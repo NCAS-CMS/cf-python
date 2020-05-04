@@ -4976,7 +4976,6 @@ class Field(mixin.PropertiesData,
         if not dim.has_bounds():
             # Dimension coordinate has no bounds
             if auto:
-                print (999)
                 return False
 
             raise ValueError(
@@ -7951,8 +7950,8 @@ class Field(mixin.PropertiesData,
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
 
-            result = c.collapse(
-                method=method, weights=weights, verbose=False).data
+            result = c.collapse(method=method, weights=weights,
+                                measure=measure, verbose=False).data
             out.data[i] = result.datum()
 
         if verbose:

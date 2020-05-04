@@ -10802,6 +10802,9 @@ False
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
+        verbose: `bool`, optional
+            TODO
+
     :Returns:
 
         `Data` or `None`
@@ -10892,13 +10895,11 @@ False
         # ------------------------------------------------------------
         # Body (not edges nor corners)
         # ------------------------------------------------------------
-        indices = [slice(h, h + n) if (h and i in axes) else slice(None)
+        indices = [slice(h, h + n)
+                   if (h and i in axes) else
+                   slice(None)
                    for i, (h, n) in enumerate(zip(size, shape0))]
-        print(indices)
-#        print(d[-1, 0:180].array, d.shape, d[-1].array.shape)
         out[tuple(indices)] = d
-#        for k in range(360):            
-#            print(d[-1, k], out[-2, k+1])
 
         # ------------------------------------------------------------
         # Edges (not corners)
@@ -10907,33 +10908,31 @@ False
             size_i = size[i]
             
             for edge in ('first', 'last'):
+                # Initialise indices to the expanded data
                 indices1 = [slice(None)] * ndim
-#                 if edge == 'first':
-#                     indices1[i] = slice(0, size_i)
-#                 else:
-#                     indices1[i] = slice(-size_i, None)
                     
                 if edge == 'last':
                     indices1[i] = slice(-size_i, None)
                 else:
                     indices1[i] = slice(0, size_i)
-                        
+
+                # Initialise indices to the original data
                 indices0 = indices1[:]
-                if (tripolar
-                    and edge == 'last'
-                    and i == Y_axis and j == X_axis):
-                    # Special case for tripolar "top row"
-                    indices0[X_axis] = slice(None, None, -1)
+#                if (tripolar
+#                    and edge == 'last'
+#                    and i == Y_axis and j == X_axis):
+#                    # Special case for tripolar "top": halo contains
+#                    # the values that have been flipped in the X
+#                    # direction.
+#                    indices0[X_axis] = slice(None, None, -1)
                 
                 for j in axes:
                     if j == i:
                         continue
                     
                     size_j = size[j]            
-#                    indices1[j] = slice(size_j, size_j + shape0[j])
                     indices1[j] = slice(size_j, -size_j)
 
-                print(i, indices1, indices0, shape1, shape0)
                 out[tuple(indices1)] = d[tuple(indices0)]
         # --- End: for
 
@@ -10947,9 +10946,23 @@ False
                       (slice(None),)
                       for i in range(ndim)]
             ):
-#                    print (indices,shape1, shape0)
                 out[indices] = d[indices]
 
+        hardmask = d.hardmask
+        
+        if tripolar:
+            # Special case for tripolar: The "top" halo contains the
+            # values that have been flipped in the X direction.
+            indices1 = [slice(None)] * ndim
+            indices1[Y_axis] = slice(-size[Y_axis], None)
+            
+            indices2 = indices1[:]
+            indices2[X_axis] = slice(None, None, -1)
+
+            out.hardmask = False
+            out[tuple(indices1)] = out[tuple(indices2)]
+
+        out.hardmask = hardmask            
         out.set_fill_value(d.get_fill_value(None))
 
         if inplace:
