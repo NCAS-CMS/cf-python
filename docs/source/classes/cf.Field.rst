@@ -181,6 +181,15 @@ Data
    ~cf.Field.transpose
    ~cf.Field.unsqueeze
 
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.halo
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -211,11 +220,11 @@ Data
    :template: method.rst
 
    ~cf.Field.__setitem__
-   ~cf.Field.apply_masking
-   ~cf.Field.indices
-   ~cf.Field.mask_invalid
    ~cf.Field.subspace
+   ~cf.Field.indices
    ~cf.Field.where
+   ~cf.Field.apply_masking
+   ~cf.Field.mask_invalid
 
 Miscellaneous data operations
 -----------------------------
@@ -229,10 +238,9 @@ Miscellaneous data operations
 	      
    ~cf.Field.cyclic
    ~cf.Field.get_filenames
-   ~cf.Field.halo
-   ~cf.Field.chunk
    ~cf.Field.close
-
+   ~cf.Field.chunk
+ 
 Metadata constructs
 -------------------
 

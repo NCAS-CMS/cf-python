@@ -10789,17 +10789,58 @@ False
         '''Expand the field construct by adding a halo to its data.
 
     The halo may be applied over a subset of the data dimensions and
-    each dimension may have a a different halo size. The halo region
-    is populated with a copy of the proximate values from the original
-    data.
+    each dimension may have a a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
+
+    **Tripolar domains**
+
+    Data for global tripolar domains are a special case in that a halo
+    added to the northern end of the "Y" axis must be filled with
+    values that are flipped in "X" direction. Such domains need to be
+    explicitly indicated with the *tripolar* parameter.
 
     :Parameters:
 
-        size:
-            TODO
+        size: `int` or `dict`
+            Specify the size of the halo for each axis. 
 
-        axes: optional
-            TODO
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* and *tripolar* parameters.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (defined by its integer position in the
+            data) with a corresponding value of the halo size for that
+            axis. Axes not specified by the dictionary are not
+            expanded. In this case the *axes* parameter can not also
+            be set (but the *tripolar* parameter can).
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivelent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the first and last
+              dimensions `size=2, axes=[0, -1]`` or equivalently
+              ``size={0: 2, -1: 2}``.
+
+        axes: (sequence of) `int`
+            Select the domain axes to be expanded, defined by their
+            integer positions in the data. By default, or if *axes* is
+            `None`, all axes are selected. No axes are expanded if
+            *axes* is an empty sequence.
 
         tripolar: `dict`, optional
             TODO
@@ -10808,7 +10849,7 @@ False
             If True then do the operation in-place and return `None`.
 
         verbose: `bool`, optional
-            TODO
+            If True then print a description operation.
 
     :Returns:
 
@@ -10823,8 +10864,9 @@ False
         '''
         if verbose:
             _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-            print("{}.halo({})".format(self.__class__.__name__,
-                                       ', '.join(_kwargs)))
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{})".format(_,
+                                 (',\n' + ' '*len(_)).join(_kwargs)))
             
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -10893,15 +10935,13 @@ False
                     for i in range(ndim)]
 
         if tripolar:
-            if X_axis not in axes:
-                raise ValueError(
-                    "Tripolar 'X' axis ({!r}) is not specified by the "
-                    "size nor axes parameters")
-        
-            if Y_axis not in axes:
-                raise ValueError(
-                    "Tripolar 'Y' axis ({!r}) is not specified by the "
-                    "size nor axes parameters")
+            for A, axis in zip(('X', 'Y',),
+                               (X_axis, Y_axis)):                
+                if axis not in axes:
+                    raise ValueError(
+                        "If dimensions have been identified with the "
+                        "axes or size parmaeters then they must include "
+                        "the tripolar {!r} axis: {!r}".format(A, axis))
         # --- End: if
 
         # Remove axes with a size 0 halo
@@ -10916,7 +10956,7 @@ False
             if h > n:
                 raise ValueError(
                     "Halo size {!r} is too big for axis of size {!r}".format(
-                        h, n)
+                        h, n))
         # --- End: for
 
         # Initialise the expanded data

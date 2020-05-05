@@ -3044,8 +3044,8 @@ class Field(mixin.PropertiesData,
             A name to identify the field in error messages.
 
         axes: `dict`, optional
-            A dictionary specifying the X and Y axes, with keys 'X' and
-            'Y'.
+            A dictionary specifying the X and Y axes, with keys
+            ``'X'`` and ``'Y'``.
 
             *Parameter example:*
               ``axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -8986,7 +8986,7 @@ class Field(mixin.PropertiesData,
             selected by passing each given axis description to a call
             of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected. If a
+            returned by ``f.domain_axis('X')`` is selected. If a
             selected axis has size 1 then it is ignored. By default
             all axes with size greater than 1 are collapsed.
 
@@ -11945,7 +11945,7 @@ class Field(mixin.PropertiesData,
             would be selected by passing the given axis description to
             a call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
             If *axis* is `None` then a new domain axis construct will
             created for the inserted dimension.
@@ -14030,7 +14030,7 @@ class Field(mixin.PropertiesData,
             by passing the given axis description to a call of the
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
@@ -14470,7 +14470,7 @@ class Field(mixin.PropertiesData,
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all axes are flipped.
 
@@ -14551,7 +14551,7 @@ class Field(mixin.PropertiesData,
             be selected by passing the given axis description to a
             call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
         value:
             Anchor the dimension coordinate values for the selected
@@ -14971,7 +14971,7 @@ class Field(mixin.PropertiesData,
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all size 1 axes are squeezed.
 
@@ -15108,7 +15108,7 @@ class Field(mixin.PropertiesData,
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             Each dimension of the field construct's data must be
             provided, or if no axes are specified then the axis order
@@ -16901,16 +16901,59 @@ class Field(mixin.PropertiesData,
         '''Expand the field construct by adding a halo to its data.
 
     The halo may be applied over a subset of the data dimensions and
-    each dimension may have a a different halo size. The halo region
-    is populated with a copy of the proximate values from the original
-    data.
+    each dimension may have a a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
 
     The metadata constructs are similary extended where appropriate.
 
+    **Tripolar domains**
+
+    Global tripolar domains are a special case in that a halo added to
+    the northern end of the "Y" axis must be filled with values that
+    are flipped in "X" direction. Such domains can not be identified
+    from the field construct's metadata, so need to be explicitly
+    indicated with the *tripolar* parameter.
+
     :Parameters:
         
-        size: optional
-            TODO
+        size:  `int` or `dict`
+            Specify the size of the halo for each axis. 
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* and *tripolar* parameters.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (by passing the axis description to a
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X')``) with a corresponding
+            value of the halo size for that axis. Axes not specified
+            by the dictionary are not expanded. In this case the
+            *axes* parameter can not also be set (but the *tripolar*
+            parameter can).
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivelent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the "longitude" and
+              "latitude" axes: ``size=2, axes=['latutude',
+              'longitude']``, or equivalently ``size={'latutude': 2,
+              'longitude': 2}``.
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to be expanded, defined by the
@@ -16918,9 +16961,11 @@ class Field(mixin.PropertiesData,
             axis description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
-            By default, or if *axes* is `None`, all axes are selected.
+            By default, or if *axes* is `None`, all axes are
+            selected. No axes are expanded if *axes* is an empty
+            sequence.
         
             *Parameter example:*
               ``axes='X'``
@@ -16941,10 +16986,38 @@ class Field(mixin.PropertiesData,
               ``axes='ncdim%i'``
 
         tripolar: `dict`, optional
-            TODO
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by passing the value to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'ncdim%i'``, the domain axis construct returned by
+            ``f.domain_axis('ncdim%i')``.
+        
+            This is necessary because in the global tripolar case the
+            "X" and "Y" axes need special treatment (see above), but
+            the identity of these axes is not inferrable from the
+            field contruct's metadata.
+
+            If no axes are individually specified for expansion by the
+            *size* nor *axes* parameters then both the "X" and "Y"
+            axes will be expanded, and no others. Otherwise the the
+            "X" and "Y axes must be a subset of those identified by
+            the *size* or *axes* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by their netCDF dimension
+              names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
+
+            *Parameter example:*
+              Define the "X" and Y" axes by their positions in the
+              data: ``tripolar={'X': 2, 'Y': 1}``
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description operation.
 
     :Returns:
 
@@ -17037,8 +17110,8 @@ class Field(mixin.PropertiesData,
         if verbose:
             _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
             _ = "{}.halo(".format(self.__class__.__name__)
-            print("{}{}".format(_,
-                                (',\n' + ' '*len(_)).join(_kwargs)))
+            print("{}{})".format(_,
+                                 (',\n' + ' '*len(_)).join(_kwargs)))
             
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -17186,7 +17259,7 @@ class Field(mixin.PropertiesData,
             selected by passing each given axis description to a call
             of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
             By default, or if *axes* is `None`, all axes are selected.
 
@@ -17477,7 +17550,7 @@ class Field(mixin.PropertiesData,
             by passing the given axis description to a call of the
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
         axes: deprecated at version 3.0.0
             Use the *axis* parameter instead.
@@ -17666,7 +17739,7 @@ class Field(mixin.PropertiesData,
             axis description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all axes spanned by the field
             construct's data are flattened.
@@ -17913,7 +17986,7 @@ class Field(mixin.PropertiesData,
             be selected by passing the given axis description to a
             call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
         shift: `int`
             The number of places by which the selected cyclic axis is
@@ -17934,11 +18007,11 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    Roll the data of the 'X' axis one elements to the right:
+    Roll the data of the "X" axis one elements to the right:
 
     >>> f.roll('X', 1)
 
-    Roll the data of the 'X' axis three elements to the left:
+    Roll the data of the "X" axis three elements to the left:
 
     >>> f.roll('X', -3)
 
@@ -18806,8 +18879,8 @@ class Field(mixin.PropertiesData,
         src_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and
             longitude coordinates of the source field when no 1D
-            dimension coordinates are present. It must have keys 'X'
-            and 'Y'. TODO
+            dimension coordinates are present. It must have keys
+            ``'X'`` and ``'Y'``. TODO
 
             *Parameter example:*
               ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -18818,8 +18891,8 @@ class Field(mixin.PropertiesData,
         dst_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and
             longitude coordinates of the destination field when no
-            dimension coordinates are present. It must have keys 'X'
-            and 'Y'.
+            dimension coordinates are present. It must have keys
+            ``'X'`` and ``'Y'``.
 
             *Parameter example:*
               ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -18885,7 +18958,7 @@ class Field(mixin.PropertiesData,
     >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
 
     Regrid f to 2D auxiliary coordinates lat and lon, which have their
-    dimensions ordered 'Y' first then 'X'.
+    dimensions ordered "Y" first then "X".
 
     >>> lat
     <CF AuxiliaryCoordinate: latitude(110, 106) degrees_north>
@@ -19744,7 +19817,7 @@ class Field(mixin.PropertiesData,
             passing the given axis description to a call of the field
             construct's `domain_axis` method. For example, for a value
             of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
         wrap: `bool`, optional
             If True then the boundary is wrapped around, otherwise the
