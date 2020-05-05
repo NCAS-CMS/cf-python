@@ -5746,7 +5746,7 @@ class Field(mixin.PropertiesData,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def cell_area(self, radius='earth', great_circle=False,
+    def cell_area(self, radius='earth', great_circle=False, set=False,
                   insert=False, force=False):
         '''Return a field containing horizontal cell areas.
 
@@ -5779,17 +5779,9 @@ class Field(mixin.PropertiesData,
 
             .. versionadded:: 3.2.0
 
-        insert: `bool`, optional
-            If True then calculated cell areas are also inserted in
-            place as an "area" cell measure construct, unless there is
-            already an existing area cell measure construct for the
-            horizontal axes.
+        insert: deprecated at version 3.0.0
 
-        force: `bool`, optional
-            If True the always calculate the cell areas. By default,
-            if there is already an "area" cell measure construct for
-            the horizontal axes then it will be used provide the area
-            values.
+        force: deprecated at version 3.0.0
 
     :Returns:
 
@@ -5799,14 +5791,19 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> a = f.cell_area()
-    >>> a = f.cell_area(force=True)
     >>> a = f.cell_area(radius=cf.Data(3389.5, 'km'))
     >>> a = f.cell_area(insert=True)
 
         '''
         if insert:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'cell_area', {'insert': insert})  # pragma: no cover
+                self, 'cell_area', {'insert': insert},
+                version='3.0.0')  # pragma: no cover
+
+        if force:
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'cell_area', {'force': force},
+                version='3.0.0')  # pragma: no cover
 
 #        x_axis = self.domain_axis('X', key=True, default=None)
 #        y_axis = self.domain_axis('Y', key=True, default=None)
@@ -16896,16 +16893,21 @@ class Field(mixin.PropertiesData,
         return super().get_data_axes(key=key, default=default)
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False,
-             verbose=False):
+    def halo(self, size, axes=None, tripolar=None,
+             fold_index=-1, inplace=False, verbose=False):
         '''Expand the field construct by adding a halo to its data.
 
     The halo may be applied over a subset of the data dimensions and
-    each dimension may have a a different halo size (including
+    each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
     The metadata constructs are similary extended where appropriate.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
 
     **Tripolar domains**
 
@@ -16915,6 +16917,8 @@ class Field(mixin.PropertiesData,
     from the field construct's metadata, so need to be explicitly
     indicated with the *tripolar* parameter.
 
+    .. versionadded:: 3.4.1
+
     :Parameters:
         
         size:  `int` or `dict`
@@ -16922,7 +16926,7 @@ class Field(mixin.PropertiesData,
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
-            *axes* and *tripolar* parameters.
+            *axes* parameter.
 
             Alternatively, halo sizes may be assigned to axes
             individually by providing a `dict` for which a key
@@ -16931,9 +16935,8 @@ class Field(mixin.PropertiesData,
             example, for a value of ``'X'``, the domain axis construct
             returned by ``f.domain_axis('X')``) with a corresponding
             value of the halo size for that axis. Axes not specified
-            by the dictionary are not expanded. In this case the
-            *axes* parameter can not also be set (but the *tripolar*
-            parameter can).
+            by the dictionary are not expanded, and the *axes*
+            parameter must not also be set.
 
             *Parameter example:*
               Specify a halo size of 1 for all otherwise selected
@@ -16946,7 +16949,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               For data with three dimensions, specify a halo size of 3
               for the first dimension and 1 for the second dimension:
-              ``size={0: 3, 1: 1}``. This is equivelent to ``size={0:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
               3, 1: 1, 2: 0}``
 
             *Parameter example:*
@@ -16987,37 +16990,40 @@ class Field(mixin.PropertiesData,
 
         tripolar: `dict`, optional
             A dictionary defining the "X" and "Y" axes of a global
-            tripolar domain. It must have keys ``'X'`` and ``'Y'``,
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by passing the value to a call of the field
             construct's `domain_axis` method. For example, for a value
             of ``'ncdim%i'``, the domain axis construct returned by
             ``f.domain_axis('ncdim%i')``.
         
-            This is necessary because in the global tripolar case the
-            "X" and "Y" axes need special treatment (see above), but
-            the identity of these axes is not inferrable from the
-            field contruct's metadata.
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
 
-            If no axes are individually specified for expansion by the
-            *size* nor *axes* parameters then both the "X" and "Y"
-            axes will be expanded, and no others. Otherwise the the
-            "X" and "Y axes must be a subset of those identified by
-            the *size* or *axes* parameter.
+            See the *fold_index* parameter.
         
             *Parameter example:*
               Define the "X" and Y" axes by their netCDF dimension
               names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
 
             *Parameter example:*
-              Define the "X" and Y" axes by their positions in the
-              data: ``tripolar={'X': 2, 'Y': 1}``
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
         verbose: `bool`, optional
-            If True then print a description operation.
+            If True then print a description of the operation.
 
     :Returns:
 
@@ -17144,42 +17150,39 @@ class Field(mixin.PropertiesData,
             X_axis = tripolar.pop('X', None)
             Y_axis = tripolar.pop('Y', None)
             
-            if tripolar:
-                raise ValueError("TODO 3")
-             
             if X_axis is None:
-                raise ValueError("TODO 1")
+                raise ValueError("Must provide a tripolar 'X' axis.")
         
             if Y_axis is None:
-                raise ValueError("TODO 2")
+                raise ValueError("Must provide a tripolar 'Y' axis.")
 
             X = self.domain_axis(X_axis, key=True)
             Y = self.domain_axis(Y_axis, key=True)
 
-            if X not in axis_halo:
-                raise ValueError("TODO 4 {}".format(X_axis))
-        
-            if Y not in axis_halo:
-                raise ValueError("TODO 5 {}".format(Y_axis))
-
-            if X == Y:
-                raise ValueError("TODO 6 {} {}".format(Y_axis, X_axis))
-
-            tripolar = {'X': data_axes.index(X),
-                        'Y': data_axes.index(Y)
-            }
-
-            tripolar_axes = {X: 'X', Y: 'Y'}
+            try:
+                i_X = data_axes.index(X)
+            except ValueError:
+                raise ValueError(
+                    "Axis {!r} is not spanned by the data".format(X_axis))
+                
+            try:
+                i_Y = data_axes.index(Y)
+            except ValueError:
+                raise ValueError(
+                    "Axis {!r} is not spanned by the data".format(Y_axis))
+                
+            tripolar['X'] = i_X
+            tripolar['Y'] = i_Y
             
+            tripolar_axes = {X: 'X', Y: 'Y'}
+        # --- End: if
+        
         # Add halos to the field construct's data
         size = {data_axes.index(axis): h
                 for axis, h, in axis_halo.items()}
 
-#        if verbose:
-#            print('  size =', size)  # pragma: no cover
-#            print('  tripolar =', tripolar)  # pragma: no cover
-        
-        f.data.halo(size=size, tripolar=tripolar, inplace=True,
+        f.data.halo(size=size, tripolar=tripolar,
+                    fold_index=fold_index, inplace=True,
                     verbose=verbose)
         
         # Change domain axis sizes
@@ -17189,9 +17192,6 @@ class Field(mixin.PropertiesData,
 
         # Add halos to metadata constructs
         for key, c in f.constructs.filter_by_data().items():
-#            if verbose:
-#                print(" ",repr(c))  # pragma: no cover
-#                
             construct_axes = f.get_data_axes(key)
             construct_size = {construct_axes.index(axis): h
                               for axis, h in axis_halo.items()
@@ -17209,17 +17209,13 @@ class Field(mixin.PropertiesData,
                     for axis, axis_type in tripolar_axes.items()
                 }
 
-#            if verbose:
-#                print("    size = ", construct_size)  # pragma: no cover
-#                print("    tripolar = ", construct_tripolar
-#                )  # pragma: no cover
-                
             c.halo(size=construct_size, tripolar=construct_tripolar,
-                   inplace=True, verbose=verbose)
+                   fold_index=fold_index, inplace=True,
+                   verbose=verbose)
         # --- End: for
         
         if verbose:
-            print("Result:\n{!r}\n".format(f))  # pragma: no cover
+            print("Returns:{!r}".format(f))  # pragma: no cover
 
         return f
     

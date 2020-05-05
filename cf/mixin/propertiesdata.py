@@ -4805,9 +4805,109 @@ class PropertiesData(Properties):
         return super().get_data(default=default, _units=False)
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False,
-             verbose=False):
-        '''TODO
+    def halo(self, size, axes=None, tripolar=None, fold_index=-1,
+             inplace=False, verbose=False):
+        '''Expand the data by adding a halo.
+        
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
+
+    **Tripolar domains**
+
+    Data for global tripolar domains are a special case in that a halo
+    added to the northern end of the "Y" axis must be filled with
+    values that are flipped in "X" direction. Such domains need to be
+    explicitly indicated with the *tripolar* parameter.
+
+    .. versionadded:: 3.4.1
+
+    :Parameters:
+
+        size: `int` or `dict`
+            Specify the size of the halo for each axis. 
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* parameter.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (defined by its integer position in the
+            data) with a corresponding value of the halo size for that
+            axis. Axes not specified by the dictionary are not
+            expanded, and the *axes* parameter must not also be set.
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the first and last
+              dimensions `size=2, axes=[0, -1]`` or equivalently
+              ``size={0: 2, -1: 2}``.
+
+        axes: (sequence of) `int`
+            Select the domain axes to be expanded, defined by their
+            integer positions in the data. By default, or if *axes* is
+            `None`, all axes are selected. No axes are expanded if
+            *axes* is an empty sequence.
+
+        tripolar: `dict`, optional
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by their integer positions in the data.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description of the operation.
+
+    :Returns:
+        
+            The expanded data, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    TODO
+
 
     :Parameters:
 
@@ -4827,9 +4927,6 @@ class PropertiesData(Properties):
 
         '''
         if verbose:
-#            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-#            print("{}.halo({})".format(self.__class__.__name__,
-#                                       ', '.join(_kwargs)))
             _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
             _ = "{}.halo(".format(self.__class__.__name__)
             print("{}{}".format(_,
@@ -4840,7 +4937,8 @@ class PropertiesData(Properties):
         data = v.get_data(None)
         if data is not None:
             data.halo(size=size, axes=axes, tripolar=tripolar,
-                      inplace=True)
+                      fold_index=fold_index, inplace=True,
+                      verbose=verbose)
             
         return v
         

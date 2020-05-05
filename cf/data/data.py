@@ -10784,14 +10784,19 @@ False
         return out
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=None, inplace=False,
-             verbose=False):
-        '''Expand the field construct by adding a halo to its data.
-
+    def halo(self, size, axes=None, tripolar=None,
+             fold_index=-1, inplace=False, verbose=False):
+        '''Expand the data by adding a halo.
+        
     The halo may be applied over a subset of the data dimensions and
-    each dimension may have a a different halo size (including
+    each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
 
     **Tripolar domains**
 
@@ -10800,6 +10805,8 @@ False
     values that are flipped in "X" direction. Such domains need to be
     explicitly indicated with the *tripolar* parameter.
 
+    .. versionadded:: 3.4.1
+
     :Parameters:
 
         size: `int` or `dict`
@@ -10807,15 +10814,14 @@ False
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
-            *axes* and *tripolar* parameters.
+            *axes* parameter.
 
             Alternatively, halo sizes may be assigned to axes
             individually by providing a `dict` for which a key
             specifies an axis (defined by its integer position in the
             data) with a corresponding value of the halo size for that
             axis. Axes not specified by the dictionary are not
-            expanded. In this case the *axes* parameter can not also
-            be set (but the *tripolar* parameter can).
+            expanded, and the *axes* parameter must not also be set.
 
             *Parameter example:*
               Specify a halo size of 1 for all otherwise selected
@@ -10828,7 +10834,7 @@ False
             *Parameter example:*
               For data with three dimensions, specify a halo size of 3
               for the first dimension and 1 for the second dimension:
-              ``size={0: 3, 1: 1}``. This is equivelent to ``size={0:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
               3, 1: 1, 2: 0}``
 
             *Parameter example:*
@@ -10843,13 +10849,34 @@ False
             *axes* is an empty sequence.
 
         tripolar: `dict`, optional
-            TODO
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by their integer positions in the data.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
         verbose: `bool`, optional
-            If True then print a description operation.
+            If True then print a description of the operation.
 
     :Returns:
 
@@ -10873,15 +10900,45 @@ False
         ndim = d.ndim
         shape0 = d.shape
 
+        # ------------------------------------------------------------
+        # Parse the size and axes parameters
+        # ------------------------------------------------------------
+        if isinstance(size, dict):
+            if axes is not None:
+                raise ValueError(
+                    "Can't set the axes parameter when the "
+                    "size parameter is a dictionary")
+            
+            axes = self._parse_axes(tuple(size))
+            size = [size[i] if i in axes else 0
+                    for i in range(ndim)]
+        else:
+            if axes is None:
+                axes = list(range(ndim))
+            
+            axes = d._parse_axes(axes)
+            size = [size if i in axes else 0
+                    for i in range(ndim)]
+
+        # ------------------------------------------------------------
+        # Parse the tripolar parameter
+        # ------------------------------------------------------------
         if tripolar:
+            if fold_index not in (0, -1):
+                raise ValueError(
+                    "fold_index parameter must be -1 or 0. "
+                    "Got {!r}".format(fold_index))
+            
             # Find the X and Y axes of a tripolar grid
             tripolar = tripolar.copy()
             X_axis = tripolar.pop('X', None)
             Y_axis = tripolar.pop('Y', None)
             
             if tripolar:
-                raise ValueError("Must provide a tripolar 'X' axis.")
-             
+                raise ValueError(
+                    "Can not set key {!r} in the tripolar "
+                    "dictionary.".format(tripolar.popitem()[0]))
+            
             if X_axis is None:
                 raise ValueError("Must provide a tripolar 'X' axis.")
         
@@ -10912,36 +10969,16 @@ False
                     "Got {!r}, {!r}".format(
                         X_axis, Y_axis))
 
-            tripolar = True
-
-        # Set the halo size for each axis.
-        if isinstance(size, dict):
-            if axes is not None:
-                raise ValueError("can't set axes when size is a dict TODO")
-            
-            axes = self._parse_axes(tuple(size))
-            size = [size[i] if i in axes else 0
-                    for i in range(ndim)]
-        else:
-            if axes is None:
-                if tripolar:
-                    axes = (Y_axis, X_axis)
-                else:
-                    axes = list(range(ndim))
-            # --- End: if
-            
-            axes = d._parse_axes(axes)
-            size = [size if i in axes else 0
-                    for i in range(ndim)]
-
-        if tripolar:
             for A, axis in zip(('X', 'Y',),
                                (X_axis, Y_axis)):                
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
-                        "axes or size parmaeters then they must include "
+                        "axes or size parameters then they must include "
                         "the tripolar {!r} axis: {!r}".format(A, axis))
+            # --- End: for
+
+            tripolar = True
         # --- End: if
 
         # Remove axes with a size 0 halo
@@ -10979,11 +11016,11 @@ False
         for i in axes:
             size_i = size[i]
             
-            for edge in ('first', 'last'):
+            for edge in (0, -1):
                 # Initialise indices to the expanded data
                 indices1 = [slice(None)] * ndim
                     
-                if edge == 'last':
+                if edge == -1:
                     indices1[i] = slice(-size_i, None)
                 else:
                     indices1[i] = slice(0, size_i)
@@ -11014,13 +11051,24 @@ False
                 out[indices] = d[indices]
 
         hardmask = d.hardmask
-        
+
+        # ------------------------------------------------------------
+        # Special case for tripolar: The northern "Y" axis halo
+        # contains the values that have been flipped in the "X"
+        # direction.
+        # ------------------------------------------------------------
         if tripolar and size[Y_axis]:
-            # Special case for tripolar: The northern halo contains
-            # the values that have been flipped in the X direction.
             indices1 = [slice(None)] * ndim
-            indices1[Y_axis] = slice(-size[Y_axis], None)
             
+            if fold_index == -1:
+                # The last index of the "Y" axis corresponds to the
+                # fold in "X" axis of a tripolar grid
+                indices1[Y_axis] = slice(-size[Y_axis], None)
+            else:
+                # The first index of the "Y" axis corresponds to the
+                # fold in "X" axis of a tripolar grid
+                indices1[Y_axis] = slice(0, size[Y_axis])
+                
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
@@ -11029,7 +11077,10 @@ False
 
         out.hardmask = True
         out.set_fill_value(d.get_fill_value(None))
-                    
+
+        # Set expanded axes to be non-cyclic
+        out.cyclic(axes=axes, iscyclic=False)
+        
         if inplace:
             d.__dict__ = out.__dict__
             d.hardmask = hardmask
@@ -11665,7 +11716,7 @@ False
             arrays with one element (but any number of dimensions),
             and the single element is returned. If positional
             arguments are given then they must be one of the
-            following:
+            fdlowing:
 
             * An integer. This argument is interpreted as a flat index
               into the array, specifying which element to copy and

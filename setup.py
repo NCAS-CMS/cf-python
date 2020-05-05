@@ -245,9 +245,9 @@ setup(name = "cf-python",
       install_requires = ['netCDF4>=1.5.3',
                           'cftime>=1.1.1',
                           'numpy>=1.15',
-                          'cfdm==1.8.3',
+                          'cfdm>=1.8.4, <1.9',
                           'psutil>=0.6.0',
-                          'cfunits>=3.2.5'
+                          'cfunits>=3.2.6'
 #                          'scipy>=1.1.0',
 #                          'matplotlib>=3.0.0',
 #                          'mpi4py>=3.0.0',

@@ -1,5 +1,5 @@
-'''The Python `cf` package is an Earth Science data analysis library that is
-built on a complete implementation of the CF data model.
+'''The Python `cf` package is an Earth Science data analysis library
+that is built on a complete implementation of the CF data model.
 
 The `cf` package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is
@@ -55,16 +55,16 @@ The `cf` package can:
 * create field constructs to create derived quantities (such as
   vorticity).
 
-All of the above use LAMA functionality, which allows multiple
-fields larger than the available memory to exist and be manipulated.
+All of the above use LAMA functionality, which allows multiple fields
+larger than the available memory to exist and be manipulated.
 
 
 **Hierarchical groups**
 
 Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of `cf` will include support
-for netCDF4 files containing data organised in hierarchical groups,
-but this is not available in version 3.2.0 (even though it is
+variables within datasets. A future release of `cf` will include
+support for netCDF4 files containing data organised in hierarchical
+groups, but this is not available in version 3.2.0 (even though it is
 allowed in CF-1.8).
 
 
@@ -75,8 +75,8 @@ constructs uses the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that is automatically installed
 along with with `cf`.
 
-See the :ref:`cf-python home page <cf-python-home>` for
-documentation, installation and source code.
+See the :ref:`cf-python home page <cf-python-home>` for documentation,
+installation and source code.
 
 '''
 __Conventions__  = 'CF-1.8'
@@ -202,11 +202,15 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_exact_vn = '1.8.3'
-if LooseVersion(cfdm.__version__) != LooseVersion(_exact_vn):
+_minimum_vn = '1.8.3'
+_maximum_vn = '1.9'
+_cfdm_version = LooseVersion(cfdm.__version__)
+if (_cfdm_version < LooseVersion(_minimum_vn)
+    or _cfdm_version >= LooseVersion(_maximum_vn)):
     raise ValueError(
-        "Bad cfdm version: cf requires cfdm version {}. Got {} "
-        "at {}".format(_exact_vn, cfdm.__version__, cfdm.__file__))
+        "Bad cfdm version: cf requires cfdm version >={} and <{}. Got {} "
+        "at {}".format(_minimum_vn, _maximum_vn,
+                       _cfdm_version, cfdm.__file__))
 
 from .constructs import Constructs
 
