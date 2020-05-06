@@ -56,7 +56,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_get_filenames']
+#        self.test_only = ['test_Field_halo']
 #        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
@@ -140,6 +140,26 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.get_filenames() == set(),
                         g.get_filenames())
         
+    def test_Field_halo(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+#        f = cf.example_field(7)
+#
+#        g = f.copy()
+#        self.assertIsNone(g.halo(1, inplace=True))
+#
+#        i = 1
+#        g = f.halo(i)
+#        self.assertTrue(
+#            (numpy.array(g.shape) == numpy.array(f.shape) + i*2).all())
+#
+#        for key, c in g.constructs.filter_by_data().items():
+#            d = f.construct(key)
+#            self.assertTrue(
+#                (numpy.array(c.shape) == numpy.array(d.shape) + i*2).all())
+#        # --- End: for
+        
     def test_Field_has_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -209,7 +229,7 @@ class FieldTest(unittest.TestCase):
 
         d = f.data.copy()
         g = f.copy()        
-        self.assertTrue(f.apply_masking(inplace=True) is None)
+        self.assertIsNone(f.apply_masking(inplace=True))
         self.assertTrue(f.equals(g, verbose=1))
 
         x = 0.11        
