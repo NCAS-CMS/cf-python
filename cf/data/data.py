@@ -1,5 +1,14 @@
-from functools   import reduce
-from operator    import itemgetter
+import itertools
+import operator
+
+from functools import reduce as functools_reduce
+from operator import itemgetter
+from operator import mul as operator_mul
+
+from json import dumps as json_dumps
+from json import loads as json_loads
+
+from math import ceil as math_ceil
 
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
@@ -88,19 +97,10 @@ from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 import cftime
 import cfdm
 
-import operator
-
-from json import dumps as json_dumps
-from json import loads as json_loads
-
-from operator import mul as operator_mul
-from math import ceil as math_ceil
-from itertools import product as itertools_product
-
 from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
-from ..units      import Units
-from ..constants  import masked as cf_masked
+from ..units import Units
+from ..constants import masked as cf_masked
 from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
@@ -118,11 +118,11 @@ from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check)
 
-from .abstract           import (Array,
+from .abstract import (Array,
                                  CompressedArray)
-from .filledarray        import FilledArray
-from .partition          import Partition
-from .partitionmatrix    import PartitionMatrix
+from .filledarray import FilledArray
+from .partition import Partition
+from .partitionmatrix import PartitionMatrix
 from .collapse_functions import *
 
 from . import (NetCDFArray,
@@ -138,7 +138,6 @@ if mpi_on:
     from .. import mpi_size
     from .. import mpi_rank
     from mpi4py.MPI import SUM as mpi_sum
-# --- End: if
 
 
 # --------------------------------------------------------------------
@@ -149,39 +148,39 @@ _month_length = _year_length / 12
 
 
 def _convert_to_builtin_type(x):
+    '''Convert a non-JSON-encodable object to a JSON-encodable built-in
+    type.
+    
+    Possible conversions are:
+    
+    ================  =======  ================================
+    Input             Output   `numpy` data-types covered
+    ================  =======  ================================
+    `numpy.bool_`     `bool`   bool
+    `numpy.integer`   `int`    int, int8, int16, int32, int64,
+                               uint8, uint16, uint32, uint64
+    `numpy.floating`  `float`  float, float16, float32, float64
+    ================  =======  ================================
+    
+    :Parameters:
+    
+        x:
+            TODO
+    
+    :Returns:
+    
+            TODO
+    
+    **Examples:**
+    
+    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+    bool
+    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+    double
+    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+    int
+
     '''
-
-Convert a non-JSON-encodable object to a JSON-encodable built-in type.
-
-Possible conversions are:
-
-==============  =============  ======================================
-Input object    Output object  numpy data-types covered
-==============  =============  ======================================
-numpy.bool_     bool           bool
-numpy.integer   int            int, int8, int16, int32, int64, uint8,
-                               uint16, uint32, uint64
-numpy.floating  float          float, float16, float32, float64
-==============  =============  ======================================
-
-:Parameters:
-
-    x: TODO
-
-:Returns:
-
-TODO
-
-**Examples:**
-
->>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-bool
->>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-double
->>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-int
-
-'''
     if isinstance(x, numpy_bool_):
         return bool(x)
 
@@ -244,15 +243,18 @@ _cached_axes = {0: []}
 
 
 def _initialise_axes(ndim):
-    '''TODO
+    '''Initialise dimension identifiers of N-d data.
 
     :Parameters:
 
         ndim: `int`
+            The number of dimensions in the data.
 
     :Returns:
 
         `list`
+             The dimension identifiers, one of each dimension in the
+             array. If the data is scalar thn the list will be empty.
 
     **Examples:**
 
@@ -265,7 +267,7 @@ def _initialise_axes(ndim):
     >>> _initialise_axes(3) is _initialise_axes(3)
     True
 
-'''
+    '''
     axes = _cached_axes.get(ndim, None)
     if axes is None:
         axes = ['dim%d' % i for i in range(ndim)]
@@ -473,7 +475,8 @@ place.
     >>> d = cf.Data(5)
     >>> d = cf.Data([1,2,3], units='K')
     >>> import numpy
-    >>> d = cf.Data(numpy.arange(10).reshape(2,5), units=Units('m/s'), fill_value=-999)
+    >>> d = cf.Data(numpy.arange(10).reshape(2,5),
+    ...             units=Units('m/s'), fill_value=-999)
     >>> d = cf.Data(tuple('fly'))
 
         '''
@@ -1516,7 +1519,7 @@ place.
         # --- End: if
 
         new_shape = tuple(map(_size_of_index, indices, shape))
-        new_size = reduce(operator_mul, new_shape, 1)
+        new_size = functools_reduce(operator_mul, new_shape, 1)
 
         new = d.copy()  # Data.__new__(Data)
 
@@ -3073,7 +3076,7 @@ place.
 
         self._shape = shape
         self._ndim = len(shape)
-        self._size = reduce(operator_mul, shape, 1)
+        self._size = functools_reduce(operator_mul, shape, 1)
 
         cyclic = d.get('_cyclic', None)
         if cyclic:
@@ -3166,7 +3169,8 @@ place.
                 kwargs['shape'] = tuple(kwargs['shape'])
 
                 kwargs['ndim'] = len(kwargs['shape'])
-                kwargs['size'] = reduce(operator_mul, kwargs['shape'], 1)
+                kwargs['size'] = functools_reduce(
+                    operator_mul, kwargs['shape'], 1)
 
                 kwargs.setdefault('dtype', dtype)
 
@@ -4545,7 +4549,7 @@ place.
 
                 broadcast_indices.append(slice(None))
 
-            new_size = reduce(operator_mul, new_shape, 1)
+            new_size = functools_reduce(operator_mul, new_shape, 1)
 
             dummy_location = [None] * new_ndim
         # ---End: if
@@ -4600,10 +4604,10 @@ place.
         #     dummy_location   = [None] * new_ndim
         # else:
         #     set_location_map = False
-        #     new_size = reduce(mul, new_shape, 1)
+        #     new_size = functools_reduce(mul, new_shape, 1)
 
 #        if not set_location_map:
-#            new_size = reduce(mul, new_shape, 1)
+#            new_size = functools_reduce(mul, new_shape, 1)
 #        else:
 #            new_size = self._size
 
@@ -6489,7 +6493,8 @@ dimensions.
                     ndim = array.ndim
                     new_shape = shape[:n_non_collapse_axes]
                     new_shape += (
-                        reduce(operator_mul, shape[n_non_collapse_axes:]),)
+                        functools_reduce(
+                            operator_mul, shape[n_non_collapse_axes:]),)
                     array = numpy_reshape(array.copy(), new_shape)
 
                     if weights is not None:
@@ -10538,7 +10543,7 @@ False
     ()
 
         '''
-        return itertools_product(*[range(0, r) for r in self._shape])
+        return itertools.product(*[range(0, r) for r in self._shape])
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
@@ -11060,7 +11065,8 @@ False
         # Initialise the expanded data
         shape1 = [n + size[i] * 2 if i in axes else n
                   for i, n in enumerate(shape0)]
-        out = type(d).empty(shape1, dtype=d.dtype, units=d.Units)
+        out = type(d).empty(shape1, dtype=d.dtype, units=d.Units,
+                            fill_value=d.get_fill_value(None))
 
         # ------------------------------------------------------------
         # Body (not edges nor corners)
@@ -11103,7 +11109,7 @@ False
         # Corners
         # ------------------------------------------------------------
         if len(axes) > 1:
-            for indices in itertools_product(
+            for indices in itertools.product(
                     *[(slice(0, size[i]), slice(-size[i], None))
                       if i in axes else
                       (slice(None),)
@@ -11137,7 +11143,6 @@ False
             out[tuple(indices1)] = out[tuple(indices2)]
 
         out.hardmask = True
-        out.set_fill_value(d.get_fill_value(None))
 
         # Set expanded axes to be non-cyclic
         out.cyclic(axes=axes, iscyclic=False)
@@ -12003,7 +12008,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=reduce(operator_mul, shape, 1),
+                            size=functools_reduce(operator_mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=cf_masked)
 
@@ -13792,7 +13797,7 @@ False
 
     @classmethod
     def empty(cls, shape, dtype=None, units=None, calendar=None,
-              chunk=True):
+              fill_value=None, chunk=True):
         '''Create a new data array without initializing the elements.
 
     Note that the mask of the returned empty data is hard.
@@ -13814,6 +13819,19 @@ False
         calendar: `str`, optional
             The calendar for reference time units.
 
+        fill_value: optional
+            The fill value of the data. By default, or if set to
+            `None`, the `numpy` fill value appropriate to the array's
+            data-type will be used (see
+            `numpy.ma.default_fill_value`). Ignored if the *source*
+            parameter is set.
+
+            The fill value may also be set after initialisation with
+            the `set_fill_value` method.
+
+            *Parameter example:*
+              ``fill_value=-999.``
+
     :Returns:
 
         `Data`
@@ -13823,8 +13841,10 @@ False
     >>> d = cf.Data.empty((96, 73))
 
         '''
-        return cls.full(shape, fill_value=None, dtype=dtype,
-                        units=units, calendar=calendar, chunk=chunk)
+        out = cls.full(shape, fill_value=None, dtype=dtype,
+                       units=units, calendar=calendar, chunk=chunk)
+        out.fill_value = fill_value
+        return out
 
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
@@ -13863,7 +13883,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=reduce(operator_mul, shape, 1),
+                            size=functools_reduce(operator_mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=fill_value)
 

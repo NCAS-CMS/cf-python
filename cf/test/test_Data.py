@@ -74,7 +74,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_apply_masking']
+#        self.test_only = ['test_Data_halo']
 
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
@@ -123,6 +123,71 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 #        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
+
+    def test_Data_halo(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+       
+        d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+        d[-1, -1] = cf.masked
+        d[1, 1] = cf.masked
+        
+        e = d.copy()
+        self.assertIsNone(e.halo(1, inplace=True))
+        
+        e = d.halo(0)
+        self.assertTrue(d.equals(e, verbose=True))
+        
+        for i in (1, 2):    
+            e = d.halo(i)
+            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=True))
+            self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=True))
+            self.assertTrue(e[:i, -i:].equals(d[:i, -i:], verbose=True))
+            self.assertTrue(e[-i:, :i].equals(d[-i:, :i], verbose=True))
+            self.assertTrue(e[-i:, -i:].equals(d[-i:, -i:], verbose=True))
+
+        for i in (1, 2):    
+            e = d.halo(i, axes=0)
+            self.assertTrue(d.equals(e[i:-i, :], verbose=True))
+
+        for i, j in zip([1, 1, 2, 2],
+                        [1, 2, 1, 2]):    
+            e = d.halo({0: i, 1: j})
+            self.assertTrue(d.equals(e[i:-i, j:-j], verbose=True))
+            self.assertTrue(e[:i, :j].equals(d[:i, :j], verbose=True))
+            self.assertTrue(e[:i, -j:].equals(d[:i, -j:], verbose=True))
+            self.assertTrue(e[-i:, :j].equals(d[-i:, :j], verbose=True))
+            self.assertTrue(e[-i:, -j:].equals(d[-i:, -j:], verbose=True))
+
+#     e = d.halo(1, axes=0)
+#    
+#    >>> print(e.array)
+#    [[ 0  1  2  3]
+#     [ 0  1  2  3]
+#     [ 4 --  6  7]
+#     [ 8  9 10 --]
+#     [ 8  9 10 --]]
+#    >>> d.equals(e[1:-1, :])
+#    True
+#    >>> f = d.halo({0: 1})
+#    >>> f.equals(e)
+#    True
+#
+#    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
+#    >>> print(e.array)
+#    [[ 0  0  1  2  3  3]
+#     [ 0  0  1  2  3  3]
+#     [ 4  4 --  6  7  7]
+#     [ 8  8  9 10 -- --]
+#     [-- -- 10  9  8  8]]
+#
+#    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
+#    >>> print(e.array)
+#    [[ 3  3  2  1  0  0]
+#     [ 0  0  1  2  3  3]
+#     [ 4  4 --  6  7  7]
+#     [ 8  8  9 10 -- --]
+#     [ 8  8  9 10 -- --]]
 
     def test_Data_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -6,7 +6,8 @@ version 3.4.1
 
 * New method: `cf.Field.halo`
 * New method: `cf.Data.halo`
-  
+* New keyword parameter to `cf.Data.empty`: ``fill_value``
+
 version 3.4.0
 -------------
 ----
