@@ -2124,7 +2124,6 @@ class PropertiesDataBounds(PropertiesData):
     TODO
 
         '''
-        # Set bounds to True to bypass 'if bounds' check in call:
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'halo',
             bounds=True, interior_ring=True, inplace=inplace,

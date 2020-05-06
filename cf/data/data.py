@@ -10886,7 +10886,68 @@ False
 
     **Examples:**
 
-    TODO
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[-1, -1] = cf.masked
+    >>> d[1, 1] = cf.masked
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+
+    >>> e = d.halo(1)
+    >>> print(e.array)
+    [[ 0  0  1  2  3  3]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [ 8  8  9 10 -- --]]
+    >>> d.equals(e[1:-1, 1:-1])
+    True
+
+    >>> e = d.halo(2)
+    >>> print(e.array)
+    [[ 0  1  0  1  2  3  2  3]
+     [ 4 --  4 --  6  7  6  7]
+     [ 0  1  0  1  2  3  2  3]
+     [ 4 --  4 --  6  7  6  7]
+     [ 8  9  8  9 10 -- 10 --]
+     [ 4 --  4 --  6  7  6  7]
+     [ 8  9  8  9 10 -- 10 --]]
+    >>> d.equals(e[2:-2, 2:-2])
+    True
+
+    >>> e = d.halo(0)
+    >>> d.equals(e)
+    True
+
+    >>> e = d.halo(1, axes=0)
+    >>> print(e.array)
+    [[ 0  1  2  3]
+     [ 0  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]
+     [ 8  9 10 --]]
+    >>> d.equals(e[1:-1, :])
+    True
+    >>> f = d.halo({0: 1})
+    >>> f.equals(e)
+    True
+
+    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
+    >>> print(e.array)
+    [[ 0  0  1  2  3  3]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [-- -- 10  9  8  8]]
+
+    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
+    >>> print(e.array)
+    [[ 3  3  2  1  0  0]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [ 8  8  9 10 -- --]]
 
         '''
         if verbose:
