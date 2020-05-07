@@ -206,14 +206,14 @@ class FieldList(list):
         return not self.equals(other)
 
     # ???
-    __len__     = list.__len__
+    __len__ = list.__len__
     __setitem__ = list.__setitem__
-    append      = list.append
-    extend      = list.extend
-    insert      = list.insert
-    pop         = list.pop
-    reverse     = list.reverse
-    sort        = list.sort
+    append = list.append
+    extend = list.extend
+    insert = list.insert
+    pop = list.pop
+    reverse = list.reverse
+    sort = list.sort
 
     # ----------------------------------------------------------------
     # Methods

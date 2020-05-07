@@ -1,6 +1,6 @@
-from numpy import argsort    as numpy_argsort
+from numpy import argsort as numpy_argsort
 from numpy import atleast_1d as numpy_atleast_1d
-from numpy import ndarray    as numpy_ndarray
+from numpy import ndarray as numpy_ndarray
 
 from copy import deepcopy
 
@@ -438,6 +438,5 @@ class Flags:
                 array = getattr(self, attr).view()
                 array[...] = array[indices]
         # --- End: for
-
 
 # --- End: class

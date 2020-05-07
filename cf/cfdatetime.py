@@ -5,18 +5,18 @@ import numpy
 
 import cftime
 
-from numpy import around     as numpy_around
-from numpy import array      as numpy_array
+from numpy import around as numpy_around
+from numpy import array as numpy_array
 from numpy import asanyarray as numpy_asanyarray
-from numpy import ndarray    as numpy_ndarray
-from numpy import ndim       as numpy_ndim
-from numpy import vectorize  as numpy_vectorize
+from numpy import ndarray as numpy_ndarray
+from numpy import ndim as numpy_ndim
+from numpy import vectorize as numpy_vectorize
 
-from numpy.ma import isMA         as numpy_ma_isMA
-from numpy.ma import is_masked    as numpy_ma_is_masked
-from numpy.ma import masked_all   as numpy_ma_masked_all
+from numpy.ma import isMA as numpy_ma_isMA
+from numpy.ma import is_masked as numpy_ma_is_masked
+from numpy.ma import masked_all as numpy_ma_masked_all
 from numpy.ma import masked_where as numpy_ma_masked_where
-from numpy.ma import nomask       as numpy_ma_nomask
+from numpy.ma import nomask as numpy_ma_nomask
 
 from .functions import _DEPRECATION_ERROR_CLASS
 

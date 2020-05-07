@@ -1,4 +1,4 @@
-from numpy import empty       as numpy_empty
+from numpy import empty as numpy_empty
 from numpy import result_type as numpy_result_type
 
 import cfdm
@@ -6,12 +6,11 @@ import cfdm
 from . import Bounds
 
 from .timeduration import TimeDuration
-from .units        import Units
+from .units import Units
 
 from .data.data import Data
 
 from . import mixin
-#from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE)
