@@ -39,7 +39,7 @@ e.g. ``3.4.1``
   * changes to the documentation;
   * code tidying.
 
----
+# Change log
 
 See the change log
 (https://github.com/NCAS-CMS/cf-python/blob/master/Changelog.rst)
