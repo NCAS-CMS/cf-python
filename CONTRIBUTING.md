@@ -14,11 +14,11 @@ e.g. ``3.4.1``
 
 **Epoch** changes comprise
 
-  * support for epoch-version releases to the CF conventions (e.g.
+  * support for epoch-version changes to the CF conventions (e.g.
     upgrading from CF-1.x to CF-2.y);
   * support for epoch-version changes to the Python language (e.g.
-    upgrading from Python 2 to Python 3).
-  * *comprehensive* *backwards-incompatible* changes to the API;
+    upgrading from Python 2 to Python 3);
+  * *comprehensive* *backwards-incompatible* changes to the API.
 
 **Major** changes comprise
 
@@ -37,7 +37,7 @@ e.g. ``3.4.1``
   * *backwards-compatible* changes to the API, such as
     - introducing a *new* function or method;
     - introducing a *new* keyword parameter;
-    - introducing *new* permitted values of a keyword parameter;
+    - introducing a *new* permitted value of a keyword parameter;
   * changes to required versions of the dependencies;
   * bug fixes;
   * changes to the documentation;
