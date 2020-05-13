@@ -7,6 +7,11 @@ version 3.4.1
 * New method: `cf.Field.halo`
 * New method: `cf.Data.halo`
 * New keyword parameter to `cf.Data.empty`: ``fill_value``
+* Changed minimum cfdm dependency to version 1.8.4.
+* Changed minimum cfdm dependency to version 1.8.4.
+* Fixed bug in `cf.Field.regrids` that caused a failure when
+  regridding from latitude-longitude to tripolar domains
+  (https://github.com/NCAS-CMS/cf-python/issues/73).
 
 version 3.4.0
 -------------
