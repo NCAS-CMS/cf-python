@@ -19283,7 +19283,7 @@ class Field(mixin.PropertiesData,
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Set the cyclicity of the destination longitude
-        x = f.dimension_coordinate('X')
+        x = f.dimension_coordinate('X', default=None)
         if x is not None and x.Units.equivalent(Units('degrees')):
             f.cyclic('X', iscyclic=dst_cyclic, period=Data(360, 'degrees'))
 
