@@ -208,9 +208,9 @@ _cfdm_version = LooseVersion(cfdm.__version__)
 if (_cfdm_version < LooseVersion(_minimum_vn)
     or _cfdm_version >= LooseVersion(_maximum_vn)):
     raise ValueError(
-        "Bad cfdm version: cf requires cfdm version >={} and <{}. Got {} "
-        "at {}".format(_minimum_vn, _maximum_vn,
-                       _cfdm_version, cfdm.__file__))
+        "Bad cfdm version: cf requires {} <= cfdm version <{}. Got {} "
+        "at {}".format(_minimum_vn, _cfdm_version, _maximum_vn,
+                       cfdm.__file__))
 
 from .constructs import Constructs
 
