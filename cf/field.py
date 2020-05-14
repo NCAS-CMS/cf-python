@@ -3194,20 +3194,21 @@ class Field(mixin.PropertiesData,
         axis_keys = [x_axis, y_axis]
         axis_sizes = [x_size, y_size]
 
-        # If 1D latitude and longitude coordinates for the field are not
-        # found search for 2D auxiliary coordinates.
-        if (axes is not None or
-                not x.Units.islongitude or
-                not y.Units.islatitude):
+        # If 1-d latitude and longitude coordinates for the field are
+        # not found search for 2-d auxiliary coordinates.
+        if (axes is not None
+                or not x.Units.islongitude
+                or not y.Units.islatitude):
             lon_found = False
             lat_found = False
+
             for key, aux in (
                     self.auxiliary_coordinates.filter_by_naxes(2).items()):
                 if aux.Units.islongitude:
                     if lon_found:
                         raise ValueError(
-                            'The 2D auxiliary longitude coordinate '
-                            'of the ' + name + ' field is not unique.'
+                            "The 2-d auxiliary longitude coordinate "
+                            "of the {} field is not unique.".format(name)
                         )
                     else:
                         lon_found = True
@@ -3218,8 +3219,8 @@ class Field(mixin.PropertiesData,
                 if aux.Units.islatitude:
                     if lat_found:
                         raise ValueError(
-                            'The 2D auxiliary latitude coordinate '
-                            'of the ' + name + ' field is not unique.'
+                            "The 2-d auxiliary latitude coordinate "
+                            "of the {} field is not unique.".format(name)
                         )
                     else:
                         lat_found = True
@@ -3229,41 +3230,43 @@ class Field(mixin.PropertiesData,
 
             if not lon_found or not lat_found:
                 raise ValueError(
-                    'Both longitude and latitude '
-                    'coordinates were not found for the ' + name + ' field.'
+                    "Both longitude and latitude coordinates "
+                    "were not found for the {} field.".format(name)
                 )
 
             if axes is not None:
                 if set(axis_keys) != set(self.get_data_axes(x_key)):
                     raise ValueError(
-                        'Axes of longitude do not match '
-                        'those specified for ' + name + ' field.'
+                        "Axes of longitude do not match "
+                        "those specified for {} field.".format(name)
                     )
 
                 if set(axis_keys) != set(self.get_data_axes(y_key)):
                     raise ValueError(
-                        'Axes of latitude do not match '
-                        'those specified for ' + name + ' field.'
+                        "Axes of latitude do not match "
+                        "those specified for {} field.".format(name)
                     )
             # --- End: if
+            
             coords_2D = True
         else:
             coords_2D = False
             # Check for size 1 latitude or longitude dimensions
             if x_size == 1 or y_size == 1:
                 raise ValueError(
-                    'Neither the longitude nor latitude dimension '
-                    'coordinates of the ' + name + ' field can be of size 1.'
+                    "Neither the longitude nor latitude dimension coordinates "
+                    "of the {} field can be of size 1.".format(name)
                 )
         # --- End: if
 
         coord_keys = [x_key, y_key]
         coords = [x, y]
+        
         return axis_keys, axis_sizes, coord_keys, coords, coords_2D
 
     def _regrid_get_cartesian_coords(self, name, axes):
-        '''Retrieve the specified cartesian dimension coordinates of the
-    field and their corresponding keys.
+        '''Retrieve the specified cartesian dimension coordinates of the field
+    and their corresponding keys.
 
     :Parameters:
 
@@ -3271,8 +3274,8 @@ class Field(mixin.PropertiesData,
             A name to identify the field in error messages.
 
         axes: sequence of `str`
-            Specifiers for the dimension coordinates to be retrieved. See
-            cf.Field.axes for details.
+            Specifiers for the dimension coordinates to be
+            retrieved. See cf.Field.axes for details.
 
     :Returns:
 
@@ -3948,7 +3951,7 @@ class Field(mixin.PropertiesData,
         '''
 # NOTE: May be common ground between cartesian and shperical that
 # could save some lines of code.
-
+             
         # Remove the source coordinates of new field
 #        self.remove_items(axes=src_axis_keys)
 #        for key in self.constructs.filter_by_axis('or', *src_axis_keys):
@@ -4002,13 +4005,17 @@ class Field(mixin.PropertiesData,
             else:
                 for src_axis_key, dst_axis_key in zip(
                         src_axis_keys, dst_axis_keys):
-                    try:
-                        self.set_construct(
-                            dst.dimension_coordinate(dst_axis_key),
-                            axes=[src_axis_key]
-                        )
-                    except AttributeError:
-                        pass
+#                    try:
+#                        self.set_construct(
+#                            dst.dimension_coordinate(dst_axis_key),
+#                            axes=[src_axis_key]
+#                        )
+#                    except AttributeError:
+#                        pass
+                    dim_coord = dst.dimension_coordinate(dst_axis_key,
+                                                         default=None)
+                    if dim_coord is not None:
+                        self.set_construct(dim_coord, axes=[src_axis_key])
 
                     for aux in dst.auxiliary_coordinates.filter_by_axis(
                             'exact', dst_axis_key).values():
@@ -4022,8 +4029,6 @@ class Field(mixin.PropertiesData,
                         self.set_construct(aux, axes=src_axis_keys)
                     else:
                         self.set_construct(aux, axes=src_axis_keys[::-1])
-                # --- End: for
-            # --- End: if
         # --- End: if
 
         # Copy names of dimensions from destination to source field
@@ -19244,7 +19249,7 @@ class Field(mixin.PropertiesData,
             )
         # --- End: for
 
-        # Construct new data from regridded sdst_dictections
+        # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
         # Construct new field.
