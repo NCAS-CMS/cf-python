@@ -3464,9 +3464,9 @@ class Field(mixin.PropertiesData,
                 if (not coord.has_bounds() or not
                         coord.contiguous(overlap=False)):
                     raise ValueError(
-                        'Source coordinates must have'
-                        ' contiguous, non-overlapping bounds'
-                        ' for conservative regridding.'
+                        "Source coordinates must have "
+                        "contiguous, non-overlapping bounds "
+                        "for conservative regridding."
                     )
             # --- End: for
 
@@ -18842,6 +18842,174 @@ class Field(mixin.PropertiesData,
             Specify the regridding method. The *method* parameter must
             be one of the following, which are described in more detail in
             :ref:`Regridding-methods`, but to summarise:
+
+            +--------------------------+-----------------------------------------+
+            | Method                   | Notes                                   |
+            +==========================+=========================================+
+            | Linear (``'linear'``,    | Linear interpolation in the number of   |
+            | previously called        | dimensions corresponding to the domain. |
+            | ``'bilinear'``, which    |                                         |
+            | is still supported,      | For example, for 2D domains this        |
+            | but you are encouraged   | amounts to *bilinear*                   |
+            | to use ``'linear'``      | interpolation (that is, linear          |
+            | instead now)             | interpolation in *both* axes) and for   |
+            |                          | regridding in 3D (only available with   |
+            |                          | `Cartesian-regridding`_) it amounts to  |
+            |                          | *trilinear* interpolation over the      |
+            |                          | three axes.                             |
+            +--------------------------+-----------------------------------------+
+            | *First-order*            | Preserve the area integral of the data  |
+            | conservative             | across the interpolation from source    |
+            | (``'conservative'`` or   | to destination. It uses the proportion  |
+            | ``'conservative_1st'``)  | of the area of the overlapping source   |
+            |                          | and destination cells to determine      |
+            |                          | appropriate weights.                    |
+            |                          |                                         |
+            |                          | In particular, the weight of            |
+            |                          | a source cell is the ratio of           |
+            |                          | the area of intersection of the source  |
+            |                          | and destination cells to the area of    |
+            |                          | the whole destination cell.             |
+            |                          |                                         |
+            |                          | It does not account for the             |
+            |                          | field gradient across the source        |
+            |                          | cell, unlike the second-order           |
+            |                          | conservative method (see below).        |
+            +--------------------------+-----------------------------------------+
+            | *Second-order*           | As with first-order (see above),        |
+            | conservative             | preserves the area integral of the      |
+            | (``'conservative_2nd'``) | field between source and destination    |
+            |                          | using a weighted sum, with weights      |
+            |                          | based on the proportionate area of      |
+            |                          | intersection.                           |
+            |                          |                                         |
+            |                          | But unlike first-order, the             |
+            |                          | second-order method incorporates        |
+            |                          | further terms to take into              |
+            |                          | consideration the gradient of the       |
+            |                          | field across the source cell,           |
+            |                          | thereby typically producing a           |
+            |                          | smoother result of higher accuracy.     |
+            +--------------------------+-----------------------------------------+
+            | Higher order patch       | A second degree polynomial regridding   |
+            | recovery (``'patch'``)   | method, which uses a least squares      |
+            |                          | algorithm to calculate the polynomial.  |
+            |                          |                                         |
+            |                          | This method gives better                |
+            |                          | derivatives in the resulting            |
+            |                          | destination data than the linear        |
+            |                          | method.                                 |
+            +--------------------------+-----------------------------------------+
+            | Nearest neighbour        | Nearest neighbour interpolation, which  |
+            | interpolation mapping    | is useful for extrapolation of          |
+            | *destination to nearest* | categorical data. In this variant,      |
+            | *source*                 | *each destination point* is mapped      |
+            | (``'nearest_stod'``)     | to the *closest source*.                |
+            |                          |                                         |
+            |                          | See also below for the                  |
+            |                          | the other variant of the                |
+            |                          | nearest neighbour approach.             |
+            +--------------------------+-----------------------------------------+
+            | Nearest neighbour        | Nearest neighbour interpolation, which  |
+            | interpolation mapping    | is useful for extrapolation of          |
+            | *source to nearest*      | categorical data. In this variant,      |
+            | *destination*            | *each source point* is mapped to the    |
+            | (``'nearest_dtos'``)     | *closest destination*.                  |
+            |                          |                                         |
+            |                          | In this case, a given destination       |
+            |                          | point may receive input from multiple   |
+            |                          | source points, but no source point      |
+            |                          | will map to more than one               |
+            |                          | destination point.                      |
+            |                          |                                         |
+            |                          | See also above for the other            |
+            |                          | variant of nearest neighbour            |
+            |                          | interpolation.                          |
+            +--------------------------+-----------------------------------------+
+
+
+            ======================  ==================================
+            Method                  Description
+            ======================  ==================================
+            ``'linear'``            Bilinear interpolation.
+
+            ``'bilinear'``          Alias for ``'linear'``
+
+            ``'conservative_1st'``  First order conservative
+                                    interpolation.
+
+                                    Preserve the area integral of the
+                                    data across the interpolation from
+                                    source to destination. It uses the
+                                    proportion of the area of the
+                                    overlapping source and destination
+                                    cells to determine appropriate
+                                    weights.
+                                              
+                                    In particular, the weight of a
+                                    source cell is the ratio of the
+                                    area of intersection of the source
+                                    and destination cells to the area
+                                    of the whole destination cell.
+                                              
+                                    It does not account for the field
+                                    gradient across the source cell,
+                                    unlike the second-order
+                                    conservative method (see below).
+
+           ``'conservative_2nd'``  Second order conservative
+                                   interpolation.
+
+                                   As with first order (see above),
+                                   preserves the area integral of the
+                                   field between source and destinatio
+                                   using a weighted sum, with weights
+                                   based on the proportionate area of
+                                   intersection.
+                                   
+                                   But unlike first-order, the        
+                                   second-order method incorporates   
+                                   further terms to take into         
+                                   consideration the gradient of the  
+                                   field across the source cell,      
+                                   thereby typically producing a      
+                                   smoother result of higher accuracy.
+
+            ``'conservative'``     Alias for ``'conservative_1st'``
+
+            ``'patch'``            Higher order patch recovery
+                                   interpolation.
+
+                                   A second degree polynomial
+                                   regridding method, which uses a
+                                   least squares algorithm to
+                                   calculate the polynomial.
+                                                                         
+                                   This method gives better
+                                   derivatives in the resulting
+                                   destination data than the linear
+                                   method.
+
+            ``'nearest_stod'``     Nearest neighbour interpolation for
+                                   which each destination point is
+                                   mapped to the closest source point.
+
+                                   Useful for extrapolation of
+                                   categorical data.      
+          
+            ``'nearest_dtos'``     Nearest neighbour interpolation for
+                                   which each source point is mapped
+                                   to the desrination point.
+
+                                   Useful for extrapolation of
+                                   categorical data.
+
+                                   A given destination point may
+                                   receive input from multiple source
+                                   points, but no source point will
+                                   map to more than one destination
+                                   point.
+            ======================  ==================================
 
               +------------------------+---------------------------------+
               | *method*               | Form of regridding to be        |

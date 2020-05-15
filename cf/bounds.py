@@ -1,5 +1,8 @@
 import cfdm
 
+from .data import Data
+from .units import Units
+
 from . import mixin
 
 from .decorators import _deprecated_kwarg_check
@@ -45,7 +48,8 @@ class Bounds(mixin.Coordinate,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-    def contiguous(self, overlap=True, direction=None):
+    def contiguous(self, overlap=True, direction=None, period=None,
+                   verbose=1):
         '''Return True if the bounds are contiguous.
 
     Bounds are contiguous if the cell boundaries match up, or overlap,
@@ -65,41 +69,98 @@ class Bounds(mixin.Coordinate,
         if data is None:
             return False
 
+        ndim = data.ndim - 1
         nbounds = data.shape[-1]
 
         if data.size == nbounds:
             return True
 
-        if nbounds == 4 and data.ndim == 3:
+        if period is None:
+            if self.Units.islongitude:
+                period = Data(360.0, 'degrees_east')
+            elif self.Units.equals(Units('degres')):
+                period = Data(360.0, 'degrees')
+        # --- End: if
+        if verbose >= 2:
+            print("Period = {!r}".format(period))
+        
+        if ndim == 2:
+            if nbounds != 4:
+                raise ValueError("Can't tell if {}-d cells with {} vertices "
+                                 "are contiguous".format(ndim, nbounds))
+
+            # --------------------------------------------------------
+            # 2-d coordinates with 4 vertices per cell
+            # --------------------------------------------------------
             if overlap:
                 raise ValueError(
                     "overlap=True and can't tell if 2-d bounds are contiguous")
 
-            bnd = data.array
-            for j in range(data.shape[0] - 1):
-                for i in range(data.shape[1] - 1):
-                    # Check cells (j, i) and cells (j, i+1) are contiguous
-                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
-                            bnd[j, i, 2] != bnd[j, i+1, 3]):
-                        return False
+            # Check cells (j, i) and cells (j, i+1) are contiguous
+            diff = data[:, :-1, 1] - data[:, 1:, 0]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+            
+            diff = data[:, :-1, 2] - data[:, 1:, 3]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+ 
+            # Check cells (j, i) and (j+1, i) are contiguous
+            diff = data[:-1, :, 3] - data[1:, :, 0]
+            if period is not None:
+                diff = diff % period
 
-                    # Check cells (j, i) and (j+1, i) are contiguous
-                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
-                            bnd[j, i, 2] != bnd[j+1, i, 1]):
-                        return False
-            # --- End: for
+            if diff.any():
+                return False
+ 
+            diff = data[:-1, :, 2] - data[1:, :, 1]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+         
+
+#            bnd = data.array
+#            for j in range(data.shape[0] - 1):
+#                for i in range(data.shape[1] - 1):
+#                    
+#                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
+#                        bnd[j, i, 2] != bnd[j, i+1, 3]):
+#                        return False
+#
+#                    # Check cells (j, i) and (j+1, i) are contiguous
+#                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
+#                            bnd[j, i, 2] != bnd[j+1, i, 1]):
+#                        return False
+#            # --- End: for
 
             return True
 
-        if nbounds > 2 or data.ndim > 2:
-            raise ValueError(
-                "Can't tell if multidimensional bounds are contiguous")
+        if ndim > 2:            
+            raise ValueError("Can't tell if {}-d cells "
+                             "are contiguous".format(ndim))
+
+        if nbounds > 2:
+            raise ValueError("Can't tell if {}-d cells with {} vertices "
+                             "are contiguous".format(ndim, nbounds))
 
         if not overlap:
-            return data[1:, 0].equals(data[:-1, 1])
+            diff = data[1:, 0] - data[:-1, 1]
+            if period is not None:
+                diff = diff % period
+
+            return not diff.any()
+#            return data[1:, 0].equals(data[:-1, 1])
         else:
             if direction is None:
-                b = data[(0,)*(data.ndim-1)].array
+                b = data[(0,) * ndim].array
                 direction = b.item(0,) < b.item(1,)
 
             if direction:

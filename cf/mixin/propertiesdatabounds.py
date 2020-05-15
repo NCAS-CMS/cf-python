@@ -1504,7 +1504,14 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is None:
             return False
 
-        return bounds.contiguous(overlap=overlap, direction=self.direction())
+        try:
+            period = self.perdiod()
+        except AttributeError:
+            period = None
+
+        return bounds.contiguous(overlap=overlap,
+                                 direction=self.direction(),
+                                 period=period)
 
 #        if monoyine:
 #            return self.monit()#
