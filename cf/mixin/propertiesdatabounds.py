@@ -614,27 +614,27 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             bounds.dtype = value
 
-    @property
-    def isperiodic(self):
-        '''
-
-    .. versionadded:: 2.0
-
-    >>> print(c.period())
-    None
-    >>> c.isperiodic
-    False
-    >>> print(c.period(cf.Data(360, 'degeres_east')))
-    None
-    >>> c.isperiodic
-    True
-    >>> c.period(None)
-    <CF Data(): 360 degrees_east>
-    >>> c.isperiodic
-    False
-
-    '''
-        return self._custom.get('period', None) is not None
+#    @property
+#    def isperiodic(self):
+#        '''
+#
+#    .. versionadded:: 2.0
+#
+#    >>> print(c.period())
+#    None
+#    >>> c.isperiodic
+#    False
+#    >>> print(c.period(cf.Data(360, 'degeres_east')))
+#    None
+#    >>> c.isperiodic
+#    True
+#    >>> c.period(None)
+#    <CF Data(): 360 degrees_east>
+#    >>> c.isperiodic
+#    False
+#
+#    '''
+#        return self._custom.get('period', None) is not None
 
     @property
     def lower_bounds(self):
@@ -706,12 +706,13 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             bounds.Units = value
 
-        # Set the Units on the period
-        period = self._custom.get('period')
-        if period is not None:
-            period = period.copy()
-            period.Units = value
-            self._custom['period'] = period
+# Moved to parent class at v3.4.1         
+#        # Set the Units on the period
+#        period = self._custom.get('period')
+#        if period is not None:
+#            period = period.copy()
+#            period.Units = value
+#            self._custom['period'] = period
 
     @Units.deleter
     def Units(self):
@@ -1467,9 +1468,15 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         overlap : bool, optional
-            If False then overlapping cell boundaries are not
-            considered contiguous. By default cell boundaries are
-            considered contiguous.
+            If False then 1-d cells with two vertices and with
+            overlapping boundaries are not considered contiguous. By
+            default such cells are not considered contiguous.
+
+            .. note:: The value of the *overlap* parameter does not
+                      affect any other types of cell, for which a
+                      necessary (but not sufficient) condition for
+                      contiguousness is that adjacent cells do not
+                      overlap.
 
     :Returns:
 
@@ -1500,23 +1507,81 @@ class PropertiesDataBounds(PropertiesData):
     False
 
         '''
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is None:
             return False
 
-        try:
-            period = self.perdiod()
-        except AttributeError:
-            period = None
+        ndim = self.ndim
+        nbounds = bounds.shape[-1]
 
-        return bounds.contiguous(overlap=overlap,
-                                 direction=self.direction(),
-                                 period=period)
+        if self.size == 1:
+            return True
 
-#        if monoyine:
-#            return self.monit()#
-#
-#        return False
+        period = self.autoperiod().period()
+                
+        if ndim == 2:
+            if nbounds != 4:
+                raise ValueError("Can't tell if {}-d cells with {} vertices "
+                                 "are contiguous".format(ndim, nbounds))
+
+            # Check cells (j, i) and cells (j, i+1) are contiguous
+            diff = bounds[:, :-1, 1] - bounds[:, 1:, 0]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+            
+            diff = bounds[:, :-1, 2] - bounds[:, 1:, 3]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+ 
+            # Check cells (j, i) and (j+1, i) are contiguous
+            diff = bounds[:-1, :, 3] - bounds[1:, :, 0]
+            if period is not None:
+                diff = diff % period
+
+            if diff.any():
+                return False
+ 
+            diff = bounds[:-1, :, 2] - bounds[1:, :, 1]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+         
+            return True
+
+        if ndim > 2:            
+            raise ValueError("Can't tell if {}-d cells "
+                             "are contiguous".format(ndim))
+
+        if nbounds != 2:
+            raise ValueError("Can't tell if {}-d cells with {} vertices "
+                             "are contiguous".format(ndim, nbounds))
+
+        lower = bounds[1:, 0]
+        upper = bounds[:-1, 1]
+         
+        if not overlap:
+            diff = lower - upper
+            if period is not None:
+                diff = diff % period
+
+            return not diff.any()
+        else:
+            direction = self.direction()
+            if direction is None:
+               return (lower <= upper).all() or (lower >= upper).all()
+            
+            if direction:
+                return (lower <= upper).all()
+            else:
+                return (lower >= upper).all()
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1794,21 +1859,21 @@ class PropertiesDataBounds(PropertiesData):
             bounds=bounds, inplace=inplace, i=i)
 
     def direction(self):
-        '''Return None, indicating that it is not specified whether the
+        '''Return `None`, indicating that it is not specified whether the
     values are increasing or decreasing.
 
     .. versionadded:: 2.0
 
     :Returns:
 
-        None
+        `None`
 
     **Examples:**
 
-    >>> print(c.direction())
+    >>> c.direction()
     None
 
-            '''
+        '''
         return
 
     def match_by_property(self, *mode, **properties):
@@ -1902,7 +1967,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
-    def override_calendar(self, calendar, inplace=False,  i=False):
+    def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of date-time units.
 
     The new calendar **need not** be equivalent to the original one

@@ -16770,11 +16770,13 @@ class Field(mixin.PropertiesData,
         out = super().set_construct(construct, key=key, axes=axes, copy=copy)
 
         if construct_type == 'dimension_coordinate':
+            construct.autoperiod(inplace=True)
             self._conform_coordinate_references(out)
             self.autocyclic()
             self._conform_cell_methods()
 
         elif construct_type == 'auxiliary_coordinate':
+            construct.autoperiod(inplace=True)
             self._conform_coordinate_references(out)
             self._conform_cell_methods()
 
@@ -19077,8 +19079,9 @@ class Field(mixin.PropertiesData,
             dst_cyclic = dst.iscyclic(dst_axis_keys[0])
         elif dst_dict and dst_cyclic is None:
             dst = dst.copy()
-            dst['longitude'] = dst['longitude'].copy()
-            dst['longitude'].autoperiod()
+#            dst['longitude'] = dst['longitude'].copy()
+#            dst['longitude'].autoperiod()
+            dst['longitude'] = dst['longitude'].autoperiod()
             dst_cyclic = dst['longitude'].isperiodic
 
         # Get the axis indices and their order for the source field

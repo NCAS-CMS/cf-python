@@ -56,7 +56,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_halo']
+#        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
@@ -2062,8 +2062,10 @@ class FieldTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.filename2)[0][0:100]
-            self.assertTrue(len(f.section(('X', 'Y'))) == 100,
-                            'CHUNKSIZE = {}'.format(chunksize))
+            g = f.section(('X', 'Y'))
+            self.assertTrue(len(g) == 100,
+                            'CHUNKSIZE={}, len(g)={}'.format(chunksize,
+                                                             len(g)))
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 

@@ -64,6 +64,41 @@ class Bounds(mixin.Coordinate,
 
     .. versionadded:: 2.0
 
+   :Parameters:
+        
+        overlap: `bool`, optional
+            If False then 1-d cells with two bounds vertices are not
+            considered contiguous if any adjacent cells overlap each
+            other. By default such cells are considered contiguous.
+
+        direction:
+            Specify the direction of 1-d coordinates with two bounds
+            vertices. Either True for increasing coordinates, or False
+            for descreasing coordinates. By default the direction is
+            inferred from whether the first bound of the first cell is
+            less than its second bound (direction is True), or not
+            (direction is False).
+
+        period: optional
+            Define the period of cyclic values so that the test for
+            contiguousness can be carried out with modulo
+            arithmetic. By default the data are assumed to be
+            non-cyclic, unless the bounds have units of longitude (or
+            have units of ``'degrees'``), in which case a period of
+            360 degrees is assumed.
+
+        verbose: `int`, optional
+            TODO
+
+    :Returns:
+
+        `bool`
+            Whether or not the cells are contiguous.
+
+    **Examples:**
+
+    TODO
+
         '''
         data = self.get_data(None)
         if data is None:
@@ -78,7 +113,7 @@ class Bounds(mixin.Coordinate,
         if period is None:
             if self.Units.islongitude:
                 period = Data(360.0, 'degrees_east')
-            elif self.Units.equals(Units('degres')):
+            elif self.Units.equals(Units('degrees')):
                 period = Data(360.0, 'degrees')
         # --- End: if
         if verbose >= 2:
@@ -92,9 +127,9 @@ class Bounds(mixin.Coordinate,
             # --------------------------------------------------------
             # 2-d coordinates with 4 vertices per cell
             # --------------------------------------------------------
-            if overlap:
-                raise ValueError(
-                    "overlap=True and can't tell if 2-d bounds are contiguous")
+#            if overlap:
+#                raise ValueError(
+#                    "overlap=True and can't tell if 2-d bounds are contiguous")
 
             # Check cells (j, i) and cells (j, i+1) are contiguous
             diff = data[:, :-1, 1] - data[:, 1:, 0]
@@ -147,7 +182,7 @@ class Bounds(mixin.Coordinate,
             raise ValueError("Can't tell if {}-d cells "
                              "are contiguous".format(ndim))
 
-        if nbounds > 2:
+        if nbounds != 2:
             raise ValueError("Can't tell if {}-d cells with {} vertices "
                              "are contiguous".format(ndim, nbounds))
 

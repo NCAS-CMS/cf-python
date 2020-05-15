@@ -215,7 +215,8 @@ if (_cfdm_version < LooseVersion(_minimum_vn)
 
 from .constructs import Constructs
 
-from .abstract import Coordinate
+#from .abstract import Coordinate
+from .mixin import Coordinate
 
 from .count                   import Count
 from .index                   import Index

@@ -2276,9 +2276,9 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         else:
             axis_indices = axes
     else:
-        axis_keys = x.axes(axes, **kwargs)
+        axis_keys = [x.domain_axis(axis, key=True) for axis in axes]
         axis_indices = list()
-        for key in x.domain_axes(): #axis_keys:
+        for key in axis_keys:
             try:
                 axis_indices.append(x.get_data_axes().index(key))
             except ValueError:

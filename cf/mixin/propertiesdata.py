@@ -1069,6 +1069,28 @@ class PropertiesData(Properties):
         return self.del_data()
 
     @property
+    def isperiodic(self):
+        '''TODO
+
+    .. versionadded:: 2.0
+
+    >>> print(c.period())
+    None
+    >>> c.isperiodic
+    False
+    >>> print(c.period(cf.Data(360, 'degeres_east')))
+    None
+    >>> c.isperiodic
+    True
+    >>> c.period(None)
+    <CF Data(): 360 degrees_east>
+    >>> c.isperiodic
+    False
+
+        '''
+        return self.period() is not None
+
+    @property
     def reference_datetime(self):
         '''The reference date-time of units of elapsed time.
 
@@ -1138,6 +1160,13 @@ class PropertiesData(Properties):
             data.Units = value
         else:
             self._custom['Units'] = value
+
+        # Set the Units on the period
+        period = self._custom.get('period')
+        if period is not None:
+            period = period.copy()
+            period.Units = value
+            self._custom['period'] = period
 
         self._custom['direction'] = None
 
@@ -1735,6 +1764,89 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")
+
+    def period(self, *value):
+        '''Set the period for cyclic values.
+
+    :Parameters:
+
+        value: data-like or `None`, optional
+            The period. The absolute value is used.
+
+            {+data-like-scalar} TODO
+
+    :Returns:
+
+        out: `Data` or `None`
+            The period prior to the change, or the current period if
+            no *value* was specified. In either case, None is returned
+            if the period had not been set previously.
+
+    **Examples:**
+
+    >>> print(c.period())
+    None
+    >>> c.Units
+    <Units: degrees_east>
+    >>> print(c.period(360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 'degrees_east'>
+    >>> import math
+    >>> c.period(cf.Data(2*math.pi, 'radians'))
+    <CF Data(): 360.0 degrees_east>
+    >>> c.period()
+    <CF Data(): 6.28318530718 radians>
+    >>> c.period(None)
+    <CF Data:() 6.28318530718 radians>
+    >>> print(c.period())
+    None
+    >>> print(c.period(-360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 degrees_east>
+
+        '''
+        old = self._custom.get('period')
+        if old is not None:
+            old = old.copy()
+
+        if not value:
+            return old
+
+        value = value[0]
+
+        if value is not None:
+            value = Data.asdata(value)
+            units = value.Units
+            if not units:
+                value = value.override_units(self.Units)
+            elif units != self.Units:
+                if units.equivalent(self.Units):
+                    value.Units = self.Units
+                else:
+                    raise ValueError(
+                        "Period units {!r} are not equivalent to data "
+                        "units {!r}".format(units, self.Units)
+                    )
+            # --- End: if
+
+            value = abs(value)
+            value.dtype = float
+
+#            array = self.array
+#            r = abs(array[-1] - array[0])
+#
+#            if r >= value.datum(0):
+#                raise ValueError(
+#                    "The data range of {!r} is not less than the "
+#                    "period of {!r}".format(r, value)
+#                )
+        # --- End: if
+
+        self._custom['period'] = value
+
+        return old
 
     def range(self):
         '''The absolute difference between the maximum and minimum of the data
@@ -5055,12 +5167,17 @@ class PropertiesData(Properties):
         data = v.get_data(None)
         if data is not None:
             data.override_units(units, inplace=True)
+#            v._custom['Units'] = units
+#            v.Units = units
+        else:
             v._custom['Units'] = units
-#            v.Units = units
-#        else:
-#            v.Units = units
-
-        PropertiesData.Units.fset(v, units)
+            
+        # Set the Units on the period
+        period = self._custom.get('period')
+        if period is not None:
+            period.override_units(units, inplace=True)
+        
+#        PropertiesData.Units.fset(v, units)
 
         return v
 
