@@ -2860,12 +2860,6 @@ class Field(mixin.PropertiesData,
                 other = other.squeeze(0)
         # --- End: if
 
-#        if not self._is_broadcastable(other.shape):
-#            raise ValueError(
-#                "Can't transform field {!r} to be broadcastable to "
-#                "{!r}.".format(other, self)
-#            )
-
         return other
 
     def _equivalent_construct_data(self, field1, key0=None, key1=None,
@@ -2901,9 +2895,8 @@ class Field(mixin.PropertiesData,
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
 
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            items differ.
+        verbose: `bool`, optional
+            TODO
 
         '''
         item0 = self.constructs[key0]
@@ -2966,35 +2959,6 @@ class Field(mixin.PropertiesData,
                 transpose_axes.append(axes1.index(axis1))
         # --- End: if
 
-
-#        transpose_axes = []
-#        for axis0 in axes0:
-#            axis1 = axis_map.get(axis0)
-#            if axis1 is None:
-#                if verbose:
-#                    print(
-#                        "{}: Domain axis {!r} has no corresponding domain "
-#                        "axis in other field".format(
-#                            self.__class__.__name__, axis0)
-#                    )
-#
-#                    print(
-#                        "%s: TODO" % self.__class__.__name__
-#                    )  # pragma: no cover
-#                return False
-#
-#            try:
-#                transpose_axes.append(axes1.index(axis1))
-#            except ValueError:
-#                if verbose:
-#                    print(
-#                        "{}: In other field, domain axis {!r} is not "
-#                        "spanned by {!r}".format(
-#                            self.__class__.__name__, axis1, item1)
-#                    )
-#                return False
-#        # --- End: for
-
         copy1 = True
 
         if transpose_axes != list(range(item1.ndim)):
@@ -3007,9 +2971,6 @@ class Field(mixin.PropertiesData,
         if item0.shape != item1.shape:
             # add traceback TODO
             return False
-
-#        direction0 = self_Items.direction
-#        direction1 = field1_Items.direction
 
         flip_axes = [i
                      for i, (axis1, axis0) in enumerate(zip(axes1, axes0))
@@ -3041,7 +3002,8 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         name: `str`
-            A name to identify the field in error messages.
+            A name to identify the field in error messages. Either
+            ``'source'`` or ``'destination'``.
 
         axes: `dict`, optional
             A dictionary specifying the X and Y axes, with keys
@@ -3062,16 +3024,16 @@ class Field(mixin.PropertiesData,
             The sizes of the x and y dimension coordinates.
 
         coord_keys: `list`
-            The keys of the x and y coordinate (1D dimension coordinate,
-            or 2D auxilliary coordinates).
+            The keys of the x and y coordinate (1D dimension
+            coordinate, or 2D auxilliary coordinates).
 
         coords: `list`
             The x and y coordinates (1D dimension coordinates or 2D
             auxilliary coordinates).
 
         coords_2D: `bool`
-            True if 2D auxiliary coordinates are returned or if 1D X and Y
-            coordinates are returned, which are not long/lat.
+            True if 2D auxiliary coordinates are returned or if 1D X
+            and Y coordinates are returned, which are not long/lat.
 
         '''
         if axes is None:
@@ -3080,28 +3042,30 @@ class Field(mixin.PropertiesData,
             len_x = len(xdims)
             if not len_x:
                 raise ValueError(
-                    'No X dimension coordinate found for the ' + name +
-                    ' field. If none is present you '
-                    'may need to specify the axes keyword, '
-                    'otherwise you may need to set the X '
-                    'attribute of the X dimension coordinate to True.'
+                    "No X dimension coordinate found for the {} "
+                    "field. If none is present you "
+                    "may need to specify the axes keyword, "
+                    "otherwise you may need to set the X "
+                    "attribute of the X dimension coordinate "
+                    "to True.".format(name)
                 )
 
             if len_x > 1:
                 raise ValueError(
                     "{} field has multiple 'X' dimension coordinates".format(
-                        name))
+                        name.captalize()))
 
             ydims = self.dimension_coordinates('Y')
             len_y = len(ydims)
 
             if not len_y:
                 raise ValueError(
-                    'No Y dimension coordinate found for the ' + name +
-                    ' field. If none is present you '
-                    'may need to specify the axes keyword, '
-                    'otherwise you may need to set the Y '
-                    'attribute of the Y dimension coordinate to True.'
+                    "No Y dimension coordinate found for the {} "
+                    "field. If none is present you "
+                    "may need to specify the axes keyword, "
+                    "otherwise you may need to set the Y "
+                    "attribute of the Y dimension coordinate "
+                    "to True.".format(name)
                 )
 
             if len_y > 1:
@@ -3323,8 +3287,7 @@ class Field(mixin.PropertiesData,
         axis_keys: sequence
             A sequence of axis specifiers.
 
-        i: `bool`, optional
-            Whether to change the field in place or not.
+        i: deprecated at version 3.0.0
 
     :Returns:
 
@@ -3385,17 +3348,17 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         axis_sizes: sequence
-            A sequence of the sizes of each axis along which the section.
-            will be taken
+            A sequence of the sizes of each axis along which the
+            section.  will be taken
 
         axis_indices: sequence
-            A sequence of the same length giving the axis index of each
-            axis.
+            A sequence of the same length giving the axis index of
+            each axis.
 
     :Returns:
 
         shape: `list`
-            A list defining the shape of each section.
+            A list of integers defining the shape of each section.
 
         '''
 
@@ -3408,8 +3371,8 @@ class Field(mixin.PropertiesData,
     @classmethod
     def _regrid_check_bounds(
             cls, src_coords, dst_coords, method, ext_coords=None):
-        '''Check the bounds of the coordinates for regridding and reassign
-    the regridding method if auto is selected.
+        '''Check the bounds of the coordinates for regridding and reassign the
+    regridding method if auto is selected.
 
     :Parameters:
 
@@ -3427,73 +3390,47 @@ class Field(mixin.PropertiesData,
             are also checked. Only used for cartesian regridding when
             regridding only 1 (only 1!) dimension of a n>2 dimensional
             field. In this case we need to provided the coordinates of
-            the dimensions that aren't being regridded (that are
-            the same in both src and dst grids) so that we can create
-            a sensible ESMF grid object.
+            the dimensions that aren't being regridded (that are the
+            same in both src and dst grids) so that we can create a
+            sensible ESMF grid object.
 
     :Returns:
 
         `None`
 
         '''
-
-#        if method == 'auto':
-#            method = 'conservative'
-#            for coord in src_coords:
-#                if (not coord.hasbounds or not
-#                        coord.contiguous(overlap=False):
-#                    method = 'linear'
-#                    break
-#            # --- End: for
-#            for coord in dst_coords:
-#                if (not coord.hasbounds or not
-#                        coord.contiguous(overlap=False):
-#                    method = 'linear'
-#                    break
-#            # --- End: for
-#            if ext_coords is not None:
-#                for coord in ext_coords:
-#                    if (not coord.hasbounds or
-#                        not coord.contiguous(overlap=False)):
-#                        method = 'linear'
-#                        break
-#                # --- End: for
-#            # --- End: if
         if method in conservative_regridding_methods:
-            for coord in src_coords:
-                if (not coord.has_bounds() or not
-                        coord.contiguous(overlap=False)):
-                    raise ValueError(
-                        "Source coordinates must have "
-                        "contiguous, non-overlapping bounds "
-                        "for conservative regridding."
+            for x, coords in zip(('Source', 'Destination'),
+                                 (src_coords, dst_coords)):
+                for coord in coords:
+                    if not coord.has_bounds():
+                        raise ValueError(
+                            "{} {!r} coordinates must have bounds "
+                            "for conservative regridding.".format(x, coord)
                     )
-            # --- End: for
-
-            for coord in dst_coords:
-                if (not coord.has_bounds() or not
-                        coord.contiguous(overlap=False)):
-                    raise ValueError(
-                        'Destination coordinates must have'
-                        ' contiguous, non-overlapping bounds'
-                        ' for conservative regridding.'
+                    
+                    if not coord.contiguous(overlap=False):
+                        raise ValueError(
+                            "{} {!r} coordinates must have "
+                            "contiguous, non-overlapping bounds "
+                            "for conservative regridding.".format(x, coord)
                     )
             # --- End: for
 
             if ext_coords is not None:
                 for coord in ext_coords:
-                    if (not coord.has_bounds() or
-                            not coord.contiguous(overlap=False)):
+                    if not coord.has_bounds():
                         raise ValueError(
-                            'Dimension coordinates must have'
-                            ' contiguous, non-overlapping bounds'
-                            ' for conservative regridding.'
+                            "{!r} dimension coordinates must have bounds "
+                            "for conservative regridding.".format(coord)
                         )
-                # --- End: for
-            # --- End: if
+                    if not coord.contiguous(overlap=False):
+                        raise ValueError(
+                            "{!r} dimension coordinates must have "
+                            "contiguous, non-overlapping bounds "
+                            "for conservative regridding.".format(coord)
+                        )
         # --- End: if
-
-#        return method
 
     @classmethod
     def _regrid_check_method(cls, method):
@@ -18840,93 +18777,7 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of the following, which are described in more detail in
-            :ref:`Regridding-methods`, but to summarise:
-
-            +--------------------------+-----------------------------------------+
-            | Method                   | Notes                                   |
-            +==========================+=========================================+
-            | Linear (``'linear'``,    | Linear interpolation in the number of   |
-            | previously called        | dimensions corresponding to the domain. |
-            | ``'bilinear'``, which    |                                         |
-            | is still supported,      | For example, for 2D domains this        |
-            | but you are encouraged   | amounts to *bilinear*                   |
-            | to use ``'linear'``      | interpolation (that is, linear          |
-            | instead now)             | interpolation in *both* axes) and for   |
-            |                          | regridding in 3D (only available with   |
-            |                          | `Cartesian-regridding`_) it amounts to  |
-            |                          | *trilinear* interpolation over the      |
-            |                          | three axes.                             |
-            +--------------------------+-----------------------------------------+
-            | *First-order*            | Preserve the area integral of the data  |
-            | conservative             | across the interpolation from source    |
-            | (``'conservative'`` or   | to destination. It uses the proportion  |
-            | ``'conservative_1st'``)  | of the area of the overlapping source   |
-            |                          | and destination cells to determine      |
-            |                          | appropriate weights.                    |
-            |                          |                                         |
-            |                          | In particular, the weight of            |
-            |                          | a source cell is the ratio of           |
-            |                          | the area of intersection of the source  |
-            |                          | and destination cells to the area of    |
-            |                          | the whole destination cell.             |
-            |                          |                                         |
-            |                          | It does not account for the             |
-            |                          | field gradient across the source        |
-            |                          | cell, unlike the second-order           |
-            |                          | conservative method (see below).        |
-            +--------------------------+-----------------------------------------+
-            | *Second-order*           | As with first-order (see above),        |
-            | conservative             | preserves the area integral of the      |
-            | (``'conservative_2nd'``) | field between source and destination    |
-            |                          | using a weighted sum, with weights      |
-            |                          | based on the proportionate area of      |
-            |                          | intersection.                           |
-            |                          |                                         |
-            |                          | But unlike first-order, the             |
-            |                          | second-order method incorporates        |
-            |                          | further terms to take into              |
-            |                          | consideration the gradient of the       |
-            |                          | field across the source cell,           |
-            |                          | thereby typically producing a           |
-            |                          | smoother result of higher accuracy.     |
-            +--------------------------+-----------------------------------------+
-            | Higher order patch       | A second degree polynomial regridding   |
-            | recovery (``'patch'``)   | method, which uses a least squares      |
-            |                          | algorithm to calculate the polynomial.  |
-            |                          |                                         |
-            |                          | This method gives better                |
-            |                          | derivatives in the resulting            |
-            |                          | destination data than the linear        |
-            |                          | method.                                 |
-            +--------------------------+-----------------------------------------+
-            | Nearest neighbour        | Nearest neighbour interpolation, which  |
-            | interpolation mapping    | is useful for extrapolation of          |
-            | *destination to nearest* | categorical data. In this variant,      |
-            | *source*                 | *each destination point* is mapped      |
-            | (``'nearest_stod'``)     | to the *closest source*.                |
-            |                          |                                         |
-            |                          | See also below for the                  |
-            |                          | the other variant of the                |
-            |                          | nearest neighbour approach.             |
-            +--------------------------+-----------------------------------------+
-            | Nearest neighbour        | Nearest neighbour interpolation, which  |
-            | interpolation mapping    | is useful for extrapolation of          |
-            | *source to nearest*      | categorical data. In this variant,      |
-            | *destination*            | *each source point* is mapped to the    |
-            | (``'nearest_dtos'``)     | *closest destination*.                  |
-            |                          |                                         |
-            |                          | In this case, a given destination       |
-            |                          | point may receive input from multiple   |
-            |                          | source points, but no source point      |
-            |                          | will map to more than one               |
-            |                          | destination point.                      |
-            |                          |                                         |
-            |                          | See also above for the other            |
-            |                          | variant of nearest neighbour            |
-            |                          | interpolation.                          |
-            +--------------------------+-----------------------------------------+
-
+            be one of the following:
 
             ======================  ==================================
             Method                  Description
@@ -18957,94 +18808,62 @@ class Field(mixin.PropertiesData,
                                     unlike the second-order
                                     conservative method (see below).
 
-           ``'conservative_2nd'``  Second order conservative
-                                   interpolation.
+            ``'conservative_2nd'``  Second-order conservative
+                                    interpolation.
 
-                                   As with first order (see above),
-                                   preserves the area integral of the
-                                   field between source and destinatio
-                                   using a weighted sum, with weights
-                                   based on the proportionate area of
-                                   intersection.
+                                    As with first order (see above),
+                                    preserves the area integral of the
+                                    field between source and
+                                    destinatio using a weighted sum,
+                                    with weights based on the
+                                    proportionate area of
+                                    intersection.
                                    
-                                   But unlike first-order, the        
-                                   second-order method incorporates   
-                                   further terms to take into         
-                                   consideration the gradient of the  
-                                   field across the source cell,      
-                                   thereby typically producing a      
-                                   smoother result of higher accuracy.
+                                    But unlike first-order, the
+                                    second-order method incorporates
+                                    further terms to take into
+                                    consideration the gradient of the
+                                    field across the source cell,
+                                    thereby typically producing a
+                                    smoother result of higher
+                                    accuracy.
 
-            ``'conservative'``     Alias for ``'conservative_1st'``
+            ``'conservative'``      Alias for ``'conservative_1st'``
 
-            ``'patch'``            Higher order patch recovery
-                                   interpolation.
+            ``'patch'``             Higher-order patch recovery
+                                    interpolation.
 
-                                   A second degree polynomial
-                                   regridding method, which uses a
-                                   least squares algorithm to
-                                   calculate the polynomial.
+                                    A second degree polynomial
+                                    regridding method, which uses a
+                                    least squares algorithm to
+                                    calculate the polynomial.
                                                                          
-                                   This method gives better
-                                   derivatives in the resulting
-                                   destination data than the linear
-                                   method.
+                                    This method gives better
+                                    derivatives in the resulting
+                                    destination data than the linear
+                                    method.
 
-            ``'nearest_stod'``     Nearest neighbour interpolation for
-                                   which each destination point is
-                                   mapped to the closest source point.
+            ``'nearest_stod'``      Nearest neighbour interpolation
+                                    for which each destination point
+                                    is mapped to the closest source
+                                    point.
 
-                                   Useful for extrapolation of
-                                   categorical data.      
+                                    Useful for extrapolation of
+                                    categorical data.      
           
-            ``'nearest_dtos'``     Nearest neighbour interpolation for
-                                   which each source point is mapped
-                                   to the desrination point.
+            ``'nearest_dtos'``      Nearest neighbour interpolation
+                                    for which each source point is
+                                    mapped to the desrination point.
 
-                                   Useful for extrapolation of
-                                   categorical data.
-
-                                   A given destination point may
-                                   receive input from multiple source
-                                   points, but no source point will
-                                   map to more than one destination
-                                   point.
+                                    Useful for extrapolation of
+                                    categorical data.
+                                    
+                                    A given destination point may
+                                    receive input from multiple source
+                                    points, but no source point will
+                                    map to more than one destination
+                                    point.
             ======================  ==================================
-
-              +------------------------+---------------------------------+
-              | *method*               | Form of regridding to be        |
-              |                        | applied:                        |
-              +========================+=================================+
-              | ``'linear'``           | Linear interpolation in the     |
-              | (previously called     | corresponding number of         |
-              | ``'bilinear'``,        | dimensions, which for spherical |
-              | which is               | regridding is always two, so    |
-              | is still               | this amounts to *bilinear       |
-              | supported)             | interpolation* (linear          |
-              |                        | interpolation in *both* X and   |
-              |                        | Y).                             |
-              +------------------------+---------------------------------+
-              | ``'conservative'`` or  | First-order conservative. Note  |
-              | ``'conservative_1st'`` | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'conservative_2nd'`` | Second-order conservative. Note |
-              |                        | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'patch'``            | Higher order patch recovery.    |
-              +------------------------+---------------------------------+
-              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
-              |                        | where each destination point is |
-              |                        | mapped to the *closest source*. |
-              +------------------------+---------------------------------+
-              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
-              |                        | where each source point is      |
-              |                        | mapped to the *closest*         |
-              |                        | *destination* point.            |
-              +------------------------+---------------------------------+
 
         src_cyclic: `bool`, optional
             Specifies whether the longitude for the source grid is
