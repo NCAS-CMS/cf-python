@@ -12,6 +12,9 @@ version 3.4.1
 * Fixed bug in `cf.Field.regrids` that caused a failure when
   regridding from latitude-longitude to tripolar domains
   (https://github.com/NCAS-CMS/cf-python/issues/73).
+* Fixed bug in `cf.Field.regrids` that caused a failure when
+  regridding to tripolar domains the do not have dimension coordinate
+  constructs (https://github.com/NCAS-CMS/cf-python/issues/73).
 
 version 3.4.0
 -------------

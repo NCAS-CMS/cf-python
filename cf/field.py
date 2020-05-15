@@ -3627,13 +3627,22 @@ class Field(mixin.PropertiesData,
 
     :Returns:
 
-        dst_mask: ndarray
+        dst_mask: `numpy.ndarray`
             A numpy array with the mask.
 
         '''
-        dst_mask = self.section(axes, stop=1,
-                                ndim=1)[0].squeeze().array.mask
-        dst_mask = dst_mask.transpose(dst_order)
+#        dst_mask = self.section(axes, stop=1,
+#                                ndim=1)[0].squeeze().array.mask
+#        dst_mask = dst_mask.transpose(dst_order)
+
+        indices = {axis: [0] for axis in self.get_data_axes()
+                   if axis not in axes}
+
+        f = self.subspace(**indices)    
+        f = f.squeeze(tuple(indices)).transpose(dst_order)
+        
+        dst_mask = f.mask.array
+
         if cartesian:
             tmp = []
             for coord in coords_ext:
@@ -19146,7 +19155,8 @@ class Field(mixin.PropertiesData,
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
-            dst_mask = dst._regrid_get_destination_mask(dst_order)
+            dst_mask = dst._regrid_get_destination_mask(dst_order,
+                                                        axes=dst_axis_keys)
 
         # Retrieve the destination ESMPy grid and fields
         dstgrid = Regrid.create_grid(
@@ -19681,7 +19691,10 @@ class Field(mixin.PropertiesData,
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
             dst_mask = dst._regrid_get_destination_mask(
-                dst_order, cartesian=True, coords_ext=coords_ext)
+                dst_order,
+                axes=dst_axes_keys,
+                cartesian=True,
+                coords_ext=coords_ext)
 
         # Create the destination ESMPy grid and fields
         dstgrid = Regrid.create_grid(coords_ext + dst_coords, use_bounds,
