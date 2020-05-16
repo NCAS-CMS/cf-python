@@ -859,6 +859,7 @@ class DimensionCoordinate(mixin.Coordinate,
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
+
         '''
         if self.size <= 1:
             if inplace:
@@ -869,6 +870,7 @@ class DimensionCoordinate(mixin.Coordinate,
 
         shift %= self.size
 
+        print("TODO check fo cyclicity with cyclic, rather than period")
         period = self._custom.get('period')
 
         if not shift:

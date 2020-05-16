@@ -702,7 +702,7 @@ class PropertiesDataBounds(PropertiesData):
             # Return the units of the data
             return data.Units
 
-        TODO RECURISION HERE
+        print('TODO RECURISION HERE')
         bounds = self.get_bounds(None)
         if bounds is not None:        
             data = bounds.get_data(None)
