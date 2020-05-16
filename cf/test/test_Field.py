@@ -1700,12 +1700,16 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f.dimension_coordinate('X').period(None)
         f.cyclic('X', False)
+        print('ATTENTION 0')                
         self.assertIsNone(f.period('X'))
         f.cyclic('X', period=360)
+        print('ATTENTION 1')                
         self.assertTrue(f.period('X') == cf.Data(360, 'degrees'))
         f.cyclic('X', False)
+        print('ATTENTION 2')                
         self.assertTrue(f.period('X') == cf.Data(360, 'degrees'))
         f.dimension_coordinate('X').period(None)
+        print('ATTENTION 3')                
         self.assertIsNone(f.period('X'))
 
     def test_Field_autocyclic(self):

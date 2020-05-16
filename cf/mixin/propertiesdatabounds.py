@@ -695,8 +695,36 @@ class PropertiesDataBounds(PropertiesData):
     <Units: days since 2014-1-1 calendar=noleap>
 
         '''
-        return super().Units
+#        return super().Units
 
+        data = self.get_data(None)
+        if data is not None:
+            # Return the units of the data
+            return data.Units
+
+        TODO RECURISION HERE
+        bounds = self.get_bounds(None)
+        if bounds is not None:        
+            data = bounds.get_data(None)
+            if data is not None:
+                # Return the units of the bounds data
+                return data.Units
+        # --- End: if
+
+        try:
+            return self._custom['Units']
+        except KeyError:
+            if bounds is None:
+                self._custom['Units'] = _units_None
+            else:
+                try:
+                    return bounds._custom['Units']
+                except KeyError:
+                    bounds._custom['Units'] = _units_None
+        # --- End: try
+        
+        return _units_None
+    
     @Units.setter
     def Units(self, value):
         PropertiesData.Units.fset(self, value)
@@ -2005,8 +2033,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'override_calendar',
-            calendar, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self),
+            'override_calendar', calendar, bounds=True,
+            interior_ring=False, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2058,8 +2087,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'override_units',
-            units, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self),
+            'override_units', units, bounds=True, interior_ring=False,
+            inplace=inplace, i=i)
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.

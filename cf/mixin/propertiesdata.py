@@ -1151,7 +1151,8 @@ class PropertiesData(Properties):
             return self._custom['Units']
         except KeyError:
             self._custom['Units'] = _units_None
-            return _units_None
+            
+        return _units_None
 
     @Units.setter
     def Units(self, value):
@@ -1162,7 +1163,7 @@ class PropertiesData(Properties):
             self._custom['Units'] = value
 
         # Set the Units on the period
-        period = self._custom.get('period')
+        period = self.period()
         if period is not None:
             period = period.copy()
             period.Units = value
@@ -5167,17 +5168,13 @@ class PropertiesData(Properties):
         data = v.get_data(None)
         if data is not None:
             data.override_units(units, inplace=True)
-#            v._custom['Units'] = units
-#            v.Units = units
         else:
             v._custom['Units'] = units
             
-        # Set the Units on the period
-        period = self._custom.get('period')
+        # Override the Units on the period
+        period = v.period()
         if period is not None:
-            period.override_units(units, inplace=True)
-        
-#        PropertiesData.Units.fset(v, units)
+            v._custom['period'] = period.override_units(units)
 
         return v
 

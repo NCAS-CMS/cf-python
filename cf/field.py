@@ -17506,7 +17506,7 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    def period(self, axis, **kwargs):
+    def period(self, axis=None, **kwargs):
         '''Return the period of an axis.
 
     Note that a non-cyclic axis may have a defined period.
@@ -17518,7 +17518,7 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
 
-        axis:
+        axis: TODO
             The cyclic axis, defined by that which would be selected
             by passing the given axis description to a call of the
             field construct's `domain_axis` method. For example, for a
@@ -17561,7 +17561,10 @@ class Field(mixin.PropertiesData,
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'period', kwargs)  # pragma: no cover
-
+# DCH TODO HORROR
+        if axis is None:
+            return super().period()
+            
         axis = self.domain_axis(axis, key=True, default=ValueError(
                 "Can't identify axis from: {!r}".format(axis)))
 
