@@ -702,28 +702,29 @@ class PropertiesDataBounds(PropertiesData):
             # Return the units of the data
             return data.Units
 
-        print('TODO RECURISION HERE')
-        bounds = self.get_bounds(None)
-        if bounds is not None:        
-            data = bounds.get_data(None)
-            if data is not None:
-                # Return the units of the bounds data
-                return data.Units
-        # --- End: if
+#        print('TODO RECURISION HERE')
+#        bounds = self.get_bounds(None)
+#        if bounds is not None:        
+#            data = bounds.get_data(None)
+#            if data is not None:
+#                # Return the units of the bounds data
+#                return data.Units
+#        # --- End: if
 
         try:
             return self._custom['Units']
         except KeyError:
-            if bounds is None:
-                self._custom['Units'] = _units_None
-            else:
-                try:
-                    return bounds._custom['Units']
-                except KeyError:
-                    bounds._custom['Units'] = _units_None
-        # --- End: try
+#            if bounds is None:
+            self._custom['Units'] = _units_None
+            return _units_None
+#            else:
+#                try:
+#                    return bounds._custom['Units']
+#                except KeyError:
+#                    bounds._custom['Units'] = _units_None
+#        # --- End: try
         
-        return _units_None
+#        return _units_None
     
     @Units.setter
     def Units(self, value):

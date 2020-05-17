@@ -12250,9 +12250,9 @@ class Field(mixin.PropertiesData,
                 print('    keys      =', repr(keys))  # pragma: no cover
 
             if n_axes == 1:
-                # -----------------------------------------------------
-                # 1-d item
-                # -----------------------------------------------------
+                # ----------------------------------------------------
+                # 1-d construct
+                # ----------------------------------------------------
                 ind = None
 
                 if _debug:
@@ -12268,13 +12268,13 @@ class Field(mixin.PropertiesData,
                     print('    value     =', repr(value))  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, numpy_ndarray)):
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     # 1-dimensional CASE 1: Value is already an index,
                     #                       e.g. [0], (0,3),
                     #                       slice(0,4,2),
                     #                       numpy.array([2,4,7]),
                     #                       [True, False, True]
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     if _debug:
                         print('    1-d CASE 1: ',)  # pragma: no cover
 
@@ -12292,12 +12292,12 @@ class Field(mixin.PropertiesData,
                       and item.isdimension
                       and self.iscyclic(axis)):
                     # self.iscyclic(sorted_axes)):
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     # 1-dimensional CASE 2: Axis is cyclic and
                     #                       subspace criterion is a
                     #                       'within' or 'without'
                     #                       Query instance
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     if _debug:
                         print('    1-d CASE 2: ',)  # pragma: no cover
 
@@ -12310,7 +12310,7 @@ class Field(mixin.PropertiesData,
 
                     a = self.anchor(axis, anchor0, dry_run=True)['roll']
                     b = self.flip(axis).anchor(
-                        axis, anchor1, dry_run=True)['roll']
+                            axis, anchor1, dry_run=True)['roll']
 
                     size = item.size
                     if abs(anchor1 - anchor0) >= item.period():
@@ -12318,6 +12318,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = 0
                         else:
                             set_start_stop = -a
+                            
                         start = set_start_stop
                         stop = set_start_stop
                     elif a + b == size:
@@ -12327,6 +12328,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = -a
                         else:
                             set_start_stop = 0
+                            
                         start = set_start_stop
                         stop = set_start_stop
                     else:
@@ -12346,7 +12348,6 @@ class Field(mixin.PropertiesData,
                         ind = (d[index].array,)
 
                         index = slice(None)
-#                        ind = (numpy_arange((stop%size)-start, size),)
 
                 elif item is not None:
                     # -------------------------------------------------

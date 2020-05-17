@@ -870,7 +870,6 @@ class DimensionCoordinate(mixin.Coordinate,
 
         shift %= self.size
 
-        print("TODO check fo cyclicity with cyclic, rather than period")
         period = self._custom.get('period')
 
         if not shift:
@@ -881,7 +880,7 @@ class DimensionCoordinate(mixin.Coordinate,
                 return self.copy()
         elif period is None:
             raise ValueError(
-                "Can't roll {} array when no period has been set".format(
+                "Can't roll {} when no period has been set".format(
                     self.__class__.__name__))
 
         direction = self.direction()

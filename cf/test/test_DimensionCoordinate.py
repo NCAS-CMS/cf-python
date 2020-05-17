@@ -34,7 +34,6 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue(x.isdimension)
 
-
     def test_DimensionCoordinate_convert_reference_time(self):
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='gregorian'))
@@ -85,15 +84,17 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((d.array == [1., 2, 3]).all())
 
-
     def test_DimensionCoordinate_roll(self):
         f = cf.read(self.filename)[0]
+
         x = f.dimension_coordinates('X').value()
+        y = f.dimension_coordinates('Y').value()
+        
+        _ = x.roll(0, 3)
 
         with self.assertRaises(Exception):
-            x.roll(0, 3)
+            y.roll(0, 3)
 
-        x.period(360)
         _ = x.roll(0, 3)
         _ = x.roll(-1, 3)
         with self.assertRaises(Exception):
@@ -162,7 +163,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         c = d.cellsize
         self.assertTrue(c.Units.equals(cf.Units('km')))
 
-
     def test_DimensionCoordinate_override_calendar(self):
         d = self.dim.copy()
 
@@ -180,7 +180,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         d.override_calendar('365_day', inplace=True)
         self.assertTrue(d.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
         self.assertTrue(d.bounds.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
-
 
     def test_DimensionCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
@@ -203,7 +202,6 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         b = y.create_bounds()
 
-
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
@@ -219,7 +217,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         x.axis = 'T'
         self.assertTrue(x.ndim == 1)
 
-
     def test_DimensionCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
@@ -234,7 +231,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         x.insert_dimension(-1, inplace=True)
         self.assertTrue(x.shape == (9, 1))
         self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
-
 
     def test_DimensionCoordinate_binary_operation(self):
         f = cf.read(self.filename)[0]
