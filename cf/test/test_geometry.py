@@ -41,7 +41,6 @@ class DSGTest(unittest.TestCase):
         os.close(fd)
 #        self.tempfilename = 'delme.nc'
 
-
         self.test_only = []
 #        self.test_only = ['test_node_count']
 #        self.test_only = ['test_geometry_interior_ring']
@@ -63,7 +62,7 @@ class DSGTest(unittest.TestCase):
         g = f[0]
         for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
@@ -111,9 +110,9 @@ class DSGTest(unittest.TestCase):
         g = f[0]
         for axis in ('X', 'Y', 'Z'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
-            self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
-            self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis=' + axis)
+            self.assertFalse(coord.has_part_node_count(), 'axis=' + axis)
+            self.assertFalse(coord.has_interior_ring(), 'axis=' + axis)
 
         cf.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
@@ -175,7 +174,7 @@ class DSGTest(unittest.TestCase):
 
         for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
@@ -240,7 +239,9 @@ class DSGTest(unittest.TestCase):
             d = c.insert_dimension(0)
             self.assertTrue(d.data.shape == (1,) + c.data.shape)
             self.assertTrue(
-                d.interior_ring.data.shape == (1,) + c.interior_ring.data.shape)
+                d.interior_ring.data.shape ==
+                (1,) + c.interior_ring.data.shape
+            )
 
             e = d.squeeze(0)
             self.assertTrue(e.data.shape == c.data.shape)
@@ -249,9 +250,14 @@ class DSGTest(unittest.TestCase):
 
             t = d.transpose()
             self.assertTrue(
-                t.data.shape == d.data.shape[::-1], (t.data.shape, c.data.shape[::-1]))
+                t.data.shape == d.data.shape[::-1],
+                (t.data.shape, c.data.shape[::-1])
+            )
             self.assertTrue(
-                t.interior_ring.data.shape == d.interior_ring.data.shape[-2::-1] + (d.interior_ring.data.shape[-1],))
+                t.interior_ring.data.shape ==
+                d.interior_ring.data.shape[-2::-1] +
+                (d.interior_ring.data.shape[-1],)
+            )
 
             # Subspacing
             g = g[1, ...]
@@ -346,4 +352,3 @@ if __name__ == '__main__':
     cf.environment()
     print()
     unittest.main(verbosity=2)
-
