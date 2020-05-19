@@ -709,89 +709,6 @@ class DimensionCoordinate(mixin.Coordinate,
 
         return super().get_bounds(default=default)
 
-#    def period(self, *value):
-#        '''Set the period for cyclic coordinates.
-#
-#    :Parameters:
-#
-#        value: data-like or `None`, optional
-#            The period. The absolute value is used.
-#
-#            {+data-like-scalar} TODO
-#
-#    :Returns:
-#
-#        out: `cf.Data` or `None`
-#            The period prior to the change, or the current period if
-#            no *value* was specified. In either case, None is returned
-#            if the period had not been set previously.
-#
-#    **Examples:**
-#
-#    >>> print(c.period())
-#    None
-#    >>> c.Units
-#    <Units: degrees_east>
-#    >>> print(c.period(360))
-#    None
-#    >>> c.period()
-#    <CF Data(): 360.0 'degrees_east'>
-#    >>> import math
-#    >>> c.period(cf.Data(2*math.pi, 'radians'))
-#    <CF Data(): 360.0 degrees_east>
-#    >>> c.period()
-#    <CF Data(): 6.28318530718 radians>
-#    >>> c.period(None)
-#    <CF Data:() 6.28318530718 radians>
-#    >>> print(c.period())
-#    None
-#    >>> print(c.period(-360))
-#    None
-#    >>> c.period()
-#    <CF Data(): 360.0 degrees_east>
-#
-#        '''
-#        old = self._custom.get('period')
-#        if old is not None:
-#            old = old.copy()
-#
-#        if not value:
-#            return old
-#
-#        value = value[0]
-#
-#        if value is not None:
-#            value = Data.asdata(value)
-#            units = value.Units
-#            if not units:
-#                value = value.override_units(self.Units)
-#            elif units != self.Units:
-#                if units.equivalent(self.Units):
-#                    value.Units = self.Units
-#                else:
-#                    raise ValueError(
-#                        "Period units {!r} are not equivalent to coordinate "
-#                        "units {!r}".format(units, self.Units)
-#                    )
-#            # --- End: if
-#
-#            value = abs(value)
-#            value.dtype = float
-#
-#            array = self.array
-#            r = abs(array[-1] - array[0])
-#
-#            if r >= value.datum(0):
-#                raise ValueError(
-#                    "The coordinate range of {!r} is not less than the "
-#                    "period of {!r}".format(r, value)
-#                )
-#        # --- End: if
-#
-#        self._custom['period'] = value
-#
-#        return old
-#
 #    def autoperiod(self, verbose=False):
 #        '''TODO Set dimensions to be cyclic.
 #
@@ -870,7 +787,8 @@ class DimensionCoordinate(mixin.Coordinate,
 
         shift %= self.size
 
-        period = self._custom.get('period')
+#        period = self._custom.get('period')
+        period = self.period()
 
         if not shift:
             # Null roll

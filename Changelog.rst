@@ -1,9 +1,12 @@
-version 3.4.1
+version 3.5.0
 -------------
 ----
 
 **2020-05-??**
 
+* Changed the API to `cf.Field.period`: Now sets and reports on the
+  period of the field construct data, rather than that of its metadata
+  constucts.
 * New method: `cf.Field.halo`
 * New method: `cf.Data.halo`
 * New keyword parameter to `cf.Data.empty`: ``fill_value``
@@ -11,7 +14,7 @@ version 3.4.1
 * Changed dependency: ``cftime==1.1.1``. Versions ``1.1.2`` and
   ``1.1.3`` have bugs/features that cause failures.
 * When assessing coordinate constructs for contiguousness with
-  `cf.Bounds.contiguous`, allowed periodic values that differ by the
+  `cf.Bounds.contiguous`, allow periodic values that differ by the
   period to be considered the same
   (https://github.com/NCAS-CMS/cf-python/issues/75).
 * Fixed bug in `cf.Field.regrids` that caused a failure when

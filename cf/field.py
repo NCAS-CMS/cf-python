@@ -17507,75 +17507,98 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    def period(self, axis=None, **kwargs):
-        '''Return the period of an axis.
-
-    Note that a non-cyclic axis may have a defined period.
-
-    .. versionadded:: 1.0
-
-    .. seealso:: `axis`, `cyclic`, `iscyclic`,
-                 `cf.DimensionCoordinate.period`
-
-    :Parameters:
-
-        axis: TODO
-            The cyclic axis, defined by that which would be selected
-            by passing the given axis description to a call of the
-            field construct's `domain_axis` method. For example, for a
-            value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
-
-        axes: deprecated at version 3.0.0
-            Use the *axis* parameter instead.
-
-        kwargs: deprecated at version 3.0.0
-
-    :Returns:
-
-        `Data` or `None`
-            The period of the cyclic axis's dimension coordinates, or
-            `None` if no period has been set.
-
-    **Examples:**
-
-    >>> f.cyclic()
-    {}
-    >>> print(f.period('X'))
-    None
-    >>> f.dimension_coordinate('X').Units
-    <CF Units: degrees_east>
-    >>> f.cyclic('X', period=360)
-    {}
-    >>> print(f.period('X'))
-    <CF Data(): 360.0 'degrees_east'>
-    >>> f.cyclic('X', False)
-    {'dim3'}
-    >>> print(f.period('X'))
-    <CF Data(): 360.0 'degrees_east'>
-    >>> f.dimension_coordinate('X').period(None)
-    <CF Data(): 360.0 'degrees_east'>
-    >>> print(f.period('X'))
-    None
-
-        '''
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'period', kwargs)  # pragma: no cover
-# DCH TODO HORROR
-        if axis is None:
-            return super().period()
+#    def period(self, *value, **kwargs):
+#        '''Return the period of the data, or of the data of a metadata
+#    construct.
+#
+#    Note that a non-cyclic axis may have a period data.
+#
+#    .. versionadded:: 1.0
+#
+#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `isperiodic`
+#
+#    :Parameters:
+#
+#        identity: optional
+#           Select the construct for which to return the period of the
+#           data. By default the field construct itself is
+#           selected. May be:
+#    
+#              * `None` to select the field construct. This is the
+#                default.
+#
+#              * The identity or key of a metadata construct.
+#    
+#            A construct identity is specified by a string
+#            (e.g. ``'latitude'``, ``'long_name=time'``,
+#            ``'ncvar%lat'``, etc.); or a compiled regular expression
+#            (e.g. ``re.compile('^atmosphere')``) that selects the
+#            relevant constructs whose identities match via
+#            `re.search`.
+#    
+#            Each construct has a number of identities, and is selected
+#            if any of them match any of those provided. A construct's
+#            identities are those returned by its `!identities`
+#            method. In the following example, the construct ``x`` has
+#            six identities:
+#    
+#               >>> x.identities()
+#               ['time',
+#                'long_name=Time',
+#                'foo=bar',
+#                'standard_name=time',
+#                'ncvar%t',
+#                'T']
+#    
+#            A construct key may optionally have the ``'key%'``
+#            prefix. For example ``'dimensioncoordinate2'`` and
+#            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#    
+#            Note that in the output of a `print` call or `!dump`
+#            method, a construct is always described by one of its
+#            identities, and so this description may always be used as
+#            an *identity* argument.
+#
+#        axes: deprecated at version 3.0.0
+#
+#        axis: deprecated at version 3.4.1
+#
+#        kwargs: deprecated at version 3.0.0
+#
+#    :Returns:
+#
+#        `Data` or `None`
+#            The period of the cyclic axis's dimension coordinates, or
+#            `None` if no period has been set.
+#
+#    **Examples:**
+#
+#    >>> f.cyclic()
+#    {}
+#    >>> print(f.period('X'))
+#    None
+#    >>> f.dimension_coordinate('X').Units
+#    <CF Units: degrees_east>
+#    >>> f.cyclic('X', period=360)
+#    {}
+#    >>> print(f.period('X'))
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> f.cyclic('X', False)
+#    {'dim3'}
+#    >>> print(f.period('X'))
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> f.dimension_coordinate('X').period(None)
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> print(f.period('X'))
+#    None
+#
+#        '''
+#        if kwargs:
+#            _DEPRECATION_ERROR_KWARGS(
+#                self, 'period', kwargs)  # pragma: no cover
+#
+#        return super().period(*value)
             
-        axis = self.domain_axis(axis, key=True, default=ValueError(
-                "Can't identify axis from: {!r}".format(axis)))
-
-        dim = self.dimension_coordinates.filter_by_axis('and', axis).value(
-            None)
-        if dim is None:
-            return
-
-        return dim.period()
-
     def replace_construct(self, identity, construct, copy=True):
         '''Replace a metadata construct.
 
@@ -18790,7 +18813,7 @@ class Field(mixin.PropertiesData,
             ======================  ==================================
             ``'linear'``            Bilinear interpolation.
 
-            ``'bilinear'``          Alias for ``'linear'``
+            ``'bilinear'``          Deprecated alias for ``'linear'``.
 
             ``'conservative_1st'``  First order conservative
                                     interpolation.
@@ -18825,7 +18848,7 @@ class Field(mixin.PropertiesData,
                                     proportionate area of
                                     intersection.
                                    
-                                    But unlike first-order, the
+                                    Unlike first-order, the
                                     second-order method incorporates
                                     further terms to take into
                                     consideration the gradient of the
@@ -18859,7 +18882,7 @@ class Field(mixin.PropertiesData,
           
             ``'nearest_dtos'``      Nearest neighbour interpolation
                                     for which each source point is
-                                    mapped to the desrination point.
+                                    mapped to the destination point.
 
                                     Useful for extrapolation of
                                     categorical data.
@@ -19407,40 +19430,101 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of the following, which are described in more detail in
-            :ref:`Regridding-methods`, but to summarise:
+            be one of the following:
 
-              +------------------------+---------------------------------+
-              | *method*               | Form of regridding to be        |
-              |                        | applied:                        |
-              +========================+=================================+
-              | ``'linear'``           | Linear interpolation in the     |
-              | (previously called     | corresponding number of         |
-              | ``'bilinear'``, which  | dimensions.                     |
-              | is still supported)    |                                 |
-              +------------------------+---------------------------------+
-              | ``'conservative'`` or  | First-order conservative. Note  |
-              | ``'conservative_1st'`` | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'conservative_2nd'`` | Second-order conservative. Note |
-              |                        | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'patch'``            | Higher order patch recovery.    |
-              +------------------------+---------------------------------+
-              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
-              |                        | where each destination point is |
-              |                        | mapped to the *closest source*. |
-              +------------------------+---------------------------------+
-              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
-              |                        | where each source point is      |
-              |                        | mapped to the *closest*         |
-              |                        | *destination* point.            |
-              +------------------------+---------------------------------+
+            ======================  ==================================
+            Method                  Description
+            ======================  ==================================
+            ``'linear'``            Linear interpolation in the number
+                                    of dimensions being regridded.
 
+                                    For two dimensional regridding
+                                    this is bilinear interpolation,
+                                    and for three dimensional
+                                    regridding this is trilinear
+                                    interpolation.Bilinear
+                                    interpolation.
+
+            ``'bilinear'``          Deprecated alias for ``'linear'``.
+
+            ``'conservative_1st'``  First order conservative
+                                    interpolation.
+
+                                    Preserve the area integral of the
+                                    data across the interpolation from
+                                    source to destination. It uses the
+                                    proportion of the area of the
+                                    overlapping source and destination
+                                    cells to determine appropriate
+                                    weights.
+                                              
+                                    In particular, the weight of a
+                                    source cell is the ratio of the
+                                    area of intersection of the source
+                                    and destination cells to the area
+                                    of the whole destination cell.
+                                              
+                                    It does not account for the field
+                                    gradient across the source cell,
+                                    unlike the second-order
+                                    conservative method (see below).
+
+            ``'conservative_2nd'``  Second-order conservative
+                                    interpolation.
+
+                                    As with first order (see above),
+                                    preserves the area integral of the
+                                    field between source and
+                                    destinatio using a weighted sum,
+                                    with weights based on the
+                                    proportionate area of
+                                    intersection.
+                                   
+                                    Unlike first-order, the
+                                    second-order method incorporates
+                                    further terms to take into
+                                    consideration the gradient of the
+                                    field across the source cell,
+                                    thereby typically producing a
+                                    smoother result of higher
+                                    accuracy.
+
+            ``'conservative'``      Alias for ``'conservative_1st'``
+
+            ``'patch'``             Higher-order patch recovery
+                                    interpolation.
+
+                                    A second degree polynomial
+                                    regridding method, which uses a
+                                    least squares algorithm to
+                                    calculate the polynomial.
+                                                                         
+                                    This method gives better
+                                    derivatives in the resulting
+                                    destination data than the linear
+                                    method.
+
+            ``'nearest_stod'``      Nearest neighbour interpolation
+                                    for which each destination point
+                                    is mapped to the closest source
+                                    point.
+
+                                    Useful for extrapolation of
+                                    categorical data.      
+          
+            ``'nearest_dtos'``      Nearest neighbour interpolation
+                                    for which each source point is
+                                    mapped to the destination point.
+
+                                    Useful for extrapolation of
+                                    categorical data.
+                                    
+                                    A given destination point may
+                                    receive input from multiple source
+                                    points, but no source point will
+                                    map to more than one destination
+                                    point.
+            ======================  ==================================
 
         use_src_mask: `bool`, optional
             For all methods other than 'nearest_stod', this must be

@@ -82,7 +82,7 @@ installation and source code.
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
 __date__         = '2020-05-??'
-__version__      = '3.4.1b2'
+__version__      = '3.5.0'
 
 _requires = (
     'numpy',
@@ -178,13 +178,12 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.1.1'
-_exact_vn = '1.1.1'
-if LooseVersion(cftime.__version__) != LooseVersion(_exact_vn):
+_minimum_vn = '1.1.3'
+if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad cftime version: cf requires cftime=={}. "
+        "Bad cftime version: cf requires cftime>={}. "
         "Got {} at {}".format(
-            _exact_vn, cftime.__version__, cftime.__file__))
+            _minimum_vn, cftime.__version__, cftime.__file__))
 
 # Check the version of numpy
 _minimum_vn = '1.15'
@@ -206,8 +205,9 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
 _minimum_vn = '1.8.3'
 _maximum_vn = '1.9'
 _cfdm_version = LooseVersion(cfdm.__version__)
-if (_cfdm_version < LooseVersion(_minimum_vn)
-    or _cfdm_version >= LooseVersion(_maximum_vn)):
+#if (_cfdm_version < LooseVersion(_minimum_vn)
+#    or _cfdm_version >= LooseVersion(_maximum_vn)):
+if not (LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn)):
     raise RuntimeError(
         "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
         "at {}".format(_minimum_vn, _maximum_vn,

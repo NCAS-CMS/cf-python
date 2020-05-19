@@ -89,9 +89,8 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         x = f.dimension_coordinates('X').value()
         y = f.dimension_coordinates('Y').value()
-        
-        _ = x.roll(0, 3)
 
+        _ = x.roll(0, 3)
         with self.assertRaises(Exception):
             y.roll(0, 3)
 

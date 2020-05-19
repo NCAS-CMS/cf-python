@@ -792,6 +792,15 @@ class TimeDuration:
 
     .. versionadded:: 1.4
 
+    :Parameters:
+
+        other: any object with a `timetuple` method
+
+        op: `str`
+
+    :Returns:
+
+
         '''
         def _dHMS(duration, other, calendar, op):
             units = Units(
@@ -823,8 +832,8 @@ class TimeDuration:
             months = None
 
         calendar = getattr(other, 'calendar', None)
-        if calendar == '':
-            calendar = None
+#        if calendar == '':
+#            calendar = None
 
         if months is not None:
             y, m = divmod(op(other.month, months), 12)
@@ -834,12 +843,20 @@ class TimeDuration:
 
             y = other.year + y
 
-            max_days = self.days_in_month(y, m, calendar)
             d = other.day
-            if d > max_days:
-                d = max_days
+            if calendar != '':
+                max_days = self.days_in_month(y, m, calendar)
+                if d > max_days:
+                    d = max_days
+            # --- End: if
 
-            return other.replace(year=y, month=m, day=d)
+            try:
+                return other.replace(year=y, month=m, day=d, calendar=calendar)
+            except TypeError:
+                # If we are here, then 'other' is a datetime.datetime
+                # object, which doesn't have a 'calendar' keyword to
+                # its 'replace' method.
+                return other.replace(year=y, month=m, day=d)            
         else:
             return _dHMS(duration, other, calendar, op)
 
@@ -1013,15 +1030,18 @@ class TimeDuration:
     :Parameters:
 
         year: `int`
+            TODO
 
         month: `int`
+            TODO
 
         calendar: `str`, optional
             By default, calendar is the mixed Gregorian/Julian
             calendar as defined by Udunits.
 
         leap_month: `int`, optional
-            By default, the leap month is 2.
+            The leap month. By default the leap month is 2, i.e. the
+            seond month of the year.
 
         month_lengths: sequence of `int`, optional
             By default, *month_lengths* is ``[31, 28, 31, 30, 31, 30,

@@ -1,5 +1,5 @@
 import datetime
-from functools import partial as functools_partial
+from functools import partial
 
 import numpy
 
@@ -41,7 +41,7 @@ _default_calendar = 'gregorian'
 # Mapping of CF calendars to date-time objects
 # --------------------------------------------------------------------
 _datetime_object = {
-     ('',): cftime.datetime,
+     ('',): partial(cftime.datetime, calendar=''),
      (None, 'gregorian', 'standard', 'none'): cftime.DatetimeGregorian,
      ('proleptic_gregorian',): cftime.DatetimeProlepticGregorian,
      ('360_day',): cftime.Datetime360Day,
@@ -139,8 +139,9 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
             arg)
 
     elif isinstance(arg, cftime.datetime):
-        (year, month, day, hour, minute, second) = arg.timetuple()[:6]
-        microsecond = arg.microsecond
+        (year, month, day, hour, minute, second, microsecond) = (
+            arg.year, arg.month, arg.day, arg.hour, arg.minute, arg.second,
+            arg.microsecond)
         if calendar == '':
             calendar = arg.calendar
 
@@ -154,7 +155,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
         year = arg
 
     for calendars, datetime_cls in _datetime_object.items():
-        if calendar in calendars:
+        if calendar in calendars:                
             return datetime_cls(year, month, day, hour, minute,
                                 second, microsecond)
     # --- End: for
@@ -290,7 +291,7 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
     **Examples:**
 
     '''
-    func = functools_partial(st2datetime, calendar=units_in._calendar)
+    func = partial(st2datetime, calendar=units_in._calendar)
     return numpy_vectorize(func, otypes=[object])(array)
 
 
@@ -440,7 +441,7 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         # There is no missing data
         return numpy_array(array, dtype=object)
         # return numpy_vectorize(
-        #     functools_partial(dt2Dt, calendar=units_in._calendar),
+        #     partial(dt2Dt, calendar=units_in._calendar),
         #     otypes=[object])(array)
     else:
         # There is missing data
@@ -449,7 +450,7 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         else:
             # array = numpy_array(array)
             # array = numpy_vectorize(
-            #     functools_partial(dt2Dt, calendar=units_in._calendar),
+            #     partial(dt2Dt, calendar=units_in._calendar),
             #     otypes=[object])(array)
             return numpy_ma_masked_where(mask, array)
 

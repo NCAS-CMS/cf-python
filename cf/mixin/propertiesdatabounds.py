@@ -614,26 +614,34 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             bounds.dtype = value
 
-#    @property
-#    def isperiodic(self):
-#        '''
-#
-#    .. versionadded:: 2.0
-#
-#    >>> print(c.period())
-#    None
-#    >>> c.isperiodic
-#    False
-#    >>> print(c.period(cf.Data(360, 'degeres_east')))
-#    None
-#    >>> c.isperiodic
-#    True
-#    >>> c.period(None)
-#    <CF Data(): 360 degrees_east>
-#    >>> c.isperiodic
-#    False
-#
-#    '''
+    @property
+    def isperiodic(self):
+        '''TODO
+
+    .. versionadded:: 2.0
+
+    >>> print(c.period())
+    None
+    >>> c.isperiodic
+    False
+    >>> print(c.period(cf.Data(360, 'degeres_east')))
+    None
+    >>> c.isperiodic
+    True
+    >>> c.period(None)
+    <CF Data(): 360 degrees_east>
+    >>> c.isperiodic
+    False
+
+    '''
+        period = self.period()
+        if period is not None:
+            return True
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:            
+            return bounds.period is not None
+
 #        return self._custom.get('period', None) is not None
 
     @property
@@ -3348,6 +3356,67 @@ class PropertiesDataBounds(PropertiesData):
         '''
         print(cf_inspect(self))  # pragma: no cover
 
+    def period(self, *value):
+        '''Return or set the period for cyclic values.
+
+    .. seeslso:: `cyclic`
+        
+    :Parameters:
+
+        value: optional
+            The period. The absolute value is used.  May be set to any
+            numeric scalar object, including `numpy` and `Data`
+            objects. The units of the radius are assumed to be the
+            same as the data, unless specified by a `Data` object.
+
+            If *value* is `None` then any existing period is removed
+            from the construct.
+
+    :Returns:
+
+        `Data` or `None`
+            The period prior to the change, or the current period if
+            no *value* was specified. `None` is always returned if the
+            period had not been set previously.
+
+    **Examples:**
+
+    >>> print(c.period())
+    None
+    >>> c.Units
+    <Units: degrees_east>
+    >>> print(c.period(360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 'degrees_east'>
+    >>> import math
+    >>> c.period(cf.Data(2*math.pi, 'radians'))
+    <CF Data(): 360.0 degrees_east>
+    >>> c.period()
+    <CF Data(): 6.28318530718 radians>
+    >>> c.period(None)
+    <CF Data:() 6.28318530718 radians>
+    >>> print(c.period())
+    None
+    >>> print(c.period(-360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 degrees_east>
+
+        '''
+        old = super().period(*value)
+
+        old2 = None
+        
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            old2 = bounds.period(*value)
+
+        if old is None and old2 is not None:
+            return old2
+
+        return old
+        
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, bounds=True, inplace=False, i=False):

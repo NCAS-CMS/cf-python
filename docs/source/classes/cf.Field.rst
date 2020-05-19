@@ -237,6 +237,7 @@ Miscellaneous data operations
    :template: method.rst
 	      
    ~cf.Field.cyclic
+   ~cf.Field.period
    ~cf.Field.get_filenames
    ~cf.Field.close
    ~cf.Field.chunk
@@ -399,7 +400,6 @@ Domain axes
    ~cf.Field.iscyclic 
    ~cf.Field.item_axes
    ~cf.Field.items_axes
-   ~cf.Field.period
 
 Subspacing
 ----------

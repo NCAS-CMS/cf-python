@@ -23,7 +23,6 @@ from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check)
 
-print("TODO DCH source copy period __init__")
 
 _units_None = Units()
 
@@ -1768,21 +1767,29 @@ class PropertiesData(Properties):
             "ERROR: Can't get the minimum when there is no data array")
 
     def period(self, *value):
-        '''Set the period for cyclic values.
+        '''Return or set the period of the data.
 
+    This is distinct from the cyclicity of individual axes.
+
+    .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
+        
     :Parameters:
 
-        value: data-like or `None`, optional
-            The period. The absolute value is used.
+        value: optional
+            The period. The absolute value is used.  May be set to any
+            numeric scalar object, including `numpy` and `Data`
+            objects. The units of the radius are assumed to be the
+            same as the data, unless specified by a `Data` object.
 
-            {+data-like-scalar} TODO
+            If *value* is `None` then any existing period is removed
+            from the construct.
 
     :Returns:
 
-        out: `Data` or `None`
+        `Data` or `None`
             The period prior to the change, or the current period if
-            no *value* was specified. In either case, None is returned
-            if the period had not been set previously.
+            no *value* was specified. `None` is always returned if the
+            period had not been set previously.
 
     **Examples:**
 
@@ -4874,6 +4881,44 @@ class PropertiesData(Properties):
         '''
         print(cf_inspect(self))  # pragma: no cover
 
+    def iscyclic(self, identity):
+        '''Whether or a not a given axis is cyclic.
+
+    .. versionadded:: 3.4.1
+
+    .. seealso:: `cyclic`, `period`, `isperiodic`
+
+    :Parameters:
+
+        axis: `int`, optional
+           Select the axis by its position in the data dimensions.
+
+    :Returns:
+
+        `bool`
+            `True` if the selected axis is cyclic, otherwise `False`.
+
+    **Examples:**
+
+    >>> f.iscyclic('X')
+    True
+    >>> f.iscyclic('latitude')
+    False
+
+    >>> x = f.iscyclic('long_name=Latitude')
+    >>> x = f.iscyclic('dimensioncoordinate1')
+    >>> x = f.iscyclic('domainaxis2')
+    >>> x = f.iscyclic('key%domainaxis2')
+    >>> x = f.iscyclic('ncdim%y')
+    >>> x = f.iscyclic(2)
+
+        '''
+        axis = self._parse_axes(axis)
+        if len(axis) != 1:
+            raise ValueError("TODO")
+
+        return axis[0] in self.cyclic()
+
     def get_data(self, default=ValueError()):
         '''Return the data.
 
@@ -5175,7 +5220,8 @@ class PropertiesData(Properties):
         # Override the Units on the period
         period = v.period()
         if period is not None:
-            v._custom['period'] = period.override_units(units)
+#            v._custom['period'] = period.override_units(units)
+            v.period(period.override_units(units))
 
         return v
 
