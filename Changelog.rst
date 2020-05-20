@@ -1,3 +1,12 @@
+version 3.5.0
+-------------
+----
+
+**2020-??-??**
+
+* Fixed bug that caused `cf.FieldList.select_by_ncvar` to always fail
+  (https://github.com/NCAS-CMS/cf-python/issues/76).
+
 version 3.4.0
 -------------
 ----
