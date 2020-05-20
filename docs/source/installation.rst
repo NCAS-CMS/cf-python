@@ -188,7 +188,7 @@ Required
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.4 up to, but
   not including, 1.9.0.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.6 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.7 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
