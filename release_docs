@@ -72,20 +72,16 @@ if [[ $2 = "latest" ]] ; then
 fi
 
 # --------------------------------------------------------------------
-# Add and commit the latest
+# Add and commit the latest or archive
 # --------------------------------------------------------------------
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   echo "d2=$2"
   cd $dir
   git add \
 	  *.html \
-	  classes/*.html \
-	  function/*.html \
-	  method/*.html \
-	  attribute/*.html \
+	  */*.html \
 	  *.inv \
 	  *.js \
-	  _sources \
 	  _static \
 	  _downloads/cf_tutorial_files.zip \
 	  _downloads/tutorial.py \
