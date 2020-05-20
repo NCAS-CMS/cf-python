@@ -363,6 +363,20 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(len(f.select_by_units('long_name=qwery:asd')) == 0)
 
+        # select_by_ncvar
+        f[1] = f[1].copy()
+        f[3] = f[3].copy()
+        f[-1] = f[-1].copy()
+        f[1].nc_set_variable('temp')
+        f[3].nc_set_variable('temp')
+        f[-1].nc_set_variable('temp2')
+        
+        self.assertTrue(len(f.select_by_ncvar('eastward_wind')) == 6)
+        self.assertTrue(len(f.select_by_ncvar('temp')) == 2)
+        self.assertTrue(len(f.select_by_ncvar('temp2')) == 1)
+        self.assertTrue(len(f.select_by_ncvar('temp', 'temp2')) == 3)
+        self.assertTrue(len(f.select_by_ncvar(re.compile('^temp'))) == 3)
+
     def test_FieldList_select_by_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
