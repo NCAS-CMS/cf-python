@@ -997,7 +997,7 @@ class FieldList(list):
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
 
-    def select_by_ncvar(self, *rank):
+    def select_by_ncvar(self, *ncvars):
         '''Select field constructs by netCDF variable name.
 
     To find the inverse of the selection, use a list comprehension
