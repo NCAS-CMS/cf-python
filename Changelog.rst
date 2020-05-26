@@ -30,6 +30,9 @@ version 3.5.0
   (https://github.com/NCAS-CMS/cf-python/issues/76).
 * Fixed bug that stopped 'integral' collapses working for grouped
   collapses (https://github.com/NCAS-CMS/cf-python/issues/81).
+* Fixed bug the wouldn't allow the reading of a netCDF file which
+  specifies Conventions other than CF
+  (https://github.com/NCAS-CMS/cf-python/issues/78).
 
 version 3.4.0
 -------------
