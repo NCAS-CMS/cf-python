@@ -10172,7 +10172,7 @@ class Field(mixin.PropertiesData,
                     )
 
                 # ------------------------------------------------------------
-                # Calculate weights
+                # Grouped collapse: Calculate weights
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method not in _collapse_weighted_methods:
@@ -10210,7 +10210,7 @@ class Field(mixin.PropertiesData,
                                           measure=measure,
                                           radius=radius,
                                           great_circle=great_circle)
-
+                    
                     if not g_weights:
                         g_weights = None
                 # --- End: if
@@ -10242,11 +10242,11 @@ class Field(mixin.PropertiesData,
                 )
 
                 if regroup:
-                    # Return the numpy array
+                    # Grouped collapse: Return the numpy array
                     return f
 
                 # ----------------------------------------------------
-                # Update the cell methods
+                # Grouped collapse: Update the cell methods 
                 # ----------------------------------------------------
                 f._update_cell_methods(method=method,
                                        domain_axes=collapse_axes,
@@ -10310,7 +10310,8 @@ class Field(mixin.PropertiesData,
                 if method == 'integral':
                     if not measure:
                         raise ValueError(
-                            "Must set measure=True for 'integral' collapses.")
+                            "Must set measure=True for {!r} "
+                            "collapses".format(method))
 
                     if scale is not None:
                         raise ValueError(
@@ -10333,7 +10334,10 @@ class Field(mixin.PropertiesData,
                     print(
                         '    Output weights          =', repr(d_weights)
                     )  # pragma: no cover
-            # --- End: if
+            elif method == 'integral':                
+                raise ValueError(
+                    "Must set the 'weights' parameter "
+                    "for {!r} collapses".format(method))
 
             if method in _collapse_ddof_methods:
                 d_kwargs['ddof'] = ddof
@@ -10510,16 +10514,16 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         method: `str`
-            TODO
+            See `collapse` for details.
 
-        axis: `str`
-            TODO
+        measure: `bool`, optional
+            See `collapse` for details.
 
         over: `str`
-            TODO
+            See `collapse` for details.
 
         within: `str`
-            TODO
+            See `collapse` for details.
 
     '''
         def _ddddd(classification, n, lower, upper, increasing, coord,
@@ -11590,16 +11594,16 @@ class Field(mixin.PropertiesData,
                             #             'exact', axis).value(None)
                             if coord is None:
                                 raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d "
-                                    "coordinates when group_span={!r}".format(
-                                        group_span)
+                                    "Can't collapse: Need an unambiguous 1-d "
+                                    "coordinate construct when "
+                                    "group_span={!r}".format(group_span)
                                 )
 
                             bounds = coord.get_bounds(None)
                             if bounds is None:
                                 raise ValueError(
                                     "Can't collapse: Need unambiguous 1-d "
-                                    "coordinate bounds when "
+                                    "coordinate cell bounds when "
                                     "group_span={!r}".format(group_span)
                                 )
 
@@ -11645,12 +11649,12 @@ class Field(mixin.PropertiesData,
                     print('        Collapsing group', u, ':',
                           repr(pc))  # pragma: no cover
 
-                fl.append(pc.collapse(
-                    method, axis, weights=w, mtol=mtol, ddof=ddof,
-                    coordinate=coordinate, squeeze=False, inplace=True,
-                    _create_zero_size_cell_bounds=True,
-                    _update_cell_methods=False
-                ))
+                fl.append(pc.collapse(method, axis, weights=w,
+                                      measure=measure, mtol=mtol, ddof=ddof,
+                                      coordinate=coordinate, squeeze=False,
+                                      inplace=True,
+                                      _create_zero_size_cell_bounds=True,
+                                      _update_cell_methods=False ))
             # --- End: for
 
             if regroup:
@@ -19166,6 +19170,8 @@ class Field(mixin.PropertiesData,
         section_keys, sections = self._regrid_get_reordered_sections(
             axis_order, src_axis_keys, src_axis_indices)
 
+        print  (section_keys,)
+        
         # Bounds must be used if the regridding method is conservative.
         use_bounds = self._regrid_use_bounds(method)
 

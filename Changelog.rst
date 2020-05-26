@@ -28,6 +28,8 @@ version 3.5.0
   (https://github.com/NCAS-CMS/cf-python/issues/73).
 * Fixed bug that caused `cf.FieldList.select_by_ncvar` to always fail
   (https://github.com/NCAS-CMS/cf-python/issues/76).
+* Fixed bug that stopped 'integral' collapses working for grouped
+  collapses (https://github.com/NCAS-CMS/cf-python/issues/81).
 
 version 3.4.0
 -------------

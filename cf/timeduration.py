@@ -837,16 +837,16 @@ class TimeDuration:
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: "
-                    "{}".format(months0)
+                    "Fractional months are not supported for  "
+                    "date calculations: {}".format(months0)
                 )
         elif units == _calendar_months:
             months0 = duration.datum()
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: "
-                    "{}".format(months0)
+                    "Fractional months are not supported for "
+                    "date calculations: {}".format(months0)
                 )
         else:
             months = None
@@ -870,12 +870,15 @@ class TimeDuration:
                     d = max_days
             # --- End: if
 
+            # TODO When cftime==1.1.4 is ready use this one line:
+#            return other.replace(year=y, month=m, day=d)
+            # Instead of these try ... except ... lines:
             try:
                 return other.replace(year=y, month=m, day=d, calendar=calendar)
-            except TypeError:
+            except (ValueError, TypeError):
                 # If we are here, then 'other' is a datetime.datetime
                 # object, which doesn't have a 'calendar' keyword to
-                # its 'replace' method.
+                # its 'replace' method.                
                 return other.replace(year=y, month=m, day=d)            
         else:
             return _dHMS(duration, other, calendar, op)
