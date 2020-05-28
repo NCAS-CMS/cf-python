@@ -327,7 +327,7 @@ class _Meta:
 
                 info_dim.append(
                     {'identity' : dim_identity,
-                     'key'      : dim_coord_key, #axis,
+                     'key'      : dim_coord_key,  # axis,
                      'units'    : units,
                      'hasdata'  : dim_coord.has_data(),
                      'hasbounds': dim_coord.has_bounds(),

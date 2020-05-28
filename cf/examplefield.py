@@ -5,6 +5,7 @@ from .cfimplementation import implementation
 
 _implementation = implementation()
 
+
 def example_field(n, _implementation=_implementation):
     return cfdm.example_field(n, _implementation=_implementation)
 

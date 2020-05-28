@@ -41,7 +41,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
             f.open_fd()
         # --- End: if
-        
+
         return f
 
     if open_files_threshold_exceeded():
@@ -58,7 +58,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
             f.close_fd()
         except:
             pass
-        
+
         raise Exception(error)
 
     # Add a close method to the file object

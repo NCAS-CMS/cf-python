@@ -4189,7 +4189,7 @@ class Field(mixin.PropertiesData,
         '''TODO
 
     :Parameters:
-            
+
         methods: `bool`, optional
             If True then add a description of the method used to
             create the weights to the *comp* dictionary, as opposed to
@@ -4371,7 +4371,7 @@ class Field(mixin.PropertiesData,
         # --- End: for
 
         return True
-    
+
     def _weights_field_scalar(self, methods=False):
         '''Return a scalar field of weights with long_name ``'weight'``.
 
@@ -4381,14 +4381,14 @@ class Field(mixin.PropertiesData,
 
         '''
         data = Data(1.0, '1')
-        
+
         f = type(self)()
         f.set_data(data, copy=False)
         f.long_name = 'weight'
         f.comment = 'Weights for {!r}'.format(self)
 
         return f
-    
+
     def _weights_geometry_area(self, domain_axis, comp, weights_axes,
                                auto=False, measure=False, radius=None,
                                great_circle=False, return_areas=False,
@@ -4398,7 +4398,7 @@ class Field(mixin.PropertiesData,
     .. versionadded:: 3.2.0
 
     :Parameters:
-            
+
         domain_axis : `str` or `None`
 
         measure: `bool`
@@ -4413,7 +4413,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool` or `Data`
-        
+
         '''
         axis, aux_X, aux_Y, aux_Z = self._weights_yyy(domain_axis,
                                                       'polygon',
@@ -4469,7 +4469,7 @@ class Field(mixin.PropertiesData,
         y = aux_Y.bounds.data
 
         if (x.Units.equivalent(_units_metres) and
-            y.Units.equivalent(_units_metres)):
+                y.Units.equivalent(_units_metres)):
             # ----------------------------------------------------
             # Plane polygons defined by straight lines.
             #
@@ -4496,7 +4496,7 @@ class Field(mixin.PropertiesData,
                     nodes_y = nodes_y.compressed()
 
                     if ((nodes_x.size and nodes_x[0] != nodes_x[-1]) or
-                        (nodes_y.size and nodes_y[0] != nodes_y[-1])):
+                            (nodes_y.size and nodes_y[0] != nodes_y[-1])):
                         # First and last nodes of this polygon
                         # part are different => need to account
                         # for the "last" edge of the polygon that
@@ -4551,7 +4551,7 @@ class Field(mixin.PropertiesData,
                     nodes_y = nodes_y.compressed()
 
                     if ((nodes_x.size and nodes_x[0] != nodes_x[-1]) or
-                        (nodes_y.size and nodes_y[0] != nodes_y[-1])):
+                            (nodes_y.size and nodes_y[0] != nodes_y[-1])):
                         # First and last nodes of this polygon
                         # part are different => need to account
                         # for the "last" edge of the polygon that
@@ -4623,9 +4623,9 @@ class Field(mixin.PropertiesData,
         '''TODO
 
     .. versionadded:: 3.2.0
-    
+
     :Parameters:
-            
+
         measure: `bool`
             If True then make sure that the weights represent true
             cell sizes.
@@ -4664,7 +4664,7 @@ class Field(mixin.PropertiesData,
         y = aux_Y.bounds.data
 
         if (x.Units.equivalent(_units_metres) and
-            y.Units.equivalent(_units_metres)):
+                y.Units.equivalent(_units_metres)):
             # ----------------------------------------------------
             # Plane lines.
             #
@@ -4740,9 +4740,9 @@ class Field(mixin.PropertiesData,
         '''TODO
 
     .. versionadded:: 3.2.0
-    
+
     :Parameters:
-            
+
         measure: `bool`
             If True then make sure that the weights represent true
             cell sizes.
@@ -4788,14 +4788,14 @@ class Field(mixin.PropertiesData,
                                                   great_circle=great_circle,
                                                   methods=False,
                                                   return_areas=True)
-                    
+
             if measure:
                 delta_z = abs(z[..., 1] - z[ ..., 0])
                 delta_z.squeeze(axis=-1, inplace=True)
         # --- End: if
-        
+
         if (x.Units.equivalent(_units_metres) and
-            y.Units.equivalent(_units_metres)):
+                y.Units.equivalent(_units_metres)):
             # ----------------------------------------------------
             # Plane polygons defined by straight lines.
             #
@@ -4833,7 +4833,7 @@ class Field(mixin.PropertiesData,
             if methods:
                 comp[(axis,)] = 'volume spherical polygon geometry'
                 return True
-            
+
             if measure:
                 r = radius
 
@@ -4867,19 +4867,19 @@ class Field(mixin.PropertiesData,
               {\sin \phi _{1}\sin \phi _{2} +
                \cos \phi _{1}\cos \phi _{2}\cos(\Delta \lambda )}
               }
-    
+
     :Parameters:
-    
+
         data_lambda: `Data`
             Longitudes. Must have units of radians, which is not
             checked.
-    
+
         data_phi: `Data`
             Latitudes. Must have units of radians, which is not
             checked.
-    
+
     :Returns:
-    
+
         `Data`
             The interior angles in units of radians.
 
@@ -4914,7 +4914,7 @@ class Field(mixin.PropertiesData,
         interior_angle.override_units(_units_1, inplace=True)
 
         return interior_angle
-    
+
     def _weights_linear(self, axis, comp, weights_axes, auto=False,
                         measure=False, methods=False):
         '''1-d linear weights from dimension coordinate constructs.
@@ -5068,7 +5068,7 @@ class Field(mixin.PropertiesData,
 
     def _weights_scale(self, w, scale):
         '''Scale the weights so that they are <= scale.
-        
+
     :Parameters:
 
         w: `Data
@@ -5076,7 +5076,7 @@ class Field(mixin.PropertiesData,
         scale: number
 
     :Returns:
-        
+
         `Data`
 
         '''
@@ -5225,7 +5225,7 @@ class Field(mixin.PropertiesData,
     geomtries.
 
     .. versionadded:: 2.0
-        
+
     .. seealso:: `featureType`
 
     **Examples:**
@@ -6299,7 +6299,7 @@ class Field(mixin.PropertiesData,
               defined for particular axes, and an exception will be
               raised if it is not possible to the create weights.
 
-        .. 
+        ..
 
             **Type 1** and **Type 2** come at the expense of not
             always being able to control exactly how the weights are
@@ -6544,7 +6544,7 @@ class Field(mixin.PropertiesData,
 
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'weights', kwargs) # pragma: no cover
+                self, 'weights', kwargs)  # pragma: no cover
 
         if measure and scale is not None:
             raise ValueError("Can't set measure=True and scale")
@@ -6653,7 +6653,7 @@ class Field(mixin.PropertiesData,
                     # Found linear weights from dimension coordinates
                     pass
             # --- End: for
-                
+
             weights_axes = []
             for key in comp:
                 weights_axes.extend(key)
@@ -7995,12 +7995,12 @@ class Field(mixin.PropertiesData,
         '''Whether a metadata construct exists.
 
     .. versionadded:: 3.4.0
-    
+
     .. seealso:: `construct`, `del_construct`, `get_construct`,
                  `set_construct`
-    
+
     :Parameters:
-    
+
         identity: optional
             Select the construct. Must be
 
@@ -8053,12 +8053,12 @@ class Field(mixin.PropertiesData,
               ``identity='cellmeasure1'``
 
     :Returns:
-    
-        `bool` 
+
+        `bool`
             `True` if the construct exists, otherwise `False`.
-    
+
     **Examples:**
-    
+
     >>> f = cf.example_field(0)
     >>> print(f)
     Field: specific_humidity (ncvar%q)
@@ -8072,7 +8072,7 @@ class Field(mixin.PropertiesData,
     >>> f.has_construct('T')
     True
     >>> f.has_construct('longitude')
-    True    
+    True
     >>> f.has_construct('Z')
     False
 
@@ -15408,9 +15408,9 @@ class Field(mixin.PropertiesData,
 
     .. seealso:: `del_construct`, `get_construct`, `has_construct`,
                  `set_construct`
-    
+
     :Parameters:
-    
+
         identity: optional
             Select the construct. Must be
 
@@ -15497,13 +15497,13 @@ class Field(mixin.PropertiesData,
     Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-    
+
     >>> f.construct('long_name=Grid latitude name')
     <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
     >>> f.construct('ncvar%a')
     <CF DomainAncillary: ncvar%a(1) m>
     >>> f.construct('measure:area')
-    <CF CellMeasure: measure:area(9, 10) km2>    
+    <CF CellMeasure: measure:area(9, 10) km2>
     >>> f.construct('domainaxis0')
     <CF DomainAxis: size(1)>
     >>> f.construct('height')

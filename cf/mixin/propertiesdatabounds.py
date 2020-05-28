@@ -912,7 +912,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-     
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def ceil(self, bounds=True, inplace=False, i=False):
@@ -1306,7 +1306,7 @@ class PropertiesDataBounds(PropertiesData):
         geometry = self.get_geometry(None)
         if geometry is not None:
             out.append("{}.set_geometry({!r})".format(name, geometry))
-        
+
         bounds = self.get_bounds(None)
         if bounds is not None:
             out.extend(bounds.creation_commands(
@@ -1315,7 +1315,7 @@ class PropertiesDataBounds(PropertiesData):
                 data_name=data_name))
 
             out.append("{}.set_bounds({})".format(name, bounds_name))
-            
+
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             out.extend(interior_ring.creation_commands(
@@ -1995,18 +1995,18 @@ class PropertiesDataBounds(PropertiesData):
 
     The names of the file or files containing the bounds data are also
     returned.
-    
+
     :Returns:
-    
+
         `set`
             The file names in normalized, absolute form. If all of the
             data are in memory then an empty `set` is returned.
 
         '''
         out = super().get_filenames()
-        
+
         data = self.get_bounds_data(None)
-        if data is not None:            
+        if data is not None:
             out.update(data.get_filenames())
 
         interior_ring = self.get_interior_ring(None)
@@ -2017,7 +2017,7 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return out
-    
+
 #   def files(self):
 #        '''Return the names of any files containing parts of the data array.
 #
@@ -2050,7 +2050,7 @@ class PropertiesDataBounds(PropertiesData):
 #            out.update(interior_ring.files())
 #
 #        return out
-   
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
@@ -3139,7 +3139,7 @@ class PropertiesDataBounds(PropertiesData):
                                     _ctype=_ctype)
 
 # TODO: when coord has no standard name but bounds do - that standard name needs to be picked up.
-        
+
         if identity is not None:
             return identity
 
@@ -3328,5 +3328,5 @@ class PropertiesDataBounds(PropertiesData):
             "Use method 'get_filenames' instead.",
             version='3.4.0'
         )  # pragma: no cover
-        
+
 # --- End: class
