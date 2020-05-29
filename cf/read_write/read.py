@@ -699,11 +699,13 @@ def read(files, external=None, verbose=False, warnings=False,
 
     return field_list
 
+
 def _plural(n):  # pragma: no cover
     '''Return a suffix which reflects a word's plural.
 
     '''
     return 's' if n != 1 else ''  # pragma: no cover
+
 
 def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
@@ -838,7 +840,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk) #, mask=mask, warn_valid=warn_valid)
+                         chunk=chunk)  # , mask=mask, warn_valid=warn_valid)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
@@ -859,6 +861,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
+
 
 def file_type(filename):
     '''Return the file format.

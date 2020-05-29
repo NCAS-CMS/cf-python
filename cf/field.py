@@ -17,7 +17,7 @@ from numpy import asanyarray  as numpy_asanyarray
 from numpy import can_cast    as numpy_can_cast
 from numpy import diff        as numpy_diff
 from numpy import empty       as numpy_empty
-#from numpy import errstate    as numpy_errstate
+# from numpy import errstate    as numpy_errstate
 from numpy import finfo       as numpy_finfo
 from numpy import full        as numpy_full
 from numpy import isnan       as numpy_isnan

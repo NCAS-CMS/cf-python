@@ -69,6 +69,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
     return f
 
+
 def _close_um_file(filename):
     '''Close a PP or UM fields file.
 

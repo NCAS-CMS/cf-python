@@ -1,4 +1,4 @@
-### DEPRECATED at 3.2.0 ###
+# ### DEPRECATED at 3.2.0 ### #
 
 from .. import mixin
 

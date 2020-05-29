@@ -70,7 +70,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             new = self.copy()  # data=False)
 
-##        data = self.data
+#       data = self.data
 
         if auxiliary_mask:
             findices = tuple(auxiliary_mask) + tuple(indices)
