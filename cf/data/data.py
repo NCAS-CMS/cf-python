@@ -549,7 +549,7 @@ place.
             check_free_memory = True
 
             if isinstance(data, self.__class__):
-#                self.loadd(data.dumpd(), chunk=chunk)
+                # self.loadd(data.dumpd(), chunk=chunk)
                 self.__dict__ = data.copy().__dict__
                 if chunk:
                     self.chunk()

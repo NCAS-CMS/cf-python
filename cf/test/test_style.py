@@ -23,12 +23,7 @@ class styleTest(unittest.TestCase):
         # descriptions for each code see:
         # https://pep8.readthedocs.io/en/latest/intro.html#error-codes
         pep8_check.options.ignore += (
-            'W391',
             'W605',
-            'E111',
-            'E115',
-            'E117',
-            'E124',
             'E129',
             'E201',
             'E202',

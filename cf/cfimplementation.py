@@ -2,32 +2,34 @@ import cfdm
 
 from .functions import CF
 
-from . import (AuxiliaryCoordinate,
-               CellMethod,
-               CellMeasure,
-               CoordinateReference,
-               DimensionCoordinate,
-               DomainAncillary,
-               DomainAxis,
-               Field,
-               FieldAncillary,
-               Bounds,
-               InteriorRing,
-               CoordinateConversion,
-               Datum,
-               Count,
-               List,
-               Index,
-               NodeCountProperties,
-               PartNodeCountProperties,
+from . import (
+    AuxiliaryCoordinate,
+    CellMethod,
+    CellMeasure,
+    CoordinateReference,
+    DimensionCoordinate,
+    DomainAncillary,
+    DomainAxis,
+    Field,
+    FieldAncillary,
+    Bounds,
+    InteriorRing,
+    CoordinateConversion,
+    Datum,
+    Count,
+    List,
+    Index,
+    NodeCountProperties,
+    PartNodeCountProperties,
 )
 
-from .data import (Data,
-                   GatheredArray,
-                   NetCDFArray,
-                   RaggedContiguousArray,
-                   RaggedIndexedArray,
-                   RaggedIndexedContiguousArray,
+from .data import (
+    Data,
+    GatheredArray,
+    NetCDFArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
 )
 
 
@@ -118,4 +120,3 @@ def implementation():
 
     '''
     return _implementation.copy()
-

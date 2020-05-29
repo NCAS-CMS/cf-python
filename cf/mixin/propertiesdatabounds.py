@@ -99,7 +99,7 @@ class PropertiesDataBounds(PropertiesData):
         # Subspace the interior ring array, if there is one.
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-             new.set_interior_ring(interior_ring[tuple(indices)], copy=False)
+            new.set_interior_ring(interior_ring[tuple(indices)], copy=False)
 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
