@@ -4487,8 +4487,8 @@ class Field(mixin.PropertiesData,
 
             y.Units = x.Units
 
-            all_areas = ((x[...,:-1] * y[..., 1:]).sum(-1, squeeze=True) -
-                         (x[..., 1:] * y[...,:-1]).sum(-1, squeeze=True))
+            all_areas = ((x[..., :-1] * y[..., 1:]).sum(-1, squeeze=True) -
+                         (x[..., 1:] * y[..., :-1]).sum(-1, squeeze=True))
 
             for i, (parts_x, parts_y) in enumerate(zip(x, y)):
                 for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
@@ -4790,7 +4790,7 @@ class Field(mixin.PropertiesData,
                                                   return_areas=True)
 
             if measure:
-                delta_z = abs(z[..., 1] - z[ ..., 0])
+                delta_z = abs(z[..., 1] - z[..., 0])
                 delta_z.squeeze(axis=-1, inplace=True)
         # --- End: if
 
@@ -4889,10 +4889,10 @@ class Field(mixin.PropertiesData,
         cos_phi = data_phi.cos()
         sin_phi = data_phi.sin()
 
-        cos_phi_1 = cos_phi[...,  :-1]
+        cos_phi_1 = cos_phi[..., :-1]
         cos_phi_2 = cos_phi[..., 1:]
 
-        sin_phi_1 = sin_phi[...,  :-1]
+        sin_phi_1 = sin_phi[..., :-1]
         sin_phi_2 = sin_phi[..., 1:]
 
         cos_delta_lambda = delta_lambda.cos()
@@ -4976,7 +4976,7 @@ class Field(mixin.PropertiesData,
         if not dim.has_bounds():
             # Dimension coordinate has no bounds
             if auto:
-                print (999)
+                print(999)
                 return False
 
             raise ValueError(
@@ -10527,7 +10527,7 @@ class Field(mixin.PropertiesData,
                                        domain_axes=collapse_axes,
                                        input_axes=axes_in,
                                        within=within, over=over,
-                                       verbose=verbose )
+                                       verbose=verbose)
         # --- End: for
 
         # ------------------------------------------------------------
