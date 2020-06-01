@@ -531,7 +531,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return v
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -1742,7 +1741,6 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.flatten(axes, inplace=True)
 
         return v
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled

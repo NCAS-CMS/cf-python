@@ -3065,8 +3065,8 @@ place.
         dtype = d['dtype']
         self._dtype = dtype
 #        print ('P45 asdasdasds', dtype)
-        self.Units       = units
-        self._axes       = axes
+        self.Units = units
+        self._axes = axes
 
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
@@ -9957,7 +9957,7 @@ False
 
             size = array.size
             if size >= 1:
-                end  = start + size
+                end = start + size
                 comp[start:end] = array
                 start = end
 
@@ -14248,7 +14248,6 @@ False
             self, 'files', "Use method 'get_filenames' instead.",
             version='3.4.0'
         )  # pragma: no cover
-
 
     @property
     def unsafe_array(self):

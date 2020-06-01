@@ -15,17 +15,17 @@ from .decorators import _deprecated_kwarg_check
 
 
 # Define some useful units
-_calendar_years  = Units('calendar_years')
+_calendar_years = Units('calendar_years')
 _calendar_months = Units('calendar_months')
-_days            = Units('days')
-_hours           = Units('hours')
-_minutes         = Units('minutes')
-_seconds         = Units('seconds')
+_days = Units('days')
+_hours = Units('hours')
+_minutes = Units('minutes')
+_seconds = Units('seconds')
 
 # Define some useful constants
-_one_year   = Data(1, 'calendar_years')
-_one_day    = Data(1, 'day')
-_one_hour   = Data(1, 'hour')
+_one_year = Data(1, 'calendar_years')
+_one_day = Data(1, 'day')
+_one_hour = Data(1, 'hour')
 _one_minute = Data(1, 'minute')
 
 # Default month lengths in days
