@@ -548,7 +548,7 @@ grouped collapse. The groups do not need to be created from adjacent
 cells, as would be the case when creating 12 multi-annual monthly
 means from a timeseries of 120 months.
 
-Selected statistics for overalapping groups can be calculated with the
+Selected statistics for overlapping groups can be calculated with the
 `~cf.Field.moving_window` method of the field construct.
 
 The *group* keyword of `~Field.collapse` defines the size of the
@@ -1678,12 +1678,12 @@ they have different standard names.
 The :ref:`domain <domain>` metadata constructs of the result of a
 successful arithmetical operation between two field constructs are
 unambiguously well defined: The domain metadata constructs of the
-result of a succesful operation are copied from the left hand side
+result of a successful operation are copied from the left hand side
 (LHS) operand, except when a coordinate construct in the LHS operand
 has size 1 and the corresponding coordinate construct in right hand
 side (RHS) field construct operand has size greater than 1. In this
 case the coordinate construct from the RHS operand is used in the
-result, to match up with the data broadcasting that will have occured
+result, to match up with the data broadcasting that will have occurred
 during the operation.
 
 .. _ambiguous-result:
@@ -1854,12 +1854,12 @@ result, which also has no units.
 The :ref:`domain <domain>` metadata constructs of the result of a
 successful relational operation between two field constructs are
 unambiguously well defined: The domain metadata constructs of the
-result of a succesful operation are copied from the left hand side
+result of a successful operation are copied from the left hand side
 (LHS) operand, except when a coordinate construct in the LHS operand
 has size 1 and the corresponding coordinate construct in right hand
 side (RHS) field construct operand has size greater than 1. In this
 case the coordinate construct from the RHS operand is used in the
-result, to match up with the data broadcasting that will have occured
+result, to match up with the data broadcasting that will have occurred
 during the operation.
 
 In circumstances when domain metadata constructs in the result can not
@@ -1882,7 +1882,7 @@ or :ref:`relational <Relational-operations>` operation are field
 constructs then the creation of the mapping of physically compatible
 dimensions relies on there being sufficient metadata. By default, the
 mapping relies on their being "strict" identities for the metadata
-constucts with multi-valued data. The strict identity is restricted
+constructs with multi-valued data. The strict identity is restricted
 `!standard_name` property (or `!id` attribute), and may be returned by
 the `!identity` method of a construct:
 
@@ -1924,7 +1924,7 @@ Operating on the field constructs' data
 :ref:`Arithmetical <Arithmetical-operations>` and :ref:`relational
 <Relational-operations>` operations between may also be carried out on
 their data instances, thereby bypassing any reference to, or checks
-on, the metadata constucts. This can be useful if there
+on, the metadata constructs. This can be useful if there
 :ref:`insufficient metadata
 <Arithmetical-and-relational-operations-with-insufficient-metadata>`
 for determining if the two field constructs are compatible; or if the
@@ -1942,7 +1942,7 @@ construct data may be changed in-place.
 It is up to the user to ensure that the data instances are consistent
 in terms of size 1 dimensions (to satisfy the `numpy broadcasting
 rules`_), dimension order and dimension direction, and that the
-resulting data is compatible with the metadata of the field constuct
+resulting data is compatible with the metadata of the field construct
 which will contain it. Automatic units conversions are, however, still
 accounted for when combining the data instances.
 
