@@ -8,6 +8,7 @@ import cfdm
 # Decorators (and helper functions for these) inherited from cfdm:
 _inplace_enabled = cfdm._inplace_enabled
 _inplace_enabled_define_and_cleanup = cfdm._inplace_enabled_define_and_cleanup
+_manage_log_level_via_verbosity = cfdm._manage_log_level_via_verbosity
 
 
 # @_deprecated_kwarg_check('i') -> example usage for decorating, using i kwarg
