@@ -1,3 +1,5 @@
+import logging
+
 from operator import __and__ as operator_and
 from operator import __or__  as operator_or
 
@@ -11,7 +13,11 @@ from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
                          _DEPRECATION_ERROR_ATTRIBUTE,
                          _DEPRECATION_ERROR_FUNCTION)
 
-from .decorators import _deprecated_kwarg_check
+from .decorators import (_deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 
 class Query:
@@ -487,58 +493,53 @@ class Query:
             return(string)
 
     @_deprecated_kwarg_check('traceback')
-    def equals(self, other, verbose=False, traceback=False):
+    @_manage_log_level_via_verbosity
+    def equals(self, other, verbose=None, traceback=False):
         '''TODO
 
         '''
         if self._compound:
             if not other._compound:
-                if verbose:
-                    print(
-                        "{}: Different compound components".format(
-                            self.__class__.__name__)
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Different compound components".format(
+                        self.__class__.__name__)
+                )  # pragma: no cover
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
-                if verbose:
-                    print(
-                        "{}: Different compound operators: {!r}, {!r}".format(
-                            self.__class__.__name__, self._bitwise_operator,
-                            other._bitwise_operator
-                        )
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Different compound operators: {!r}, {!r}".format(
+                        self.__class__.__name__, self._bitwise_operator,
+                        other._bitwise_operator
+                    )
+                )  # pragma: no cover
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
-                    if verbose:
-                        print(
-                            "{}: Different compound components".format(
-                                self.__class__.__name__)
-                        )  # pragma: no cover
-                    return False
-                if not self._compound[1].equals(other._compound[0]):
-                    if verbose:
-                        print(
-                            "{}: Different compound components".format(
-                                self.__class__.__name__)
-                        )  # pragma: no cover
-                    return False
-            elif not self._compound[1].equals(other._compound[1]):
-                if verbose:
-                    print(
+                    logger.info(
                         "{}: Different compound components".format(
                             self.__class__.__name__)
                     )  # pragma: no cover
-                return False
-
-        elif other._compound:
-            if verbose:
-                print(
+                    return False
+                if not self._compound[1].equals(other._compound[0]):
+                    logger.info(
+                        "{}: Different compound components".format(
+                            self.__class__.__name__)
+                    )  # pragma: no cover
+                    return False
+            elif not self._compound[1].equals(other._compound[1]):
+                logger.info(
                     "{}: Different compound components".format(
                         self.__class__.__name__)
                 )  # pragma: no cover
+                return False
+
+        elif other._compound:
+            logger.info(
+                "{}: Different compound components".format(
+                    self.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         for attr in ('_NotImplemented_RHS_Data_op',
@@ -548,14 +549,13 @@ class Query:
             if not _equals(getattr(self, attr, None),
                            getattr(other, attr, None),
                            verbose=verbose):
-                if verbose:
-                    print(
-                        "{}: Different {!r} attributes: {!r}, {!r}".format(
-                            self.__class__.__name__, attr,
-                            getattr(self, attr, None),
-                            getattr(other, attr, None)
-                        )
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Different {!r} attributes: {!r}, {!r}".format(
+                        self.__class__.__name__, attr,
+                        getattr(self, attr, None),
+                        getattr(other, attr, None)
+                    )
+                )  # pragma: no cover
                 return False
         # --- End: for
 

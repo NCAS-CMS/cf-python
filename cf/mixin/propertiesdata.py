@@ -1,9 +1,10 @@
 from functools import partial as functools_partial
 
+import logging
+
 from numpy import array       as numpy_array
 from numpy import result_type as numpy_result_type
 from numpy import vectorize   as numpy_vectorize
-
 
 from ..cfdatetime   import dt
 from ..functions    import equivalent              as cf_equivalent
@@ -21,7 +22,8 @@ from ..functions import _DEPRECATION_ERROR_METHOD
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
 
 
 _units_None = Units()
@@ -31,6 +33,8 @@ _year_units = ('year', 'years', 'yr')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__',
                        '__gt__', '__ge__')
+
+logger = logging.getLogger(__name__)
 
 
 class PropertiesData(Properties):
@@ -675,8 +679,9 @@ class PropertiesData(Properties):
         '''
         return other
 
+    @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, atol=None, rtol=None,
-                         verbose=False):
+                         verbose=None):
         '''TODO
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -704,9 +709,8 @@ class PropertiesData(Properties):
 
         '''
         if self.has_data() != other.has_data():
-            if verbose:
-                print("{}: Only one construct has data: {!r}, {!r}".format(
-                    self.__class__.__name__, self, other))
+            logger.info("{}: Only one construct has data: {!r}, {!r}".format(
+                self.__class__.__name__, self, other))
             return False
 
         if not self.has_data():
@@ -716,15 +720,15 @@ class PropertiesData(Properties):
         data1 = other.get_data()
 
         if data0.shape != data1.shape:
-            if verbose:
-                print("{}: Data have different shapes: {}, {}".format(
-                    self.__class__.__name__, data0.shape, data1.shape))
+            logger.info("{}: Data have different shapes: {}, {}".format(
+                self.__class__.__name__, data0.shape, data1.shape))
             return False
 
         if not data0.Units.equivalent(data1.Units):
-            if verbose:
-                print("{}: Data have non-equivalent units: {!r}, {!r}".format(
-                    self.__class__.__name__, data0.Units, data1.Units))
+            logger.info(
+                "{}: Data have non-equivalent units: {!r}, {!r}".format(
+                self.__class__.__name__, data0.Units, data1.Units)
+            )
             return False
 
 #        if atol is None:
@@ -733,11 +737,10 @@ class PropertiesData(Properties):
 #            rtol = RTOL()
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
-            if verbose:
-                print(
-                    "{}: Data have non-equivalent values: {!r}, {!r}".format(
-                        self.__class__.__name__, data0, data1)
-                )
+            logger.info(
+                "{}: Data have non-equivalent values: {!r}, {!r}".format(
+                    self.__class__.__name__, data0, data1)
+            )
             return False
 
         return True
@@ -2905,7 +2908,8 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -3010,10 +3014,9 @@ class PropertiesData(Properties):
         # Check that each instance has the same Units
         try:
             if not self.Units.equals(other.Units):
-                if verbose:
-                    print("{0}: Different Units: {1!r} != {2!r}".format(
-                        self.__class__.__name__, self.Units, other.Units))
-                    return False
+                logger.info("{0}: Different Units: {1!r} != {2!r}".format(
+                    self.__class__.__name__, self.Units, other.Units))
+                return False
         except AttributeError:
             pass
 

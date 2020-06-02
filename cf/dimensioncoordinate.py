@@ -1,3 +1,5 @@
+import logging
+
 from numpy import empty       as numpy_empty
 from numpy import result_type as numpy_result_type
 
@@ -18,7 +20,11 @@ from .functions import (_DEPRECATION_ERROR_KWARGS,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecated_kwarg_check)
+                         _deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 
 class DimensionCoordinate(mixin.Coordinate,
@@ -795,7 +801,8 @@ class DimensionCoordinate(mixin.Coordinate,
 
         return old
 
-    def autoperiod(self, verbose=False):
+    @_manage_log_level_via_verbosity
+    def autoperiod(self, verbose=None):
         '''TODO Set dimensions to be cyclic.
 
     TODO A dimension is set to be cyclic if it has a unique longitude (or
@@ -822,25 +829,21 @@ class DimensionCoordinate(mixin.Coordinate,
 
         '''
         if not self.Units.islongitude:
-            if verbose:
-                print(0)
+            logger.debug(0)
             if (self.get_property('standard_name', None) not in
                     ('longitude', 'grid_longitude')):
-                if verbose:
-                    print(1)
+                logger.debug(1)
                 return False
         # --- End: if
 
         bounds = self.get_bounds(None)
         if bounds is None:
-            if verbose:
-                print(2)
+            logger.debug(2)
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
-            if verbose:
-                print(3)
+            logger.debug(3)
             return False
 
         bounds = bounds_data.array
@@ -850,8 +853,7 @@ class DimensionCoordinate(mixin.Coordinate,
         period.Units = bounds_data.Units
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
-            if verbose:
-                print(4)
+            logger.debug(4)
             return False
 
         self.period(period)

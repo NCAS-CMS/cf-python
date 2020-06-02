@@ -1,3 +1,5 @@
+import logging
+
 from numpy import argsort    as numpy_argsort
 from numpy import atleast_1d as numpy_atleast_1d
 from numpy import ndarray    as numpy_ndarray
@@ -7,7 +9,11 @@ from copy import deepcopy
 from .functions import RTOL, ATOL, equals
 from .functions import inspect as cf_inspect
 
-from .decorators import _deprecated_kwarg_check
+from .decorators import (_deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 
 class Flags:
@@ -290,8 +296,9 @@ class Flags:
             return(string)
 
     @_deprecated_kwarg_check('traceback')
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None,
-               ignore_fill_value=False, verbose=False,
+               ignore_fill_value=False, verbose=None,
                traceback=False):
         '''True if two groups of flags are logically equal, False otherwise.
 
@@ -338,13 +345,12 @@ class Flags:
         '''
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose:
-                print(
-                    "%s: Different type: %s, %s" % (
-                        self.__class__.__name__,
-                        self.__class__.__name__, other.__class__.__name__
-                    )
-                )  # pragma: no cover
+            logger.info(
+                "%s: Different type: %s, %s" % (
+                    self.__class__.__name__,
+                    self.__class__.__name__, other.__class__.__name__
+                )
+            )  # pragma: no cover
             return False
 
         self.sort()
@@ -359,11 +365,10 @@ class Flags:
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):
                 if not hasattr(other, attr):
-                    if verbose:
-                        print(
-                            "%s: Different attributes: %s" %
-                            (self.__class__.__name__, attr[1:])
-                        )  # pragma: no cover
+                    logger.info(
+                        "%s: Different attributes: %s" %
+                        (self.__class__.__name__, attr[1:])
+                    )  # pragma: no cover
                     return False
 
                 x = getattr(self, attr)
@@ -373,19 +378,17 @@ class Flags:
                     not equals(x, y, rtol=rtol, atol=atol,
                                ignore_fill_value=ignore_fill_value,
                                verbose=verbose)):
-                    if verbose:
-                        print(
-                            "%s: Different '%s': %r, %r" %
-                            (self.__class__.__name__, attr[1:], x, y)
-                        )  # pragma: no cover
+                    print(
+                        "%s: Different '%s': %r, %r" %
+                        (self.__class__.__name__, attr[1:], x, y)
+                    )  # pragma: no cover
                     return False
 
             elif hasattr(other, attr):
-                if verbose:
-                    print(
-                        "%s: Different attributes: %s" %
-                        (self.__class__.__name__, attr[1:])
-                    )  # pragma: no cover
+                print(
+                    "%s: Different attributes: %s" %
+                    (self.__class__.__name__, attr[1:])
+                )  # pragma: no cover
                 return False
         # --- End: for
 

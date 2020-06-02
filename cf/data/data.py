@@ -1,6 +1,8 @@
 from functools   import reduce
 from operator    import itemgetter
 
+import logging
+
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
 except ImportError:
@@ -116,7 +118,8 @@ from ..functions import _section
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
 
 from .abstract           import (Array,
                                  CompressedArray)
@@ -139,6 +142,9 @@ if mpi_on:
     from .. import mpi_rank
     from mpi4py.MPI import SUM as mpi_sum
 # --- End: if
+
+
+logger = logging.getLogger(__name__)
 
 
 # --------------------------------------------------------------------
@@ -10541,9 +10547,10 @@ False
         return itertools_product(*[range(0, r) for r in self._shape])
 
     @_deprecated_kwarg_check('traceback')
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, ignore_data_type=False,
-               ignore_type=False, verbose=False, traceback=False,
+               ignore_type=False, verbose=None, traceback=False,
                ignore_compression=False):
         '''True if two data arrays are logically equal, False otherwise.
 
@@ -10611,9 +10618,8 @@ False
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
-            if verbose:
-                print("{}: Different Units ({!r}, {!r}".format(
-                    self.__class__.__name__, self.Units, other.Units))
+            logger.info("{}: Different Units ({!r}, {!r}".format(
+                self.__class__.__name__, self.Units, other.Units))
             return False
 
         config = self.partition_configuration(readonly=True)
@@ -10627,12 +10633,11 @@ False
             partition.close()
 
             if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
-                if verbose:
-                    print(
-                        "{0}: Different array values (atol={1}, "
-                        "rtol={2})".format(
-                            self.__class__.__name__, atol, rtol)
-                    )
+                logger.info(
+                    "{0}: Different array values (atol={1}, "
+                    "rtol={2})".format(
+                        self.__class__.__name__, atol, rtol)
+                )
 
                 return False
         # --- End: for

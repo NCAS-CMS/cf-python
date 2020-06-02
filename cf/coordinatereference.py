@@ -1,3 +1,5 @@
+import logging
+
 import cfdm
 
 from .constants import cr_coordinates, cr_canonical_units, cr_default_values
@@ -15,10 +17,13 @@ from .functions import (_DEPRECATION_ERROR_METHOD,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecated_kwarg_check)
+                         _deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
 
 
 _units = {}
+
+logger = logging.getLogger(__name__)
 
 
 class CoordinateReference(cfdm.CoordinateReference):
@@ -275,7 +280,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return cr_default_values.get(term, 0.0)
 
     @_deprecated_kwarg_check('traceback')
-    def equivalent(self, other, atol=None, rtol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equivalent(self, other, atol=None, rtol=None, verbose=None,
                    traceback=False):
         '''True if two coordinate references are logically equal, False
     otherwise.
@@ -312,24 +318,22 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose:
-                print("{}: Different types ({!r} != {!r})".format(
-                    self.__class__.__name__,
-                    self.__class__.__name__,
-                    other.__class__.__name__)
-                )  # pragma: no cover
+            logger.info("{}: Different types ({!r} != {!r})".format(
+                self.__class__.__name__,
+                self.__class__.__name__,
+                other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
         # Check the name
         # ------------------------------------------------------------
         if self.identity() != other.identity():
-            if verbose:
-                print("{}: Different identities ({!r} != {!r})".format(
-                    self.__class__.__name__,
-                    self.identity(),
-                    other.identity()
-                ))  # pragma: no cover
+            logger.info("{}: Different identities ({!r} != {!r})".format(
+                self.__class__.__name__,
+                self.identity(),
+                other.identity()
+            ))  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -340,20 +344,18 @@ class CoordinateReference(cfdm.CoordinateReference):
         ancillaries0 = self.coordinate_conversion.domain_ancillaries()
         ancillaries1 = other.coordinate_conversion.domain_ancillaries()
         if set(ancillaries0) != set(ancillaries1):
-            if verbose:
-                print("{}: Non-equivalent domain ancillary terms".format(
-                    self.__class__.__name__)
-                )  # pragma: no cover
+            logger.info("{}: Non-equivalent domain ancillary terms".format(
+                self.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         # Check that if one term is None then so is the other
         for term, value0 in ancillaries0.items():
             if (value0 is None) != (ancillaries1[term] is None):
-                if verbose:
-                    print(
-                        "{}: Non-equivalent domain ancillary-valued "
-                        "term {!r}".format(self.__class__.__name__,  term)
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Non-equivalent domain ancillary-valued "
+                    "term {!r}".format(self.__class__.__name__,  term)
+                )  # pragma: no cover
                 return False
         # --- End: for
 
@@ -387,12 +389,11 @@ class CoordinateReference(cfdm.CoordinateReference):
                 value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
-                if verbose:
-                    print(
-                        "{}: Non-equivalent coordinate conversion parameter-"
-                        "valued term {!r}".format(
-                            self.__class__.__name__, term)
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Non-equivalent coordinate conversion parameter-"
+                    "valued term {!r}".format(
+                        self.__class__.__name__, term)
+                )  # pragma: no cover
                 return False
         # --- End: for
 
@@ -416,11 +417,10 @@ class CoordinateReference(cfdm.CoordinateReference):
                 value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
-                if verbose:
-                    print(
-                        "{}: Non-equivalent datum parameter-valued "
-                        "term {!r}".format(self.__class__.__name__, term)
-                    )  # pragma: no cover
+                logger.info(
+                    "{}: Non-equivalent datum parameter-valued "
+                    "term {!r}".format(self.__class__.__name__, term)
+                )  # pragma: no cover
                 return False
         # --- End: for
 

@@ -1,6 +1,8 @@
 from functools import reduce
 from operator  import mul
 
+import logging
+
 from numpy import size as numpy_size
 
 from . import PropertiesData
@@ -13,7 +15,8 @@ from ..functions    import (_DEPRECATION_ERROR_METHOD,
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
 
 from ..query        import Query
 from ..units        import Units
@@ -26,6 +29,8 @@ _units_None = Units()
 
 _month_units = ('month', 'months')
 _year_units = ('year', 'years', 'yr')
+
+logger = logging.getLogger(__name__)
 
 
 class PropertiesDataBounds(PropertiesData):
@@ -381,8 +386,9 @@ class PropertiesDataBounds(PropertiesData):
         else:
             return new
 
+    @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
-                         verbose=False):
+                         verbose=None):
         '''TODO
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -412,8 +418,8 @@ class PropertiesDataBounds(PropertiesData):
 
         if hasbounds != (other_bounds is not None):
             # add traceback
-            if verbose:
-                print('one has bounds, the other not TODO')  # pragma: no cover
+            logger.info(
+                'one has bounds, the other not TODO')  # pragma: no cover
             return False
 
         try:
@@ -428,20 +434,19 @@ class PropertiesDataBounds(PropertiesData):
         # Compare the data arrays
         if not super()._equivalent_data(
                 other, rtol=rtol, atol=atol, verbose=verbose):
-            if verbose:
-                print('non equivaelnt data arrays TODO')  # pragma: no cover
+            logger.info('non equivaelnt data arrays TODO')  # pragma: no cover
             return False
 
         if hasbounds:
             # Compare the bounds
-            if not self_bounds._equivalent_data(other_bounds,
-                                                rtol=rtol, atol=atol,
-                                                verbose=verbose):
-                if verbose:
-                    print('{}: Non-equivalent bounds data: {!r}, {!r}'.format(
+            if not self_bounds._equivalent_data(
+                    other_bounds, rtol=rtol, atol=atol, verbose=verbose):
+                logger.info(
+                    '{}: Non-equivalent bounds data: {!r}, {!r}'.format(
                         self.__class__.__name__, self_bounds.data,
                         other_bounds.data
-                    ))  # pragma: no cover
+                    )
+                )  # pragma: no cover
                 return False
         # --- End: if
 
