@@ -286,8 +286,10 @@ logging.basicConfig(
 logging.DETAIL = 15  # set value as an attribute as done for built-in levels
 logging.addLevelName(logging.DETAIL, 'DETAIL')
 
+
 def detail(self, message, *args, **kwargs):
     if self.isEnabledFor(logging.DETAIL):
         self._log(logging.DETAIL, message, args, **kwargs)
+
 
 logging.Logger.detail = detail

@@ -645,8 +645,7 @@ def read(files, external=None, verbose=None, warnings=False,
 
         n = len(field_list)  # pragma: no cover
         logger.info('{0} input field{1} aggregated into {2} field{3}'.format(
-            org_len, _plural(org_len),
-            n, _plural(n))
+            org_len, _plural(org_len), n, _plural(n))
         )  # pragma: no cover
     # --- End: if
 

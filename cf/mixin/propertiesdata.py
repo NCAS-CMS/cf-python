@@ -727,7 +727,7 @@ class PropertiesData(Properties):
         if not data0.Units.equivalent(data1.Units):
             logger.info(
                 "{}: Data have non-equivalent units: {!r}, {!r}".format(
-                self.__class__.__name__, data0.Units, data1.Units)
+                    self.__class__.__name__, data0.Units, data1.Units)
             )
             return False
 

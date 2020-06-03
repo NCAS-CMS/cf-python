@@ -129,6 +129,7 @@ class _Meta:
                                         'Cell_measures',
                                         'Domain_ancillaries',
                                         'Field_ancillaries'))
+
     @_manage_log_level_via_verbosity
     def __init__(
         self, f,
@@ -1058,12 +1059,12 @@ class _Meta:
     '''
         if signature:
             logger.detail('STRUCTURAL SIGNATURE:\n' +
-                  self.string_structural_signature())
+                          self.string_structural_signature())
         if self.cell_values:
             logger.detail('CANONICAL COORDINATES:\n' +
-                  self.coordinate_values())
+                          self.coordinate_values())
 
-        logger.debug('COMPLETE AGGREGATION METADATA:\n', self)
+        logger.debug('COMPLETE AGGREGATION METADATA:\n{}'.format(self))
 
     def string_structural_signature(self):
         '''TODO
@@ -1675,7 +1676,7 @@ def aggregate(fields,
 #        logger.info(hash(x[1]))
 #        for key, value in x[0]._asdict().items():
 #            if hash(value) != hash(getattr(x[1], key)):
-#                logger.info(key, ' no equal!')
+#                logger.info('{} no equal!'.format(key))
 #            if key == 'Coordinate_references' and value:
 #                for q1, q2 in zip(value, x[1].Coordinate_references):
 #                    for w1, w2 in zip(q1, q2):

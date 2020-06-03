@@ -418,8 +418,8 @@ class PropertiesDataBounds(PropertiesData):
 
         if hasbounds != (other_bounds is not None):
             # add traceback
-            logger.info(
-                'one has bounds, the other not TODO')  # pragma: no cover
+            logger.info(  # TODO: improve message
+                'One has bounds, the other does not')  # pragma: no cover
             return False
 
         try:
@@ -434,7 +434,8 @@ class PropertiesDataBounds(PropertiesData):
         # Compare the data arrays
         if not super()._equivalent_data(
                 other, rtol=rtol, atol=atol, verbose=verbose):
-            logger.info('non equivaelnt data arrays TODO')  # pragma: no cover
+            logger.info(    # TODO: improve message
+                'Non-equivalent data arrays')  # pragma: no cover
             return False
 
         if hasbounds:
