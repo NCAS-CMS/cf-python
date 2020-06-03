@@ -15,6 +15,7 @@ from scipy.ndimage import convolve1d
 
 import cf
 
+
 def reshape_array(a, axes):
     new_order = [i for i in range(a.ndim) if i not in axes]
     new_order.extend(axes)
@@ -74,13 +75,13 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_apply_masking']
+        self.test_only = ['test_Data_months_years']
 
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
 #                          'test_Data_datum',
-##                         'test_Data_ERROR',
+#                          'test_Data_ERROR',
 #                          'test_Data_array',
 #                          'test_Data_varray',
 #                          'test_Data_stats',
@@ -92,15 +93,15 @@ class DataTest(unittest.TestCase):
 #                          'test_Data_squeeze_insert_dimension',
 #                          'test_Data_months_years',
 #                          'test_Data_binary_mask',
-##                         'test_Data_CachedArray',
+#                          'test_Data_CachedArray',
 #                          'test_Data_digitize',
-##                         'test_Data_outerproduct',
-##                         'test_Data_flatten',
-##                         'test_Data_transpose',
+#                          'test_Data_outerproduct',
+#                          'test_Data_flatten',
+#                          'test_Data_transpose',
 #                          'test_Data__collapse_SHAPE',
-##                         'test_Data_range_mid_range',
-##                         'test_Data_median',
-##                         'test_Data_mean_of_upper_decile',
+#                          'test_Data_range_mid_range',
+#                          'test_Data_median',
+#                          'test_Data_mean_of_upper_decile',
 #                          'test_Data__init__dtype_mask',
 #        ]
 
@@ -124,12 +125,95 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
 
+    def test_Data_halo(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+       
+        d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+        d[-1, -1] = cf.masked
+        d[1, 1] = cf.masked
+        
+        e = d.copy()
+        self.assertIsNone(e.halo(1, inplace=True))
+        
+        e = d.halo(0)
+        self.assertTrue(d.equals(e, verbose=True))
+        
+        for i in (1, 2):    
+            e = d.halo(i)
+
+            self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1] + i*2))
+               
+            # Body
+            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=True))
+
+            # Corners
+            self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=True))
+            self.assertTrue(e[:i, -i:].equals(d[:i, -i:], verbose=True))
+            self.assertTrue(e[-i:, :i].equals(d[-i:, :i], verbose=True))
+            self.assertTrue(e[-i:, -i:].equals(d[-i:, -i:], verbose=True))
+
+        for i in (1, 2):    
+            e = d.halo(i, axes=0)
+            
+            self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1]))
+ 
+            self.assertTrue(d.equals(e[i:-i, :], verbose=True))
+
+        for j, i in zip([1, 1, 2, 2],
+                        [1, 2, 1, 2]):    
+            e = d.halo({0: j, 1: i})
+
+            self.assertTrue(e.shape == (d.shape[0] + j*2, d.shape[1] + i*2))
+
+            # Body
+            self.assertTrue(d.equals(e[j:-j, i:-i], verbose=True))
+
+            # Corners
+            self.assertTrue(e[:j, :i].equals(d[:j, :i], verbose=True))
+            self.assertTrue(e[:j, -i:].equals(d[:j, -i:], verbose=True))
+            self.assertTrue(e[-j:, :i].equals(d[-j:, :i], verbose=True))
+            self.assertTrue(e[-j:, -i:].equals(d[-j:, -i:], verbose=True))
+
+        with self.assertRaises(Exception):
+            _ = d.halo(4)
+
+#     e = d.halo(1, axes=0)
+#    
+#    >>> print(e.array)
+#    [[ 0  1  2  3]
+#     [ 0  1  2  3]
+#     [ 4 --  6  7]
+#     [ 8  9 10 --]
+#     [ 8  9 10 --]]
+#    >>> d.equals(e[1:-1, :])
+#    True
+#    >>> f = d.halo({0: 1})
+#    >>> f.equals(e)
+#    True
+#
+#    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
+#    >>> print(e.array)
+#    [[ 0  0  1  2  3  3]
+#     [ 0  0  1  2  3  3]
+#     [ 4  4 --  6  7  7]
+#     [ 8  8  9 10 -- --]
+#     [-- -- 10  9  8  8]]
+#
+#    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
+#    >>> print(e.array)
+#    [[ 3  3  2  1  0  0]
+#     [ 0  0  1  2  3  3]
+#     [ 4  4 --  6  7  7]
+#     [ 8  8  9 10 -- --]
+#     [ 8  8  9 10 -- --]]
+
     def test_Data_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         a = self.ma
-        
+
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
 
@@ -137,53 +221,53 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((a == d.array).all())
             self.assertTrue((a.mask == d.mask.array).all())
-    
+
             b = a.copy()
             e = d.apply_masking()
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where(a==0, numpy.ma.masked, a)
+
+            b = numpy.ma.where(a == 0, numpy.ma.masked, a)
             e = d.apply_masking(fill_values=[0])
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where((a==0) | (a==11), numpy.ma.masked, a)
+
+            b = numpy.ma.where((a == 0) | (a == 11), numpy.ma.masked, a)
             e = d.apply_masking(fill_values=[0, 11])
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where(a<30, numpy.ma.masked, a)
+
+            b = numpy.ma.where(a < 30, numpy.ma.masked, a)
             e = d.apply_masking(valid_min=30)
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where(a>-60, numpy.ma.masked, a)
+
+            b = numpy.ma.where(a > -60, numpy.ma.masked, a)
             e = d.apply_masking(valid_max=-60)
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where((a<-20) | (a>80), numpy.ma.masked, a)
+
+            b = numpy.ma.where((a < -20) | (a > 80), numpy.ma.masked, a)
             e = d.apply_masking(valid_range=[-20, 80])
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
+
             d.set_fill_value(70)
-    
-            b = numpy.ma.where(a==70, numpy.ma.masked, a)
+
+            b = numpy.ma.where(a == 70, numpy.ma.masked, a)
             e = d.apply_masking(fill_values=True)
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-    
-            b = numpy.ma.where((a==70) | (a<20) | (a>80),
+
+            b = numpy.ma.where((a == 70) | (a < 20) | (a > 80),
                                numpy.ma.masked, a)
             e = d.apply_masking(fill_values=True,
                                 valid_range=[20, 80])
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
-            
+
         cf.CHUNKSIZE(self.original_chunksize)
-        
+
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -306,34 +390,31 @@ class DataTest(unittest.TestCase):
         _ = d.stats(all=True)
         _ = d.stats(mean_of_upper_decile=True, range=False)
 
-
     def test_Data__init__dtype_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for m in (1, 20, True):
-            d = cf.Data([[1,2,3], [4,5,6]], mask=m)
+            d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertTrue(not d.count())
             self.assertTrue(d.shape == (2, 3))
 
         for m in (0, False):
-            d = cf.Data([[1,2,3], [4,5,6]], mask=m)
+            d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertTrue(d.count() == d.size)
             self.assertTrue(d.shape == (2, 3))
 
-
-        d = cf.Data([[1,2,3], [4,5,6]], mask=[[0], [1]])
+        d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=[[0], [1]])
         self.assertTrue(d.count() == 3)
         self.assertTrue(d.shape == (2, 3))
 
-        d = cf.Data([[1,2,3], [4,5,6]], mask=[0, 1, 1])
+        d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=[0, 1, 1])
         self.assertTrue(d.count() == 2)
         self.assertTrue(d.shape == (2, 3))
 
-        d = cf.Data([[1,2,3], [4,5,6]], mask=[[0, 1, 0], [1, 0, 1]])
+        d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=[[0, 1, 0], [1, 0, 1]])
         self.assertTrue(d.count() == 3)
         self.assertTrue(d.shape == (2, 3))
-
 
         a = numpy.ma.array([[280.0,   -99,   -99,   -99],
                             [281.0, 279.0, 278.0, 279.0]],
@@ -351,10 +432,10 @@ class DataTest(unittest.TestCase):
                     mask=[[0, 1, 1, 1],
                           [0, 0, 0, 0]])
 
-        self.assertTrue(d.dtype==a.dtype)
-        self.assertTrue((d.array==a).all())
-        self.assertTrue(d.mask.shape==a.mask.shape)
-        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+        self.assertTrue(d.dtype == a.dtype)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue(d.mask.shape == a.mask.shape)
+        self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
         a = numpy.array([[280.0,   -99,   -99,   -99],
                          [281.0, 279.0, 278.0, 279.0]],
@@ -365,11 +446,10 @@ class DataTest(unittest.TestCase):
                      [281, 279, 278, 279]],
                     dtype=float)
 
-        self.assertTrue(d.dtype==a.dtype)
-        self.assertTrue((d.array==a).all())
-        self.assertTrue(d.mask.shape==mask.shape)
-        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
-
+        self.assertTrue(d.dtype == a.dtype)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue(d.mask.shape == mask.shape)
+        self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
         # Mask broadcasting
         a = numpy.ma.array([[280.0,   -99,   -99,   -99],
@@ -383,15 +463,14 @@ class DataTest(unittest.TestCase):
                     dtype=float,
                     mask=[0, 1, 1, 0])
 
-        self.assertTrue(d.dtype==a.dtype)
-        self.assertTrue((d.array==a).all())
-        self.assertTrue(d.mask.shape==a.mask.shape)
-        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+        self.assertTrue(d.dtype == a.dtype)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue(d.mask.shape == a.mask.shape)
+        self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
     def test_Data_digitize(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
 
         for a in [numpy.arange(120).reshape(3, 2, 20),
                   numpy.ma.arange(120).reshape(3, 2, 20)]:
@@ -472,11 +551,11 @@ class DataTest(unittest.TestCase):
             # now do for subsets of axes TODO
 
             for axes in self.axes_combinations:
-#                print('axes=', axes, 'd._pmshape=', d._pmshape, d.shape)
+                # print('axes=', axes, 'd._pmshape=', d._pmshape, d.shape)
                 e = d.flatten(axes)
 
                 if len(axes) <= 1:
-                    shape  = d.shape
+                    shape = d.shape
                 else:
                     shape = [n for i, n in enumerate(d.shape) if i not in axes]
                     shape.insert(
@@ -577,7 +656,7 @@ class DataTest(unittest.TestCase):
 
             fm = cf.Data.full((70, 4), fill_value=False, dtype=bool)
 
-            fm[ 0, 0] = True
+            fm[0, 0] = True
             fm[10, 2] = True
             fm[20, 1] = True
 
@@ -611,7 +690,7 @@ class DataTest(unittest.TestCase):
             e = cf.Data(numpy.arange(120, 280).reshape(40, 4))
 
             fm = cf.Data.full((70, 4), False, bool)
-            fm[ 0, 0] = True
+            fm[0, 0] = True
             fm[10, 2] = True
             fm[20, 1] = True
             fm[50, 0] = True
@@ -750,11 +829,12 @@ class DataTest(unittest.TestCase):
                 d = cf.Data(a.filled(), 'm')
                 d.hardmask = hardmask
 
-                for n, (j, i) in enumerate(((34, 23), (0, 0), (-1, -1),
-                                            (slice(40, 50), slice(58, 60)),
-                                            (Ellipsis, slice(None)),
-                                            (slice(None), Ellipsis),
-                                        )):
+                for n, (j, i) in enumerate((
+                     (34, 23), (0, 0), (-1, -1),
+                     (slice(40, 50), slice(58, 60)),
+                     (Ellipsis, slice(None)),
+                     (slice(None), Ellipsis),
+                )):
                     n = -n-1
                     for dvalue, avalue in ((n, n),
                                            (cf.masked, numpy.ma.masked),
@@ -765,9 +845,17 @@ class DataTest(unittest.TestCase):
                         d[j, i] = dvalue
                         a[j, i] = avalue
 
-                        self.assertIn((d.array == a).all(), (True, numpy.ma.masked), message)
-                        self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(),
-                                        'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
+                        self.assertIn(
+                            (d.array == a).all(),
+                            (True, numpy.ma.masked),
+                            message
+                        )
+                        self.assertTrue(
+                            (d.mask.array == numpy.ma.getmaskarray(a)).all(),
+                            ('d.mask.array=' + repr(d.mask.array) +
+                             '\nnumpy.ma.getmaskarray(a)=' +
+                             repr(numpy.ma.getmaskarray(a)))
+                        )
                 # --- End: for
 
                 a = numpy.ma.arange(3000).reshape(50, 60)
@@ -780,16 +868,20 @@ class DataTest(unittest.TestCase):
                 d.hardmask = hardmask
 
                 (j, i) = (slice(0, 2), slice(0, 3))
-                array = numpy.array([[1, 2, 6],[3, 4, 5]])*-1
+                array = numpy.array([[1, 2, 6], [3, 4, 5]])*-1
                 for dvalue in (array,
                                numpy.ma.masked_where(array < -2, array),
                                array):
                     message = 'cf.Data[%s, %s]=%s failed' % (j, i, dvalue)
                     d[j, i] = dvalue
                     a[j, i] = dvalue
-                    
-                    self.assertIn((d.array == a).all(), (True, numpy.ma.masked), message)
-                    self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
+
+                    self.assertIn(
+                        (d.array == a).all(), (True, numpy.ma.masked), message)
+                    self.assertTrue(
+                        (d.mask.array == numpy.ma.getmaskarray(a)).all(),
+                        message
+                    )
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -833,7 +925,7 @@ class DataTest(unittest.TestCase):
             cf.CHUNKSIZE(chunksize)
             d = cf.Data(numpy.array([[0] * 1000]))
             self.assertTrue(not d.all())
-            d[-1,-1] = 1
+            d[-1, -1] = 1
             self.assertFalse(d.all())
             d[...] = 1
             self.assertTrue(d.all())
@@ -850,7 +942,7 @@ class DataTest(unittest.TestCase):
             cf.CHUNKSIZE(chunksize)
             d = cf.Data(numpy.array([[0] * 1000]))
             self.assertFalse(d.any())
-            d[-1,-1] = 1
+            d[-1, -1] = 1
             self.assertTrue(d.any())
             d[...] = 1
             self.assertTrue(d.any())
@@ -879,9 +971,9 @@ class DataTest(unittest.TestCase):
             cf.CHUNKSIZE(chunksize)
             d = cf.Data(b, 'km')
             a = d.array
-            a[0,0,0,0] = -999
+            a[0, 0, 0, 0] = -999
             a2 = d.array
-            self.assertTrue(a2[0,0,0,0] == 0)
+            self.assertTrue(a2[0, 0, 0, 0] == 0)
             self.assertTrue(a2.shape == b.shape)
             self.assertTrue((a2 == b).all())
             self.assertFalse((a2 == a).all())
@@ -942,7 +1034,6 @@ class DataTest(unittest.TestCase):
             d.clip(c0*100, c1*100, units='10m', inplace=True)
             self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
 
-
         cf.CHUNKSIZE(self.original_chunksize)
 
     def test_Data_months_years(self):
@@ -953,33 +1044,39 @@ class DataTest(unittest.TestCase):
         d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2000,2,1, 10,29,3,831223, calendar=calendar),
-                         cf.dt(2000,3,1, 20,58,7,662447, calendar=calendar)])
+        a = numpy.array([
+            cf.dt(2000, 2, 1, 10, 29, 3, 831223, calendar=calendar),
+            cf.dt(2000, 3, 1, 20, 58, 7, 662447, calendar=calendar)
+        ])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2000,1,31, 10,29,3,831203, calendar=calendar),
-                         cf.dt(2000,3, 1, 20,58,7,662447, calendar=calendar)])
+        a = numpy.array([
+            cf.dt(2000, 1, 31, 10, 29, 3, 831203, calendar=calendar),
+            cf.dt(2000, 3, 1, 20, 58, 7, 662447, calendar=calendar)
+        ])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = '360_day'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2001,1, 6,  5,48,45,974677, calendar=calendar),
-                         cf.dt(2002,1,11, 11,37,31,949355, calendar=calendar)])
+        a = numpy.array([
+            cf.dt(2001, 1, 6, 5, 48, 45, 974677, calendar=calendar),
+            cf.dt(2002, 1, 11, 11, 37, 31, 949355, calendar=calendar)
+        ])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2000,12,31,  5,48,45,974687,
+        a = numpy.array([cf.dt(2000, 12, 31, 5, 48, 45, 974687,
                                calendar=calendar),
-                         cf.dt(2001,12,31, 11,37,31,949375,
+                         cf.dt(2001, 12, 31, 11, 37, 31, 949375,
                                calendar=calendar)])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
@@ -1155,7 +1252,7 @@ class DataTest(unittest.TestCase):
                 e = d.round(decimals=decimals)
 
                 self.assertIsNone(d.round(decimals=decimals, inplace=True))
-                
+
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
@@ -1170,16 +1267,16 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             d = cf.Data(5, 'metre')
-            self.assertTrue(d.datum()   == 5)
-            self.assertTrue(d.datum(0)  == 5)
+            self.assertTrue(d.datum() == 5)
+            self.assertTrue(d.datum(0) == 5)
             self.assertTrue(d.datum(-1) == 5)
 
             for d in [cf.Data([4, 5, 6, 1, 2, 3], 'metre'),
                       cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')]:
-                self.assertTrue(d.datum(0)  == 4)
+                self.assertTrue(d.datum(0) == 4)
                 self.assertTrue(d.datum(-1) == 3)
                 for index in d.ndindex():
-                    self.assertTrue(d.datum(index)  == d.array[index].item())
+                    self.assertTrue(d.datum(index) == d.array[index].item())
                     self.assertTrue(
                         d.datum(*index) == d.array[index].item(),
                         '{}, {}'.format(
@@ -1217,7 +1314,7 @@ class DataTest(unittest.TestCase):
             for axes, indices in zip(
                     (0, 1, [0, 1]),
                     ((slice(None, None, -1), slice(None)),
-                     (slice(None)          , slice(None, None, -1)),
+                     (slice(None), slice(None, None, -1)),
                      (slice(None, None, -1), slice(None, None, -1)))
             ):
                 array = array[indices]
@@ -1232,25 +1329,25 @@ class DataTest(unittest.TestCase):
         d.chunk(total=[0], omit_axes=[1, 2])
 
         self.assertTrue(d._pmshape == (3,))
-        self.assertTrue(d[0].shape  == (1, 4, 5))
+        self.assertTrue(d[0].shape == (1, 4, 5))
         self.assertTrue(d[-1].shape == (1, 4, 5))
-        self.assertTrue(d[0].maximum()  == 4*5)
+        self.assertTrue(d[0].maximum() == 4*5)
         self.assertTrue(d[-1].maximum() == 3*4*5)
 
         for i in (2, 1):
             e = d.flip(i)
             self.assertTrue(e._pmshape == (3,))
-            self.assertTrue(e[0].shape  == (1, 4, 5))
+            self.assertTrue(e[0].shape == (1, 4, 5))
             self.assertTrue(e[-1].shape == (1, 4, 5))
-            self.assertTrue(e[0].maximum()  == 4*5)
+            self.assertTrue(e[0].maximum() == 4*5)
             self.assertTrue(e[-1].maximum() == 3*4*5)
 
         i = 0
         e = d.flip(i)
         self.assertTrue(e._pmshape == (3,))
-        self.assertTrue(e[0].shape  == (1, 4, 5))
+        self.assertTrue(e[0].shape == (1, 4, 5))
         self.assertTrue(e[-1].shape == (1, 4, 5))
-        self.assertTrue(e[0].maximum()  == 3*4*5)
+        self.assertTrue(e[0].maximum() == 3*4*5)
         self.assertTrue(e[-1].maximum() == 4*5)
 
     def test_Data_max(self):
@@ -1379,7 +1476,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1403,7 +1499,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_unique(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1418,7 +1513,6 @@ class DataTest(unittest.TestCase):
                 (d.unique() == cf.Data([1, 2, 4], 'metre')).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_varray(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1443,16 +1537,15 @@ class DataTest(unittest.TestCase):
             d = cf.Data(b, 'km')
             e = d.copy()
             v = e.varray
-            v[0,0,0,0] = -999
+            v[0, 0, 0, 0] = -999
             v = e.varray
-            self.assertTrue(v[0,0,0,0] == -999)
+            self.assertTrue(v[0, 0, 0, 0] == -999)
             self.assertTrue(v.shape == b.shape)
             self.assertFalse((v == b).all())
             v[0, 0, 0, 0] = 0
             self.assertTrue((v == b).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1477,7 +1570,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1486,8 +1578,8 @@ class DataTest(unittest.TestCase):
             cf.CHUNKSIZE(chunksize)
             array = numpy.arange(3*4*5).reshape(3, 4, 5) + 1
 
-            arrays =  (numpy.arange(3*4*5).reshape(3, 4, 5) + 1.0,
-                       numpy.arange(3*4*5).reshape(3, 4, 5) + 1)
+            arrays = (numpy.arange(3*4*5).reshape(3, 4, 5) + 1.0,
+                      numpy.arange(3*4*5).reshape(3, 4, 5) + 1)
 
             for a0 in arrays:
                 for a1 in arrays[::-1]:
@@ -1496,20 +1588,20 @@ class DataTest(unittest.TestCase):
                     x = cf.Data(a1, 'metre')
 
                     message = 'Failed in {!r}+{!r}'.format(d, x)
-                    self.assertTrue((d +  x).equals(
-                        cf.Data(a0 +  a1, 'm' ), verbose=1), message)
+                    self.assertTrue((d + x).equals(
+                        cf.Data(a0 + a1, 'm'), verbose=1), message)
                     message = 'Failed in {!r}*{!r}'.format(d, x)
-                    self.assertTrue((d *  x).equals(
-                        cf.Data(a0 *  a1, 'm2'), verbose=1), message)
+                    self.assertTrue((d * x).equals(
+                        cf.Data(a0 * a1, 'm2'), verbose=1), message)
                     message = 'Failed in {!r}/{!r}'.format(d, x)
-                    self.assertTrue((d /  x).equals(
-                        cf.Data(a0 /  a1, '1' ), verbose=1), message)
+                    self.assertTrue((d / x).equals(
+                        cf.Data(a0 / a1, '1'), verbose=1), message)
                     message = 'Failed in {!r}-{!r}'.format(d, x)
-                    self.assertTrue((d -  x).equals(
-                        cf.Data(a0 -  a1, 'm' ), verbose=1), message)
+                    self.assertTrue((d - x).equals(
+                        cf.Data(a0 - a1, 'm'), verbose=1), message)
                     message = 'Failed in {!r}//{!r}'.format(d, x)
                     self.assertTrue((d // x).equals(
-                        cf.Data(a0 // a1, '1' ), verbose=1), message)
+                        cf.Data(a0 // a1, '1'), verbose=1), message)
 
                     message = 'Failed in {!r}.__truediv__//{!r}'.format(d, x)
                     self.assertTrue(d.__truediv__(x).equals(
@@ -1518,7 +1610,7 @@ class DataTest(unittest.TestCase):
 
                     message = 'Failed in {!r}__rtruediv__{!r}'.format(d, x)
                     self.assertTrue(d.__rtruediv__(x).equals(
-                        cf.Data(array.__rtruediv__(array), '1'), verbose=1) ,
+                        cf.Data(array.__rtruediv__(array), '1'), verbose=1),
                                     message)
 
                     try:
@@ -1534,24 +1626,24 @@ class DataTest(unittest.TestCase):
                 d = cf.Data(a0, 'metre')
                 for x in (2, 2.0,):
                     message = 'Failed in {!r}+{}'.format(d, x)
-                    self.assertTrue((d +  x).equals(
-                        cf.Data(a0 +  x, 'm' ), verbose=1),
+                    self.assertTrue((d + x).equals(
+                        cf.Data(a0 + x, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {!r}*{}'.format(d, x)
-                    self.assertTrue((d *  x).equals(
-                        cf.Data(a0 *  x, 'm' ), verbose=1),
+                    self.assertTrue((d * x).equals(
+                        cf.Data(a0 * x, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {!r}/{}'.format(d, x)
-                    self.assertTrue((d /  x).equals(
-                        cf.Data(a0 /  x, 'm' ), verbose=1),
+                    self.assertTrue((d / x).equals(
+                        cf.Data(a0 / x, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {!r}-{}'.format(d, x)
-                    self.assertTrue((d -  x).equals(
-                        cf.Data(a0 -  x, 'm' ), verbose=1),
+                    self.assertTrue((d - x).equals(
+                        cf.Data(a0 - x, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {!r}//{}'.format(d, x)
                     self.assertTrue((d // x).equals(
-                        cf.Data(a0 // x, 'm' ), verbose=1),
+                        cf.Data(a0 // x, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {!r}**{}'.format(d, x)
                     self.assertTrue((d ** x).equals(
@@ -1563,31 +1655,31 @@ class DataTest(unittest.TestCase):
                                     message)
                     message = 'Failed in {!r}.__rtruediv__{}'.format(d, x)
                     self.assertTrue(d.__rtruediv__(x).equals(
-                        cf.Data(a0.__rtruediv__(x),'m-1'), verbose=1),
+                        cf.Data(a0.__rtruediv__(x), 'm-1'), verbose=1),
                                     message)
-                    
+
                     message = 'Failed in {}+{!r}'.format(x, d)
-                    self.assertTrue((x +  d).equals(
-                        cf.Data(x +  a0, 'm'  ), verbose=1),
+                    self.assertTrue((x + d).equals(
+                        cf.Data(x + a0, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {}*{!r}'.format(x, d)
-                    self.assertTrue((x *  d).equals(
-                        cf.Data(x *  a0, 'm'  ), verbose=1),
+                    self.assertTrue((x * d).equals(
+                        cf.Data(x * a0, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {}/{!r}'.format(x, d)
-                    self.assertTrue((x /  d).equals(
-                        cf.Data(x /  a0, 'm-1'), verbose=1),
+                    self.assertTrue((x / d).equals(
+                        cf.Data(x / a0, 'm-1'), verbose=1),
                                     message)
                     message = 'Failed in {}-{!r}'.format(x, d)
-                    self.assertTrue((x -  d).equals(
-                        cf.Data(x -  a0, 'm'  ), verbose=1),
+                    self.assertTrue((x - d).equals(
+                        cf.Data(x - a0, 'm'), verbose=1),
                                     message)
                     message = 'Failed in {}//{!r}\n{!r}\n{!r}'.format(
                         x, d, x//d, x//a0)
                     self.assertTrue((x // d).equals(
                         cf.Data(x // a0, 'm-1'), verbose=1),
                                     message)
-                    
+
                     try:
                         x ** d
                     except:
@@ -1683,19 +1775,19 @@ class DataTest(unittest.TestCase):
                 # --- End: for
 
                 for x in (cf.Data(2, 'metre'), cf.Data(2.0, 'metre')):
-                    self.assertTrue((d +  x).equals(
-                        cf.Data(a0 +  x.datum(), 'm' ), verbose=1))
-                    self.assertTrue((d *  x).equals(
-                        cf.Data(a0 *  x.datum(), 'm2'), verbose=1))
-                    self.assertTrue((d /  x).equals(
-                        cf.Data(a0 /  x.datum(), '1' ), verbose=1))
-                    self.assertTrue((d -  x).equals(
-                        cf.Data(a0 -  x.datum(), 'm' ), verbose=1))
+                    self.assertTrue((d + x).equals(
+                        cf.Data(a0 + x.datum(), 'm'), verbose=1))
+                    self.assertTrue((d * x).equals(
+                        cf.Data(a0 * x.datum(), 'm2'), verbose=1))
+                    self.assertTrue((d / x).equals(
+                        cf.Data(a0 / x.datum(), '1'), verbose=1))
+                    self.assertTrue((d - x).equals(
+                        cf.Data(a0 - x.datum(), 'm'), verbose=1))
                     self.assertTrue((d // x).equals(
-                        cf.Data(a0 // x.datum(), '1' ), verbose=1))
+                        cf.Data(a0 // x.datum(), '1'), verbose=1))
 
                     try:
-                       d ** x
+                        d ** x
                     except:
                         pass
                     else:
@@ -1711,19 +1803,20 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        A = [numpy.array(3),
-             numpy.array( [3]),
-             numpy.array( [3]).reshape(1, 1),
-             numpy.array( [3]).reshape(1, 1, 1),
-             numpy.arange(  5).reshape(5, 1),
-             numpy.arange(  5).reshape(1, 5),
-             numpy.arange(  5).reshape(1, 5, 1),
-             numpy.arange(  5).reshape(5, 1, 1),
-             numpy.arange(  5).reshape(1, 1, 5),
-             numpy.arange( 25).reshape(1, 5, 5),
-             numpy.arange( 25).reshape(5, 1, 5),
-             numpy.arange( 25).reshape(5, 5, 1),
-             numpy.arange(125).reshape(5, 5, 5),
+        A = [
+            numpy.array(3),
+            numpy.array([3]),
+            numpy.array([3]).reshape(1, 1),
+            numpy.array([3]).reshape(1, 1, 1),
+            numpy.arange(5).reshape(5, 1),
+            numpy.arange(5).reshape(1, 5),
+            numpy.arange(5).reshape(1, 5, 1),
+            numpy.arange(5).reshape(5, 1, 1),
+            numpy.arange(5).reshape(1, 1, 5),
+            numpy.arange(25).reshape(1, 5, 5),
+            numpy.arange(25).reshape(5, 1, 5),
+            numpy.arange(25).reshape(5, 5, 1),
+            numpy.arange(125).reshape(5, 5, 5),
         ]
 
         for chunksize in self.chunk_sizes:
@@ -1744,7 +1837,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        return # !!!!!!
+        return  # !!!!!!
 
 #        print ('\n')
 #        print(cf.Data.seterr())
@@ -1906,21 +1999,26 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(
                     e.shape == shape,
                     "{}, axes={}, squeezed bad shape: {} != {}".format(
-                        h, axes, e.shape, shape))
+                        h, axes, e.shape, shape)
+                )
 
             e = getattr(d, h)(squeeze=True,
                               _preserve_partitions=False)
             shape = ()
-            self.assertTrue(e.shape == shape,
+            self.assertTrue(
+                e.shape == shape,
                 "{}, axes={}, squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape))
+                    h, None, e.shape, shape)
+            )
 
             e = getattr(d, h)(squeeze=False,
                               _preserve_partitions=False)
             shape = (1,) * d.ndim
-            self.assertTrue(e.shape == shape,
+            self.assertTrue(
+                e.shape == shape,
                 "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape))
+                    h, None, e.shape, shape)
+            )
         # --- End: for
 
     def test_Data_max_min_sum_sum_of_squares(self):
@@ -1946,9 +2044,10 @@ class DataTest(unittest.TestCase):
                                           _preserve_partitions=pp)
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            ("%s, axis=%s, unweighted, unmasked "
-                             "\ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, e.array, b, e.array-b)))
+                            "%s, axis=%s, unweighted, unmasked "
+                            "\ne=%s, \nb=%s, \ne-b=%s" % (
+                                h, axes, e.array, b, e.array-b)
+                        )
                 # --- End: for
 
                 # unweighted, masked
@@ -1956,8 +2055,8 @@ class DataTest(unittest.TestCase):
                 for np, h in zip(
                         (numpy.ma.sum, numpy.ma.amin, numpy.ma.amax,
                          numpy.ma.sum),
-                        (     'sum',     'min',     'max',
-                              'sum_of_squares')):
+                        ('sum', 'min', 'max', 'sum_of_squares')
+                ):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
                         if h == 'sum_of_squares':
@@ -1970,16 +2069,19 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
-                            "\ne.mask==b.mask=%s" %
-                            (h, axes, e.mask.array,
-                             b.mask, e.mask.array==b.mask)))
+                            "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                            "\ne.mask==b.mask=%s" % (
+                                h, axes, e.mask.array, b.mask,
+                                e.mask.array == b.mask
+                            )
+                        )
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            ("%s, axis=%s, unweighted, masked "
-                             "\ne=%s, \nb=%s, \ne-b=%s" %
-                             (h, axes, e.array, b, e.array-b)))
+                            "%s, axis=%s, unweighted, masked "
+                            "\ne=%s, \nb=%s, \ne-b=%s" % (
+                                 h, axes, e.array, b, e.array-b)
+                        )
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2026,7 +2128,7 @@ class DataTest(unittest.TestCase):
                         (e.mask.array == b.mask).all(),
                         ("median, axis=%s, \ne.mask=%s, \nb.mask=%s, "
                          "\ne.mask==b.mask=%s" %
-                         (axes, e.mask.array, b.mask, e.mask.array==b.mask)))
+                         (axes, e.mask.array, b.mask, e.mask.array == b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2092,8 +2194,8 @@ class DataTest(unittest.TestCase):
                         (e.mask.array == b.mask).all(),
                         ("mean_of_upper_decile, axis=%s, \ne.mask=%s, "
                          "\nb.mask=%s, \ne.mask==b.mask=%s" %
-                         (axes, e.mask.array, b.mask, e.mask.array==b.mask)))
-                    
+                         (axes, e.mask.array, b.mask, e.mask.array == b.mask)))
+
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         ("mean_of_upper_decile, axis=%s, unweighted, masked "
@@ -2154,7 +2256,7 @@ class DataTest(unittest.TestCase):
                             ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
                              "\ne.mask==b.mask=%s" %
                              (h, axes, e.mask.array, b.mask,
-                              e.mask.array==b.mask)))
+                              e.mask.array == b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2206,7 +2308,7 @@ class DataTest(unittest.TestCase):
                         ("axis={} masked, \ne.mask={}, \nb.mask={}, "
                          "\ne.mask==b.mask={}".format(
                              axes, e.mask.array, b.mask,
-                             e.mask.array==b.mask)))
+                             e.mask.array == b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2241,7 +2343,7 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
-                for a, h in zip((self.mones      , self.mones),
+                for a, h in zip((self.mones, self.mones),
                                 ('sum_of_weights', 'sum_of_weights2')):
                     for axes in self.axes_combinations:
                         b = reshape_array(a, axes)
@@ -2255,7 +2357,7 @@ class DataTest(unittest.TestCase):
                              "\ne.mask=%s, \nb.mask=%s, "
                              "\ne.mask==b.mask=%s" % (
                                  h, axes, pp, e.mask.array, b.mask,
-                                 e.mask.array==b.mask)))
+                                 e.mask.array == b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2267,7 +2369,7 @@ class DataTest(unittest.TestCase):
                 # weighted, masked
                 d = cf.Data(self.ma)
                 x = cf.Data(self.w)
-                for a, h in zip((self.mw         , self.mw*self.mw),
+                for a, h in zip((self.mw, self.mw*self.mw),
                                 ('sum_of_weights', 'sum_of_weights2')):
                     for axes in self.axes_combinations:
                         a = a.copy()
@@ -2282,7 +2384,7 @@ class DataTest(unittest.TestCase):
                             ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
                              "\ne.mask==b.mask=%s" %
                              (h, axes, e.mask.array, b.mask,
-                              e.mask.array==b.mask)))
+                              e.mask.array == b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2292,7 +2394,7 @@ class DataTest(unittest.TestCase):
 
                 # weighted, unmasked
                 d = cf.Data(self.a)
-                for a, h in zip((self.w          , self.w*self.w),
+                for a, h in zip((self.w, self.w*self.w),
                                 ('sum_of_weights', 'sum_of_weights2')):
                     for axes in self.axes_combinations:
                         b = reshape_array(a, axes)
@@ -2313,11 +2415,11 @@ class DataTest(unittest.TestCase):
             return
 
         for absolute in (False, True):
-            a  = self.a
+            a = self.a
             ma = self.ma
             method = 'mean'
             if absolute:
-                a  = numpy.absolute(a)
+                a = numpy.absolute(a)
                 ma = numpy.absolute(ma)
                 method = 'mean_absolute_value'
 
@@ -2368,7 +2470,7 @@ class DataTest(unittest.TestCase):
                         ("%s unweighted, masked axis=%s, \ne.mask=%s, "
                          "\nb.mask=%s, \ne.mask==b.mask=%s" %
                          (method, axes, e.mask.array, b.mask,
-                          e.mask.array==b.mask)))
+                          e.mask.array == b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2391,7 +2493,7 @@ class DataTest(unittest.TestCase):
                         ("%s weighted, masked axis=%s, \ne.mask=%s, "
                          "\nb.mask=%s, \ne.mask==b.mask=%s" %
                          (method, axes, e.mask.array, b.mask,
-                          e.mask.array==b.mask)))
+                          e.mask.array == b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2451,7 +2553,7 @@ class DataTest(unittest.TestCase):
                     (e.mask.array == b.mask).all(),
                     ("axis={}, unweighted, masked \ne.mask={}, \nb.mask={}, "
                      "\ne.mask==b.mask={}".format(
-                         axes, e.mask.array, b.mask, e.mask.array==b.mask)))
+                         axes, e.mask.array, b.mask, e.mask.array == b.mask)))
 
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2473,8 +2575,8 @@ class DataTest(unittest.TestCase):
                     (e.mask.array == b.mask).all(),
                     ("axis={}, weighted, masked \ne.mask={}, \nb.mask={}, "
                      "\ne.mask==b.mask={}".format(
-                         axes, e.mask.array, b.mask, e.mask.array==b.mask)))
-                
+                         axes, e.mask.array, b.mask, e.mask.array == b.mask)))
+
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     ("axis={}, weighted, masked \ne={}, \nb={}, "
@@ -2523,7 +2625,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        ddofs=(0, 1)
+        ddofs = (0, 1)
 
         for chunksize in self.chunk_sizes:
             for pp in (False, True):
@@ -2532,7 +2634,7 @@ class DataTest(unittest.TestCase):
                 # unweighted, unmasked
                 d = cf.Data(self.a, units='K')
                 for np, h in zip((numpy.var, numpy.std),
-                                 ('var'    , 'sd')):
+                                 ('var', 'sd')):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.a, axes)
@@ -2550,7 +2652,7 @@ class DataTest(unittest.TestCase):
                 # unweighted, masked
                 d = cf.Data(self.ma, units='K')
                 for np, h in zip((numpy.ma.var, numpy.ma.std),
-                                 ('var'    , 'sd')):
+                                 ('var', 'sd')):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.ma, axes)
@@ -2601,7 +2703,7 @@ class DataTest(unittest.TestCase):
                                               _preserve_partitions=pp)
 
                             self.assertTrue(
-                                e.allclose(b, rtol=1e-05, atol=1e-08) ,
+                                e.allclose(b, rtol=1e-05, atol=1e-08),
                                 ("%s, axis=%s, weighted, unmasked, pp=%s, "
                                  "ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                  (h, axes, pp, ddof, e.array, b, e.array-b)))
@@ -2658,7 +2760,7 @@ class DataTest(unittest.TestCase):
                                 ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
                                  "\ne.mask==b.mask=%s" %
                                  (h, axes, e.mask.array, b.mask,
-                                  e.mask.array==b.mask)))
+                                  e.mask.array == b.mask)))
 
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2694,7 +2796,7 @@ class DataTest(unittest.TestCase):
         for chunksize in (300, 10000, 100000)[::-1]:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.filename6)[0]
-            self.assertTrue(list(sorted(f.data.section((1,2)).keys())) ==
+            self.assertTrue(list(sorted(f.data.section((1, 2)).keys())) ==
                             [(x, None, None) for x in range(1800)])
             d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
             x = d.section([1, 3])
@@ -2771,7 +2873,7 @@ class DataTest(unittest.TestCase):
                     for units in (None, '', '1', 'radians', 'K'):
                         d = cf.Data(a, units=units)
                         e = getattr(d, method)()
-                        
+
                         self.assertIsNone(getattr(d, method)(inplace=True))
 
                         self.assertTrue(
@@ -2779,11 +2881,11 @@ class DataTest(unittest.TestCase):
                         self.assertTrue(d.shape == c.shape)
                         self.assertTrue(
                             (d.array == c).all(),
-                             "{}, {}, {}".format(method, units, d.array-c)
+                            "{}, {}, {}".format(method, units, d.array-c)
                         )
                         self.assertTrue(
                             (d.mask.array == c.mask).all(),
-                             "{}, {}, {}".format(method, units, d.array-c)
+                            "{}, {}, {}".format(method, units, d.array-c)
                         )
         # --- End: for
 
@@ -2812,25 +2914,25 @@ class DataTest(unittest.TestCase):
 
         # AT2
         #
-        ## Treat arctan2 separately (as is a class method & takes two inputs)
-        #for x in (1, -1):
-        #    a1 = 0.9 * x * self.ma
-        #    a2 = 0.5 * x * self.a
-        #    # Transform data for 'a' into range more appropriate for inverse:
-        #    a1 = numpy.sin(a1.data)
-        #    a2 = numpy.cos(a2.data)
+        # # Treat arctan2 separately (as is a class method & takes two inputs)
+        # for x in (1, -1):
+        #     a1 = 0.9 * x * self.ma
+        #     a2 = 0.5 * x * self.a
+        #     # Transform data for 'a' into range more appropriate for inverse:
+        #     a1 = numpy.sin(a1.data)
+        #     a2 = numpy.cos(a2.data)
 
-        #    c = numpy.ma.arctan2(a1, a2)
-        #    for chunksize in self.chunk_sizes:
-        #        cf.CHUNKSIZE(chunksize)
-        #        for units in (None, '', '1', 'radians', 'K'):
-        #            d1 = cf.Data(a1, units=units)
-        #            d2 = cf.Data(a2, units=units)
-        #            e = cf.Data.arctan2(d1, d2)
-        #            # Note: no inplace arg for arctan2 (operates on 2 arrays)
-        #            self.assertTrue(d1.shape == c.shape)
-        #            self.assertTrue((e.array == c).all())
-        #            self.assertTrue((d1.mask.array == c.mask).all())
+        #     c = numpy.ma.arctan2(a1, a2)
+        #     for chunksize in self.chunk_sizes:
+        #         cf.CHUNKSIZE(chunksize)
+        #         for units in (None, '', '1', 'radians', 'K'):
+        #             d1 = cf.Data(a1, units=units)
+        #             d2 = cf.Data(a2, units=units)
+        #             e = cf.Data.arctan2(d1, d2)
+        #             # Note: no inplace arg for arctan2 (operates on 2 arrays)
+        #             self.assertTrue(d1.shape == c.shape)
+        #             self.assertTrue((e.array == c).all())
+        #             self.assertTrue((d1.mask.array == c.mask).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
 

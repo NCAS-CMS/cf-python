@@ -50,7 +50,7 @@ class NetCDFArray(cfdm.NetCDFArray,
             the netCDF variable attributes ``valid_min``,
             ``valid_max``, ``valid_range``, ``_FillValue`` and
             ``missing_value``.
-    
+
             .. versionadded:: 3.4.0
 
     **Examples:**

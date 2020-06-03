@@ -124,7 +124,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # VLEN variables can not be assigned to by masked arrays
                 # https://github.com/Unidata/netcdf4-python/pull/465
                 array = array.filled('')
-                
+
             if not warned_valid and g['warn_valid']:
                 # Check for out-of-range values
                 warned_valid = self._check_valid(cfvar, array, attributes)

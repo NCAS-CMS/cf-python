@@ -3,7 +3,7 @@ import cfdm
 from .constants import cr_coordinates, cr_canonical_units, cr_default_values
 from .functions import RTOL, ATOL, allclose
 from .functions import inspect as cf_inspect
-from .query     import Query
+from .query import Query
 
 from . import CoordinateConversion
 from . import Datum
@@ -16,7 +16,6 @@ from .functions import (_DEPRECATION_ERROR_METHOD,
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
                          _deprecated_kwarg_check)
-
 
 _units = {}
 

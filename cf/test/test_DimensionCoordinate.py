@@ -103,12 +103,14 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate_roll(self):
         f = cf.read(self.filename)[0]
+
         x = f.dimension_coordinates('X').value()
+        y = f.dimension_coordinates('Y').value()
 
+        _ = x.roll(0, 3)
         with self.assertRaises(Exception):
-            x.roll(0, 3)
+            y.roll(0, 3)
 
-        x.period(360)
         _ = x.roll(0, 3)
         _ = x.roll(-1, 3)
         with self.assertRaises(Exception):
@@ -202,7 +204,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(
             d.bounds.Units.equals(
                 cf.Units('days since 2000-01-01', calendar='365_day')))
-
+        
     def test_DimensionCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()

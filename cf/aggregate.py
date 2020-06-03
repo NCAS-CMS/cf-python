@@ -326,10 +326,10 @@ class _Meta:
                                              relaxed_units=relaxed_units)
 
                 info_dim.append(
-                    {'identity' : dim_identity,
-                     'key'      : dim_coord_key, #axis,
-                     'units'    : units,
-                     'hasdata'  : dim_coord.has_data(),
+                    {'identity': dim_identity,
+                     'key': dim_coord_key,  # axis,
+                     'units': units,
+                     'hasdata': dim_coord.has_data(),
                      'hasbounds': dim_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(axis)}
                 )
@@ -363,10 +363,10 @@ class _Meta:
                                              relaxed_units=relaxed_units)
 
                 info_aux.append(
-                    {'identity' : aux_identity,
-                     'key'      : key,
-                     'units'    : units,
-                     'hasdata'  : aux_coord.has_data(),
+                    {'identity': aux_identity,
+                     'key': key,
+                     'units': units,
+                     'hasdata': aux_coord.has_data(),
                      'hasbounds': aux_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(key)}
                 )
@@ -414,14 +414,14 @@ class _Meta:
                     ncdim = True
             # --- End: if
 
-            self.axis[identity] = \
-                {'ids'      : tuple([i['identity']  for i in info_1d_coord]),
-                 'keys'     : tuple([i['key']       for i in info_1d_coord]),
-                 'units'    : tuple([i['units']     for i in info_1d_coord]),
-                 'hasdata'  : tuple([i['hasdata']   for i in info_1d_coord]),
+            self.axis[identity] = {
+                 'ids': tuple([i['identity'] for i in info_1d_coord]),
+                 'keys': tuple([i['key'] for i in info_1d_coord]),
+                 'units': tuple([i['units'] for i in info_1d_coord]),
+                 'hasdata': tuple([i['hasdata'] for i in info_1d_coord]),
                  'hasbounds': tuple([i['hasbounds'] for i in info_1d_coord]),
-                 'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])}
-#                 'size'     : None} #tuple([i['size']      for i in info_1d_coord])}
+                 'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])
+            }  # 'size': None} #tuple([i['size'] for i in info_1d_coord])}
 
             if info_dim:
                 self.axis[identity]['dim_coord_index'] = 0
@@ -465,10 +465,10 @@ class _Meta:
                                          relaxed_units=relaxed_units)
 
             self.nd_aux[identity] = {
-                'key'      : key,
-                'units'    : units,
-                'axes'     : axes,
-                'hasdata'  : nd_aux_coord.has_data(),
+                'key': key,
+                'units': units,
+                'axes': axes,
+                'hasdata': nd_aux_coord.has_data(),
                 'hasbounds': nd_aux_coord.has_bounds(),
                 'coordrefs': self.find_coordrefs(key)
             }
@@ -1153,9 +1153,12 @@ class _Meta:
         # already been sorted.
         axis = self.axis
         x = [(identity,
-              ('ids'      , axis[identity]['ids']),
-              ('units'    , tuple([u.formatted(definition=True) for u in axis[identity]['units']])),
-              ('hasdata'  , axis[identity]['hasdata']),
+              ('ids', axis[identity]['ids']),
+              ('units', tuple([
+                  u.formatted(definition=True) for u in
+                  axis[identity]['units']
+              ])),
+              ('hasdata', axis[identity]['hasdata']),
               ('hasbounds', axis[identity]['hasbounds']),
               ('coordrefs', axis[identity]['coordrefs']),
               ('size', axis[identity]['size']))
@@ -1172,9 +1175,9 @@ class _Meta:
         # N-d auxiliary coordinates
         nd_aux = self.nd_aux
         x = [(identity,
-              ('units'    , nd_aux[identity]['units'].formatted(definition=True)),
-              ('axes'     , nd_aux[identity]['axes']),
-              ('hasdata'  , nd_aux[identity]['hasdata']),
+              ('units', nd_aux[identity]['units'].formatted(definition=True)),
+              ('axes', nd_aux[identity]['axes']),
+              ('hasdata', nd_aux[identity]['hasdata']),
               ('hasbounds', nd_aux[identity]['hasbounds']),
               ('coordrefs', nd_aux[identity]['coordrefs']))
              for identity in sorted(nd_aux)]
@@ -1222,23 +1225,23 @@ class _Meta:
         Field_ancillaries = tuple(x)
 
         self.signature = self._structural_signature(
-            Identity                  = Identity,
-            Units                     = Units,
-            Cell_methods              = Cell_methods,
-            Data                      = Data,
-            Properties                = Properties,
-            standard_error_multiplier = standard_error_multiplier,
-            valid_min                 = valid_min,
-            valid_max                 = valid_max,
-            valid_range               = valid_range,
-            Flags                     = Flags,
-            Coordinate_references     = Coordinate_references,
-            Axes                      = Axes,
-            dim_coord_index           = dim_coord_index,
-            Nd_coordinates            = Nd_coordinates,
-            Cell_measures             = Cell_measures,
-            Domain_ancillaries        = Domain_ancillaries,
-            Field_ancillaries         = Field_ancillaries,
+            Identity=Identity,
+            Units=Units,
+            Cell_methods=Cell_methods,
+            Data=Data,
+            Properties=Properties,
+            standard_error_multiplier=standard_error_multiplier,
+            valid_min=valid_min,
+            valid_max=valid_max,
+            valid_range=valid_range,
+            Flags=Flags,
+            Coordinate_references=Coordinate_references,
+            Axes=Axes,
+            dim_coord_index=dim_coord_index,
+            Nd_coordinates=Nd_coordinates,
+            Cell_measures=Cell_measures,
+            Domain_ancillaries=Domain_ancillaries,
+            Field_ancillaries=Field_ancillaries,
         )
 
     def find_coordrefs(self, key):

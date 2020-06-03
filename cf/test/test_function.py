@@ -14,7 +14,7 @@ class functionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for n in range(7):
+        for n in range(8):
             f = cf.example_field(n)
             _ = f.array
             _ = f.dump(display=False)
@@ -26,7 +26,8 @@ class functionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # Use as test case 'i' kwarg, the deprecated old name for 'inplace':
+        # Use as test case 'i' kwarg, the deprecated old name for
+        # 'inplace':
         a = cf.Data([list(range(100))])
         a.squeeze(inplace=True)  # new way to specify operation tested below
 

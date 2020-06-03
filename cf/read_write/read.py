@@ -300,17 +300,17 @@ def read(files, external=None, verbose=False, warnings=False,
             values of any of the netCDF variable attributes
             ``_FillValue``, ``missing_value``, ``valid_min``,
             ``valid_max`` and ``valid_range``.
-    
+
             The masking by convention of a PP or UM array depends on
             the value of BMDI in the lookup header. A value other than
             ``-1.0e30`` indicates the data value to be masked.
-    
+
             See
             https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
             for details.
 
             .. versionadded:: 3.4.0
-            
+
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
@@ -321,13 +321,13 @@ def read(files, external=None, verbose=False, warnings=False,
             of these properties, are automatically masked by default,
             which may not be as intended. See the *mask* parameter for
             turning off all automatic masking.
-    
+
             See
             https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
             for details.
 
             .. versionadded:: 3.4.0
-            
+
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
@@ -563,7 +563,7 @@ def read(files, external=None, verbose=False, warnings=False,
                 except Exception as error:
                     if not ignore_read_error:
                         message = error
-                        
+
 #                        if not find_library("umfile"):
 #                            message += ("\n\n"
 #                                "Note: Unable to detect the UM read C library needed "
@@ -576,7 +576,7 @@ def read(files, external=None, verbose=False, warnings=False,
 #                                "reinstall cf-python to try to build the library. "
 #                                "Note a warning will be given if the build fails."
 #                            )
-                                
+
                         raise ValueError(message)
 
                     if verbose:
@@ -699,11 +699,13 @@ def read(files, external=None, verbose=False, warnings=False,
 
     return field_list
 
+
 def _plural(n):  # pragma: no cover
     '''Return a suffix which reflects a word's plural.
 
     '''
     return 's' if n != 1 else ''  # pragma: no cover
+
 
 def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
@@ -770,7 +772,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             # endian-ness
             if word_size is None:
                 word_size = 4
-                
+
             if endian is None:
                 endian = 'big'
         # --- End: if
@@ -838,7 +840,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk) #, mask=mask, warn_valid=warn_valid)
+                         chunk=chunk)  # , mask=mask, warn_valid=warn_valid)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
@@ -859,6 +861,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
+
 
 def file_type(filename):
     '''Return the file format.

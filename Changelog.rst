@@ -2,10 +2,39 @@ version 3.5.0
 -------------
 ----
 
-**2020-??-??**
+**2020-05-??**
 
+* Changed the API to `cf.Field.period`: Now sets and reports on the
+  period of the field construct data, rather than that of its metadata
+  constucts.
+* New method: `cf.Field.halo`
+* New method: `cf.Data.halo`
+* New keyword parameter to `cf.Data.empty`: ``fill_value``
+* Changed dependency: ``1.8.4<=cfdm<1.9.0``
+* Changed dependency: ``cfunits>=3.2.7``
+* Changed dependency: ``cftime>=1.1.3``
+* When assessing coordinate constructs for contiguousness with
+  `cf.Bounds.contiguous`, allow periodic values that differ by the
+  period to be considered the same
+  (https://github.com/NCAS-CMS/cf-python/issues/75).
+* Fixed bug in `cf.Field.regrids` that caused a failure when
+  regridding from latitude-longitude to tripolar domains
+  (https://github.com/NCAS-CMS/cf-python/issues/73).
+* Fixed bug in `cf.Field.regrids` that caused a failure when
+  regridding to tripolar domains the do not have dimension coordinate
+  constructs (https://github.com/NCAS-CMS/cf-python/issues/73).
+* Fixed bug in `cf.Field.regrids` and `cf.Field.regridc` that caused a
+  failure when applying the destination mask to the regridded fields
+  (https://github.com/NCAS-CMS/cf-python/issues/73).
 * Fixed bug that caused `cf.FieldList.select_by_ncvar` to always fail
   (https://github.com/NCAS-CMS/cf-python/issues/76).
+* Fixed bug that stopped 'integral' collapses working for grouped
+  collapses (https://github.com/NCAS-CMS/cf-python/issues/81).
+* Fixed bug the wouldn't allow the reading of a netCDF file which
+  specifies Conventions other than CF
+  (https://github.com/NCAS-CMS/cf-python/issues/78).
+* Fixed bug that prevented the reading of netCDF files with
+  unreferenced external variables.
 
 version 3.4.0
 -------------
@@ -27,8 +56,8 @@ version 3.4.0
 * New keyword parameter to `cf.Field.nc_global_attributes`: ``values``
 * Added time coordinate bounds to the polygon geometry example field
   ``6`` returned by `cf.example_field`.
-* Changed exact cfdm dependency to version 1.8.3.
-* Changed minimum cfunits dependency to version 3.2.6.
+* Changed dependency: ``cfdm==1.8.3``
+* Changed dependency: ``cfunits>=3.2.6``
 * Fixed bug in `cf.write` that caused (what are effectively)
   string-valued scalar auxiliary coordinates to not be written to disk
   as such, or even an exception to be raised.
@@ -81,15 +110,17 @@ version 3.2.0
   `cf.Field.weights`: ``radius``, ``great_circle``.
 * Implemented simple geometries for CF-1.8.
 * Implemented string data-types for CF-1.8.
-* Changed minimum cfdm dependency to version 1.8.0.
-* Changed minimum cfunits dependency to version 3.2.5.
-* Changed minimum netCDF4 dependency to version 1.5.3.
-* Changed minimum cftime dependency to version 1.1.1.
-* Renamed the regridding method, i.e. option for the ``method`` parameter to
-  `cf.Field.regridc` and `cf.Field.regrids`, ``bilinear`` to ``linear``,
-  though ``bilinear`` is still supported (use of it gives a message as such).
-* Made documentation of available `cf.Field.regridc` and `cf.Field.regrids`
-  ``method`` parameters clearer & documented second-order conservative method.
+* Changed dependency: ``cfdm>=1.8.0``
+* Changed dependency: ``cfunits>=3.2.5``
+* Changed dependency: ``netCDF4>=1.5.3``
+* Changed dependency: ``cftime>=1.1.1``
+* Renamed the regridding method, i.e. option for the ``method``
+  parameter to `cf.Field.regridc` and `cf.Field.regrids`, ``bilinear``
+  to ``linear``, though ``bilinear`` is still supported (use of it
+  gives a message as such).
+* Made documentation of available `cf.Field.regridc` and
+  `cf.Field.regrids` ``method`` parameters clearer & documented
+  second-order conservative method.
 * Fixed bug that prevented writing to ``'NETCDF3_64BIT_OFFSET'`` and
   ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).
@@ -99,10 +130,12 @@ version 3.2.0
 * Fixed bug that prevented the reading of PP and UM files with "zero"
   data or validity times.
 * Fixed broken API reference 'source' links to code in `cfdm`.
-* Fixed bug in `cf.Field.weights` with the parameter ``methods`` set to
-  ``True`` where it would always error before returning dictionary of methods.
-* Fixed bug in `cf.Data.where` that meant the units were not taken into
-  account when the condition was a `cf.Query` object with specified units.
+* Fixed bug in `cf.Field.weights` with the parameter ``methods`` set
+  to ``True`` where it would always error before returning dictionary
+  of methods.
+* Fixed bug in `cf.Data.where` that meant the units were not taken
+  into account when the condition was a `cf.Query` object with
+  specified units.
 * Addressed many 'TODO' placeholders in the documentation.
 
 version 3.1.0
@@ -134,12 +167,12 @@ version 3.1.0
   the coordinates were changed.
 * Fixed bug in `cf.Field.domain_axis` that caused an error when no
   unique domain axis construct could be identified.
-* Changed minimum cfunits dependency to version 3.2.4. This fixes a
-  bug that rased an exception for units specified by non-strings
+* Changed dependency:``cfunits>=3.2.4``. This fixes a bug that raised
+  an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).
-* Changed minimum ESMF dependency to 8.0.0. This fixes an issue
-  with second-order conservative regridding, which is now fully
-  documented and available.
+* Changed dependency: ``ESMF>=to 8.0.0``. This fixes an issue with
+  second-order conservative regridding, which is now fully documented
+  and available.
 * Converted all remaining instances of Python 2 print statements in the
   documentation API reference examples to Python 3.
 * Corrected aspects of the API documentation for trigonometric functions.
@@ -166,7 +199,7 @@ version 3.0.6
 * Fixed bug that sometimes gave an error when the LHS and RHS operands
   are swapped in field construct arithmetic
   (https://github.com/NCAS-CMS/cf-python/issues/16).
-* Changed minimum cfdm dependency to version 1.7.11.
+* Changed dependency: ``cfdm>=1.7.11``
 
 version 3.0.5
 -------------
@@ -186,10 +219,10 @@ version 3.0.5
   (https://github.com/NCAS-CMS/cf-python/issues/13).
 * Removed specific user shebang from ``cfa`` script
   (https://github.com/NCAS-CMS/cf-python/pull/14).
-* Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
-  that didn't allow CDL files to start with comments or blank lines
+* Changed dependency: ``cfdm>=1.7.10``. This fixes a bug that didn't
+  allow CDL files to start with comments or blank lines
   (https://github.com/NCAS-CMS/cfdm/issues/5).
-* Changed minimum cftime dependency to version 1.0.4.2
+* Changed dependency: ``cftime>=1.0.4.2`
 
 version 3.0.4
 -------------
@@ -211,7 +244,7 @@ version 3.0.4
 * Fixed bug that sometimes caused an exception to be raised when
   metadata constructs were selected by a property value that
   legitimately contained a colon.
-* Changed minimum cfdm dependency to version 1.7.9.
+* Changed dependency: ``cfdm>=1.7.9``
 
 version 3.0.3
 -------------
@@ -247,11 +280,11 @@ version 3.0.2
   `cf.Data.sum_of_squares`, `cf.Data.root_mean_square`,
   `cf.Data.flatten`.
 * Renamed `cf.default_fillvals` to `cf.default_netCDF_fillvals`.
-* Changed minimum cfdm dependency to version 1.7.8. This fixes a bug
-  that sometimes occurs when writing to disk and the _FillValue and
-  data have different data types.
-* Changed minimum cfunits dependency to version 3.2.2.
-* Changed minimum cftime dependency to version 1.0.4.2.
+* Changed dependency: ``cfdm>=1.7.8``. This fixes a bug that sometimes
+  occurs when writing to disk and the _FillValue and data have
+  different data types.
+* Changed dependency: ``cfunits>=3.2.2``
+* Changed dependency: ``cftime>=1.0.4.2``
 * Fixed occasional failure to delete all temporary directories at
   exit.
 * Fixed bug in `cf.Data.func` when overriding units. Affects all

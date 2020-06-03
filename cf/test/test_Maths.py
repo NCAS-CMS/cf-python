@@ -8,6 +8,7 @@ import numpy
 
 import cf
 
+
 class MathTest(unittest.TestCase):
     filename1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'regrid_file1.nc')
@@ -23,7 +24,7 @@ class MathTest(unittest.TestCase):
 
     def test_relative_vorticity_distance(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+            returncf
 
         x_min = 0.0
         x_max = 100.0
@@ -63,7 +64,6 @@ class MathTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_relative_vorticity_latlong(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -91,16 +91,18 @@ class MathTest(unittest.TestCase):
                                   (lon_size, lat_size))
         v_2d = v_2d*numpy.cos(lat_1d*numpy.pi/180.0)[numpy.newaxis, :]
 
-        rv_array = (u_2d/cf.Data(6371229.0, 'meters')
-                    *numpy.tan(lat_1d*numpy.pi/180.0)[numpy.newaxis, :])
+        rv_array = (u_2d/cf.Data(6371229.0, 'meters') *
+                    numpy.tan(lat_1d*numpy.pi/180.0)[numpy.newaxis, :])
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
 
-            dim_x = cf.DimensionCoordinate(data=cf.Data(lon_1d, 'degrees_east'),
-                                           properties={'axis': 'X'})
-            dim_y = cf.DimensionCoordinate(data=cf.Data(lat_1d,'degrees_north'),
-                                           properties={'axis': 'Y'})
+            dim_x = cf.DimensionCoordinate(
+                data=cf.Data(lon_1d, 'degrees_east'), properties={'axis': 'X'})
+            dim_y = cf.DimensionCoordinate(
+                data=cf.Data(lat_1d, 'degrees_north'),
+                properties={'axis': 'Y'}
+            )
 
             u = cf.Field()
             u.set_construct(cf.DomainAxis(size=lon_1d.size))
@@ -109,7 +111,6 @@ class MathTest(unittest.TestCase):
             u.set_construct(dim_y)
             u.set_data(cf.Data(u_2d, 'm/s'), axes=('X', 'Y'))
             u.cyclic('X', period=360.0)
-
 
             v = cf.Field()
             v.set_construct(cf.DomainAxis(size=lon_1d.size))

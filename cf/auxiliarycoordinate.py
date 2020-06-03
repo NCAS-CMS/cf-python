@@ -1,7 +1,6 @@
 import cfdm
 
 from . import mixin
-#from . import abstract
 
 
 class AuxiliaryCoordinate(mixin.Coordinate,

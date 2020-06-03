@@ -1539,7 +1539,7 @@ class UMField:
             fill_value = rec.real_hdr.item(bmdi,)
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
-            
+
             data = Data(UMArray(filename=filename,
                                 ndim=2,
                                 shape=yx_shape,
@@ -1693,7 +1693,7 @@ class UMField:
             fill_value = recs[0].real_hdr.item(bmdi,)
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
-                
+
             data = Data(units=units, fill_value=fill_value)
 
             data._axes = data_axes

@@ -548,7 +548,7 @@ grouped collapse. The groups do not need to be created from adjacent
 cells, as would be the case when creating 12 multi-annual monthly
 means from a timeseries of 120 months.
 
-Selected statistics for overalapping groups can be calculated with the
+Selected statistics for overlapping groups can be calculated with the
 `~cf.Field.moving_window` method of the field construct.
 
 The *group* keyword of `~Field.collapse` defines the size of the
@@ -1221,89 +1221,80 @@ The following regridding methods are available (in this table,
 being regridded, and the domain that it is being regridded to,
 respectively):
 
-+--------------------------+-----------------------------------------+
-| Method                   | Notes                                   |
-+==========================+=========================================+
-| Linear (``'linear'``,    | Linear interpolation in the number of   |
-| previously called        | dimensions corresponding to the domain. |
-| ``'bilinear'``, which    |                                         |
-| is still supported,      | For example, for 2D domains this        |
-| but you are encouraged   | amounts to *bilinear*                   |
-| to use ``'linear'``      | interpolation (that is, linear          |
-| instead now)             | interpolation in *both* axes) and for   |
-|                          | regridding in 3D (only available with   |
-|                          | `Cartesian-regridding`_) it amounts to  |
-|                          | *trilinear* interpolation over the      |
-|                          | three axes.                             |
-+--------------------------+-----------------------------------------+
-| *First-order*            | Preserve the area integral of the data  |
-| conservative             | across the interpolation from source    |
-| (``'conservative'`` or   | to destination. It uses the proportion  |
-| ``'conservative_1st'``)  | of the area of the overlapping source   |
-|                          | and destination cells to determine      |
-|                          | appropriate weights.                    |
-|                          |                                         |
-|                          | In particular, the weight of            |
-|                          | a source cell is the ratio of           |
-|                          | the area of intersection of the source  |
-|                          | and destination cells to the area of    |
-|                          | the whole destination cell.             |
-|                          |                                         |
-|                          | It does not account for the             |
-|                          | field gradient across the source        |
-|                          | cell, unlike the second-order           |
-|                          | conservative method (see below).        |
-+--------------------------+-----------------------------------------+
-| *Second-order*           | As with first-order (see above),        |
-| conservative             | preserves the area integral of the      |
-| (``'conservative_2nd'``) | field between source and destination    |
-|                          | using a weighted sum, with weights      |
-|                          | based on the proportionate area of      |
-|                          | intersection.                           |
-|                          |                                         |
-|                          | But unlike first-order, the             |
-|                          | second-order method incorporates        |
-|                          | further terms to take into              |
-|                          | consideration the gradient of the       |
-|                          | field across the source cell,           |
-|                          | thereby typically producing a           |
-|                          | smoother result of higher accuracy.     |
-+--------------------------+-----------------------------------------+
-| Higher order patch       | A second degree polynomial regridding   |
-| recovery (``'patch'``)   | method, which uses a least squares      |
-|                          | algorithm to calculate the polynomial.  |
-|                          |                                         |
-|                          | This method gives better                |
-|                          | derivatives in the resulting            |
-|                          | destination data than the linear        |
-|                          | method.                                 |
-+--------------------------+-----------------------------------------+
-| Nearest neighbour        | Nearest neighbour interpolation, which  |
-| interpolation mapping    | is useful for extrapolation of          |
-| *destination to nearest* | categorical data. In this variant,      |
-| *source*                 | *each destination point* is mapped      |
-| (``'nearest_stod'``)     | to the *closest source*.                |
-|                          |                                         |
-|                          | See also below for the                  |
-|                          | the other variant of the                |
-|                          | nearest neighbour approach.             |
-+--------------------------+-----------------------------------------+
-| Nearest neighbour        | Nearest neighbour interpolation, which  |
-| interpolation mapping    | is useful for extrapolation of          |
-| *source to nearest*      | categorical data. In this variant,      |
-| *destination*            | *each source point* is mapped to the    |
-| (``'nearest_dtos'``)     | *closest destination*.                  |
-|                          |                                         |
-|                          | In this case, a given destination       |
-|                          | point may receive input from multiple   |
-|                          | source points, but no source point      |
-|                          | will map to more than one               |
-|                          | destination point.                      |
-|                          |                                         |
-|                          | See also above for the other            |
-|                          | variant of nearest neighbour            |
-|                          | interpolation.                          |
-+--------------------------+-----------------------------------------+
+===========================  =========================================
+Method                       Description
+===========================  =========================================
+Linear                       Linear interpolation in the number of
+                             dimensions being regridded.
+
+                             For two dimensional regridding this is
+                             bilinear interpolation, and for three
+                             dimensional regridding this is trilinear
+                             interpolation.
+			     
+First-order conservative     First order conservative interpolation.
+			     
+                             Preserve the area integral of the data
+                             across the interpolation from source to
+                             destination. It uses the proportion of
+                             the area of the overlapping source and
+                             destination cells to determine
+                             appropriate weights.
+                                    
+                             In particular, the weight of a source
+                             cell is the ratio of the area of
+                             intersection of the source and
+                             destination cells to the area of the
+                             whole destination cell.
+                                    
+                             It does not account for the field
+                             gradient across the source cell, unlike
+                             the *second-order* conservative method.
+			     
+Second-order conservative    Second-order conservative
+                             interpolation.
+			     
+                             As with first order (see above),
+                             preserves the area integral of the field
+                             between source and destinatio using a
+                             weighted sum, with weights based on the
+                             proportionate area of intersection.
+                       	     
+                             Unlike *first-order*, the second-order
+                             method incorporates further terms to take
+                             into consideration the gradient of the
+                             field across the source cell, thereby
+                             typically producing a smoother result of
+                             higher accuracy.
+
+Higher-order patch recovery  Higher-order patch recovery
+                             interpolation.
+
+                             A second degree polynomial regridding
+                             method, which uses a least squares
+                             algorithm to calculate the polynomial.
+                                                             
+                             This method gives better derivatives in
+                             the resulting destination data than the
+                             linear method.
+			     
+Nearest neighbour            Nearest neighbour interpolation for which
+                             each destination point is mapped to the
+                             closest source point, or vice versa.
+			     
+                             Useful for extrapolation of categorical
+                             data.
+			     
+			     When mapping destination to source
+                             points, a given destination point may
+                             receive input from multiple source
+                             points, but no source point will map to
+                             more than one destination point.
+			     
+                             When mapping source to destination
+                             points, a given destination receives
+                             input at most one source point.
+===========================  =========================================
 
 .. _Spherical-regridding:
 
@@ -1678,12 +1669,12 @@ they have different standard names.
 The :ref:`domain <domain>` metadata constructs of the result of a
 successful arithmetical operation between two field constructs are
 unambiguously well defined: The domain metadata constructs of the
-result of a succesful operation are copied from the left hand side
+result of a successful operation are copied from the left hand side
 (LHS) operand, except when a coordinate construct in the LHS operand
 has size 1 and the corresponding coordinate construct in right hand
 side (RHS) field construct operand has size greater than 1. In this
 case the coordinate construct from the RHS operand is used in the
-result, to match up with the data broadcasting that will have occured
+result, to match up with the data broadcasting that will have occurred
 during the operation.
 
 .. _ambiguous-result:
@@ -1854,12 +1845,12 @@ result, which also has no units.
 The :ref:`domain <domain>` metadata constructs of the result of a
 successful relational operation between two field constructs are
 unambiguously well defined: The domain metadata constructs of the
-result of a succesful operation are copied from the left hand side
+result of a successful operation are copied from the left hand side
 (LHS) operand, except when a coordinate construct in the LHS operand
 has size 1 and the corresponding coordinate construct in right hand
 side (RHS) field construct operand has size greater than 1. In this
 case the coordinate construct from the RHS operand is used in the
-result, to match up with the data broadcasting that will have occured
+result, to match up with the data broadcasting that will have occurred
 during the operation.
 
 In circumstances when domain metadata constructs in the result can not
@@ -1882,7 +1873,7 @@ or :ref:`relational <Relational-operations>` operation are field
 constructs then the creation of the mapping of physically compatible
 dimensions relies on there being sufficient metadata. By default, the
 mapping relies on their being "strict" identities for the metadata
-constucts with multi-valued data. The strict identity is restricted
+constructs with multi-valued data. The strict identity is restricted
 `!standard_name` property (or `!id` attribute), and may be returned by
 the `!identity` method of a construct:
 
@@ -1924,7 +1915,7 @@ Operating on the field constructs' data
 :ref:`Arithmetical <Arithmetical-operations>` and :ref:`relational
 <Relational-operations>` operations between may also be carried out on
 their data instances, thereby bypassing any reference to, or checks
-on, the metadata constucts. This can be useful if there
+on, the metadata constructs. This can be useful if there
 :ref:`insufficient metadata
 <Arithmetical-and-relational-operations-with-insufficient-metadata>`
 for determining if the two field constructs are compatible; or if the
@@ -1942,7 +1933,7 @@ construct data may be changed in-place.
 It is up to the user to ensure that the data instances are consistent
 in terms of size 1 dimensions (to satisfy the `numpy broadcasting
 rules`_), dimension order and dimension direction, and that the
-resulting data is compatible with the metadata of the field constuct
+resulting data is compatible with the metadata of the field construct
 which will contain it. Automatic units conversions are, however, still
 accounted for when combining the data instances.
 

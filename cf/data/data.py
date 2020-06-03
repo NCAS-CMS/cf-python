@@ -1,5 +1,14 @@
-from functools   import reduce
-from operator    import itemgetter
+import itertools
+import operator
+
+from functools import reduce as functools_reduce
+from operator import itemgetter
+from operator import mul as operator_mul
+
+from json import dumps as json_dumps
+from json import loads as json_loads
+
+from math import ceil as math_ceil
 
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
@@ -13,7 +22,7 @@ from numpy import arccosh           as numpy_arccosh
 from numpy import arcsin            as numpy_arcsin
 from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
-#from numpy import arctan2           as numpy_arctan2  AT2
+# from numpy import arctan2           as numpy_arctan2  AT2
 from numpy import arctanh           as numpy_arctanh
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
@@ -88,19 +97,10 @@ from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 import cftime
 import cfdm
 
-import operator
-
-from json import dumps as json_dumps
-from json import loads as json_loads
-
-from operator  import mul as operator_mul
-from math      import ceil as math_ceil
-from itertools import product as itertools_product
-
 from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
-from ..units      import Units
-from ..constants  import masked as cf_masked
+from ..units import Units
+from ..constants import masked as cf_masked
 from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
@@ -118,11 +118,11 @@ from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check)
 
-from .abstract           import (Array,
+from .abstract import (Array,
                                  CompressedArray)
-from .filledarray        import FilledArray
-from .partition          import Partition
-from .partitionmatrix    import PartitionMatrix
+from .filledarray import FilledArray
+from .partition import Partition
+from .partitionmatrix import PartitionMatrix
 from .collapse_functions import *
 
 from . import (NetCDFArray,
@@ -138,7 +138,6 @@ if mpi_on:
     from .. import mpi_size
     from .. import mpi_rank
     from mpi4py.MPI import SUM as mpi_sum
-# --- End: if
 
 
 # --------------------------------------------------------------------
@@ -149,39 +148,39 @@ _month_length = _year_length / 12
 
 
 def _convert_to_builtin_type(x):
+    '''Convert a non-JSON-encodable object to a JSON-encodable built-in
+    type.
+    
+    Possible conversions are:
+    
+    ================  =======  ================================
+    Input             Output   `numpy` data-types covered
+    ================  =======  ================================
+    `numpy.bool_`     `bool`   bool
+    `numpy.integer`   `int`    int, int8, int16, int32, int64,
+                               uint8, uint16, uint32, uint64
+    `numpy.floating`  `float`  float, float16, float32, float64
+    ================  =======  ================================
+    
+    :Parameters:
+    
+        x:
+            TODO
+    
+    :Returns:
+    
+            TODO
+    
+    **Examples:**
+    
+    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+    bool
+    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+    double
+    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+    int
+
     '''
-
-Convert a non-JSON-encodable object to a JSON-encodable built-in type.
-
-Possible conversions are:
-
-==============  =============  ======================================
-Input object    Output object  numpy data-types covered
-==============  =============  ======================================
-numpy.bool_     bool           bool
-numpy.integer   int            int, int8, int16, int32, int64, uint8,
-                               uint16, uint32, uint64
-numpy.floating  float          float, float16, float32, float64
-==============  =============  ======================================
-
-:Parameters:
-
-    x: TODO
-
-:Returns:
-
-TODO
-
-**Examples:**
-
->>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-bool
->>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-double
->>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-int
-
-'''
     if isinstance(x, numpy_bool_):
         return bool(x)
 
@@ -244,15 +243,18 @@ _cached_axes = {0: []}
 
 
 def _initialise_axes(ndim):
-    '''TODO
+    '''Initialise dimension identifiers of N-d data.
 
     :Parameters:
 
         ndim: `int`
+            The number of dimensions in the data.
 
     :Returns:
 
         `list`
+             The dimension identifiers, one of each dimension in the
+             array. If the data is scalar thn the list will be empty.
 
     **Examples:**
 
@@ -265,7 +267,7 @@ def _initialise_axes(ndim):
     >>> _initialise_axes(3) is _initialise_axes(3)
     True
 
-'''
+    '''
     axes = _cached_axes.get(ndim, None)
     if axes is None:
         axes = ['dim%d' % i for i in range(ndim)]
@@ -473,7 +475,8 @@ place.
     >>> d = cf.Data(5)
     >>> d = cf.Data([1,2,3], units='K')
     >>> import numpy
-    >>> d = cf.Data(numpy.arange(10).reshape(2,5), units=Units('m/s'), fill_value=-999)
+    >>> d = cf.Data(numpy.arange(10).reshape(2,5),
+    ...             units=Units('m/s'), fill_value=-999)
     >>> d = cf.Data(tuple('fly'))
 
         '''
@@ -549,7 +552,7 @@ place.
             check_free_memory = True
 
             if isinstance(data, self.__class__):
-#                self.loadd(data.dumpd(), chunk=chunk)
+                # self.loadd(data.dumpd(), chunk=chunk)
                 self.__dict__ = data.copy().__dict__
                 if chunk:
                     self.chunk()
@@ -1516,7 +1519,7 @@ place.
         # --- End: if
 
         new_shape = tuple(map(_size_of_index, indices, shape))
-        new_size = reduce(operator_mul, new_shape, 1)
+        new_size = functools_reduce(operator_mul, new_shape, 1)
 
         new = d.copy()  # Data.__new__(Data)
 
@@ -3065,15 +3068,15 @@ place.
         dtype = d['dtype']
         self._dtype = dtype
 #        print ('P45 asdasdasds', dtype)
-        self.Units       = units
-        self._axes       = axes
+        self.Units = units
+        self._axes = axes
 
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
 
         self._shape = shape
         self._ndim = len(shape)
-        self._size = reduce(operator_mul, shape, 1)
+        self._size = functools_reduce(operator_mul, shape, 1)
 
         cyclic = d.get('_cyclic', None)
         if cyclic:
@@ -3166,7 +3169,8 @@ place.
                 kwargs['shape'] = tuple(kwargs['shape'])
 
                 kwargs['ndim'] = len(kwargs['shape'])
-                kwargs['size'] = reduce(operator_mul, kwargs['shape'], 1)
+                kwargs['size'] = functools_reduce(
+                    operator_mul, kwargs['shape'], 1)
 
                 kwargs.setdefault('dtype', dtype)
 
@@ -4545,7 +4549,7 @@ place.
 
                 broadcast_indices.append(slice(None))
 
-            new_size = reduce(operator_mul, new_shape, 1)
+            new_size = functools_reduce(operator_mul, new_shape, 1)
 
             dummy_location = [None] * new_ndim
         # ---End: if
@@ -4600,10 +4604,10 @@ place.
         #     dummy_location   = [None] * new_ndim
         # else:
         #     set_location_map = False
-        #     new_size = reduce(mul, new_shape, 1)
+        #     new_size = functools_reduce(mul, new_shape, 1)
 
 #        if not set_location_map:
-#            new_size = reduce(mul, new_shape, 1)
+#            new_size = functools_reduce(mul, new_shape, 1)
 #        else:
 #            new_size = self._size
 
@@ -6489,7 +6493,8 @@ dimensions.
                     ndim = array.ndim
                     new_shape = shape[:n_non_collapse_axes]
                     new_shape += (
-                        reduce(operator_mul, shape[n_non_collapse_axes:]),)
+                        functools_reduce(
+                            operator_mul, shape[n_non_collapse_axes:]),)
                     array = numpy_reshape(array.copy(), new_shape)
 
                     if weights is not None:
@@ -8666,7 +8671,7 @@ False
     .. versionadded:: 3.4.0
 
     .. seealso:: `get_fill_value`, `hardmask`, `mask`, `where`
-                 
+
     :Parameters:
 
         fill_values: `bool` or sequence of scalars, optional
@@ -8682,19 +8687,19 @@ False
 
             *Parameter example:*
               Specify a fill value of 999: ``fill_values=[999]``
-         
+
             *Parameter example:*
               Specify fill values of 999 and -1.0e30:
               ``fill_values=[999, -1.0e30]``
-         
+
             *Parameter example:*
               Use the fill value already set for the data:
               ``fill_values=True``
-         
+
             *Parameter example:*
               Use no fill values: ``fill_values=False`` or
               ``fill_value=[]``
-         
+
         valid_min: number, optional
             A scalar specifying the minimum valid value. Data elements
             strictly less than this number will be set to missing
@@ -8718,9 +8723,9 @@ False
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with masked values. If the operation was in-place
             then `None` is returned.
@@ -8742,12 +8747,12 @@ False
     >>> print(d.apply_masking(fill_values=[0]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
-     [ 8  9 10 11]]    
+     [ 8  9 10 11]]
     >>> print(d.apply_masking(fill_values=[0, 11]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
      [ 8  9 10 --]]
-    
+
     >>> print(d.apply_masking(valid_min=3).array)
     [[-- -- --  3]
      [ 4 --  6  7]
@@ -8760,7 +8765,7 @@ False
     [[-- --  2  3]
      [ 4 --  6  7]
      [ 8 -- -- --]]
-    
+
     >>> d.set_fill_value(7)
     >>> print(d.apply_masking(fill_values=True).array)
     [[0  1  2  3]
@@ -8784,18 +8789,18 @@ False
                     raise ValueError(
                         "'valid_range' parameter must be a vector of "
                         "two elements")
-            except TypeError:                
+            except TypeError:
                 raise ValueError(
                     "'valid_range' parameter must be a vector of "
                     "two elements")
-            
+
             valid_min, valid_max = valid_range
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_values is None:
             fill_values = False
-        
+
         if isinstance(fill_values, bool):
             if fill_values:
                 fill_value = self.get_fill_value(None)
@@ -8805,7 +8810,7 @@ False
                     fill_values = ()
             else:
                 fill_values = ()
-        else:            
+        else:
             try:
                 _ = iter(fill_values)
             except TypeError:
@@ -8818,16 +8823,16 @@ False
                         "'fill_values' parameter must be a sequence or "
                         "of type bool. Got type {}".format(type(fill_values)))
         # --- End: if
-        
+
         mask = None
-        
+
         if fill_values:
             mask = (d == fill_values[0])
 
             for fill_value in fill_values[1:]:
                 mask |= (d == fill_value)
         # --- End: for
-            
+
         if valid_min is not None:
             if mask is None:
                 mask = d < valid_min
@@ -8841,7 +8846,7 @@ False
             else:
                 mask |= d > valid_max
         # --- End: if
-        
+
         if mask is not None:
             d.where(mask, cf_masked, inplace=True)
 
@@ -9957,7 +9962,7 @@ False
 
             size = array.size
             if size >= 1:
-                end  = start + size
+                end = start + size
                 comp[start:end] = array
                 start = end
 
@@ -10538,7 +10543,7 @@ False
     ()
 
         '''
-        return itertools_product(*[range(0, r) for r in self._shape])
+        return itertools.product(*[range(0, r) for r in self._shape])
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
@@ -10783,6 +10788,373 @@ False
 
         return out
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=None,
+             fold_index=-1, inplace=False, verbose=False):
+        '''Expand the data by adding a halo.
+        
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
+
+    **Tripolar domains**
+
+    Data for global tripolar domains are a special case in that a halo
+    added to the northern end of the "Y" axis must be filled with
+    values that are flipped in "X" direction. Such domains need to be
+    explicitly indicated with the *tripolar* parameter.
+
+    .. versionadded:: 3.4.1
+
+    :Parameters:
+
+        size: `int` or `dict`
+            Specify the size of the halo for each axis. 
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* parameter.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (defined by its integer position in the
+            data) with a corresponding value of the halo size for that
+            axis. Axes not specified by the dictionary are not
+            expanded, and the *axes* parameter must not also be set.
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the first and last
+              dimensions `size=2, axes=[0, -1]`` or equivalently
+              ``size={0: 2, -1: 2}``.
+
+        axes: (sequence of) `int`
+            Select the domain axes to be expanded, defined by their
+            integer positions in the data. By default, or if *axes* is
+            `None`, all axes are selected. No axes are expanded if
+            *axes* is an empty sequence.
+
+        tripolar: `dict`, optional
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by their integer positions in the data.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description of the operation.
+
+    :Returns:
+
+        `Data` or `None`
+            The expanded data, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[-1, -1] = cf.masked
+    >>> d[1, 1] = cf.masked
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+
+    >>> e = d.halo(1)
+    >>> print(e.array)
+    [[ 0  0  1  2  3  3]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [ 8  8  9 10 -- --]]
+    >>> d.equals(e[1:-1, 1:-1])
+    True
+
+    >>> e = d.halo(2)
+    >>> print(e.array)
+    [[ 0  1  0  1  2  3  2  3]
+     [ 4 --  4 --  6  7  6  7]
+     [ 0  1  0  1  2  3  2  3]
+     [ 4 --  4 --  6  7  6  7]
+     [ 8  9  8  9 10 -- 10 --]
+     [ 4 --  4 --  6  7  6  7]
+     [ 8  9  8  9 10 -- 10 --]]
+    >>> d.equals(e[2:-2, 2:-2])
+    True
+
+    >>> e = d.halo(0)
+    >>> d.equals(e)
+    True
+
+    >>> e = d.halo(1, axes=0)
+    >>> print(e.array)
+    [[ 0  1  2  3]
+     [ 0  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]
+     [ 8  9 10 --]]
+    >>> d.equals(e[1:-1, :])
+    True
+    >>> f = d.halo({0: 1})
+    >>> f.equals(e)
+    True
+
+    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
+    >>> print(e.array)
+    [[ 0  0  1  2  3  3]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [-- -- 10  9  8  8]]
+
+    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
+    >>> print(e.array)
+    [[ 3  3  2  1  0  0]
+     [ 0  0  1  2  3  3]
+     [ 4  4 --  6  7  7]
+     [ 8  8  9 10 -- --]
+     [ 8  8  9 10 -- --]]
+
+        '''
+        if verbose:
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{})".format(_,
+                                 (',\n' + ' '*len(_)).join(_kwargs)))
+            
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        ndim = d.ndim
+        shape0 = d.shape
+
+        # ------------------------------------------------------------
+        # Parse the size and axes parameters
+        # ------------------------------------------------------------
+        if isinstance(size, dict):
+            if axes is not None:
+                raise ValueError(
+                    "Can't set the axes parameter when the "
+                    "size parameter is a dictionary")
+            
+            axes = self._parse_axes(tuple(size))
+            size = [size[i] if i in axes else 0
+                    for i in range(ndim)]
+        else:
+            if axes is None:
+                axes = list(range(ndim))
+            
+            axes = d._parse_axes(axes)
+            size = [size if i in axes else 0
+                    for i in range(ndim)]
+
+        # ------------------------------------------------------------
+        # Parse the tripolar parameter
+        # ------------------------------------------------------------
+        if tripolar:
+            if fold_index not in (0, -1):
+                raise ValueError(
+                    "fold_index parameter must be -1 or 0. "
+                    "Got {!r}".format(fold_index))
+            
+            # Find the X and Y axes of a tripolar grid
+            tripolar = tripolar.copy()
+            X_axis = tripolar.pop('X', None)
+            Y_axis = tripolar.pop('Y', None)
+            
+            if tripolar:
+                raise ValueError(
+                    "Can not set key {!r} in the tripolar "
+                    "dictionary.".format(tripolar.popitem()[0]))
+            
+            if X_axis is None:
+                raise ValueError("Must provide a tripolar 'X' axis.")
+        
+            if Y_axis is None:
+                raise ValueError("Must provide a tripolar 'Y' axis.")
+
+            X = d._parse_axes(X_axis)
+            Y = d._parse_axes(Y_axis)
+
+            if len(X) != 1:
+                raise ValueError(
+                    "Must provide exactly one tripolar 'X' axis. "
+                    "Got {!r}".format(
+                        X_axis))
+        
+            if len(Y) != 1:
+                raise ValueError(
+                    "Must provide exactly one tripolar 'Y' axis. "
+                    "Got {!r}".format(
+                        Y_axis))
+
+            X_axis = X[0]
+            Y_axis = Y[0]
+            
+            if X_axis == Y_axis:
+                raise ValueError(
+                    "Tripolar 'X' and 'Y' axes must be different. "
+                    "Got {!r}, {!r}".format(
+                        X_axis, Y_axis))
+
+            for A, axis in zip(('X', 'Y',),
+                               (X_axis, Y_axis)):                
+                if axis not in axes:
+                    raise ValueError(
+                        "If dimensions have been identified with the "
+                        "axes or size parameters then they must include "
+                        "the tripolar {!r} axis: {!r}".format(A, axis))
+            # --- End: for
+
+            tripolar = True
+        # --- End: if
+
+        # Remove axes with a size 0 halo
+        axes = [i for i in axes if size[i]]
+
+        if not axes:
+            # Return now if all halos are of size 0
+            return d
+
+        # Check that the halos are not too large
+        for i, (h, n) in enumerate(zip(size, shape0)):
+            if h > n:
+                raise ValueError(
+                    "Halo size {!r} is too big for axis of size {!r}".format(
+                        h, n))
+        # --- End: for
+
+        # Initialise the expanded data
+        shape1 = [n + size[i] * 2 if i in axes else n
+                  for i, n in enumerate(shape0)]
+        out = type(d).empty(shape1, dtype=d.dtype, units=d.Units,
+                            fill_value=d.get_fill_value(None))
+
+        # ------------------------------------------------------------
+        # Body (not edges nor corners)
+        # ------------------------------------------------------------
+        indices = [slice(h, h + n)
+                   if (h and i in axes) else
+                   slice(None)
+                   for i, (h, n) in enumerate(zip(size, shape0))]
+        out[tuple(indices)] = d
+
+        # ------------------------------------------------------------
+        # Edges (not corners)
+        # ------------------------------------------------------------
+        for i in axes:
+            size_i = size[i]
+            
+            for edge in (0, -1):
+                # Initialise indices to the expanded data
+                indices1 = [slice(None)] * ndim
+                    
+                if edge == -1:
+                    indices1[i] = slice(-size_i, None)
+                else:
+                    indices1[i] = slice(0, size_i)
+
+                # Initialise indices to the original data
+                indices0 = indices1[:]
+               
+                for j in axes:
+                    if j == i:
+                        continue
+                    
+                    size_j = size[j]            
+                    indices1[j] = slice(size_j, -size_j)
+
+                out[tuple(indices1)] = d[tuple(indices0)]
+        # --- End: for
+
+        # ------------------------------------------------------------
+        # Corners
+        # ------------------------------------------------------------
+        if len(axes) > 1:
+            for indices in itertools.product(
+                    *[(slice(0, size[i]), slice(-size[i], None))
+                      if i in axes else
+                      (slice(None),)
+                      for i in range(ndim)]
+            ):
+                out[indices] = d[indices]
+
+        hardmask = d.hardmask
+
+        # ------------------------------------------------------------
+        # Special case for tripolar: The northern "Y" axis halo
+        # contains the values that have been flipped in the "X"
+        # direction.
+        # ------------------------------------------------------------
+        if tripolar and size[Y_axis]:
+            indices1 = [slice(None)] * ndim
+            
+            if fold_index == -1:
+                # The last index of the "Y" axis corresponds to the
+                # fold in "X" axis of a tripolar grid
+                indices1[Y_axis] = slice(-size[Y_axis], None)
+            else:
+                # The first index of the "Y" axis corresponds to the
+                # fold in "X" axis of a tripolar grid
+                indices1[Y_axis] = slice(0, size[Y_axis])
+                
+            indices2 = indices1[:]
+            indices2[X_axis] = slice(None, None, -1)
+
+            out.hardmask = False
+            out[tuple(indices1)] = out[tuple(indices2)]
+
+        out.hardmask = True
+
+        # Set expanded axes to be non-cyclic
+        out.cyclic(axes=axes, iscyclic=False)
+        
+        if inplace:
+            d.__dict__ = out.__dict__
+            d.hardmask = hardmask
+        else:
+            d = out
+
+        return d
+    
     @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO
@@ -11410,7 +11782,7 @@ False
             arrays with one element (but any number of dimensions),
             and the single element is returned. If positional
             arguments are given then they must be one of the
-            following:
+            fdlowing:
 
             * An integer. This argument is interpreted as a flat index
               into the array, specifying which element to copy and
@@ -11636,7 +12008,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=reduce(operator_mul, shape, 1),
+                            size=functools_reduce(operator_mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=cf_masked)
 
@@ -13425,7 +13797,7 @@ False
 
     @classmethod
     def empty(cls, shape, dtype=None, units=None, calendar=None,
-              chunk=True):
+              fill_value=None, chunk=True):
         '''Create a new data array without initializing the elements.
 
     Note that the mask of the returned empty data is hard.
@@ -13447,6 +13819,19 @@ False
         calendar: `str`, optional
             The calendar for reference time units.
 
+        fill_value: optional
+            The fill value of the data. By default, or if set to
+            `None`, the `numpy` fill value appropriate to the array's
+            data-type will be used (see
+            `numpy.ma.default_fill_value`). Ignored if the *source*
+            parameter is set.
+
+            The fill value may also be set after initialisation with
+            the `set_fill_value` method.
+
+            *Parameter example:*
+              ``fill_value=-999.``
+
     :Returns:
 
         `Data`
@@ -13456,8 +13841,10 @@ False
     >>> d = cf.Data.empty((96, 73))
 
         '''
-        return cls.full(shape, fill_value=None, dtype=dtype,
-                        units=units, calendar=calendar, chunk=chunk)
+        out = cls.full(shape, fill_value=None, dtype=dtype,
+                       units=units, calendar=calendar, chunk=chunk)
+        out.fill_value = fill_value
+        return out
 
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
@@ -13496,7 +13883,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=reduce(operator_mul, shape, 1),
+                            size=functools_reduce(operator_mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=fill_value)
 
@@ -14240,7 +14627,7 @@ False
 
     def files(self):
         '''Return the names of files containing parts of the data array.
-        
+
     Deprecated at version 3.4.0. Use method 'get_filenames' instead.
 
         '''
@@ -14249,7 +14636,6 @@ False
             version='3.4.0'
         )  # pragma: no cover
 
-        
     @property
     def unsafe_array(self):
         '''A numpy array of the data.

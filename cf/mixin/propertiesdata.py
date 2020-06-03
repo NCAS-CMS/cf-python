@@ -1069,6 +1069,28 @@ class PropertiesData(Properties):
         return self.del_data()
 
     @property
+    def isperiodic(self):
+        '''TODO
+
+    .. versionadded:: 2.0
+
+    >>> print(c.period())
+    None
+    >>> c.isperiodic
+    False
+    >>> print(c.period(cf.Data(360, 'degeres_east')))
+    None
+    >>> c.isperiodic
+    True
+    >>> c.period(None)
+    <CF Data(): 360 degrees_east>
+    >>> c.isperiodic
+    False
+
+        '''
+        return self.period() is not None
+
+    @property
     def reference_datetime(self):
         '''The reference date-time of units of elapsed time.
 
@@ -1129,7 +1151,8 @@ class PropertiesData(Properties):
             return self._custom['Units']
         except KeyError:
             self._custom['Units'] = _units_None
-            return _units_None
+            
+        return _units_None
 
     @Units.setter
     def Units(self, value):
@@ -1138,6 +1161,13 @@ class PropertiesData(Properties):
             data.Units = value
         else:
             self._custom['Units'] = value
+
+        # Set the Units on the period
+        period = self.period()
+        if period is not None:
+            period = period.copy()
+            period.Units = value
+            self._custom['period'] = period
 
         self._custom['direction'] = None
 
@@ -1735,6 +1765,97 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")
+
+    def period(self, *value):
+        '''Return or set the period of the data.
+
+    This is distinct from the cyclicity of individual axes.
+
+    .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
+        
+    :Parameters:
+
+        value: optional
+            The period. The absolute value is used.  May be set to any
+            numeric scalar object, including `numpy` and `Data`
+            objects. The units of the radius are assumed to be the
+            same as the data, unless specified by a `Data` object.
+
+            If *value* is `None` then any existing period is removed
+            from the construct.
+
+    :Returns:
+
+        `Data` or `None`
+            The period prior to the change, or the current period if
+            no *value* was specified. `None` is always returned if the
+            period had not been set previously.
+
+    **Examples:**
+
+    >>> print(c.period())
+    None
+    >>> c.Units
+    <Units: degrees_east>
+    >>> print(c.period(360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 'degrees_east'>
+    >>> import math
+    >>> c.period(cf.Data(2*math.pi, 'radians'))
+    <CF Data(): 360.0 degrees_east>
+    >>> c.period()
+    <CF Data(): 6.28318530718 radians>
+    >>> c.period(None)
+    <CF Data:() 6.28318530718 radians>
+    >>> print(c.period())
+    None
+    >>> print(c.period(-360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 degrees_east>
+
+        '''
+        old = self._custom.get('period')
+        if old is not None:
+            old = old.copy()
+
+        if not value:
+            return old
+
+        value = value[0]
+
+        if value is not None:
+            value = Data.asdata(value)
+            units = value.Units
+            if not units:
+                value = value.override_units(self.Units)
+            elif units != self.Units:
+                if units.equivalent(self.Units):
+                    value.Units = self.Units
+                else:
+                    raise ValueError(
+                        "Period units {!r} are not equivalent to data "
+                        "units {!r}".format(units, self.Units)
+                    )
+            # --- End: if
+
+            value = abs(value)
+            value.dtype = float
+
+#            array = self.array
+#            r = abs(array[-1] - array[0])
+#
+#            if r >= value.datum(0):
+#                raise ValueError(
+#                    "The data range of {!r} is not less than the "
+#                    "period of {!r}".format(r, value)
+#                )
+        # --- End: if
+
+        self._custom['period'] = value
+
+        return old
 
     def range(self):
         '''The absolute difference between the maximum and minimum of the data
@@ -3013,7 +3134,7 @@ class PropertiesData(Properties):
                 if verbose:
                     print("{0}: Different Units: {1!r} != {2!r}".format(
                         self.__class__.__name__, self.Units, other.Units))
-                    return False
+                return False
         except AttributeError:
             pass
 
@@ -4734,8 +4855,8 @@ class PropertiesData(Properties):
             else:
                 out0 = out[0]
                 if ('=' in out0
-                    or '%' in out0
-                    or True in [a == out0 for a in 'XYZT']):
+                        or '%' in out0
+                        or True in [a == out0 for a in 'XYZT']):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)
@@ -4759,6 +4880,44 @@ class PropertiesData(Properties):
 
         '''
         print(cf_inspect(self))  # pragma: no cover
+
+    def iscyclic(self, identity):
+        '''Whether or a not a given axis is cyclic.
+
+    .. versionadded:: 3.4.1
+
+    .. seealso:: `cyclic`, `period`, `isperiodic`
+
+    :Parameters:
+
+        axis: `int`, optional
+           Select the axis by its position in the data dimensions.
+
+    :Returns:
+
+        `bool`
+            `True` if the selected axis is cyclic, otherwise `False`.
+
+    **Examples:**
+
+    >>> f.iscyclic('X')
+    True
+    >>> f.iscyclic('latitude')
+    False
+
+    >>> x = f.iscyclic('long_name=Latitude')
+    >>> x = f.iscyclic('dimensioncoordinate1')
+    >>> x = f.iscyclic('domainaxis2')
+    >>> x = f.iscyclic('key%domainaxis2')
+    >>> x = f.iscyclic('ncdim%y')
+    >>> x = f.iscyclic(2)
+
+        '''
+        axis = self._parse_axes(axis)
+        if len(axis) != 1:
+            raise ValueError("TODO")
+
+        return axis[0] in self.cyclic()
 
     def get_data(self, default=ValueError()):
         '''Return the data.
@@ -4804,6 +4963,144 @@ class PropertiesData(Properties):
         '''
         return super().get_data(default=default, _units=False)
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=None, fold_index=-1,
+             inplace=False, verbose=False):
+        '''Expand the data by adding a halo.
+        
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
+
+    **Tripolar domains**
+
+    Data for global tripolar domains are a special case in that a halo
+    added to the northern end of the "Y" axis must be filled with
+    values that are flipped in "X" direction. Such domains need to be
+    explicitly indicated with the *tripolar* parameter.
+
+    .. versionadded:: 3.4.1
+
+    :Parameters:
+
+        size: `int` or `dict`
+            Specify the size of the halo for each axis. 
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* parameter.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (defined by its integer position in the
+            data) with a corresponding value of the halo size for that
+            axis. Axes not specified by the dictionary are not
+            expanded, and the *axes* parameter must not also be set.
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the first and last
+              dimensions `size=2, axes=[0, -1]`` or equivalently
+              ``size={0: 2, -1: 2}``.
+
+        axes: (sequence of) `int`
+            Select the domain axes to be expanded, defined by their
+            integer positions in the data. By default, or if *axes* is
+            `None`, all axes are selected. No axes are expanded if
+            *axes* is an empty sequence.
+
+        tripolar: `dict`, optional
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by their integer positions in the data.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description of the operation.
+
+    :Returns:
+        
+            The expanded data, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    TODO
+
+
+    :Parameters:
+
+        TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The expanded construct, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if verbose:
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{}".format(_,
+                                (',\n' + ' '*len(_)).join(_kwargs)))
+            
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = v.get_data(None)
+        if data is not None:
+            data.halo(size=size, axes=axes, tripolar=tripolar,
+                      fold_index=fold_index, inplace=True,
+                      verbose=verbose)
+            
+        return v
+        
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
@@ -4917,12 +5214,14 @@ class PropertiesData(Properties):
         data = v.get_data(None)
         if data is not None:
             data.override_units(units, inplace=True)
+        else:
             v._custom['Units'] = units
-#            v.Units = units
-#        else:
-#            v.Units = units
-
-        PropertiesData.Units.fset(v, units)
+            
+        # Override the Units on the period
+        period = v.period()
+        if period is not None:
+#            v._custom['period'] = period.override_units(units)
+            v.period(period.override_units(units))
 
         return v
 
