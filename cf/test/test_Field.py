@@ -396,31 +396,31 @@ class FieldTest(unittest.TestCase):
         f += 1
 
         w = f.weights()
-        self.assertTrue(isinstance(w, cf.Field))
+        self.assertIsInstance(w, cf.Field)
 
         w = f.weights(None)
-        self.assertTrue(isinstance(w, cf.Field))
+        self.assertIsInstance(w, cf.Field)
         self.assertTrue(w.data.equals(cf.Data(1.0, '1'), verbose=True))
 
         w = f.weights(data=True)
-        self.assertTrue(isinstance(w, cf.Data))
+        self.assertIsInstance(w, cf.Data)
 
         w = f.weights(None, data=True)
-        self.assertTrue(isinstance(w, cf.Data))
+        self.assertIsInstance(w, cf.Data)
         self.assertTrue(w.equals(cf.Data(1.0, '1'), verbose=True))
 
         w = f.weights(components=True)
-        self.assertTrue(isinstance(w, dict))
+        self.assertIsInstance(w, dict)
 
         w = f.weights(None, components=True)
-        self.assertTrue(isinstance(w, dict))
+        self.assertIsInstance(w, dict)
         self.assertTrue(w == {})
 
         w = f.weights(methods=True)
-        self.assertTrue(isinstance(w, dict))
+        self.assertIsInstance(w, dict)
 
         w = f.weights(None, methods=True)
-        self.assertTrue(isinstance(w, dict))
+        self.assertIsInstance(w, dict)
         self.assertTrue(w == {})
 
         w = f.weights()
@@ -2168,18 +2168,18 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-
-        self.assertTrue(f.ndim == 3)
+        self.assertEqual(f.ndim, 3)
+        
         f.squeeze(inplace=True)
-        self.assertTrue(f.ndim == 2)
+        self.assertEqual(f.ndim, 2)
 
         g = f.copy()
         self.assertIsNone(g.unsqueeze(inplace=True))
-        self.assertTrue(g.ndim == 3)
+        self.assertEqual(g.ndim, 3)
 
         g = f.unsqueeze()
-        self.assertTrue(g.ndim == 3)
-        self.assertTrue(f.ndim == 2)
+        self.assertEqual(g.ndim, 3)
+        self.assertEqual(f.ndim, 2)
 
     def test_Field_auxiliary_coordinate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2193,14 +2193,14 @@ class FieldTest(unittest.TestCase):
 
             self.assertTrue(
                 f.auxiliary_coordinate(identity).equals(c, verbose=True))
-            self.assertTrue(f.auxiliary_coordinate(identity, key=True) == key)
+            self.assertEqual(f.auxiliary_coordinate(identity, key=True), key)
 
             self.assertTrue(f.aux(identity).equals(c, verbose=True))
-            self.assertTrue(f.aux(identity, key=True) == key)
+            self.assertEqual(f.aux(identity, key=True), key)
 
-        self.assertTrue(len(f.auxs()) == 3)
-        self.assertTrue(len(f.auxs('longitude')) == 1)
-        self.assertTrue(len(f.auxs('longitude', 'latitude')) == 2)
+        self.assertEqual(len(f.auxs()), 3)
+        self.assertEqual(len(f.auxs('longitude')), 1)
+        self.assertEqual(len(f.auxs('longitude', 'latitude')), 2)
 
         identities = ['latitude', 'longitude']
         c = f.auxiliary_coordinates(*identities)
@@ -2211,7 +2211,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.auxs(identities[0]).equals(c, verbose=True))
 
         self.assertIsNone(f.aux('long_name=qwerty:asd', None))
-        self.assertTrue(len(f.auxs('long_name=qwerty:asd')) == 0)
+        self.assertEqual(len(f.auxs('long_name=qwerty:asd')), 0)
 
         with self.assertRaises(Exception):
             f.aux('long_name:qwerty')
