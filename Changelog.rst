@@ -33,6 +33,8 @@ version 3.5.0
 * Fixed bug the wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cf-python/issues/78).
+* Fixed bug that prevented the reading of netCDF files with
+  unreferenced external variables.
 
 version 3.4.0
 -------------
