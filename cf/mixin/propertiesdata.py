@@ -3013,7 +3013,7 @@ class PropertiesData(Properties):
                 if verbose:
                     print("{0}: Different Units: {1!r} != {2!r}".format(
                         self.__class__.__name__, self.Units, other.Units))
-                    return False
+                return False
         except AttributeError:
             pass
 
