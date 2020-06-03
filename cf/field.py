@@ -4,6 +4,8 @@ from functools   import reduce
 from operator    import mul as operator_mul
 from operator    import itemgetter
 
+import logging
+
 try:
     from matplotlib.path import Path
 except ImportError:
@@ -89,7 +91,11 @@ from .functions import (_DEPRECATION_ERROR,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 _debug = False
 
@@ -2433,10 +2439,11 @@ class Field(mixin.PropertiesData,
             cm.change_axes(axis_map, inplace=True)
         # --- End: for
 
+    @_manage_log_level_via_verbosity
     def _equivalent_coordinate_references(self, field1, key0, key1,
                                           atol=None, rtol=None,
                                           s=None, t=None,
-                                          verbose=False,
+                                          verbose=None,
                                           axis_map=None):
         '''TODO
 
@@ -2465,12 +2472,11 @@ class Field(mixin.PropertiesData,
 
         if not ref0.equivalent(ref1, rtol=rtol, atol=atol,
                                verbose=verbose):
-            if verbose:
-                print(
-                    "{}: Non-equivalent coordinate references "
-                    "({!r}, {!r})".format(
-                        self.__class__.__name__, ref0, ref1)
-                )  # pragma: no cover
+            logger.info(
+                "{}: Non-equivalent coordinate references "
+                "({!r}, {!r})".format(
+                    self.__class__.__name__, ref0, ref1)
+            )  # pragma: no cover
             return False
 
         # Compare the domain ancillaries
@@ -2868,9 +2874,10 @@ class Field(mixin.PropertiesData,
 
         return other
 
+    @_manage_log_level_via_verbosity
     def _equivalent_construct_data(self, field1, key0=None, key1=None,
                                    s=None, t=None, atol=None,
-                                   rtol=None, verbose=False,
+                                   rtol=None, verbose=None,
                                    axis_map=None):
         '''TODO
 
@@ -2910,9 +2917,8 @@ class Field(mixin.PropertiesData,
         item1 = field1.constructs[key1]
 
         if item0.has_data() != item1.has_data():
-            if verbose:
-                print("{0}: Only one item has data".format(
-                    self.__class__.__name__))  # pragma: no cover
+            logger.info("{0}: Only one item has data".format(
+                self.__class__.__name__))  # pragma: no cover
             return False
 
         if not item0.has_data():
@@ -2920,19 +2926,17 @@ class Field(mixin.PropertiesData,
             return True
 
         if item0.size != item1.size:
-            if verbose:
-                print(
-                    "{}: Different metadata construct data array size: "
-                    "{} != {}".format(
-                        self.__class__.__name__, item0.size, item1.size)
-                )  # pragma: no cover
+            logger.info(
+                "{}: Different metadata construct data array size: "
+                "{} != {}".format(
+                    self.__class__.__name__, item0.size, item1.size)
+            )  # pragma: no cover
             return False
 
         if item0.ndim != item1.ndim:
-            if verbose:
-                print("{0}: Different data array ranks ({1}, {2})".format(
-                    self.__class__.__name__, item0.ndim, item1.ndim)
-                )  # pragma: no cover
+            logger.info("{0}: Different data array ranks ({1}, {2})".format(
+                self.__class__.__name__, item0.ndim, item1.ndim)
+            )  # pragma: no cover
             return False
 
         axes0 = self.get_data_axes(key0, default=())
@@ -2948,9 +2952,8 @@ class Field(mixin.PropertiesData,
             for axis0 in axes0:
                 axis1 = t['id_to_axis'].get(s['axis_to_id'][axis0], None)
                 if axis1 is None:
-                    if verbose:
-                        print("%s: TTTTTTTTTTT w2345nb34589*D*& TODO" %
-                              self.__class__.__name__)  # pragma: no cover
+                    logger.info("%s: TTTTTTTTTTT w2345nb34589*D*& TODO" %
+                          self.__class__.__name__)  # pragma: no cover
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -2958,9 +2961,8 @@ class Field(mixin.PropertiesData,
             for axis0 in axes0:
                 axis1 = axis_map.get(axis0)
                 if axis1 is None:
-                    if verbose:
-                        print("%s: ****** 56 xdcv f7y edc TODO" %
-                              self.__class__.__name__)  # pragma: no cover
+                    logger.info("%s: ****** 56 xdcv f7y edc TODO" %
+                          self.__class__.__name__)  # pragma: no cover
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -2971,27 +2973,25 @@ class Field(mixin.PropertiesData,
 #        for axis0 in axes0:
 #            axis1 = axis_map.get(axis0)
 #            if axis1 is None:
-#                if verbose:
-#                    print(
-#                        "{}: Domain axis {!r} has no corresponding domain "
-#                        "axis in other field".format(
-#                            self.__class__.__name__, axis0)
-#                    )
+#                logger.info(
+#                    "{}: Domain axis {!r} has no corresponding domain "
+#                    "axis in other field".format(
+#                        self.__class__.__name__, axis0)
+#                )
 #
-#                    print(
-#                        "%s: TODO" % self.__class__.__name__
-#                    )  # pragma: no cover
+#                logger.info(
+#                    "%s: TODO" % self.__class__.__name__
+#                )  # pragma: no cover
 #                return False
 #
 #            try:
 #                transpose_axes.append(axes1.index(axis1))
 #            except ValueError:
-#                if verbose:
-#                    print(
-#                        "{}: In other field, domain axis {!r} is not "
-#                        "spanned by {!r}".format(
-#                            self.__class__.__name__, axis1, item1)
-#                    )
+#                logger.info(
+#                    "{}: In other field, domain axis {!r} is not "
+#                    "spanned by {!r}".format(
+#                        self.__class__.__name__, axis1, item1)
+#                )
 #                return False
 #        # --- End: for
 
@@ -7309,9 +7309,10 @@ class Field(mixin.PropertiesData,
 
         return f
 
+    @_manage_log_level_via_verbosity
     def bin(self, method, digitized, weights=None, measure=False,
             scale=None, mtol=1, ddof=1, radius='earth',
-            great_circle=False, return_indices=False, verbose=False):
+            great_circle=False, return_indices=False, verbose=None):
         '''Collapse the data values that lie in N-dimensional bins.
 
     The data values of the field construct are binned according to how
@@ -7759,8 +7760,7 @@ class Field(mixin.PropertiesData,
     True
 
         '''
-        if verbose:
-            print('    Method:', method)  # pragma: no cover
+        logger.info('    Method:', method)  # pragma: no cover
 
         if method == 'integral':
             if weights is None:
@@ -7807,16 +7807,14 @@ class Field(mixin.PropertiesData,
             digitized = (digitized,)
 
         for f in digitized[::-1]:
-            if verbose:
-                print(
-                    '    Digitized field input    :', repr(f)
-                )  # pragma: no cover
+            logger.info(
+                '    Digitized field input    :', repr(f)
+            )  # pragma: no cover
 
             f = self._conform_for_data_broadcasting(f)
-            if verbose:
-                print(
-                    '                    conformed:', repr(f)
-                )  # pragma: no cover
+            logger.info(
+                '                    conformed:', repr(f)
+            )  # pragma: no cover
 
             if not self._is_broadcastable(f.shape):
                 raise ValueError(
@@ -7873,9 +7871,8 @@ class Field(mixin.PropertiesData,
                 numpy_reshape(bin_bounds, (bin_count, 2)), units=units)
             dim.set_bounds(Bounds(data=bounds_data))
 
-            if verbose:
-                print('                    bins     : {} {!r}'.format(
-                    dim.identity(), bounds_data))  # pragma: no cover
+            logger.info('                    bins     : {} {!r}'.format(
+                dim.identity(), bounds_data))  # pragma: no cover
 
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(self._DomainAxis(dim.size))
@@ -7926,19 +7923,17 @@ class Field(mixin.PropertiesData,
         del f
         del y
 
-        if verbose:
-            print('    Weights:', repr(weights))  # pragma: no cover
-            print(
-                '    Number of indexed ({}) bins: {}'.format(
-                    ', '.join(names), unique_indices.shape[1])
-            )  # pragma: no cover
-            print('    ({}) bin indices:'.format(', '.join(names)),
-                  end=" ")  # pragma: no cover
+        logger.info('    Weights:', repr(weights))  # pragma: no cover
+        logger.info(
+            '    Number of indexed ({}) bins: {}'.format(
+                ', '.join(names), unique_indices.shape[1])
+        )  # pragma: no cover
+        logger.info('    ({}) bin indices:'.format(', '.join(names)),
+              end=" ")  # pragma: no cover
 
         # Loop round unique collections of bin indices
         for i in zip(*unique_indices):
-            if verbose:
-                print(i, end=" ")
+            logger.info(i, end=" ")
 
             b = (bin_indices[0] == i[0])
             for a, n in zip(bin_indices[1:], i[1:]):
@@ -7955,8 +7950,7 @@ class Field(mixin.PropertiesData,
                 method=method, weights=weights, verbose=False).data
             out.data[i] = result.datum()
 
-        if verbose:
-            print()
+        logger.info()
 
         # Set correct units (note: takes them from the last processed
         # "result" variable in the above loop)
@@ -8504,13 +8498,14 @@ class Field(mixin.PropertiesData,
         return self.set_construct(ref, key=key, copy=False)
 
     @_deprecated_kwarg_check('i')
+    @_manage_log_level_via_verbosity
     def collapse(self, method, axes=None, squeeze=False, mtol=1,
                  weights=None, ddof=1, a=None, inplace=False,
                  group=None, regroup=False, within_days=None,
                  within_years=None, over_days=None, over_years=None,
                  coordinate=None, group_by=None, group_span=None,
                  group_contiguous=1, measure=False, scale=None,
-                 radius='earth', great_circle=False, verbose=False,
+                 radius='earth', great_circle=False, verbose=None,
                  _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
@@ -10055,11 +10050,10 @@ class Field(mixin.PropertiesData,
             all_axes.append(axes2)
         # --- End: for
 
-        if verbose:
-            print(
-                '    all_methods, all_axes, all_within, all_over =',
-                all_methods, all_axes, all_within, all_over
-            )  # pragma: no cover
+        logger.info(
+            '    all_methods, all_axes, all_within, all_over =',
+            all_methods, all_axes, all_within, all_over
+        )  # pragma: no cover
 
         if group is not None and len(all_axes) > 1:
             raise ValueError(
@@ -10080,16 +10074,15 @@ class Field(mixin.PropertiesData,
 
             collapse_axes_all_sizes = f.domain_axes.filter_by_key(*axes)
 
-            if verbose:
-                print(
-                    '    axes                    =', axes
-                )  # pragma: no cover
-                print(
-                    '    method                  =', method
-                )  # pragma: no cover
-                print(
-                    '    collapse_axes_all_sizes =', collapse_axes_all_sizes
-                )  # pragma: no cover
+            logger.info(
+                '    axes                    =', axes
+            )  # pragma: no cover
+            logger.info(
+                '    method                  =', method
+            )  # pragma: no cover
+            logger.info(
+                '    collapse_axes_all_sizes =', collapse_axes_all_sizes
+            )  # pragma: no cover
 
             if not collapse_axes_all_sizes:
                 raise ValueError(
@@ -10141,9 +10134,8 @@ class Field(mixin.PropertiesData,
 #            else:
 #                collapse_axes = collapse_axes_all_sizes.copy()
 
-            if verbose:
-                print('    collapse_axes           =',
-                      collapse_axes)  # pragma: no cover
+            logger.info('    collapse_axes           =',
+                  collapse_axes)  # pragma: no cover
 
             if not collapse_axes:
                 # Do nothing if there are no collapse axes
@@ -10173,9 +10165,8 @@ class Field(mixin.PropertiesData,
 #                    "Can't calculate {0} from fewer than {1} values".format(
 #                    _collapse_cell_methods[method], min_size))
 
-            if verbose:
-                print('    collapse_axes_sizes     =',
-                      collapse_axes_sizes)  # pragma: no cover
+            logger.info('    collapse_axes_sizes     =',
+                  collapse_axes_sizes)  # pragma: no cover
 
             grouped_collapse = (within is not None or
                                 over is not None or
@@ -10328,10 +10319,9 @@ class Field(mixin.PropertiesData,
             # ------------------------------------------------------------
             # Calculate weights
             # ------------------------------------------------------------
-            if verbose:
-                print(
-                    '    Input weights           =', repr(weights)
-                )  # pragma: no cover
+            logger.info(
+                '    Input weights           =', repr(weights)
+            )  # pragma: no cover
 
             if method not in _collapse_weighted_methods:
                 weights = None
@@ -10367,10 +10357,9 @@ class Field(mixin.PropertiesData,
                 if d_weights:
                     d_kwargs['weights'] = d_weights
 
-                if verbose:
-                    print(
-                        '    Output weights          =', repr(d_weights)
-                    )  # pragma: no cover
+                logger.info(
+                    '    Output weights          =', repr(d_weights)
+                )  # pragma: no cover
             # --- End: if
 
             if method in _collapse_ddof_methods:
@@ -10379,13 +10368,12 @@ class Field(mixin.PropertiesData,
             # ========================================================
             # Collapse the data array
             # ========================================================
-            if verbose:
-                print('  Before collapse of data:')  # pragma: no cover
-                print(
-                    '    iaxes, d_kwargs =', iaxes, d_kwargs
-                )  # pragma: no cover
-                print('    f.shape = ', f.shape)  # pragma: no cover
-                print('    f.dtype = ', f.dtype)  # pragma: no cover
+            logger.info('  Before collapse of data:')  # pragma: no cover
+            logger.info(
+                '    iaxes, d_kwargs =', iaxes, d_kwargs
+            )  # pragma: no cover
+            logger.info('    f.shape = ', f.shape)  # pragma: no cover
+            logger.info('    f.dtype = ', f.dtype)  # pragma: no cover
 
             getattr(f.data, method)(axes=iaxes, squeeze=squeeze, mtol=mtol,
                                     inplace=True, **d_kwargs)
@@ -10398,18 +10386,16 @@ class Field(mixin.PropertiesData,
                 f.set_data_axes([axis for axis in data_axes
                                  if axis not in collapse_axes])
 
-            if verbose:
-                print('  After collapse of data:')  # pragma: no cover
-                print('    f.shape = ', f.shape)  # pragma: no cover
-                print('    f.dtype = ', f.dtype)  # pragma: no cover
+            logger.info('  After collapse of data:')  # pragma: no cover
+            logger.info('    f.shape = ', f.shape)  # pragma: no cover
+            logger.info('    f.dtype = ', f.dtype)  # pragma: no cover
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,
             # cell measures and domain ancillaries
             # ---------------------------------------------------------
-            if verbose:
-                print(
-                    '    collapse_axes =', collapse_axes)  # pragma: no cover
+            logger.info(
+                '    collapse_axes =', collapse_axes)  # pragma: no cover
 
             for axis, domain_axis in collapse_axes.items():
                 # Ignore axes which are already size 1
@@ -10422,10 +10408,9 @@ class Field(mixin.PropertiesData,
                 c = f.constructs.filter_by_type(
                     'cell_measure', 'domain_ancillary')
                 for key, value in c.filter_by_axis('or', axis).items():
-                    if verbose:
-                        print(
-                            '    Removing {!r}'.format(value)
-                        )  # pragma: no cover
+                    logger.info(
+                        '    Removing {!r}'.format(value)
+                    )  # pragma: no cover
 
                     f.del_construct(key)
 
@@ -10433,10 +10418,9 @@ class Field(mixin.PropertiesData,
                 # which span this axis
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
                 for key in c.filter_by_axis('or', axis):
-                    if verbose:
-                        print(
-                            '    Removing {!r}'.format(value)
-                        )  # pragma: no cover
+                    logger.info(
+                        '    Removing {!r}'.format(value)
+                    )  # pragma: no cover
 
                     f.del_construct(key)
 
@@ -10450,18 +10434,16 @@ class Field(mixin.PropertiesData,
                 # array and bounds.
                 for key, aux in f.auxiliary_coordinates.filter_by_axis(
                         'exact', axis).items():
-                    if verbose:
-                        print(
-                            'key, aux =', key, repr(aux)
-                        )  # pragma: no cover
+                    logger.info(
+                        'key, aux =', key, repr(aux)
+                    )  # pragma: no cover
 
                     d = aux[0]
 
                     if aux.has_bounds() or (aux[:-1] != aux[1:]).any():
-                        if verbose:
-                            print(
-                                '    Removing {!r}'.format(aux)
-                            )  # pragma: no cover
+                        logger.info(
+                            '    Removing {!r}'.format(aux)
+                        )  # pragma: no cover
 
                         f.del_construct(key)
                     else:
@@ -10474,9 +10456,8 @@ class Field(mixin.PropertiesData,
 
                 # Reset the axis size
                 f.domain_axes[axis].set_size(1)
-                if verbose:
-                    print(
-                        'Changing axis size to 1:', axis)  # pragma: no cover
+                logger.info(
+                    'Changing axis size to 1:', axis)  # pragma: no cover
 
                 dim = f.dimension_coordinates.filter_by_axis(
                     'exact', axis).value(None)
@@ -10535,6 +10516,7 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         return f
 
+    @_manage_log_level_via_verbosity
     def _collapse_grouped(self, method, axis, within=None, over=None,
                           within_days=None, within_years=None,
                           over_days=None, over_years=None, group=None,
@@ -10542,7 +10524,7 @@ class Field(mixin.PropertiesData,
                           mtol=None, ddof=None, regroup=None,
                           coordinate=None, measure=False,
                           weights=None, squeeze=None, group_by=None,
-                          axis_in=None, verbose=False):
+                          axis_in=None, verbose=None):
         '''TODO
 
     :Parameters:
@@ -10976,49 +10958,48 @@ class Field(mixin.PropertiesData,
 
         # START OF MAIN CODE
 
-        if verbose:
-            print(
-                '    Grouped collapse:'
-            )  # pragma: no cover
-            print(
-                '        method            =', repr(method)
-            )  # pragma: no cover
-            print(
-                '        axis_in           =', repr(axis_in)
-            )  # pragma: no cover
-            print(
-                '        axis              =', repr(axis)
-            )  # pragma: no cover
-            print(
-                '        over              =', repr(over)
-            )  # pragma: no cover
-            print(
-                '        over_days         =', repr(over_days)
-            )  # pragma: no cover
-            print(
-                '        over_years        =', repr(over_years)
-            )  # pragma: no cover
-            print(
-                '        within            =', repr(within)
-            )  # pragma: no cover
-            print(
-                '        within_days       =', repr(within_days)
-            )  # pragma: no cover
-            print(
-                '        within_years      =', repr(within_years)
-            )  # pragma: no cover
-            print(
-                '        regroup           =', repr(regroup)
-            )  # pragma: no cover
-            print(
-                '        group             =', repr(group)
-            )  # pragma: no cover
-            print(
-                '        group_span        =', repr(group_span)
-            )  # pragma: no cover
-            print(
-                '        group_contiguous  =', repr(group_contiguous)
-            )  # pragma: no cover
+        logger.info(
+            '    Grouped collapse:'
+        )  # pragma: no cover
+        logger.info(
+            '        method            =', repr(method)
+        )  # pragma: no cover
+        logger.info(
+            '        axis_in           =', repr(axis_in)
+        )  # pragma: no cover
+        logger.info(
+            '        axis              =', repr(axis)
+        )  # pragma: no cover
+        logger.info(
+            '        over              =', repr(over)
+        )  # pragma: no cover
+        logger.info(
+            '        over_days         =', repr(over_days)
+        )  # pragma: no cover
+        logger.info(
+            '        over_years        =', repr(over_years)
+        )  # pragma: no cover
+        logger.info(
+            '        within            =', repr(within)
+        )  # pragma: no cover
+        logger.info(
+            '        within_days       =', repr(within_days)
+        )  # pragma: no cover
+        logger.info(
+            '        within_years      =', repr(within_years)
+        )  # pragma: no cover
+        logger.info(
+            '        regroup           =', repr(regroup)
+        )  # pragma: no cover
+        logger.info(
+            '        group             =', repr(group)
+        )  # pragma: no cover
+        logger.info(
+            '        group_span        =', repr(group_span)
+        )  # pragma: no cover
+        logger.info(
+            '        group_contiguous  =', repr(group_contiguous)
+        )  # pragma: no cover
 
         # Size of uncollapsed axis
         axis_size = self.domain_axes[axis].get_size()
@@ -11263,9 +11244,8 @@ class Field(mixin.PropertiesData,
                         # cells. Therefore we can stop.
                         break
 
-                    if verbose:
-                        print('          HMS  =',
-                              repr(HMS))  # pragma: no cover
+                    logger.info(
+                        '          HMS  =', repr(HMS))  # pragma: no cover
 
                     if over_days is None:
                         # --------------------------------------------
@@ -11377,18 +11357,16 @@ class Field(mixin.PropertiesData,
                     if not mdHMS0:
                         # Keep a record of the first cell
                         mdHMS0 = mdHMS
-                        if verbose:
-                            print('        mdHMS0 =',
-                                  repr(mdHMS0))  # pragma: no cover
+                        logger.info('        mdHMS0 =',
+                              repr(mdHMS0))  # pragma: no cover
                     elif mdHMS.equals(mdHMS0):
                         # We've got repeat of the first cell, which
                         # means that we must have now classified all
                         # cells. Therefore we can stop.
                         break
 
-                    if verbose:
-                        print('        mdHMS  =',
-                              repr(mdHMS))  # pragma: no cover
+                    logger.info('        mdHMS  =',
+                          repr(mdHMS))  # pragma: no cover
 
                     if over_years is None:
                         # --------------------------------------------
@@ -11582,9 +11560,8 @@ class Field(mixin.PropertiesData,
             # ---------------------------------------------------------
             # Collapse each group
             # ---------------------------------------------------------
-            if verbose:
-                print('        classification    =',
-                      classification)  # pragma: no cover
+            logger.info('        classification    =',
+                  classification)  # pragma: no cover
 
             unique = numpy_unique(classification)
             unique = unique[numpy_where(unique >= 0)[0]]
@@ -11600,7 +11577,7 @@ class Field(mixin.PropertiesData,
 #                    if over == 'days':
 #                        t = pc.dimension_coordinate('T').copy()
 #                        t.units = 'days since ' + str(t.reference_datetime)
-#                        print(t.bounds.Units, u, len(index),
+#                        logger.info(t.bounds.Units, u, len(index),
 #                              int(t.bounds.range().ceil()))
 #                        if over_days != int(t.bounds.range().ceil()):
 #                            classification[index] = ignore_n
@@ -11677,9 +11654,8 @@ class Field(mixin.PropertiesData,
                 # Still here? Then collapse the group
                 # ----------------------------------------------------
                 w = _group_weights(weights, iaxis, index)
-                if verbose:
-                    print('        Collapsing group', u, ':',
-                          repr(pc))  # pragma: no cover
+                logger.info('        Collapsing group', u, ':',
+                    repr(pc))  # pragma: no cover
 
                 fl.append(pc.collapse(
                     method, axis, weights=w, mtol=mtol, ddof=ddof,
@@ -11749,8 +11725,7 @@ class Field(mixin.PropertiesData,
         # Return the collapsed field
         # ------------------------------------------------------------
         self.__dict__ = f.__dict__
-        if verbose:
-            print('    End of grouped collapse')  # pragma: no cover
+        logger.info('    End of grouped collapse')  # pragma: no cover
 
         return self
 
@@ -11773,13 +11748,12 @@ class Field(mixin.PropertiesData,
 
         '''
         original_cell_methods = self.cell_methods.ordered()
-        if verbose:
-            print('  Update cell methods:')  # pragma: no cover
-            print('    Original cell methods =',
-                  original_cell_methods)  # pragma: no cover
-            print('    method        =', repr(method))  # pragma: no cover
-            print('    within        =', repr(within))  # pragma: no cover
-            print('    over          =', repr(over))  # pragma: no cover
+        logger.info('  Update cell methods:')  # pragma: no cover
+        logger.info('    Original cell methods =',
+                    original_cell_methods)  # pragma: no cover
+        logger.info('    method        =', repr(method))  # pragma: no cover
+        logger.info('    within        =', repr(within))  # pragma: no cover
+        logger.info('    over          =', repr(over))  # pragma: no cover
 
         if input_axes and tuple(input_axes) == ('area',):
             axes = ('area',)
@@ -11833,9 +11807,8 @@ class Field(mixin.PropertiesData,
         if cell_method is not None:
             self.set_construct(cell_method)
 
-        if verbose:
-            print('    Modified cell methods =',
-                  self.cell_methods.ordered())  # pragma: no cover
+        logger.info('    Modified cell methods =',
+            self.cell_methods.ordered())  # pragma: no cover
 
     @_deprecated_kwarg_check('axes')
     def direction(self, identity, axes=None, **kwargs):
@@ -14822,7 +14795,8 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    def autocyclic(self, verbose=False):
+    @_manage_log_level_via_verbosity
+    def autocyclic(self, verbose=None):
         '''Set dimensions to be cyclic.
 
     A dimension is set to be cyclic if it has a unique longitude (or
@@ -14851,36 +14825,31 @@ class Field(mixin.PropertiesData,
         dims = self.dimension_coordinates('X')
 
         if len(dims) != 1:
-            if verbose:
-                print("Not one 'X' dimension coordinate construct:",
-                      len(dims))  # pragma: no cover
+            logger.info("Not one 'X' dimension coordinate construct:",
+                        len(dims))  # pragma: no cover
             return False
 
         key, dim = dict(dims).popitem()
 
         if not dim.Units.islongitude:
-            if verbose:
-                print(0)
+            logger.debug(0)
             if dim.get_property('standard_name', None) not in (
                     'longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
-                if verbose:
-                    print(1)
+                logger.debug(1)
                 return False
         # --- End: if
 
         bounds = dim.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
-            if verbose:
-                print(2)
+            logger.debug(2)
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
-            if verbose:
-                print(3)
+            logger.debug(3)
             return False
 
         bounds = bounds_data.array
@@ -14891,13 +14860,11 @@ class Field(mixin.PropertiesData,
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
             self.cyclic(key, iscyclic=False)
-            if verbose:
-                print(4)
+            logger.debug(4)
             return False
 
         self.cyclic(key, iscyclic=True, period=period)
-        if verbose:
-            print(5)
+        logger.debug(5)
 
         return True
 
@@ -20029,7 +19996,8 @@ class Field(mixin.PropertiesData,
             self, 'data_axes',
             "Use 'get_data_axes' method instead.")  # pragma: no cover
 
-    def equivalent(self, other, rtol=None, atol=None, verbose=False):
+    @_manage_log_level_via_verbosity
+    def equivalent(self, other, rtol=None, atol=None, verbose=None):
         '''True if two fields are equivalent, False otherwise.
 
     Deprecated at version 3.0.0.
