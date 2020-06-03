@@ -213,6 +213,7 @@ Data
    ~cf.Index.convert_reference_time
    ~cf.Index.creation_commands
    ~cf.Index.cyclic
+   ~cf.Index.period
    ~cf.Index.get_filenames
    ~cf.Index.has_bounds
 

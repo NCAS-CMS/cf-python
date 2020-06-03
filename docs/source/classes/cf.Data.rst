@@ -152,6 +152,16 @@ Rearranging elements
    ~cf.Data.flip
    ~cf.Data.roll
 	    
+Expanding the data
+^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.halo
+	    
 Binary operations
 ^^^^^^^^^^^^^^^^^
 

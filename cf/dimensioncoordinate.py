@@ -1,4 +1,4 @@
-from numpy import empty       as numpy_empty
+from numpy import empty as numpy_empty
 from numpy import result_type as numpy_result_type
 
 import cfdm
@@ -6,12 +6,11 @@ import cfdm
 from . import Bounds
 
 from .timeduration import TimeDuration
-from .units        import Units
+from .units import Units
 
 from .data.data import Data
 
 from . import mixin
-# from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE)
@@ -82,12 +81,12 @@ class DimensionCoordinate(mixin.Coordinate,
     def _infer_direction(self):
         '''Return True if a coordinate is increasing, otherwise return False.
 
-    A coordinate is considered to be increasing if its *raw* data
-    array values are increasing in index space or if it has no data
-    not bounds data.
+    A dimension coordinate construct is considered to be increasing if
+    its data array values are increasing in index space, or if it has
+    no data nor bounds.
 
-    If the direction can not be inferred from the coordinate's data
-    then the coordinate's units are used.
+    If the direction can not be inferred from the data not bounds then
+    the coordinate's units are used.
 
     The direction is inferred from the coordinate's data array values
     or its from coordinates. It is not taken directly from its
@@ -114,8 +113,7 @@ class DimensionCoordinate(mixin.Coordinate,
         '''
         data = self.get_data(None)
         if data is not None:
-            # Infer the direction from the dimension coordinate's data
-            # array
+            # Infer the direction from the data
             if data._size > 1:
                 data = data[0:2].array
                 return bool(data.item(0,) < data.item(1,))
@@ -124,9 +122,8 @@ class DimensionCoordinate(mixin.Coordinate,
         # Still here?
         data = self.get_bounds_data(None)
         if data is not None:
-            # Infer the direction from the dimension coordinate's
-            # bounds
-            b = data[(0,)*(data.ndim-1)].array
+            # Infer the direction from the bounds
+            b = data[(0,) * (data.ndim - 1)].array
             return bool(b.item(0,) < b.item(1,))
 
         # Still here? Then infer the direction from the units.
@@ -712,156 +709,74 @@ class DimensionCoordinate(mixin.Coordinate,
 
         return super().get_bounds(default=default)
 
-    def period(self, *value):
-        '''Set the period for cyclic coordinates.
-
-    :Parameters:
-
-        value: data-like or `None`, optional
-            The period. The absolute value is used.
-
-            {+data-like-scalar} TODO
-
-    :Returns:
-
-        out: `cf.Data` or `None`
-            The period prior to the change, or the current period if
-            no *value* was specified. In either case, None is returned
-            if the period had not been set previously.
-
-    **Examples:**
-
-    >>> print(c.period())
-    None
-    >>> c.Units
-    <Units: degrees_east>
-    >>> print(c.period(360))
-    None
-    >>> c.period()
-    <CF Data(): 360.0 'degrees_east'>
-    >>> import math
-    >>> c.period(cf.Data(2*math.pi, 'radians'))
-    <CF Data(): 360.0 degrees_east>
-    >>> c.period()
-    <CF Data(): 6.28318530718 radians>
-    >>> c.period(None)
-    <CF Data:() 6.28318530718 radians>
-    >>> print(c.period())
-    None
-    >>> print(c.period(-360))
-    None
-    >>> c.period()
-    <CF Data(): 360.0 degrees_east>
-
-        '''
-        old = self._custom.get('period')
-        if old is not None:
-            old = old.copy()
-
-        if not value:
-            return old
-
-        value = value[0]
-
-        if value is not None:
-            value = Data.asdata(value)
-            units = value.Units
-            if not units:
-                value = value.override_units(self.Units)
-            elif units != self.Units:
-                if units.equivalent(self.Units):
-                    value.Units = self.Units
-                else:
-                    raise ValueError(
-                        "Period units {!r} are not equivalent to coordinate "
-                        "units {!r}".format(units, self.Units)
-                    )
-            # --- End: if
-
-            value = abs(value)
-            value.dtype = float
-
-            array = self.array
-            r = abs(array[-1] - array[0])
-
-            if r >= value.datum(0):
-                raise ValueError(
-                    "The coordinate range of {!r} is not less than the "
-                    "period of {!r}".format(r, value)
-                )
-        # --- End: if
-
-        self._custom['period'] = value
-
-        return old
-
-    def autoperiod(self, verbose=False):
-        '''TODO Set dimensions to be cyclic.
-
-    TODO A dimension is set to be cyclic if it has a unique longitude (or
-    grid longitude) dimension coordinate construct with bounds and the
-    first and last bounds values differ by 360 degrees (or an
-    equivalent amount in other units).
-
-    .. versionadded:: 3.0.0
-
-    .. seealso:: `isperiodic`, `period`
-
-    :Parameters:
-
-        verbose: `bool`, optional
-            TODO
-
-    :Returns:
-
-       `bool`
-
-    **Examples:**
-
-    >>> f.autocyclic()
-
-        '''
-        if not self.Units.islongitude:
-            if verbose:
-                print(0)
-            if (self.get_property('standard_name', None) not in
-                    ('longitude', 'grid_longitude')):
-                if verbose:
-                    print(1)
-                return False
-        # --- End: if
-
-        bounds = self.get_bounds(None)
-        if bounds is None:
-            if verbose:
-                print(2)
-            return False
-
-        bounds_data = bounds.get_data(None)
-        if bounds_data is None:
-            if verbose:
-                print(3)
-            return False
-
-        bounds = bounds_data.array
-
-        period = Data(360.0, units='degrees')
-
-        period.Units = bounds_data.Units
-
-        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
-            if verbose:
-                print(4)
-            return False
-
-        self.period(period)
-
-        return True
+#    def autoperiod(self, verbose=False):
+#        '''TODO Set dimensions to be cyclic.
+#
+#    TODO A dimension is set to be cyclic if it has a unique longitude (or
+#    grid longitude) dimension coordinate construct with bounds and the
+#    first and last bounds values differ by 360 degrees (or an
+#    equivalent amount in other units).
+#
+#    .. versionadded:: 3.0.0
+#
+#    .. seealso:: `isperiodic`, `period`
+#
+#    :Parameters:
+#
+#        verbose: `bool`, optional
+#            TODO
+#
+#    :Returns:
+#
+#       `bool`
+#
+#    **Examples:**
+#
+#    >>> f.autocyclic()
+#
+#        '''
+#        if not self.Units.islongitude:
+#            if verbose:
+#                print(0)
+#            if (self.get_property('standard_name', None) not in
+#                    ('longitude', 'grid_longitude')):
+#                if verbose:
+#                    print(1)
+#                return False
+#        # --- End: if
+#
+#        bounds = self.get_bounds(None)
+#        if bounds is None:
+#            if verbose:
+#                print(2)
+#            return False
+#
+#        bounds_data = bounds.get_data(None)
+#        if bounds_data is None:
+#            if verbose:
+#                print(3)
+#            return False
+#
+#        bounds = bounds_data.array
+#
+#        period = Data(360.0, units='degrees')
+#
+#        period.Units = bounds_data.Units
+#
+#        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
+#            if verbose:
+#                print(4)
+#            return False
+#
+#        self.period(period)
+#
+#        return True
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
+
         '''
         if self.size <= 1:
             if inplace:
@@ -872,7 +787,8 @@ class DimensionCoordinate(mixin.Coordinate,
 
         shift %= self.size
 
-        period = self._custom.get('period')
+#        period = self._custom.get('period')
+        period = self.period()
 
         if not shift:
             # Null roll
@@ -882,7 +798,7 @@ class DimensionCoordinate(mixin.Coordinate,
                 return self.copy()
         elif period is None:
             raise ValueError(
-                "Can't roll {} array when no period has been set".format(
+                "Can't roll {} when no period has been set".format(
                     self.__class__.__name__))
 
         direction = self.direction()

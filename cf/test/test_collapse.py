@@ -545,6 +545,13 @@ class Field_collapseTest(unittest.TestCase):
             print(g.constructs)
         self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
+        # Test method=integral with groups
+        g = f.collapse('T: integral', group=cf.M(5, month=12),
+                       weights=True, measure=True)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+
         g = f.collapse('T: mean', group=cf.M(5, month=3), group_contiguous=2)
         expected_shape = list(f.shape)
         expected_shape[0] = 7

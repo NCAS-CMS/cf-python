@@ -27,6 +27,7 @@ _one_year = Data(1, 'calendar_years')
 _one_day = Data(1, 'day')
 _one_hour = Data(1, 'hour')
 _one_minute = Data(1, 'minute')
+_one_second = Data(1, 'second')
 
 # Default month lengths in days
 _default_month_lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -268,9 +269,22 @@ class TimeDuration:
 
          month, day, hour, minute, second: `int` or `None`, optional
             The offset used when creating, with the `bounds` method, a
-            time interval containing a given date-time. Only the
-            offset elements for units smaller that of the time
-            duration are used.
+            time interval containing a given date-time.
+
+            .. note:: The offset element *month* is ignored unless the
+                      time duration is at least 1 calendar year.
+
+                      The offset element *day* is ignored unless the
+                      time duration is at least 1 calendar month.
+
+                      The offset element *hour* is ignored unless the
+                      time duration is at least 1 day
+
+                      The offset element *minute* is ignored unless
+                      the time duration is at least 1 hour.
+
+                      The offset element *second* is ignored unless
+                      the time duration is at least 1 minute
 
             *Parameter example:*
               >>> cf.TimeDuration(1, 'calendar_month').bounds(
@@ -325,12 +339,18 @@ class TimeDuration:
         else:
             offset[1] = None
             offset[2] = None
-            if units <= _hours and duration < _one_day:
+            if duration < _one_day:
                 offset[3] = None
-                if units <= _minutes and duration < _one_hour:
+                if duration < _one_hour:
                     offset[4] = None
-                    if units <= _seconds and duration < _one_minute:
+                    if duration < _one_minute:
                         offset[5] = None
+#            if units <= _hours and duration < _one_day:
+#                offset[3] = None
+#                if units <= _minutes and duration < _one_hour:
+#                    offset[4] = None
+#                    if units <= _seconds and duration < _one_minute:
+#                        offset[5] = None
         # --- End: if
         self.offset = Offset(*offset)
 
@@ -792,6 +812,15 @@ class TimeDuration:
 
     .. versionadded:: 1.4
 
+    :Parameters:
+
+        other: any object with a `timetuple` method
+
+        op: `str`
+
+    :Returns:
+
+
         '''
         def _dHMS(duration, other, calendar, op):
             units = Units(
@@ -808,23 +837,23 @@ class TimeDuration:
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: "
-                    "{}".format(months0)
+                    "Fractional months are not supported for  "
+                    "date calculations: {}".format(months0)
                 )
         elif units == _calendar_months:
             months0 = duration.datum()
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: "
-                    "{}".format(months0)
+                    "Fractional months are not supported for "
+                    "date calculations: {}".format(months0)
                 )
         else:
             months = None
 
         calendar = getattr(other, 'calendar', None)
-        if calendar == '':
-            calendar = None
+#        if calendar == '':
+#            calendar = None
 
         if months is not None:
             y, m = divmod(op(other.month, months), 12)
@@ -834,12 +863,23 @@ class TimeDuration:
 
             y = other.year + y
 
-            max_days = self.days_in_month(y, m, calendar)
             d = other.day
-            if d > max_days:
-                d = max_days
+            if calendar != '':
+                max_days = self.days_in_month(y, m, calendar)
+                if d > max_days:
+                    d = max_days
+            # --- End: if
 
-            return other.replace(year=y, month=m, day=d)
+            # TODO When cftime==1.1.4 is ready use this one line:
+#            return other.replace(year=y, month=m, day=d)
+            # Instead of these try ... except ... lines:
+            try:
+                return other.replace(year=y, month=m, day=d, calendar=calendar)
+            except (ValueError, TypeError):
+                # If we are here, then 'other' is a datetime.datetime
+                # object, which doesn't have a 'calendar' keyword to
+                # its 'replace' method.                
+                return other.replace(year=y, month=m, day=d)            
         else:
             return _dHMS(duration, other, calendar, op)
 
@@ -1013,15 +1053,18 @@ class TimeDuration:
     :Parameters:
 
         year: `int`
+            TODO
 
         month: `int`
+            TODO
 
         calendar: `str`, optional
             By default, calendar is the mixed Gregorian/Julian
             calendar as defined by Udunits.
 
         leap_month: `int`, optional
-            By default, the leap month is 2.
+            The leap month. By default the leap month is 2, i.e. the
+            seond month of the year.
 
         month_lengths: sequence of `int`, optional
             By default, *month_lengths* is ``[31, 28, 31, 30, 31, 30,
@@ -1448,6 +1491,8 @@ class TimeDuration:
 
     The interval spans the time duration and starts and ends at
     date-times consistent with the time duration's offset.
+
+    The offset of the time duration is used to modify the bounds.
 
     .. versionadded:: 1.2.3
 
