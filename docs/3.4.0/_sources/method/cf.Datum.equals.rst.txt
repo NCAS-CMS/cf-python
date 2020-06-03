@@ -1,0 +1,7 @@
+cf.Datum.equals
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.equals

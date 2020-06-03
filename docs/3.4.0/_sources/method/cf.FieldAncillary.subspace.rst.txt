@@ -1,0 +1,7 @@
+cf.FieldAncillary.subspace
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.subspace

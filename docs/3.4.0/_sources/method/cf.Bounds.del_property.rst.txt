@@ -1,0 +1,7 @@
+cf.Bounds.del_property
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.del_property

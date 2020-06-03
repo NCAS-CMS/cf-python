@@ -164,6 +164,11 @@ q[[0, 4], :] = cf.masked
 print(q.mask.array)
 q.mask.all()
 q.mask.any()
+cf.write(q, 'masked_q.nc')
+no_mask_q = cf.read('masked_q.nc', mask=False)[0]
+print(no_mask_q.array)
+masked_q = no_mask_q.apply_masking()
+print(masked_q.array)
 
 print("\n**Subspacing by index**\n")
 
@@ -831,8 +836,6 @@ cell_measure = cf.CellMeasure(measure='area',
 
 tas.set_construct(cell_measure)
 
-
-
 print(tas)
 q, t = cf.read('file.nc')
 print(q.creation_commands())
@@ -1023,8 +1026,8 @@ T.set_data(data)
 
 # Compress the data 
 T.compress('contiguous',
-           count_properties={'long_name': 'number of obs for this timeseries'},
-           inplace=True)
+       count_properties={'long_name': 'number of obs for this timeseries'},
+       inplace=True)
 
 T
 print(T.array)
@@ -1046,7 +1049,8 @@ count_array = [1, 4]
 
 # Create the count variable
 count_variable = cf.Count(data=cf.Data(count_array))
-count_variable.set_property('long_name', 'number of obs for this timeseries')
+count_variable.set_property('long_name',
+                            'number of obs for this timeseries')
 
 # Create the contiguous ragged array object, specifying the
 # uncompressed shape
@@ -1066,7 +1070,7 @@ Y = T.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cf.Data(array))
-	
+
 p = cf.read('gathered.nc')[0]
 print(p)
 print(p.array)

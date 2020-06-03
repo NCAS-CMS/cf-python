@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.match_by_property
+========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.match_by_property

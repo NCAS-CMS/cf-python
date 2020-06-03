@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.arcsin
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.arcsin

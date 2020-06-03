@@ -1,0 +1,7 @@
+cf.FieldList.__deepcopy__
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__deepcopy__

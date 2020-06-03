@@ -1,0 +1,7 @@
+cf.DomainAncillary.set_property
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.set_property

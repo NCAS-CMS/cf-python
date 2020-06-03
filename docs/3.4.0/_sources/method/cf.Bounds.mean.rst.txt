@@ -1,0 +1,7 @@
+cf.Bounds.mean
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.mean

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.del_data
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.del_data

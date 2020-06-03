@@ -1,0 +1,7 @@
+cf.Data.median
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.median

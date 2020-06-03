@@ -1,0 +1,7 @@
+cf.histogram
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.histogram

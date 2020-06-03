@@ -1,0 +1,7 @@
+cf.DomainAncillary.creation_commands
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.creation_commands

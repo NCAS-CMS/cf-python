@@ -1,0 +1,7 @@
+cf.Count.match_by_units
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.match_by_units

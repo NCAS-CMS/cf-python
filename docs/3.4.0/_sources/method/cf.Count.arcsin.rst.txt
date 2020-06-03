@@ -1,0 +1,7 @@
+cf.Count.arcsin
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.arcsin

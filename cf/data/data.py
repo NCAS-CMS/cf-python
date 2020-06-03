@@ -22,7 +22,7 @@ from numpy import arccosh           as numpy_arccosh
 from numpy import arcsin            as numpy_arcsin
 from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
-#from numpy import arctan2           as numpy_arctan2  AT2
+# from numpy import arctan2           as numpy_arctan2  AT2
 from numpy import arctanh           as numpy_arctanh
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
@@ -552,7 +552,7 @@ place.
             check_free_memory = True
 
             if isinstance(data, self.__class__):
-#                self.loadd(data.dumpd(), chunk=chunk)
+                # self.loadd(data.dumpd(), chunk=chunk)
                 self.__dict__ = data.copy().__dict__
                 if chunk:
                     self.chunk()
@@ -3068,8 +3068,8 @@ place.
         dtype = d['dtype']
         self._dtype = dtype
 #        print ('P45 asdasdasds', dtype)
-        self.Units       = units
-        self._axes       = axes
+        self.Units = units
+        self._axes = axes
 
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
@@ -8671,7 +8671,7 @@ False
     .. versionadded:: 3.4.0
 
     .. seealso:: `get_fill_value`, `hardmask`, `mask`, `where`
-                 
+
     :Parameters:
 
         fill_values: `bool` or sequence of scalars, optional
@@ -8687,19 +8687,19 @@ False
 
             *Parameter example:*
               Specify a fill value of 999: ``fill_values=[999]``
-         
+
             *Parameter example:*
               Specify fill values of 999 and -1.0e30:
               ``fill_values=[999, -1.0e30]``
-         
+
             *Parameter example:*
               Use the fill value already set for the data:
               ``fill_values=True``
-         
+
             *Parameter example:*
               Use no fill values: ``fill_values=False`` or
               ``fill_value=[]``
-         
+
         valid_min: number, optional
             A scalar specifying the minimum valid value. Data elements
             strictly less than this number will be set to missing
@@ -8723,9 +8723,9 @@ False
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with masked values. If the operation was in-place
             then `None` is returned.
@@ -8747,12 +8747,12 @@ False
     >>> print(d.apply_masking(fill_values=[0]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
-     [ 8  9 10 11]]    
+     [ 8  9 10 11]]
     >>> print(d.apply_masking(fill_values=[0, 11]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
      [ 8  9 10 --]]
-    
+
     >>> print(d.apply_masking(valid_min=3).array)
     [[-- -- --  3]
      [ 4 --  6  7]
@@ -8765,7 +8765,7 @@ False
     [[-- --  2  3]
      [ 4 --  6  7]
      [ 8 -- -- --]]
-    
+
     >>> d.set_fill_value(7)
     >>> print(d.apply_masking(fill_values=True).array)
     [[0  1  2  3]
@@ -8789,18 +8789,18 @@ False
                     raise ValueError(
                         "'valid_range' parameter must be a vector of "
                         "two elements")
-            except TypeError:                
+            except TypeError:
                 raise ValueError(
                     "'valid_range' parameter must be a vector of "
                     "two elements")
-            
+
             valid_min, valid_max = valid_range
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_values is None:
             fill_values = False
-        
+
         if isinstance(fill_values, bool):
             if fill_values:
                 fill_value = self.get_fill_value(None)
@@ -8810,7 +8810,7 @@ False
                     fill_values = ()
             else:
                 fill_values = ()
-        else:            
+        else:
             try:
                 _ = iter(fill_values)
             except TypeError:
@@ -8823,16 +8823,16 @@ False
                         "'fill_values' parameter must be a sequence or "
                         "of type bool. Got type {}".format(type(fill_values)))
         # --- End: if
-        
+
         mask = None
-        
+
         if fill_values:
             mask = (d == fill_values[0])
 
             for fill_value in fill_values[1:]:
                 mask |= (d == fill_value)
         # --- End: for
-            
+
         if valid_min is not None:
             if mask is None:
                 mask = d < valid_min
@@ -8846,7 +8846,7 @@ False
             else:
                 mask |= d > valid_max
         # --- End: if
-        
+
         if mask is not None:
             d.where(mask, cf_masked, inplace=True)
 
@@ -9962,7 +9962,7 @@ False
 
             size = array.size
             if size >= 1:
-                end  = start + size
+                end = start + size
                 comp[start:end] = array
                 start = end
 
@@ -14627,7 +14627,7 @@ False
 
     def files(self):
         '''Return the names of files containing parts of the data array.
-        
+
     Deprecated at version 3.4.0. Use method 'get_filenames' instead.
 
         '''
@@ -14636,7 +14636,6 @@ False
             version='3.4.0'
         )  # pragma: no cover
 
-        
     @property
     def unsafe_array(self):
         '''A numpy array of the data.

@@ -5,6 +5,7 @@ import unittest
 
 import cf
 
+
 class DomainAxisTest(unittest.TestCase):
     def test_DomainAxis__repr__str(self):
         x = cf.DomainAxis(size=56)
@@ -12,7 +13,6 @@ class DomainAxisTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-
 
     def test_DomainAxis(self):
         x = cf.DomainAxis(size=111)
@@ -39,9 +39,9 @@ class DomainAxisTest(unittest.TestCase):
 
         self.assertTrue(int(x) == 56)
 
-        self.assertTrue(x >  1)
+        self.assertTrue(x > 1)
+        self.assertTrue(x < 100)
         self.assertTrue(x >= 1)
-        self.assertTrue(x <  100)
         self.assertTrue(x <= 100)
         self.assertTrue(x != 100)
 

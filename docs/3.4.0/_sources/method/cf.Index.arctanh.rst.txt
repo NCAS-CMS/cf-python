@@ -1,0 +1,7 @@
+cf.Index.arctanh
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.arctanh

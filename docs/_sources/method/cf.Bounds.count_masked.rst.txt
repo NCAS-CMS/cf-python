@@ -1,0 +1,7 @@
+cf.Bounds.count_masked
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.count_masked

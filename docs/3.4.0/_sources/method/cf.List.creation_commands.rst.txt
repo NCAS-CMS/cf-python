@@ -1,0 +1,7 @@
+cf.List.creation_commands
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.creation_commands

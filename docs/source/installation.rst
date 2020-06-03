@@ -175,12 +175,11 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, version 3.5 or newer.
+* `Python <https://www.python.org/>`_, 3.5 <= version.
 
-* `numpy <https://pypi.org/project/numpy/>`_, version 1.15 or newer.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.15 <= version.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.5.3 or
-  newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 <= version.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.1.3 or newer
   (note that this package may be installed with netCDF4).
@@ -195,9 +194,9 @@ Required
 .. _UNIDATA-UDUNITS-2-library:
 
 * `UNIDATA UDUNITS-2 library
-  <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
-  newer. UDUNITS-2 is a C library that provides support for units of
-  physical quantities.  
+  <http://www.unidata.ucar.edu/software/udunits>`_, 2.2.20 <=
+  version. UDUNITS-2 is a C library that provides support for units of
+  physical quantities.
 
   If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
   GNU/Linux or ``libudunits2.0.dylibfile`` on MacOS) is in a

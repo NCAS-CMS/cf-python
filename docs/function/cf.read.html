@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -110,7 +110,7 @@
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/read_write/read.py#L27-L641"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/read_write/read.py#L28-L700"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, CDL, PP or UM fields files.</p>
 <p>NetCDF files may be on disk or on an OPeNDAP server.</p>
 <p>Any amount of files of any combination of file types may be read.</p>
@@ -139,17 +139,18 @@ well as optionally displayed when the dataset is read by setting
 the warnings parameter.</p>
 <p><strong>CDL files</strong></p>
 <p>A file is considered to be a CDL representation of a netCDF
-dataset
-(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html">https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html</a>)
-if it is a text file that starts with the seven characters “netcdf
-” (six letters followed by a space). It is converted to a
-temporary netCDF4 file using the external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and
-the temporary file persists until the end of the Python session,
-at which time it is automatically deleted. The CDL file may omit
-data array values (as would be the case, for example, if the file
-was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or <code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in
-which case the relevant constructs in memory will be created
-with data containing missing values.</p>
+dataset if it is a text file whose first non-comment line starts
+with the seven characters “netcdf ” (six letters followed by a
+space). A comment line is identified as one which starts with any
+amount white space (including none) followed by “//” (two
+slashes). It is converted to a temporary netCDF4 file using the
+external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and the temporary file persists until
+the end of the Python session, at which time it is automatically
+deleted. The CDL file may omit data array values (as would be the
+case, for example, if the file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or
+<code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which case the the relevant
+constructs in memory will be created with data with all missing
+values.</p>
 <p><strong>PP and UM fields files</strong></p>
 <p>32-bit and 64-bit PP and UM fields files of any endian-ness can be
 read. In nearly all cases the file format is auto-detected from
@@ -367,6 +368,38 @@ parent directory of itself.</p>
 <p>This parameter replaces the deprecated <em>follow_symlinks</em>
 parameter.</p>
 </dd>
+<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention when reading the
+data of field or metadata constructs from disk. By default
+data is masked by convention.</p>
+<p>The masking by convention of a netCDF array depends on the
+values of any of the netCDF variable attributes
+<code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>, <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>,
+<code class="docutils literal notranslate"><span class="pre">valid_max</span></code> and <code class="docutils literal notranslate"><span class="pre">valid_range</span></code>.</p>
+<p>The masking by convention of a PP or UM array depends on
+the value of BMDI in the lookup header. A value other than
+<code class="docutils literal notranslate"><span class="pre">-1.0e30</span></code> indicates the data value to be masked.</p>
+<p>See
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/tutorial.html#data-mask">https://ncas-cms.github.io/cf-python/tutorial.html#data-mask</a>
+for details.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.0.</span></p>
+</div>
+</dd>
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
+<code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties
+on field contructs and metadata constructs that have
+data. By default no such warning is issued.</p>
+<p>“Out-of-range” data values in the file, as defined by any
+of these properties, are automatically masked by default,
+which may not be as intended. See the <em>mask</em> parameter for
+turning off all automatic masking.</p>
+<p>See
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/tutorial.html#data-mask">https://ncas-cms.github.io/cf-python/tutorial.html#data-mask</a>
+for details.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.0.</span></p>
+</div>
+</dd>
 <dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
 files only, provide extra decoding instructions. This
 option is ignored for input files which are notPP or
@@ -462,8 +495,9 @@ little-endian PP files from version 5.1 of the UM:
 </dd>
 <dt>follow_symlinks: deprecated at version 3.0.0</dt><dd><p>Use the <em>followlinks</em> parameter instead.</p>
 </dd>
+<dt>select_options: deprecated at version 3.0.0</dt><dd><p>Use methods on the returned <a class="reference internal" href="../classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> instead.</p>
+</dd>
 </dl>
-<p>select_options: deprecated at version 3.0.0</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
@@ -529,7 +563,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

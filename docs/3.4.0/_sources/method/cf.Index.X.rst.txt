@@ -1,0 +1,7 @@
+cf.Index.X
+==========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.X

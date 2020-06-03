@@ -1,0 +1,7 @@
+cf.FieldAncillary.count_masked
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.count_masked

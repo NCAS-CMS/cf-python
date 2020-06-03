@@ -1,0 +1,7 @@
+cf.Count.clear_properties
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.clear_properties

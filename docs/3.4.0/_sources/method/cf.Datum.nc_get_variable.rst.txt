@@ -1,0 +1,7 @@
+cf.Datum.nc_get_variable
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.nc_get_variable

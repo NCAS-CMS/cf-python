@@ -9,9 +9,11 @@ import atexit
 import cf
 
 
-tmpfile  = tempfile.mktemp('.nc')
+tmpfile = tempfile.mktemp('.nc')
 tmpfile2 = tempfile.mktemp('.nca')
 tmpfiles = [tmpfile, tmpfile2, 'delme.nc', 'delme.nca']
+
+
 def _remove_tmpfiles():
     '''
     '''
@@ -40,7 +42,7 @@ class generalTest(unittest.TestCase):
         g = self.f.squeeze()
         f = self.f.copy()
 
-        c = cf.set([0,3,4,5])
+        c = cf.set([0, 3, 4, 5])
 
         a = (f == c)
 
@@ -91,10 +93,16 @@ class generalTest(unittest.TestCase):
         # Indices for a subspace defined by coordinates
         f.indices()
         f.indices(grid_latitude=cf.lt(5), grid_longitude=27)
-        f.indices(grid_latitude=cf.lt(5), grid_longitude=27, atmosphere_hybrid_height_coordinate=1.5)
+        f.indices(
+            grid_latitude=cf.lt(5), grid_longitude=27,
+            atmosphere_hybrid_height_coordinate=1.5
+        )
 
         # Subspace the field
-        g.subspace(grid_latitude=cf.lt(5), grid_longitude=27, atmosphere_hybrid_height_coordinate=1.5)
+        g.subspace(
+            grid_latitude=cf.lt(5), grid_longitude=27,
+            atmosphere_hybrid_height_coordinate=1.5
+        )
 
         # Create list of fields
         fl = cf.FieldList([g, g, g, g])
@@ -169,7 +177,6 @@ class generalTest(unittest.TestCase):
         g.data.to_memory(regardless=True)
         g.data.to_disk()
 
-
         # Iterate through array values
         for x in f.data.flat():
             pass
@@ -190,8 +197,8 @@ class generalTest(unittest.TestCase):
         cf.write(f, 'delme.nca', fmt='CFA4')
         g = cf.read('delme.nca')[0]
 
-        b = f[:,0:6,:]
-        c = f[:,6:,:]
+        b = f[:, 0:6, :]
+        c = f[:, 6:, :]
         d = cf.aggregate([b, c], info=1)[0]
 
         # Remove temporary files
@@ -207,4 +214,3 @@ if __name__ == "__main__":
     cf.environment()
     print()
     unittest.main(verbosity=2)
-

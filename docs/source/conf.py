@@ -129,14 +129,14 @@ autodoc_default_flags = ['members', 'inherited-members', 'show-inheritance'] # v
 
 intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
-    'sphinx' : ('http://sphinx.pocoo.org',  None),
-    'python' : ('http://docs.python.org/3', None),
-    'numpy'  : ('http://docs.scipy.org/doc/numpy', None),
-    'scipy'  : ('http://docs.scipy.org/doc/scipy/reference/', None),
-    'netCDF4': ('http://unidata.github.io/netcdf4-python', None),
-    'cftime' : ('http://unidata.github.io/cftime', None),
-    'cfunits': ('http://ncas-cms.github.io/cfunits', None),
-    'cfdm'   : ('http://ncas-cms.github.io/cfdm', None),
+    'sphinx' : ('https://www.sphinx-doc.org/en/master/',  None),
+    'python' : ('https://docs.python.org/3', None),
+    'numpy'  : ('https://docs.scipy.org/doc/numpy', None),
+    'scipy'  : ('https://docs.scipy.org/doc/scipy/reference/', None),
+    # 'netCDF4': ('https://unidata.github.io/netcdf4-python', None),
+    'cftime' : ('https://unidata.github.io/cftime', None),
+    'cfunits': ('https://ncas-cms.github.io/cfunits', None),
+    'cfdm'   : ('https://ncas-cms.github.io/cfdm', None),
     'cfplot' : ('https://ajheaps.github.io/cf-plot', None),
     }
 
@@ -317,7 +317,7 @@ html_sidebars = { '**': ['about.html',
                          'searchbox.html',
                          'globaltoc.html',
                          'relations.html',
-                         'sourcelink.html',
+#                         'sourcelink.html',
 ]
 }
 

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.count
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.count

@@ -1,0 +1,7 @@
+cf.Count.cosh
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.cosh

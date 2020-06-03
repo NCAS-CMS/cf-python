@@ -1,0 +1,7 @@
+cf.Bounds.apply_masking
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.apply_masking

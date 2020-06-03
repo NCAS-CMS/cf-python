@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.cyclic
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.cyclic

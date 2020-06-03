@@ -1,0 +1,7 @@
+cf.Index.equivalent
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.equivalent

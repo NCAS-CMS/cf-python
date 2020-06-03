@@ -1,0 +1,7 @@
+cf.DomainAncillary.allclose
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.allclose

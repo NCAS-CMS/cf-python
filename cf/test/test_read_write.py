@@ -18,6 +18,7 @@ tmpfile0 = tempfile.mktemp('.cf_test')
 tmpfile1 = tempfile.mktemp('.cf_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
 
+
 def _remove_tmpfiles():
     '''TODO
     '''
@@ -27,7 +28,8 @@ def _remove_tmpfiles():
         except OSError:
             pass
     # --- End: for
-    
+
+
 atexit.register(_remove_tmpfiles)
 
 
@@ -37,7 +39,6 @@ class read_writeTest(unittest.TestCase):
 
     string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'string_char.nc')
-
 
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
@@ -57,10 +58,10 @@ class read_writeTest(unittest.TestCase):
 
         tmpfile = tempfile.mktemp('.cf_test')
         tmpfiles.append(tmpfile)
-        
+
         f = cf.example_field(0)
         a = f.array
-        
+
         cf.write(f, tmpfile)
         g = cf.read(tmpfile)
 
@@ -68,39 +69,39 @@ class read_writeTest(unittest.TestCase):
             cf.write(g, tmpfile)
 
         self.assertTrue((a == g[0].array).all())
-            
+
     def test_read_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return        
+            return
 
         f = cf.example_field(0)
 
         N = f.size
-        
+
         f.data[1, 1] = cf.masked
         f.data[2, 2] = cf.masked
 
         f.del_property('_FillValue', None)
         f.del_property('missing_value', None)
-        
+
         cf.write(f, tmpfile)
 
         g = cf.read(tmpfile)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         g = cf.read(tmpfile, mask=False)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N)
 
         g.apply_masking(inplace=True)
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         f.set_property('_FillValue', 999)
         f.set_property('missing_value', -111)
         cf.write(f, tmpfile)
-        
+
         g = cf.read(tmpfile)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         g = cf.read(tmpfile, mask=False)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N)
 
@@ -165,7 +166,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(len(f) == 2, f)
 
         shutil.rmtree(dir)
-        
+
     def test_read_select(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -246,7 +247,7 @@ class read_writeTest(unittest.TestCase):
                             'NETCDF4',
                             'NETCDF4_CLASSIC',
                             'CFA',):
-#                    print (fmt, string)
+                    # print (fmt, string)
                     f = cf.read(self.filename)[0]
                     f0 = f.copy()
                     cf.write(f, tmpfile, fmt=fmt, verbose=0, string=string)
@@ -272,7 +273,7 @@ class read_writeTest(unittest.TestCase):
                         'NETCDF4_CLASSIC',
                         'CFA4'):
                 for shuffle in (True, False):
-                    for compress in (4,): #range(10):
+                    for compress in (4,):  # range(10):
                         cf.write(f, tmpfile, fmt=fmt,
                                  compress=compress,
                                  shuffle=shuffle)
@@ -291,7 +292,7 @@ class read_writeTest(unittest.TestCase):
 
         tmpfile = tempfile.mktemp('.cf_test')
         tmpfiles.append(tmpfile)
-        
+
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.filename)[0]
@@ -314,7 +315,7 @@ class read_writeTest(unittest.TestCase):
 
         tmpfile2 = tempfile.mktemp('.cf_test')
         tmpfiles.append(tmpfile2)
-        
+
         # Keyword double
         f = g
         self.assertTrue(f.dtype == numpy.dtype('float32'))
@@ -328,14 +329,14 @@ class read_writeTest(unittest.TestCase):
                 with self.assertRaises(Exception):
                     _ = cf.write(g, double=double, single=single)
         # --- End: for
-        
+
         datatype = {numpy.dtype(float): numpy.dtype('float32')}
         with self.assertRaises(Exception):
             _ = cf.write(g, datatype=datatype, single=True)
-        
+
         with self.assertRaises(Exception):
             _ = cf.write(g, datatype=datatype, double=True)
-        
+
     def test_write_reference_datetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -355,9 +356,9 @@ class read_writeTest(unittest.TestCase):
                 g = cf.read(tmpfile)[0]
                 t = g.dimension_coordinate('T')
                 self.assertTrue(
-                    t.Units == cf.Units('days since '+reference_datetime),
-                    ('Units written were '+repr(t.Units.reftime)
-                     +' not '+repr(reference_datetime)))
+                    t.Units == cf.Units('days since ' + reference_datetime),
+                    ('Units written were ' + repr(t.Units.reftime)
+                     + ' not ' + repr(reference_datetime)))
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -463,7 +464,7 @@ class read_writeTest(unittest.TestCase):
                          'NETCDF3_64BIT',
                          'NETCDF3_64BIT_OFFSET',
                          'NETCDF3_64BIT_DATA'):
-#                print ('fmt0=', fmt0)
+                # print ('fmt0=', fmt0)
                 f0 = cf.read(self.string_filename)
                 cf.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
@@ -474,7 +475,7 @@ class read_writeTest(unittest.TestCase):
                                  'NETCDF3_64BIT',
                                  'NETCDF3_64BIT_OFFSET',
                                  'NETCDF3_64BIT_DATA'):
-#                        print ('fmt1=', fmt1)
+                        # print ('fmt1=', fmt1)
                         f1 = cf.read(self.string_filename)
                         cf.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
@@ -483,6 +484,7 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

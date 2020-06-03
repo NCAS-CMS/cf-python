@@ -1,0 +1,7 @@
+cf.CellMeasure.apply_masking
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.apply_masking

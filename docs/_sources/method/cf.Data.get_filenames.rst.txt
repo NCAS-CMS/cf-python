@@ -1,0 +1,7 @@
+cf.Data.get_filenames
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.get_filenames

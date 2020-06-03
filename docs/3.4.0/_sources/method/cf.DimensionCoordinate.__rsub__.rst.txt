@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__rsub__
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__rsub__

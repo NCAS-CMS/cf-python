@@ -446,7 +446,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         verbose: `bool`, optional
             If True then print a summary of how constructs map to output
             netCDF dimensions, variables and attributes.
-    
+
        warn_valid: `bool`, optional
             If False then do not print a warning when writing
             "out-of-range" data, as indicated by the values, if
@@ -554,7 +554,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
         if single is not None and not single:
             double = True
-            
+
         if double is not None and not double:
             single = True
 
@@ -565,7 +565,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         if double:
             datatype = {numpy.dtype('float32'): numpy.dtype(float),
                         numpy.dtype('int32'): numpy.dtype(int)}
-        
+
         extra_write_vars = {
             'cfa': False,
             'cfa_options': {},

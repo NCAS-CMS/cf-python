@@ -1,0 +1,7 @@
+cf.List.subspace
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.subspace

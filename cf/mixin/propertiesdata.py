@@ -3134,7 +3134,7 @@ class PropertiesData(Properties):
                 if verbose:
                     print("{0}: Different Units: {1!r} != {2!r}".format(
                         self.__class__.__name__, self.Units, other.Units))
-                    return False
+                return False
         except AttributeError:
             pass
 
@@ -4855,8 +4855,8 @@ class PropertiesData(Properties):
             else:
                 out0 = out[0]
                 if ('=' in out0
-                    or '%' in out0
-                    or True in [a == out0 for a in 'XYZT']):
+                        or '%' in out0
+                        or True in [a == out0 for a in 'XYZT']):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)

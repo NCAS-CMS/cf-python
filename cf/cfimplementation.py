@@ -2,32 +2,34 @@ import cfdm
 
 from .functions import CF
 
-from . import (AuxiliaryCoordinate,
-               CellMethod,
-               CellMeasure,
-               CoordinateReference,
-               DimensionCoordinate,
-               DomainAncillary,
-               DomainAxis,
-               Field,
-               FieldAncillary,
-               Bounds,
-               InteriorRing,
-               CoordinateConversion,
-               Datum,
-               Count,
-               List,
-               Index,
-               NodeCountProperties,
-               PartNodeCountProperties,
+from . import (
+    AuxiliaryCoordinate,
+    CellMethod,
+    CellMeasure,
+    CoordinateReference,
+    DimensionCoordinate,
+    DomainAncillary,
+    DomainAxis,
+    Field,
+    FieldAncillary,
+    Bounds,
+    InteriorRing,
+    CoordinateConversion,
+    Datum,
+    Count,
+    List,
+    Index,
+    NodeCountProperties,
+    PartNodeCountProperties,
 )
 
-from .data import (Data,
-                   GatheredArray,
-                   NetCDFArray,
-                   RaggedContiguousArray,
-                   RaggedIndexedArray,
-                   RaggedIndexedContiguousArray,
+from .data import (
+    Data,
+    GatheredArray,
+    NetCDFArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
 )
 
 
@@ -41,36 +43,37 @@ class CFImplementation(cfdm.CFDMImplementation):
 
 
 _implementation = CFImplementation(
-    cf_version = CF(),
+    cf_version=CF(),
 
-    AuxiliaryCoordinate = AuxiliaryCoordinate,
-    CellMeasure         = CellMeasure,
-    CellMethod          = CellMethod,
-    CoordinateReference = CoordinateReference,
-    DimensionCoordinate = DimensionCoordinate,
-    DomainAncillary     = DomainAncillary,
-    DomainAxis          = DomainAxis,
-    Field               = Field,
-    FieldAncillary      = FieldAncillary,
+    AuxiliaryCoordinate=AuxiliaryCoordinate,
+    CellMeasure=CellMeasure,
+    CellMethod=CellMethod,
+    CoordinateReference=CoordinateReference,
+    DimensionCoordinate=DimensionCoordinate,
+    DomainAncillary=DomainAncillary,
+    DomainAxis=DomainAxis,
+    Field=Field,
+    FieldAncillary=FieldAncillary,
 
-    Bounds               = Bounds,
-    InteriorRing         = InteriorRing,
-    CoordinateConversion = CoordinateConversion,
-    Datum                = Datum,
+    Bounds=Bounds,
+    InteriorRing=InteriorRing,
+    CoordinateConversion=CoordinateConversion,
+    Datum=Datum,
 
-    List                    = List,
-    Index                   = Index,
-    Count                   = Count,
-    NodeCountProperties     = NodeCountProperties,
-    PartNodeCountProperties = PartNodeCountProperties,
+    List=List,
+    Index=Index,
+    Count=Count,
+    NodeCountProperties=NodeCountProperties,
+    PartNodeCountProperties=PartNodeCountProperties,
 
-    Data                         = Data,
-    GatheredArray                = GatheredArray,
-    NetCDFArray                  = NetCDFArray,
-    RaggedContiguousArray        = RaggedContiguousArray,
-    RaggedIndexedArray           = RaggedIndexedArray,
-    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+    Data=Data,
+    GatheredArray=GatheredArray,
+    NetCDFArray=NetCDFArray,
+    RaggedContiguousArray=RaggedContiguousArray,
+    RaggedIndexedArray=RaggedIndexedArray,
+    RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
 )
+
 
 def implementation():
     '''Return a container for the CF data model implementation.
@@ -117,4 +120,3 @@ def implementation():
 
     '''
     return _implementation.copy()
-

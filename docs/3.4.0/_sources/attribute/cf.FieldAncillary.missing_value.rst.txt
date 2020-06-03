@@ -1,0 +1,7 @@
+cf.FieldAncillary.missing_value
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.missing_value

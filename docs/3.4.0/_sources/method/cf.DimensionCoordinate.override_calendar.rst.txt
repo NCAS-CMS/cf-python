@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.override_calendar
+========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.override_calendar

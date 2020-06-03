@@ -8,8 +8,9 @@ on:
   #  branches:
   #    - master
   pull_request:
-    # default (from docs) is just on [opened, synchronize, reopened]
-    types: [opened, reopened, ready_for_review, edited]
+    # 'reopened' enables manual retrigger via close & re-open. Disable for all
+    # edits to manage limited resource (PRs often change before merge-ready).
+    types: [opened, reopened, ready_for_review]
     branches:
       - master
 

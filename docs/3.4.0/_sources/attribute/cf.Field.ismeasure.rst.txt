@@ -1,0 +1,7 @@
+cf.Field.ismeasure
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.ismeasure

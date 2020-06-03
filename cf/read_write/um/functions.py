@@ -41,7 +41,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
             f.open_fd()
         # --- End: if
-        
+
         return f
 
     if open_files_threshold_exceeded():
@@ -58,7 +58,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
             f.close_fd()
         except:
             pass
-        
+
         raise Exception(error)
 
     # Add a close method to the file object
@@ -68,6 +68,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
     _file_to_UM[filename] = f
 
     return f
+
 
 def _close_um_file(filename):
     '''Close a PP or UM fields file.

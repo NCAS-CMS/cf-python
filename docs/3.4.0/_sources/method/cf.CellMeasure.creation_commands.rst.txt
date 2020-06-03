@@ -1,0 +1,7 @@
+cf.CellMeasure.creation_commands
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.creation_commands

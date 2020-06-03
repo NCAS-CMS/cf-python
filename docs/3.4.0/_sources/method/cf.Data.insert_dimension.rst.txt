@@ -1,0 +1,7 @@
+cf.Data.insert_dimension
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.insert_dimension

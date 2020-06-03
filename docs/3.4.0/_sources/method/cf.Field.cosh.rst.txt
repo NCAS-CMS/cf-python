@@ -1,0 +1,7 @@
+cf.Field.cosh
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.cosh

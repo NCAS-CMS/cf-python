@@ -1,0 +1,7 @@
+cf.Bounds.__str__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__str__

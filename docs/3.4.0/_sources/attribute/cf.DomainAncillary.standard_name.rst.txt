@@ -1,0 +1,7 @@
+cf.DomainAncillary.standard_name
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.standard_name

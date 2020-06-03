@@ -9,8 +9,11 @@ import numpy
 
 import cf
 
-tmpfile  = tempfile.mktemp('.cf_test')
+
+tmpfile = tempfile.mktemp('.cf_test')
 tmpfiles = [tmpfile]
+
+
 def _remove_tmpfiles():
     '''
 '''
@@ -23,22 +26,23 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
+
 class ppTest(unittest.TestCase):
     def setUp(self):
-        self.ppfilename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                       'wgdos_packed.pp')
+        self.ppfilename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'wgdos_packed.pp')
 
-        self.new_table = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      'new_STASH_to_CF.txt')
+        self.new_table = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'new_STASH_to_CF.txt')
 
         text_file = open(self.new_table, 'w')
-        text_file.write('1!24!SURFACE TEMPERATURE AFTER TIMESTEP  !Pa!!!NEW_NAME!!')
+        text_file.write(
+            '1!24!SURFACE TEMPERATURE AFTER TIMESTEP  !Pa!!!NEW_NAME!!')
         text_file.close()
 
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
         self.test_only = ()
-
 
     def test_PP_load_stash2standard_name(self):
         f = cf.read(self.ppfilename)[0]
@@ -56,7 +60,6 @@ class ppTest(unittest.TestCase):
 
         cf.load_stash2standard_name()
 
-
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfilename)[0]
 
@@ -73,12 +76,12 @@ class ppTest(unittest.TestCase):
             f = cf.read(self.ppfilename)[0]
 
             for fmt in ('NETCDF4', 'CFA4'):
-#                print (fmt)
-#                f.dump()
-#                print (repr(f.dtype))
-#                print (f._FillValue)
-#                print (type(f._FillValue))
-#                f._FillValue = numpy.array(f._FillValue , dtype='float32')
+                # print (fmt)
+                # f.dump()
+                # print (repr(f.dtype))
+                # print (f._FillValue)
+                # print (type(f._FillValue))
+                # f._FillValue = numpy.array(f._FillValue , dtype='float32')
                 cf.write(f, tmpfile, fmt=fmt)
                 g = cf.read(tmpfile)[0]
 

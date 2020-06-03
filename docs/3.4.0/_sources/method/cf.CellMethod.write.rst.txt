@@ -1,0 +1,7 @@
+cf.CellMethod.write
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMethod.write
