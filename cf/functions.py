@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 import platform
 import re
@@ -9,6 +10,8 @@ import netCDF4
 import warnings
 
 import psutil
+
+from functools import partial
 
 import cftime
 
@@ -252,6 +255,10 @@ CF = cfdm.CF
 # This also means the LOG_LEVEL dostrings are independent which is important
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
+# Required to inherit logging-level verbosity management logic. Note we
+# override the default logger to be cf's own root, else it would use cfdm's:
+_disable_logging = partial(cfdm._disable_logging, logger=logging.getLogger())
+_reset_log_emergence_level = cfdm._reset_log_emergence_level
 
 
 def LOG_LEVEL(*log_level):

@@ -13,7 +13,9 @@ from .fieldlist           import FieldList
 from .query               import gt
 from .units               import Units
 
-from .decorators          import _manage_log_level_via_verbosity
+from .decorators          import (_manage_log_level_via_verbosity,
+                                  _manage_log_level_via_verbose_attr)
+
 from .functions           import (flat, RTOL, ATOL,
                                   hash_array,
                                   _numpy_allclose)
@@ -97,6 +99,7 @@ class _HFLCache:
 # --- End: class
 
 
+@_manage_log_level_via_verbose_attr
 class _Meta:
     '''A summary of a field.
 
@@ -848,15 +851,13 @@ class _Meta:
 
     '''
         if not msr.Units:
-            if self.verbose:
-                self.message = "{0!r} cell measure has no units".format(
-                    msr.identity())
+            self.message = "{0!r} cell measure has no units".format(
+                msr.identity())
             return
 
         if not msr.has_data():
-            if self.verbose:
-                self.message = "{0!r} cell measure has no data".format(
-                    msr.identity())
+            self.message = "{0!r} cell measure has no data".format(
+                msr.identity())
             return
 
         return True
@@ -902,9 +903,8 @@ class _Meta:
                 axes, set())
 
             if identity in all_coord_identities:
-                if self.verbose:
-                    self.message = "multiple {0!r} coordinates".format(
-                        identity)
+                self.message = "multiple {0!r} coordinates".format(
+                    identity)
                 return None
 
             if coord.has_data() or (
@@ -914,8 +914,7 @@ class _Meta:
         # --- End: if
 
         # Still here?
-        if self.verbose:
-            self.message = "{!r} has no identity or no data".format(coord)
+        self.message = "{!r} has no identity or no data".format(coord)
 
         return None
 
@@ -941,9 +940,8 @@ class _Meta:
             all_field_anc_identities = self.all_field_anc_identities
 
             if identity in all_field_anc_identities:
-                if self.verbose:
-                    self.message = "multiple {0!r} field ancillaries".format(
-                        identity)
+                self.message = "multiple {0!r} field ancillaries".format(
+                    identity)
 
                 return None
 
@@ -953,9 +951,8 @@ class _Meta:
         # --- End: if
 
         # Still here?
-        if self.verbose:
-            self.message = ("{0!r} field ancillary has no identity or "
-                            "no data".format(anc.identity()))
+        self.message = ("{0!r} field ancillary has no identity or "
+                        "no data".format(anc.identity()))
 
         return None
 
@@ -1020,23 +1017,20 @@ class _Meta:
                                         nc_only=self.ncvar_identities)
 
         if anc_identity is None:
-            if self.verbose:
-                self.message = "{0!r} domain ancillary has no identity".format(
+            self.message = "{0!r} domain ancillary has no identity".format(
                     anc.identity())
             return
 
         all_domain_anc_identities = self.all_domain_anc_identities
 
         if anc_identity in all_domain_anc_identities:
-            if self.verbose:
-                self.message = "multiple {0!r} domain ancillaries".format(
-                    anc_identity)
+            self.message = "multiple {0!r} domain ancillaries".format(
+                anc_identity)
             return
 
         if not anc.has_data():
-            if self.verbose:
-                self.message = "{0!r} domain ancillary has no data".format(
-                    anc.identity())
+            self.message = "{0!r} domain ancillary has no data".format(
+                anc.identity())
             return
 
         all_domain_anc_identities.add(anc_identity)
