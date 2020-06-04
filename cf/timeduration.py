@@ -1,3 +1,5 @@
+import logging
+
 from operator import __add__, __sub__
 
 from collections import namedtuple
@@ -11,8 +13,11 @@ from .units      import Units
 
 from .data.data import Data
 
-from .decorators import _deprecated_kwarg_check
+from .decorators import (_deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
 
+
+logger = logging.getLogger(__name__)
 
 # Define some useful units
 _calendar_years = Units('calendar_years')
@@ -1068,7 +1073,8 @@ class TimeDuration:
         return length
 
     @_deprecated_kwarg_check('traceback')
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                traceback=False):
         '''True if two time durations are equal.
 
@@ -1115,11 +1121,10 @@ class TimeDuration:
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Different type: %s" % (
-                        self.__class__.__name__, other.__class__.__name__)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Different type: %s" % (
+                    self.__class__.__name__, other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
@@ -1129,26 +1134,25 @@ class TimeDuration:
         d1 = other__dict__.pop('duration', None)
 
         if not d0.equals(d1):
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Different durations: %r, %r" % (
-                        self.__class__.__name__, d0, d1)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Different durations: %r, %r" % (
+                    self.__class__.__name__, d0, d1)
+            )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Different The default date-time elements: "
-                    "%r != %r" % (
-                        self.__class__.__name__, self__dict__, other__dict__)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Different default date-time elements: "
+                "%r != %r" % (
+                    self.__class__.__name__, self__dict__, other__dict__)
+            )  # pragma: no cover
             return False
 
         return True
 
     @_deprecated_kwarg_check('traceback')
-    def equivalent(self, other, rtol=None, atol=None, verbose=True,
+    @_manage_log_level_via_verbosity
+    def equivalent(self, other, rtol=None, atol=None, verbose=None,
                    traceback=False):
         '''True if two time durations are logically equivalent.
 
@@ -1197,11 +1201,10 @@ class TimeDuration:
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Different type: %s" % (
-                        self.__class__.__name__, other.__class__.__name__)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Different type: %s" % (
+                    self.__class__.__name__, other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
@@ -1210,20 +1213,18 @@ class TimeDuration:
         d0 = self__dict__.pop('duration', None)
         d1 = other__dict__.pop('duration', None)
         if d0 != d0:
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Non-equivalent durations: %r, %r" % (
-                        self.__class__.__name__, d0, d1)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Non-equivalent durations: %r, %r" % (
+                    self.__class__.__name__, d0, d1)
+            )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if verbose:  # pragma: no cover
-                print(
-                    "%s: Non-equivalent default date-time elements: "
-                    "%r != %r" % (
-                        self.__class__.__name__, self__dict__, other__dict__)
-                )  # pragma: no cover
+            logger.info(
+                "%s: Non-equivalent default date-time elements: "
+                "%r != %r" % (
+                    self.__class__.__name__, self__dict__, other__dict__)
+            )  # pragma: no cover
             return False
 
         return True
