@@ -1054,6 +1054,10 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=False):
     True
 
     '''
+    # TODO: we want to use @_manage_log_level_via_verbosity on this function
+    # but we cannot, since importing it to this module would lead to a
+    # circular import dependency with the decorators module. Tentative plan
+    # is to move the function elsewhere. For now, it is not 'loggified'.
 
     # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
