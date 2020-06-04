@@ -11,8 +11,6 @@ import warnings
 
 import psutil
 
-from functools import partial
-
 import cftime
 
 from numpy import __file__          as _numpy__file__
@@ -249,15 +247,13 @@ ATOL = cfdm.ATOL
 RTOL = cfdm.RTOL
 CF = cfdm.CF
 
+_disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python LOG_LEVEL() function
 # as contained in _log_level, but can't inherit the user-facing LOG_LEVEL()
 # from cfdm as it operates on cfdm's CONSTANTS dict. Define cf-python's own.
 # This also means the LOG_LEVEL dostrings are independent which is important
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
-# Required to inherit logging-level verbosity management logic. Note we
-# override the default logger to be cf's own root, else it would use cfdm's:
-_disable_logging = partial(cfdm._disable_logging, logger=logging.getLogger())
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
 
 

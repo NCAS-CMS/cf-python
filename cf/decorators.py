@@ -99,6 +99,7 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
 
         # Convert Boolean cases for backwards compatibility. Need 'is' identity
         # rather than '==' (value) equivalency test, since 1 == True, etc.
+        # Note: it is safe (and desirable) to change these (to standard form)
         if self.verbose is True:
             self.verbose = 3  # max verbosity excluding debug levels
         elif self.verbose is False:
