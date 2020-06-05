@@ -5107,7 +5107,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
-              _debug=False):
+              verbose=None):
         '''Set data array elements depending on a condition.
 
     .. seealso:: `cf.masked`, `hardmask`, `subspace`
@@ -5169,7 +5169,7 @@ class PropertiesData(Properties):
 
             y = y_data
 
-        data.where(condition, x, y, inplace=True, _debug=_debug)
+        data.where(condition, x, y, inplace=True, verbose=verbose)
 
         return v
 

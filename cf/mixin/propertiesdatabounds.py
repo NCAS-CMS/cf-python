@@ -16,14 +16,14 @@ from ..functions    import (_DEPRECATION_ERROR_METHOD,
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+                          _manage_log_level_via_verbosity,
+                          _manage_log_level_via_verbose_attr)
 
 from ..query        import Query
 from ..units        import Units
 
 from ..data.data import Data
 
-_debug = False
 
 _units_None = Units()
 
@@ -38,12 +38,15 @@ class PropertiesDataBounds(PropertiesData):
     bounds.
 
     '''
+    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
 
     x.__getitem__(indices) <==> x[indices]
 
         '''
+        self.verbose = None  # init here as class should not have an __init__?
+
         if indices is Ellipsis:
             return self.copy()
 
@@ -82,20 +85,19 @@ class PropertiesDataBounds(PropertiesData):
         else:
             findices = tuple(indices)
 
-        if _debug:
-            cname = self.__class__.__name__
-            print(
-                '{}.__getitem__: shape    = {}'.format(cname, self.shape)
-            )  # pragma: no cover
-            print(
-                '{}.__getitem__: indices2 = {}'.format(cname, indices2)
-            )  # pragma: no cover
-            print(
-                '{}.__getitem__: indices  = {}'.format(cname, indices)
-            )  # pragma: no cover
-            print(
-                '{}.__getitem__: findices = {}'.format(cname, findices)
-            )  # pragma: no cover
+        cname = self.__class__.__name__
+        logger.debug(
+            '{}.__getitem__: shape    = {}'.format(cname, self.shape)
+        )  # pragma: no cover
+        logger.debug(
+            '{}.__getitem__: indices2 = {}'.format(cname, indices2)
+        )  # pragma: no cover
+        logger.debug(
+            '{}.__getitem__: indices  = {}'.format(cname, indices)
+        )  # pragma: no cover
+        logger.debug(
+            '{}.__getitem__: findices = {}'.format(cname, findices)
+        )  # pragma: no cover
 
         data = self.get_data(None)
         if data is not None:
@@ -132,9 +134,10 @@ class PropertiesDataBounds(PropertiesData):
                     findices[1] = [mask.insert_dimension(-1) for mask in
                                    findices[1]]
 
-                if _debug:
-                    print('{}.__getitem__: findices for bounds ='.format(
-                        self.__class__.__name__, findices))  # pragma: no cover
+                logger.debug(
+                    '{}.__getitem__: findices for bounds ='.format(
+                        self.__class__.__name__, findices)
+                )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
         # --- End: if
