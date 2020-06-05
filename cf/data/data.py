@@ -119,7 +119,8 @@ from ..functions import _section
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+                          _manage_log_level_via_verbosity,
+                          _manage_log_level_via_verbose_attr)
 
 from .abstract           import (Array,
                                  CompressedArray)
@@ -200,8 +201,6 @@ int
     raise TypeError(
         "{0!r} object is not JSON serializable: {1!r}".format(type(x), x))
 
-
-_debug = True
 
 # --------------------------------------------------------------------
 # _seterr = How floating-point errors in the results of arithmetic
@@ -12350,8 +12349,9 @@ False
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def where(self, condition, x=None, y=None, inplace=False, i=False,
-              _debug=False):
+              verbose=None):
         '''Assign to data elements depending on a condition.
 
     Data can be changed by assigning to elements that are selected by
@@ -12532,9 +12532,10 @@ False
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if _debug:
-            print('    data.shape =', d.shape)  # pragma: no cover
-            print('    condition =', repr(condition))  # pragma: no cover
+        logger.debug(
+            '    data.shape = {}'.format(d.shape))  # pragma: no cover
+        logger.debug(
+            '    condition = {!r}'.format(condition))  # pragma: no cover
 
         if x is None and y is None:
             # The data is unchanged regardless of condition
@@ -12602,33 +12603,31 @@ False
         (condition_is_scalar, x_is_scalar, y_is_scalar) = is_scalar
         broadcast = not any(do_not_broadcast)
 
-        if _debug:
-            print(
-                '    x =', repr(x)
-            )  # pragma: no cover
-            print(
-                '    y =', repr(y)
-            )  # pragma: no cover
-            print(
-                '    condition_is_scalar =', repr(condition_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    x_is_scalar         =', repr(x_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    y_is_scalar         =', repr(y_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    broadcast           =', repr(broadcast)
-            )  # pragma: no cover
+        logger.debug(
+            '    x = {!r}'.format(x)
+        )  # pragma: no cover
+        logger.debug(
+            '    y = {!r}'.format(y)
+        )  # pragma: no cover
+        logger.debug(
+            '    condition_is_scalar = {!r}'.format(condition_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    x_is_scalar         = {!r}'.format(x_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    y_is_scalar         = {!r}'.format(y_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    broadcast           = {!r}'.format(broadcast)
+        )  # pragma: no cover
 
         # -------------------------------------------------------------
         # Try some short cuts if the condition is a scalar
         # -------------------------------------------------------------
         if condition_is_scalar and not getattr(condition, 'isquery', False):
-            if _debug:
-                print('    Condition is a scalar:', repr(condition),
-                      type(condition))
+            logger.debug('    Condition is a scalar: {} {}'.format(
+                condition, type(condition)))
             if condition:
                 if x is not None:
                     d[...] = x
@@ -12650,8 +12649,7 @@ False
         config = d.partition_configuration(readonly=False)  # or True?
 
         for partition in d.partitions.matrix.flat:
-            if _debug:
-                print('   Partition:')  # pragma: no cover
+            logger.debug('   Partition:')  # pragma: no cover
 
             partition.open(config)
             array = partition.array
@@ -12738,11 +12736,10 @@ False
                         F = _broadcast(F, shape)
             # --- End: if
 
-            if _debug:
-                print('  array =', array)  # pragma: no cover
-                print('      c =', c)  # pragma: no cover
-                print('      T =', T)  # pragma: no cover
-                print('      F =', F)  # pragma: no cover
+            logger.debug('  array = {}'.format(array))  # pragma: no cover
+            logger.debug('      c = {}'.format(c))  # pragma: no cover
+            logger.debug('      T = {}'.format(T))  # pragma: no cover
+            logger.debug('      F = {}'.format(F))  # pragma: no cover
 
             # --------------------------------------------------------
             # Create a numpy array which takes vales from T where c
@@ -12790,8 +12787,7 @@ False
             # Replace the partition's subarray with the new numpy
             # array
             # --------------------------------------------------------
-            if _debug:
-                print('      new=', new)  # pragma: no cover
+            logger.debug('      new = {}'.format(new))  # pragma: no cover
 
             partition.subarray = new
 

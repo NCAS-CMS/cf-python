@@ -91,13 +91,12 @@ from .functions import (_DEPRECATION_ERROR,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+                         _deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity,
+                         _manage_log_level_via_verbose_attr)
 
 
 logger = logging.getLogger(__name__)
-
-_debug = False
 
 # --------------------------------------------------------------------
 # Commonly used units
@@ -302,7 +301,7 @@ class Field(mixin.PropertiesData,
                             'flag_meanings')
 
     def __init__(self, properties=None, source=None, copy=True,
-                 _use_data=True):
+                 _use_data=True, verbose=None):
         '''**Initialization**
 
     :Parameters:
@@ -329,6 +328,8 @@ class Field(mixin.PropertiesData,
         '''
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=_use_data)
+
+        self.verbose = verbose
 
         if source:
             flags = getattr(source, 'Flags', None)
@@ -389,9 +390,10 @@ class Field(mixin.PropertiesData,
     (6, 4, 3)
 
         '''
-        if _debug:
-            print(self.__class__.__name__+'.__getitem__')  # pragma: no cover
-            print('    input indices =', indices)  # pragma: no cover
+        logger.debug(
+            self.__class__.__name__ + '.__getitem__')  # pragma: no cover
+        logger.debug(
+            '    input indices = {}'.format(indices))  # pragma: no cover
 
         if indices is Ellipsis:
             return self.copy()
@@ -426,9 +428,8 @@ class Field(mixin.PropertiesData,
                             self.constructs.domain_axis_identity(_))
                     )
 
-                if _debug:
-                    print('    roll, iaxis, shift =',
-                          roll, iaxis, shift)  # pragma: no cover
+                logger.debug('    roll, iaxis, shift = {} {} {}'.format(
+                    roll, iaxis, shift))  # pragma: no cover
 
                 new = new.roll(iaxis, shift)
         else:
@@ -443,11 +444,12 @@ class Field(mixin.PropertiesData,
         else:
             findices = indices
 
-        if _debug:
-            print('    shape    =', shape)  # pragma: no cover
-            print('    indices  =', indices)  # pragma: no cover
-            print('    indices2 =', indices2)  # pragma: no cover
-            print('    findices =', findices)  # pragma: no cover
+        logger.debug('    shape    = {}'.format(shape))  # pragma: no cover
+        logger.debug('    indices  = {}'.format(indices))  # pragma: no cover
+        logger.debug(
+            '    indices2 = {}'.format(indices2))  # pragma: no cover
+        logger.debug(
+            '    findices = {}'.format(findices))  # pragma: no cover
 
         new_data = new.data[tuple(findices)]
 
@@ -516,8 +518,8 @@ class Field(mixin.PropertiesData,
                         dice = [auxiliary_mask[0], item_mask] + dice
                 # --- End: if
 
-                if _debug:
-                    print('    dice = ', dice)  # pragma: no cover
+                logger.debug(
+                    '    dice = {}'.format(dice))  # pragma: no cover
 
                 # Replace existing construct with its subspace
                 if needs_slicing:
@@ -896,7 +898,6 @@ class Field(mixin.PropertiesData,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''
-        _debug = False
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -950,13 +951,11 @@ class Field(mixin.PropertiesData,
         s = self.analyse_items(relaxed_identities=relaxed_identities)
         v = other.analyse_items(relaxed_identities=relaxed_identities)
 
-        if _debug:
-            print(s)      # pragma: no cover
-            print()       # pragma: no cover
-            print(v)      # pragma: no cover
-            print(v)      # pragma: no cover
-            print(self)   # pragma: no cover
-            print(other)  # pragma: no cover
+        logger.debug(s)      # pragma: no cover
+        logger.debug()       # pragma: no cover
+        logger.debug(v)      # pragma: no cover
+        logger.debug(self)   # pragma: no cover
+        logger.debug(other)  # pragma: no cover
 
         if s['warnings'] or v['warnings']:
             raise ValueError(
@@ -980,10 +979,11 @@ class Field(mixin.PropertiesData,
 
         # Find the axis names which are present in both fields
         matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
-        if _debug:
-            print("s['id_to_axis'] =", s['id_to_axis'])  # pragma: no cover
-            print("v['id_to_axis'] =", v['id_to_axis'])  # pragma: no cover
-            print('matching_ids    =', matching_ids)    # pragma: no cover
+        logger.debug(
+            "s['id_to_axis'] =", s['id_to_axis'])  # pragma: no cover
+        logger.debug(
+            "v['id_to_axis'] =", v['id_to_axis'])  # pragma: no cover
+        logger.debug('matching_ids    =', matching_ids)    # pragma: no cover
 
         # Check that any matching axes defined by an auxiliary
         # coordinate are done so in both fields.
@@ -1096,7 +1096,7 @@ class Field(mixin.PropertiesData,
 
             # Check that equally sized defining coordinate data arrays
             # are compatible
-            if coord0._equivalent_data(coord1, verbose=_debug):
+            if coord0._equivalent_data(coord1, verbose=self.verbose):
                 # The defining coordinates have equivalent data
                 # arrays
 
@@ -1129,7 +1129,7 @@ class Field(mixin.PropertiesData,
                     # exactly one coordinate reference
                     equivalent_refs = self._equivalent_coordinate_references(
                         other, key0=refs0[0], key1=refs1[0], s=s, t=v,
-                        verbose=_debug)
+                        verbose=self.verbose)
 
                 if not equivalent_refs:
                     # The defining coordinates have non-equivalent
@@ -1182,23 +1182,27 @@ class Field(mixin.PropertiesData,
                     # be omitted from the result field
                     remove_size1_axes0.append(axis0)
         # --- End: for
-        if _debug:
-            print(
-                "1: s['size1_broadcast_axes'] =", s['size1_broadcast_axes']
-            )  # pragma: no cover
-            print(
-                "1: v['size1_broadcast_axes'] =", v['size1_broadcast_axes']
-            )  # pragma: no cover
-            print(
-                '1: remove_size1_axes0 =', remove_size1_axes0
-            )  # pragma: no cover
+        logger.debug(
+            "1: s['size1_broadcast_axes'] = {}".format(
+                s['size1_broadcast_axes'])
+        )  # pragma: no cover
+        logger.debug(
+            "1: v['size1_broadcast_axes'] = {}".format(
+                v['size1_broadcast_axes'])
+        )  # pragma: no cover
+        logger.debug(
+            '1: remove_size1_axes0 ='.format(remove_size1_axes0)
+        )  # pragma: no cover
 
         matching_axis1_to_axis0 = axis1_to_axis0.copy()
         matching_axis0_to_axis1 = axis0_to_axis1.copy()
 
-        if _debug:
-            print("1: axis1_to_axis0 =", axis1_to_axis0)  # pragma: no cover
-            print("1: axis0_to_axis1 =", axis0_to_axis1)  # pragma: no cover
+        logger.debug(
+            "1: axis1_to_axis0 = {}".format(axis1_to_axis0)
+        )  # pragma: no cover
+        logger.debug(
+            "1: axis0_to_axis1 = {}".format(axis0_to_axis1)
+        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Still here? Then the two fields are combinable!
@@ -1245,11 +1249,10 @@ class Field(mixin.PropertiesData,
                 # Defined but unmatched axis
                 axes_unM.append(axis0)
         # --- End: for
-        if _debug:
-            print(
-                '2: axes_unD, axes_unM , axes0_M =',
-                axes_unD, axes_unM, axes0_M
-            )  # pragma: no cover
+        logger.debug(
+            '2: axes_unD, axes_unM , axes0_M = {}'.format(
+                axes_unD, axes_unM, axes0_M)
+        )  # pragma: no cover
 
 #        print ('uuuu' , axes_unD + axes_unM + axes0_M)
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
@@ -1257,16 +1260,15 @@ class Field(mixin.PropertiesData,
         end_of_undefined0 = len(axes_unD)
         start_of_unmatched0 = end_of_undefined0
         start_of_matched0 = start_of_unmatched0 + len(axes_unM)
-        if _debug:
-            print(
-                '2: end_of_undefined0   =', end_of_undefined0
-            )  # pragma: no cover
-            print(
-                '2: start_of_unmatched0 =', start_of_unmatched0
-            )  # pragma: no cover
-            print(
-                '2: start_of_matched0   =', start_of_matched0
-            )  # pragma: no cover
+        logger.debug(
+            '2: end_of_undefined0   = {}'.format(end_of_undefined0)
+        )  # pragma: no cover
+        logger.debug(
+            '2: start_of_unmatched0 = {}'.format(start_of_unmatched0)
+        )  # pragma: no cover
+        logger.debug(
+            '2: start_of_matched0   = {}'.format(start_of_matched0)
+        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Permute the axes of the data array of field1 so that:
@@ -1296,11 +1298,10 @@ class Field(mixin.PropertiesData,
                 # Defined but unmatched axis
                 axes_unM.append(axis1)
         # --- End: for
-        if _debug:
-            print(
-                '2: axes_unD , axes_unM , axes0_M =',
-                axes_unD, axes_unM, axes0_M
-            )  # pragma: no cover
+        logger.debug(
+            '2: axes_unD , axes_unM , axes0_M = {}'.format(
+                axes_unD, axes_unM, axes0_M)
+        )  # pragma: no cover
 
 #        print ('rrrr', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
@@ -1309,19 +1310,18 @@ class Field(mixin.PropertiesData,
         start_of_matched1 = start_of_unmatched1 + len(axes_unM)
         undefined_indices1 = slice(None, start_of_unmatched1)
         unmatched_indices1 = slice(start_of_unmatched1, start_of_matched1)
-        if _debug:
-            print(
-                '2: start_of_unmatched1 =', start_of_unmatched1
-            )  # pragma: no cover
-            print(
-                '2: start_of_matched1   =', start_of_matched1
-            )  # pragma: no cover
-            print(
-                '2: undefined_indices1  =', undefined_indices1
-            )  # pragma: no cover
-            print(
-                '2: unmatched_indices1  =', unmatched_indices1
-            )  # pragma: no cover
+        logger.debug(
+            '2: start_of_unmatched1 = {}'.format(start_of_unmatched1)
+        )  # pragma: no cover
+        logger.debug(
+            '2: start_of_matched1   = {}'.format(start_of_matched1)
+        )  # pragma: no cover
+        logger.debug(
+            '2: undefined_indices1  = {}'.format(undefined_indices1)
+        )  # pragma: no cover
+        logger.debug(
+            '2: unmatched_indices1  = {}'.format(unmatched_indices1)
+        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Make sure that each pair of matching axes run in the same
@@ -1330,8 +1330,8 @@ class Field(mixin.PropertiesData,
         # Note that the axis0_to_axis1 dictionary currently only maps
         # matching axes
         # ------------------------------------------------------------
-        if _debug:
-            print('2: axis0_to_axis1 =', axis0_to_axis1)  # pragma: no cover
+        logger.debug(
+            '2: axis0_to_axis1 =', axis0_to_axis1)  # pragma: no cover
 
         for axis0, axis1 in axis0_to_axis1.items():
             if field1.direction(axis1) != field0.direction(axis0):
@@ -1347,18 +1347,18 @@ class Field(mixin.PropertiesData,
         #              then field0.data becomes 1 3     1 1 T Y X
         # ------------------------------------------------------------
         unmatched_axes1 = data_axes1[unmatched_indices1]
-        if _debug:
-            print('2: unmatched_axes1=', unmatched_axes1)  # pragma: no cover
+        logger.debug(
+            '2: unmatched_axes1=', unmatched_axes1)  # pragma: no cover
 
         if unmatched_axes1:
             for axis1 in unmatched_axes1:
                 new_axis = field0.set_construct(field0._DomainAxis(1))
                 field0.insert_dimension(
                     new_axis, end_of_undefined0, inplace=True)
-                if _debug:
-                    print(
-                        '2: axis1, field0.shape =', axis1, field0.data.shape
-                    )  # pragma: no cover
+                logger.debug(
+                    '2: axis1, field0.shape = {} {}'.format(
+                        axis1, field0.data.shape)
+                )  # pragma: no cover
 
                 axis0 = set(field0.get_data_axes()).difference(
                     data_axes0).pop()
@@ -1382,18 +1382,19 @@ class Field(mixin.PropertiesData,
         #              then field1.data becomes     4 1 P Z 1 Y X
         # ------------------------------------------------------------
         unmatched_axes0 = data_axes0[start_of_unmatched0:start_of_matched0]
-        if _debug:
-            print('2: unmatched_axes0 =', unmatched_axes0)  # pragma: no cover
+        logger.debug(
+            '2: unmatched_axes0 = {}'.format(unmatched_axes0)
+        )  # pragma: no cover
 
         if unmatched_axes0:
             for axis0 in unmatched_axes0:
                 new_axis = field1.set_construct(field1._DomainAxis(1))
                 field1.insert_dimension(
                     new_axis, start_of_matched1, inplace=True)
-                if _debug:
-                    print(
-                        '2: axis0, field1.shape =', axis0, field1.shape
-                    )  # pragma: no cover
+                logger.debug(
+                    '2: axis0, field1.shape = {} {}'.format(
+                        axis0, field1.shape)
+                )  # pragma: no cover
 
                 axis1 = set(field1.get_data_axes()).difference(
                     data_axes1).pop()
@@ -1430,30 +1431,41 @@ class Field(mixin.PropertiesData,
 
                 data_axes0 = field0.get_data_axes()
         # --- End: if
-        if _debug:
-            print('2: axis0_to_axis1 =', axis0_to_axis1)  # pragma: no cover
-            print('2: axis1_to_axis0 =', axis1_to_axis0)  # pragma: no cover
-            print(
-                "2: s['new_size1_axes']  =", s['new_size1_axes']
-            )  # pragma: no cover
+        logger.debug(
+            '2: axis0_to_axis1 = {}'.format(axis0_to_axis1)
+        )  # pragma: no cover
+        logger.debug(
+            '2: axis1_to_axis0 = {}'.format(axis1_to_axis0)
+        )  # pragma: no cover
+        logger.debug(
+            "2: s['new_size1_axes']  = {}".format(s['new_size1_axes'])
+        )  # pragma: no cover
 
         # ============================================================
         # 3. Combine the data objects
         #
         # Note that, by now, field0.ndim >= field1.ndim.
         # ============================================================
-        if _debug:
-            print('3: repr(field0) =', repr(field0))  # pragma: no cover
-            print('3: repr(field1) =', repr(field1))  # pragma: no cover
+        logger.debug(
+            '3: repr(field0) = {!r}'.format(field0)
+        )  # pragma: no cover
+        logger.debug(
+            '3: repr(field1) = {!r}'.format(field1)
+        )  # pragma: no cover
 
         new_data0 = field0.data._binary_operation(field1.data, method)
 #        new_data0 = super(Field, field0)._binary_operation(
 #                        field1, method).data
 
-        if _debug:
-            print('3: new_data0.shape =', new_data0.shape)  # pragma: no cover
-            print('3: field0.shape =', field0.data.shape)  # pragma: no cover
-            print('3: repr(field0) =', repr(field0))  # pragma: no cover
+        logger.debug(
+            '3: new_data0.shape = {}'.format(new_data0.shape)
+        )  # pragma: no cover
+        logger.debug(
+            '3: field0.shape = {}'.format(field0.data.shape)
+        )  # pragma: no cover
+        logger.debug(
+            '3: repr(field0) = {!r}'.format(field0)
+        )  # pragma: no cover
 
         # ============================================================
         # 4. Adjust the domain of field0 to accommodate its new data
@@ -1470,15 +1482,14 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         # 4a. Remove selected size 1 axes
         # ------------------------------------------------------------
-        if _debug:
-            print(
-                '4: field0.constructs.keys() =',
-                sorted(field0.constructs.keys())
-            )  # pragma: no cover
-            print(
-                '4: field1.constructs.keys() =',
-                sorted(field1.constructs.keys())
-            )  # pragma: no cover
+        logger.debug(
+            '4: field0.constructs.keys() = {}'.format(
+                sorted(field0.constructs.keys()))
+        )  # pragma: no cover
+        logger.debug(
+            '4: field1.constructs.keys() = {}'.format(
+                sorted(field1.constructs.keys()))
+        )  # pragma: no cover
 
         # AND HEREIN LIES THE PROBLEM            TODO
         for size1_axis in remove_size1_axes0:
@@ -1496,13 +1507,12 @@ class Field(mixin.PropertiesData,
             axis1 = axis0_to_axis1[axis0]
 #            field0._Axes[axis0] = field1._Axes[axis1]
             field0.set_construct(field1.domain_axes[axis1], key=axis0)
-            if _debug:
-                print(
-                    '4: field0 domain axes =', field0.domain_axes
-                )  # pragma: no cover
-                print(
-                    '4: field1 domain axes =', field1.domain_axes
-                )  # pragma: no cover
+            logger.debug(
+                '4: field0 domain axes = {}'.format(field0.domain_axes)
+            )  # pragma: no cover
+            logger.debug(
+                '4: field1 domain axes = {}'.format(field1.domain_axes)
+            )  # pragma: no cover
 
             # Copy field1 1-d coordinates for this axis to field0
 #            if axis1 in field1.Items.d:
@@ -1572,16 +1582,15 @@ class Field(mixin.PropertiesData,
         #    size-1 data array.
         # -------------------------------------------------------------
         auxs1 = dict(field1.auxiliary_coordinates)
-        if _debug:
-            print(
-                '5: field0.auxs() =', field0.auxiliary_coordinates
-            )  # pragma: no cover
-            print(
-                '5: field1.auxs() =', auxs1
-            )  # pragma: no cover
-            print(
-                '5: remove_items =', remove_items
-            )  # pragma: no cover
+        logger.debug(
+            '5: field0.auxs() = {}'.format(field0.auxiliary_coordinates)
+        )  # pragma: no cover
+        logger.debug(
+            '5: field1.auxs() = {}'.format(auxs1)
+        )  # pragma: no cover
+        logger.debug(
+            '5: remove_items = {}'.format(remove_items)
+        )  # pragma: no cover
 
         for key0, aux0 in field0.auxiliary_coordinates.items():
             if key0 in remove_items:
@@ -1663,27 +1672,26 @@ class Field(mixin.PropertiesData,
         # Map field1 items keys to field0 item keys
         key1_to_key0 = {}
 
-        if _debug:
-            print(
-                '5: insert_dim               =', insert_dim
-            )  # pragma: no cover
-            print(
-                '5: insert_aux               =', insert_aux
-            )  # pragma: no cover
-            print(
-                '5: insert_domain_anc        =', insert_domain_anc
-            )  # pragma: no cover
-            print(
-                '5: insert_ref               =', insert_ref
-            )  # pragma: no cover
-            print(
-                '5: field0.constructs.keys() =',
-                sorted(field0.constructs.keys())
-            )  # pragma: no cover
-            print(
-                '5: field1.constructs.keys() =',
-                sorted(field1.constructs.keys())
-            )  # pragma: no cover
+        logger.debug(
+            '5: insert_dim               = {}'.format(insert_dim)
+        )  # pragma: no cover
+        logger.debug(
+            '5: insert_aux               = {}'.format(insert_aux)
+        )  # pragma: no cover
+        logger.debug(
+            '5: insert_domain_anc        = {}'.format(insert_domain_anc)
+        )  # pragma: no cover
+        logger.debug(
+            '5: insert_ref               = {}'.format(insert_ref)
+        )  # pragma: no cover
+        logger.debug(
+            '5: field0.constructs.keys() = {}'.format(
+                sorted(field0.constructs.keys()))
+        )  # pragma: no cover
+        logger.debug(
+            '5: field1.constructs.keys() = {}'.format(
+                sorted(field1.constructs.keys()))
+        )  # pragma: no cover
 
         for key1, axes0 in insert_dim.items():
             try:
@@ -1696,11 +1704,10 @@ class Field(mixin.PropertiesData,
             else:
                 key1_to_key0[key1] = key0
 
-            if _debug:
-                print(
-                    'axes0, key1, field1.constructs[key1] =',
-                    axes0, key1, repr(field1.constructs[key1])
-                )  # pragma: no cover
+            logger.debug(
+                'axes0, key1, field1.constructs[key1] = '
+                '{}, {}, {!r}'.format(axes0, key1, field1.constructs[key1])
+            )  # pragma: no cover
 
         for key1, axes0 in insert_aux.items():
             try:
@@ -1713,11 +1720,11 @@ class Field(mixin.PropertiesData,
             else:
                 key1_to_key0[key1] = key0
 
-            if _debug:
-                print(
-                    'axes0, key1, field1.constructs[key1] =',
-                    axes0, key1, repr(field1.constructs[key1])
-                )  # pragma: no cover
+            logger.debug(
+                'axes0, key1, field1.constructs[key1] = '
+                '{}, {}, {!r}'.format(
+                    axes0, key1, field1.constructs[key1])
+            )  # pragma: no cover
 
         for key1, axes0 in insert_domain_anc.items():
             try:
@@ -1726,28 +1733,27 @@ class Field(mixin.PropertiesData,
             except ValueError as error:
                 # There was some sort of problem with the insertion, so
                 # just ignore this item.
-                if _debug:
-                    print(
-                        'Domain ancillary insertion problem:', error
-                    )  # pragma: no cover
+                logger.debug(
+                    'Domain ancillary insertion problem: {}'.format(error)
+                )  # pragma: no cover
             else:
                 key1_to_key0[key1] = key0
 
-            if _debug:
-                print(
-                    'domain ancillary axes0, key1, field1.constructs[key1] =',
-                    axes0, key1, repr(field1.constructs[key1])
-                )  # pragma: no cover
+            logger.debug(
+                'domain ancillary axes0, key1, field1.constructs[key1] ='
+                ' {}, {}, {!r}'.format(
+                    axes0, key1, field1.constructs[key1])
+            )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Remove field0 which are no longer required
         # ------------------------------------------------------------
         if remove_items:
-            if _debug:
-                print(sorted(field0.constructs.keys()))  # pragma: no cover
-                print(
-                    'Removing {!r} from field0'.format(sorted(remove_items))
-                )  # pragma: no cover
+            logger.debug(
+                sorted(field0.constructs.keys()))  # pragma: no cover
+            logger.debug(
+                'Removing {!r} from field0'.format(sorted(remove_items))
+            )  # pragma: no cover
 
             for key in remove_items:
                 field0.del_construct(key, default=None)
@@ -1758,10 +1764,9 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         for key1 in insert_ref:
             ref1 = field1.coordinate_references[key1]
-            if _debug:
-                print(
-                    'Copying {!r} from field1 to field0'.format(ref1)
-                )  # pragma: no cover
+            logger.debug(
+                'Copying {!r} from field1 to field0'.format(ref1)
+            )  # pragma: no cover
 
             identity_map = dict(field1.constructs.filter_by_type(
                 'dimension_coordinate', 'axuiliary_coordinate',
@@ -2636,8 +2641,6 @@ class Field(mixin.PropertiesData,
     >>> h = f._conform_for_assignment(g)
 
         '''
-        _debug = False
-
         # Analyse each domain
         s = self.analyse_items()
         v = other.analyse_items()
@@ -2807,7 +2810,7 @@ class Field(mixin.PropertiesData,
 
             # Check that equally sized defining coordinate data arrays
             # are compatible
-            if not coord0._equivalent_data(coord1, verbose=_debug):
+            if not coord0._equivalent_data(coord1, verbose=self.verbose):
                 raise ValueError(
                     "Matching {!r} coordinate constructs have different "
                     "data".format(identity)
@@ -2830,7 +2833,7 @@ class Field(mixin.PropertiesData,
 
             if nrefs and not self._equivalent_coordinate_references(
                     other, key0=refs0[0], key1=refs1[0], s=s, t=v,
-                    verbose=_debug):
+                    verbose=self.verbose):
                 raise ValueError("TODO")
         # --- End: for
 
@@ -12008,6 +12011,7 @@ class Field(mixin.PropertiesData,
 
         return f
 
+    @_manage_log_level_via_verbose_attr
     def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the field construct.
 
@@ -12194,18 +12198,18 @@ class Field(mixin.PropertiesData,
         envelope = 'envelope' in mode
         full = 'full' in mode
         compress = 'compress' in mode or not (envelope or full)
-        _debug = '_debug' in mode
 
-        if not _debug and len(mode) == 2:
+        if len(mode) == 2:
             raise ValueError(
                 "Can't provide {0[0]!r} and {0[1]!r} positional arguments "
                 "in the same call.".format(mode)
             )
 
-        if _debug:
-            print('Field.indices:')  # pragma: no cover
-            print('    envelope, full, compress, _debug =',
-                  envelope, full, compress, _debug)  # pragma: no cover
+        logger.debug('Field.indices:')  # pragma: no cover
+        logger.debug(
+            '    envelope, full, compress = {}, {}, {}'.format(
+              envelope, full, compress)
+        )  # pragma: no cover
 
         auxiliary_mask = []
 
@@ -12274,9 +12278,10 @@ class Field(mixin.PropertiesData,
 
             item_axes = axes[0]
 
-            if _debug:
-                print('    item_axes =', repr(item_axes))  # pragma: no cover
-                print('    keys      =', repr(keys))  # pragma: no cover
+            logger.debug(
+                '    item_axes = {!r}'.format(item_axes))  # pragma: no cover
+            logger.debug(
+                '    keys      = {!r}'.format(keys))  # pragma: no cover
 
             if n_axes == 1:
                 # -----------------------------------------------------
@@ -12284,17 +12289,17 @@ class Field(mixin.PropertiesData,
                 # -----------------------------------------------------
                 ind = None
 
-                if _debug:
-                    print('    {} 1-d constructs: {!r}'.format(
-                        n_items, constructs))  # pragma: no cover
+                logger.debug('    {} 1-d constructs: {!r}'.format(
+                    n_items, constructs))  # pragma: no cover
 
                 axis = item_axes[0]
                 item = constructs[0]
                 value = points[0]
 
-                if _debug:
-                    print('    axis      =', repr(axis))  # pragma: no cover
-                    print('    value     =', repr(value))  # pragma: no cover
+                logger.debug(
+                    '    axis      = {!r}'.format(axis))  # pragma: no cover
+                logger.debug(
+                    '    value     = {!r}'.format(value))  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, numpy_ndarray)):
                     # -------------------------------------------------
@@ -12304,8 +12309,7 @@ class Field(mixin.PropertiesData,
                     #                       numpy.array([2,4,7]),
                     #                       [True, False, True]
                     # -------------------------------------------------
-                    if _debug:
-                        print('    1-d CASE 1: ',)  # pragma: no cover
+                    logger.debug('    1-d CASE 1: ')  # pragma: no cover
 
                     index = value
 
@@ -12327,8 +12331,7 @@ class Field(mixin.PropertiesData,
                     #                       'within' or 'without'
                     #                       Query instance
                     # -------------------------------------------------
-                    if _debug:
-                        print('    1-d CASE 2: ',)  # pragma: no cover
+                    logger.debug('    1-d CASE 2: ')  # pragma: no cover
 
                     if item.increasing:
                         anchor0 = value.value[0]
@@ -12381,8 +12384,7 @@ class Field(mixin.PropertiesData,
                     # -------------------------------------------------
                     # 1-dimensional CASE 3: All other 1-d cases
                     # -------------------------------------------------
-                    if _debug:
-                        print('    1-d CASE 3:',)  # pragma: no cover
+                    logger.debug('    1-d CASE 3:')  # pragma: no cover
 
                     item_match = (value == item)
 
@@ -12408,8 +12410,8 @@ class Field(mixin.PropertiesData,
                         "with data for which to create indices"
                     )
 
-                if _debug:
-                    print('    index =', index)  # pragma: no cover
+                logger.debug(
+                    '    index = {}'.format(index))  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -12423,13 +12425,13 @@ class Field(mixin.PropertiesData,
                 # -----------------------------------------------------
                 # N-dimensional constructs
                 # -----------------------------------------------------
-                if _debug:
-                    print('    {} N-d constructs: {!r}'.format(
-                        n_items, constructs))  # pragma: no cover
-                    print('    {} points        : {!r}'.format(
-                        len(points), points))  # pragma: no cover
-                    print('    field.shape     :',
-                          self.shape)  # pragma: no cover
+                logger.debug('    {} N-d constructs: {!r}'.format(
+                    n_items, constructs))  # pragma: no cover
+                logger.debug('    {} points        : {!r}'.format(
+                    len(points), points))  # pragma: no cover
+                logger.debug(
+                    '    field.shape     : {}'.format(self.shape)
+                )  # pragma: no cover
 
                 # Make sure that each N-d item has the same relative
                 # axis order as the field's data array.
@@ -12452,9 +12454,9 @@ class Field(mixin.PropertiesData,
                 item_axes = g.get_data_axes(keys[0])
 
                 constructs = [g.constructs[key] for key in keys]
-                if _debug:
-                    print('    transposed N-d constructs: {!r}'.format(
-                        constructs))  # pragma: no cover
+                logger.debug(
+                    '    transposed N-d constructs: {!r}'.format(constructs)
+                )  # pragma: no cover
 
                 item_matches = [(value == construct).data for
                                 value, construct in zip(points, constructs)]
@@ -12474,9 +12476,11 @@ class Field(mixin.PropertiesData,
                 else:
                     ind = numpy_where(item_match)
 
-                if _debug:
-                    print('    item_match  =', item_match)  # pragma: no cover
-                    print('    ind         =', ind)  # pragma: no cover
+                logger.debug(
+                    '    item_match  = {}'.format(item_match)
+                )  # pragma: no cover
+                logger.debug(
+                    '    ind         = {}'.format(ind))  # pragma: no cover
 
                 bounds = [item.bounds.array[ind] for item in constructs
                           if item.has_bounds()]
@@ -12541,8 +12545,7 @@ class Field(mixin.PropertiesData,
                 mask_shape = [None] * self.ndim
                 masked_subspace_size = 1
                 ind = numpy_array(ind)
-                if _debug:
-                    print('    ind =', ind)  # pragma: no cover
+                logger.debug('    ind = {}'.format(ind))  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(zip(
                         item_axes, ind.min(axis=1), ind.max(axis=1))):
@@ -12587,20 +12590,24 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
-            if _debug:
-                print('    create_mask =', create_mask)  # pragma: no cover
+            logger.debug(
+                '    create_mask = {}'.format(create_mask)
+            )  # pragma: no cover
 
             if create_mask:
-                if _debug:
-                    print(
-                        '    mask_shape  = ', mask_shape)  # pragma: no cover
+                logger.debug(
+                    '    mask_shape  = {}'.format(mask_shape)
+                )  # pragma: no cover
 
                 mask = self.data._create_auxiliary_mask_component(
                     mask_shape, ind, compress)
                 auxiliary_mask.append(mask)
-                if _debug:
-                    print('    mask_shape  =', mask_shape)  # pragma: no cover
-                    print('    mask.shape  =', mask.shape)  # pragma: no cover
+                logger.debug(
+                    '    mask_shape  = {}'.format(mask_shape)
+                )  # pragma: no cover
+                logger.debug(
+                    '    mask.shape  = {}'.format(mask.shape)
+                )  # pragma: no cover
         # --- End: for
 
         indices = tuple(parse_indices(self.shape, tuple(indices)))
@@ -12608,8 +12615,8 @@ class Field(mixin.PropertiesData,
         if auxiliary_mask:
             indices = ('mask', auxiliary_mask) + indices
 
-        if _debug:
-            print('\n    Final indices =', indices)  # pragma: no cover
+            logger.debug(
+                '    Final indices = {}'.format(indices))  # pragma: no cover
 
         # Return the tuple of indices and the auxiliary mask (which
         # may be None)
@@ -17716,8 +17723,9 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
+    @_manage_log_level_via_verbosity
     def where(self, condition, x=None, y=None, inplace=False,
-              construct=None, i=False, _debug=False, item=None,
+              construct=None, i=False, verbose=None, item=None,
               **item_options):
         '''Assign to data elements depending on a condition.
 
@@ -18029,7 +18037,8 @@ class Field(mixin.PropertiesData,
         if y is not None and isinstance(y, self_class):
             y = self._conform_for_assignment(y)
 
-        return super().where(condition, x, y, inplace=inplace, _debug=_debug)
+        return super().where(
+            condition, x, y, inplace=inplace, verbose=verbose)
 
     @property
     def subspace(self):
