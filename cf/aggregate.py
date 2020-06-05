@@ -156,7 +156,7 @@ class _Meta:
 
         f: `cf.Field`
 
-        verbose: `int`, optional
+        verbose: `int` or `None`, optional
             See the `aggregate` function for details.
 
         relaxed_units: `bool`, optional
@@ -1048,8 +1048,6 @@ class _Meta:
 
         m: `_Meta`
 
-        verbose: `int`
-
     :Returns:
 
         `None`
@@ -1340,16 +1338,38 @@ def aggregate(fields,
         fields: `FieldList` or sequence of `Field`
             The field constructs to aggregated.
 
-        verbose: `int`, optional
-            Print information about the aggregation process. By
-            default *info* is 0 and no information is displayed. If
-            *info* is 1 or more then display information on which
-            fields are unaggregatable, and why. If *info* is 2 or more
-            then also display the structural signatures of the fields
-            and, when there is more than one field construct with the
-            same structural signature, their canonical first and last
-            coordinate values. If *info* is 3 or more then display the
-            field construct's complete aggregation metadata.
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about the aggregation process. Explicitly:
+
+            =============  ===============================================
+            Value set      Result
+            =============  =================================================
+            `0`            * No information is displayed.
+
+            `1`            * Display information on which fields are
+                           unaggregatable, and why.
+
+            `2`            * As well as the above, display the structural
+                           signatures of the fields and, when there is more
+                           than one field construct with the same structural
+                           signature, their canonical first and last
+                           coordinate values.
+
+            `3` (or `-1`)  * As well as the above, display the field
+                           construct's complete aggregation metadata.
+            =============  =================================================
 
         overlap: `bool`, optional
             If False then require that aggregated field constructs
@@ -2544,7 +2564,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
         contiguous: `bool`
             See the `cf.aggregate` function for details.
 
-        verbose: `int`
+        verbose: `int` or `None`, optional
             See the `cf.aggregate` function for details.
 
     :Returns:
@@ -2703,7 +2723,7 @@ def _aggregate_2_fields(m0, m1,
         atol: `float`, optional
             See the `cf.aggregate` function for details.
 
-        verbose: `int`, optional
+        verbose: `int` or `None`, optional
             See the `cf.aggregate` function for details.
 
     :Returns:

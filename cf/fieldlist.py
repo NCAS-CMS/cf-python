@@ -513,9 +513,20 @@ class FieldList(list):
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
 
-        verbose: `bool`, optional
-            If `True` then print information about differences that lead
-            to inequality.
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
 
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the

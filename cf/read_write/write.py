@@ -432,22 +432,34 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                       ``double=False`` is exactly equivalent to
                       ``single=True``.
 
-       string: `bool`, optional
-           By default string-valued construct data are written as
-           netCDF arrays of type string if the output file format is
-           ``'NETCDF4'``, or of type char with an extra dimension
-           denoting the maximum string length for any other output
-           file format (see the *fmt* parameter). If *string* is False
-           then string-valued construct data are written as netCDF
-           arrays of type char with an extra dimension denoting the
-           maximum string length, regardless of the selected output
-           file format.
+        string: `bool`, optional
+            By default string-valued construct data are written as
+            netCDF arrays of type string if the output file format is
+            ``'NETCDF4'``, or of type char with an extra dimension
+            denoting the maximum string length for any other output
+            file format (see the *fmt* parameter). If *string* is False
+            then string-valued construct data are written as netCDF
+            arrays of type char with an extra dimension denoting the
+            maximum string length, regardless of the selected output
+            file format.
 
-        verbose: `bool`, optional
-            If True then print a summary of how constructs map to output
-            netCDF dimensions, variables and attributes.
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
 
-       warn_valid: `bool`, optional
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            how constructs map to output netCDF dimensions, variables and
+            attributes.
+
+        warn_valid: `bool`, optional
             If False then do not print a warning when writing
             "out-of-range" data, as indicated by the values, if
             present, of any of the ``valid_min``, ``valid_max`` or

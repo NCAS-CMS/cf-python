@@ -384,7 +384,20 @@ class UMField:
 
         height_at_top_of_model: `float`
 
-        verbose: `bool`, optional
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed about
+            the read process.
 
         kwargs: *optional*
             Keyword arguments providing extra CF properties for each
@@ -2896,7 +2909,20 @@ class UMRead(cfdm.read_write.IORead):
             version elements (such as the ``3`` in ``606.3``), so it
             may be necessary to provide a UM version in such cases.
 
-        verbose: `bool`, optional
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed about
+            the read process.
 
         set_standard_name: `bool`, optional
 
