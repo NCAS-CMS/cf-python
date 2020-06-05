@@ -99,7 +99,6 @@ class _HFLCache:
 # --- End: class
 
 
-@_manage_log_level_via_verbose_attr
 class _Meta:
     '''A summary of a field.
 
@@ -838,6 +837,7 @@ class _Meta:
 
         return cms
 
+    @_manage_log_level_via_verbose_attr
     def cell_measure_has_data_and_units(self, msr):
         '''TODO
 
@@ -862,6 +862,7 @@ class _Meta:
 
         return True
 
+    @_manage_log_level_via_verbose_attr
     def coord_has_identity_and_data(self, coord, axes=None):
         '''TODO
 
@@ -918,6 +919,7 @@ class _Meta:
 
         return None
 
+    @_manage_log_level_via_verbose_attr
     def field_ancillary_has_identity_and_data(self, anc):
         '''TODO
 
@@ -956,6 +958,7 @@ class _Meta:
 
         return None
 
+    @_manage_log_level_via_verbose_attr
     def coordinate_reference_signatures(self, refs):
         '''TODO
 
@@ -993,6 +996,7 @@ class _Meta:
 
         return signatures
 
+    @_manage_log_level_via_verbose_attr
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
         '''TODO
 
@@ -1037,7 +1041,7 @@ class _Meta:
 
         return anc_identity
 
-    def print_info(self, verbose, signature=True):
+    def print_info(self, signature=True):
         '''TODO
 
     :Parameters:
@@ -1683,7 +1687,7 @@ def aggregate(fields,
         meta = signatures[signature]
 
         # Print useful information
-        meta[0].print_info(verbose)
+        meta[0].print_info()
         logger.detail('')
 
         if len(meta) == 1:
@@ -1745,7 +1749,7 @@ def aggregate(fields,
 
         # Print useful information
         for m in meta:
-            m.print_info(verbose, signature=False)
+            m.print_info(signature=False)
         logger.detail('')
 
         # Take a shallow copy in case we abandon and want to output
@@ -2519,7 +2523,8 @@ def _sorted_by_first_values(meta, axis):
     meta.sort(key=_first_values)
 
 
-def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose):
+@_manage_log_level_via_verbosity
+def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
     '''Return True iff the aggregating 1-d coordinates of the aggregating
     axis are all aggregatable.
 
@@ -2678,6 +2683,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose):
     return True
 
 
+@_manage_log_level_via_verbosity
 def _aggregate_2_fields(m0, m1,
                         rtol=None, atol=None,
                         verbose=None,

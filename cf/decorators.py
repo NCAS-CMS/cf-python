@@ -65,6 +65,10 @@ def _deprecated_kwarg_check(*depr_kwargs):
     return deprecated_kwarg_check_decorator
 
 
+# TODO(?): we could instead define a metaclass to apply this logic to all
+# methods in a class with a self.verbose attibute to avoid decorating perhaps
+# most methods of the class (any that contain log calls should have it).
+# But this (explicit) approach may be better?
 def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
     '''A decorator for managing log message filtering by verbose attribute.
 

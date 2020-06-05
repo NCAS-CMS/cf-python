@@ -12,7 +12,7 @@ import logging
 log_name = __name__
 logger = cf.logging.getLogger(log_name)
 
-#@cf.decorators._manage_log_level_via_verbose_attr
+
 class dummyClass:
     '''Dummy class acting as container to test methods as proper instance
        methods, mirroring their context in the codebase.
@@ -24,7 +24,6 @@ class dummyClass:
         self.detail_message = "In practice this will be very detailed."
         self.info_message = "This should be short and sweet"
         self.warning_message = "Best pay attention to this!"
-
 
     def func_2(self, good_kwarg=True, traceback=False, bad_kwarg=False):
         '''Dummy function, otherwise trivial, where a True boolean passed as
