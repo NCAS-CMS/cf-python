@@ -1,8 +1,10 @@
+import logging
 import os
 import netCDF4
 import csv
 import re
 import textwrap
+
 from datetime import datetime
 
 from numpy import any          as numpy_any
@@ -34,17 +36,21 @@ import cftime
 import cfdm
 
 from ...                   import __version__, __Conventions__, __file__
-from ...functions          import RTOL, ATOL, equals
-from ...units              import Units
-from ...functions          import (open_files_threshold_exceeded,
+from ...decorators         import _manage_log_level_via_verbose_attr
+from ...functions          import (RTOL, ATOL, equals,
+                                   open_files_threshold_exceeded,
                                    close_one_file, abspath,
                                    load_stash2standard_name)
+from ...units              import Units
 
 from ...data.data import Data, Partition, PartitionMatrix
 
 from ...data              import UMArray
 from ...data.functions    import _open_um_file, _close_um_file
 from ...umread_lib.umfile import UMFileException
+
+
+logger = logging.getLogger(__name__)
 
 _cached_runid = {}
 _cached_latlon = {}
@@ -352,8 +358,9 @@ class UMField:
     '''TODO
 
     '''
+    @_manage_log_level_via_verbose_attr
     def __init__(self, var, fmt, byte_ordering, word_size, um_version,
-                 set_standard_name, height_at_top_of_model, verbose,
+                 set_standard_name, height_at_top_of_model, verbose=None,
                  implementation=None, **kwargs):
         '''**Initialization**
 
@@ -683,9 +690,8 @@ class UMField:
             # --------------------------------------------------------
             # Set some derived metadata quantities
             # --------------------------------------------------------
-            if self.verbose:
-                print(self.__dict__)  # pragma: no cover
-                self.printfdr()      # pragma: no cover
+            logger.detail(self.__dict__)  # pragma: no cover
+            self.printfdr()      # pragma: no cover
 
             # --------------------------------------------------------
             # Create the 'T' dimension coordinate
@@ -867,8 +873,8 @@ class UMField:
 
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
-            if self.verbose:
-                print('down_axes =', down_axes)  # pragma: no cover
+            logger.info(
+                'down_axes = {}'.format(down_axes))  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -1501,6 +1507,7 @@ class UMField:
         '''
         return self.header_lz + self.header_bz
 
+    @_manage_log_level_via_verbose_attr
     def create_data(self):
         '''Sets the data and data axes.
 
@@ -1509,8 +1516,7 @@ class UMField:
         `Data`
 
         '''
-        if self.verbose:
-            print('Creating data:')  # pragma: no cover
+        logger.info('Creating data:')  # pragma: no cover
 
         LBROW = self.lbrow
         LBNPT = self.lbnpt
@@ -1554,11 +1560,10 @@ class UMField:
                         units=units,
                         fill_value=fill_value)
 
-            if self.verbose:
-                print(
-                    '    location =', yx_shape, 'subarray[...].max() =',
-                    data.partitions[()].subarray[...].max()
-                )  # pragma: no cover
+            logger.info(
+                '    location = {}, subarray[...].max() = {}'.format(
+                    yx_shape, data.partitions[()].subarray[...].max())
+            )  # pragma: no cover
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1622,12 +1627,11 @@ class UMField:
                         Units=units
                     ))
 
-                    if self.verbose:
-                        print(
-                            '    header_offset =', rec.hdr_offset,
-                            'location =', location, 'subarray[...].max() =',
-                            subarray[...].max()
-                        )  # pragma: no cover
+                    logger.info(
+                        '    header_offset = {}, location = {}, '
+                        'subarray[...].max() = {}'.format(
+                            rec.hdr_offset, location, subarray[...].max())
+                    )  # pragma: no cover
                 # --- End: for
 
                 # Populate the 1-d partition matrix
@@ -1675,11 +1679,10 @@ class UMField:
                         part=empty_list,
                         Units=units))
 
-                    if self.verbose:
-                        print(
-                            '    location =', location,
-                            'subarray[...].max() =', subarray[...].max()
-                        )  # pragma: no cover
+                    logger.info(
+                        '    location = {}, subarray[...].max() = {}'.format(
+                            location, subarray[...].max())
+                    )  # pragma: no cover
                 # --- End: for
 
                 # Populate the 2-d partition matrix
@@ -2029,7 +2032,7 @@ class UMField:
 
         '''
         for header in self.fdr():
-            print(header)
+            logger.info(header)
 
     def pseudolevel_coordinate(self, LBUSER5):
         '''TODO
@@ -2607,6 +2610,7 @@ class UMField:
 
         return key, dc
 
+    @_manage_log_level_via_verbose_attr
     def z_coordinate(self, axiscode):
         '''Create a Z dimension coordinate from BLEV
 
@@ -2619,11 +2623,10 @@ class UMField:
         `DimensionCoordinate`
 
         '''
-        if self.verbose:
-            print(
-                'Creating Z coordinates and bounds from BLEV, BRLEV and '
-                'BRSVD1:'
-            )  # pragma: no cover
+        logger.info(
+            'Creating Z coordinates and bounds from BLEV, BRLEV and '
+            'BRSVD1:'
+        )  # pragma: no cover
 
         z_recs = self.z_recs
         array = tuple([rec.real_hdr.item(blev,) for rec in z_recs])
@@ -2666,19 +2669,18 @@ class UMField:
         self.implementation.set_dimension_coordinate(
             self.field, dc, axes=[_axis['z']], copy=copy)
 
-        if self.verbose:
-            print('    '+dc.dump(display=False))  # pragma: no cover
+        logger.info('    ' + dc.dump(display=False))  # pragma: no cover
 
         return dc
 
+    @_manage_log_level_via_verbose_attr
     def z_reference_coordinate(self, axiscode):
         '''TODO
 
         '''
-        if self.verbose:
-            print(
-                'Creating Z reference coordinates from BRLEV'
-            )  # pragma: no cover
+        logger.info(
+            'Creating Z reference coordinates from BRLEV'
+        )  # pragma: no cover
 
         array = numpy_array([rec.real_hdr.item(brlev,) for rec in self.z_recs],
                             dtype=float)
@@ -2872,7 +2874,7 @@ class UMRead(cfdm.read_write.IORead):
     def read(self, filename, um_version=405,
              aggregate=True, endian=None, word_size=None,
              set_standard_name=True, height_at_top_of_model=None,
-             fmt=None, chunk=True, verbose=False):
+             fmt=None, chunk=True, verbose=None):
         '''Read fields from a PP file or UM fields file.
 
     The file may be big or little endian, 32 or 64 bit
