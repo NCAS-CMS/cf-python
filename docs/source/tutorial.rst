@@ -1015,7 +1015,7 @@ the `~cf.Data.datetime_array` (and any construct that contains it)
 returns the data as an array of date-time objects.
 
 .. code-block:: python
-   :caption: *View date-times aas elapsed time or as date-time
+   :caption: *View date-times as elapsed time or as date-time
              objects.*
 	     
    >>> d = cf.Data([1, 2, 3], units='days since 2004-2-28')
@@ -1164,7 +1164,7 @@ have the same relative order as the field construct:
 
 .. code-block:: python
    :caption: *Also permute the data dimension of metadata constructs
-             using the 'contructs' keyword.*
+             using the 'constructs' keyword.*
 
    >>> t4 = t.transpose(['X', 'Z', 'Y'], constructs=True)
 
@@ -1174,7 +1174,7 @@ Data mask
 ^^^^^^^^^
 
 There is always a data mask, which may be thought of as a separate
-data array of booleans with the same shape as the original data. The
+data array of Booleans with the same shape as the original data. The
 data mask is `False` where the the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~Field.mask` attribute of the field construct, which returns the data
@@ -1183,7 +1183,7 @@ original field construct.
 
 
 .. code-block:: python
-   :caption: *Inspect the data mask of a field constuct.*
+   :caption: *Inspect the data mask of a field construct.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -1309,7 +1309,7 @@ the only differences being:
 
 * When two or more dimensions' indices are sequences of integers then
   these indices work independently along each dimension (similar to
-  the way vector subscripts work in Fortran). This is the same
+  the way vector subscripts work in FORTRAN). This is the same
   indexing behaviour as on a ``Variable`` object of the `netCDF4
   package <http://unidata.github.io/netcdf4-python>`_.
 
@@ -1422,7 +1422,7 @@ the only difference being:
 
 * When two or more dimensions' indices are sequences of integers then
   these indices work independently along each dimension (similar to
-  the way vector subscripts work in Fortran). This is the same
+  the way vector subscripts work in FORTRAN). This is the same
   indexing behaviour as on a ``Variable`` object of the `netCDF4
   package <http://unidata.github.io/netcdf4-python>`_.
 
@@ -1687,7 +1687,7 @@ Calendar
 
 When the data represents date-times, the `cf.Units` instance describes
 both the units and calendar of the data. If the latter is missing then
-the Gregorian calender is assumed, as per the CF conventions.  The
+the Gregorian calendar is assumed, as per the CF conventions.  The
 `~Field.calendar` property provides the calendar contained in the
 `cf.Units` instance, and changes in one are reflected in the other.
 
@@ -2569,7 +2569,7 @@ from, as opposed to included in, the cell extent. Such cells also have
 an interior ring array that spans the same domain axes as the
 coordinate cells, with the addition of one extra dimension that
 indexes the parts for each cell. This array records whether each
-polygon is to be included or excluded from the cell, with vlaues of
+polygon is to be included or excluded from the cell, with values of
 ``1`` or ``0`` respectively.
 
 .. code-block:: python
@@ -2971,7 +2971,7 @@ spanned by the field construct's data.
 
 Explicit indices may also be assigned to a domain axis identified by a
 metadata construct, with either a Python `slice` object, or a sequence
-of integers or booleans.
+of integers or Booleans.
 
 .. code-block:: python
    :caption: *Create a new field construct whose domain spans the 2nd,
@@ -3179,7 +3179,7 @@ inserted from another field construct. See
 Multiple dimensions
 ^^^^^^^^^^^^^^^^^^^
 
-Conditions may also be applied to multi-dimensionsal metadata
+Conditions may also be applied to multi-dimensional metadata
 constructs
 
 .. code-block:: python
@@ -4251,7 +4251,7 @@ Command modification
 
 It is sometimes convenient to produce the commands that would create
 an already existing field construct, and then modify them to create
-the desired field constuct. The commands are produced by the
+the desired field construct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
 
 .. code-block:: python

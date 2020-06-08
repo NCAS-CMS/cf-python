@@ -1,5 +1,5 @@
-'''The Python `cf` package is an Earth Science data analysis library that is
-built on a complete implementation of the CF data model.
+'''The Python `cf` package is an Earth Science data analysis library
+that is built on a complete implementation of the CF data model.
 
 The `cf` package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is
@@ -55,16 +55,16 @@ The `cf` package can:
 * create field constructs to create derived quantities (such as
   vorticity).
 
-All of the above use LAMA functionality, which allows multiple
-fields larger than the available memory to exist and be manipulated.
+All of the above use LAMA functionality, which allows multiple fields
+larger than the available memory to exist and be manipulated.
 
 
 **Hierarchical groups**
 
 Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of `cf` will include support
-for netCDF4 files containing data organised in hierarchical groups,
-but this is not available in version 3.2.0 (even though it is
+variables within datasets. A future release of `cf` will include
+support for netCDF4 files containing data organised in hierarchical
+groups, but this is not available in version 3.2.0 (even though it is
 allowed in CF-1.8).
 
 
@@ -75,14 +75,14 @@ constructs uses the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that is automatically installed
 along with with `cf`.
 
-See the :ref:`cf-python home page <cf-python-home>` for
-documentation, installation and source code.
+See the :ref:`cf-python home page <cf-python-home>` for documentation,
+installation and source code.
 
 '''
-__Conventions__ = 'CF-1.8'
-__author__ = 'David Hassell'
-__date__ = '2020-04-30'
-__version__ = '3.4.0'
+__Conventions__  = 'CF-1.8'
+__author__       = 'David Hassell'
+__date__         = '2020-06-??'
+__version__      = '3.5.0'
 
 _requires = (
     'numpy',
@@ -165,53 +165,58 @@ except ImportError as error1:
 _minimum_vn = '0.6.0'
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad psutil version: cf requires psutil version {} or later. "
+        "Bad psutil version: cf requires psutil>={}. "
         "Got {} at {}".format(
             _minimum_vn, psutil.__version__, psutil.__file__))
 
 # Check the version of netCDF4
 _minimum_vn = '1.5.3'
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
-        "Bad netCDF4 version: cf requires netCDF4 version {} or later. Got {} "
+    raise RuntimeError(
+        "Bad netCDF4 version: cf requires netCDF4>={}. Got {} "
         "at {}".format(_minimum_vn, netCDF4.__version__, netCDF4.__file__)
     )
 
 # Check the version of cftime
-_minimum_vn = '1.1.1'
+_minimum_vn = '1.1.3'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad cftime version: cf requires cftime version {} or later. "
+        "Bad cftime version: cf requires cftime>={}. "
         "Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
 
 # Check the version of numpy
 _minimum_vn = '1.15'
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
-        "Bad numpy version: cf requires numpy version {} or later. Got {} "
+    raise RuntimeError(
+        "Bad numpy version: cf requires numpy>={}. Got {} "
         "at {}".format(_minimum_vn, numpy.__version__, numpy.__file__)
     )
 
 # Check the version of cfunits
 _minimum_vn = '3.2.6'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
-        "Bad cfunits version: cf requires cfunits version {} or later. Got {} "
+    raise RuntimeError(
+        "Bad cfunits version: cf requires cfunits>={}. Got {} "
         "at {}".format(_minimum_vn, cfunits.__version__, cfunits.__file__)
     )
 
 # Check the version of cfdm
 _minimum_vn = '1.8.3'
-if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
-        "Bad cfdm version: cf requires cfdm version {} or later. Got {} "
-        "at {}".format(_minimum_vn, cfdm.__version__, cfdm.__file__)
-    )
+_maximum_vn = '1.9'
+_cfdm_version = LooseVersion(cfdm.__version__)
+#if (_cfdm_version < LooseVersion(_minimum_vn)
+#    or _cfdm_version >= LooseVersion(_maximum_vn)):
+if not (LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn)):
+    raise RuntimeError(
+        "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
+        "at {}".format(_minimum_vn, _maximum_vn,
+                       _cfdm_version, cfdm.__file__))
 
 from .constructs import Constructs
 
-from .abstract import Coordinate
+#from .abstract import Coordinate
+from .mixin import Coordinate
 
 from .count                   import Count
 from .index                   import Index

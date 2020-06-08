@@ -1,3 +1,9 @@
+from ..decorators import (_inplace_enabled,
+                          _inplace_enabled_define_and_cleanup,)
+
+from ..data.data import Data
+
+
 class Coordinate():
     '''Mixin class for dimension or auxiliary coordinate constructs.
 
@@ -338,91 +344,45 @@ class Coordinate():
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-#    def period(self, *value):
-#        '''Set the period for cyclic coordinates.
-#
-#    :Parameters:
-#
-#        value: data-like or `None`, optional
-#            The period. The absolute value is used.
-#
-#            {+data-like-scalar}
-#
-#    :Returns:
-#
-#        out: `cf.Data` or `None`
-#             The period prior to the change, or the current period if no
-#             *value* was specified. In either case, None is returned if the
-#             period had not been set previously.
-#
-#    **Examples:**
-#
-#    >>> print(c.period())
-#    None
-#    >>> c.Units
-#    <CF Units: degrees_east>
-#    >>> print(c.period(360))
-#    None
-#    >>> c.period()
-#    <CF Data: 360.0 'degrees_east'>
-#    >>> import math
-#    >>> c.period(cf.Data(2*math.pi, 'radians'))
-#    <CF Data: 360.0 degrees_east>
-#    >>> c.period()
-#    <CF Data: 6.28318530718 radians>
-#    >>> c.period(None)
-#    <CF Data: 6.28318530718 radians>
-#    >>> print(c.period())
-#    None
-#    >>> print(c.period(-360))
-#    None
-#    >>> c.period()
-#    <CF Data: 360.0 degrees_east>
-#
-#        '''
-#        old = self._period
-#        if old is not None:
-#            old = old.copy()
-#
-#        if not value:
-#            return old
-#
-#        value = value[0]
-#
-#        if value is not None:
-#            value = Data.asdata(value)
-#            units = value.Units
-#            if not units:
-#                value = value.override_units(self.Units)
-#            elif units != self.Units:
-#                if units.equivalent(self.Units):
-#                    value.Units = self.Units
-#                else:
-#                    raise ValueError(
-#                        "Period units {!r} are not equivalent to coordinate "
-#                        "units {!r}".format(units, self.Units)
-#                    )
-#            # --- End: if
-#
-#            value = abs(value)
-#            value.dtype = float
-#
-#            if self.isdimension:
-#                # Faster than `range`
-#                array = self.array
-#                r =  abs(array[-1] - array[0])
-#            else:
-#                r = self.data.range().datum(0)
-#
-#            if r >= value.datum(0):
-#                raise ValueError(
-#                    "The coordinate range {!r} is not less than the period "
-#                    "{!r}".format(range, value)
-#                )
-#        # --- End: if
-#
-#        self._period = value
-#
-#        return old
+    @_inplace_enabled
+    def autoperiod(self, inplace=False):
+        '''TODO Set dimensions to be cyclic.
+
+    TODO A dimension is set to be cyclic if it has a unique longitude (or
+    grid longitude) dimension coordinate construct with bounds and the
+    first and last bounds values differ by 360 degrees (or an
+    equivalent amount in other units).
+
+    .. versionadded:: 3.4.1
+
+    .. seealso:: `isperiodic`, `period`
+
+    :Parameters:
+
+        verbose: `bool`, optional
+            TODO
+
+    :Returns:
+
+        TODO
+
+    **Examples:**
+
+    TODO
+
+        '''
+        c = _inplace_enabled_define_and_cleanup(self)
+
+        if c.period() is not None:
+            return c
+        
+        if not (c.Units.islongitude
+                or c.get_property('standard_name', None) == 'grid_longitude'
+        ):
+            return c
+
+        c.period(Data(360.0, units=c.Units))
+
+        return c
 
 # --- End: class

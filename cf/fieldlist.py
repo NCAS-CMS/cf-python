@@ -1009,7 +1009,7 @@ class FieldList(list):
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
 
-    def select_by_ncvar(self, *rank):
+    def select_by_ncvar(self, *ncvars):
         '''Select field constructs by netCDF variable name.
 
     To find the inverse of the selection, use a list comprehension
@@ -1052,7 +1052,27 @@ class FieldList(list):
 
     **Examples:**
 
-    TODO
+    >>> fl = cf.FieldList([cf.example_field(0), cf.example_field(1)])
+    >>> fl
+    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+    >>> f[0].nc_get_variable()
+    'humidity'
+    >>> f[1].nc_get_variable()
+    'temp'
+
+    >>> fl.select_by_ncvar('humidity')
+    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]
+    >>> fl.select_by_ncvar('humidity', 'temp')
+    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
+     <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
+    >>> fl.select_by_ncvar()
+    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
+     <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
+    
+    >>> import re
+    >>> fl.select_by_ncvar(re.compile('^hum'))
+    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]
 
         '''
         return type(self)(f for f in self if f.match_by_ncvar(*ncvars))

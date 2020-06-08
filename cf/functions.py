@@ -2237,7 +2237,7 @@ def allclose(x, y, rtol=None, atol=None):
     return _numpy_allclose(x, y, rtol=rtol, atol=atol)
 
 
-def _section(o, axes=None, data=False, stop=None, chunks=False,
+def _section(x, axes=None, data=False, stop=None, chunks=False,
              min_step=1, **kwargs):
     '''Return a list of m dimensional sections of a Field of n dimensions
     or a dictionary of m dimensional sections of a Data object of n
@@ -2252,7 +2252,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
 
     :Parameters:
 
-        o: `Field` or `Data`
+        x: `Field` or `Data`
             The `Field` or `Data` object to be sectioned.
 
         axes: optional
@@ -2311,41 +2311,75 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
     >>> _section(f, ['latitude', 'longitude'], exact=True)
 
     '''
-    # retrieve the index of each axis defining the sections
+    def loop_over_index(x, current_index, axis_indices, indices):
+        '''Expects an index to loop over in the list indices. If this is less
+        than 0 the horizontal slice defined by indices is appended to
+        the FieldList fl, if it is the specified axis indices the
+        value in indices is left as slice(None) and it calls itself
+        recursively with the next index, otherwise each index is
+        looped over. In this loop the routine is called recursively
+        with the next index. If the count of the number of slices
+        taken is greater than or equal to stop it returns before
+        taking any more slices.
+
+        '''
+        if current_index < 0:
+            if data:
+                d[tuple([x.start for x in indices])] = x[tuple(indices)]
+            else:
+                fl.append(x[tuple(indices)])
+
+            nl_vars['count'] += 1
+            return
+
+        if current_index in axis_indices:
+            loop_over_index(x, current_index - 1, axis_indices, indices)
+            return
+
+        for i in range(0, sizes[current_index], steps[current_index]):
+            if stop is not None and nl_vars['count'] >= stop:
+                return
+            
+            indices[current_index] = slice(i, i + steps[current_index])
+            loop_over_index(x, current_index - 1, axis_indices, indices) 
+    # --- End: def
+    
+    # Retrieve the index of each axis defining the sections
     if data:
         if isinstance(axes, int):
             axes = (axes,)
 
         if not axes:
-            axis_indices = range(o.ndim)
+            axis_indices = tuple(range(x.ndim))
         else:
             axis_indices = axes
     else:
-        axis_keys = o.axes(axes, **kwargs)
+        axis_keys = [x.domain_axis(axis, key=True) for axis in axes]
         axis_indices = list()
         for key in axis_keys:
             try:
-                axis_indices.append(o.get_data_axes().index(key))
+                axis_indices.append(x.get_data_axes().index(key))
             except ValueError:
                 pass
     # --- End: if
 
     # find the size of each dimension
-    sizes = o.shape
+    sizes = x.shape
 
     if chunks:
         steps = list(sizes)
 
         # Define the factor which, when multiplied by the size of the
-        # data array, determines how many chunks are in the data array.
+        # data array, determines how many chunks are in the data
+        # array.
         #
         # I.e. factor = 1/(the number of words per chunk)
-        factor = (o.dtype.itemsize + 1.0)/CHUNKSIZE()
+        factor = (x.dtype.itemsize + 1.0)/CHUNKSIZE()
 
-        # n_chunks = number of equal sized bits the partition
-        #            needs to be split up into so that each bit's
-        #            size is less than the chunk size.
-        n_chunks = int(math_ceil(o.size*factor))
+        # n_chunks = number of equal sized bits the partition needs to
+        #            be split up into so that each bit's size is less
+        #            than the chunk size.
+        n_chunks = int(math_ceil(x.size * factor))
 
         for (index, axis_size) in enumerate(sizes):
             if index in axis_indices:
@@ -2373,37 +2407,8 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
 
     nl_vars = {'count': 0}
 
-    def loop_over_index(current_index):
-        # Expects an index to loop over in the list indices. If this is less
-        # than 0 the horizontal slice defined by indices is appended to the
-        # FieldList fl, if it is the specified axis indices the value in
-        # indices is left as slice(None) and it calls itself recursively with
-        # the next index, otherwise each index is looped over. In this loop
-        # the routine is called recursively with the next index. If the count
-        # of the number of slices taken is greater than or equal to stop
-        # it returns before taking any more slices.
-
-        if current_index < 0:
-            if data:
-                d[tuple([x.start for x in indices])] = o[tuple(indices)]
-            else:
-                fl.append(o[tuple(indices)])
-
-            nl_vars['count'] += 1
-            return
-
-        if current_index in axis_indices:
-            loop_over_index(current_index - 1)
-            return
-
-        for i in range(0, sizes[current_index], steps[current_index]):
-            if stop is not None and nl_vars['count'] >= stop:
-                return
-            indices[current_index] = slice(i, i + steps[current_index])
-            loop_over_index(current_index - 1)
-
     current_index = len(sizes) - 1
-    loop_over_index(current_index)
+    loop_over_index(x, current_index, axis_indices, indices)
 
     if data:
         return d

@@ -1,8 +1,8 @@
 from collections import namedtuple
-from copy        import deepcopy
-from functools   import reduce
-from operator    import mul as operator_mul
-from operator    import itemgetter
+from copy import deepcopy
+from functools import reduce
+from operator import mul as operator_mul
+from operator import itemgetter
 
 import logging
 
@@ -11,35 +11,36 @@ try:
 except ImportError:
     pass
 
-from numpy import arange      as numpy_arange
-from numpy import argmax      as numpy_argmax
-from numpy import array       as numpy_array
+from numpy import arange as numpy_arange
+from numpy import argmax as numpy_argmax
+from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-from numpy import asanyarray  as numpy_asanyarray
-from numpy import can_cast    as numpy_can_cast
-from numpy import diff        as numpy_diff
-from numpy import empty       as numpy_empty
-# from numpy import errstate    as numpy_errstate
-from numpy import finfo       as numpy_finfo
-from numpy import full        as numpy_full
-from numpy import isnan       as numpy_isnan
-from numpy import nan         as numpy_nan
-from numpy import ndarray     as numpy_ndarray
-from numpy import ndim        as numpy_ndim
-from numpy import pi          as numpy_pi
-from numpy import prod        as numpy_prod
-from numpy import reshape     as numpy_reshape
-from numpy import shape       as numpy_shape
-from numpy import size        as numpy_size
-from numpy import squeeze     as numpy_squeeze
-from numpy import tile        as numpy_tile
-from numpy import unique      as numpy_unique
-from numpy import where       as numpy_where
 
-from numpy.ma import is_masked   as numpy_ma_is_masked
-from numpy.ma import isMA        as numpy_ma_isMA
+from numpy import asanyarray as numpy_asanyarray
+from numpy import can_cast as numpy_can_cast
+from numpy import diff as numpy_diff
+from numpy import empty as numpy_empty
+from numpy import finfo as numpy_finfo
+from numpy import full as numpy_full
+from numpy import isnan as numpy_isnan
+from numpy import nan as numpy_nan
+from numpy import ndarray as numpy_ndarray
+from numpy import ndim as numpy_ndim
+from numpy import pi as numpy_pi
+from numpy import prod as numpy_prod
+from numpy import reshape as numpy_reshape
+from numpy import shape as numpy_shape
+from numpy import size as numpy_size
+from numpy import squeeze as numpy_squeeze
+from numpy import tile as numpy_tile
+from numpy import unique as numpy_unique
+from numpy import where as numpy_where
+
+from numpy.ma import is_masked as numpy_ma_is_masked
+from numpy.ma import isMA as numpy_ma_isMA
+
 from numpy.ma import MaskedArray as numpy_ma_MaskedArray
-from numpy.ma import where       as numpy_ma_where
+from numpy.ma import where as numpy_ma_where
 from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 
 import cfdm
@@ -66,11 +67,11 @@ from .constants import masked as cf_masked
 
 from .functions import (parse_indices, CHUNKSIZE, equals,
                         RELAXED_IDENTITIES, _section)
-from .query           import Query, ge, gt, le, lt, eq
-from .regrid          import Regrid
-from .timeduration    import TimeDuration
-from .units           import Units
-from .subspacefield   import SubspaceField
+from .query import Query, ge, gt, le, lt, eq
+from .regrid import Regrid
+from .timeduration import TimeDuration
+from .units import Units
+from .subspacefield import SubspaceField
 
 from .data import Data
 from .data import RaggedContiguousArray
@@ -1800,9 +1801,10 @@ class Field(mixin.PropertiesData,
 
         # Warning: This code is replicated in PropertiesData
         new_units = field0.Units
-        if (method in _relational_methods or
-                not units.equivalent(new_units) and
-                not (units.isreftime and new_units.isreftime)):
+        if (method in _relational_methods
+            or not units.equivalent(new_units)
+            and not (units.isreftime
+                     and new_units.isreftime)):
             field0.del_property('standard_name', None)
             field0.del_property('long_name', None)
 
@@ -2859,12 +2861,6 @@ class Field(mixin.PropertiesData,
                 other = other.squeeze(0)
         # --- End: if
 
-#        if not self._is_broadcastable(other.shape):
-#            raise ValueError(
-#                "Can't transform field {!r} to be broadcastable to "
-#                "{!r}.".format(other, self)
-#            )
-
         return other
 
     @_manage_log_level_via_verbosity
@@ -2901,9 +2897,8 @@ class Field(mixin.PropertiesData,
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
 
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            items differ.
+        verbose: `bool`, optional
+            TODO
 
         '''
         item0 = self.constructs[key0]
@@ -2968,33 +2963,6 @@ class Field(mixin.PropertiesData,
                 transpose_axes.append(axes1.index(axis1))
         # --- End: if
 
-
-#        transpose_axes = []
-#        for axis0 in axes0:
-#            axis1 = axis_map.get(axis0)
-#            if axis1 is None:
-#                logger.info(
-#                    "{}: Domain axis {!r} has no corresponding domain "
-#                    "axis in other field".format(
-#                        self.__class__.__name__, axis0)
-#                )
-#
-#                #logger.info(
-#                #    "%s: TODO" % self.__class__.__name__
-#                #)  # pragma: no cover
-#                return False
-#
-#            try:
-#                transpose_axes.append(axes1.index(axis1))
-#            except ValueError:
-#                logger.info(
-#                    "{}: In other field, domain axis {!r} is not "
-#                    "spanned by {!r}".format(
-#                        self.__class__.__name__, axis1, item1)
-#                )
-#                return False
-#        # --- End: for
-
         copy1 = True
 
         if transpose_axes != list(range(item1.ndim)):
@@ -3007,9 +2975,6 @@ class Field(mixin.PropertiesData,
         if item0.shape != item1.shape:
             # add traceback TODO
             return False
-
-#        direction0 = self_Items.direction
-#        direction1 = field1_Items.direction
 
         flip_axes = [i
                      for i, (axis1, axis0) in enumerate(zip(axes1, axes0))
@@ -3041,11 +3006,12 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         name: `str`
-            A name to identify the field in error messages.
+            A name to identify the field in error messages. Either
+            ``'source'`` or ``'destination'``.
 
         axes: `dict`, optional
-            A dictionary specifying the X and Y axes, with keys 'X' and
-            'Y'.
+            A dictionary specifying the X and Y axes, with keys
+            ``'X'`` and ``'Y'``.
 
             *Parameter example:*
               ``axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -3062,16 +3028,16 @@ class Field(mixin.PropertiesData,
             The sizes of the x and y dimension coordinates.
 
         coord_keys: `list`
-            The keys of the x and y coordinate (1D dimension coordinate,
-            or 2D auxilliary coordinates).
+            The keys of the x and y coordinate (1D dimension
+            coordinate, or 2D auxilliary coordinates).
 
         coords: `list`
             The x and y coordinates (1D dimension coordinates or 2D
             auxilliary coordinates).
 
         coords_2D: `bool`
-            True if 2D auxiliary coordinates are returned or if 1D X and Y
-            coordinates are returned, which are not long/lat.
+            True if 2D auxiliary coordinates are returned or if 1D X
+            and Y coordinates are returned, which are not long/lat.
 
         '''
         if axes is None:
@@ -3080,28 +3046,30 @@ class Field(mixin.PropertiesData,
             len_x = len(xdims)
             if not len_x:
                 raise ValueError(
-                    'No X dimension coordinate found for the ' + name +
-                    ' field. If none is present you '
-                    'may need to specify the axes keyword, '
-                    'otherwise you may need to set the X '
-                    'attribute of the X dimension coordinate to True.'
+                    "No X dimension coordinate found for the {} "
+                    "field. If none is present you "
+                    "may need to specify the axes keyword, "
+                    "otherwise you may need to set the X "
+                    "attribute of the X dimension coordinate "
+                    "to True.".format(name)
                 )
 
             if len_x > 1:
                 raise ValueError(
                     "{} field has multiple 'X' dimension coordinates".format(
-                        name))
+                        name.captalize()))
 
             ydims = self.dimension_coordinates('Y')
             len_y = len(ydims)
 
             if not len_y:
                 raise ValueError(
-                    'No Y dimension coordinate found for the ' + name +
-                    ' field. If none is present you '
-                    'may need to specify the axes keyword, '
-                    'otherwise you may need to set the Y '
-                    'attribute of the Y dimension coordinate to True.'
+                    "No Y dimension coordinate found for the {} "
+                    "field. If none is present you "
+                    "may need to specify the axes keyword, "
+                    "otherwise you may need to set the Y "
+                    "attribute of the Y dimension coordinate "
+                    "to True.".format(name)
                 )
 
             if len_y > 1:
@@ -3194,20 +3162,21 @@ class Field(mixin.PropertiesData,
         axis_keys = [x_axis, y_axis]
         axis_sizes = [x_size, y_size]
 
-        # If 1D latitude and longitude coordinates for the field are not
-        # found search for 2D auxiliary coordinates.
-        if (axes is not None or
-                not x.Units.islongitude or
-                not y.Units.islatitude):
+        # If 1-d latitude and longitude coordinates for the field are
+        # not found search for 2-d auxiliary coordinates.
+        if (axes is not None
+                or not x.Units.islongitude
+                or not y.Units.islatitude):
             lon_found = False
             lat_found = False
+
             for key, aux in (
                     self.auxiliary_coordinates.filter_by_naxes(2).items()):
                 if aux.Units.islongitude:
                     if lon_found:
                         raise ValueError(
-                            'The 2D auxiliary longitude coordinate '
-                            'of the ' + name + ' field is not unique.'
+                            "The 2-d auxiliary longitude coordinate "
+                            "of the {} field is not unique.".format(name)
                         )
                     else:
                         lon_found = True
@@ -3218,8 +3187,8 @@ class Field(mixin.PropertiesData,
                 if aux.Units.islatitude:
                     if lat_found:
                         raise ValueError(
-                            'The 2D auxiliary latitude coordinate '
-                            'of the ' + name + ' field is not unique.'
+                            "The 2-d auxiliary latitude coordinate "
+                            "of the {} field is not unique.".format(name)
                         )
                     else:
                         lat_found = True
@@ -3229,41 +3198,43 @@ class Field(mixin.PropertiesData,
 
             if not lon_found or not lat_found:
                 raise ValueError(
-                    'Both longitude and latitude '
-                    'coordinates were not found for the ' + name + ' field.'
+                    "Both longitude and latitude coordinates "
+                    "were not found for the {} field.".format(name)
                 )
 
             if axes is not None:
                 if set(axis_keys) != set(self.get_data_axes(x_key)):
                     raise ValueError(
-                        'Axes of longitude do not match '
-                        'those specified for ' + name + ' field.'
+                        "Axes of longitude do not match "
+                        "those specified for {} field.".format(name)
                     )
 
                 if set(axis_keys) != set(self.get_data_axes(y_key)):
                     raise ValueError(
-                        'Axes of latitude do not match '
-                        'those specified for ' + name + ' field.'
+                        "Axes of latitude do not match "
+                        "those specified for {} field.".format(name)
                     )
             # --- End: if
+            
             coords_2D = True
         else:
             coords_2D = False
             # Check for size 1 latitude or longitude dimensions
             if x_size == 1 or y_size == 1:
                 raise ValueError(
-                    'Neither the longitude nor latitude dimension '
-                    'coordinates of the ' + name + ' field can be of size 1.'
+                    "Neither the longitude nor latitude dimension coordinates "
+                    "of the {} field can be of size 1.".format(name)
                 )
         # --- End: if
 
         coord_keys = [x_key, y_key]
         coords = [x, y]
+        
         return axis_keys, axis_sizes, coord_keys, coords, coords_2D
 
     def _regrid_get_cartesian_coords(self, name, axes):
-        '''Retrieve the specified cartesian dimension coordinates of the
-    field and their corresponding keys.
+        '''Retrieve the specified cartesian dimension coordinates of the field
+    and their corresponding keys.
 
     :Parameters:
 
@@ -3271,8 +3242,8 @@ class Field(mixin.PropertiesData,
             A name to identify the field in error messages.
 
         axes: sequence of `str`
-            Specifiers for the dimension coordinates to be retrieved. See
-            cf.Field.axes for details.
+            Specifiers for the dimension coordinates to be
+            retrieved. See cf.Field.axes for details.
 
     :Returns:
 
@@ -3320,8 +3291,7 @@ class Field(mixin.PropertiesData,
         axis_keys: sequence
             A sequence of axis specifiers.
 
-        i: `bool`, optional
-            Whether to change the field in place or not.
+        i: deprecated at version 3.0.0
 
     :Returns:
 
@@ -3382,17 +3352,17 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         axis_sizes: sequence
-            A sequence of the sizes of each axis along which the section.
-            will be taken
+            A sequence of the sizes of each axis along which the
+            section.  will be taken
 
         axis_indices: sequence
-            A sequence of the same length giving the axis index of each
-            axis.
+            A sequence of the same length giving the axis index of
+            each axis.
 
     :Returns:
 
         shape: `list`
-            A list defining the shape of each section.
+            A list of integers defining the shape of each section.
 
         '''
 
@@ -3405,8 +3375,8 @@ class Field(mixin.PropertiesData,
     @classmethod
     def _regrid_check_bounds(
             cls, src_coords, dst_coords, method, ext_coords=None):
-        '''Check the bounds of the coordinates for regridding and reassign
-    the regridding method if auto is selected.
+        '''Check the bounds of the coordinates for regridding and reassign the
+    regridding method if auto is selected.
 
     :Parameters:
 
@@ -3424,73 +3394,47 @@ class Field(mixin.PropertiesData,
             are also checked. Only used for cartesian regridding when
             regridding only 1 (only 1!) dimension of a n>2 dimensional
             field. In this case we need to provided the coordinates of
-            the dimensions that aren't being regridded (that are
-            the same in both src and dst grids) so that we can create
-            a sensible ESMF grid object.
+            the dimensions that aren't being regridded (that are the
+            same in both src and dst grids) so that we can create a
+            sensible ESMF grid object.
 
     :Returns:
 
         `None`
 
         '''
-
-#        if method == 'auto':
-#            method = 'conservative'
-#            for coord in src_coords:
-#                if (not coord.hasbounds or not
-#                        coord.contiguous(overlap=False):
-#                    method = 'linear'
-#                    break
-#            # --- End: for
-#            for coord in dst_coords:
-#                if (not coord.hasbounds or not
-#                        coord.contiguous(overlap=False):
-#                    method = 'linear'
-#                    break
-#            # --- End: for
-#            if ext_coords is not None:
-#                for coord in ext_coords:
-#                    if (not coord.hasbounds or
-#                        not coord.contiguous(overlap=False)):
-#                        method = 'linear'
-#                        break
-#                # --- End: for
-#            # --- End: if
         if method in conservative_regridding_methods:
-            for coord in src_coords:
-                if (not coord.has_bounds() or not
-                        coord.contiguous(overlap=False)):
-                    raise ValueError(
-                        'Source coordinates must have'
-                        ' contiguous, non-overlapping bounds'
-                        ' for conservative regridding.'
+            for x, coords in zip(('Source', 'Destination'),
+                                 (src_coords, dst_coords)):
+                for coord in coords:
+                    if not coord.has_bounds():
+                        raise ValueError(
+                            "{} {!r} coordinates must have bounds "
+                            "for conservative regridding.".format(x, coord)
                     )
-            # --- End: for
-
-            for coord in dst_coords:
-                if (not coord.has_bounds() or not
-                        coord.contiguous(overlap=False)):
-                    raise ValueError(
-                        'Destination coordinates must have'
-                        ' contiguous, non-overlapping bounds'
-                        ' for conservative regridding.'
+                    
+                    if not coord.contiguous(overlap=False):
+                        raise ValueError(
+                            "{} {!r} coordinates must have "
+                            "contiguous, non-overlapping bounds "
+                            "for conservative regridding.".format(x, coord)
                     )
             # --- End: for
 
             if ext_coords is not None:
                 for coord in ext_coords:
-                    if (not coord.has_bounds() or
-                            not coord.contiguous(overlap=False)):
+                    if not coord.has_bounds():
                         raise ValueError(
-                            'Dimension coordinates must have'
-                            ' contiguous, non-overlapping bounds'
-                            ' for conservative regridding.'
+                            "{!r} dimension coordinates must have bounds "
+                            "for conservative regridding.".format(coord)
                         )
-                # --- End: for
-            # --- End: if
+                    if not coord.contiguous(overlap=False):
+                        raise ValueError(
+                            "{!r} dimension coordinates must have "
+                            "contiguous, non-overlapping bounds "
+                            "for conservative regridding.".format(coord)
+                        )
         # --- End: if
-
-#        return method
 
     @classmethod
     def _regrid_check_method(cls, method):
@@ -3624,18 +3568,27 @@ class Field(mixin.PropertiesData,
 
     :Returns:
 
-        dst_mask: ndarray
+        dst_mask: `numpy.ndarray`
             A numpy array with the mask.
 
         '''
-        dst_mask = self.section(axes, stop=1,
-                                ndim=1)[0].squeeze().array.mask
-        dst_mask = dst_mask.transpose(dst_order)
+#        dst_mask = self.section(axes, stop=1,
+#                                ndim=1)[0].squeeze().array.mask
+#        dst_mask = dst_mask.transpose(dst_order)
+
+        indices = {axis: [0] for axis in self.get_data_axes()
+                   if axis not in axes}
+
+        f = self.subspace(**indices)    
+        f = f.squeeze(tuple(indices)).transpose(dst_order)
+        
+        dst_mask = f.mask.array
+
         if cartesian:
             tmp = []
             for coord in coords_ext:
                 tmp.append(coord.size)
-                dst_mask = numpy_tile(dst_mask, tmp + [1]*dst_mask.ndim)
+                dst_mask = numpy_tile(dst_mask, tmp + [1] * dst_mask.ndim)
         # --- End: if
 
         return dst_mask
@@ -3743,7 +3696,7 @@ class Field(mixin.PropertiesData,
             else:
                 frac[frac == 0.0] = 1.0
                 regridded_data = numpy_ma_MaskedArray(
-                    dstfield.data[...].copy()/frac,
+                    dstfield.data[...].copy() / frac,
                     mask=(dstfield.data == self.fill_value(default='netCDF'))
                 )
         else:
@@ -3948,7 +3901,7 @@ class Field(mixin.PropertiesData,
         '''
 # NOTE: May be common ground between cartesian and shperical that
 # could save some lines of code.
-
+             
         # Remove the source coordinates of new field
 #        self.remove_items(axes=src_axis_keys)
 #        for key in self.constructs.filter_by_axis('or', *src_axis_keys):
@@ -4002,13 +3955,17 @@ class Field(mixin.PropertiesData,
             else:
                 for src_axis_key, dst_axis_key in zip(
                         src_axis_keys, dst_axis_keys):
-                    try:
-                        self.set_construct(
-                            dst.dimension_coordinate(dst_axis_key),
-                            axes=[src_axis_key]
-                        )
-                    except AttributeError:
-                        pass
+#                    try:
+#                        self.set_construct(
+#                            dst.dimension_coordinate(dst_axis_key),
+#                            axes=[src_axis_key]
+#                        )
+#                    except AttributeError:
+#                        pass
+                    dim_coord = dst.dimension_coordinate(dst_axis_key,
+                                                         default=None)
+                    if dim_coord is not None:
+                        self.set_construct(dim_coord, axes=[src_axis_key])
 
                     for aux in dst.auxiliary_coordinates.filter_by_axis(
                             'exact', dst_axis_key).values():
@@ -4022,8 +3979,6 @@ class Field(mixin.PropertiesData,
                         self.set_construct(aux, axes=src_axis_keys)
                     else:
                         self.set_construct(aux, axes=src_axis_keys[::-1])
-                # --- End: for
-            # --- End: if
         # --- End: if
 
         # Copy names of dimensions from destination to source field
@@ -4164,7 +4119,7 @@ class Field(mixin.PropertiesData,
                 ycoord.sin(inplace=True)
 
                 if methods:
-                    comp[(yaxis,)] = 'linear sine '+ycoord.identity()
+                    comp[(yaxis,)] = 'linear sine ' + ycoord.identity()
                 else:
                     cells = ycoord.cellsize
                     if measure:
@@ -4173,7 +4128,7 @@ class Field(mixin.PropertiesData,
                     comp[(yaxis,)] = cells
             else:
                 if methods:
-                    comp[(yaxis,)] = 'linear '+ycoord.identity()
+                    comp[(yaxis,)] = 'linear ' + ycoord.identity()
                 else:
                     cells = ycoord.cellsize
                     comp[(yaxis,)] = cells
@@ -4228,7 +4183,7 @@ class Field(mixin.PropertiesData,
                         w = w.squeeze(0)
 
         else:
-            iaxes = list(range(self.ndim-w.ndim, self.ndim))
+            iaxes = list(range(self.ndim - w.ndim, self.ndim))
 
         if not (components or methods):
             if not self._is_broadcastable(w.shape):
@@ -4237,7 +4192,7 @@ class Field(mixin.PropertiesData,
                     "to the field construct's data (shape {}).".format(
                         w.shape, self.shape))
 
-            axes0 = field_data_axes[self.ndim-w.ndim:]
+            axes0 = field_data_axes[self.ndim - w.ndim:]
         else:
             axes0 = [field_data_axes[i] for i in iaxes]
 
@@ -4345,8 +4300,8 @@ class Field(mixin.PropertiesData,
                             w,
                             key0=refs0[0], key1=refs1[0],
                             s=s, t=t)
-                        )
-
+                    )
+                    
                 if not equivalent_refs:
                     raise ValueError(
                         "Input weights field has an incompatible "
@@ -4501,7 +4456,7 @@ class Field(mixin.PropertiesData,
                         # part are different => need to account
                         # for the "last" edge of the polygon that
                         # joins the first and last points.
-                        all_areas[i, j] += x[-1]*y[0] - x[0]*y[-1]
+                        all_areas[i, j] += x[-1] * y[0] - x[0] * y[-1]
             # --- End: for
 
             all_areas = all_areas.abs() * 0.5
@@ -4543,7 +4498,9 @@ class Field(mixin.PropertiesData,
             # that later).
             N = interior_angle.sample_size(-1, squeeze=True)
 
-            all_areas = interior_angle.sum(-1, squeeze=True) - (N - 2)*numpy_pi
+            all_areas = (interior_angle.sum(-1, squeeze=True)
+                         - (N - 2) * numpy_pi
+            )
 
             for i, (parts_x, parts_y) in enumerate(zip(x, y)):
                 for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
@@ -4714,7 +4671,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "A spherical line geometry segment has "
                     "negative length: {!r}".format(
-                        interior_angle.min()*radius))
+                        interior_angle.min() * radius))
 
             all_lengths = interior_angle.sum(-1, squeeze=True)
 
@@ -4840,7 +4797,7 @@ class Field(mixin.PropertiesData,
                 # actual_volume =
                 #    [actual_area/(4*pi*r**2)]
                 #    * (4/3)*pi*[(r+delta_z)**3 - r**3)]
-                volumes *= (delta_z**3 / (3*r**2)
+                volumes *= (delta_z**3 / (3 * r**2)
                             + delta_z**2 / r
                             + delta_z)
         else:
@@ -4899,17 +4856,18 @@ class Field(mixin.PropertiesData,
         sin_delta_lambda = delta_lambda.sin()
 
         numerator = (
-            (cos_phi_2*sin_delta_lambda)**2 +
-            (cos_phi_1*sin_phi_2 - sin_phi_1*cos_phi_2*cos_delta_lambda)**2
+            (cos_phi_2 * sin_delta_lambda)**2 +
+            (cos_phi_1 * sin_phi_2
+             - sin_phi_1 * cos_phi_2 * cos_delta_lambda)**2
         )**0.5
 
-        denominator = (sin_phi_1*sin_phi_2 +
-                       cos_phi_1*cos_phi_2*cos_delta_lambda)
+        denominator = (sin_phi_1 * sin_phi_2 +
+                       cos_phi_1 * cos_phi_2 * cos_delta_lambda)
 
 # TODO RuntimeWarning: overflow encountered in true_divide comes from
 # numerator/denominator with missing values
 
-        interior_angle = (numerator/denominator).arctan()
+        interior_angle = (numerator / denominator).arctan()
 
         interior_angle.override_units(_units_1, inplace=True)
 
@@ -4976,7 +4934,6 @@ class Field(mixin.PropertiesData,
         if not dim.has_bounds():
             # Dimension coordinate has no bounds
             if auto:
-                print(999)
                 return False
 
             raise ValueError(
@@ -5058,7 +5015,7 @@ class Field(mixin.PropertiesData,
             clm.squeeze(iaxes, inplace=True)
 
         if methods:
-            comp[tuple(clm_axes)] = measure+' cell measure'
+            comp[tuple(clm_axes)] = measure + ' cell measure'
         else:
             comp[tuple(clm_axes)] = clm
 
@@ -5558,10 +5515,12 @@ class Field(mixin.PropertiesData,
         return self.get_property('Conventions')
 
     @Conventions.setter
-    def Conventions(self, value): self.set_property('Conventions', value)
+    def Conventions(self, value):
+        self.set_property('Conventions', value)
 
     @Conventions.deleter
-    def Conventions(self):        self.del_property('Conventions')
+    def Conventions(self):
+        self.del_property('Conventions')
 
     @property
     def featureType(self):
@@ -5589,10 +5548,12 @@ class Field(mixin.PropertiesData,
         return self.get_property('featureType')
 
     @featureType.setter
-    def featureType(self, value): self.set_property('featureType', value)
+    def featureType(self, value):
+        self.set_property('featureType', value)
 
     @featureType.deleter
-    def featureType(self):        self.del_property('featureType')
+    def featureType(self):
+        self.del_property('featureType')
 
     @property
     def institution(self):
@@ -5617,10 +5578,12 @@ class Field(mixin.PropertiesData,
         return self.get_property('institution')
 
     @institution.setter
-    def institution(self, value): self.set_property('institution', value)
+    def institution(self, value):
+        self.set_property('institution', value)
 
     @institution.deleter
-    def institution(self):        self.del_property('institution')
+    def institution(self):
+        self.del_property('institution')
 
     @property
     def references(self):
@@ -5646,10 +5609,12 @@ class Field(mixin.PropertiesData,
         return self.get_property('references')
 
     @references.setter
-    def references(self, value): self.set_property('references', value)
+    def references(self, value):
+        self.set_property('references', value)
 
     @references.deleter
-    def references(self):        self.del_property('references')
+    def references(self):
+        self.del_property('references')
 
     @property
     def standard_error_multiplier(self):
@@ -5710,10 +5675,12 @@ class Field(mixin.PropertiesData,
         return self.get_property('source')
 
     @source.setter
-    def source(self, value): self.set_property('source', value)
+    def source(self, value):
+        self.set_property('source', value)
 
     @source.deleter
-    def source(self):        self.del_property('source')
+    def source(self):
+        self.del_property('source')
 
     @property
     def title(self):
@@ -5739,15 +5706,17 @@ class Field(mixin.PropertiesData,
         return self.get_property('title')
 
     @title.setter
-    def title(self, value): self.set_property('title', value)
+    def title(self, value):
+        self.set_property('title', value)
 
     @title.deleter
-    def title(self):        self.del_property('title')
+    def title(self):
+        self.del_property('title')
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def cell_area(self, radius='earth', great_circle=False,
+    def cell_area(self, radius='earth', great_circle=False, set=False,
                   insert=False, force=False):
         '''Return a field containing horizontal cell areas.
 
@@ -5780,17 +5749,9 @@ class Field(mixin.PropertiesData,
 
             .. versionadded:: 3.2.0
 
-        insert: `bool`, optional
-            If True then calculated cell areas are also inserted in
-            place as an "area" cell measure construct, unless there is
-            already an existing area cell measure construct for the
-            horizontal axes.
+        insert: deprecated at version 3.0.0
 
-        force: `bool`, optional
-            If True the always calculate the cell areas. By default,
-            if there is already an "area" cell measure construct for
-            the horizontal axes then it will be used provide the area
-            values.
+        force: deprecated at version 3.0.0
 
     :Returns:
 
@@ -5800,14 +5761,19 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> a = f.cell_area()
-    >>> a = f.cell_area(force=True)
     >>> a = f.cell_area(radius=cf.Data(3389.5, 'km'))
     >>> a = f.cell_area(insert=True)
 
         '''
         if insert:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'cell_area', {'insert': insert})  # pragma: no cover
+                self, 'cell_area', {'insert': insert},
+                version='3.0.0')  # pragma: no cover
+
+        if force:
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'cell_area', {'force': force},
+                version='3.0.0')  # pragma: no cover
 
 #        x_axis = self.domain_axis('X', key=True, default=None)
 #        y_axis = self.domain_axis('Y', key=True, default=None)
@@ -7854,12 +7820,12 @@ class Field(mixin.PropertiesData,
                     "'bin_bounds' property.".format(f)
                 )
 
-            if bin_count != len(bin_bounds)/2:
+            if bin_count != len(bin_bounds) / 2:
                 raise ValueError(
                     "Digitized field construct {!r} bin_count must equal "
                     "len(bin_bounds)/2. Got bin_count={}, "
                     "len(bin_bounds)/2={}".format(
-                        f, bin_count, len(bin_bounds)/2)
+                        f, bin_count, len(bin_bounds) / 2)
                 )
 
             # Create dimension coordinate for bins
@@ -7875,7 +7841,7 @@ class Field(mixin.PropertiesData,
             # Create units for the bins
             units = Units(bin_units, bin_calendar)
 
-            data = Data(0.5*(bin_bounds[1::2] + bin_bounds[0::2]),
+            data = Data(0.5 * (bin_bounds[1::2] + bin_bounds[0::2]),
                         units=units)
             dim.set_data(data=data, copy=False)
 
@@ -7959,8 +7925,8 @@ class Field(mixin.PropertiesData,
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
 
-            result = c.collapse(
-                method=method, weights=weights).data
+            result = c.collapse(method=method, weights=weights,
+                                measure=measure).data
             out.data[i] = result.datum()
 
         # Set correct units (note: takes them from the last processed
@@ -8819,7 +8785,7 @@ class Field(mixin.PropertiesData,
       >>> b = a.collapse('T: minimum within years T: variance over years',
       ...                within_years=cf.seasons(), weights=True)
 
-    When collapsing over years, it is assumed by default that the each
+    When collapsing over years, it is assumed by default that each
     portion of the annual cycle is collapsed over all years that are
     present. This is the case in the above two examples. It is
     possible, however, to restrict the years to be included, or group
@@ -8845,8 +8811,8 @@ class Field(mixin.PropertiesData,
       ... )
 
     Similarly for collapses over days, it is assumed by default that
-    the each portion of the diurnal cycle is collapsed over all days
-    that are present, But it is possible to restrict the days to be
+    each portion of the diurnal cycle is collapsed over all days that
+    are present, But it is possible to restrict the days to be
     included, or group them into chunks, with the *over_days* keyword.
 
     The calculation can be done with multiple collapse calls, which
@@ -8993,7 +8959,7 @@ class Field(mixin.PropertiesData,
             selected by passing each given axis description to a call
             of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected. If a
+            returned by ``f.domain_axis('X')`` is selected. If a
             selected axis has size 1 then it is ignored. By default
             all axes with size greater than 1 are collapsed.
 
@@ -10215,7 +10181,7 @@ class Field(mixin.PropertiesData,
                     )
 
                 # ------------------------------------------------------------
-                # Calculate weights
+                # Grouped collapse: Calculate weights
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method not in _collapse_weighted_methods:
@@ -10253,7 +10219,7 @@ class Field(mixin.PropertiesData,
                                           measure=measure,
                                           radius=radius,
                                           great_circle=great_circle)
-
+                    
                     if not g_weights:
                         g_weights = None
                 # --- End: if
@@ -10285,11 +10251,11 @@ class Field(mixin.PropertiesData,
                 )
 
                 if regroup:
-                    # Return the numpy array
+                    # Grouped collapse: Return the numpy array
                     return f
 
                 # ----------------------------------------------------
-                # Update the cell methods
+                # Grouped collapse: Update the cell methods 
                 # ----------------------------------------------------
                 f._update_cell_methods(method=method,
                                        domain_axes=collapse_axes,
@@ -10352,7 +10318,8 @@ class Field(mixin.PropertiesData,
                 if method == 'integral':
                     if not measure:
                         raise ValueError(
-                            "Must set measure=True for 'integral' collapses.")
+                            "Must set measure=True for {!r} "
+                            "collapses".format(method))
 
                     if scale is not None:
                         raise ValueError(
@@ -10374,7 +10341,10 @@ class Field(mixin.PropertiesData,
                 logger.info(
                     '    Output weights          = {!r}'.format(d_weights)
                 )  # pragma: no cover
-            # --- End: if
+            elif method == 'integral':                
+                raise ValueError(
+                    "Must set the 'weights' parameter "
+                    "for {!r} collapses".format(method))
 
             if method in _collapse_ddof_methods:
                 d_kwargs['ddof'] = ddof
@@ -10503,7 +10473,7 @@ class Field(mixin.PropertiesData,
 
                 if coordinate == 'mid_range':
                     data = Data(
-                        [(bounds_data[0] + bounds_data[1])*0.5], units=units)
+                        [(bounds_data[0] + bounds_data[1]) * 0.5], units=units)
                 elif coordinate == 'minimum':
                     data = dim.data.min()
                 elif coordinate == 'maximum':
@@ -10511,7 +10481,7 @@ class Field(mixin.PropertiesData,
                 else:
                     raise ValueError(
                         "Can't collapse: Bad parameter value: "
-                        "coordinate={0!r}".format(coordinate)
+                        "coordinate={!r}".format(coordinate)
                     )
 
                 bounds = Bounds(data=Data([bounds_data], units=units))
@@ -10550,16 +10520,16 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         method: `str`
-            TODO
+            See `collapse` for details.
 
-        axis: `str`
-            TODO
+        measure: `bool`, optional
+            See `collapse` for details.
 
         over: `str`
-            TODO
+            See `collapse` for details.
 
         within: `str`
-            TODO
+            See `collapse` for details.
 
     '''
         def _ddddd(classification, n, lower, upper, increasing, coord,
@@ -10800,7 +10770,7 @@ class Field(mixin.PropertiesData,
 #                    x = numpy_where(classification==n)[0]
 #                    for i in range(1, max(1, int(float(len(x))/group_span))):
 #                        n += 1
-#                        classification[x[i*group_span:(i+1)*group_span]] = n
+#                        classification[x[i*group_span:(i + 1)*group_span]] = n
 #                # --- End: if
 
 #                n += 1
@@ -10853,12 +10823,12 @@ class Field(mixin.PropertiesData,
             n = classification.max() + 1
 
             start = 0
-            for i, c in enumerate(classification[:size-1]):
+            for i, c in enumerate(classification[:size - 1]):
                 if c < 0:
                     continue
 
-                if not coord[i:i+2].contiguous(overlap=False):
-                    classification[start:i+1] = n
+                if not coord[i:i + 2].contiguous(overlap=False):
+                    classification[start:i + 1] = n
                     start = i + 1
                     n += 1
             # --- End: for
@@ -11245,14 +11215,14 @@ class Field(mixin.PropertiesData,
                 n = 0
                 for lower, upper in zip(lower_bounds, upper_bounds):
                     HMS_l = (
-                        eq(lower.hour, attr='hour') &
-                        eq(lower.minute, attr='minute') &
-                        eq(lower.second, attr='second')
+                        eq(lower.hour, attr='hour')
+                        & eq(lower.minute, attr='minute')
+                        & eq(lower.second, attr='second')
                     ).addattr('lower_bounds')
                     HMS_u = (
-                        eq(upper.hour, attr='hour') &
-                        eq(upper.minute, attr='minute') &
-                        eq(upper.second, attr='second')
+                        eq(upper.hour, attr='hour')
+                        & eq(upper.minute, attr='minute')
+                        & eq(upper.second, attr='second')
                     ).addattr('upper_bounds')
                     HMS = HMS_l & HMS_u
 
@@ -11360,18 +11330,18 @@ class Field(mixin.PropertiesData,
                 n = 0
                 for lower, upper in zip(lower_bounds, upper_bounds):
                     mdHMS_l = (
-                        eq(lower.month, attr='month') &
-                        eq(lower.day, attr='day') &
-                        eq(lower.hour, attr='hour') &
-                        eq(lower.minute, attr='minute') &
-                        eq(lower.second, attr='second')
+                        eq(lower.month, attr='month')
+                        & eq(lower.day, attr='day')
+                        & eq(lower.hour, attr='hour')
+                        & eq(lower.minute, attr='minute')
+                        & eq(lower.second, attr='second')
                     ).addattr('lower_bounds')
                     mdHMS_u = (
-                        eq(upper.month, attr='month') &
-                        eq(upper.day, attr='day') &
-                        eq(upper.hour, attr='hour') &
-                        eq(upper.minute, attr='minute') &
-                        eq(upper.second, attr='second')
+                        eq(upper.month, attr='month')
+                        & eq(upper.day, attr='day')
+                        & eq(upper.hour, attr='hour')
+                        & eq(upper.minute, attr='minute')
+                        & eq(upper.second, attr='second')
                     ).addattr('upper_bounds')
                     mdHMS = mdHMS_l & mdHMS_u
 
@@ -11446,8 +11416,8 @@ class Field(mixin.PropertiesData,
                 if isinstance(within_days, Query):
                     within_days = (within_days,)
                 elif isinstance(within_days, TimeDuration):
-                    if (within_days.Units.istime and
-                            TimeDuration(24, 'hours') % within_days):
+                    if (within_days.Units.istime
+                        and TimeDuration(24, 'hours') % within_days):
                         # % Data(1, 'day'): # % within_days:
                         raise ValueError(
                             "Can't collapse: within_days={!r} is not an "
@@ -11632,16 +11602,16 @@ class Field(mixin.PropertiesData,
                             #             'exact', axis).value(None)
                             if coord is None:
                                 raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d "
-                                    "coordinates when group_span={!r}".format(
-                                        group_span)
+                                    "Can't collapse: Need an unambiguous 1-d "
+                                    "coordinate construct when "
+                                    "group_span={!r}".format(group_span)
                                 )
 
                             bounds = coord.get_bounds(None)
                             if bounds is None:
                                 raise ValueError(
                                     "Can't collapse: Need unambiguous 1-d "
-                                    "coordinate bounds when "
+                                    "coordinate cell bounds when "
                                     "group_span={!r}".format(group_span)
                                 )
 
@@ -11663,15 +11633,17 @@ class Field(mixin.PropertiesData,
                                 continue
                     # --- End: if
 
-                    if (group_contiguous and coord is not None and
-                            coord.has_bounds()):
-                        if not coord.bounds.contiguous(
-                                overlap=(group_contiguous == 2)):
-                            # This group is not contiguous, so don't
-                            # collapse it.
-                            classification[index] = ignore_n
-                            ignore_n -= 1
-                            continue
+                    if (group_contiguous
+                        and coord is not None
+                        and coord.has_bounds()
+                        and not coord.bounds.contiguous(
+                            overlap=(group_contiguous == 2))
+                        ):
+                        # This group is not contiguous, so don't
+                        # collapse it.
+                        classification[index] = ignore_n
+                        ignore_n -= 1
+                        continue
                 # --- End: if
 
                 if regroup:
@@ -11685,12 +11657,12 @@ class Field(mixin.PropertiesData,
                     '        Collapsing group {}: {!r}'.format(u, pc)
                 )  # pragma: no cover
 
-                fl.append(pc.collapse(
-                    method, axis, weights=w, mtol=mtol, ddof=ddof,
-                    coordinate=coordinate, squeeze=False, inplace=True,
-                    _create_zero_size_cell_bounds=True,
-                    _update_cell_methods=False
-                ))
+                fl.append(pc.collapse(method, axis, weights=w,
+                                      measure=measure, mtol=mtol, ddof=ddof,
+                                      coordinate=coordinate, squeeze=False,
+                                      inplace=True,
+                                      _create_zero_size_cell_bounds=True,
+                                      _update_cell_methods=False ))
             # --- End: for
 
             if regroup:
@@ -11721,7 +11693,7 @@ class Field(mixin.PropertiesData,
                         'exact', axis).value()
                     if not c.has_bounds():
                         c.set_bounds(c.create_bounds())
-                except:
+                except Exception:
                     pass
             # --- End: for
 
@@ -11814,16 +11786,17 @@ class Field(mixin.PropertiesData,
                 lastcm_method = _collapse_cell_methods.get(
                     lastcm.get_method(None), lastcm.get_method(None))
 
-                if (original_domain_axis.get_size() ==
-                        self.domain_axes[key].get_size()):
-                    if (lastcm.get_axes(None) == axes and
-                            lastcm_method == method and
-                            lastcm_method in (
-                                'mean', 'maximum', 'minimum', 'point', 'sum',
-                                'median', 'mode', 'minumum_absolute_value',
-                                'maximum_absolute_value'
-                            ) and not lastcm.get_qualifier('within', None)
-                            and not lastcm.get_qualifier('over', None)):
+                if (original_domain_axis.get_size()
+                    == self.domain_axes[key].get_size()):
+                    if (lastcm.get_axes(None) == axes
+                        and lastcm_method == method
+                        and lastcm_method in (
+                            'mean', 'maximum', 'minimum', 'point', 'sum',
+                            'median', 'mode', 'minumum_absolute_value',
+                            'maximum_absolute_value'
+                        )
+                        and not lastcm.get_qualifier('within', None)
+                        and not lastcm.get_qualifier('over', None)):
                         # It was a null collapse (i.e. the method is
                         # the same as the last one and the size of the
                         # collapsed axis hasn't changed).
@@ -11950,7 +11923,7 @@ class Field(mixin.PropertiesData,
             would be selected by passing the given axis description to
             a call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
             If *axis* is `None` then a new domain axis construct will
             created for the inserted dimension.
@@ -12290,9 +12263,9 @@ class Field(mixin.PropertiesData,
                 '    keys      = {!r}'.format(keys))  # pragma: no cover
 
             if n_axes == 1:
-                # -----------------------------------------------------
-                # 1-d item
-                # -----------------------------------------------------
+                # ----------------------------------------------------
+                # 1-d construct
+                # ----------------------------------------------------
                 ind = None
 
                 logger.debug('    {} 1-d constructs: {!r}'.format(
@@ -12308,7 +12281,7 @@ class Field(mixin.PropertiesData,
                     '    value     = {!r}'.format(value))  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, numpy_ndarray)):
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     # 1-dimensional CASE 1: Value is already an index,
                     #                       e.g. [0], (0,3),
                     #                       slice(0,4,2),
@@ -12325,13 +12298,13 @@ class Field(mixin.PropertiesData,
                         ind = (d[value].array,)
                         index = slice(None)
 
-                elif (item is not None and
-                      isinstance(value, Query) and
-                      value.operator in ('wi', 'wo') and
-                      item.isdimension and
-                      self.iscyclic(axis)):
+                elif (item is not None
+                      and isinstance(value, Query)
+                      and value.operator in ('wi', 'wo')
+                      and item.isdimension
+                      and self.iscyclic(axis)):
                     # self.iscyclic(sorted_axes)):
-                    # -------------------------------------------------
+                    # ------------------------------------------------
                     # 1-dimensional CASE 2: Axis is cyclic and
                     #                       subspace criterion is a
                     #                       'within' or 'without'
@@ -12348,7 +12321,7 @@ class Field(mixin.PropertiesData,
 
                     a = self.anchor(axis, anchor0, dry_run=True)['roll']
                     b = self.flip(axis).anchor(
-                        axis, anchor1, dry_run=True)['roll']
+                            axis, anchor1, dry_run=True)['roll']
 
                     size = item.size
                     if abs(anchor1 - anchor0) >= item.period():
@@ -12356,6 +12329,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = 0
                         else:
                             set_start_stop = -a
+                            
                         start = set_start_stop
                         stop = set_start_stop
                     elif a + b == size:
@@ -12365,6 +12339,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = -a
                         else:
                             set_start_stop = 0
+                            
                         start = set_start_stop
                         stop = set_start_stop
                     else:
@@ -12384,7 +12359,6 @@ class Field(mixin.PropertiesData,
                         ind = (d[index].array,)
 
                         index = slice(None)
-#                        ind = (numpy_arange((stop%size)-start, size),)
 
                 elif item is not None:
                     # -------------------------------------------------
@@ -13871,23 +13845,25 @@ class Field(mixin.PropertiesData,
                 length = old_bounds.shape[0]
                 new_bounds = numpy_empty((length, 2))
                 len_weights = len(window)
-                lower_offset = len_weights//2 + origin
+                lower_offset = len_weights // 2 + origin
                 upper_offset = len_weights - 1 - lower_offset
                 if mode == 'wrap':
                     if coord.direction():
                         new_bounds[:, 0] = (
-                            coord.roll(0,  upper_offset).bounds.array[:, 0])
+                            coord.roll(0, upper_offset).bounds.array[:, 0])
                         new_bounds[:, 1] = (
-                            coord.roll(0, -lower_offset).bounds.array[:, 1] +
-                            coord.period()
+                            coord.roll(0, -lower_offset).bounds.array[:, 1]
+                            + coord.period()
                         )
                     else:
                         new_bounds[:, 0] = (
-                            coord.roll(0,  upper_offset).bounds.array[:, 0] +
-                            2*coord.period()
+                            coord.roll(0, upper_offset).bounds.array[:, 0]
+                            + 2 * coord.period()
                         )
-                        new_bounds[:, 1] = coord.roll(
-                            0, -lower_offset).bounds.array[:, 1] + coord.period()
+                        new_bounds[:, 1] = (
+                            coord.roll(0, -lower_offset).bounds.array[:, 1]
+                            + coord.period()
+                        )
                 else:
                     new_bounds[upper_offset:length, 0] = old_bounds[
                         0:length - upper_offset, 0]
@@ -14037,7 +14013,7 @@ class Field(mixin.PropertiesData,
             by passing the given axis description to a call of the
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
@@ -14159,7 +14135,9 @@ class Field(mixin.PropertiesData,
 
                 if coordinate is not None and data is not None:
                     if coordinate == 'mid_range':
-                        data[...] = ((bounds[:, 0] + bounds[:, 1])*0.5).squeeze()
+                        data[...] = (
+                            ((bounds[:, 0] + bounds[:, 1]) * 0.5).squeeze()
+                        )
                     elif coordinate == 'minimum':
                         data[...] = coord.lower_bounds
                     elif coordinate == 'maximum':
@@ -14394,7 +14372,7 @@ class Field(mixin.PropertiesData,
 
         namespace0 = namespace
         if namespace0:
-            namespace = namespace+"."
+            namespace = namespace + "."
         else:
             namespace = ""
 
@@ -14455,8 +14433,8 @@ class Field(mixin.PropertiesData,
             out.append("{}.set_construct(c)".format(name))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 
@@ -14472,11 +14450,11 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to flip, defined by the domain axes
-            that would be selected by passing the each given axis
+            that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all axes are flipped.
 
@@ -14557,7 +14535,7 @@ class Field(mixin.PropertiesData,
             be selected by passing the given axis description to a
             call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
         value:
             Anchor the dimension coordinate values for the selected
@@ -14730,7 +14708,7 @@ class Field(mixin.PropertiesData,
         # --- End: if
 
         if dry_run:
-            return {'axis': axis, 'roll': shift, 'nperiod': n*period}
+            return {'axis': axis, 'roll': shift, 'nperiod': n * period}
 
         if n:
             np = n * period
@@ -14823,7 +14801,7 @@ class Field(mixin.PropertiesData,
 
         if standard_name:
             cm = CellMethod()
-            cm.create(standard_name+': maximum')
+            cm.create(standard_name + ': maximum')
 
         return out
 
@@ -14982,11 +14960,11 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to squeeze, defined by the domain
-            axes that would be selected by passing the each given axis
+            axes that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all size 1 axes are squeezed.
 
@@ -15119,11 +15097,11 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axis order, defined by the domain axes
-            that would be selected by passing the each given axis
+            that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             Each dimension of the field construct's data must be
             provided, or if no axes are specified then the axis order
@@ -15172,7 +15150,7 @@ class Field(mixin.PropertiesData,
                 self, 'transpose', kwargs)  # pragma: no cover
 
         if axes is None:
-            iaxes = list(range(self.ndim-1, -1, -1))
+            iaxes = list(range(self.ndim - 1, -1, -1))
         else:
             data_axes = self.get_data_axes(default=())
             if isinstance(axes, (str, int)):
@@ -16445,7 +16423,7 @@ class Field(mixin.PropertiesData,
         if da_key is None:
             return self._default(
                 default,
-                "No unique domain axis construct is identiable from "
+                "No unique domain axis construct is identifable from "
                 "{!r}".format(identity)
             )
 
@@ -16815,11 +16793,13 @@ class Field(mixin.PropertiesData,
         out = super().set_construct(construct, key=key, axes=axes, copy=copy)
 
         if construct_type == 'dimension_coordinate':
+            construct.autoperiod(inplace=True)
             self._conform_coordinate_references(out)
             self.autocyclic()
             self._conform_cell_methods()
 
         elif construct_type == 'auxiliary_coordinate':
+            construct.autoperiod(inplace=True)
             self._conform_coordinate_references(out)
             self._conform_cell_methods()
 
@@ -16910,6 +16890,335 @@ class Field(mixin.PropertiesData,
 
         return super().get_data_axes(key=key, default=default)
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=None,
+             fold_index=-1, inplace=False, verbose=False):
+        '''Expand the field construct by adding a halo to its data.
+
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
+
+    The metadata constructs are similary extended where appropriate.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
+
+    **Tripolar domains**
+
+    Global tripolar domains are a special case in that a halo added to
+    the northern end of the "Y" axis must be filled with values that
+    are flipped in "X" direction. Such domains can not be identified
+    from the field construct's metadata, so need to be explicitly
+    indicated with the *tripolar* parameter.
+
+    .. versionadded:: 3.4.1
+
+    :Parameters:
+        
+        size:  `int` or `dict`
+            Specify the size of the halo for each axis.
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* parameter.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (by passing the axis description to a
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X')``) with a corresponding
+            value of the halo size for that axis. Axes not specified
+            by the dictionary are not expanded, and the *axes*
+            parameter must not also be set.
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the "longitude" and
+              "latitude" axes: ``size=2, axes=['latutude',
+              'longitude']``, or equivalently ``size={'latutude': 2,
+              'longitude': 2}``.
+
+        axes: (sequence of) `str` or `int`, optional
+            Select the domain axes to be expanded, defined by the
+            domain axes that would be selected by passing each given
+            axis description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X')`` is selected.
+
+            By default, or if *axes* is `None`, all axes that span the
+            data are selected. No axes are expanded if *axes* is an
+            empty sequence.
+        
+            *Parameter example:*
+              ``axes='X'``
+
+            *Parameter example:*
+              ``axes=['Y']``
+
+            *Parameter example:*
+              ``axes=['X', 'Y']``
+
+            *Parameter example:*
+              ``axes='longitude'``
+
+            *Parameter example:*
+              ``axes=2``
+
+            *Parameter example:*
+              ``axes='ncdim%i'``
+
+        tripolar: `dict`, optional
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by passing the value to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'ncdim%i'``, the domain axis construct returned by
+            ``f.domain_axis('ncdim%i')``.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by their netCDF dimension
+              names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
+
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description of the operation.
+
+    :Returns:
+
+        `Field` or `None`
+            The expanded field construct, or `None` if the operation
+            was in-place.
+
+    **Examples:**
+
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> print(f.coordinate('X').array)
+    [ 22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5]
+
+    >>> g = f.halo(1)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(7), longitude(10)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(7) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(10) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.11  0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011 0.011]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
+    >>> print(g.coordinate('X').array)
+    [ 22.5  22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5 337.5]
+    
+    >>> g = f.halo(1, axes='Y')
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(7), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(7) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> h = f.halo({'Y': 1})
+    >>> h.equals(g)
+    True
+
+    >>> g = f.halo({'Y': 2, 'X': 1})
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(9), longitude(10)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(9) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(10) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.11  0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011 0.011]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
+
+        '''
+        if verbose:
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{})".format(_,
+                                 (',\n' + ' ' * len(_)).join(_kwargs)))
+            
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        # Set the halo size for each axis.
+        data_axes = f.get_data_axes(default=())
+        if isinstance(size, dict):
+            if axes is not None:
+                raise ValueError("can't set axes when size is a dict TODO")
+            
+            axis_halo = {self.domain_axis(k, key=True): v
+                         for k, v in size.items()}
+            
+            if not set(data_axes).issuperset(axis_halo):
+                raise ValueError(
+                    "Can't apply halo: Bad axis specification: {!r}".format(
+                        size))
+        else:
+            if axes is None:
+                axes = data_axes
+                
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+             
+            axis_halo = {self.domain_axis(k, key=True): size
+                         for k in axes}
+
+        if tripolar:
+            # Find the X and Y axes of a tripolar grid
+            tripolar = tripolar.copy()
+            X_axis = tripolar.pop('X', None)
+            Y_axis = tripolar.pop('Y', None)
+            
+            if X_axis is None:
+                raise ValueError("Must provide a tripolar 'X' axis.")
+        
+            if Y_axis is None:
+                raise ValueError("Must provide a tripolar 'Y' axis.")
+
+            X = self.domain_axis(X_axis, key=True)
+            Y = self.domain_axis(Y_axis, key=True)
+
+            try:
+                i_X = data_axes.index(X)
+            except ValueError:
+                raise ValueError(
+                    "Axis {!r} is not spanned by the data".format(X_axis))
+                
+            try:
+                i_Y = data_axes.index(Y)
+            except ValueError:
+                raise ValueError(
+                    "Axis {!r} is not spanned by the data".format(Y_axis))
+                
+            tripolar['X'] = i_X
+            tripolar['Y'] = i_Y
+            
+            tripolar_axes = {X: 'X', Y: 'Y'}
+        # --- End: if
+        
+        # Add halos to the field construct's data
+        size = {data_axes.index(axis): h
+                for axis, h, in axis_halo.items()}
+
+        f.data.halo(size=size, tripolar=tripolar,
+                    fold_index=fold_index, inplace=True,
+                    verbose=verbose)
+        
+        # Change domain axis sizes
+        for axis, h in axis_halo.items():
+            d = f.domain_axis(axis)
+            d.set_size(d.get_size() + 2 * h)
+
+        # Add halos to metadata constructs
+        for key, c in f.constructs.filter_by_data().items():
+            construct_axes = f.get_data_axes(key)
+            construct_size = {construct_axes.index(axis): h
+                              for axis, h in axis_halo.items()
+                              if axis in construct_axes}
+
+            if not construct_size:
+                # This construct does not span an expanded axis
+                continue
+            
+            construct_tripolar = False
+            if (
+                    tripolar
+                    and set(construct_axes).issuperset(tripolar_axes)
+            ):
+                construct_tripolar = {
+                    axis_type: construct_axes.index(axis)
+                    for axis, axis_type in tripolar_axes.items()
+                }
+
+            c.halo(size=construct_size, tripolar=construct_tripolar,
+                   fold_index=fold_index, inplace=True,
+                   verbose=verbose)
+        # --- End: for
+        
+        if verbose:
+            print("Returns:{!r}".format(f))  # pragma: no cover
+
+        return f
+    
     def percentile(self, ranks, axes=None, interpolation='linear',
                    squeeze=False, mtol=1):
         '''Compute percentiles of the data along the specified axes.
@@ -16943,12 +17252,12 @@ class Field(mixin.PropertiesData,
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes over which to calculate the
             percentiles, defined by the domain axes that would be
-            selected by passing the each given axis description to a
-            call of the field construct's `domain_axis` method. For
+            selected by passing each given axis description to a call
+            of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
-             By default, of *axes* is `None`, all axes are selected.
+            By default, or if *axes* is `None`, all axes are selected.
 
         interpolation: `str`, optional
             Specify the interpolation method to use when the desired
@@ -17220,72 +17529,98 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    def period(self, axis, **kwargs):
-        '''Return the period of an axis.
-
-    Note that a non-cyclic axis may have a defined period.
-
-    .. versionadded:: 1.0
-
-    .. seealso:: `axis`, `cyclic`, `iscyclic`,
-                 `cf.DimensionCoordinate.period`
-
-    :Parameters:
-
-        axis:
-            The cyclic axis, defined by that which would be selected
-            by passing the given axis description to a call of the
-            field construct's `domain_axis` method. For example, for a
-            value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
-
-        axes: deprecated at version 3.0.0
-            Use the *axis* parameter instead.
-
-        kwargs: deprecated at version 3.0.0
-
-    :Returns:
-
-        `Data` or `None`
-            The period of the cyclic axis's dimension coordinates, or
-            `None` if no period has been set.
-
-    **Examples:**
-
-    >>> f.cyclic()
-    {}
-    >>> print(f.period('X'))
-    None
-    >>> f.dimension_coordinate('X').Units
-    <CF Units: degrees_east>
-    >>> f.cyclic('X', period=360)
-    {}
-    >>> print(f.period('X'))
-    <CF Data(): 360.0 'degrees_east'>
-    >>> f.cyclic('X', False)
-    {'dim3'}
-    >>> print(f.period('X'))
-    <CF Data(): 360.0 'degrees_east'>
-    >>> f.dimension_coordinate('X').period(None)
-    <CF Data(): 360.0 'degrees_east'>
-    >>> print(f.period('X'))
-    None
-
-        '''
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'period', kwargs)  # pragma: no cover
-
-        axis = self.domain_axis(axis, key=True, default=ValueError(
-                "Can't identify axis from: {!r}".format(axis)))
-
-        dim = self.dimension_coordinates.filter_by_axis('and', axis).value(
-            None)
-        if dim is None:
-            return
-
-        return dim.period()
-
+#    def period(self, *value, **kwargs):
+#        '''Return the period of the data, or of the data of a metadata
+#    construct.
+#
+#    Note that a non-cyclic axis may have a period data.
+#
+#    .. versionadded:: 1.0
+#
+#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `isperiodic`
+#
+#    :Parameters:
+#
+#        identity: optional
+#           Select the construct for which to return the period of the
+#           data. By default the field construct itself is
+#           selected. May be:
+#    
+#              * `None` to select the field construct. This is the
+#                default.
+#
+#              * The identity or key of a metadata construct.
+#    
+#            A construct identity is specified by a string
+#            (e.g. ``'latitude'``, ``'long_name=time'``,
+#            ``'ncvar%lat'``, etc.); or a compiled regular expression
+#            (e.g. ``re.compile('^atmosphere')``) that selects the
+#            relevant constructs whose identities match via
+#            `re.search`.
+#    
+#            Each construct has a number of identities, and is selected
+#            if any of them match any of those provided. A construct's
+#            identities are those returned by its `!identities`
+#            method. In the following example, the construct ``x`` has
+#            six identities:
+#    
+#               >>> x.identities()
+#               ['time',
+#                'long_name=Time',
+#                'foo=bar',
+#                'standard_name=time',
+#                'ncvar%t',
+#                'T']
+#    
+#            A construct key may optionally have the ``'key%'``
+#            prefix. For example ``'dimensioncoordinate2'`` and
+#            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#    
+#            Note that in the output of a `print` call or `!dump`
+#            method, a construct is always described by one of its
+#            identities, and so this description may always be used as
+#            an *identity* argument.
+#
+#        axes: deprecated at version 3.0.0
+#
+#        axis: deprecated at version 3.4.1
+#
+#        kwargs: deprecated at version 3.0.0
+#
+#    :Returns:
+#
+#        `Data` or `None`
+#            The period of the cyclic axis's dimension coordinates, or
+#            `None` if no period has been set.
+#
+#    **Examples:**
+#
+#    >>> f.cyclic()
+#    {}
+#    >>> print(f.period('X'))
+#    None
+#    >>> f.dimension_coordinate('X').Units
+#    <CF Units: degrees_east>
+#    >>> f.cyclic('X', period=360)
+#    {}
+#    >>> print(f.period('X'))
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> f.cyclic('X', False)
+#    {'dim3'}
+#    >>> print(f.period('X'))
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> f.dimension_coordinate('X').period(None)
+#    <CF Data(): 360.0 'degrees_east'>
+#    >>> print(f.period('X'))
+#    None
+#
+#        '''
+#        if kwargs:
+#            _DEPRECATION_ERROR_KWARGS(
+#                self, 'period', kwargs)  # pragma: no cover
+#
+#        return super().period(*value)
+            
     def replace_construct(self, identity, construct, copy=True):
         '''Replace a metadata construct.
 
@@ -17422,11 +17757,11 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to be flattened, defined by the
-            domain axes that would be selected by passing the each
-            given axis description to a call of the field construct's
+            domain axes that would be selected by passing each given
+            axis description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
             If no axes are provided then all axes spanned by the field
             construct's data are flattened.
@@ -17673,7 +18008,7 @@ class Field(mixin.PropertiesData,
             be selected by passing the given axis description to a
             call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X'))`` is selected.
+            returned by ``f.domain_axis('X')`` is selected.
 
         shift: `int`
             The number of places by which the selected cyclic axis is
@@ -17694,11 +18029,11 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    Roll the data of the 'X' axis one elements to the right:
+    Roll the data of the "X" axis one elements to the right:
 
     >>> f.roll('X', 1)
 
-    Roll the data of the 'X' axis three elements to the left:
+    Roll the data of the "X" axis three elements to the left:
 
     >>> f.roll('X', -3)
 
@@ -18434,7 +18769,8 @@ class Field(mixin.PropertiesData,
 
     The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
+    `regridding utility
+    <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -18494,43 +18830,93 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of the following, which are described in more detail in
-            :ref:`Regridding-methods`, but to summarise:
+            be one of the following:
 
-              +------------------------+---------------------------------+
-              | *method*               | Form of regridding to be        |
-              |                        | applied:                        |
-              +========================+=================================+
-              | ``'linear'``           | Linear interpolation in the     |
-              | (previously called     | corresponding number of         |
-              | ``'bilinear'``,        | dimensions, which for spherical |
-              | which is               | regridding is always two, so    |
-              | is still               | this amounts to *bilinear       |
-              | supported)             | interpolation* (linear          |
-              |                        | interpolation in *both* X and   |
-              |                        | Y).                             |
-              +------------------------+---------------------------------+
-              | ``'conservative'`` or  | First-order conservative. Note  |
-              | ``'conservative_1st'`` | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'conservative_2nd'`` | Second-order conservative. Note |
-              |                        | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'patch'``            | Higher order patch recovery.    |
-              +------------------------+---------------------------------+
-              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
-              |                        | where each destination point is |
-              |                        | mapped to the *closest source*. |
-              +------------------------+---------------------------------+
-              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
-              |                        | where each source point is      |
-              |                        | mapped to the *closest*         |
-              |                        | *destination* point.            |
-              +------------------------+---------------------------------+
+            ======================  ==================================
+            Method                  Description
+            ======================  ==================================
+            ``'linear'``            Bilinear interpolation.
+
+            ``'bilinear'``          Deprecated alias for ``'linear'``.
+
+            ``'conservative_1st'``  First order conservative
+                                    interpolation.
+
+                                    Preserve the area integral of the
+                                    data across the interpolation from
+                                    source to destination. It uses the
+                                    proportion of the area of the
+                                    overlapping source and destination
+                                    cells to determine appropriate
+                                    weights.
+                                              
+                                    In particular, the weight of a
+                                    source cell is the ratio of the
+                                    area of intersection of the source
+                                    and destination cells to the area
+                                    of the whole destination cell.
+                                              
+                                    It does not account for the field
+                                    gradient across the source cell,
+                                    unlike the second-order
+                                    conservative method (see below).
+
+            ``'conservative_2nd'``  Second-order conservative
+                                    interpolation.
+
+                                    As with first order (see above),
+                                    preserves the area integral of the
+                                    field between source and
+                                    destinatio using a weighted sum,
+                                    with weights based on the
+                                    proportionate area of
+                                    intersection.
+                                   
+                                    Unlike first-order, the
+                                    second-order method incorporates
+                                    further terms to take into
+                                    consideration the gradient of the
+                                    field across the source cell,
+                                    thereby typically producing a
+                                    smoother result of higher
+                                    accuracy.
+
+            ``'conservative'``      Alias for ``'conservative_1st'``
+
+            ``'patch'``             Higher-order patch recovery
+                                    interpolation.
+
+                                    A second degree polynomial
+                                    regridding method, which uses a
+                                    least squares algorithm to
+                                    calculate the polynomial.
+                                                                         
+                                    This method gives better
+                                    derivatives in the resulting
+                                    destination data than the linear
+                                    method.
+
+            ``'nearest_stod'``      Nearest neighbour interpolation
+                                    for which each destination point
+                                    is mapped to the closest source
+                                    point.
+
+                                    Useful for extrapolation of
+                                    categorical data.      
+          
+            ``'nearest_dtos'``      Nearest neighbour interpolation
+                                    for which each source point is
+                                    mapped to the destination point.
+
+                                    Useful for extrapolation of
+                                    categorical data.
+                                    
+                                    A given destination point may
+                                    receive input from multiple source
+                                    points, but no source point will
+                                    map to more than one destination
+                                    point.
+            ======================  ==================================
 
         src_cyclic: `bool`, optional
             Specifies whether the longitude for the source grid is
@@ -18568,8 +18954,8 @@ class Field(mixin.PropertiesData,
         src_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and
             longitude coordinates of the source field when no 1D
-            dimension coordinates are present. It must have keys 'X'
-            and 'Y'. TODO
+            dimension coordinates are present. It must have keys
+            ``'X'`` and ``'Y'``. TODO
 
             *Parameter example:*
               ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -18580,8 +18966,8 @@ class Field(mixin.PropertiesData,
         dst_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and
             longitude coordinates of the destination field when no
-            dimension coordinates are present. It must have keys 'X'
-            and 'Y'.
+            dimension coordinates are present. It must have keys
+            ``'X'`` and ``'Y'``.
 
             *Parameter example:*
               ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -18647,7 +19033,7 @@ class Field(mixin.PropertiesData,
     >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
 
     Regrid f to 2D auxiliary coordinates lat and lon, which have their
-    dimensions ordered 'Y' first then 'X'.
+    dimensions ordered "Y" first then "X".
 
     >>> lat
     <CF AuxiliaryCoordinate: latitude(110, 106) degrees_north>
@@ -18744,8 +19130,9 @@ class Field(mixin.PropertiesData,
             dst_cyclic = dst.iscyclic(dst_axis_keys[0])
         elif dst_dict and dst_cyclic is None:
             dst = dst.copy()
-            dst['longitude'] = dst['longitude'].copy()
-            dst['longitude'].autoperiod()
+#            dst['longitude'] = dst['longitude'].copy()
+#            dst['longitude'].autoperiod()
+            dst['longitude'] = dst['longitude'].autoperiod()
             dst_cyclic = dst['longitude'].isperiodic
 
         # Get the axis indices and their order for the source field
@@ -18803,13 +19190,16 @@ class Field(mixin.PropertiesData,
         section_keys, sections = self._regrid_get_reordered_sections(
             axis_order, src_axis_keys, src_axis_indices)
 
+        print  (section_keys,)
+        
         # Bounds must be used if the regridding method is conservative.
         use_bounds = self._regrid_use_bounds(method)
 
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
-            dst_mask = dst._regrid_get_destination_mask(dst_order)
+            dst_mask = dst._regrid_get_destination_mask(dst_order,
+                                                        axes=dst_axis_keys)
 
         # Retrieve the destination ESMPy grid and fields
         dstgrid = Regrid.create_grid(
@@ -18912,7 +19302,7 @@ class Field(mixin.PropertiesData,
             )
         # --- End: for
 
-        # Construct new data from regridded sdst_dictections
+        # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
         # Construct new field.
@@ -18951,7 +19341,7 @@ class Field(mixin.PropertiesData,
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Set the cyclicity of the destination longitude
-        x = f.dimension_coordinate('X')
+        x = f.dimension_coordinate('X', default=None)
         if x is not None and x.Units.equivalent(Units('degrees')):
             f.cyclic('X', iscyclic=dst_cyclic, period=Data(360, 'degrees'))
 
@@ -19037,7 +19427,8 @@ class Field(mixin.PropertiesData,
 
     The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
+    `regridding utility
+    <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -19065,40 +19456,101 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of the following, which are described in more detail in
-            :ref:`Regridding-methods`, but to summarise:
+            be one of the following:
 
-              +------------------------+---------------------------------+
-              | *method*               | Form of regridding to be        |
-              |                        | applied:                        |
-              +========================+=================================+
-              | ``'linear'``           | Linear interpolation in the     |
-              | (previously called     | corresponding number of         |
-              | ``'bilinear'``, which  | dimensions.                     |
-              | is still supported)    |                                 |
-              +------------------------+---------------------------------+
-              | ``'conservative'`` or  | First-order conservative. Note  |
-              | ``'conservative_1st'`` | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'conservative_2nd'`` | Second-order conservative. Note |
-              |                        | this requires both of the       |
-              |                        | fields to have contiguous,      |
-              |                        | non-overlapping bounds.         |
-              +------------------------+---------------------------------+
-              | ``'patch'``            | Higher order patch recovery.    |
-              +------------------------+---------------------------------+
-              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
-              |                        | where each destination point is |
-              |                        | mapped to the *closest source*. |
-              +------------------------+---------------------------------+
-              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
-              |                        | where each source point is      |
-              |                        | mapped to the *closest*         |
-              |                        | *destination* point.            |
-              +------------------------+---------------------------------+
+            ======================  ==================================
+            Method                  Description
+            ======================  ==================================
+            ``'linear'``            Linear interpolation in the number
+                                    of dimensions being regridded.
 
+                                    For two dimensional regridding
+                                    this is bilinear interpolation,
+                                    and for three dimensional
+                                    regridding this is trilinear
+                                    interpolation.Bilinear
+                                    interpolation.
+
+            ``'bilinear'``          Deprecated alias for ``'linear'``.
+
+            ``'conservative_1st'``  First order conservative
+                                    interpolation.
+
+                                    Preserve the area integral of the
+                                    data across the interpolation from
+                                    source to destination. It uses the
+                                    proportion of the area of the
+                                    overlapping source and destination
+                                    cells to determine appropriate
+                                    weights.
+                                              
+                                    In particular, the weight of a
+                                    source cell is the ratio of the
+                                    area of intersection of the source
+                                    and destination cells to the area
+                                    of the whole destination cell.
+                                              
+                                    It does not account for the field
+                                    gradient across the source cell,
+                                    unlike the second-order
+                                    conservative method (see below).
+
+            ``'conservative_2nd'``  Second-order conservative
+                                    interpolation.
+
+                                    As with first order (see above),
+                                    preserves the area integral of the
+                                    field between source and
+                                    destinatio using a weighted sum,
+                                    with weights based on the
+                                    proportionate area of
+                                    intersection.
+                                   
+                                    Unlike first-order, the
+                                    second-order method incorporates
+                                    further terms to take into
+                                    consideration the gradient of the
+                                    field across the source cell,
+                                    thereby typically producing a
+                                    smoother result of higher
+                                    accuracy.
+
+            ``'conservative'``      Alias for ``'conservative_1st'``
+
+            ``'patch'``             Higher-order patch recovery
+                                    interpolation.
+
+                                    A second degree polynomial
+                                    regridding method, which uses a
+                                    least squares algorithm to
+                                    calculate the polynomial.
+                                                                         
+                                    This method gives better
+                                    derivatives in the resulting
+                                    destination data than the linear
+                                    method.
+
+            ``'nearest_stod'``      Nearest neighbour interpolation
+                                    for which each destination point
+                                    is mapped to the closest source
+                                    point.
+
+                                    Useful for extrapolation of
+                                    categorical data.      
+          
+            ``'nearest_dtos'``      Nearest neighbour interpolation
+                                    for which each source point is
+                                    mapped to the destination point.
+
+                                    Useful for extrapolation of
+                                    categorical data.
+                                    
+                                    A given destination point may
+                                    receive input from multiple source
+                                    points, but no source point will
+                                    map to more than one destination
+                                    point.
+            ======================  ==================================
 
         use_src_mask: `bool`, optional
             For all methods other than 'nearest_stod', this must be
@@ -19228,8 +19680,8 @@ class Field(mixin.PropertiesData,
                 try:
                     dst_coords.append(dst[axis])
                 except KeyError:
-                    raise ValueError('Axis ' + str(axis) +
-                                     ' not specified in dst.')
+                    raise ValueError(
+                        "Axis {!r} not specified in dst.".format(axis))
             # --- End: for
             dst_axis_keys = None
         else:
@@ -19283,7 +19735,9 @@ class Field(mixin.PropertiesData,
             # If adding this extra dimension to the regridding axis will not
             # create sections that exceed 1 chunk of memory proceed to get
             # the coordinate and associated data for the extra dimension.
-            if src_shape[src_axis_indices].prod()*max_length*8 < CHUNKSIZE():
+            if src_shape[src_axis_indices].prod() * max_length * 8 < (
+                    CHUNKSIZE()
+            ):
                 axis_keys_ext, coords_ext = f._regrid_get_cartesian_coords(
                     'source', [max_ind])
                 src_axis_indices_ext, src_order_ext = \
@@ -19315,8 +19769,9 @@ class Field(mixin.PropertiesData,
 
         # Deal with case of 1D nonconservative regridding
         nonconservative1D = False
-        if (method not in conservative_regridding_methods and n_axes == 1
-                and coords_ext == []):
+        if (method not in conservative_regridding_methods
+            and n_axes == 1
+            and coords_ext == []):
             # Method is not conservative, regridding is to be done along
             # one dimension and that dimension has not been padded out with
             # an extra one.
@@ -19340,7 +19795,10 @@ class Field(mixin.PropertiesData,
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
             dst_mask = dst._regrid_get_destination_mask(
-                dst_order, cartesian=True, coords_ext=coords_ext)
+                dst_order,
+                axes=dst_axes_keys,
+                cartesian=True,
+                coords_ext=coords_ext)
 
         # Create the destination ESMPy grid and fields
         dstgrid = Regrid.create_grid(coords_ext + dst_coords, use_bounds,
@@ -19362,8 +19820,9 @@ class Field(mixin.PropertiesData,
                 src_data = d2.squeeze().transpose(src_order_ext).array
                 if nonconservative1D:
                     src_data = numpy_tile(src_data, (2, 1))
+
                 if (not (method == 'nearest_stod' and use_src_mask)
-                        and numpy_ma_is_masked(src_data)):
+                    and numpy_ma_is_masked(src_data)):
                     mask = src_data.mask
                     if not numpy_array_equal(mask, old_mask):
                         # Release old memory
@@ -19506,7 +19965,7 @@ class Field(mixin.PropertiesData,
             passing the given axis description to a call of the field
             construct's `domain_axis` method. For example, for a value
             of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
 
         wrap: `bool`, optional
             If True then the boundary is wrapped around, otherwise the
@@ -19655,7 +20114,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
@@ -19718,7 +20177,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
@@ -19764,7 +20223,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
@@ -19810,14 +20269,14 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
         return self.domain_ancillaries.filter_by_identity(*identities)
 
     def field_anc(
-            self, identity, default=ValueError(),  key=False, **kwargs):
+            self, identity, default=ValueError(), key=False, **kwargs):
         '''Alias for `cf.Field.field_ancillary`.
 
         '''
@@ -19857,7 +20316,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
@@ -19948,13 +20407,13 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(':', '=', 1))
                     )  # pragma: no cover
         # --- End: for
 
         return self.cell_measures(*identities)
 
-    def ref(self, identity, default=ValueError(),  key=False,  **kwargs):
+    def ref(self, identity, default=ValueError(), key=False, **kwargs):
         '''Alias for `cf.Field.coordinate_reference`.
 
         '''

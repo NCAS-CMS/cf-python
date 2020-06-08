@@ -624,7 +624,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @property
     def isperiodic(self):
-        '''
+        '''TODO
 
     .. versionadded:: 2.0
 
@@ -642,7 +642,15 @@ class PropertiesDataBounds(PropertiesData):
     False
 
     '''
-        return self._custom.get('period', None) is not None
+        period = self.period()
+        if period is not None:
+            return True
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:            
+            return bounds.period is not None
+
+#        return self._custom.get('period', None) is not None
 
     @property
     def lower_bounds(self):
@@ -703,8 +711,37 @@ class PropertiesDataBounds(PropertiesData):
     <Units: days since 2014-1-1 calendar=noleap>
 
         '''
-        return super().Units
+#        return super().Units
 
+        data = self.get_data(None)
+        if data is not None:
+            # Return the units of the data
+            return data.Units
+
+#        print('TODO RECURISION HERE')
+#        bounds = self.get_bounds(None)
+#        if bounds is not None:        
+#            data = bounds.get_data(None)
+#            if data is not None:
+#                # Return the units of the bounds data
+#                return data.Units
+#        # --- End: if
+
+        try:
+            return self._custom['Units']
+        except KeyError:
+#            if bounds is None:
+            self._custom['Units'] = _units_None
+            return _units_None
+#            else:
+#                try:
+#                    return bounds._custom['Units']
+#                except KeyError:
+#                    bounds._custom['Units'] = _units_None
+#        # --- End: try
+        
+#        return _units_None
+    
     @Units.setter
     def Units(self, value):
         PropertiesData.Units.fset(self, value)
@@ -714,12 +751,13 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             bounds.Units = value
 
-        # Set the Units on the period
-        period = self._custom.get('period')
-        if period is not None:
-            period = period.copy()
-            period.Units = value
-            self._custom['period'] = period
+# Moved to parent class at v3.4.1         
+#        # Set the Units on the period
+#        period = self._custom.get('period')
+#        if period is not None:
+#            period = period.copy()
+#            period.Units = value
+#            self._custom['period'] = period
 
     @Units.deleter
     def Units(self):
@@ -1475,9 +1513,15 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         overlap : bool, optional
-            If False then overlapping cell boundaries are not
-            considered contiguous. By default cell boundaries are
-            considered contiguous.
+            If False then 1-d cells with two vertices and with
+            overlapping boundaries are not considered contiguous. By
+            default such cells are not considered contiguous.
+
+            .. note:: The value of the *overlap* parameter does not
+                      affect any other types of cell, for which a
+                      necessary (but not sufficient) condition for
+                      contiguousness is that adjacent cells do not
+                      overlap.
 
     :Returns:
 
@@ -1508,16 +1552,81 @@ class PropertiesDataBounds(PropertiesData):
     False
 
         '''
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is None:
             return False
 
-        return bounds.contiguous(overlap=overlap, direction=self.direction())
+        ndim = self.ndim
+        nbounds = bounds.shape[-1]
 
-#        if monoyine:
-#            return self.monit()#
-#
-#        return False
+        if self.size == 1:
+            return True
+
+        period = self.autoperiod().period()
+                
+        if ndim == 2:
+            if nbounds != 4:
+                raise ValueError("Can't tell if {}-d cells with {} vertices "
+                                 "are contiguous".format(ndim, nbounds))
+
+            # Check cells (j, i) and cells (j, i+1) are contiguous
+            diff = bounds[:, :-1, 1] - bounds[:, 1:, 0]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+            
+            diff = bounds[:, :-1, 2] - bounds[:, 1:, 3]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+ 
+            # Check cells (j, i) and (j+1, i) are contiguous
+            diff = bounds[:-1, :, 3] - bounds[1:, :, 0]
+            if period is not None:
+                diff = diff % period
+
+            if diff.any():
+                return False
+ 
+            diff = bounds[:-1, :, 2] - bounds[1:, :, 1]
+            if period is not None:
+                diff = diff % period
+                
+            if diff.any():
+                return False
+         
+            return True
+
+        if ndim > 2:            
+            raise ValueError("Can't tell if {}-d cells "
+                             "are contiguous".format(ndim))
+
+        if nbounds != 2:
+            raise ValueError("Can't tell if {}-d cells with {} vertices "
+                             "are contiguous".format(ndim, nbounds))
+
+        lower = bounds[1:, 0]
+        upper = bounds[:-1, 1]
+         
+        if not overlap:
+            diff = lower - upper
+            if period is not None:
+                diff = diff % period
+
+            return not diff.any()
+        else:
+            direction = self.direction()
+            if direction is None:
+               return (lower <= upper).all() or (lower >= upper).all()
+            
+            if direction:
+                return (lower <= upper).all()
+            else:
+                return (lower >= upper).all()
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1794,21 +1903,21 @@ class PropertiesDataBounds(PropertiesData):
             bounds=bounds, inplace=inplace, i=i)
 
     def direction(self):
-        '''Return None, indicating that it is not specified whether the
+        '''Return `None`, indicating that it is not specified whether the
     values are increasing or decreasing.
 
     .. versionadded:: 2.0
 
     :Returns:
 
-        None
+        `None`
 
     **Examples:**
 
-    >>> print(c.direction())
+    >>> c.direction()
     None
 
-            '''
+        '''
         return
 
     def match_by_property(self, *mode, **properties):
@@ -1902,7 +2011,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
-    def override_calendar(self, calendar, inplace=False,  i=False):
+    def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of date-time units.
 
     The new calendar **need not** be equivalent to the original one
@@ -1940,8 +2049,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'override_calendar',
-            calendar, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self),
+            'override_calendar', calendar, bounds=True,
+            interior_ring=False, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1993,8 +2103,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'override_units',
-            units, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self),
+            'override_units', units, bounds=True, interior_ring=False,
+            inplace=inplace, i=i)
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
@@ -2023,40 +2134,120 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return out
+    
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=None, fold_index=-1,
+             inplace=False, verbose=False):
+        '''Expand the data by adding a halo.
 
-#   def files(self):
-#        '''Return the names of any files containing parts of the data array.
-#
-#    .. seealso:: `close`
-#
-#    :Returns:
-#
-#        `set`
-#            The file names in normalized, absolute form.
-#
-#    **Examples:**
-#
-#    >>> c.files()
-#    {'/data/user/file1.nc',
-#     '/data/user/file2.nc',
-#     '/data/user/file3.nc'}
-#    >>> a = c.array
-#    >>> f.files()
-#    set()
-#
-#        '''
-#        out = super().files()
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            out.update(bounds.files())
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if bounds is not None:
-#            out.update(interior_ring.files())
-#
-#        return out
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a different halo size (including
+    zero). The halo region is populated with a copy of the proximate
+    values from the original data.
 
+    Corresponding axes exapnded in the bounds, if present.
+
+    **Cyclic axes**
+
+    A cyclic axis that is expanded with a halo of at least size 1 is
+    no longer considered to be cyclic.
+
+    **Tripolar domains**
+
+    Data for global tripolar domains are a special case in that a halo
+    added to the northern end of the "Y" axis must be filled with
+    values that are flipped in "X" direction. Such domains need to be
+    explicitly indicated with the *tripolar* parameter.
+
+    .. versionadded:: 3.4.1
+
+    :Parameters:
+
+        size: `int` or `dict`
+            Specify the size of the halo for each axis. 
+
+            If *size* is a non-negative `int` then this is the halo
+            size that is applied to all of the axes defined by the
+            *axes* parameter.
+
+            Alternatively, halo sizes may be assigned to axes
+            individually by providing a `dict` for which a key
+            specifies an axis (defined by its integer position in the
+            data) with a corresponding value of the halo size for that
+            axis. Axes not specified by the dictionary are not
+            expanded, and the *axes* parameter must not also be set.
+
+            *Parameter example:*
+              Specify a halo size of 1 for all otherwise selected
+              axes: ``size=1``
+
+            *Parameter example:*
+              Specify a halo size of zero ``size=0``. This results in
+              no change to the data shape.
+
+            *Parameter example:*
+              For data with three dimensions, specify a halo size of 3
+              for the first dimension and 1 for the second dimension:
+              ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
+              3, 1: 1, 2: 0}``
+
+            *Parameter example:*
+              Specify a halo size of 2 for the first and last
+              dimensions `size=2, axes=[0, -1]`` or equivalently
+              ``size={0: 2, -1: 2}``.
+
+        axes: (sequence of) `int`
+            Select the domain axes to be expanded, defined by their
+            integer positions in the data. By default, or if *axes* is
+            `None`, all axes are selected. No axes are expanded if
+            *axes* is an empty sequence.
+
+        tripolar: `dict`, optional
+            A dictionary defining the "X" and "Y" axes of a global
+            tripolar domain. This is necessary because in the global
+            tripolar case the "X" and "Y" axes need special treatment,
+            as described above. It must have keys ``'X'`` and ``'Y'``,
+            whose values identify the corresponding domain axis
+            construct by their integer positions in the data.
+        
+            The "X" and "Y" axes must be a subset of those identified
+            by the *size* or *axes* parameter.
+
+            See the *fold_index* parameter.
+        
+            *Parameter example:*
+              Define the "X" and Y" axes by positions 2 and 1
+              respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+
+        fold_index: `int`, optional
+            Identify which index of the "Y" axis corresponds to the
+            fold in "X" axis of a tripolar grid. The only valid values
+            are ``-1`` for the last index, and ``0`` for the first
+            index. By default it is assumed to be the last
+            index. Ignored if *tripolar* is `None`.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        verbose: `bool`, optional
+            If True then print a description of the operation.
+
+    :Returns:
+        
+            The expanded data, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'halo',
+            bounds=True, interior_ring=True, inplace=inplace,
+            size=size, axes=axes, tripolar=tripolar,
+            fold_index=fold_index, verbose=verbose)
+   
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
@@ -2180,8 +2371,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'exp', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'exp',
+            bounds=bounds, inplace=inplace, i=i)
 
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
@@ -2314,8 +2505,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'sin', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'sin',
+            bounds=bounds, inplace=inplace, i=i)
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
@@ -2892,8 +3083,8 @@ class PropertiesDataBounds(PropertiesData):
         '''
         # TODO: 'base' kwarg not used? why?
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'log', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'log',
+            bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -3172,6 +3363,67 @@ class PropertiesDataBounds(PropertiesData):
         '''
         print(cf_inspect(self))  # pragma: no cover
 
+    def period(self, *value):
+        '''Return or set the period for cyclic values.
+
+    .. seeslso:: `cyclic`
+        
+    :Parameters:
+
+        value: optional
+            The period. The absolute value is used.  May be set to any
+            numeric scalar object, including `numpy` and `Data`
+            objects. The units of the radius are assumed to be the
+            same as the data, unless specified by a `Data` object.
+
+            If *value* is `None` then any existing period is removed
+            from the construct.
+
+    :Returns:
+
+        `Data` or `None`
+            The period prior to the change, or the current period if
+            no *value* was specified. `None` is always returned if the
+            period had not been set previously.
+
+    **Examples:**
+
+    >>> print(c.period())
+    None
+    >>> c.Units
+    <Units: degrees_east>
+    >>> print(c.period(360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 'degrees_east'>
+    >>> import math
+    >>> c.period(cf.Data(2*math.pi, 'radians'))
+    <CF Data(): 360.0 degrees_east>
+    >>> c.period()
+    <CF Data(): 6.28318530718 radians>
+    >>> c.period(None)
+    <CF Data:() 6.28318530718 radians>
+    >>> print(c.period())
+    None
+    >>> print(c.period(-360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 degrees_east>
+
+        '''
+        old = super().period(*value)
+
+        old2 = None
+        
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            old2 = bounds.period(*value)
+
+        if old is None and old2 is not None:
+            return old2
+
+        return old
+        
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, bounds=True, inplace=False, i=False):
@@ -3210,8 +3462,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'rint', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'rint',
+            bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled

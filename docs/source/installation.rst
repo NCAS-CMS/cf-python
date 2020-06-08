@@ -181,15 +181,15 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 <= version.
 
-* `cftime <https://pypi.org/project/cftime/>`_, 1.1.1 <= version, but
-  *not* version 1.1.2 (note that this package may be installed with
-  *netCDF4).
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.1.3 or newer
+  (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, 1.8.3 <= version < 1.9.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.4 up to, but
+  not including, 1.9.0.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, 3.2.6 <= version.
-
-* `psutil <https://pypi.org/project/psutil/>`_, 0.6.0 <= version.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.7 or newer.
+  
+* `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
 .. _UNIDATA-UDUNITS-2-library:
 

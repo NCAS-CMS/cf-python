@@ -1,6 +1,6 @@
 import re
 
-from ast  import literal_eval as ast_literal_eval
+from ast import literal_eval as ast_literal_eval
 from copy import deepcopy
 
 import logging
@@ -170,7 +170,7 @@ class CellMethod(cfdm.CellMethod):
                         try:
                             data = Data(
                                 array=parsed_interval, units=units, copy=False)
-                        except:
+                        except Exception:
                             raise ValueError(
                                 "{}: {!r}".format(incorrect_interval, interval)
                             )
@@ -411,7 +411,7 @@ class CellMethod(cfdm.CellMethod):
 
                 try:
                     x = ast_literal_eval(i.pop(0))
-                except:
+                except Exception:
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval))
 
@@ -422,13 +422,13 @@ class CellMethod(cfdm.CellMethod):
 
                 try:
                     d = Data(x, units)
-                except:
+                except Exception:
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval))
             else:
                 try:
                     d = Data.asdata(interval, copy=True)
-                except:
+                except Exception:
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval))
             # --- End: if
