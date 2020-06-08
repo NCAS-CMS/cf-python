@@ -38,20 +38,12 @@ class PropertiesDataBounds(PropertiesData):
     bounds.
 
     '''
-    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
 
     x.__getitem__(indices) <==> x[indices]
 
         '''
-        # In other methods, have 'self.verbose = verbose' set after a verbose
-        # instantiation argument set to None by default. But in this case
-        # we don't want an __init__ so set as below. (Therefore can change
-        # class verbosity via class attribute but it is not documented to
-        # the user).
-        # TODO: change the above approach?
-        self.verbose = None
 
         if indices is Ellipsis:
             return self.copy()

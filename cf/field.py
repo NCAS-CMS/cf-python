@@ -92,8 +92,7 @@ from .functions import (_DEPRECATION_ERROR,
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
                          _deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity,
-                         _manage_log_level_via_verbose_attr)
+                         _manage_log_level_via_verbosity)
 
 
 logger = logging.getLogger(__name__)
@@ -301,7 +300,7 @@ class Field(mixin.PropertiesData,
                             'flag_meanings')
 
     def __init__(self, properties=None, source=None, copy=True,
-                 _use_data=True, verbose=None):
+                 _use_data=True):
         '''**Initialization**
 
     :Parameters:
@@ -329,15 +328,12 @@ class Field(mixin.PropertiesData,
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=_use_data)
 
-        self.verbose = verbose
-
         if source:
             flags = getattr(source, 'Flags', None)
             if flags is not None:
                 self.Flags = flags.copy()
         # --- End: if
 
-    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
 
@@ -869,7 +865,6 @@ class Field(mixin.PropertiesData,
 
         return True
 
-    @_manage_log_level_via_verbose_attr
     def _binary_operation_old(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
     data array with metadata-aware broadcasting.
@@ -1102,7 +1097,7 @@ class Field(mixin.PropertiesData,
 
             # Check that equally sized defining coordinate data arrays
             # are compatible
-            if coord0._equivalent_data(coord1, verbose=self.verbose):
+            if coord0._equivalent_data(coord1):
                 # The defining coordinates have equivalent data
                 # arrays
 
@@ -1134,8 +1129,7 @@ class Field(mixin.PropertiesData,
                     # Each defining coordinate is associated with
                     # exactly one coordinate reference
                     equivalent_refs = self._equivalent_coordinate_references(
-                        other, key0=refs0[0], key1=refs1[0], s=s, t=v,
-                        verbose=self.verbose)
+                        other, key0=refs0[0], key1=refs1[0], s=s, t=v)
 
                 if not equivalent_refs:
                     # The defining coordinates have non-equivalent
@@ -2626,7 +2620,6 @@ class Field(mixin.PropertiesData,
 
         return axes
 
-    @_manage_log_level_via_verbose_attr
     def _conform_for_assignment(self, other, check_coordinates=False):
         '''Conform *other* so that it is ready for metadata-unaware
     assignment broadcasting across *self*.
@@ -2817,7 +2810,7 @@ class Field(mixin.PropertiesData,
 
             # Check that equally sized defining coordinate data arrays
             # are compatible
-            if not coord0._equivalent_data(coord1, verbose=self.verbose):
+            if not coord0._equivalent_data(coord1):
                 raise ValueError(
                     "Matching {!r} coordinate constructs have different "
                     "data".format(identity)
@@ -2839,8 +2832,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError("TODO")
 
             if nrefs and not self._equivalent_coordinate_references(
-                    other, key0=refs0[0], key1=refs1[0], s=s, t=v,
-                    verbose=self.verbose):
+                    other, key0=refs0[0], key1=refs1[0], s=s, t=v):
                 raise ValueError("TODO")
         # --- End: for
 
@@ -12038,7 +12030,6 @@ class Field(mixin.PropertiesData,
 
         return f
 
-    @_manage_log_level_via_verbose_attr
     def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the field construct.
 
