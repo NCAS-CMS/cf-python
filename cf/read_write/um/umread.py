@@ -359,7 +359,7 @@ class UMField:
     '''TODO
 
     '''
-    @_manage_log_level_via_verbose_attr
+
     def __init__(self, var, fmt, byte_ordering, word_size, um_version,
                  set_standard_name, height_at_top_of_model, verbose=None,
                  implementation=None, **kwargs):
