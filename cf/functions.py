@@ -69,8 +69,15 @@ KWARGS_MESSAGE_MAP = {
     "axes": "Use keyword 'axis' instead.",
     "traceback": "Use keyword 'verbose' instead.",
     "exact": "Use 're.compile' objects instead.",
-    "i": "Use keyword 'inplace' instead. Note that when inplace=True, "
-         "None is returned.",
+    "i": (
+        "Use keyword 'inplace' instead. Note that when inplace=True, "
+        "None is returned."
+    ),
+    "info": (
+        "Use keyword 'verbose' instead. Note the informational levels "
+        "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
+        "excluding I >= 3 which maps to V = -1 (and V = 0 disables messages)"
+    )
 }
 
 # Are we running on GNU/Linux?
@@ -2597,7 +2604,7 @@ def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
 
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
                                        exact=False, traceback=False,
-                                       version='3.0.0'):
+                                       info=False, version='3.0.0'):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
@@ -2623,7 +2630,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
 def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
                               i=False, traceback=False, axes=False,
                               exact=False, relaxed_identity=False,
-                              version='3.0.0'):
+                              info=False, version='3.0.0'):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}

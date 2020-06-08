@@ -14,9 +14,11 @@ from .query               import gt
 from .units               import Units
 
 from .decorators          import (_manage_log_level_via_verbosity,
-                                  _manage_log_level_via_verbose_attr)
+                                  _manage_log_level_via_verbose_attr,
+                                  _deprecated_kwarg_check)
 
 from .functions           import (flat, RTOL, ATOL,
+                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
                                   hash_array,
                                   _numpy_allclose)
 from .functions           import inspect as cf_inspect
@@ -1300,6 +1302,7 @@ def aggregate(fields,
               no_overlap=False,
               shared_nc_domain=False,
               field_identity=None,
+              info=False,
               ):
     '''Aggregate field constructs into as few field constructs as
     possible.
@@ -1525,6 +1528,9 @@ def aggregate(fields,
         shared_nc_domain: deprecated at version 3.0.0
             No longer required due to updated CF data model.
 
+        info: deprecated at version 3.5.0
+            Use the *verbose* parameter instead.
+
     :Returns:
 
         `FieldList`
@@ -1553,10 +1559,19 @@ def aggregate(fields,
     AttributeError: 'Field' object has no attribute 'source'
 
     '''
-    if no_overlap:
+    if no_overlap is not False:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             'cf.aggregate', {'no_overlap': no_overlap},
             "Use keyword 'overlap' instead.")  # pragma: no cover
+
+    if info is not False:  # catch 'Falsy' entries e.g. standard info=0
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.aggregate', {'info': info},
+            "Use keyword 'verbose' instead. Note the informational levels "
+            "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
+            "excluding I >= 3 which maps to V = -1 (V = 0 disables messages)",
+            version='3.5.0'
+        )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
