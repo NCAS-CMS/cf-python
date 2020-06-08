@@ -36,7 +36,8 @@ import cftime
 import cfdm
 
 from ...                   import __version__, __Conventions__, __file__
-from ...decorators         import _manage_log_level_via_verbose_attr
+from ...decorators         import (_manage_log_level_via_verbosity,
+                                   _manage_log_level_via_verbose_attr)
 from ...functions          import (RTOL, ATOL, equals,
                                    open_files_threshold_exceeded,
                                    close_one_file, abspath,
@@ -2884,6 +2885,7 @@ class UMRead(cfdm.read_write.IORead):
     '''TODO
 
     '''
+    @_manage_log_level_via_verbosity
     def read(self, filename, um_version=405,
              aggregate=True, endian=None, word_size=None,
              set_standard_name=True, height_at_top_of_model=None,

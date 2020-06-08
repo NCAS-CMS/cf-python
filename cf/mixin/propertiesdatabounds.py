@@ -45,7 +45,13 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
-        self.verbose = None  # init here as class should not have an __init__?
+        # In other methods, have 'self.verbose = verbose' set after a verbose
+        # instantiation argument set to None by default. But in this case
+        # we don't want an __init__ so set as below. (Therefore can change
+        # class verbosity via class attribute but it is not documented to
+        # the user).
+        # TODO: change the above approach?
+        self.verbose = None
 
         if indices is Ellipsis:
             return self.copy()
@@ -135,7 +141,7 @@ class PropertiesDataBounds(PropertiesData):
                                    findices[1]]
 
                 logger.debug(
-                    '{}.__getitem__: findices for bounds ='.format(
+                    '{}.__getitem__: findices for bounds = {}'.format(
                         self.__class__.__name__, findices)
                 )  # pragma: no cover
 
@@ -420,8 +426,9 @@ class PropertiesDataBounds(PropertiesData):
         hasbounds = self_bounds is not None
 
         if hasbounds != (other_bounds is not None):
-            # add traceback
-            logger.info(  # TODO: improve message
+            # TODO: add traceback
+            # TODO: improve message below
+            logger.info(
                 'One has bounds, the other does not')  # pragma: no cover
             return False
 
@@ -437,7 +444,8 @@ class PropertiesDataBounds(PropertiesData):
         # Compare the data arrays
         if not super()._equivalent_data(
                 other, rtol=rtol, atol=atol, verbose=verbose):
-            logger.info(    # TODO: improve message
+            # TODO: improve message below
+            logger.info(
                 'Non-equivalent data arrays')  # pragma: no cover
             return False
 

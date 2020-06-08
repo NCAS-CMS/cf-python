@@ -811,7 +811,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 #            if not ignore_read_error:
 #                raise Exception(error)
 #
-#            logger.info('WARNING: {}'.format(error))  # pragma: no cover
+#            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
 #
 #            return FieldList()
     # --- End: if
@@ -839,7 +839,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 
         if not netcdf.is_netcdf_file(filename):
             if ignore_read_error:
-                logger.info(
+                logger.warning(
                     "WARNING: Can't determine format of file {} generated "
                     "from CDL file {}".format(filename, cdl_filename)
                 )  # pragma: no cover

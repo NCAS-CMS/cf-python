@@ -1011,7 +1011,7 @@ def ufunc(name, x, *args, **kwargs):
     return x
 
 
-def _numpy_allclose(a, b, rtol=None, atol=None, verbose=False):
+def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
     '''Returns True if two broadcastable arrays have equal values to
     within numerical tolerance, False otherwise.
 

@@ -6,9 +6,10 @@ from .netcdf import NetCDFWrite
 
 from ..cfimplementation import implementation
 
+from ..decorators import _manage_log_level_via_verbosity
+
 from ..functions import flat
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
-
 
 # from . import mpi_on
 mpi_on = False
@@ -21,12 +22,13 @@ if mpi_on:
 netcdf = NetCDFWrite(implementation())
 
 
+@_manage_log_level_via_verbosity
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, file_descriptors=None,
           external=None, Conventions=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, reference_datetime=None,
-          verbose=False, cfa_options=None, mode='w', single=None,
+          verbose=None, cfa_options=None, mode='w', single=None,
           double=None, variable_attributes=None, string=True,
           warn_valid=True, HDF_chunksizes=None, no_shuffle=None,
           unlimited=None):

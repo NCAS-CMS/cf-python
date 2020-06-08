@@ -337,6 +337,7 @@ class Field(mixin.PropertiesData,
                 self.Flags = flags.copy()
         # --- End: if
 
+    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
 
@@ -868,6 +869,7 @@ class Field(mixin.PropertiesData,
 
         return True
 
+    @_manage_log_level_via_verbose_attr
     def _binary_operation_old(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
     data array with metadata-aware broadcasting.
@@ -980,10 +982,14 @@ class Field(mixin.PropertiesData,
         # Find the axis names which are present in both fields
         matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
         logger.debug(
-            "s['id_to_axis'] =", s['id_to_axis'])  # pragma: no cover
+            "s['id_to_axis'] = {}".format(s['id_to_axis'])
+        )  # pragma: no cover
         logger.debug(
-            "v['id_to_axis'] =", v['id_to_axis'])  # pragma: no cover
-        logger.debug('matching_ids    =', matching_ids)    # pragma: no cover
+            "v['id_to_axis'] = {}".format(v['id_to_axis'])
+        )  # pragma: no cover
+        logger.debug(
+            'matching_ids    = {}'.format(matching_ids)
+        )    # pragma: no cover
 
         # Check that any matching axes defined by an auxiliary
         # coordinate are done so in both fields.
@@ -1191,7 +1197,7 @@ class Field(mixin.PropertiesData,
                 v['size1_broadcast_axes'])
         )  # pragma: no cover
         logger.debug(
-            '1: remove_size1_axes0 ='.format(remove_size1_axes0)
+            '1: remove_size1_axes0 = {}'.format(remove_size1_axes0)
         )  # pragma: no cover
 
         matching_axis1_to_axis0 = axis1_to_axis0.copy()
@@ -1250,7 +1256,7 @@ class Field(mixin.PropertiesData,
                 axes_unM.append(axis0)
         # --- End: for
         logger.debug(
-            '2: axes_unD, axes_unM , axes0_M = {}'.format(
+            '2: axes_unD, axes_unM, axes0_M = {} {} {}'.format(
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
@@ -1299,7 +1305,7 @@ class Field(mixin.PropertiesData,
                 axes_unM.append(axis1)
         # --- End: for
         logger.debug(
-            '2: axes_unD , axes_unM , axes0_M = {}'.format(
+            '2: axes_unD , axes_unM , axes0_M = {} {} {}'.format(
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
@@ -1331,7 +1337,7 @@ class Field(mixin.PropertiesData,
         # matching axes
         # ------------------------------------------------------------
         logger.debug(
-            '2: axis0_to_axis1 =', axis0_to_axis1)  # pragma: no cover
+            '2: axis0_to_axis1 = {}', axis0_to_axis1)  # pragma: no cover
 
         for axis0, axis1 in axis0_to_axis1.items():
             if field1.direction(axis1) != field0.direction(axis0):
@@ -2620,6 +2626,7 @@ class Field(mixin.PropertiesData,
 
         return axes
 
+    @_manage_log_level_via_verbose_attr
     def _conform_for_assignment(self, other, check_coordinates=False):
         '''Conform *other* so that it is ready for metadata-unaware
     assignment broadcasting across *self*.
@@ -2955,8 +2962,12 @@ class Field(mixin.PropertiesData,
             for axis0 in axes0:
                 axis1 = t['id_to_axis'].get(s['axis_to_id'][axis0], None)
                 if axis1 is None:
-                    logger.info("%s: TTTTTTTTTTT w2345nb34589*D*& TODO" %
-                          self.__class__.__name__)  # pragma: no cover
+                    # TODO: improve message here (make user friendly):
+                    logger.info(
+                        "t['id_to_axis'] does not have a key "
+                        "s['axis_to_id'][axis0] for {}".format(
+                            self.__class__.__name__)
+                    )  # pragma: no cover
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -2964,8 +2975,11 @@ class Field(mixin.PropertiesData,
             for axis0 in axes0:
                 axis1 = axis_map.get(axis0)
                 if axis1 is None:
-                    logger.info("%s: ****** 56 xdcv f7y edc TODO" %
-                          self.__class__.__name__)  # pragma: no cover
+                    # TODO: improve message here (make user friendly):
+                    logger.info(
+                        "axis_map[axis0] is None for {}".format(
+                            self.__class__.__name__)
+                    )  # pragma: no cover
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -2982,9 +2996,9 @@ class Field(mixin.PropertiesData,
 #                        self.__class__.__name__, axis0)
 #                )
 #
-#                logger.info(
-#                    "%s: TODO" % self.__class__.__name__
-#                )  # pragma: no cover
+#                #logger.info(
+#                #    "%s: TODO" % self.__class__.__name__
+#                #)  # pragma: no cover
 #                return False
 #
 #            try:
@@ -7963,10 +7977,10 @@ class Field(mixin.PropertiesData,
                        set_axes=False, copy=False)
 
             result = c.collapse(
-                method=method, weights=weights, verbose=False).data
+                method=method, weights=weights).data
             out.data[i] = result.datum()
 
-        logger.info('{}'.format(', '.join(indices)))
+        logger.info('{}'.format(' '.join(indices)))
 
         # Set correct units (note: takes them from the last processed
         # "result" variable in the above loop)
@@ -10067,8 +10081,9 @@ class Field(mixin.PropertiesData,
         # --- End: for
 
         logger.info(
-            '    all_methods, all_axes, all_within, all_over =',
-            all_methods, all_axes, all_within, all_over
+            '    all_methods, all_axes, all_within, all_over = '
+            '{} {} {} {}'.format(
+                all_methods, all_axes, all_within, all_over)
         )  # pragma: no cover
 
         if group is not None and len(all_axes) > 1:
@@ -11763,7 +11778,7 @@ class Field(mixin.PropertiesData,
 
     def _update_cell_methods(self, method=None, domain_axes=None,
                              input_axes=None, within=None, over=None,
-                             verbose=False):
+                             verbose=None):
         '''Update the cell methods.
 
     :Parameters:
@@ -12218,7 +12233,7 @@ class Field(mixin.PropertiesData,
 
         logger.debug('Field.indices:')  # pragma: no cover
         logger.debug(
-            '    envelope, full, compress = {}, {}, {}'.format(
+            '    envelope, full, compress = {} {} {}'.format(
               envelope, full, compress)
         )  # pragma: no cover
 
@@ -13589,8 +13604,7 @@ class Field(mixin.PropertiesData,
         # Add a cell method
         if f.domain_axis(axis).get_size() > 1 or method == 'integral':
             f._update_cell_methods(method=method,
-                                   domain_axes=f.domain_axes(axis),
-                                   verbose=False)
+                                   domain_axes=f.domain_axes(axis))
 
         return f
 
@@ -14179,8 +14193,7 @@ class Field(mixin.PropertiesData,
 
             # Add a cell method
             f._update_cell_methods(method='sum',
-                                   domain_axes=f.domain_axes(axis_key),
-                                   verbose=False)
+                                   domain_axes=f.domain_axes(axis_key))
         # --- End: if
 
         return f
