@@ -1,3 +1,23 @@
+version 3.5.0
+-------------
+----
+
+**2020-06-??**
+
+* Enabled configuration of the extent and nature of informational and
+  warning messages output by `cf` using a logging framework (see
+  points below and also https://github.com/NCAS-CMS/cf-python/issues/37)
+* New function `cf.LOG_LEVEL` to set the minimum log level for which
+  messages are displayed globally, i.e. to change the project-wide
+  verbosity.
+* Changed behaviour and default of ``verbose`` keyword argument when
+  available to a function/method so it interfaces with the new logging
+  functionality.
+* Renamed and re-mapped all ``info`` keyword arguments available to any
+  function/method to ``verbose``, with equal granularity but a different
+  numbering system: ``V = I + 1`` maps ``info=I`` to ``verbose=V`` except
+  for the ``debug`` case of ``I=3`` mapping to ``V=-1`` (``V=0`` disables).
+
 version 3.4.0
 -------------
 ----
