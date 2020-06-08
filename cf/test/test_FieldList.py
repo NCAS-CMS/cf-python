@@ -166,8 +166,8 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename)
         f.append(f[0].copy())
         g = f.copy()
-        self.assertTrue(f.equals(f, verbose=True))
-        self.assertTrue(f.equals(g, verbose=True))
+        self.assertTrue(f.equals(f, verbose=2))
+        self.assertTrue(f.equals(g, verbose=2))
 
     def test_FieldList__getslice__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -203,24 +203,24 @@ class FieldTest(unittest.TestCase):
 
         f = cf.read(self.filename)
         g = f.copy()
-        self.assertTrue(f.equals(f, verbose=True))
-        self.assertTrue(f.equals(g, verbose=True))
+        self.assertTrue(f.equals(f, verbose=2))
+        self.assertTrue(f.equals(g, verbose=2))
 
         f += g.copy()
-        self.assertTrue(f.equals(f, verbose=True))
+        self.assertTrue(f.equals(f, verbose=2))
         self.assertTrue(len(f) == 2)
         g = f.copy()
-        self.assertTrue(f.equals(g, verbose=True))
-        self.assertTrue(f.equals(g, unordered=True, verbose=True))
+        self.assertTrue(f.equals(g, verbose=2))
+        self.assertTrue(f.equals(g, unordered=True, verbose=2))
 
         h = cf.read(self.filename2)
         f.extend(h)
-        self.assertTrue(f.equals(f, verbose=True))
-        self.assertTrue(f.equals(f.copy(), verbose=True))
+        self.assertTrue(f.equals(f, verbose=2))
+        self.assertTrue(f.equals(f.copy(), verbose=2))
 
         g = f.copy()[::-1]
         self.assertFalse(f.equals(g))
-        self.assertTrue(f.equals(g, unordered=True, verbose=True))
+        self.assertTrue(f.equals(g, unordered=True, verbose=2))
 
         g = g[:-1]
         self.assertFalse(f.equals(g))
@@ -479,10 +479,10 @@ class FieldTest(unittest.TestCase):
         g = cf.FieldList([f[0], f[1:456], f[456:]])
 
         h = g.concatenate(axis=0)
-        self.assertTrue(f.equals(h, verbose=True))
+        self.assertTrue(f.equals(h, verbose=2))
 
         h = g.concatenate(axis=0, _preserve=False)
-        self.assertTrue(f.equals(h, verbose=True))
+        self.assertTrue(f.equals(h, verbose=2))
 
     def test_FieldList_index(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

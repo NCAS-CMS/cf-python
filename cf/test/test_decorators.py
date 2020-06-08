@@ -171,7 +171,7 @@ class DecoratorsTest(unittest.TestCase):
 
             # Boolean cases for testing backwards compatibility...
 
-            # ... verbose=True should be equivalent to verbose=3 now:
+            # ... verbose=2 should be equivalent to verbose=3 now:
             test_class.verbose = True
             with self.assertLogs(level=cf.LOG_LEVEL()) as catch:
                 test_class.decorated_logging_func()
@@ -181,7 +181,7 @@ class DecoratorsTest(unittest.TestCase):
                     else:
                         self.assertIn(msg, catch.output)
 
-            # ... verbose=False should be equivalent to verbose=0 now, so
+            # ... verbose=0 should be equivalent to verbose=0 now, so
             # test along with 'DISABLE' special case below...
 
             # Special 'DISABLE' (0) case: note this needs to be last as we
@@ -198,7 +198,7 @@ class DecoratorsTest(unittest.TestCase):
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
 
-            # verbose=False should be equivalent in behaviour to verbose=0
+            # verbose=0 should be equivalent in behaviour to verbose=0
             test_class.verbose = False
             with self.assertLogs(level='NOTSET') as catch:
                 logger.info("Purely to keep 'assertLog' happy: see previous!")

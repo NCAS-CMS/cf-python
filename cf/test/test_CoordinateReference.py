@@ -97,8 +97,8 @@ class CoordinateReferenceTest(unittest.TestCase):
                 }
             )
         )
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
         # Create a horizontal grid mapping coordinate reference
         t = cf.CoordinateReference(
@@ -111,8 +111,8 @@ class CoordinateReferenceTest(unittest.TestCase):
                 }
             )
         )
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
         datum = cf.Datum(parameters={'earth_radius': 6371007})
         conversion = cf.CoordinateConversion(
@@ -129,8 +129,8 @@ class CoordinateReferenceTest(unittest.TestCase):
             coordinates=['x', 'y', 'lat', 'lon']
         )
 
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
         # Create a horizontal grid mapping coordinate reference
         t = cf.CoordinateReference(
@@ -145,8 +145,8 @@ class CoordinateReferenceTest(unittest.TestCase):
                 }
             )
         )
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
         # Create a horizontal grid mapping coordinate reference
         t = cf.CoordinateReference(
@@ -161,8 +161,8 @@ class CoordinateReferenceTest(unittest.TestCase):
                 }
             )
         )
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
     def test_CoordinateReference_default_value(self):
         f = cf.read(self.filename)[0]

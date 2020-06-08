@@ -55,25 +55,25 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(f2, 'conservative')
 
             self.assertTrue(
-                f3.equals(r, verbose=True),
+                f3.equals(r, verbose=2),
                 'destination = global Field, CHUNKSIZE = %s' % chunksize
             )
             r = f1.regrids(f2, method='conservative')
 
             self.assertTrue(
-                f3.equals(r, verbose=True),
+                f3.equals(r, verbose=2),
                 'destination = global Field, CHUNKSIZE = %s' % chunksize
             )
             dst = {'longitude': f2.dim('X'), 'latitude': f2.dim('Y')}
             r = f1.regrids(dst, 'conservative', dst_cyclic=True)
 
             self.assertTrue(
-                f3.equals(r, verbose=True),
+                f3.equals(r, verbose=2),
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )
             r = f1.regrids(dst, method='conservative', dst_cyclic=True)
             self.assertTrue(
-                f3.equals(r, verbose=True),
+                f3.equals(r, verbose=2),
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )
 
@@ -82,13 +82,13 @@ class RegridTest(unittest.TestCase):
 
             r = f1.regrids(f5, 'linear')
             self.assertTrue(
-                f4.equals(r, verbose=True),
+                f4.equals(r, verbose=2),
                 'destination = regional Field, CHUNKSIZE = %s' % chunksize
             )
 
             r = f1.regrids(f5, method='linear')
             self.assertTrue(
-                f4.equals(r, verbose=True),
+                f4.equals(r, verbose=2),
                 'destination = regional Field, CHUNKSIZE = %s' % chunksize
             )
         # --- End: for
@@ -114,7 +114,7 @@ class RegridTest(unittest.TestCase):
             f3 = cf.read(self.filename9)[0]
             self.assertTrue(
                 f3.equals(f1.regridc(
-                    f2, axes='T', method='linear'), verbose=True),
+                    f2, axes='T', method='linear'), verbose=2),
                 'destination = time series, CHUNKSIZE = %s' % chunksize
             )
             f4 = cf.read(self.filename1)[0]
@@ -122,26 +122,26 @@ class RegridTest(unittest.TestCase):
             f6 = cf.read(self.filename10)[0]
             self.assertTrue(
                 f6.equals(f4.regridc(
-                    f5, axes=('X', 'Y'), method='conservative'), verbose=True),
+                    f5, axes=('X', 'Y'), method='conservative'), verbose=2),
                 'destination = global Field, CHUNKSIZE = %s' % chunksize
             )
             self.assertTrue(
                 f6.equals(f4.regridc(
-                    f5, axes=('X', 'Y'), method='conservative'), verbose=True),
+                    f5, axes=('X', 'Y'), method='conservative'), verbose=2),
                 'destination = global Field, CHUNKSIZE = %s' % chunksize
             )
             dst = {'X': f5.dim('X'), 'Y': f5.dim('Y')}
             self.assertTrue(
                 f6.equals(
                     f4.regridc(dst, axes=('X', 'Y'), method='conservative'),
-                    verbose=True
+                    verbose=2
                 ),
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )
             self.assertTrue(
                 f6.equals(
                     f4.regridc(dst, axes=('X', 'Y'), method='conservative'),
-                    verbose=True
+                    verbose=2
                 ),
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )

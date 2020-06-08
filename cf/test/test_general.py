@@ -76,7 +76,7 @@ class generalTest(unittest.TestCase):
         h.flip(0, inplace=True)
         h.flip(1, inplace=True)
         h.flip([0, 1], inplace=True)
-        self.assertTrue(g.equals(h, verbose=True))
+        self.assertTrue(g.equals(h, verbose=2))
 
         # Access the field's data as a numpy array
         a = g.array
@@ -88,7 +88,7 @@ class generalTest(unittest.TestCase):
         g[9::-4, ...].array
         h = g[(slice(None, None, -1),) * g.ndim]
         h = h[(slice(None, None, -1),) * h.ndim]
-        self.assertTrue(g.equals(h, verbose=True))
+        self.assertTrue(g.equals(h, verbose=2))
 
         # Indices for a subspace defined by coordinates
         f.indices()
@@ -199,7 +199,7 @@ class generalTest(unittest.TestCase):
 
         b = f[:, 0:6, :]
         c = f[:, 6:, :]
-        d = cf.aggregate([b, c], info=1)[0]
+        d = cf.aggregate([b, c], verbose=2)[0]
 
         # Remove temporary files
         cf.data.partition._remove_temporary_files()

@@ -145,7 +145,7 @@ class ExternalVariableTest(unittest.TestCase):
             return
 
         # Read the parent file on its own, without the external file
-        f = cf.read(self.parent_file, verbose=False)
+        f = cf.read(self.parent_file, verbose=0)
 
         for i in f:
             _ = repr(i)
@@ -164,9 +164,9 @@ class ExternalVariableTest(unittest.TestCase):
 
         # External file contains only the cell measure variable
         f = cf.read(self.parent_file, external=[self.external_file],
-                    verbose=False)
+                    verbose=0)
 
-        c = cf.read(self.combined_file, verbose=False)
+        c = cf.read(self.combined_file, verbose=0)
 
         for i in c + f:
             _ = repr(i)
@@ -180,11 +180,11 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=2))
 
         # External file contains other variables
         f = cf.read(self.parent_file, external=self.combined_file,
-                    verbose=False)
+                    verbose=0)
 
         for i in f:
             _ = repr(i)
@@ -195,13 +195,13 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=2))
 
         # Two external files
         f = cf.read(
             self.parent_file,
             external=[self.external_file, self.external_missing_file],
-            verbose=False
+            verbose=0
         )
 
         for i in f:
@@ -213,7 +213,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=2))
 
     def test_EXTERNAL_WRITE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -231,7 +231,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(g) == len(combined))
 
         for i in range(len(g)):
-            self.assertTrue(combined[i].equals(g[i], verbose=True))
+            self.assertTrue(combined[i].equals(g[i], verbose=2))
 
         cell_measure = g[0].constructs('measure:area').value()
 
@@ -248,14 +248,14 @@ class ExternalVariableTest(unittest.TestCase):
 
         cf.write(g, self.tempfilename_parent,
                  external=self.tempfilename_external,
-                 verbose=False)
+                 verbose=0)
 
-        h = cf.read(self.tempfilename_parent, verbose=False)
+        h = cf.read(self.tempfilename_parent, verbose=0)
 
         self.assertTrue(len(h) == len(parent))
 
         for i in range(len(h)):
-            self.assertTrue(parent[i].equals(h[i], verbose=True))
+            self.assertTrue(parent[i].equals(h[i], verbose=2))
 
         h = cf.read(self.tempfilename_external)
         external = cf.read(self.external_file)
@@ -263,7 +263,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(h) == len(external))
 
         for i in range(len(h)):
-            self.assertTrue(external[i].equals(h[i], verbose=True))
+            self.assertTrue(external[i].equals(h[i], verbose=2))
 
 
 # --- End: class

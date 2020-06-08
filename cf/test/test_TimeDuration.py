@@ -157,11 +157,11 @@ class TimeDurationTest(unittest.TestCase):
             cf.TimeDuration(cf.Data(48, 'hours'), units='days') == 2)
         self.assertTrue(cf.TimeDuration(0.1, units='seconds') == 0.1)
 
-        self.assertTrue(t.equals(t, verbose=True))
-        self.assertTrue(t.equals(t.copy(), verbose=True))
+        self.assertTrue(t.equals(t, verbose=2))
+        self.assertTrue(t.equals(t.copy(), verbose=2))
 
-        self.assertTrue(t.equivalent(t, verbose=True))
-        self.assertTrue(t.equivalent(t.copy(), verbose=True))
+        self.assertTrue(t.equivalent(t, verbose=2))
+        self.assertTrue(t.equivalent(t.copy(), verbose=2))
 
         with self.assertRaises(Exception):
             t = cf.TimeDuration(48, 'm')

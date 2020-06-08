@@ -48,8 +48,8 @@ class QueryTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = u.value
 
-        self.assertTrue(u.equals(u.copy(), verbose=True))
-        self.assertFalse(u.equals(t, verbose=False))
+        self.assertTrue(u.equals(u.copy(), verbose=2))
+        self.assertFalse(u.equals(t, verbose=0))
 
         _ = copy.deepcopy(u)
 
@@ -142,7 +142,7 @@ class QueryTest(unittest.TestCase):
 
         self.assertTrue(
             (d == cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(
-                cf.Data([[False, True], [False, False]]), verbose=True),
+                cf.Data([[False, True], [False, False]]), verbose=2),
             message
         )
         self.assertTrue(

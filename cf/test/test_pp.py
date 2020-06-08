@@ -88,7 +88,7 @@ class ppTest(unittest.TestCase):
                 self.assertTrue((f.array == array).all(),
                                 'Bad unpacking of WGDOS packed data')
 
-                self.assertTrue(f.equals(g, verbose=True),
+                self.assertTrue(f.equals(g, verbose=2),
                                 'Bad writing/reading. format='+fmt)
 
         cf.CHUNKSIZE(self.original_chunksize)
