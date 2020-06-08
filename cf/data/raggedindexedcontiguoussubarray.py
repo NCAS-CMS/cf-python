@@ -2,7 +2,6 @@ import logging
 
 import numpy
 
-from ..decorators import _manage_log_level_via_verbose_attr
 from ..functions import parse_indices, get_subspace
 
 from . import abstract
@@ -16,7 +15,6 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
 
     '''
 
-    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 

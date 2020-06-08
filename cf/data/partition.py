@@ -34,7 +34,6 @@ from numpy.ma.core import MaskedConstant as numpy_ma_core_MaskedConstant
 from ..units     import Units
 from ..functions import get_subspace, FREE_MEMORY, FM_THRESHOLD
 from ..functions import inspect as cf_inspect
-from ..decorators import _manage_log_level_via_verbose_attr
 from ..constants import CONSTANTS
 
 # from .filearray import  (_TempFileArray #, SharedMemoryArray,
@@ -206,7 +205,7 @@ class Partition:
 
     def __init__(self, subarray=None, flip=None, location=None,
                  shape=None, Units=None, part=None, axes=None,
-                 fill=None, verbose=None):
+                 fill=None):
         '''**Initialization**
 
     :Parameters:
@@ -275,8 +274,6 @@ class Partition:
         self.Units = Units        # DO NOT UPDATE INPLACE
         self.subarray = subarray  # DO NOT UPDATE INPLACE
         self.fill = fill          # DO NOT UPDATE INPLACE
-
-        self.verbose = verbose
 
         if shape is None and location is not None:
             self.shape = [i[1]-i[0] for i in location]
@@ -741,7 +738,6 @@ class Partition:
         if flip:
             self.flip = [axis_map[axis] for axis in flip]
 
-    @_manage_log_level_via_verbose_attr
     def close(self, **kwargs):
         '''Close the partition after it has been conformed.
 

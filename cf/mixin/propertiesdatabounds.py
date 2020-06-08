@@ -16,8 +16,7 @@ from ..functions    import (_DEPRECATION_ERROR_METHOD,
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity,
-                          _manage_log_level_via_verbose_attr)
+                          _manage_log_level_via_verbosity)
 
 from ..query        import Query
 from ..units        import Units

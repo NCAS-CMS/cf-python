@@ -7,7 +7,6 @@ from numpy import empty as numpy_empty
 
 from numpy.ma import masked_all as numpy_ma_masked_all
 
-from ..decorators import _manage_log_level_via_verbose_attr
 from ..functions import parse_indices, get_subspace
 
 from . import abstract
@@ -20,10 +19,6 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
     '''TODO
 
     '''
-    def __init__(self, verbose=None):
-        self.verbose = verbose
-
-    @_manage_log_level_via_verbose_attr
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
