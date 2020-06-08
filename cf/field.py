@@ -1841,7 +1841,6 @@ class Field(mixin.PropertiesData,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''
-        verbose = False
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1984,11 +1983,8 @@ class Field(mixin.PropertiesData,
                 del out0[identity]
         # --- End: for
 
-        if verbose:
-            print()
-            print('out0', out0)
-            print()
-            print('out1', out1)
+        logger.info('out0\n {}'.format(out0))
+        logger.info('out1\n {}'.format(out1))
 
         squeeze1 = []
         insert0 = []
@@ -2048,7 +2044,7 @@ class Field(mixin.PropertiesData,
 #                        other.flip(y.axis, inplace=True)
 #
 #                    # Check for matching coordinate values
-#                    if not y.coord._equivalent_data(a.coord, verbose=verbose):
+#                    if not y.coord._equivalent_data(a.coord):
 #                        raise  ValueError(
 #                            "Can't combine {!r} axes with different "
 #                            "coordinate values".format(identity)
@@ -2085,19 +2081,21 @@ class Field(mixin.PropertiesData,
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
-            if verbose:
-                print('\n', identity, y)
+            logger.info('{} {}'.format(identity, y))
             if isinstance(identity, int) or identity not in out0:
                 field1.swapaxes(field1.get_data_axes().index(y.axis), -1,
                                 inplace=True)
             else:
                 # This identity is also in out0
                 a = out0[identity]
-                if verbose:
-                    print(identity, y.axis, a.axis)
-                    print(a, field0.get_data_axes(), field1.get_data_axes(),
-                          field1.get_data_axes().index(y.axis),
-                          field0.get_data_axes().index(a.axis))
+                logger.info("{} {} {}".format(identity, y.axis, a.axis))
+                logger.info(
+                    "{} {} {} {} {}".format(
+                        a, field0.get_data_axes(), field1.get_data_axes(),
+                        field1.get_data_axes().index(y.axis),
+                        field0.get_data_axes().index(a.axis)
+                    )
+                )
 
                 field1.swapaxes(field1.get_data_axes().index(y.axis),
                                 field0.get_data_axes().index(a.axis),
@@ -2110,10 +2108,9 @@ class Field(mixin.PropertiesData,
 #        axis_map_0_to_1 = {axis0: axis1 for axis1, axis0 in zip(
 #            field1.get_data_axes(), field0.get_data_axes())}
 
-        if verbose:
-            print('\naxis_map=', axis_map, '\n')
-            print(repr(field0))
-            print(repr(field1))
+        logger.info("\naxis_map= {}\n".format(axis_map))
+        logger.info("{!r}".format(field0))
+        logger.info("{!r}".format(field1))
 
         # ------------------------------------------------------------
         # Check that the two fields have compatible metadata
@@ -2142,7 +2139,7 @@ class Field(mixin.PropertiesData,
                 other.flip(y.axis, inplace=True)
 
             # Check for matching coordinate values
-            if not y.coord._equivalent_data(a.coord, verbose=verbose):
+            if not y.coord._equivalent_data(a.coord):
                 raise ValueError(
                     "Can't combine size {} {!r} axes with non-matching "
                     "coordinate values".format(y.size, identity)
@@ -2161,7 +2158,7 @@ class Field(mixin.PropertiesData,
             for ref1 in refs1:
                 for ref0 in refs0[:]:
                     if field1._equivalent_coordinate_references(
-                            field0, key0=ref1, key1=ref0, verbose=verbose,
+                            field0, key0=ref1, key1=ref0,
                             axis_map=axis_map):
                         n_equivalent_refs += 1
                         refs0.remove(ref0)
@@ -2197,12 +2194,10 @@ class Field(mixin.PropertiesData,
                 axis0 = axis_map[y.axis]
                 field0.domain_axis(axis0).set_size(y.size)
         # --- End: for
-        if verbose:
-            print()
-            print(repr(field0))
-            print(repr(field1))
-            print(repr(field0.data))
-            print(repr(field1.data))
+        logger.info("\n{!r}".format(field0))
+        logger.info("{!r}".format(field1))
+        logger.info("{!r}".format(field0.data))
+        logger.info("{!r}".format(field1.data))
 
         # ------------------------------------------------------------
         # Operate on the data
@@ -2210,13 +2205,12 @@ class Field(mixin.PropertiesData,
         new_data = field0.data._binary_operation(field1.data, method)
 
         field0.set_data(new_data, set_axes=False, copy=False)
-        if verbose:
-            print(field0)
-#            print(field0.array)
-            print()
-            print('axes_added_from_field1=', axes_added_from_field1)
-            print()
-            print('axes_to_replace_from_field1=', axes_to_replace_from_field1)
+        logger.info("{}".format(field0))
+#       logger.info("{}".format(field0.array))
+        logger.info(
+            '\naxes_added_from_field1= {}\n', axes_added_from_field1)
+        logger.info(
+            'axes_to_replace_from_field1= {}', axes_to_replace_from_field1)
 
         already_copied = {}
 
@@ -2242,8 +2236,7 @@ class Field(mixin.PropertiesData,
 #            axis0 = axis_map[axis1]
         new_axes = set(axes_added_from_field1).union(
             axes_to_replace_from_field1)
-        if verbose:
-            print('\nnew_axes =', new_axes)
+        logger.info('\nnew_axes =', new_axes)
 
         if new_axes:
             constructs = field1.constructs.filter_by_type(
@@ -2275,9 +2268,7 @@ class Field(mixin.PropertiesData,
                 refs_to_add_from_field1.append(ref)
         # --- End: for
 
-        if verbose:
-            print()
-            print('refs_to_add_from_field1=', refs_to_add_from_field1)
+        logger.info('\nrefs_to_add_from_field1=', refs_to_add_from_field1)
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
@@ -7954,9 +7945,8 @@ class Field(mixin.PropertiesData,
         )  # pragma: no cover
 
         # Loop round unique collections of bin indices
-        indices = []
         for i in zip(*unique_indices):
-            indices.append(i)
+            logger.info('{}'.format(' '.join(str(i))))
 
             b = (bin_indices[0] == i[0])
             for a, n in zip(bin_indices[1:], i[1:]):
@@ -7972,8 +7962,6 @@ class Field(mixin.PropertiesData,
             result = c.collapse(
                 method=method, weights=weights).data
             out.data[i] = result.datum()
-
-        logger.info('{}'.format(' '.join(indices)))
 
         # Set correct units (note: takes them from the last processed
         # "result" variable in the above loop)
