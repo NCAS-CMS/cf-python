@@ -7623,19 +7623,20 @@ class Field(mixin.PropertiesData,
             .. versionadded:: 3.2.0
 
         verbose: `int` or `None`, optional
-            If an integer from `0` to `3`, corresponding to increasing
-            verbosity (else `-1` as a special case of maximal and extreme
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cf.LOG_LEVEL`.
 
-            Else, if None (the default value), log messages will be filtered
-            out, or otherwise, according to the value of the
-            `LOG_LEVEL` setting.
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
 
             Overall, the higher a non-negative integer that is set (up to
-            a maximum of `3`) the more description that is printed to convey
-            information about the binned field construct creation process.
+            a maximum of ``3``) the more description that is printed to
+            convey information about the binned field construct creation
+            process.
 
     :Returns:
 
@@ -14863,19 +14864,20 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         verbose: `int` or `None`, optional
-            If an integer from `0` to `3`, corresponding to increasing
-            verbosity (else `-1` as a special case of maximal and extreme
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cf.LOG_LEVEL`.
 
-            Else, if None (the default value), log messages will be filtered
-            out, or otherwise, according to the value of the
-            `LOG_LEVEL` setting.
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
 
             Overall, the higher a non-negative integer that is set (up to
-            a maximum of `3`) the more description that is printed to convey
-            information about the attempt to set cyclicity on the dimensions.
+            a maximum of ``3``) the more description that is printed to
+            convey information about the attempt to set cyclicity on the
+            dimensions.
 
     :Returns:
 

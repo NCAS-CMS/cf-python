@@ -1339,35 +1339,35 @@ def aggregate(fields,
             The field constructs to aggregated.
 
         verbose: `int` or `None`, optional
-            If an integer from `0` to `3`, corresponding to increasing
-            verbosity (else `-1` as a special case of maximal and extreme
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cf.LOG_LEVEL`.
 
-            Else, if None (the default value), log messages will be filtered
-            out, or otherwise, according to the value of the
-            `LOG_LEVEL` setting.
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
 
             Overall, the higher a non-negative integer that is set (up to
-            a maximum of `3`) the more description that is printed to convey
-            information about the aggregation process. Explicitly:
+            a maximum of ``3``) the more description that is printed to
+            convey information about the aggregation process. Explicitly:
 
-            =============  ===============================================
+            =============  =================================================
             Value set      Result
             =============  =================================================
-            `0`            * No information is displayed.
+            ``0``          * No information is displayed.
 
-            `1`            * Display information on which fields are
+            ``1``          * Display information on which fields are
                            unaggregatable, and why.
 
-            `2`            * As well as the above, display the structural
+            ``2``          * As well as the above, display the structural
                            signatures of the fields and, when there is more
                            than one field construct with the same structural
                            signature, their canonical first and last
                            coordinate values.
 
-            `3` (or `-1`)  * As well as the above, display the field
+            ``3``/``-1``  * As well as the above, display the field
                            construct's complete aggregation metadata.
             =============  =================================================
 
