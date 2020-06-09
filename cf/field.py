@@ -19213,8 +19213,6 @@ class Field(mixin.PropertiesData,
         section_keys, sections = self._regrid_get_reordered_sections(
             axis_order, src_axis_keys, src_axis_indices)
 
-        print(section_keys,)
-
         # Bounds must be used if the regridding method is conservative.
         use_bounds = self._regrid_use_bounds(method)
 
