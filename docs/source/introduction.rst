@@ -109,8 +109,7 @@ The `cf` package can:
 
 * apply convolution filters to field constructs,
 
-* create moving means from field constructs (**new in version
-  3.3.0**),
+* create moving means from field constructs (*new in version 3.3.0*),
 
 * calculate derivatives of field constructs,
 

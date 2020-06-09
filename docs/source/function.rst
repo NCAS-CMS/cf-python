@@ -167,4 +167,4 @@ Version |release| for version |version| of the CF conventions.
    cf.pickle
    cf.relpath
    cf.unpickle
-
+   cf.LOG_LEVEL
