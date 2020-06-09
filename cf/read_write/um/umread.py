@@ -1575,8 +1575,8 @@ class UMField:
                         fill_value=fill_value)
 
             logger.info(
-                '    location = {}, subarray[...].max() = {}'.format(
-                    yx_shape, data.partitions[()].subarray[...].max())
+                '    location = {}'.format(
+                    yx_shape)
             )  # pragma: no cover
         else:
             # --------------------------------------------------------
