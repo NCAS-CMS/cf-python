@@ -16926,7 +16926,7 @@ class Field(mixin.PropertiesData,
     from the field construct's metadata, so need to be explicitly
     indicated with the *tripolar* parameter.
 
-    .. versionadded:: 3.4.1
+    .. versionadded:: 3.5.0
 
     :Parameters:
 

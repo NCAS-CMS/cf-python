@@ -353,7 +353,7 @@ class Coordinate():
     first and last bounds values differ by 360 degrees (or an
     equivalent amount in other units).
 
-    .. versionadded:: 3.4.1
+    .. versionadded:: 3.5.0
 
     .. seealso:: `isperiodic`, `period`
 

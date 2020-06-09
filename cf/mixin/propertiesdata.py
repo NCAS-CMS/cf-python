@@ -4898,7 +4898,7 @@ class PropertiesData(Properties):
     def iscyclic(self, identity):
         '''Whether or a not a given axis is cyclic.
 
-    .. versionadded:: 3.4.1
+    .. versionadded:: 3.5.0
 
     .. seealso:: `cyclic`, `period`, `isperiodic`
 
@@ -5000,7 +5000,7 @@ class PropertiesData(Properties):
     values that are flipped in "X" direction. Such domains need to be
     explicitly indicated with the *tripolar* parameter.
 
-    .. versionadded:: 3.4.1
+    .. versionadded:: 3.5.0
 
     :Parameters:
 

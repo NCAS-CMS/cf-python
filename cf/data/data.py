@@ -10824,7 +10824,7 @@ False
     values that are flipped in "X" direction. Such domains need to be
     explicitly indicated with the *tripolar* parameter.
 
-    .. versionadded:: 3.4.1
+    .. versionadded:: 3.5.0
 
     :Parameters:
 
