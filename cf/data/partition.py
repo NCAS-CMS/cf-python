@@ -528,7 +528,6 @@ class Partition:
         '''
         return hasattr(self._subarray, '__array_interface__')
 
-
 #    @property
 #    def in_shared_memory(self):
 #        '''

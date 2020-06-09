@@ -3779,7 +3779,6 @@ place.
             self._chunk_add_partitions(d, axes)
         # --- End: while
 
-
 #        # ------------------------------------------------------------
 #        # Find any new partition boundaries for each axis
 #        # ------------------------------------------------------------

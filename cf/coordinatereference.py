@@ -183,7 +183,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return False
 
-
 #    def canonical(self, field=None):
 #        '''
 #        '''
