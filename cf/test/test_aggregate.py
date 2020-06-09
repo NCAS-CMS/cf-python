@@ -31,9 +31,9 @@ class aggregateTest(unittest.TestCase):
             g.extend([f[i] for i in range(7, f.shape[0])])
 
             g0 = g.copy()
-            self.assertTrue(g.equals(g0, verbose=True), "g != g0")
+            self.assertTrue(g.equals(g0, verbose=2), "g != g0")
 
-            h = cf.aggregate(g, info=1)
+            h = cf.aggregate(g, verbose=2)
 
             self.assertTrue(len(h) == 1)
 
@@ -43,33 +43,33 @@ class aggregateTest(unittest.TestCase):
             )
 
             self.assertTrue(
-                g.equals(g0, verbose=True),
+                g.equals(g0, verbose=2),
                 'g != itself after aggregation'
             )
 
-            self.assertTrue(h[0].equals(f, verbose=True), 'h[0] != f')
+            self.assertTrue(h[0].equals(f, verbose=2), 'h[0] != f')
 
-            i = cf.aggregate(g, info=1)
+            i = cf.aggregate(g, verbose=2)
 
             self.assertTrue(
-                i.equals(h, verbose=True),
+                i.equals(h, verbose=2),
                 'The second aggregation != the first'
             )
 
             self.assertTrue(
-                g.equals(g0, verbose=True),
+                g.equals(g0, verbose=2),
                 'g != itself after the second aggregation'
             )
 
-            i = cf.aggregate(g, info=1, axes='grid_latitude')
+            i = cf.aggregate(g, verbose=2, axes='grid_latitude')
 
             self.assertTrue(
-                i.equals(h, verbose=True),
+                i.equals(h, verbose=2),
                 'The third aggregation != the first'
             )
 
             self.assertTrue(
-                g.equals(g0, verbose=True),
+                g.equals(g0, verbose=2),
                 'g !=itself after the third aggregation'
             )
 
@@ -77,17 +77,17 @@ class aggregateTest(unittest.TestCase):
                 i[0].shape == (10, 9), 'i[0].shape is ' + repr(i[0].shape))
 
             i = cf.aggregate(
-                g, info=1, axes='grid_latitude',
+                g, verbose=2, axes='grid_latitude',
                 donotchecknonaggregatingaxes=1
             )
 
             self.assertTrue(
-                i.equals(h, verbose=True),
+                i.equals(h, verbose=2),
                 'The fourth aggregation != the first'
             )
 
             self.assertTrue(
-                g.equals(g0, verbose=True),
+                g.equals(g0, verbose=2),
                 'g != itself after the fourth aggregation'
             )
 
@@ -98,13 +98,13 @@ class aggregateTest(unittest.TestCase):
             q, t = cf.read(self.file)
             c = cf.read(self.file2)[0]
 
-            d = cf.aggregate([c, t], info=0, relaxed_identities=True)
-            e = cf.aggregate([t, c], info=0, relaxed_identities=True)
+            d = cf.aggregate([c, t], verbose=1, relaxed_identities=True)
+            e = cf.aggregate([t, c], verbose=1, relaxed_identities=True)
 
             self.assertTrue(len(d) == 1)
             self.assertTrue(len(e) == 1)
             self.assertTrue(d[0].shape == (3,) + t.shape)
-            self.assertTrue(d[0].equals(e[0], verbose=True))
+            self.assertTrue(d[0].equals(e[0], verbose=2))
 
             x = cf.read(['file.nc', 'file2.nc'], aggregate=False)
             self.assertTrue(len(x) == 3)

@@ -1042,7 +1042,7 @@ Using cf-python library version {1} at {2}'''.format(
     Directory          = None
     directory          = None
     outfile            = None
-    info               = 0      # By default no info is printed to STDOUT
+    verbose            = 1      # By default no info is printed to STDOUT
     axes               = []
     equal              = []
     exist              = []
@@ -1073,7 +1073,7 @@ Using cf-python library version {1} at {2}'''.format(
         elif option == '--overwrite':
             overwrite = True
         elif option == '--info':
-            info = int(arg)
+            verbose = int(arg)  # note info in cfa <-> verbose in cf-python
         elif option in ('-x', '--exclude'):
             exclude = True
         elif option == '--contiguous':
@@ -1177,7 +1177,7 @@ Using cf-python library version {1} at {2}'''.format(
     if no_aggregation:
         read_options['aggregate'] = False
     else:
-        aggregate_options['info']    = info
+        aggregate_options['verbose'] = verbose
         aggregate_options['exclude'] = exclude
 
         if axes:

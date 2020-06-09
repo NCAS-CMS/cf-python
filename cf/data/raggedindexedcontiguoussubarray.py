@@ -1,16 +1,20 @@
+import logging
+
 import numpy
 
 from ..functions import parse_indices, get_subspace
 
 from . import abstract
 
-_debug = False
+
+logger = logging.getLogger(__name__)
 
 
 class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
     '''TODO
 
     '''
+
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
@@ -46,12 +50,11 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
         if indices is Ellipsis:
             return uarray
         else:
-            if _debug:
-                print('indices =', indices)
+            logger.debug('indices = {}'.format(indices))
 
             indices = parse_indices(self.shape, indices)
-            if _debug:
-                print('parse_indices(self.shape, indices) =', indices)
+            logger.debug(
+                'parse_indices(self.shape, indices) = {}'.format(indices))
 
             return get_subspace(uarray, indices)
 

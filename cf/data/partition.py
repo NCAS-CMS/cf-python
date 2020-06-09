@@ -1,4 +1,5 @@
 import atexit
+import logging
 
 from copy      import deepcopy
 from functools import reduce
@@ -40,6 +41,9 @@ from ..constants import CONSTANTS
 from .cachedarray import CachedArray
 
 from .abstract import FileArray
+
+
+logger = logging.getLogger(__name__)
 
 _Units_conform = Units.conform
 
@@ -524,7 +528,6 @@ class Partition:
         '''
         return hasattr(self._subarray, '__array_interface__')
 
-
 #    @property
 #    def in_shared_memory(self):
 #        '''
@@ -778,11 +781,8 @@ class Partition:
         if kwargs:
             config.update(kwargs)
 
-        _debug = False
-
         original = getattr(self, '_original', None)
-        if _debug:
-            print('Partition.close: original =', original)
+        logger.debug('Partition.close: original = {}'.format(original))
 
         if not original:
             originally_on_disk = False
@@ -792,23 +792,19 @@ class Partition:
             original_subarray = original._subarray
 
         config = self.config
-        if _debug:
-            print(' config =', config)
+        logger.debug(' config = {}'.format(config))
 
         if config['serial']:
             # --------------------------------------------------------
             # SERIAL
             # --------------------------------------------------------
-            if _debug:
-                print('  serial')
+            logger.debug('  serial')
 
             if config['readonly']:
-                if _debug:
-                    print('   readonly=True')
+                logger.debug('   readonly=True')
 
                 if originally_on_disk:
-                    if _debug:
-                        print('    subarray originally on disk')
+                    logger.debug('    subarray originally on disk')
 
                     if config.get('to_disk', False):
                         # 1.1.1.1 The original subarray was on disk,
@@ -816,17 +812,15 @@ class Partition:
                         #         subarray in memory, and we are happy
                         #         to discard any changes that may have
                         #         been made to the subaray.
-                        if _debug:
-                            print('    1.1.1.1 revert')
+                        logger.debug('    1.1.1.1 revert')
                         self.revert()
                     elif FREE_MEMORY() <= FM_THRESHOLD():
                         # 1.1.1.2 The original subarray was on disk,
                         #         we are happy to keep the current
                         #         subarray in memory, but there is not
                         #         enough free memory to do so.
-                        if _debug:
-                            print('    1.1.1.2 revert ({} <= {})'.format(
-                                FREE_MEMORY(), FM_THRESHOLD()))
+                        logger.debug('    1.1.1.2 revert ({} <= {})'.format(
+                            FREE_MEMORY(), FM_THRESHOLD()))
                         self.revert()
                     else:
                         # 1.1.1.3 The original subarray was on disk
@@ -841,33 +835,30 @@ class Partition:
                                 original_subarray._partition_file)
 
                         del self.masked
-                        if _debug:
-                            print('    1.1.1.3 del masked ({} > {})'.format(
-                                FREE_MEMORY(), FM_THRESHOLD()))
+                        logger.debug(
+                            '    1.1.1.3 del masked ({} > {})'.format(
+                                FREE_MEMORY(), FM_THRESHOLD())
+                        )
 
                 else:
-                    if _debug:
-                        print('   subarray originally in memory')
+                    logger.debug('   subarray originally in memory')
                     if config.get('to_disk', False):
                         # 1.1.2.1 Original subarray was in memory and
                         #         we don't want to keep the current
                         #         subarray in memory
-                        if _debug:
-                            print('    1.1.2.1 to_disk')
+                        logger.debug('    1.1.2.1 to_disk')
                         self.to_disk(reopen=False)
                     elif FREE_MEMORY() <= FM_THRESHOLD():
                         # 1.1.2.2 Original subarray was in memory and
                         #         unique but there is not enough
                         #         memory to keep the current subarray
-                        if _debug:
-                            print('    1.1.2.2 to_disk')
+                        logger.debug('    1.1.2.2 to_disk')
                         self.to_disk(reopen=False)
                     else:
                         # 1.1.2.3 Original subarray was in memory and
                         #         unique and there is enough memory to
                         #         keep the current subarray in memory
-                        if _debug:
-                            print('    1.1.2.3 pass')
+                        logger.debug('    1.1.2.3 pass')
                         pass
             else:
                 # config['readonly'] is False
@@ -884,8 +875,7 @@ class Partition:
                             _remove_temporary_files(
                                 original_subarray._partition_file)
 
-                        if _debug:
-                            print('    1.2.1.1 to_disk')
+                        logger.debug('    1.2.1.1 to_disk')
                         self.to_disk(reopen=False)
                     elif FREE_MEMORY() <= FM_THRESHOLD():
                         # 1.2.1.2 Original subarray was on disk but
@@ -899,39 +889,33 @@ class Partition:
                             _remove_temporary_files(
                                 original_subarray._partition_file)
 
-                        if _debug:
-                            print('    1.2.1.2 to_disk')
+                        logger.debug('    1.2.1.2 to_disk')
                         self.to_disk(reopen=False)
                     else:
                         # 1.2.1.3 Original subarray was on disk and
                         #         there is enough memory to keep it
-                        if _debug:
-                            print('    1.2.1.3 pass')
+                        logger.debug('    1.2.1.3 pass')
                         del self.masked
                         pass
                 else:
                     if config.get('to_disk', False):
                         # 1.2.2.1 Original subarray was in memory but
                         #         we don't want to keep it
-                        if _debug:
-                            print('    1.2.2.1 to_disk')
+                        logger.debug('    1.2.2.1 to_disk')
                         self.to_disk(reopen=False)
                     elif FREE_MEMORY() <= FM_THRESHOLD():
                         # 1.2.2.2 Original subarray was an in memory
                         #         but there is not enough memory to
                         #         keep it
-                        if _debug:
-                            print('    1.2.2.2 to_disk')
+                        logger.debug('    1.2.2.2 to_disk')
                         self.to_disk(reopen=False)
                     else:
                         # 1.2.2.3 Original subarray was in memory and
                         #         there is enough memory to keep it
-                        if _debug:
-                            print('    1.2.2.3 del masked')
+                        logger.debug('    1.2.2.3 del masked')
                         del self.masked
         else:
-            if _debug:
-                print('Partition.close: parallel')
+            logger.debug('Partition.close: parallel')
             # --------------------------------------------------------
             # PARALLEL
             # --------------------------------------------------------

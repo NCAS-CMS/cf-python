@@ -3,6 +3,8 @@ import re
 from ast import literal_eval as ast_literal_eval
 from copy import deepcopy
 
+import logging
+
 import cfdm
 
 from .functions import inspect as cf_inspect
@@ -13,7 +15,11 @@ from .functions import _DEPRECATION_ERROR_METHOD
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecated_kwarg_check)
+                         _deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 
 _collapse_cell_methods = {
@@ -597,7 +603,8 @@ class CellMethod(cfdm.CellMethod):
         return c
 
     @_deprecated_kwarg_check('traceback')
-    def equivalent(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equivalent(self, other, rtol=None, atol=None, verbose=None,
                    traceback=False):
         '''True if two cell methods are equivalent, False otherwise.
 
@@ -632,21 +639,19 @@ class CellMethod(cfdm.CellMethod):
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__
-                    )
-                )  # pragma: no cover
+            logger.info("{0}: Different types: {0} != {1}".format(
+                self.__class__.__name__,
+                other.__class__.__name__
+                )
+            )  # pragma: no cover
             return False
 
         axes0 = self.get_axes(())
         axes1 = other.get_axes(())
 
         if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-            if verbose:
-                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-                    self.__class__.__name__, axes0, axes1))  # pragma: no cover
+            logger.info("{}: Non-equivalent axes: {!r}, {!r}".format(
+                self.__class__.__name__, axes0, axes1))  # pragma: no cover
             return False
 
 #        other1 = other.copy()
@@ -655,9 +660,8 @@ class CellMethod(cfdm.CellMethod):
 
         if not self.equals(other1, rtol=rtol, atol=atol,
                            ignore_qualifiers=('interval',)):
-            if verbose:
-                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self, other))  # pragma: no cover
+            logger.info("{0}: Non-equivalent: {1!r}, {2!r}".format(
+                self.__class__.__name__, self, other))  # pragma: no cover
             return False
 
         self1 = self
@@ -667,14 +671,14 @@ class CellMethod(cfdm.CellMethod):
             other1.expand_intervals(inplace=True)
             if len(self1.get_qualifier('interval', ())) != len(
                     other1.get_qualifier('interval', ())):
-                if verbose:
-                    msg = "{0}: Different numbers of intervals: {1!r} != {2!r}"
-                    print(msg.format(
+                logger.info(
+                    "{0}: Different numbers of intervals: {1!r} != "
+                    "{2!r}".format(
                         self.__class__.__name__,
                         self1.get_qualifier('interval', ()),
                         other1.get_qualifier('interval', ())
-                        )
-                    )  # pragma: no cover
+                    )
+                )  # pragma: no cover
                 return False
 
         intervals0 = self1.get_qualifier('interval', ())
@@ -682,12 +686,12 @@ class CellMethod(cfdm.CellMethod):
             for data0, data1 in zip(
                     intervals0, other1.get_qualifier('interval', ())):
                 if not data0.allclose(data1, rtol=rtol, atol=atol):
-                    if verbose:
-                        msg = "{0}: Different interval data: {1!r} != {2!r}"
-                        print(msg.format(
+                    logger.info(
+                        "{0}: Different interval data: {1!r} != {2!r}".format(
                             self.__class__.__name__,
-                            self.intervals, other.intervals)
-                        )  # pragma: no cover
+                            self.intervals, other.intervals
+                        )
+                    )  # pragma: no cover
                     return False
         # --- End: if
 

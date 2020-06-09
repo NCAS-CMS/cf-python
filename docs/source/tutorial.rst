@@ -6179,6 +6179,138 @@ is straight forward with the `cf.load_stash2standard_name` function.
 
 .. include:: field_analysis.rst
 
+----
+
+.. _Controlling-output-messages:
+
+**Controlling output messages**
+-------------------------------
+
+cf will produce messages upon the execution of operations, to
+provide feedback about:
+
+* the progress of, and under-the-hood steps involved in, the
+  operations it is performing;
+* the events that emerge during these operations;
+* the nature of the dataset being operated on, including CF compliance
+  issues that may be encountered during the operation.
+
+This feedback may be purely informational, or may convey warning(s)
+about dataset issues or the potential for future error(s).
+
+It is possible to configure the extent to which messages are output at
+runtime, i.e. the verbosity of cf, so that less serious and/or more
+detailed messages can be filtered out.
+
+There are two means to do this, which are covered in more detail in
+the sub-sections below. Namely, you may configure the extent of
+messaging:
+
+* **globally** i.e. for all cf operations, by setting the
+  `cf.LOG_LEVEL` which controls the project-wide logging;
+* **for a specific function only** (for many functions) by setting
+  that function's *verbose* keyword argument (which overrides the
+  global setting for the duration of the function call).
+
+Both possibilities use a consistent level-based cut-off system, as
+detailed below.
+
+.. _Logging:
+
+Logging
+^^^^^^^
+
+All messages from cf, excluding exceptions which are always raised
+in error cases, are incorporated into a logging system which assigns
+to each a level based on the relative seriousness and/or
+verbosity. From highest to lowest on this scale, these levels are:
+
+* ``'WARNING'``: conveys a warning;
+* ``'INFO'``: provides information concisely, in a few lines or so;
+* ``'DETAIL'``: provides information in a more detailed manner than
+  ``'INFO'``;
+* ``'DEBUG'``: produces highly-verbose information intended mainly for
+  the purposes of debugging and cf library development.
+
+The function `cf.LOG_LEVEL` sets the minimum of these levels for
+which messages are displayed. Any message marked as being of any lower
+level will be filtered out. Note it sets the verbosity *globally*, for
+*all* cf library operations (unless these are overridden for
+individual functions, as covered below).
+
+As well as the named log levels above, `cf.LOG_LEVEL` accepts a
+further identifier, ``'DISABLE'``. Each of these potential settings
+has a numerical value that is treated interchangeably and may instead
+be set (as this may be easier to recall and write, if less
+explicit). The resulting behaviour in each case is as follows:
+
+=======================  ============  =========================================
+Log level                Integer code  Result when set as the log severity level
+=======================  ============  =========================================
+``'DISABLE'``            ``0``         *Disable all* logging messages. Note this
+                                       does not include exception messages
+                                       raised by errors.
+
+``'WARNING'`` (default)  ``1``         *Only show* logging messages that are
+                                       *warnings* (those labelled as
+                                       ``'WARNING'``).
+
+``'INFO'``               ``2``         *Only show* logging messages that are
+                                       *warnings or concise informational
+                                       messages* (marked as ``'WARNING'`` or
+                                       ``'INFO'`` respectively).
+
+``'DETAIL'``             ``3``         *Enable all* logging messages *except
+                                       for debugging messages*. In other words,
+                                       show logging messages labelled
+                                       ``'WARNING'``, ``'INFO'`` and
+                                       ``'DETAIL'``, but not ``'DEBUG'``.
+
+``'DEBUG'``              ``-1``        *Enable all* logging messages,
+                                       *including debugging messages*
+                                       (labelled as ``'DEBUG'``).
+=======================  ============  =========================================
+
+Note ``'DEBUG'`` is intended as a special case for debugging, which
+should not be required in general usage of cf, hence its equivalence
+to ``-1`` rather than ``4`` which would follow the increasing integer
+code pattern.  ``-1`` reflects that it is the final value in the
+sequence, as with Python indexing.
+
+The default value for `cf.LOG_LEVEL` is ``'WARNING'`` (``1``).
+However, whilst completing this tutorial, it may be instructive to set
+the log level` to a higher verbosity level such as `'INFO'` to gain
+insight into the internal workings of cf calls.
+
+
+.. _Function-verbosity:
+
+Function verbosity
+^^^^^^^^^^^^^^^^^^
+
+Functions and methods that involve a particularly high number of steps
+or especially complex processing, for example the `cf.read` and
+`cf.write` functions, accept a keyword argument *verbose*. This be
+set to change the minimum log level at which messages are displayed
+for the function/method call only, without being influenced by, or
+influencing, the global `cf.LOG_LEVEL` value.
+
+A *verbose* value effectively overrides the value of `cf.LOG_LEVEL`
+for the function/method along with any functions/methods it calls in
+turn, until the origin function/method completes.
+
+The *verbose* argument accepts the same levels as `cf.LOG_LEVEL`
+(including ``0`` for ``'DISABLE'``), as described in :ref:`the logging
+section <logging>`, however to keep the keyword simple, only the
+integer code is recognised and should be used, not the string
+name. For example, ``verbose=2`` should be set rather than
+``verbose='INFO'``.
+
+By default, *verbose* is set to `None`, in which case the value of the
+`cf.LOG_LEVEL` setting is used to determine which messages,
+if any, are filtered out.
+
+
 .. rubric:: Footnotes
 
 

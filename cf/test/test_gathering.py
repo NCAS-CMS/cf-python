@@ -250,7 +250,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.gathered, verbose=False)
+        f = cf.read(self.gathered, verbose=0)
 
         self.assertTrue(len(f) == 3)
 
@@ -268,8 +268,8 @@ class DSGTest(unittest.TestCase):
 #        print(g.data.get_compressed_axes())
 #        print(g.data.shape)
 
-        cf.write(f, self.tempfilename, verbose=False)
-        g = cf.read(self.tempfilename, verbose=False)
+        cf.write(f, self.tempfilename, verbose=0)
+        g = cf.read(self.tempfilename, verbose=0)
 #        print (repr(f))
 #        print (repr(g))
         self.assertTrue(len(g) == len(f), str(len(g)) + ' ' + str(len(f)))
@@ -288,7 +288,7 @@ class DSGTest(unittest.TestCase):
 #            x.dump()
 
         for a, b in zip(f, g):
-            self.assertTrue(b.equals(a, verbose=True))
+            self.assertTrue(b.equals(a, verbose=2))
 
     def test_GATHERING_create(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

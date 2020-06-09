@@ -74,6 +74,7 @@ jobs:
         conda install -c ncas -c conda-forge udunits2=2.2.20
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib
+        pip install pycodestyle
         # Important! Must install our development version of cf-python to test:
         pip install -e .
 

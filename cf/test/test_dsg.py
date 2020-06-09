@@ -557,7 +557,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.contiguous, verbose=False)
+        f = cf.read(self.contiguous, verbose=0)
 
         self.assertTrue(len(f) == 2)
 
@@ -576,7 +576,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(q._equals(self.a, q.data.array),
                         '\nself.a=\n'+str(self.a)+'\nq.array=\n'+str(q.array))
 
-        cf.write(f, self.tempfilename, verbose=False)
+        cf.write(f, self.tempfilename, verbose=0)
         g = cf.read(self.tempfilename)
 
 #        print ('\ng\n')
@@ -586,7 +586,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=2))
 
         # ------------------------------------------------------------
         # Test creation
@@ -649,7 +649,7 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
 
-        cf.write(f, self.tempfilename, verbose=False)
+        cf.write(f, self.tempfilename, verbose=0)
         g = cf.read(self.tempfilename)
 
 #        print ('\ng\n')
@@ -659,13 +659,13 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=2))
 
     def test_DSG_indexed_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.indexed_contiguous, verbose=False)
+        f = cf.read(self.indexed_contiguous, verbose=0)
 
         self.assertTrue(len(f) == 2)
 
@@ -696,8 +696,8 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
 
-        cf.write(f, self.tempfilename, verbose=False)
-        g = cf.read(self.tempfilename, verbose=False)
+        cf.write(f, self.tempfilename, verbose=0)
+        g = cf.read(self.tempfilename, verbose=0)
 
 #        print ('\ng\n')
 #        for x in g:
@@ -706,7 +706,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=2))
 
     def test_DSG_create_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

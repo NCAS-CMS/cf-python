@@ -10,6 +10,8 @@ from json import loads as json_loads
 
 from math import ceil as math_ceil
 
+import logging
+
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
 except ImportError:
@@ -116,10 +118,11 @@ from ..functions import _section
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
 
 from .abstract import (Array,
-                                 CompressedArray)
+                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
@@ -140,6 +143,9 @@ if mpi_on:
     from mpi4py.MPI import SUM as mpi_sum
 
 
+logger = logging.getLogger(__name__)
+
+
 # --------------------------------------------------------------------
 # Constants
 # --------------------------------------------------------------------
@@ -150,9 +156,9 @@ _month_length = _year_length / 12
 def _convert_to_builtin_type(x):
     '''Convert a non-JSON-encodable object to a JSON-encodable built-in
     type.
-    
+
     Possible conversions are:
-    
+
     ================  =======  ================================
     Input             Output   `numpy` data-types covered
     ================  =======  ================================
@@ -161,18 +167,18 @@ def _convert_to_builtin_type(x):
                                uint8, uint16, uint32, uint64
     `numpy.floating`  `float`  float, float16, float32, float64
     ================  =======  ================================
-    
+
     :Parameters:
-    
+
         x:
             TODO
-    
+
     :Returns:
-    
+
             TODO
-    
+
     **Examples:**
-    
+
     >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
     bool
     >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
@@ -193,8 +199,6 @@ def _convert_to_builtin_type(x):
     raise TypeError(
         "{0!r} object is not JSON serializable: {1!r}".format(type(x), x))
 
-
-_debug = True
 
 # --------------------------------------------------------------------
 # _seterr = How floating-point errors in the results of arithmetic
@@ -3774,7 +3778,6 @@ place.
 
             self._chunk_add_partitions(d, axes)
         # --- End: while
-
 
 #        # ------------------------------------------------------------
 #        # Find any new partition boundaries for each axis
@@ -10546,9 +10549,10 @@ False
         return itertools.product(*[range(0, r) for r in self._shape])
 
     @_deprecated_kwarg_check('traceback')
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, ignore_data_type=False,
-               ignore_type=False, verbose=False, traceback=False,
+               ignore_type=False, verbose=None, traceback=False,
                ignore_compression=False):
         '''True if two data arrays are logically equal, False otherwise.
 
@@ -10575,9 +10579,20 @@ False
             If True then data arrays with different fill values are
             considered equal. By default they are considered unequal.
 
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about differences that lead to inequality.
 
         traceback: deprecated at version 3.0.0
             Use *verbose* parameter instead.
@@ -10616,9 +10631,8 @@ False
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
-            if verbose:
-                print("{}: Different Units ({!r}, {!r}".format(
-                    self.__class__.__name__, self.Units, other.Units))
+            logger.info("{}: Different Units ({!r}, {!r}".format(
+                self.__class__.__name__, self.Units, other.Units))
             return False
 
         config = self.partition_configuration(readonly=True)
@@ -10632,12 +10646,11 @@ False
             partition.close()
 
             if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
-                if verbose:
-                    print(
-                        "{0}: Different array values (atol={1}, "
-                        "rtol={2})".format(
-                            self.__class__.__name__, atol, rtol)
-                    )
+                logger.info(
+                    "{0}: Different array values (atol={1}, "
+                    "rtol={2})".format(
+                        self.__class__.__name__, atol, rtol)
+                )
 
                 return False
         # --- End: for
@@ -10789,10 +10802,11 @@ False
         return out
 
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None,
-             fold_index=-1, inplace=False, verbose=False):
+             fold_index=-1, inplace=False, verbose=None):
         '''Expand the data by adding a halo.
-        
+
     The halo may be applied over a subset of the data dimensions and
     each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
@@ -10815,7 +10829,7 @@ False
     :Parameters:
 
         size: `int` or `dict`
-            Specify the size of the halo for each axis. 
+            Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
@@ -10860,12 +10874,12 @@ False
             as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by their integer positions in the data.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by positions 2 and 1
               respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
@@ -10880,8 +10894,20 @@ False
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        verbose: `bool`, optional
-            If True then print a description of the operation.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the operation.
 
     :Returns:
 
@@ -10955,12 +10981,10 @@ False
      [ 8  8  9 10 -- --]]
 
         '''
-        if verbose:
-            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-            _ = "{}.halo(".format(self.__class__.__name__)
-            print("{}{})".format(_,
-                                 (',\n' + ' '*len(_)).join(_kwargs)))
-            
+        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+        _ = "{}.halo(".format(self.__class__.__name__)
+        logger.info("{}{})".format(_, (',\n' + ' '*len(_)).join(_kwargs)))
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
@@ -10974,14 +10998,14 @@ False
                 raise ValueError(
                     "Can't set the axes parameter when the "
                     "size parameter is a dictionary")
-            
+
             axes = self._parse_axes(tuple(size))
             size = [size[i] if i in axes else 0
                     for i in range(ndim)]
         else:
             if axes is None:
                 axes = list(range(ndim))
-            
+
             axes = d._parse_axes(axes)
             size = [size if i in axes else 0
                     for i in range(ndim)]
@@ -10994,20 +11018,20 @@ False
                 raise ValueError(
                     "fold_index parameter must be -1 or 0. "
                     "Got {!r}".format(fold_index))
-            
+
             # Find the X and Y axes of a tripolar grid
             tripolar = tripolar.copy()
             X_axis = tripolar.pop('X', None)
             Y_axis = tripolar.pop('Y', None)
-            
+
             if tripolar:
                 raise ValueError(
                     "Can not set key {!r} in the tripolar "
                     "dictionary.".format(tripolar.popitem()[0]))
-            
+
             if X_axis is None:
                 raise ValueError("Must provide a tripolar 'X' axis.")
-        
+
             if Y_axis is None:
                 raise ValueError("Must provide a tripolar 'Y' axis.")
 
@@ -11019,7 +11043,7 @@ False
                     "Must provide exactly one tripolar 'X' axis. "
                     "Got {!r}".format(
                         X_axis))
-        
+
             if len(Y) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'Y' axis. "
@@ -11028,7 +11052,7 @@ False
 
             X_axis = X[0]
             Y_axis = Y[0]
-            
+
             if X_axis == Y_axis:
                 raise ValueError(
                     "Tripolar 'X' and 'Y' axes must be different. "
@@ -11036,7 +11060,7 @@ False
                         X_axis, Y_axis))
 
             for A, axis in zip(('X', 'Y',),
-                               (X_axis, Y_axis)):                
+                               (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
@@ -11082,11 +11106,11 @@ False
         # ------------------------------------------------------------
         for i in axes:
             size_i = size[i]
-            
+
             for edge in (0, -1):
                 # Initialise indices to the expanded data
                 indices1 = [slice(None)] * ndim
-                    
+
                 if edge == -1:
                     indices1[i] = slice(-size_i, None)
                 else:
@@ -11094,12 +11118,12 @@ False
 
                 # Initialise indices to the original data
                 indices0 = indices1[:]
-               
+
                 for j in axes:
                     if j == i:
                         continue
-                    
-                    size_j = size[j]            
+
+                    size_j = size[j]
                     indices1[j] = slice(size_j, -size_j)
 
                 out[tuple(indices1)] = d[tuple(indices0)]
@@ -11126,7 +11150,7 @@ False
         # ------------------------------------------------------------
         if tripolar and size[Y_axis]:
             indices1 = [slice(None)] * ndim
-            
+
             if fold_index == -1:
                 # The last index of the "Y" axis corresponds to the
                 # fold in "X" axis of a tripolar grid
@@ -11135,7 +11159,7 @@ False
                 # The first index of the "Y" axis corresponds to the
                 # fold in "X" axis of a tripolar grid
                 indices1[Y_axis] = slice(0, size[Y_axis])
-                
+
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
@@ -11146,7 +11170,7 @@ False
 
         # Set expanded axes to be non-cyclic
         out.cyclic(axes=axes, iscyclic=False)
-        
+
         if inplace:
             d.__dict__ = out.__dict__
             d.hardmask = hardmask
@@ -11154,7 +11178,7 @@ False
             d = out
 
         return d
-    
+
     @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO
@@ -12717,8 +12741,9 @@ False
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def where(self, condition, x=None, y=None, inplace=False, i=False,
-              _debug=False):
+              verbose=None):
         '''Assign to data elements depending on a condition.
 
     Data can be changed by assigning to elements that are selected by
@@ -12807,6 +12832,22 @@ False
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
+
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the condition-based assignment
+            process.
 
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -12899,9 +12940,10 @@ False
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if _debug:
-            print('    data.shape =', d.shape)  # pragma: no cover
-            print('    condition =', repr(condition))  # pragma: no cover
+        logger.debug(
+            '    data.shape = {}'.format(d.shape))  # pragma: no cover
+        logger.debug(
+            '    condition = {!r}'.format(condition))  # pragma: no cover
 
         if x is None and y is None:
             # The data is unchanged regardless of condition
@@ -12969,33 +13011,31 @@ False
         (condition_is_scalar, x_is_scalar, y_is_scalar) = is_scalar
         broadcast = not any(do_not_broadcast)
 
-        if _debug:
-            print(
-                '    x =', repr(x)
-            )  # pragma: no cover
-            print(
-                '    y =', repr(y)
-            )  # pragma: no cover
-            print(
-                '    condition_is_scalar =', repr(condition_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    x_is_scalar         =', repr(x_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    y_is_scalar         =', repr(y_is_scalar)
-            )  # pragma: no cover
-            print(
-                '    broadcast           =', repr(broadcast)
-            )  # pragma: no cover
+        logger.debug(
+            '    x = {!r}'.format(x)
+        )  # pragma: no cover
+        logger.debug(
+            '    y = {!r}'.format(y)
+        )  # pragma: no cover
+        logger.debug(
+            '    condition_is_scalar = {!r}'.format(condition_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    x_is_scalar         = {!r}'.format(x_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    y_is_scalar         = {!r}'.format(y_is_scalar)
+        )  # pragma: no cover
+        logger.debug(
+            '    broadcast           = {!r}'.format(broadcast)
+        )  # pragma: no cover
 
         # -------------------------------------------------------------
         # Try some short cuts if the condition is a scalar
         # -------------------------------------------------------------
         if condition_is_scalar and not getattr(condition, 'isquery', False):
-            if _debug:
-                print('    Condition is a scalar:', repr(condition),
-                      type(condition))
+            logger.debug('    Condition is a scalar: {} {}'.format(
+                condition, type(condition)))
             if condition:
                 if x is not None:
                     d[...] = x
@@ -13017,8 +13057,7 @@ False
         config = d.partition_configuration(readonly=False)  # or True?
 
         for partition in d.partitions.matrix.flat:
-            if _debug:
-                print('   Partition:')  # pragma: no cover
+            logger.debug('   Partition:')  # pragma: no cover
 
             partition.open(config)
             array = partition.array
@@ -13105,11 +13144,10 @@ False
                         F = _broadcast(F, shape)
             # --- End: if
 
-            if _debug:
-                print('  array =', array)  # pragma: no cover
-                print('      c =', c)  # pragma: no cover
-                print('      T =', T)  # pragma: no cover
-                print('      F =', F)  # pragma: no cover
+            logger.debug('  array = {}'.format(array))  # pragma: no cover
+            logger.debug('      c = {}'.format(c))  # pragma: no cover
+            logger.debug('      T = {}'.format(T))  # pragma: no cover
+            logger.debug('      F = {}'.format(F))  # pragma: no cover
 
             # --------------------------------------------------------
             # Create a numpy array which takes vales from T where c
@@ -13157,8 +13195,7 @@ False
             # Replace the partition's subarray with the new numpy
             # array
             # --------------------------------------------------------
-            if _debug:
-                print('      new=', new)  # pragma: no cover
+            logger.debug('      new = {}'.format(new))  # pragma: no cover
 
             partition.subarray = new
 

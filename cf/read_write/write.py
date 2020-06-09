@@ -6,9 +6,10 @@ from .netcdf import NetCDFWrite
 
 from ..cfimplementation import implementation
 
+from ..decorators import _manage_log_level_via_verbosity
+
 from ..functions import flat
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
-
 
 # from . import mpi_on
 mpi_on = False
@@ -21,12 +22,13 @@ if mpi_on:
 netcdf = NetCDFWrite(implementation())
 
 
+@_manage_log_level_via_verbosity
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, file_descriptors=None,
           external=None, Conventions=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, reference_datetime=None,
-          verbose=False, cfa_options=None, mode='w', single=None,
+          verbose=None, cfa_options=None, mode='w', single=None,
           double=None, variable_attributes=None, string=True,
           warn_valid=True, HDF_chunksizes=None, no_shuffle=None,
           unlimited=None):
@@ -432,22 +434,34 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                       ``double=False`` is exactly equivalent to
                       ``single=True``.
 
-       string: `bool`, optional
-           By default string-valued construct data are written as
-           netCDF arrays of type string if the output file format is
-           ``'NETCDF4'``, or of type char with an extra dimension
-           denoting the maximum string length for any other output
-           file format (see the *fmt* parameter). If *string* is False
-           then string-valued construct data are written as netCDF
-           arrays of type char with an extra dimension denoting the
-           maximum string length, regardless of the selected output
-           file format.
+        string: `bool`, optional
+            By default string-valued construct data are written as
+            netCDF arrays of type string if the output file format is
+            ``'NETCDF4'``, or of type char with an extra dimension
+            denoting the maximum string length for any other output
+            file format (see the *fmt* parameter). If *string* is False
+            then string-valued construct data are written as netCDF
+            arrays of type char with an extra dimension denoting the
+            maximum string length, regardless of the selected output
+            file format.
 
-        verbose: `bool`, optional
-            If True then print a summary of how constructs map to output
-            netCDF dimensions, variables and attributes.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
 
-       warn_valid: `bool`, optional
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey how constructs map to output netCDF dimensions, variables
+            and attributes.
+
+        warn_valid: `bool`, optional
             If False then do not print a warning when writing
             "out-of-range" data, as indicated by the values, if
             present, of any of the ``valid_min``, ``valid_max`` or

@@ -13,8 +13,6 @@ from numpy.ma import masked_all as numpy_ma_masked_all
 from ..functions import parse_indices, get_subspace
 from ..constants import masked as cf_masked
 
-_debug = False
-
 
 class FilledArray(abstract.Array):
     '''TODO
@@ -196,7 +194,6 @@ class FilledArray(abstract.Array):
     def fill_value(self):
         '''TODO        '''
         return self._get_component('fill_value')
-
 
 #    def masked_all(self):
 #        '''TODO        '''

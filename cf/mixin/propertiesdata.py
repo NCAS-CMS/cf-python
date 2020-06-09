@@ -1,9 +1,10 @@
 from functools import partial as functools_partial
 
+import logging
+
 from numpy import array       as numpy_array
 from numpy import result_type as numpy_result_type
 from numpy import vectorize   as numpy_vectorize
-
 
 from ..cfdatetime   import dt
 from ..functions    import equivalent              as cf_equivalent
@@ -21,7 +22,8 @@ from ..functions import _DEPRECATION_ERROR_METHOD
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecated_kwarg_check)
+                          _deprecated_kwarg_check,
+                          _manage_log_level_via_verbosity)
 
 
 _units_None = Units()
@@ -31,6 +33,8 @@ _year_units = ('year', 'years', 'yr')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__',
                        '__gt__', '__ge__')
+
+logger = logging.getLogger(__name__)
 
 
 class PropertiesData(Properties):
@@ -675,8 +679,9 @@ class PropertiesData(Properties):
         '''
         return other
 
+    @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, atol=None, rtol=None,
-                         verbose=False):
+                         verbose=None):
         '''TODO
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -704,9 +709,8 @@ class PropertiesData(Properties):
 
         '''
         if self.has_data() != other.has_data():
-            if verbose:
-                print("{}: Only one construct has data: {!r}, {!r}".format(
-                    self.__class__.__name__, self, other))
+            logger.info("{}: Only one construct has data: {!r}, {!r}".format(
+                self.__class__.__name__, self, other))
             return False
 
         if not self.has_data():
@@ -716,15 +720,15 @@ class PropertiesData(Properties):
         data1 = other.get_data()
 
         if data0.shape != data1.shape:
-            if verbose:
-                print("{}: Data have different shapes: {}, {}".format(
-                    self.__class__.__name__, data0.shape, data1.shape))
+            logger.info("{}: Data have different shapes: {}, {}".format(
+                self.__class__.__name__, data0.shape, data1.shape))
             return False
 
         if not data0.Units.equivalent(data1.Units):
-            if verbose:
-                print("{}: Data have non-equivalent units: {!r}, {!r}".format(
-                    self.__class__.__name__, data0.Units, data1.Units))
+            logger.info(
+                "{}: Data have non-equivalent units: {!r}, {!r}".format(
+                    self.__class__.__name__, data0.Units, data1.Units)
+            )
             return False
 
 #        if atol is None:
@@ -733,11 +737,10 @@ class PropertiesData(Properties):
 #            rtol = RTOL()
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
-            if verbose:
-                print(
-                    "{}: Data have non-equivalent values: {!r}, {!r}".format(
-                        self.__class__.__name__, data0, data1)
-                )
+            logger.info(
+                "{}: Data have non-equivalent values: {!r}, {!r}".format(
+                    self.__class__.__name__, data0, data1)
+            )
             return False
 
         return True
@@ -1151,7 +1154,7 @@ class PropertiesData(Properties):
             return self._custom['Units']
         except KeyError:
             self._custom['Units'] = _units_None
-            
+
         return _units_None
 
     @Units.setter
@@ -1772,7 +1775,7 @@ class PropertiesData(Properties):
     This is distinct from the cyclicity of individual axes.
 
     .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
-        
+
     :Parameters:
 
         value: optional
@@ -3026,7 +3029,8 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -3084,9 +3088,20 @@ class PropertiesData(Properties):
             If True then the "_FillValue" and "missing_value"
             properties are omitted from the comparison.
 
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about differences that lead to inequality.
 
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
@@ -3131,9 +3146,8 @@ class PropertiesData(Properties):
         # Check that each instance has the same Units
         try:
             if not self.Units.equals(other.Units):
-                if verbose:
-                    print("{0}: Different Units: {1!r} != {2!r}".format(
-                        self.__class__.__name__, self.Units, other.Units))
+                logger.info("{0}: Different Units: {1!r} != {2!r}".format(
+                    self.__class__.__name__, self.Units, other.Units))
                 return False
         except AttributeError:
             pass
@@ -4964,10 +4978,11 @@ class PropertiesData(Properties):
         return super().get_data(default=default, _units=False)
 
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
-             inplace=False, verbose=False):
+             inplace=False, verbose=None):
         '''Expand the data by adding a halo.
-        
+
     The halo may be applied over a subset of the data dimensions and
     each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
@@ -4990,7 +5005,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         size: `int` or `dict`
-            Specify the size of the halo for each axis. 
+            Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
@@ -5035,12 +5050,12 @@ class PropertiesData(Properties):
             as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by their integer positions in the data.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by positions 2 and 1
               respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
@@ -5055,11 +5070,23 @@ class PropertiesData(Properties):
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        verbose: `bool`, optional
-            If True then print a description of the operation.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the operation.
 
     :Returns:
-        
+
             The expanded data, or `None` if the operation was
             in-place.
 
@@ -5085,12 +5112,10 @@ class PropertiesData(Properties):
         TODO
 
         '''
-        if verbose:
-            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-            _ = "{}.halo(".format(self.__class__.__name__)
-            print("{}{}".format(_,
-                                (',\n' + ' '*len(_)).join(_kwargs)))
-            
+        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+        _ = "{}.halo(".format(self.__class__.__name__)
+        logger.info("{}{}".format(_, (',\n' + ' '*len(_)).join(_kwargs)))
+
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
@@ -5098,9 +5123,9 @@ class PropertiesData(Properties):
             data.halo(size=size, axes=axes, tripolar=tripolar,
                       fold_index=fold_index, inplace=True,
                       verbose=verbose)
-            
+
         return v
-        
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
@@ -5216,11 +5241,11 @@ class PropertiesData(Properties):
             data.override_units(units, inplace=True)
         else:
             v._custom['Units'] = units
-            
+
         # Override the Units on the period
         period = v.period()
         if period is not None:
-#            v._custom['period'] = period.override_units(units)
+            # v._custom['period'] = period.override_units(units)
             v.period(period.override_units(units))
 
         return v
@@ -5403,7 +5428,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
-              _debug=False):
+              verbose=None):
         '''Set data array elements depending on a condition.
 
     .. seealso:: `cf.masked`, `hardmask`, `subspace`
@@ -5465,7 +5490,7 @@ class PropertiesData(Properties):
 
             y = y_data
 
-        data.where(condition, x, y, inplace=True, _debug=_debug)
+        data.where(condition, x, y, inplace=True, verbose=verbose)
 
         return v
 

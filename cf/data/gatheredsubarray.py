@@ -8,8 +8,6 @@ from ..functions import parse_indices, get_subspace
 
 from . import abstract
 
-_debug = False
-
 
 class GatheredSubarray(abstract.CompressedSubarray):
     '''TODO

@@ -174,7 +174,7 @@ class read_writeTest(unittest.TestCase):
         # select on field list
         f = cf.read(self.filename, select='eastward_wind')
         g = cf.read(self.filename)
-        self.assertTrue(f.equals(g, verbose=True),
+        self.assertTrue(f.equals(g, verbose=2),
                         'Bad read with select keyword')
 
     def test_read_squeeze(self):
@@ -279,7 +279,7 @@ class read_writeTest(unittest.TestCase):
                                  shuffle=shuffle)
                         g = cf.read(tmpfile)[0]
                         self.assertTrue(
-                            f.equals(g, verbose=True),
+                            f.equals(g, verbose=2),
                             "Bad read/write with lossless compression: "
                             "{0}, {1}, {2}".format(
                                 fmt, compress, shuffle))
@@ -410,7 +410,7 @@ class read_writeTest(unittest.TestCase):
                          'version': 4.5,
                          'height_at_top_of_model': 23423.65})[0]
 
-        self.assertTrue(p.equals(p0, verbose=True))
+        self.assertTrue(p.equals(p0, verbose=2))
 
     def test_read_CDL(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -431,12 +431,12 @@ class read_writeTest(unittest.TestCase):
         h = cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
 
-        self.assertTrue(f0.equals(f, verbose=True))
+        self.assertTrue(f0.equals(f, verbose=2))
 
         self.assertTrue(f.construct('grid_latitude').equals(
-            c.construct('grid_latitude'), verbose=True))
+            c.construct('grid_latitude'), verbose=2))
         self.assertTrue(f0.construct('grid_latitude').equals(
-            c.construct('grid_latitude'), verbose=True))
+            c.construct('grid_latitude'), verbose=2))
 
         with self.assertRaises(Exception):
             _ = cf.read('test_read_write.py')

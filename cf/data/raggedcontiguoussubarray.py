@@ -1,3 +1,5 @@
+import logging
+
 from os import close
 from operator import mul
 
@@ -9,7 +11,8 @@ from ..functions import parse_indices, get_subspace
 
 from . import abstract
 
-_debug = False
+
+logger = logging.getLogger(__name__)
 
 
 class RaggedContiguousSubarray(abstract.CompressedSubarray):
@@ -44,24 +47,22 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
 
         uarray[tuple(p_indices)] = array[sample_indices]
 
-        if _debug:
-            print('instance_axis    =', instance_axis)
-            print('instance_index   =', instance_index)
-            print('element_axis     =', element_axis)
-            print('sample_indices   =', sample_indices)
-            print('p_indices        =', p_indices)
-            print('uarray.shape     =', uarray.shape)
-            print('self.array.shape =', array.shape)
+        logger.debug('instance_axis    = {}'.format(instance_axis))
+        logger.debug('instance_index   = {}'.format(instance_index))
+        logger.debug('element_axis     = {}'.format(element_axis))
+        logger.debug('sample_indices   = {}'.format(sample_indices))
+        logger.debug('p_indices        = {}'.format(p_indices))
+        logger.debug('uarray.shape     = {}'.format(uarray.shape))
+        logger.debug('self.array.shape = {}'.format(array.shape))
 
         if indices is Ellipsis:
             return uarray
         else:
-            if _debug:
-                print('indices =', indices)
+            logger.debug('indices = {}'.format(indices))
 
             indices = parse_indices(self.shape, indices)
-            if _debug:
-                print('parse_indices(self.shape, indices) =', indices)
+            logger.debug(
+                'parse_indices(self.shape, indices) = {}'.format(indices))
 
             return get_subspace(uarray, indices)
 

@@ -81,7 +81,7 @@ class CellMethodTest(unittest.TestCase):
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             for cm in cms:
-                self.assertTrue(cm.equals(cm.copy(), verbose=True))
+                self.assertTrue(cm.equals(cm.copy(), verbose=2))
 
     def test_CellMethod_equivalent(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -90,7 +90,7 @@ class CellMethodTest(unittest.TestCase):
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             for cm in cms:
-                self.assertTrue(cm.equivalent(cm.copy(), verbose=True))
+                self.assertTrue(cm.equivalent(cm.copy(), verbose=2))
         # --- End: for
 
         # Intervals
@@ -122,7 +122,7 @@ class CellMethodTest(unittest.TestCase):
 
             for cm0, cm1 in zip(cms0, cms1):
                 self.assertTrue(
-                    cm0.equivalent(cm1, verbose=True),
+                    cm0.equivalent(cm1, verbose=2),
                     '{0!r} not equivalent to {1!r}'.format(cm0, cm1)
                 )
         # --- End: for

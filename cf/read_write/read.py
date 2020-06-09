@@ -1,3 +1,4 @@
+import logging
 import os
 
 from ctypes.util import find_library
@@ -10,11 +11,13 @@ from .um     import UMRead
 from ..cfimplementation import implementation
 
 from ..fieldlist import FieldList
-from ..functions import flat
 
 from ..aggregate import aggregate as cf_aggregate
 
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+from ..decorators import _manage_log_level_via_verbosity
+
+from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
+
 
 # --------------------------------------------------------------------
 # Create an implementation container and initialize a read object for
@@ -25,7 +28,11 @@ netcdf = NetCDFRead(_implementation)
 UM = UMRead(_implementation)
 
 
-def read(files, external=None, verbose=False, warnings=False,
+logger = logging.getLogger(__name__)
+
+
+@_manage_log_level_via_verbosity
+def read(files, external=None, verbose=None, warnings=False,
          ignore_read_error=False, aggregate=True, nfields=None,
          squeeze=False, unsqueeze=False, fmt=None, select=None,
          extra=None, recursive=False, followlinks=False, um=None,
@@ -221,10 +228,21 @@ def read(files, external=None, verbose=False, warnings=False,
             `~cf.Field.convert` method of a returned field construct,
             instead of setting the *extra* parameter.
 
-        verbose: `bool`, optional
-            If True then print a description of how the contents of
-            the netCDF file were parsed and mapped to CF data model
-            constructs.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey how the contents of the netCDF file were parsed and
+            mapped to CF data model constructs.
 
         warnings: `bool`, optional
             If True then print warnings when an output field construct
@@ -552,8 +570,7 @@ def read(files, external=None, verbose=False, warnings=False,
             files2 = files3
 
         for filename in files2:
-            if verbose:
-                print('File: {0}'.format(filename))  # pragma: no cover
+            logger.info('File: {0}'.format(filename))  # pragma: no cover
 
             if um:
                 ftype = 'UM'
@@ -579,8 +596,8 @@ def read(files, external=None, verbose=False, warnings=False,
 
                         raise ValueError(message)
 
-                    if verbose:
-                        print('WARNING: {}'.format(error))  # pragma: no cover
+                    logger.warning(
+                        'WARNING: {}'.format(error))  # pragma: no cover
 
                     continue
             # --- End: if
@@ -622,29 +639,25 @@ def read(files, external=None, verbose=False, warnings=False,
         # --- End: for
     # --- End: for
 
-    # Print some informative messages
-    if verbose:
-        print(
-            "Read {0} field{1} from {2} file{3}".format(
-                field_counter, _plural(field_counter), file_counter,
-                _plural(file_counter)
-            )
-        )  # pragma: no cover
+    logger.info(
+        "Read {0} field{1} from {2} file{3}".format(
+            field_counter, _plural(field_counter), file_counter,
+            _plural(file_counter)
+        )
+    )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Aggregate the output fields
     # ----------------------------------------------------------------
     if aggregate and len(field_list) > 1:
-        if verbose:
-            org_len = len(field_list)  # pragma: no cover
+        org_len = len(field_list)  # pragma: no cover
 
         field_list = cf_aggregate(field_list, **aggregate_options)
 
-        if verbose:
-            n = len(field_list)  # pragma: no cover
-            print('{0} input field{1} aggregated into {2} field{3}'.format(
-                org_len, _plural(org_len),
-                n, _plural(n)))  # pragma: no cover
+        n = len(field_list)  # pragma: no cover
+        logger.info('{0} input field{1} aggregated into {2} field{3}'.format(
+            org_len, _plural(org_len), n, _plural(n))
+        )  # pragma: no cover
     # --- End: if
 
     # ----------------------------------------------------------------
@@ -707,9 +720,10 @@ def _plural(n):  # pragma: no cover
     return 's' if n != 1 else ''  # pragma: no cover
 
 
+@_manage_log_level_via_verbosity
 def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
-                 verbose=False, warnings=False, external=None,
+                 verbose=None, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
                  height_at_top_of_model=None, chunk=True, mask=True,
                  warn_valid=False):
@@ -740,8 +754,19 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 
             .. versionadded:: 3.4.0
 
-        verbose: `bool`, optional
-            If True then print information to stdout.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed.
 
     :Returns:
 
@@ -786,8 +811,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 #            if not ignore_read_error:
 #                raise Exception(error)
 #
-#            if verbose:
-#                print('WARNING: {}'.format(error))  # pragma: no cover
+#            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
 #
 #            return FieldList()
     # --- End: if
@@ -815,11 +839,10 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 
         if not netcdf.is_netcdf_file(filename):
             if ignore_read_error:
-                if verbose:
-                    print(
-                        "WARNING: Can't determine format of file {} generated "
-                        "from CDL file {}".format(filename, cdl_filename)
-                    )  # pragma: no cover
+                logger.warning(
+                    "WARNING: Can't determine format of file {} generated "
+                    "from CDL file {}".format(filename, cdl_filename)
+                )  # pragma: no cover
 
                 return FieldList()
             else:

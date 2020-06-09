@@ -65,7 +65,7 @@ class Bounds(mixin.Coordinate,
     .. versionadded:: 2.0
 
    :Parameters:
-        
+
         overlap: `bool`, optional
             If False then 1-d cells with two bounds vertices are not
             considered contiguous if any adjacent cells overlap each
@@ -118,7 +118,7 @@ class Bounds(mixin.Coordinate,
         # --- End: if
         if verbose >= 2:
             print("Period = {!r}".format(period))
-        
+
         if ndim == 2:
             if nbounds != 4:
                 raise ValueError("Can't tell if {}-d cells with {} vertices "
@@ -135,17 +135,17 @@ class Bounds(mixin.Coordinate,
             diff = data[:, :-1, 1] - data[:, 1:, 0]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
-            
+
             diff = data[:, :-1, 2] - data[:, 1:, 3]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
- 
+
             # Check cells (j, i) and (j+1, i) are contiguous
             diff = data[:-1, :, 3] - data[1:, :, 0]
             if period is not None:
@@ -153,19 +153,19 @@ class Bounds(mixin.Coordinate,
 
             if diff.any():
                 return False
- 
+
             diff = data[:-1, :, 2] - data[1:, :, 1]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
-         
+
 
 #            bnd = data.array
 #            for j in range(data.shape[0] - 1):
 #                for i in range(data.shape[1] - 1):
-#                    
+#
 #                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
 #                        bnd[j, i, 2] != bnd[j, i+1, 3]):
 #                        return False
@@ -178,7 +178,7 @@ class Bounds(mixin.Coordinate,
 
             return True
 
-        if ndim > 2:            
+        if ndim > 2:
             raise ValueError("Can't tell if {}-d cells "
                              "are contiguous".format(ndim))
 

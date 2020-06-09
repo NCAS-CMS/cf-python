@@ -1,3 +1,5 @@
+import logging
+
 from numpy import argsort as numpy_argsort
 from numpy import dtype   as numpy_dtype
 from numpy import sort    as numpy_sort
@@ -9,14 +11,22 @@ from .auxiliarycoordinate import AuxiliaryCoordinate
 from .domainaxis          import DomainAxis
 from .fieldlist           import FieldList
 from .query               import gt
+from .units               import Units
+
+from .decorators          import (_manage_log_level_via_verbosity,
+                                  _manage_log_level_via_verbose_attr,
+                                  _deprecated_kwarg_check)
+
 from .functions           import (flat, RTOL, ATOL,
+                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
                                   hash_array,
                                   _numpy_allclose)
 from .functions           import inspect as cf_inspect
-from .units               import Units
 
 from .data.data import Data
 
+
+logger = logging.getLogger(__name__)
 
 _dtype_float = numpy_dtype(float)
 
@@ -124,10 +134,11 @@ class _Meta:
                                         'Domain_ancillaries',
                                         'Field_ancillaries'))
 
+    @_manage_log_level_via_verbosity
     def __init__(
         self, f,
         rtol=None, atol=None,
-        info=0,
+        verbose=None,
         relaxed_units=False,
         allow_no_identity=False,
         respect_valid=False,
@@ -147,7 +158,7 @@ class _Meta:
 
         f: `cf.Field`
 
-        info: `int`, optional
+        verbose: `int` or `None`, optional
             See the `aggregate` function for details.
 
         relaxed_units: `bool`, optional
@@ -171,7 +182,7 @@ class _Meta:
         self._bool = False
         self.cell_values = False
 
-        self.info = info
+        self.verbose = verbose
 
         self.sort_indices = {}
         self.sort_keys = {}
@@ -228,13 +239,11 @@ class _Meta:
 
         if self.identity is None:
             if not allow_no_identity and self.has_data:
-                if info:
-                    self.message = ("no identity; consider setting "
-                                    "relaxed_identities")
+                self.message = ("no identity; consider setting "
+                                "relaxed_identities")
                 return
         elif not self.has_data:
-            if info:
-                self.message = "no data array"
+            self.message = "no data array"
             return
 
         constructs = f.constructs
@@ -381,8 +390,7 @@ class _Meta:
             info_1d_coord = info_dim + info_aux
 
 #            if not info_1d_coord:
-#                if info:
-#                    self.message = ("axis has no one-dimensional nor "
+#                self.message = ("axis has no one-dimensional nor "
 #                                    "scalar coordinates")
 #                return
 
@@ -391,9 +399,8 @@ class _Meta:
             if info_1d_coord:
                 identity = info_1d_coord[0]['identity']
             elif not self.relaxed_identities:
-                if info:
-                    self.message = ("axis has no one-dimensional nor "
-                                    "scalar coordinates")
+                self.message = ("axis has no one-dimensional nor "
+                                "scalar coordinates")
                 return
 
             ncdim = False
@@ -404,11 +411,10 @@ class _Meta:
                 domain_axis = f.axis(axis)  # TODO
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
-                    if info:
-                        self.message = (
-                            "axis {0!r} has no netCDF dimension name".format(
-                                f.axis_name(axis))
-                        )  # TODO
+                    self.message = (
+                        "axis {0!r} has no netCDF dimension name".format(
+                            f.axis_name(axis))
+                    )  # TODO
                     return
                 else:
                     ncdim = True
@@ -612,8 +618,7 @@ class _Meta:
                 # have the same units and span the same axes.
                 for value in info_msr[units]:
                     if axes == value['axes']:
-                        if info:
-                            self.message = "duplicate {0!r}".format(msr)
+                        self.message = "duplicate {0!r}".format(msr)
                         return
             else:
                 info_msr[units] = []
@@ -834,6 +839,7 @@ class _Meta:
 
         return cms
 
+    @_manage_log_level_via_verbose_attr
     def cell_measure_has_data_and_units(self, msr):
         '''TODO
 
@@ -847,19 +853,18 @@ class _Meta:
 
     '''
         if not msr.Units:
-            if self.info:
-                self.message = "{0!r} cell measure has no units".format(
-                    msr.identity())
+            self.message = "{0!r} cell measure has no units".format(
+                msr.identity())
             return
 
         if not msr.has_data():
-            if self.info:
-                self.message = "{0!r} cell measure has no data".format(
-                    msr.identity())
+            self.message = "{0!r} cell measure has no data".format(
+                msr.identity())
             return
 
         return True
 
+    @_manage_log_level_via_verbose_attr
     def coord_has_identity_and_data(self, coord, axes=None):
         '''TODO
 
@@ -901,9 +906,8 @@ class _Meta:
                 axes, set())
 
             if identity in all_coord_identities:
-                if self.info:
-                    self.message = "multiple {0!r} coordinates".format(
-                        identity)
+                self.message = "multiple {0!r} coordinates".format(
+                    identity)
                 return None
 
             if coord.has_data() or (
@@ -913,11 +917,11 @@ class _Meta:
         # --- End: if
 
         # Still here?
-        if self.info:
-            self.message = "{!r} has no identity or no data".format(coord)
+        self.message = "{!r} has no identity or no data".format(coord)
 
         return None
 
+    @_manage_log_level_via_verbose_attr
     def field_ancillary_has_identity_and_data(self, anc):
         '''TODO
 
@@ -940,9 +944,8 @@ class _Meta:
             all_field_anc_identities = self.all_field_anc_identities
 
             if identity in all_field_anc_identities:
-                if self.info:
-                    self.message = "multiple {0!r} field ancillaries".format(
-                        identity)
+                self.message = "multiple {0!r} field ancillaries".format(
+                    identity)
 
                 return None
 
@@ -952,12 +955,12 @@ class _Meta:
         # --- End: if
 
         # Still here?
-        if self.info:
-            self.message = ("{0!r} field ancillary has no identity or "
-                            "no data".format(anc.identity()))
+        self.message = ("{0!r} field ancillary has no identity or "
+                        "no data".format(anc.identity()))
 
         return None
 
+    @_manage_log_level_via_verbose_attr
     def coordinate_reference_signatures(self, refs):
         '''TODO
 
@@ -984,11 +987,10 @@ class _Meta:
 
         for signature in signatures:
             if signature[0] is None:
-                if info:
-                    self.messsage = ("{0!r} field can't be aggregated due "
-                                     "to it having an unidentifiable "
-                                     "coordinate "
-                                     "reference".format(self.f.identity()))
+                self.messsage = ("{0!r} field can't be aggregated due "
+                                 "to it having an unidentifiable "
+                                 "coordinate "
+                                 "reference".format(self.f.identity()))
                 return
         # --- End: for
 
@@ -996,6 +998,7 @@ class _Meta:
 
         return signatures
 
+    @_manage_log_level_via_verbose_attr
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
         '''TODO
 
@@ -1020,53 +1023,46 @@ class _Meta:
                                         nc_only=self.ncvar_identities)
 
         if anc_identity is None:
-            if self.info:
-                self.message = "{0!r} domain ancillary has no identity".format(
+            self.message = "{0!r} domain ancillary has no identity".format(
                     anc.identity())
             return
 
         all_domain_anc_identities = self.all_domain_anc_identities
 
         if anc_identity in all_domain_anc_identities:
-            if self.info:
-                self.message = "multiple {0!r} domain ancillaries".format(
-                    anc_identity)
+            self.message = "multiple {0!r} domain ancillaries".format(
+                anc_identity)
             return
 
         if not anc.has_data():
-            if self.info:
-                self.message = "{0!r} domain ancillary has no data".format(
-                    anc.identity())
+            self.message = "{0!r} domain ancillary has no data".format(
+                anc.identity())
             return
 
         all_domain_anc_identities.add(anc_identity)
 
         return anc_identity
 
-    def print_info(self, info, signature=True):
+    def print_info(self, signature=True):
         '''TODO
 
     :Parameters:
 
         m: `_Meta`
 
-        info: `int`
-
     :Returns:
 
         `None`
 
     '''
-        if info >= 2:
-            if signature:
-                print('STRUCTURAL SIGNATURE:\n' +
-                      self.string_structural_signature())
-            if self.cell_values:
-                print('CANONICAL COORDINATES:\n' +
-                      self.coordinate_values())
+        if signature:
+            logger.detail('STRUCTURAL SIGNATURE:\n' +
+                          self.string_structural_signature())
+        if self.cell_values:
+            logger.detail('CANONICAL COORDINATES:\n' +
+                          self.coordinate_values())
 
-        if info >= 3:
-            print('COMPLETE AGGREGATION METADATA:\n', self)
+        logger.debug('COMPLETE AGGREGATION METADATA:\n{}'.format(self))
 
     def string_structural_signature(self):
         '''TODO
@@ -1280,8 +1276,9 @@ class _Meta:
 
 # --- End: class
 
+@_manage_log_level_via_verbosity
 def aggregate(fields,
-              info=0,
+              verbose=None,
               relaxed_units=False,
               overlap=True,
               contiguous=False,
@@ -1305,6 +1302,7 @@ def aggregate(fields,
               no_overlap=False,
               shared_nc_domain=False,
               field_identity=None,
+              info=False,
               ):
     '''Aggregate field constructs into as few field constructs as
     possible.
@@ -1343,16 +1341,38 @@ def aggregate(fields,
         fields: `FieldList` or sequence of `Field`
             The field constructs to aggregated.
 
-        info: `int`, optional
-            Print information about the aggregation process. By
-            default *info* is 0 and no information is displayed. If
-            *info* is 1 or more then display information on which
-            fields are unaggregatable, and why. If *info* is 2 or more
-            then also display the structural signatures of the fields
-            and, when there is more than one field construct with the
-            same structural signature, their canonical first and last
-            coordinate values. If *info* is 3 or more then display the
-            field construct's complete aggregation metadata.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the aggregation process. Explicitly:
+
+            =============  =================================================
+            Value set      Result
+            =============  =================================================
+            ``0``          * No information is displayed.
+
+            ``1``          * Display information on which fields are
+                           unaggregatable, and why.
+
+            ``2``          * As well as the above, display the structural
+                           signatures of the fields and, when there is more
+                           than one field construct with the same structural
+                           signature, their canonical first and last
+                           coordinate values.
+
+            ``3``/``-1``  * As well as the above, display the field
+                           construct's complete aggregation metadata.
+            =============  =================================================
 
         overlap: `bool`, optional
             If False then require that aggregated field constructs
@@ -1508,6 +1528,9 @@ def aggregate(fields,
         shared_nc_domain: deprecated at version 3.0.0
             No longer required due to updated CF data model.
 
+        info: deprecated at version 3.5.0
+            Use the *verbose* parameter instead.
+
     :Returns:
 
         `FieldList`
@@ -1536,10 +1559,19 @@ def aggregate(fields,
     AttributeError: 'Field' object has no attribute 'source'
 
     '''
-    if no_overlap:
+    if no_overlap is not False:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             'cf.aggregate', {'no_overlap': no_overlap},
             "Use keyword 'overlap' instead.")  # pragma: no cover
+
+    if info is not False:  # catch 'Falsy' entries e.g. standard info=0
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.aggregate', {'info': info},
+            "Use keyword 'verbose' instead. Note the informational levels "
+            "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
+            "excluding I >= 3 which maps to V = -1 (V = 0 disables messages)",
+            version='3.5.0'
+        )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
@@ -1621,7 +1653,7 @@ def aggregate(fields,
         # signature
         # ------------------------------------------------------------
         meta = _Meta(f,
-                     info=info, rtol=rtol, atol=atol,
+                     verbose=verbose, rtol=rtol, atol=atol,
                      relaxed_units=relaxed_units,
                      allow_no_identity=allow_no_identity,
                      equal_all=equal_all,
@@ -1639,9 +1671,8 @@ def aggregate(fields,
             unaggregatable = True
             status = 1
 
-            if info:
-                print("Unaggregatable {0!r} has{1} been output: {2}".format(
-                    f, exclude, meta.message))
+            logger.info("Unaggregatable {0!r} has{1} been output: {2}".format(
+                f, exclude, meta.message))
 
             if not exclude:
                 # This field does not have a structural signature, so
@@ -1674,26 +1705,25 @@ def aggregate(fields,
 #        x.append(signature)
 #
 #    if len(x) == 2:
-#        print (hash(x[0]))
-#        print (hash(x[1]))
+#        logger.info(hash(x[0]))
+#        logger.info(hash(x[1]))
 #        for key, value in x[0]._asdict().items():
 #            if hash(value) != hash(getattr(x[1], key)):
-#                print (key, ' no equal!')
+#                logger.info('{} no equal!'.format(key))
 #            if key == 'Coordinate_references' and value:
 #                for q1, q2 in zip(value, x[1].Coordinate_references):
 #                    for w1, w2 in zip(q1, q2):
-#                        print (w1)
-#                        print (w2)
-#                        print (hash(w1))
-#                        print (hash(w2))
+#                        logger.info(w1)
+#                        logger.info(w2)
+#                        logger.info(hash(w1))
+#                        logger.info(hash(w2))
 
     for signature in signatures:  # sorted(signatures):
         meta = signatures[signature]
 
-        if info >= 2:
-            # Print useful information
-            meta[0].print_info(info)
-            print('')
+        # Print useful information
+        meta[0].print_info()
+        logger.detail('')
 
         if len(meta) == 1:
             # --------------------------------------------------------
@@ -1752,12 +1782,10 @@ def aggregate(fields,
                                           donotchecknonaggregatingaxes,
                                           hfl_cache, rtol, atol)
 
-        if info >= 2:
-            # Print useful information
-            for m in meta:
-                m.print_info(info, signature=False)
-
-            print('')
+        # Print useful information
+        for m in meta:
+            m.print_info(signature=False)
+        logger.detail('')
 
         # Take a shallow copy in case we abandon and want to output
         # the original, unaggregated fields.
@@ -1784,20 +1812,23 @@ def aggregate(fields,
             grouped_meta = _group_fields(meta, axis)
 
             if not grouped_meta:
-                if info:
-                    print("Unaggregatable {0!r} fields have{1} been output: "
-                          "{2}".format(
-                              meta[0].field.identity(), exclude,
-                              meta[0].message))
+                logger.info(
+                    "Unaggregatable {0!r} fields have{1} been output: "
+                    "{2}".format(
+                          meta[0].field.identity(), exclude,
+                          meta[0].message
+                    )
+                )
 
                 unaggregatable = True
                 break
 
             if len(grouped_meta) == number_of_fields:
-                if info >= 3:
-                    print("{0!r} fields can't be aggregated along their "
-                          "{1!r} axis".format(
-                              meta[0].field.identity(), axis))
+                logger.debug(
+                    "{0!r} fields can't be aggregated along their "
+                    "{1!r} axis".format(
+                        meta[0].field.identity(), axis)
+                )
                 continue
 
             # --------------------------------------------------------
@@ -1821,13 +1852,12 @@ def aggregate(fields,
                 # group if any do.
                 # ----------------------------------------------------
                 if not _ok_coordinate_arrays(m, axis, overlap, contiguous,
-                                             info):
-                    if info:
-                        print(
-                            "Unaggregatable {!r} fields have{} been "
-                            "output: {}".format(
-                                m[0].field.identity(), exclude, m[0].message)
-                        )
+                                             verbose):
+                    logger.info(
+                        "Unaggregatable {!r} fields have{} been "
+                        "output: {}".format(
+                            m[0].field.identity(), exclude, m[0].message)
+                    )
 
                     unaggregatable = True
                     break
@@ -1840,7 +1870,7 @@ def aggregate(fields,
                 for m1 in m[1:]:
                     m0 = _aggregate_2_fields(m0, m1,
                                              rtol=rtol, atol=atol,
-                                             info=info,
+                                             verbose=verbose,
                                              concatenate=concatenate,
                                              copy=(copy or not exclude),
                                              )
@@ -1850,12 +1880,11 @@ def aggregate(fields,
                         # abandon all aggregations on the fields with
                         # this structural signature, including those
                         # already done.
-                        if info:
-                            print(
-                                "Unaggregatable {!r} fields have{} been "
-                                "output: {}".format(
-                                    m1.field.identity(), exclude, m1.message)
-                            )
+                        logger.info(
+                            "Unaggregatable {!r} fields have{} been "
+                            "output: {}".format(
+                                m1.field.identity(), exclude, m1.message)
+                        )
 
                         unaggregatable = True
                         break
@@ -1890,8 +1919,8 @@ def aggregate(fields,
 
     aggregate.status = status
 
-    if status and info > 0:
-        print('')
+    if status:
+        logger.info('')
 
     return output_fields
 
@@ -2529,7 +2558,8 @@ def _sorted_by_first_values(meta, axis):
     meta.sort(key=_first_values)
 
 
-def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
+@_manage_log_level_via_verbosity
+def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
     '''Return True iff the aggregating 1-d coordinates of the aggregating
     axis are all aggregatable.
 
@@ -2549,7 +2579,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
         contiguous: `bool`
             See the `cf.aggregate` function for details.
 
-        info: `int`
+        verbose: `int` or `None`, optional
             See the `cf.aggregate` function for details.
 
     :Returns:
@@ -2579,14 +2609,13 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
             if (m0.last_values[axis][dim_coord_index0] >=
                     m1.first_values[axis][dim_coord_index1]):
                 # Found overlap
-                if info:
-                    meta[0].message = (
-                        "{0!r} dimension coordinate values overlap "
-                        "({1} >= {2})".format(
-                            m.axis[axis]['ids'][dim_coord_index],
-                            m0.last_values[axis][dim_coord_index0],
-                            m1.first_values[axis][dim_coord_index1])
-                    )
+                meta[0].message = (
+                    "{0!r} dimension coordinate values overlap "
+                    "({1} >= {2})".format(
+                        m.axis[axis]['ids'][dim_coord_index],
+                        m0.last_values[axis][dim_coord_index0],
+                        m1.first_values[axis][dim_coord_index1])
+                )
 
                 return False
 
@@ -2603,15 +2632,14 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
                         # because overlapping has been disallowed and
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
-                        if info:
-                            meta[0].message = (
-                                "overlap={0} and {1!r} dimension coordinate "
-                                "bounds values overlap ({2} < {3})".format(
-                                    m.axis[axis]['ids'][dim_coord_index],
-                                    overlap,
-                                    m1.first_bounds[axis][0],
-                                    m0.last_bounds[axis][1])
-                            )
+                        meta[0].message = (
+                            "overlap={0} and {1!r} dimension coordinate "
+                            "bounds values overlap ({2} < {3})".format(
+                                m.axis[axis]['ids'][dim_coord_index],
+                                overlap,
+                                m1.first_bounds[axis][0],
+                                m0.last_bounds[axis][1])
+                        )
 
                         return
             # --- End: if
@@ -2627,14 +2655,13 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
 #                        # allowed, the first cell from field1 overlaps
 #                        # in an unreasonable way with the last cell
 #                        # from field0.
-#                        if info:
-#                            meta[0].message = (
-#                                "{0!r} dimension coordinate bounds values "
-#                                "overlap by too much ({1} <= {2})".format(
-#                                    m.axis[axis]['ids'][dim_coord_index],
-#                                    m1_first_bounds[0], m0_last_bounds[0],
-#                                    m1_first_bounds[1], m0_last_bounds[1]
-#                            )
+#                        meta[0].message = (
+#                            "{0!r} dimension coordinate bounds values "
+#                            "overlap by too much ({1} <= {2})".format(
+#                                m.axis[axis]['ids'][dim_coord_index],
+#                                m1_first_bounds[0], m0_last_bounds[0],
+#                                m1_first_bounds[1], m0_last_bounds[1]
+#                        )
 #                        return
 #            # --- End: if
 
@@ -2646,16 +2673,15 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
                         # specified and the first cell from field1 is
                         # not contiguous with the last cell from
                         # field0.
-                        if info:
-                            meta[0].message = (
-                                "contiguous={0} and {1!r} dimension "
-                                "coordinate cells are not contiguous "
-                                "({2} < {3})".format(
-                                    m.axis[axis]['ids'][dim_coord_index],
-                                    contiguous,
-                                    m0.last_bounds[axis][1],
-                                    m1.first_bounds[axis][0])
-                            )
+                        meta[0].message = (
+                            "contiguous={0} and {1!r} dimension "
+                            "coordinate cells are not contiguous "
+                            "({2} < {3})".format(
+                                m.axis[axis]['ids'][dim_coord_index],
+                                contiguous,
+                                m0.last_bounds[axis][1],
+                                m1.first_bounds[axis][0])
+                        )
                         return
             # --- End: if
         # --- End: if
@@ -2676,12 +2702,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
                 number_of_1d_aux_coord_values += array.size
                 if (len(set_of_1d_aux_coord_values) !=
                         number_of_1d_aux_coord_values):
-                    if info:
-                        meta[0].message = (
-                            "no {0!r} dimension coordinates and {0!r} "
-                            "auxiliary coordinates have duplicate "
-                            "values".format(identity)
-                        )
+                    meta[0].message = (
+                        "no {0!r} dimension coordinates and {0!r} "
+                        "auxiliary coordinates have duplicate "
+                        "values".format(identity)
+                    )
 
                     return
     # --- End: if
@@ -2693,9 +2718,10 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
     return True
 
 
+@_manage_log_level_via_verbosity
 def _aggregate_2_fields(m0, m1,
                         rtol=None, atol=None,
-                        info=0,
+                        verbose=None,
                         concatenate=True,
                         copy=True):
     '''TODO
@@ -2712,7 +2738,7 @@ def _aggregate_2_fields(m0, m1,
         atol: `float`, optional
             See the `cf.aggregate` function for details.
 
-        info: `int`, optional
+        verbose: `int` or `None`, optional
             See the `cf.aggregate` function for details.
 
     :Returns:

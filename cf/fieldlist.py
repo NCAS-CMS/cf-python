@@ -1,11 +1,17 @@
 from copy import copy
 
+import logging
+
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
                         _DEPRECATION_ERROR_DICT)
 
-from .decorators import _deprecated_kwarg_check
+from .decorators import (_deprecated_kwarg_check,
+                         _manage_log_level_via_verbosity)
+
+
+logger = logging.getLogger(__name__)
 
 
 class FieldList(list):
@@ -441,7 +447,8 @@ class FieldList(list):
         return type(self)([f.copy(data=data) for f in self])
 
     @_deprecated_kwarg_check('traceback')
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False, ignore=(), traceback=False,
@@ -506,9 +513,20 @@ class FieldList(list):
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
 
-        verbose: `bool`, optional
-            If `True` then print information about differences that lead
-            to inequality.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about differences that lead to inequality.
 
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
@@ -571,23 +589,21 @@ class FieldList(list):
             if not isinstance(other, self.__class__):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
-            if verbose:
-                print(
-                    "{0}: Incompatible type: {1}".format(
-                        self.__class__.__name__, other.__class__.__name__)
-                )  # pragma: no cover
+            logger.info(
+                "{0}: Incompatible type: {1}".format(
+                    self.__class__.__name__, other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         # Check that there are equal numbers of fields
         len_self = len(self)
         if len_self != len(other):
-            if verbose:
-                print(
-                    "{0}: Different numbers of field construct: "
-                    "{1}, {2}".format(
-                        self.__class__.__name__,
-                        len_self, len(other))
-                )  # pragma: no cover
+            logger.info(
+                "{0}: Different numbers of field construct: "
+                "{1}, {2}".format(
+                    self.__class__.__name__,
+                    len_self, len(other))
+            )  # pragma: no cover
             return False
 
         if not unordered or len_self == 1:
@@ -602,12 +618,11 @@ class FieldList(list):
                                 ignore_data_type=ignore_data_type,
                                 ignore_type=ignore_type,
                                 verbose=verbose):
-                    if verbose:
-                        print(
-                            "{0}: Different field constructs at element {1}: "
-                            "{2!r}, {3!r}".format(
-                                self.__class__.__name__, i, f, g)
-                        )  # pragma: no cover
+                    logger.info(
+                        "{0}: Different field constructs at element {1}: "
+                        "{2!r}, {3!r}".format(
+                            self.__class__.__name__, i, f, g)
+                    )  # pragma: no cover
                     return False
         else:
             # ----------------------------------------------------
@@ -624,11 +639,10 @@ class FieldList(list):
 
             # Check that there are the same identities
             if set(self_identity) != set(other_identity):
-                if verbose:
-                    print("{}: Different sets of identities: {}, {}".format(
-                        self.__class__.__name__,
-                        set(self_identity),
-                        set(other_identity)))  # pragma: no cover
+                logger.info("{}: Different sets of identities: {}, {}".format(
+                    self.__class__.__name__,
+                    set(self_identity),
+                    set(other_identity)))  # pragma: no cover
                 return False
 
             # Check that there are the same number of variables
@@ -636,16 +650,15 @@ class FieldList(list):
             for identity, fl in self_identity.items():
                 gl = other_identity[identity]
                 if len(fl) != len(gl):
-                    if verbose:
-                        print(
-                            "{0}: Different numbers of {1!r} {2}s: "
-                            "{3}, {4}".format(
-                                self.__class__.__name__,
-                                identity,
-                                fl[0].__class__.__name__,
-                                len(fl), len(gl)
-                            )
-                        )  # pragma: no cover
+                    logger.info(
+                        "{0}: Different numbers of {1!r} {2}s: "
+                        "{3}, {4}".format(
+                            self.__class__.__name__,
+                            identity,
+                            fl[0].__class__.__name__,
+                            len(fl), len(gl)
+                        )
+                    )  # pragma: no cover
                     return False
             # --- End: for
 
@@ -670,12 +683,11 @@ class FieldList(list):
                 # --- End: for
 
                 if not found_match:
-                    if verbose:
-                        print(
-                            "{0}: No {1} equal to: {2!r}".format(
-                                self.__class__.__name__,
-                                g.__class__.__name__, f)
-                        )  # pragma: no cover
+                    logger.info(
+                        "{0}: No {1} equal to: {2!r}".format(
+                            self.__class__.__name__,
+                            g.__class__.__name__, f)
+                    )  # pragma: no cover
                     return False
         # --- End: if
 
@@ -1057,7 +1069,7 @@ class FieldList(list):
     >>> fl.select_by_ncvar()
     [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
      <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
-    
+
     >>> import re
     >>> fl.select_by_ncvar(re.compile('^hum'))
     [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]

@@ -723,8 +723,7 @@ class DimensionCoordinate(mixin.Coordinate,
 #
 #    :Parameters:
 #
-#        verbose: `bool`, optional
-#            TODO
+#        TODO
 #
 #    :Returns:
 #

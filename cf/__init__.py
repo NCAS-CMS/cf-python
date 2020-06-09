@@ -79,10 +79,10 @@ See the :ref:`cf-python home page <cf-python-home>` for documentation,
 installation and source code.
 
 '''
-__Conventions__  = 'CF-1.8'
-__author__       = 'David Hassell'
-__date__         = '2020-06-??'
-__version__      = '3.5.0'
+__Conventions__ = 'CF-1.8'
+__author__ = 'David Hassell'
+__date__ = '2020-06-??'
+__version__ = '3.5.0'
 
 _requires = (
     'numpy',
@@ -205,8 +205,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
 _minimum_vn = '1.8.3'
 _maximum_vn = '1.9'
 _cfdm_version = LooseVersion(cfdm.__version__)
-#if (_cfdm_version < LooseVersion(_minimum_vn)
-#    or _cfdm_version >= LooseVersion(_maximum_vn)):
+# if (_cfdm_version < LooseVersion(_minimum_vn)
+#     or _cfdm_version >= LooseVersion(_maximum_vn)):
 if not (LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn)):
     raise RuntimeError(
         "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
@@ -215,7 +215,7 @@ if not (LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn)):
 
 from .constructs import Constructs
 
-#from .abstract import Coordinate
+# from .abstract import Coordinate
 from .mixin import Coordinate
 
 from .count                   import Count
@@ -272,3 +272,29 @@ from .cfimplementation import (CFImplementation,
 
 from .read_write import (read,
                          write)
+
+
+# Set up basic logging for the full project with a root logger
+import logging
+import sys
+
+# Configure the root logger which all module loggers inherit from:
+logging.basicConfig(
+    stream=sys.stdout,
+    style='{',              # default is old style ('%') string formatting
+    format='{message}',     # no module names or datetimes etc. for basic case
+    level=logging.WARNING,  # default but change level via LOG_LEVEL()
+)
+
+# And create custom level inbetween 'INFO' & 'DEBUG', to understand value see:
+# https://docs.python.org/3.8/howto/logging.html#logging-levels
+logging.DETAIL = 15  # set value as an attribute as done for built-in levels
+logging.addLevelName(logging.DETAIL, 'DETAIL')
+
+
+def detail(self, message, *args, **kwargs):
+    if self.isEnabledFor(logging.DETAIL):
+        self._log(logging.DETAIL, message, args, **kwargs)
+
+
+logging.Logger.detail = detail
