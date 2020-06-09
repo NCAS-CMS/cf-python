@@ -215,6 +215,7 @@ Data
    ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.cyclic
+   ~cf.FieldAncillary.period
    ~cf.FieldAncillary.get_filenames
    ~cf.FieldAncillary.has_bounds
 

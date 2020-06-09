@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Index.binary_mask" href="../attribute/cf.Index.binary_mask.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cf.Index.fill_value.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,11 +104,11 @@
 <h1>cf.Index.fill_value<a class="headerlink" href="#cf-index-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.fill_value">
-<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/mixin/propertiesdata.py#L3677-L3754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/mixin/propertiesdata.py#L3812-L3889"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data array missing data value.</p>
 <p>This is the value of the <a class="reference internal" href="../attribute/cf.Index.missing_value.html#cf.Index.missing_value" title="cf.Index.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a> CF property, or if that
 is not set, the value of the <a class="reference internal" href="../attribute/cf.Index._FillValue.html#cf.Index._FillValue" title="cf.Index._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a> CF property, else if
-that is not set, <code class="docutils literal notranslate"><span class="pre">None</span></code>. In the last case the default <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+that is not set, <code class="docutils literal notranslate"><span class="pre">None</span></code>. In the last case the default <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 missing data value for the array’s data type is assumed if a
 missing data value is required.</p>
 <div class="admonition seealso">
@@ -133,20 +125,19 @@ value <code class="docutils literal notranslate"><span class="pre">'netCDF'</spa
 appropriate to the data array’s data type is used. These
 may be found with the <a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>
 function. For example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">default_netCDF_fillvals</span><span class="p">()</span>
-<span class="go">{&#39;S1&#39;: &#39; &#39;,</span>
-<span class="go"> &#39;i1&#39;: -127,</span>
-<span class="go"> &#39;u1&#39;: 255,</span>
-<span class="go"> &#39;i2&#39;: -32767,</span>
-<span class="go"> &#39;u2&#39;: 65535,</span>
-<span class="go"> &#39;i4&#39;: -2147483647,</span>
-<span class="go"> &#39;u4&#39;: 4294967295,</span>
-<span class="go"> &#39;i8&#39;: -9223372036854775806,</span>
-<span class="go"> &#39;u8&#39;: 18446744073709551614,</span>
-<span class="go"> &#39;f4&#39;: 9.969209968386869e+36,</span>
-<span class="go"> &#39;f8&#39;: 9.969209968386869e+36}</span>
-</pre></div>
-</div>
+<pre class="doctest literal-block">&gt;&gt;&gt; cf.default_netCDF_fillvals()
+{'S1': '',
+ 'i1': -127,
+ 'u1': 255,
+ 'i2': -32767,
+ 'u2': 65535,
+ 'i4': -2147483647,
+ 'u4': 4294967295,
+ 'i8': -9223372036854775806,
+ 'u8': 18446744073709551614,
+ 'f4': 9.969209968386869e+36,
+ 'f8': 9.969209968386869e+36}
+</pre>
 </dd>
 </dl>
 </dd>
@@ -191,11 +182,11 @@ value specified by <em>default</em></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Index.fill_value.rst.txt"

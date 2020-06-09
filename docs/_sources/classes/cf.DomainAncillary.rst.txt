@@ -248,6 +248,7 @@ Data
    ~cf.DomainAncillary.convert_reference_time
    ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.cyclic
+   ~cf.DomainAncillary.period
    ~cf.DomainAncillary.get_filenames
 
 Miscellaneous

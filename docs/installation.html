@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,13 +86,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/installation.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -105,7 +97,7 @@
   <div class="section" id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.4.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.5.0 for version 1.8 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id18"><strong>Operating systems</strong></a></p></li>
@@ -245,19 +237,19 @@ files</span></a>, and</p></li>
 <div class="section" id="required">
 <span id="id9"></span><h3><a class="toc-backref" href="#id25">Required</a><a class="headerlink" href="#required" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/">Python</a>, version 3.5 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, version 1.15 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, version 1.5.3 or
-newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.1.1 or
-newer (note that this package may be installed with netCDF4).</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.8.3.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.2.6 or newer.</p></li>
+<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.5 &lt;= version.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, 1.15 &lt;= version.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.5.3 &lt;= version.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.1.3 or newer
+(note that this package may be installed with netCDF4).</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.8.4 up to, but
+not including, 1.9.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.2.7 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 </ul>
 <ul id="unidata-udunits-2-library">
-<li><p><a class="reference external" href="http://www.unidata.ucar.edu/software/udunits">UNIDATA UDUNITS-2 library</a>, version 2.2.20 or
-newer. UDUNITS-2 is a C library that provides support for units of
+<li><p><a class="reference external" href="http://www.unidata.ucar.edu/software/udunits">UNIDATA UDUNITS-2 library</a>, 2.2.20 &lt;=
+version. UDUNITS-2 is a C library that provides support for units of
 physical quantities.</p>
 <p>If the UDUNITS-2 shared library file (<code class="docutils literal notranslate"><span class="pre">libudunits2.so.0</span></code> on
 GNU/Linux or <code class="docutils literal notranslate"><span class="pre">libudunits2.0.dylibfile</span></code> on MacOS) is in a
@@ -331,11 +323,11 @@ or newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/installation.rst.txt"

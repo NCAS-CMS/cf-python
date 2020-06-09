@@ -213,6 +213,7 @@ Data
    ~cf.List.convert_reference_time
    ~cf.List.creation_commands
    ~cf.List.cyclic
+   ~cf.List.period
    ~cf.List.get_filenames
    ~cf.List.has_bounds
 

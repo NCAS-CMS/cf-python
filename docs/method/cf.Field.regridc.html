@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.regrids" href="cf.Field.regrids.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cf.Field.regridc.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,7 +104,7 @@
 <h1>cf.Field.regridc<a class="headerlink" href="#cf-field-regridc" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regridc">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/field.py#L18959-L19471"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/field.py#L19388-L19969"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field with the specified Cartesian axes regridded
 onto a new grid.</p>
 <p>Between 1 and 3 dimensions may be regridded.</p>
@@ -184,59 +176,113 @@ of axes returned by <a class="reference internal" href="cf.Field.axes.html#cf.Fi
 the number of specifiers passed in.</p>
 </dd>
 <dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Specify the regridding method. The <em>method</em> parameter must
-be one of the following, which are described in more detail in
-<a class="reference internal" href="../tutorial.html#regridding-methods"><span class="std std-ref">Regridding methods</span></a>, but to summarise:</p>
-<blockquote>
-<div><table class="docutils align-default">
+be one of the following:</p>
+<table class="docutils align-default">
 <colgroup>
-<col style="width: 42%" />
-<col style="width: 58%" />
+<col style="width: 39%" />
+<col style="width: 61%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p><em>method</em></p></th>
-<th class="head"><p>Form of regridding to be
-applied:</p></th>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code>
-(previously called
-<code class="docutils literal notranslate"><span class="pre">'bilinear'</span></code>, which
-is still supported)</p></td>
-<td><p>Linear interpolation in the
-corresponding number of
-dimensions.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code></p></td>
+<td><p>Linear interpolation in the number
+of dimensions being regridded.</p>
+<p>For two dimensional regridding
+this is bilinear interpolation,
+and for three dimensional
+regridding this is trilinear
+interpolation.Bilinear
+interpolation.</p>
+</td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'conservative'</span></code> or
-<code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code></p></td>
-<td><p>First-order conservative. Note
-this requires both of the
-fields to have contiguous,
-non-overlapping bounds.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'bilinear'</span></code></p></td>
+<td><p>Deprecated alias for <code class="docutils literal notranslate"><span class="pre">'linear'</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'conservative_2nd'</span></code></p></td>
-<td><p>Second-order conservative. Note
-this requires both of the
-fields to have contiguous,
-non-overlapping bounds.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code></p></td>
+<td><p>First order conservative
+interpolation.</p>
+<p>Preserve the area integral of the
+data across the interpolation from
+source to destination. It uses the
+proportion of the area of the
+overlapping source and destination
+cells to determine appropriate
+weights.</p>
+<p>In particular, the weight of a
+source cell is the ratio of the
+area of intersection of the source
+and destination cells to the area
+of the whole destination cell.</p>
+<p>It does not account for the field
+gradient across the source cell,
+unlike the second-order
+conservative method (see below).</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'conservative_2nd'</span></code></p></td>
+<td><p>Second-order conservative
+interpolation.</p>
+<p>As with first order (see above),
+preserves the area integral of the
+field between source and
+destinatio using a weighted sum,
+with weights based on the
+proportionate area of
+intersection.</p>
+<p>Unlike first-order, the
+second-order method incorporates
+further terms to take into
+consideration the gradient of the
+field across the source cell,
+thereby typically producing a
+smoother result of higher
+accuracy.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'conservative'</span></code></p></td>
+<td><p>Alias for <code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'patch'</span></code></p></td>
-<td><p>Higher order patch recovery.</p></td>
+<td><p>Higher-order patch recovery
+interpolation.</p>
+<p>A second degree polynomial
+regridding method, which uses a
+least squares algorithm to
+calculate the polynomial.</p>
+<p>This method gives better
+derivatives in the resulting
+destination data than the linear
+method.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'nearest_stod'</span></code></p></td>
-<td><p>Nearest neighbor interpolation
-where each destination point is
-mapped to the <em>closest source</em>.</p></td>
+<td><p>Nearest neighbour interpolation
+for which each destination point
+is mapped to the closest source
+point.</p>
+<p>Useful for extrapolation of
+categorical data.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'nearest_dtos'</span></code></p></td>
-<td><p>Nearest neighbor interpolation
-where each source point is
-mapped to the <em>closest</em>
-<em>destination</em> point.</p></td>
+<td><p>Nearest neighbour interpolation
+for which each source point is
+mapped to the destination point.</p>
+<p>Useful for extrapolation of
+categorical data.</p>
+<p>A given destination point may
+receive input from multiple source
+points, but no source point will
+map to more than one destination
+point.</p>
+</td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
 </dd>
 <dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For all methods other than ‘nearest_stod’, this must be
 True as it does not make sense to set it to False. For the</p>
@@ -335,11 +381,11 @@ contained in field <code class="docutils literal notranslate"><span class="pre">
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.regridc.rst.txt"

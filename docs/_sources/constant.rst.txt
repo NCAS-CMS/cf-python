@@ -20,7 +20,7 @@ Version |release| for version |version| of the CF conventions.
 
     **Examples**:
 
-    Masking every element of a field constuct's data could be done as
+    Masking every element of a field construct's data could be done as
     follows:
 
     >>> f[...] = cf.masked

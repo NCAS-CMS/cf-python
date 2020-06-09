@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.FieldList.select_by_property" href="cf.FieldList.select_by_property.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cf.FieldList.select_by_ncvar.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,7 +104,7 @@
 <h1>cf.FieldList.select_by_ncvar<a class="headerlink" href="#cf-fieldlist-select-by-ncvar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_ncvar">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">select_by_ncvar</code><span class="sig-paren">(</span><em class="sig-param">*rank</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/fieldlist.py#L1000-L1046"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_ncvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">select_by_ncvar</code><span class="sig-paren">(</span><em class="sig-param">*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/fieldlist.py#L1012-L1078"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_ncvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select field constructs by netCDF variable name.</p>
 <p>To find the inverse of the selection, use a list comprehension
 with <a class="reference internal" href="cf.Field.match_by_ncvar.html#cf.Field.match_by_ncvar" title="cf.Field.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a> method of the field constucts. For
@@ -160,7 +152,31 @@ are selected.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;humidity&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;temp&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_by_ncvar</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_by_ncvar</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_by_ncvar</span><span class="p">()</span>
+<span class="go">[&lt;CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius&gt;]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_by_ncvar</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^hum&#39;</span><span class="p">))</span>
+<span class="go">[&lt;CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))&gt;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -173,11 +189,11 @@ are selected.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.FieldList.select_by_ncvar.rst.txt"

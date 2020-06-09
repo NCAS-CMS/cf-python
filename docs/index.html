@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Introduction" href="introduction.html" />
@@ -36,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="#">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="#">cf 3.5.0</a></h1>
 
 
 
@@ -64,7 +63,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -85,13 +84,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -106,7 +98,7 @@
 <style> .red {color:red} </style><style> .blue {color:blue} </style><div class="section" id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 3.4.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.5.0 for version 1.8 of the CF conventions.</p>
 <p>The Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package is an Earth Science data analysis library that
 is built on a complete implementation of the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>.</p>
 <div class="section" id="functionality">
@@ -136,7 +128,7 @@ file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Perm
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">[&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
@@ -174,8 +166,7 @@ constructs (<em>new in version 3.0.3</em>),</p></li>
 first- and second-order conservative and higher order patch recovery
 methods,</p></li>
 <li><p>apply convolution filters to field constructs,</p></li>
-<li><p>create moving means from field constructs (<strong>new in version
-3.3.0</strong>),</p></li>
+<li><p>create moving means from field constructs (<em>new in version 3.3.0</em>),</p></li>
 <li><p>calculate derivatives of field constructs,</p></li>
 <li><p>create field constructs to create derived quantities (such as
 vorticity).</p></li>
@@ -187,7 +178,7 @@ fields larger than the available memory to exist and be manipulated.</p>
 <p>Hierarchical groups provide a powerful mechanism to structure
 variables within datasets. A future release of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> will include support
 for netCDF4 files containing data organised in hierarchical groups,
-but this is not available in version 3.4.0 (even though it is
+but this is not available in version 3.5.0 (even though it is
 allowed in CF-1.8).</p>
 </div>
 </div>
@@ -251,11 +242,11 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

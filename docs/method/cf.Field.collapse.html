@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.moving_window" href="cf.Field.moving_window.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cf.Field.collapse.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,7 +104,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/field.py#L8506-L10536"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/field.py#L8488-L10518"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -441,7 +433,7 @@ from ‘K’ to ‘K2’:</p>
 </div>
 </dd>
 </dl>
-<p>When collapsing over years, it is assumed by default that the each
+<p>When collapsing over years, it is assumed by default that each
 portion of the annual cycle is collapsed over all years that are
 present. This is the case in the above two examples. It is
 possible, however, to restrict the years to be included, or group
@@ -468,8 +460,8 @@ restricting the years from 1963 to 1968:</p>
 </dd>
 </dl>
 <p>Similarly for collapses over days, it is assumed by default that
-the each portion of the diurnal cycle is collapsed over all days
-that are present, But it is possible to restrict the days to be
+each portion of the diurnal cycle is collapsed over all days that
+are present, But it is possible to restrict the days to be
 included, or group them into chunks, with the <em>over_days</em> keyword.</p>
 <p>The calculation can be done with multiple collapse calls, which
 can be useful if the interim stages are needed independently, but
@@ -665,7 +657,7 @@ multiannual means of calendar monthly minima:</p>
 selected by passing each given axis description to a call
 of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
 example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
-returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected. If a
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected. If a
 selected axis has size 1 then it is ignored. By default
 all axes with size greater than 1 are collapsed.</p>
 <dl class="simple">
@@ -1009,9 +1001,9 @@ group which may contain fewer elements
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></td>
 <td><p>Define groups by selecting elements that
-map to the same value in the <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+map to the same value in the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array. The array must contain integers
 and have the same length as the axis to
 be collapsed and its sequence of values
@@ -1022,7 +1014,7 @@ integer value in the numpy array. Upon
 output, the collapsed axis is arranged in
 order of increasing group number. See the
 <em>regroup</em> parameter, which allows the
-creation of such a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> for a
+creation of such a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> for a
 given grouped collapse.</p>
 <ul class="simple">
 <li><p>The groups do not have to be in runs of
@@ -1072,7 +1064,7 @@ ignoring the 2nd, 6th and 7th elements:
 </dl>
 </dd>
 <dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then, for grouped collapses, do not collapse the
-field construct, but instead return a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of
+field construct, but instead return a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of
 integers which identifies the groups defined by the
 <em>group</em> parameter. Each group contains the elements which
 correspond to a common non-negative integer value in the
@@ -1689,8 +1681,8 @@ spanning 2001 to 2005: <code class="docutils literal notranslate"><span class="p
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The collapsed field construct. Alternatively, if the
-<em>regroup</em> parameter is True then a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The collapsed field construct. Alternatively, if the
+<em>regroup</em> parameter is True then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is
 returned.</p>
 </dd>
 </dl>
@@ -1711,11 +1703,11 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.collapse.rst.txt"

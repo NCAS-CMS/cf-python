@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.CellMethod.equivalent" href="cf.CellMethod.equivalent.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cf.CellMethod.equals.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,7 +104,7 @@
 <h1>cf.CellMethod.equals<a class="headerlink" href="#cf-cellmethod-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMethod.equals">
-<code class="sig-prename descclassname">CellMethod.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_qualifiers=()</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.3/cfdm/cellmethod.py#L289-L460"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CellMethod.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_qualifiers=()</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.4/cfdm/cellmethod.py#L305-L495"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two cell method constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -138,10 +130,10 @@ not constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.7.0.</span></p>
 </div>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>other: </dt><dd><p>The object to compare for equality.</p>
+<dd class="field-odd"><dl>
+<dt>other:</dt><dd><p>The object to compare for equality.</p>
 </dd>
 <dt>atol: float, optional</dt><dd><p>The tolerance on absolute differences between real
 numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.ATOL.html#cfdm.ATOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a>
@@ -151,8 +143,17 @@ function.</p>
 numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.RTOL.html#cfdm.RTOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
 function.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print information about differences that lead
-to inequality.</p>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, corresponding to increasing
+verbosity (else <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of maximal and extreme
+verbosity), set for the duration of the method call (only) as
+the minimum severity level cut-off of displayed log messages,
+regardless of the global configured <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a>.</p>
+<p>Else, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), log messages will be
+filtered out, or otherwise, according to the value of the
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer that is set (up to
+a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>) the more description that is printed to
+convey information about differences that lead to inequality.</p>
 </dd>
 <dt>ignore_qualifiers: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of qualifiers to omit from the comparison.</p>
 </dd>
@@ -192,11 +193,11 @@ subclass of one. If <em>ignore_type</em> is True then
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-09.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.CellMethod.equals.rst.txt"
