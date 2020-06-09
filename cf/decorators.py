@@ -118,7 +118,7 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
             # they want to change the log levels so may have them disabled.
             print(
                 "Attempt to assign invalid value for the 'verbose' instance "
-                 "attribute. Accepted values are integers from -1 to {} "
+                "attribute. Accepted values are integers from -1 to {} "
                 "corresponding in the positive cases to increasing "
                 "verbosity, or None, to configure the verbosity according "
                 "to the global LOG_LEVEL setting.".format(

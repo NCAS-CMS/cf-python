@@ -3215,7 +3215,7 @@ class Field(mixin.PropertiesData,
                         "those specified for {} field.".format(name)
                     )
             # --- End: if
-            
+
             coords_2D = True
         else:
             coords_2D = False
@@ -3229,7 +3229,7 @@ class Field(mixin.PropertiesData,
 
         coord_keys = [x_key, y_key]
         coords = [x, y]
-        
+
         return axis_keys, axis_sizes, coord_keys, coords, coords_2D
 
     def _regrid_get_cartesian_coords(self, name, axes):
@@ -3411,14 +3411,14 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "{} {!r} coordinates must have bounds "
                             "for conservative regridding.".format(x, coord)
-                    )
-                    
+                        )
+
                     if not coord.contiguous(overlap=False):
                         raise ValueError(
                             "{} {!r} coordinates must have "
                             "contiguous, non-overlapping bounds "
                             "for conservative regridding.".format(x, coord)
-                    )
+                        )
             # --- End: for
 
             if ext_coords is not None:
@@ -3579,9 +3579,9 @@ class Field(mixin.PropertiesData,
         indices = {axis: [0] for axis in self.get_data_axes()
                    if axis not in axes}
 
-        f = self.subspace(**indices)    
+        f = self.subspace(**indices)
         f = f.squeeze(tuple(indices)).transpose(dst_order)
-        
+
         dst_mask = f.mask.array
 
         if cartesian:
@@ -3901,7 +3901,7 @@ class Field(mixin.PropertiesData,
         '''
 # NOTE: May be common ground between cartesian and shperical that
 # could save some lines of code.
-             
+
         # Remove the source coordinates of new field
 #        self.remove_items(axes=src_axis_keys)
 #        for key in self.constructs.filter_by_axis('or', *src_axis_keys):
@@ -3955,13 +3955,13 @@ class Field(mixin.PropertiesData,
             else:
                 for src_axis_key, dst_axis_key in zip(
                         src_axis_keys, dst_axis_keys):
-#                    try:
-#                        self.set_construct(
-#                            dst.dimension_coordinate(dst_axis_key),
-#                            axes=[src_axis_key]
-#                        )
-#                    except AttributeError:
-#                        pass
+                    # try:
+                    #     self.set_construct(
+                    #         dst.dimension_coordinate(dst_axis_key),
+                    #         axes=[src_axis_key]
+                    #     )
+                    # except AttributeError:
+                    #     pass
                     dim_coord = dst.dimension_coordinate(dst_axis_key,
                                                          default=None)
                     if dim_coord is not None:
@@ -4301,7 +4301,7 @@ class Field(mixin.PropertiesData,
                             key0=refs0[0], key1=refs1[0],
                             s=s, t=t)
                     )
-                    
+
                 if not equivalent_refs:
                     raise ValueError(
                         "Input weights field has an incompatible "
@@ -4498,9 +4498,8 @@ class Field(mixin.PropertiesData,
             # that later).
             N = interior_angle.sample_size(-1, squeeze=True)
 
-            all_areas = (interior_angle.sum(-1, squeeze=True)
-                         - (N - 2) * numpy_pi
-            )
+            all_areas = (interior_angle.sum(-1, squeeze=True) -
+                         (N - 2) * numpy_pi)
 
             for i, (parts_x, parts_y) in enumerate(zip(x, y)):
                 for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
@@ -10219,7 +10218,7 @@ class Field(mixin.PropertiesData,
                                           measure=measure,
                                           radius=radius,
                                           great_circle=great_circle)
-                    
+
                     if not g_weights:
                         g_weights = None
                 # --- End: if
@@ -10255,7 +10254,7 @@ class Field(mixin.PropertiesData,
                     return f
 
                 # ----------------------------------------------------
-                # Grouped collapse: Update the cell methods 
+                # Grouped collapse: Update the cell methods
                 # ----------------------------------------------------
                 f._update_cell_methods(method=method,
                                        domain_axes=collapse_axes,
@@ -10341,7 +10340,7 @@ class Field(mixin.PropertiesData,
                 logger.info(
                     '    Output weights          = {!r}'.format(d_weights)
                 )  # pragma: no cover
-            elif method == 'integral':                
+            elif method == 'integral':
                 raise ValueError(
                     "Must set the 'weights' parameter "
                     "for {!r} collapses".format(method))
@@ -11417,7 +11416,7 @@ class Field(mixin.PropertiesData,
                     within_days = (within_days,)
                 elif isinstance(within_days, TimeDuration):
                     if (within_days.Units.istime
-                        and TimeDuration(24, 'hours') % within_days):
+                            and TimeDuration(24, 'hours') % within_days):
                         # % Data(1, 'day'): # % within_days:
                         raise ValueError(
                             "Can't collapse: within_days={!r} is not an "
@@ -11634,11 +11633,10 @@ class Field(mixin.PropertiesData,
                     # --- End: if
 
                     if (group_contiguous
-                        and coord is not None
-                        and coord.has_bounds()
-                        and not coord.bounds.contiguous(
-                            overlap=(group_contiguous == 2))
-                        ):
+                            and coord is not None
+                            and coord.has_bounds()
+                            and not coord.bounds.contiguous(
+                                overlap=(group_contiguous == 2))):
                         # This group is not contiguous, so don't
                         # collapse it.
                         classification[index] = ignore_n
@@ -11662,7 +11660,7 @@ class Field(mixin.PropertiesData,
                                       coordinate=coordinate, squeeze=False,
                                       inplace=True,
                                       _create_zero_size_cell_bounds=True,
-                                      _update_cell_methods=False ))
+                                      _update_cell_methods=False))
             # --- End: for
 
             if regroup:
@@ -11787,16 +11785,16 @@ class Field(mixin.PropertiesData,
                     lastcm.get_method(None), lastcm.get_method(None))
 
                 if (original_domain_axis.get_size()
-                    == self.domain_axes[key].get_size()):
+                        == self.domain_axes[key].get_size()):
                     if (lastcm.get_axes(None) == axes
-                        and lastcm_method == method
-                        and lastcm_method in (
-                            'mean', 'maximum', 'minimum', 'point', 'sum',
-                            'median', 'mode', 'minumum_absolute_value',
-                            'maximum_absolute_value'
-                        )
-                        and not lastcm.get_qualifier('within', None)
-                        and not lastcm.get_qualifier('over', None)):
+                            and lastcm_method == method
+                            and lastcm_method in (
+                                'mean', 'maximum', 'minimum', 'point', 'sum',
+                                'median', 'mode', 'minumum_absolute_value',
+                                'maximum_absolute_value'
+                            )
+                            and not lastcm.get_qualifier('within', None)
+                            and not lastcm.get_qualifier('over', None)):
                         # It was a null collapse (i.e. the method is
                         # the same as the last one and the size of the
                         # collapsed axis hasn't changed).
@@ -12329,7 +12327,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = 0
                         else:
                             set_start_stop = -a
-                            
+
                         start = set_start_stop
                         stop = set_start_stop
                     elif a + b == size:
@@ -12339,7 +12337,7 @@ class Field(mixin.PropertiesData,
                             set_start_stop = -a
                         else:
                             set_start_stop = 0
-                            
+
                         start = set_start_stop
                         stop = set_start_stop
                     else:
@@ -16918,7 +16916,7 @@ class Field(mixin.PropertiesData,
     .. versionadded:: 3.4.1
 
     :Parameters:
-        
+
         size:  `int` or `dict`
             Specify the size of the halo for each axis.
 
@@ -16967,7 +16965,7 @@ class Field(mixin.PropertiesData,
             By default, or if *axes* is `None`, all axes that span the
             data are selected. No axes are expanded if *axes* is an
             empty sequence.
-        
+
             *Parameter example:*
               ``axes='X'``
 
@@ -16996,12 +16994,12 @@ class Field(mixin.PropertiesData,
             construct's `domain_axis` method. For example, for a value
             of ``'ncdim%i'``, the domain axis construct returned by
             ``f.domain_axis('ncdim%i')``.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by their netCDF dimension
               names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
@@ -17068,7 +17066,7 @@ class Field(mixin.PropertiesData,
      [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
     >>> print(g.coordinate('X').array)
     [ 22.5  22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5 337.5]
-    
+
     >>> g = f.halo(1, axes='Y')
     >>> print(g)
     Field: specific_humidity (ncvar%q)
@@ -17116,7 +17114,7 @@ class Field(mixin.PropertiesData,
             _ = "{}.halo(".format(self.__class__.__name__)
             print("{}{})".format(_,
                                  (',\n' + ' ' * len(_)).join(_kwargs)))
-            
+
         f = _inplace_enabled_define_and_cleanup(self)
 
         # Set the halo size for each axis.
@@ -17124,10 +17122,10 @@ class Field(mixin.PropertiesData,
         if isinstance(size, dict):
             if axes is not None:
                 raise ValueError("can't set axes when size is a dict TODO")
-            
+
             axis_halo = {self.domain_axis(k, key=True): v
                          for k, v in size.items()}
-            
+
             if not set(data_axes).issuperset(axis_halo):
                 raise ValueError(
                     "Can't apply halo: Bad axis specification: {!r}".format(
@@ -17135,10 +17133,10 @@ class Field(mixin.PropertiesData,
         else:
             if axes is None:
                 axes = data_axes
-                
+
             if isinstance(axes, (str, int)):
                 axes = (axes,)
-             
+
             axis_halo = {self.domain_axis(k, key=True): size
                          for k in axes}
 
@@ -17147,10 +17145,10 @@ class Field(mixin.PropertiesData,
             tripolar = tripolar.copy()
             X_axis = tripolar.pop('X', None)
             Y_axis = tripolar.pop('Y', None)
-            
+
             if X_axis is None:
                 raise ValueError("Must provide a tripolar 'X' axis.")
-        
+
             if Y_axis is None:
                 raise ValueError("Must provide a tripolar 'Y' axis.")
 
@@ -17162,19 +17160,19 @@ class Field(mixin.PropertiesData,
             except ValueError:
                 raise ValueError(
                     "Axis {!r} is not spanned by the data".format(X_axis))
-                
+
             try:
                 i_Y = data_axes.index(Y)
             except ValueError:
                 raise ValueError(
                     "Axis {!r} is not spanned by the data".format(Y_axis))
-                
+
             tripolar['X'] = i_X
             tripolar['Y'] = i_Y
-            
+
             tripolar_axes = {X: 'X', Y: 'Y'}
         # --- End: if
-        
+
         # Add halos to the field construct's data
         size = {data_axes.index(axis): h
                 for axis, h, in axis_halo.items()}
@@ -17182,7 +17180,7 @@ class Field(mixin.PropertiesData,
         f.data.halo(size=size, tripolar=tripolar,
                     fold_index=fold_index, inplace=True,
                     verbose=verbose)
-        
+
         # Change domain axis sizes
         for axis, h in axis_halo.items():
             d = f.domain_axis(axis)
@@ -17198,7 +17196,7 @@ class Field(mixin.PropertiesData,
             if not construct_size:
                 # This construct does not span an expanded axis
                 continue
-            
+
             construct_tripolar = False
             if (
                     tripolar
@@ -17213,12 +17211,12 @@ class Field(mixin.PropertiesData,
                    fold_index=fold_index, inplace=True,
                    verbose=verbose)
         # --- End: for
-        
+
         if verbose:
             print("Returns:{!r}".format(f))  # pragma: no cover
 
         return f
-    
+
     def percentile(self, ranks, axes=None, interpolation='linear',
                    squeeze=False, mtol=1):
         '''Compute percentiles of the data along the specified axes.
@@ -17545,25 +17543,25 @@ class Field(mixin.PropertiesData,
 #           Select the construct for which to return the period of the
 #           data. By default the field construct itself is
 #           selected. May be:
-#    
+#
 #              * `None` to select the field construct. This is the
 #                default.
 #
 #              * The identity or key of a metadata construct.
-#    
+#
 #            A construct identity is specified by a string
 #            (e.g. ``'latitude'``, ``'long_name=time'``,
 #            ``'ncvar%lat'``, etc.); or a compiled regular expression
 #            (e.g. ``re.compile('^atmosphere')``) that selects the
 #            relevant constructs whose identities match via
 #            `re.search`.
-#    
+#
 #            Each construct has a number of identities, and is selected
 #            if any of them match any of those provided. A construct's
 #            identities are those returned by its `!identities`
 #            method. In the following example, the construct ``x`` has
 #            six identities:
-#    
+#
 #               >>> x.identities()
 #               ['time',
 #                'long_name=Time',
@@ -17571,11 +17569,11 @@ class Field(mixin.PropertiesData,
 #                'standard_name=time',
 #                'ncvar%t',
 #                'T']
-#    
+#
 #            A construct key may optionally have the ``'key%'``
 #            prefix. For example ``'dimensioncoordinate2'`` and
 #            ``'key%dimensioncoordinate2'`` are both acceptable keys.
-#    
+#
 #            Note that in the output of a `print` call or `!dump`
 #            method, a construct is always described by one of its
 #            identities, and so this description may always be used as
@@ -17620,7 +17618,7 @@ class Field(mixin.PropertiesData,
 #                self, 'period', kwargs)  # pragma: no cover
 #
 #        return super().period(*value)
-            
+
     def replace_construct(self, identity, construct, copy=True):
         '''Replace a metadata construct.
 
@@ -18849,13 +18847,13 @@ class Field(mixin.PropertiesData,
                                     overlapping source and destination
                                     cells to determine appropriate
                                     weights.
-                                              
+
                                     In particular, the weight of a
                                     source cell is the ratio of the
                                     area of intersection of the source
                                     and destination cells to the area
                                     of the whole destination cell.
-                                              
+
                                     It does not account for the field
                                     gradient across the source cell,
                                     unlike the second-order
@@ -18871,7 +18869,7 @@ class Field(mixin.PropertiesData,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
-                                   
+
                                     Unlike first-order, the
                                     second-order method incorporates
                                     further terms to take into
@@ -18890,7 +18888,7 @@ class Field(mixin.PropertiesData,
                                     regridding method, which uses a
                                     least squares algorithm to
                                     calculate the polynomial.
-                                                                         
+
                                     This method gives better
                                     derivatives in the resulting
                                     destination data than the linear
@@ -18902,15 +18900,15 @@ class Field(mixin.PropertiesData,
                                     point.
 
                                     Useful for extrapolation of
-                                    categorical data.      
-          
+                                    categorical data.
+
             ``'nearest_dtos'``      Nearest neighbour interpolation
                                     for which each source point is
                                     mapped to the destination point.
 
                                     Useful for extrapolation of
                                     categorical data.
-                                    
+
                                     A given destination point may
                                     receive input from multiple source
                                     points, but no source point will
@@ -19190,8 +19188,8 @@ class Field(mixin.PropertiesData,
         section_keys, sections = self._regrid_get_reordered_sections(
             axis_order, src_axis_keys, src_axis_indices)
 
-        print  (section_keys,)
-        
+        print(section_keys,)
+
         # Bounds must be used if the regridding method is conservative.
         use_bounds = self._regrid_use_bounds(method)
 
@@ -19483,13 +19481,13 @@ class Field(mixin.PropertiesData,
                                     overlapping source and destination
                                     cells to determine appropriate
                                     weights.
-                                              
+
                                     In particular, the weight of a
                                     source cell is the ratio of the
                                     area of intersection of the source
                                     and destination cells to the area
                                     of the whole destination cell.
-                                              
+
                                     It does not account for the field
                                     gradient across the source cell,
                                     unlike the second-order
@@ -19505,7 +19503,7 @@ class Field(mixin.PropertiesData,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
-                                   
+
                                     Unlike first-order, the
                                     second-order method incorporates
                                     further terms to take into
@@ -19524,7 +19522,7 @@ class Field(mixin.PropertiesData,
                                     regridding method, which uses a
                                     least squares algorithm to
                                     calculate the polynomial.
-                                                                         
+
                                     This method gives better
                                     derivatives in the resulting
                                     destination data than the linear
@@ -19536,15 +19534,15 @@ class Field(mixin.PropertiesData,
                                     point.
 
                                     Useful for extrapolation of
-                                    categorical data.      
-          
+                                    categorical data.
+
             ``'nearest_dtos'``      Nearest neighbour interpolation
                                     for which each source point is
                                     mapped to the destination point.
 
                                     Useful for extrapolation of
                                     categorical data.
-                                    
+
                                     A given destination point may
                                     receive input from multiple source
                                     points, but no source point will
@@ -19770,8 +19768,8 @@ class Field(mixin.PropertiesData,
         # Deal with case of 1D nonconservative regridding
         nonconservative1D = False
         if (method not in conservative_regridding_methods
-            and n_axes == 1
-            and coords_ext == []):
+                and n_axes == 1
+                and coords_ext == []):
             # Method is not conservative, regridding is to be done along
             # one dimension and that dimension has not been padded out with
             # an extra one.
@@ -19822,7 +19820,7 @@ class Field(mixin.PropertiesData,
                     src_data = numpy_tile(src_data, (2, 1))
 
                 if (not (method == 'nearest_stod' and use_src_mask)
-                    and numpy_ma_is_masked(src_data)):
+                        and numpy_ma_is_masked(src_data)):
                     mask = src_data.mask
                     if not numpy_array_equal(mask, old_mask):
                         # Release old memory

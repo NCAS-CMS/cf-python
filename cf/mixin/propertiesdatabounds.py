@@ -647,7 +647,7 @@ class PropertiesDataBounds(PropertiesData):
             return True
 
         bounds = self.get_bounds(None)
-        if bounds is not None:            
+        if bounds is not None:
             return bounds.period is not None
 
 #        return self._custom.get('period', None) is not None
@@ -720,7 +720,7 @@ class PropertiesDataBounds(PropertiesData):
 
 #        print('TODO RECURISION HERE')
 #        bounds = self.get_bounds(None)
-#        if bounds is not None:        
+#        if bounds is not None:
 #            data = bounds.get_data(None)
 #            if data is not None:
 #                # Return the units of the bounds data
@@ -730,7 +730,7 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._custom['Units']
         except KeyError:
-#            if bounds is None:
+            # if bounds is None:
             self._custom['Units'] = _units_None
             return _units_None
 #            else:
@@ -739,9 +739,9 @@ class PropertiesDataBounds(PropertiesData):
 #                except KeyError:
 #                    bounds._custom['Units'] = _units_None
 #        # --- End: try
-        
+
 #        return _units_None
-    
+
     @Units.setter
     def Units(self, value):
         PropertiesData.Units.fset(self, value)
@@ -751,7 +751,7 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             bounds.Units = value
 
-# Moved to parent class at v3.4.1         
+# Moved to parent class at v3.4.1
 #        # Set the Units on the period
 #        period = self._custom.get('period')
 #        if period is not None:
@@ -1563,7 +1563,7 @@ class PropertiesDataBounds(PropertiesData):
             return True
 
         period = self.autoperiod().period()
-                
+
         if ndim == 2:
             if nbounds != 4:
                 raise ValueError("Can't tell if {}-d cells with {} vertices "
@@ -1573,17 +1573,17 @@ class PropertiesDataBounds(PropertiesData):
             diff = bounds[:, :-1, 1] - bounds[:, 1:, 0]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
-            
+
             diff = bounds[:, :-1, 2] - bounds[:, 1:, 3]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
- 
+
             # Check cells (j, i) and (j+1, i) are contiguous
             diff = bounds[:-1, :, 3] - bounds[1:, :, 0]
             if period is not None:
@@ -1591,17 +1591,17 @@ class PropertiesDataBounds(PropertiesData):
 
             if diff.any():
                 return False
- 
+
             diff = bounds[:-1, :, 2] - bounds[1:, :, 1]
             if period is not None:
                 diff = diff % period
-                
+
             if diff.any():
                 return False
-         
+
             return True
 
-        if ndim > 2:            
+        if ndim > 2:
             raise ValueError("Can't tell if {}-d cells "
                              "are contiguous".format(ndim))
 
@@ -1611,7 +1611,7 @@ class PropertiesDataBounds(PropertiesData):
 
         lower = bounds[1:, 0]
         upper = bounds[:-1, 1]
-         
+
         if not overlap:
             diff = lower - upper
             if period is not None:
@@ -1621,8 +1621,8 @@ class PropertiesDataBounds(PropertiesData):
         else:
             direction = self.direction()
             if direction is None:
-               return (lower <= upper).all() or (lower >= upper).all()
-            
+                return (lower <= upper).all() or (lower >= upper).all()
+
             if direction:
                 return (lower <= upper).all()
             else:
@@ -2134,7 +2134,7 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return out
-    
+
     @_inplace_enabled
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
              inplace=False, verbose=False):
@@ -2164,7 +2164,7 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         size: `int` or `dict`
-            Specify the size of the halo for each axis. 
+            Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
@@ -2209,12 +2209,12 @@ class PropertiesDataBounds(PropertiesData):
             as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by their integer positions in the data.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by positions 2 and 1
               respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
@@ -2233,7 +2233,7 @@ class PropertiesDataBounds(PropertiesData):
             If True then print a description of the operation.
 
     :Returns:
-        
+
             The expanded data, or `None` if the operation was
             in-place.
 
@@ -2247,7 +2247,7 @@ class PropertiesDataBounds(PropertiesData):
             bounds=True, interior_ring=True, inplace=inplace,
             size=size, axes=axes, tripolar=tripolar,
             fold_index=fold_index, verbose=verbose)
-   
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
@@ -3367,7 +3367,7 @@ class PropertiesDataBounds(PropertiesData):
         '''Return or set the period for cyclic values.
 
     .. seeslso:: `cyclic`
-        
+
     :Parameters:
 
         value: optional
@@ -3414,7 +3414,7 @@ class PropertiesDataBounds(PropertiesData):
         old = super().period(*value)
 
         old2 = None
-        
+
         bounds = self.get_bounds(None)
         if bounds is not None:
             old2 = bounds.period(*value)
@@ -3423,7 +3423,7 @@ class PropertiesDataBounds(PropertiesData):
             return old2
 
         return old
-        
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, bounds=True, inplace=False, i=False):

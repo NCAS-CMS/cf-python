@@ -122,7 +122,7 @@ from ..decorators import (_inplace_enabled,
                           _manage_log_level_via_verbosity)
 
 from .abstract import (Array,
-                                 CompressedArray)
+                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
@@ -156,9 +156,9 @@ _month_length = _year_length / 12
 def _convert_to_builtin_type(x):
     '''Convert a non-JSON-encodable object to a JSON-encodable built-in
     type.
-    
+
     Possible conversions are:
-    
+
     ================  =======  ================================
     Input             Output   `numpy` data-types covered
     ================  =======  ================================
@@ -167,18 +167,18 @@ def _convert_to_builtin_type(x):
                                uint8, uint16, uint32, uint64
     `numpy.floating`  `float`  float, float16, float32, float64
     ================  =======  ================================
-    
+
     :Parameters:
-    
+
         x:
             TODO
-    
+
     :Returns:
-    
+
             TODO
-    
+
     **Examples:**
-    
+
     >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
     bool
     >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
@@ -10806,7 +10806,7 @@ False
     def halo(self, size, axes=None, tripolar=None,
              fold_index=-1, inplace=False, verbose=False):
         '''Expand the data by adding a halo.
-        
+
     The halo may be applied over a subset of the data dimensions and
     each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
@@ -10829,7 +10829,7 @@ False
     :Parameters:
 
         size: `int` or `dict`
-            Specify the size of the halo for each axis. 
+            Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
@@ -10874,12 +10874,12 @@ False
             as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by their integer positions in the data.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by positions 2 and 1
               respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
@@ -10974,7 +10974,7 @@ False
             _ = "{}.halo(".format(self.__class__.__name__)
             print("{}{})".format(_,
                                  (',\n' + ' '*len(_)).join(_kwargs)))
-            
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
@@ -10988,14 +10988,14 @@ False
                 raise ValueError(
                     "Can't set the axes parameter when the "
                     "size parameter is a dictionary")
-            
+
             axes = self._parse_axes(tuple(size))
             size = [size[i] if i in axes else 0
                     for i in range(ndim)]
         else:
             if axes is None:
                 axes = list(range(ndim))
-            
+
             axes = d._parse_axes(axes)
             size = [size if i in axes else 0
                     for i in range(ndim)]
@@ -11008,20 +11008,20 @@ False
                 raise ValueError(
                     "fold_index parameter must be -1 or 0. "
                     "Got {!r}".format(fold_index))
-            
+
             # Find the X and Y axes of a tripolar grid
             tripolar = tripolar.copy()
             X_axis = tripolar.pop('X', None)
             Y_axis = tripolar.pop('Y', None)
-            
+
             if tripolar:
                 raise ValueError(
                     "Can not set key {!r} in the tripolar "
                     "dictionary.".format(tripolar.popitem()[0]))
-            
+
             if X_axis is None:
                 raise ValueError("Must provide a tripolar 'X' axis.")
-        
+
             if Y_axis is None:
                 raise ValueError("Must provide a tripolar 'Y' axis.")
 
@@ -11033,7 +11033,7 @@ False
                     "Must provide exactly one tripolar 'X' axis. "
                     "Got {!r}".format(
                         X_axis))
-        
+
             if len(Y) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'Y' axis. "
@@ -11042,7 +11042,7 @@ False
 
             X_axis = X[0]
             Y_axis = Y[0]
-            
+
             if X_axis == Y_axis:
                 raise ValueError(
                     "Tripolar 'X' and 'Y' axes must be different. "
@@ -11050,7 +11050,7 @@ False
                         X_axis, Y_axis))
 
             for A, axis in zip(('X', 'Y',),
-                               (X_axis, Y_axis)):                
+                               (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
@@ -11096,11 +11096,11 @@ False
         # ------------------------------------------------------------
         for i in axes:
             size_i = size[i]
-            
+
             for edge in (0, -1):
                 # Initialise indices to the expanded data
                 indices1 = [slice(None)] * ndim
-                    
+
                 if edge == -1:
                     indices1[i] = slice(-size_i, None)
                 else:
@@ -11108,12 +11108,12 @@ False
 
                 # Initialise indices to the original data
                 indices0 = indices1[:]
-               
+
                 for j in axes:
                     if j == i:
                         continue
-                    
-                    size_j = size[j]            
+
+                    size_j = size[j]
                     indices1[j] = slice(size_j, -size_j)
 
                 out[tuple(indices1)] = d[tuple(indices0)]
@@ -11140,7 +11140,7 @@ False
         # ------------------------------------------------------------
         if tripolar and size[Y_axis]:
             indices1 = [slice(None)] * ndim
-            
+
             if fold_index == -1:
                 # The last index of the "Y" axis corresponds to the
                 # fold in "X" axis of a tripolar grid
@@ -11149,7 +11149,7 @@ False
                 # The first index of the "Y" axis corresponds to the
                 # fold in "X" axis of a tripolar grid
                 indices1[Y_axis] = slice(0, size[Y_axis])
-                
+
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
@@ -11160,7 +11160,7 @@ False
 
         # Set expanded axes to be non-cyclic
         out.cyclic(axes=axes, iscyclic=False)
-        
+
         if inplace:
             d.__dict__ = out.__dict__
             d.hardmask = hardmask
@@ -11168,7 +11168,7 @@ False
             d = out
 
         return d
-    
+
     @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO

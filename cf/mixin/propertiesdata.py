@@ -1154,7 +1154,7 @@ class PropertiesData(Properties):
             return self._custom['Units']
         except KeyError:
             self._custom['Units'] = _units_None
-            
+
         return _units_None
 
     @Units.setter
@@ -1775,7 +1775,7 @@ class PropertiesData(Properties):
     This is distinct from the cyclicity of individual axes.
 
     .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
-        
+
     :Parameters:
 
         value: optional
@@ -4981,7 +4981,7 @@ class PropertiesData(Properties):
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
              inplace=False, verbose=False):
         '''Expand the data by adding a halo.
-        
+
     The halo may be applied over a subset of the data dimensions and
     each dimension may have a different halo size (including
     zero). The halo region is populated with a copy of the proximate
@@ -5004,7 +5004,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         size: `int` or `dict`
-            Specify the size of the halo for each axis. 
+            Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
             size that is applied to all of the axes defined by the
@@ -5049,12 +5049,12 @@ class PropertiesData(Properties):
             as described above. It must have keys ``'X'`` and ``'Y'``,
             whose values identify the corresponding domain axis
             construct by their integer positions in the data.
-        
+
             The "X" and "Y" axes must be a subset of those identified
             by the *size* or *axes* parameter.
 
             See the *fold_index* parameter.
-        
+
             *Parameter example:*
               Define the "X" and Y" axes by positions 2 and 1
               respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
@@ -5073,7 +5073,7 @@ class PropertiesData(Properties):
             If True then print a description of the operation.
 
     :Returns:
-        
+
             The expanded data, or `None` if the operation was
             in-place.
 
@@ -5104,7 +5104,7 @@ class PropertiesData(Properties):
             _ = "{}.halo(".format(self.__class__.__name__)
             print("{}{}".format(_,
                                 (',\n' + ' '*len(_)).join(_kwargs)))
-            
+
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
@@ -5112,9 +5112,9 @@ class PropertiesData(Properties):
             data.halo(size=size, axes=axes, tripolar=tripolar,
                       fold_index=fold_index, inplace=True,
                       verbose=verbose)
-            
+
         return v
-        
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
@@ -5230,11 +5230,11 @@ class PropertiesData(Properties):
             data.override_units(units, inplace=True)
         else:
             v._custom['Units'] = units
-            
+
         # Override the Units on the period
         period = v.period()
         if period is not None:
-#            v._custom['period'] = period.override_units(units)
+            # v._custom['period'] = period.override_units(units)
             v.period(period.override_units(units))
 
         return v

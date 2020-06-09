@@ -2339,11 +2339,11 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         for i in range(0, sizes[current_index], steps[current_index]):
             if stop is not None and nl_vars['count'] >= stop:
                 return
-            
+
             indices[current_index] = slice(i, i + steps[current_index])
-            loop_over_index(x, current_index - 1, axis_indices, indices) 
+            loop_over_index(x, current_index - 1, axis_indices, indices)
     # --- End: def
-    
+
     # Retrieve the index of each axis defining the sections
     if data:
         if isinstance(axes, int):

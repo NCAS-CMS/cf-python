@@ -155,7 +155,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
         year = arg
 
     for calendars, datetime_cls in _datetime_object.items():
-        if calendar in calendars:                
+        if calendar in calendars:
             return datetime_cls(year, month, day, hour, minute,
                                 second, microsecond)
     # --- End: for

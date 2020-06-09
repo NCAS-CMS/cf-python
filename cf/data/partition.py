@@ -838,7 +838,7 @@ class Partition:
                         del self.masked
                         logger.debug(
                             '    1.1.1.3 del masked ({} > {})'.format(
-                            FREE_MEMORY(), FM_THRESHOLD())
+                                FREE_MEMORY(), FM_THRESHOLD())
                         )
 
                 else:

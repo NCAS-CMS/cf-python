@@ -128,22 +128,22 @@ class DataTest(unittest.TestCase):
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-       
+
         d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
-        
+
         e = d.copy()
         self.assertIsNone(e.halo(1, inplace=True))
-        
+
         e = d.halo(0)
         self.assertTrue(d.equals(e, verbose=True))
-        
-        for i in (1, 2):    
+
+        for i in (1, 2):
             e = d.halo(i)
 
             self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1] + i*2))
-               
+
             # Body
             self.assertTrue(d.equals(e[i:-i, i:-i], verbose=True))
 
@@ -153,15 +153,15 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e[-i:, :i].equals(d[-i:, :i], verbose=True))
             self.assertTrue(e[-i:, -i:].equals(d[-i:, -i:], verbose=True))
 
-        for i in (1, 2):    
+        for i in (1, 2):
             e = d.halo(i, axes=0)
-            
+
             self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1]))
- 
+
             self.assertTrue(d.equals(e[i:-i, :], verbose=True))
 
         for j, i in zip([1, 1, 2, 2],
-                        [1, 2, 1, 2]):    
+                        [1, 2, 1, 2]):
             e = d.halo({0: j, 1: i})
 
             self.assertTrue(e.shape == (d.shape[0] + j*2, d.shape[1] + i*2))
@@ -179,7 +179,7 @@ class DataTest(unittest.TestCase):
             _ = d.halo(4)
 
 #     e = d.halo(1, axes=0)
-#    
+#
 #    >>> print(e.array)
 #    [[ 0  1  2  3]
 #     [ 0  1  2  3]

@@ -204,7 +204,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(
             d.bounds.Units.equals(
                 cf.Units('days since 2000-01-01', calendar='365_day')))
-        
+
     def test_DimensionCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()

@@ -1069,7 +1069,7 @@ class FieldList(list):
     >>> fl.select_by_ncvar()
     [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
      <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
-    
+
     >>> import re
     >>> fl.select_by_ncvar(re.compile('^hum'))
     [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]

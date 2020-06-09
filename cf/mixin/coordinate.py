@@ -375,10 +375,9 @@ class Coordinate():
 
         if c.period() is not None:
             return c
-        
+
         if not (c.Units.islongitude
-                or c.get_property('standard_name', None) == 'grid_longitude'
-        ):
+                or c.get_property('standard_name', None) == 'grid_longitude'):
             return c
 
         c.period(Data(360.0, units=c.Units))

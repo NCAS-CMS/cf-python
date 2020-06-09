@@ -110,7 +110,6 @@ class DecoratorsTest(unittest.TestCase):
             test_class.multikwarg_decorated_func_2(
                 traceback=True, bad_kwarg="bad")
 
-
     def test_manage_log_level_via_verbose_attr(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -883,8 +883,8 @@ class TimeDuration:
             except (ValueError, TypeError):
                 # If we are here, then 'other' is a datetime.datetime
                 # object, which doesn't have a 'calendar' keyword to
-                # its 'replace' method.                
-                return other.replace(year=y, month=m, day=d)            
+                # its 'replace' method.
+                return other.replace(year=y, month=m, day=d)
         else:
             return _dHMS(duration, other, calendar, op)
 
