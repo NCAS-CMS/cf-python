@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Data.where &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Data.maximum" href="cf.Data.maximum.html" />
+    <link rel="prev" title="cf.Data.argmax" href="cf.Data.argmax.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
+      <li>Previous: <a href="cf.Data.argmax.html" title="previous chapter">cf.Data.argmax</a></li>
+      <li>Next: <a href="cf.Data.maximum.html" title="next chapter">cf.Data.maximum</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-data-where">
+<h1>cf.Data.where<a class="headerlink" href="#cf-data-where" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Data.where">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/data/data.py#L12742-L13205"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.where" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign to data elements depending on a condition.</p>
+<p>Data can be changed by assigning to elements that are selected by
+a condition based on the data values.</p>
+<p>Different values can be assigned to where the conditions are, and
+are not, met.</p>
+<p><strong>Missing data</strong></p>
+<p>Data array elements may be set to missing values by assigning them
+to the <a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant, or by assignment missing data
+elements of array-valued <em>x</em> and <em>y</em> parameters.</p>
+<p>By default the data mask is “hard”, meaning that masked values can
+not be changed by assigning them to another value. This behaviour
+may be changed by setting the <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
+thereby making the data mask “soft” and allowing masked elements
+to be set to non-masked values.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>condition:</dt><dd><p>The condition which determines how to assign values to the
+data.</p>
+<p>In general it may be any scalar or array-like object (such
+as a numpy array or <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is broadcastable
+to the shape of the data. Assignment from the <em>x</em> and <em>y</em>
+parameters will be done where elements of the condition
+evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(d.data&lt;0,</span> <span class="pre">x=-999)</span></code> will set all data values that
+are less than zero to -999.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(True,</span> <span class="pre">x=-999)</span></code> will set all data values to
+-999. This is equivalent to <code class="docutils literal notranslate"><span class="pre">d[...]</span> <span class="pre">=</span> <span class="pre">-999</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(False,</span> <span class="pre">y=-999)</span></code> will set all data values to
+-999. This is equivalent to <code class="docutils literal notranslate"><span class="pre">d[...]</span> <span class="pre">=</span> <span class="pre">-999</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>If data <code class="docutils literal notranslate"><span class="pre">d</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">3)</span></code> then <code class="docutils literal notranslate"><span class="pre">d.where([True,</span>
+<span class="pre">False,</span> <span class="pre">True],</span> <span class="pre">x=-999,</span> <span class="pre">y=cf.masked)</span></code> will set data
+values in columns 0 and 2 to -999, and data values in
+column 1 to missing data. This works because the
+condition has shape <code class="docutils literal notranslate"><span class="pre">(3,)</span></code> which broadcasts to the
+data shape.</p>
+</dd>
+</dl>
+<p>If <em>condition</em> is a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object then this implies a
+condition defined by applying the query to the data.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(cf.lt(0),</span> <span class="pre">x=-999)</span></code> will set all data values
+that are less than zero to -999. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">d.where(d&lt;0,</span> <span class="pre">x=-999)</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>x, y: <em>optional</em></dt><dd><p>Specify the assignment values. Where the condition
+evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the data from <em>x</em>, and
+where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, assign to the
+data from <em>y</em>. The <em>x</em> and <em>y</em> parameters are each one of:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
+unchanged. This the default.</p></li>
+<li><p>Any scalar or array-like object (such as a numpy array,
+or <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is broadcastable to the shape
+of the data.</p></li>
+</ul>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(condition)</span></code>, for any <code class="docutils literal notranslate"><span class="pre">condition</span></code>, returns
+data with identical data values.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">d.where(cf.lt(0),</span> <span class="pre">x=-d,</span> <span class="pre">y=cf.masked)</span></code> will change the
+sign of all negative data values, and set all other data
+values to missing data.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, corresponding to increasing
+verbosity (else <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of maximal and extreme
+verbosity), set for the duration of the method call (only) as
+the minimum severity level cut-off of displayed log messages,
+regardless of the global configured <a class="reference internal" href="../function/cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a>.</p>
+<p>Else, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), log messages will be
+filtered out, or otherwise, according to the value of the
+<a class="reference internal" href="../function/cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer that is set (up to
+a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>) the more description that is printed to
+convey information about the condition-based assignment
+process.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The new data with updated values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-06-09.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/method/cf.Data.where.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

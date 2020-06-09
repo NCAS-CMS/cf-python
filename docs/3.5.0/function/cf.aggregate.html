@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.aggregate &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.ATOL" href="cf.ATOL.html" />
+    <link rel="prev" title="cf.load_stash2standard_name" href="cf.load_stash2standard_name.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.5.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../function.html"><strong>cf functions</strong></a><ul>
+      <li>Previous: <a href="cf.load_stash2standard_name.html" title="previous chapter">cf.load_stash2standard_name</a></li>
+      <li>Next: <a href="cf.ATOL.html" title="next chapter">cf.ATOL</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-aggregate">
+<h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cf.aggregate">
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.0/cf/aggregate.py#L1279-L1925"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate field constructs into as few field constructs as
+possible.</p>
+<p>Aggregation is the combination of field constructs to create a new
+field construct that occupies a “larger” domain. Using the
+<a class="reference internal" href="../aggregation_rules.html#aggregation-rules"><span class="std std-ref">aggregation rules</span></a>,
+field constructs are separated into aggregatable groups and each
+group is then aggregated to a single field construct.</p>
+<p><strong>Identifying field and metadata constructs</strong></p>
+<p>In order to ascertain whether or not field constructs are
+aggregatable, the aggregation rules rely on field constructs (and
+their metadata constructs where applicable) being identified by
+standard name properties. However, it is sometimes the case that
+standard names are not available. In such cases the <a class="reference external" href="https://docs.python.org/3/library/functions.html#id" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute
+(which is not a CF property) may be set on any construct, which
+will be treated like a standard name if one doesn’t
+exist.</p>
+<p>Alternatively the <em>relaxed_identities</em> parameter allows long name
+properties or netCDF variable names to be used when standard names
+are missing; the <em>field_identity</em> parameter forces the field
+construct identities to be taken from a particular property; and
+the <em>ncvar_identities</em> parameter forces field and metadata
+constructs to be identified by their netCDF file variable names.</p>
+<p><strong>Units</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>fields: <a class="reference internal" href="../classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> or sequence of <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The field constructs to aggregated.</p>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, corresponding to increasing
+verbosity (else <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of maximal and extreme
+verbosity), set for the duration of the method call (only) as
+the minimum severity level cut-off of displayed log messages,
+regardless of the global configured <a class="reference internal" href="cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a>.</p>
+<p>Else, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), log messages will be
+filtered out, or otherwise, according to the value of the
+<a class="reference internal" href="cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer that is set (up to
+a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>) the more description that is printed to
+convey information about the aggregation process. Explicitly:</p>
+</dd>
+<dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then require that aggregated field constructs
+have adjacent dimension coordinate construct cells which
+do not overlap (but they may share common boundary
+values). Ignored for a dimension coordinate construct that
+does not have bounds. See also the <em>contiguous</em> parameter.</p>
+</dd>
+<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated field constructs
+have adjacent dimension coordinate construct cells which
+overlap or share common boundary values. Ignored for a
+dimension coordinate construct that does not have
+bounds. See also the <em>overlap</em> parameter.</p>
+</dd>
+<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs
+with the same identity but missing units actually have
+equivalent (but unspecified) units, so that aggregation
+may occur. By default such field constructs are not
+aggregatable.</p>
+</dd>
+<dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs with
+no identity (see the <em>relaxed_identities</em> parameter) actually
+have the same (but unspecified) identity, so that aggregation
+may occur. By default such field constructs are not
+aggregatable.</p>
+</dd>
+<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and there is no standard name property nor “id”
+attribute, then allow field and metadata constructs to be
+identifiable by long name properties or netCDF variable names.</p>
+</dd>
+<dt>field_identity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify a property with which to identify field constructs
+instead of any other technique. How metadata constructs
+are identified is not affected by this parameter. See the
+<em>relaxed_identites</em> and <em>ncvar_identities</em> parameters.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>Force field constructs to be identified by the values of
+their long_name properties:
+<code class="docutils literal notranslate"><span class="pre">field_identity='long_name'</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.1.0.</span></p>
+</div>
+</dd>
+<dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then force field and metadata constructs to be
+identified by their netCDF file variable names See also the
+<em>relaxed_identies</em> parameter.</p>
+</dd>
+<dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
+of non-standard CF properties (including
+<a class="reference internal" href="../attribute/cf.Field.long_name.html#cf.Field.long_name" title="cf.Field.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>), with the same values. See the
+<em>concatenate</em> parameter.</p>
+</dd>
+<dt>equal_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties to omit from any properties specified by
+or implied by the <em>equal_all</em> and <em>equal</em> parameters.</p>
+</dd>
+<dt>equal: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
+fields all contain the properties, with the same values. See
+the <em>concatenate</em> parameter.</p>
+</dd>
+<dt>exist_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
+of non-standard CF properties (including, in this case,
+long_name), but not requiring the values to be the same. See
+the <em>concatenate</em> parameter.</p>
+</dd>
+<dt>exist_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties to omit from the properties specified by
+or implied by the <em>exist_all</em> and <em>exist</em> parameters.</p>
+</dd>
+<dt>exist: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
+fields all contain the properties, but not requiring the
+values to be the same. See the <em>concatenate</em> parameter.</p>
+</dd>
+<dt>respect_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the CF properties <a class="reference internal" href="../attribute/cf.Field.valid_min.html#cf.Field.valid_min" title="cf.Field.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a>,
+<a class="reference internal" href="../attribute/cf.Field.valid_max.html#cf.Field.valid_max" title="cf.Field.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a> and <a class="reference internal" href="../attribute/cf.Field.valid_range.html#cf.Field.valid_range" title="cf.Field.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a> are taken
+into account during aggregation. I.e. a requirement for
+aggregation is that fields have identical values for each
+these attributes, if set. By default these CF properties are
+ignored and are not set in the output fields.</p>
+</dd>
+<dt>dimension: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new axes for each input field which has one or more of
+the given properties. For each CF property name specified, if
+an input field has the property then, prior to aggregation, a
+new axis is created with an auxiliary coordinate whose datum
+is the property’s value and the property itself is deleted
+from that field.</p>
+</dd>
+<dt>concatenate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then a CF property is omitted from an aggregated
+field if the property has unequal values across constituent
+fields or is missing from at least one constituent field. By
+default a CF property in an aggregated field is the
+concatenated collection of the distinct values from the
+constituent fields, delimited with the string
+<code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">:AGGREGATED:</span> <span class="pre">'</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not copy fields prior to aggregation.
+Setting this option to False may change input fields in place,
+and the output fields may not be independent of the
+inputs. However, if it is known that the input fields are
+never to accessed again (such as in this case: <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span>
+<span class="pre">cf.aggregate(f)</span></code>) then setting <em>copy</em> to False can reduce the
+time taken for aggregation.</p>
+</dd>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Select axes to aggregate over. Aggregation will only occur
+over as large a subset as possible of these axes. Each axis is
+identified by the exact identity of a one dimensional
+coordinate object, as returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>
+method. Aggregations over more than one axis will occur in the
+order given. By default, aggregation will be over as many axes
+as possible.</p>
+</dd>
+<dt>donotchecknonaggregatingaxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>axes</em> is set, then checks for consistent data
+array values will only be made for one dimensional coordinate
+objects which span the any of the given aggregating axes. This
+can reduce the time taken for aggregation, but if any those
+checks would have failed then this clearly allows the
+possibility of an incorrect result. Therefore, this option
+should only be used in cases for which it is known that the
+non-aggregating axes are in fact already entirely consistent.</p>
+</dd>
+<dt>atol: float, optional</dt><dd><p>The absolute tolerance for all numerical comparisons. The
+tolerance is a non-negative, typically very small number. Two
+numbers, x and y, are considered the same if <span class="math notranslate nohighlight">\(|x-y| \le
+atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOL</span></code></a>
+function is used.</p>
+</dd>
+<dt>rtol: float, optional</dt><dd><p>The relative tolerance for all numerical comparisons. The
+tolerance is a non-negative, typically very small number. Two
+numbers, x and y, are considered the same if <span class="math notranslate nohighlight">\(|x-y| \le
+atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RTOL</span></code></a>
+function is used.</p>
+</dd>
+<dt>no_overlap:</dt><dd><p>Use the <em>overlap</em> parameter instead.</p>
+</dd>
+<dt>shared_nc_domain: deprecated at version 3.0.0</dt><dd><p>No longer required due to updated CF data model.</p>
+</dd>
+<dt>info: deprecated at version 3.5.0</dt><dd><p>Use the <em>verbose</em> parameter instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt><dd><p>The aggregated field constructs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>The following six fields comprise eastward wind at two different times
+and for three different atmospheric heights for each time:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(latitude(73), longitude(96)&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">[&lt;CF Field: eastward_wind(height(3), time(2), latitude(73), longitude(96)&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span>
+<span class="go">&#39;Model A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,))</span>
+<span class="go">[&lt;CF Field: eastward_wind(source(1), height(3), time(2), latitude(73), longitude(96)&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span>
+<span class="go">AttributeError: &#39;Field&#39; object has no attribute &#39;source&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-06-09.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/function/cf.aggregate.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
