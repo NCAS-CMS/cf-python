@@ -137,7 +137,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(e.halo(1, inplace=True))
 
         e = d.halo(0)
-        self.assertTrue(d.equals(e, verbose=True))
+        self.assertTrue(d.equals(e, verbose=2))
 
         for i in (1, 2):
             e = d.halo(i)
@@ -145,20 +145,20 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1] + i*2))
 
             # Body
-            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=True))
+            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=2))
 
             # Corners
-            self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=True))
-            self.assertTrue(e[:i, -i:].equals(d[:i, -i:], verbose=True))
-            self.assertTrue(e[-i:, :i].equals(d[-i:, :i], verbose=True))
-            self.assertTrue(e[-i:, -i:].equals(d[-i:, -i:], verbose=True))
+            self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=2))
+            self.assertTrue(e[:i, -i:].equals(d[:i, -i:], verbose=2))
+            self.assertTrue(e[-i:, :i].equals(d[-i:, :i], verbose=2))
+            self.assertTrue(e[-i:, -i:].equals(d[-i:, -i:], verbose=2))
 
         for i in (1, 2):
             e = d.halo(i, axes=0)
 
             self.assertTrue(e.shape == (d.shape[0] + i*2, d.shape[1]))
 
-            self.assertTrue(d.equals(e[i:-i, :], verbose=True))
+            self.assertTrue(d.equals(e[i:-i, :], verbose=2))
 
         for j, i in zip([1, 1, 2, 2],
                         [1, 2, 1, 2]):
@@ -167,13 +167,13 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e.shape == (d.shape[0] + j*2, d.shape[1] + i*2))
 
             # Body
-            self.assertTrue(d.equals(e[j:-j, i:-i], verbose=True))
+            self.assertTrue(d.equals(e[j:-j, i:-i], verbose=2))
 
             # Corners
-            self.assertTrue(e[:j, :i].equals(d[:j, :i], verbose=True))
-            self.assertTrue(e[:j, -i:].equals(d[:j, -i:], verbose=True))
-            self.assertTrue(e[-j:, :i].equals(d[-j:, :i], verbose=True))
-            self.assertTrue(e[-j:, -i:].equals(d[-j:, -i:], verbose=True))
+            self.assertTrue(e[:j, :i].equals(d[:j, :i], verbose=2))
+            self.assertTrue(e[:j, -i:].equals(d[:j, -i:], verbose=2))
+            self.assertTrue(e[-j:, :i].equals(d[-j:, :i], verbose=2))
+            self.assertTrue(e[-j:, -i:].equals(d[-j:, -i:], verbose=2))
 
         with self.assertRaises(Exception):
             _ = d.halo(4)

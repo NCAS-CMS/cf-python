@@ -359,8 +359,7 @@ class Coordinate():
 
     :Parameters:
 
-        verbose: `bool`, optional
-            TODO
+        TODO
 
     :Returns:
 

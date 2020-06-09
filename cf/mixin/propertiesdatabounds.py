@@ -2136,8 +2136,9 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
-             inplace=False, verbose=False):
+             inplace=False, verbose=None):
         '''Expand the data by adding a halo.
 
     The halo may be applied over a subset of the data dimensions and
@@ -2229,8 +2230,20 @@ class PropertiesDataBounds(PropertiesData):
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        verbose: `bool`, optional
-            If True then print a description of the operation.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the operation.
 
     :Returns:
 

@@ -4978,8 +4978,9 @@ class PropertiesData(Properties):
         return super().get_data(default=default, _units=False)
 
     @_inplace_enabled
+    @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
-             inplace=False, verbose=False):
+             inplace=False, verbose=None):
         '''Expand the data by adding a halo.
 
     The halo may be applied over a subset of the data dimensions and
@@ -5069,8 +5070,20 @@ class PropertiesData(Properties):
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        verbose: `bool`, optional
-            If True then print a description of the operation.
+        verbose: `int` or `None`, optional
+            If an integer from ``0`` to ``3``, corresponding to increasing
+            verbosity (else ``-1`` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cf.LOG_LEVEL`.
+
+            Else, if `None` (the default value), log messages will be
+            filtered out, or otherwise, according to the value of the
+            `cf.LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of ``3``) the more description that is printed to
+            convey information about the operation.
 
     :Returns:
 
@@ -5099,11 +5112,9 @@ class PropertiesData(Properties):
         TODO
 
         '''
-        if verbose:
-            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-            _ = "{}.halo(".format(self.__class__.__name__)
-            print("{}{}".format(_,
-                                (',\n' + ' '*len(_)).join(_kwargs)))
+        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+        _ = "{}.halo(".format(self.__class__.__name__)
+        logger.info("{}{}".format(_, (',\n' + ' '*len(_)).join(_kwargs)))
 
         v = _inplace_enabled_define_and_cleanup(self)
 

@@ -314,8 +314,7 @@
 #
 #     :Parameters:
 #
-#         verbose: `bool`, optional
-#             TODO
+#         TODO
 #
 #     :Returns:
 #
