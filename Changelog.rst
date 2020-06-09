@@ -2,7 +2,7 @@ version 3.5.0
 -------------
 ----
 
-**2020-06-??**
+**2020-06-09**
 
 * Changed the API to `cf.Field.period`: Now sets and reports on the
   period of the field construct data, rather than that of its metadata

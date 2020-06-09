@@ -31,8 +31,8 @@ The `cf` package can:
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
-* read, write, and create coordinates defined by geometry cells (**new
-  in version 3.2.0**),
+* read, write, and create coordinates defined by geometry cells (*new
+  in version 3.2.0*),
 
 * combine field constructs arithmetically,
 
@@ -81,7 +81,7 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-06-??'
+__date__ = '2020-06-09'
 __version__ = '3.5.0'
 
 _requires = (

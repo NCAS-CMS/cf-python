@@ -617,7 +617,7 @@ import cf
 Q = cf.Field(properties={'project': 'research',
                            'standard_name': 'specific_humidity',
                            'units': '1'})
-     		      
+
 # Create the domain axis constructs
 domain_axisT = cf.DomainAxis(1)
 domain_axisY = cf.DomainAxis(5)
@@ -663,7 +663,7 @@ dimX.set_properties({'standard_name': 'longitude',
 
 # Create a "longitude" dimension coordinate construct
 dimY = cf.DimensionCoordinate(properties={'standard_name': 'latitude',
-     	                             'units'        : 'degrees_north'})
+                                          'units'        : 'degrees_north'})
 array = numpy.arange(5.)
 dimY.set_data(cf.Data(array))
 
@@ -1010,7 +1010,7 @@ import cf
 data = cf.Data([[280.0,   -99,   -99,   -99],
                 [281.0, 279.0, 278.0, 279.5]])
 data.where(cf.eq(-99), cf.masked, inplace=True)
-	     
+
 # Create the field construct
 T = cf.Field()
 T.set_properties({'standard_name': 'air_temperature',
@@ -1055,9 +1055,9 @@ count_variable.set_property('long_name',
 # Create the contiguous ragged array object, specifying the
 # uncompressed shape
 array = cf.RaggedContiguousArray(
-                 compressed_array=ragged_array,
-                 shape=(2, 4), size=8, ndim=2,
-                 count_variable=count_variable)
+    compressed_array=ragged_array,
+    shape=(2, 4), size=8, ndim=2,
+    count_variable=count_variable)
 
 # Create the field construct
 T.set_properties({'standard_name': 'air_temperature',
@@ -1101,7 +1101,7 @@ list_variable = cf.List(data=cf.Data(list_array))
 # shape
 array = cf.GatheredArray(
                  compressed_array=gathered_array,
-     	    compressed_dimension=1,
+                 compressed_dimension=1,
                  shape=(2, 3, 2), size=12, ndim=3,
                  list_variable=list_variable)
 
@@ -1143,6 +1143,9 @@ with open('new_STASH.txt', 'w') as new:
 
 _ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
 cf.read_write.um.umread.stash2standard_name[(1, 999)]
+
+print("\n**Controlling output messages**\n")
+
 
 print("\n**Statistical collapses**\n")
 
