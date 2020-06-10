@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.5.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.5.1</a></h1>
 
 
 
@@ -95,6 +95,16 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<div class="section" id="version-3-5-1">
+<h2>version 3.5.1<a class="headerlink" href="#version-3-5-1" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-06-10</strong></p>
+<ul class="simple">
+<li><p>Fixed bug (emerging from <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>) that prevented the reading of certain
+netCDF files, such as those with at least one external variable.</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">1.8.5&lt;=cfdm&lt;1.9.0</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-3-5-0">
 <h2>version 3.5.0<a class="headerlink" href="#version-3-5-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -142,8 +152,6 @@ collapses (<a class="reference external" href="https://github.com/NCAS-CMS/cf-py
 <li><p>Fixed bug the wouldn’t allow the reading of a netCDF file which
 specifies Conventions other than CF
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/78">https://github.com/NCAS-CMS/cf-python/issues/78</a>).</p></li>
-<li><p>Fixed bug that prevented the reading of netCDF files with
-unreferenced external variables.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-4-0">
@@ -1338,7 +1346,7 @@ to Jeff Whitaker).</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-09.
+      &copy;2020, NCAS | Page built on 2020-06-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
