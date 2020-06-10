@@ -1,3 +1,13 @@
+version 3.5.1
+-------------
+----
+
+**2020-06-10**
+
+* Fixed bug (emerging from `cfdm`) that prevented the reading of certain
+  netCDF files, such as those with at least one external variable.
+* Changed dependency: ``1.8.5<=cfdm<1.9.0``
+
 version 3.5.0
 -------------
 ----
@@ -46,8 +56,6 @@ version 3.5.0
 * Fixed bug the wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cf-python/issues/78).
-* Fixed bug that prevented the reading of netCDF files with
-  unreferenced external variables.
 
 version 3.4.0
 -------------
