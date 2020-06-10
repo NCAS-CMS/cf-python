@@ -1,6 +1,11 @@
 * Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 
+* Ensure that the requirements on dependencies & their versions are
+  up-to-date and consistent in both the `install_requires` list of the
+  `setup.py` and in the `_requires` list and `LooseVersion` checks in
+  `cf/__init__.py`.
+
 * Make sure that `README.md` is up to date.
 
 * Make sure that `Changelog.rst` is up to date.
@@ -85,9 +90,9 @@
   ./tag <vn> # E.g. ./tag 3.3.0
   ```
   
-* Upload the source tarball to PyPi. Note this requires the `twine`
+* Upload the source tarball to PyPI. Note this requires the `twine`
   library (which can be installed via `pip`) and relevant project
-  privileges on PyPi.
+  privileges on PyPI.
 
   ```bash
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.3.0
