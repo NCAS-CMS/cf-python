@@ -4,9 +4,10 @@ version 3.5.1
 
 **2020-06-10**
 
-* Fixed bug (emerging from `cfdm`) that prevented the reading of certain
-  netCDF files, such as those with at least one external variable.
 * Changed dependency: ``1.8.5<=cfdm<1.9.0``
+* Fixed bug (emerging from the cfdm library) that prevented the
+  reading of certain netCDF files, such as those with at least one
+  external variable.
 
 version 3.5.0
 -------------
