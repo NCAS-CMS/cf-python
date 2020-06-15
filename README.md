@@ -4,11 +4,11 @@ cf-python
 The Python `cf` package is an Earth Science data analysis library that
 is built on a complete implementation of the CF data model.
 
-Installation | ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cf-python?color=000000&label=latest%20version) ![PyPI](https://img.shields.io/pypi/v/cf-python?color=000000) ![Conda](https://img.shields.io/conda/v/ncas/cf-python?color=000000)
+Installation | [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cf-python?color=000000&label=latest%20version)](https://ncas-cms.github.io/cf-python/Changelog.html) [![PyPI](https://img.shields.io/pypi/v/cf-python?color=000000)](https://ncas-cms.github.io/cf-python/installation.html#pip) [![Conda](https://img.shields.io/conda/v/ncas/cf-python?color=000000)](https://ncas-cms.github.io/cf-python/installation.html#conda)
 
-About | ![Conda](https://img.shields.io/conda/pn/ncas/cf-python?color=2d8659) ![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F) ![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)
+About | [![Conda](https://img.shields.io/conda/pn/ncas/cf-python?color=2d8659)](https://ncas-cms.github.io/cf-python/installation.html#operating-systems) [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F)](https://ncas-cms.github.io/cf-python/index.html) [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/master/LICENSE)
 
-References | ![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5281%2Fzenodo.3894533&label=DOI&up_color=264d73&up_message=10.5281%2Fzenodo.3894533&url=https%3A%2F%2Fdoi.org%2F10.5281%2Fzenodo.3894533) ![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)
+References | [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5281%2Fzenodo.3894533&label=DOI&up_color=264d73&up_message=10.5281%2Fzenodo.3894533&url=https%3A%2F%2Fdoi.org%2F10.5281%2Fzenodo.3894533)](https://doi.org/10.5281/zenodo.3894533) [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
 
 
 Documentation
