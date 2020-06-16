@@ -14,6 +14,10 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
+.. note:: The latest versions of cf available from the Python package index
+          (PyPI) and conda are confirmed at `the top of the README document
+          <https://github.com/NCAS-CMS/cf-python#cf-python>`_.
+
 .. _Operating-systems:
 
 **Operating systems**
