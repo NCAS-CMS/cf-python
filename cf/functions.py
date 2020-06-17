@@ -65,7 +65,7 @@ from . import mpi_size
 def _close_proc_meminfo():
     try:
         _meminfo_file.close()
-    except:
+    except Exception:
         pass
     
 
