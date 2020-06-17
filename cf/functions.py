@@ -1,3 +1,4 @@
+import atexit
 import csv
 import logging
 import os
@@ -59,6 +60,17 @@ from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
 from . import mpi_on
 from . import mpi_size
 
+
+# Instruction to close /proc/mem at exit.
+def _close_proc_meminfo():
+    print(999)
+    try:
+        _meminfo_file.close()
+    except:
+        pass
+    
+
+atexit.register(_close_proc_meminfo)
 
 class DeprecationError(Exception):
     pass
