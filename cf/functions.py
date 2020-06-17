@@ -63,7 +63,6 @@ from . import mpi_size
 
 # Instruction to close /proc/mem at exit.
 def _close_proc_meminfo():
-    print(999)
     try:
         _meminfo_file.close()
     except:
