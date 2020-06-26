@@ -12180,19 +12180,19 @@ class Field(mixin.PropertiesData,
                 "Keywords are now never interpreted as regular expressions."
             )  # pragma: no cover
 
-        if len(mode) > 2:
+        if len(mode) > 1:
             raise ValueError(
-                "Can't provide more than two positional arguments.")
+                "Can't provide more than one positional argument.")
 
         envelope = 'envelope' in mode
         full = 'full' in mode
         compress = 'compress' in mode or not (envelope or full)
 
-        if len(mode) == 2:
-            raise ValueError(
-                "Can't provide {0[0]!r} and {0[1]!r} positional arguments "
-                "in the same call.".format(mode)
-            )
+#        if len(mode) == 2:
+#            raise ValueError(
+#                "Can't provide {0[0]!r} and {0[1]!r} positional arguments "
+#                "in the same call.".format(mode)
+#            )
 
         logger.debug('Field.indices:')  # pragma: no cover
         logger.debug(
@@ -12214,7 +12214,9 @@ class Field(mixin.PropertiesData,
         unique_axes = set()
         n_axes = 0
         for identity, value in kwargs.items():
+            print (identity, value, domain_axes)
             if identity in domain_axes:
+                print(9999)
                 axes = (identity,)
                 key = None
                 construct = None
@@ -12247,10 +12249,12 @@ class Field(mixin.PropertiesData,
             )
 
         for sorted_axes, axes_key_construct_value in parsed.items():
+            print (sorted_axes, axes_key_construct_value )
             axes, keys, constructs, points = list(zip(
                 *axes_key_construct_value))
             n_items = len(constructs)
             n_axes = len(sorted_axes)
+            print (axes, keys, constructs, points , n_items, n_axes)
 
             if n_items > n_axes:
                 if n_axes == 1:
@@ -14267,7 +14271,6 @@ class Field(mixin.PropertiesData,
     data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
     c.set_data(data)
     b = cf.Bounds()
-    b.set_properties({'units': 'degrees_north'})
     b.nc_set_variable('lat_bnds')
     data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
     b.set_data(data)
@@ -14281,7 +14284,6 @@ class Field(mixin.PropertiesData,
     data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
     c.set_data(data)
     b = cf.Bounds()
-    b.set_properties({'units': 'degrees_east'})
     b.nc_set_variable('lon_bnds')
     data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
     b.set_data(data)
@@ -14334,7 +14336,6 @@ class Field(mixin.PropertiesData,
         data = <CF Data(5): [-75.0, ..., 75.0] degrees_north> # Representative data
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         b.nc_set_variable('lat_bnds')
         data = <CF Data(5, 2): [[-90.0, ..., 90.0]] degrees_north> # Representative data
         b.set_data(data)
@@ -14348,7 +14349,6 @@ class Field(mixin.PropertiesData,
         data = <CF Data(8): [22.5, ..., 337.5] degrees_east> # Representative data
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         b.nc_set_variable('lon_bnds')
         data = <CF Data(8, 2): [[0.0, ..., 360.0]] degrees_east> # Representative data
         b.set_data(data)

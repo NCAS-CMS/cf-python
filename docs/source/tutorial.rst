@@ -3013,8 +3013,8 @@ around the edges of the data.
                    : time(1) = [2019-01-01 00:00:00]
 
 	
-Susbaces in time
-^^^^^^^^^^^^^^^^
+Subspaces in time
+^^^^^^^^^^^^^^^^^
 
 Subspaces based on time dimensions may be defined with as
 :ref:`elapsed times since the reference date <Time>`, or with
