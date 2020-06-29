@@ -57,8 +57,6 @@ jobs:
         activate-environment: cf-latest
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
-        allow-softlinks: true
-        channel-priority: true
 
     # Ensure shell is configured with conda activated:
     - name: Check conda config
@@ -80,6 +78,14 @@ jobs:
         pip install pycodestyle
         # Important! Must install our development version of cf-python to test:
         pip install -e .
+
+    # Make UMRead library
+    - name: Make UMRead
+      shell: bash -l {0}
+      run: |
+        cd cf/umread_lib/c-lib
+        make
+        cd -
 
     # Provide another notification message
     - name: Notify about starting testing
