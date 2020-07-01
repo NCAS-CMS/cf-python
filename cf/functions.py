@@ -273,6 +273,7 @@ _disable_logging = cfdm._disable_logging
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
+_is_valid_log_level_int =  cfdm._is_valid_log_level_int
 
 
 def LOG_LEVEL(*log_level):
