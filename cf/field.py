@@ -279,6 +279,38 @@ class Field(mixin.PropertiesData,
     `nc_clear_global_attributes` and `nc_set_global_attribute`
     methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
+    The netCDF group attributes may be accessed with the
+    `nc_group_attributes`, `nc_clear_group_attributes`,
+    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
+   
+    The netCDF geometry variable group structure may be accessed with
+    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
+    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
+    `nc_set_geometry_variable_groups` methods.
+   
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    variable, dimension and sample dimension names and group
+    structures for such components may be set or removed consistently
+    across all such components with the `nc_del_component_variable`,
+    `nc_set_component_variable`, `nc_set_component_variable_groups`,
+    `nc_clear_component_variable_groups`,
+    `nc_del_component_dimension`, `nc_set_component_dimension`,
+    `nc_set_component_dimension_groups`,
+    `nc_clear_component_dimension_groups`,
+    `nc_del_component_sample_dimension`,
+    `nc_set_component_sample_dimension`,
+    `nc_set_component_sample_dimension_groups`,
+    `nc_clear_component_sample_dimension_groups` methods.
+
+    CF-compliance issues for field constructs read from a netCDF
+    dataset may be accessed with the `dataset_compliance` method.
+   
     '''
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)

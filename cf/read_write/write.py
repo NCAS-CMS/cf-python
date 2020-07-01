@@ -30,14 +30,16 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           fletcher32=False, shuffle=True, reference_datetime=None,
           verbose=None, cfa_options=None, mode='w', single=None,
           double=None, variable_attributes=None, string=True,
-          warn_valid=True, HDF_chunksizes=None, no_shuffle=None,
-          unlimited=None):
+          warn_valid=True, group=True, HDF_chunksizes=None,
+          no_shuffle=None, unlimited=None):
     '''Write field constructs to a netCDF file.
+
 
     **File format**
 
     See the *fmt* parameter for details on which output netCDF file
     formats are supported.
+
 
     **NetCDF variable and dimension names**
 
@@ -59,12 +61,14 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cf.DomainAxis.nc_set_dimension` and
     `~cf.DomainAxis.nc_del_dimension`.
 
+
     **NetCDF attributes**
 
     Field construct properties may be written as netCDF global
     attributes and/or netCDF data variable attributes. See the
     *file_descriptors*, *global_attributes* and *variable_attributes*
     parameters for details.
+
 
     **External variables**
 
@@ -73,6 +77,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     attribute. However, omitted constructs may be written to an
     external file (see the *external* parameter for details).
 
+
     **NetCDF unlimited dimensions**
 
     Domain axis constructs that correspond to NetCDF unlimited
@@ -80,6 +85,17 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cf.DomainAxis.nc_is_unlimited` and
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
+
+
+    **NetCDF hierarchical groups**
+    
+    Hierarchical groups in CF provide a mechanism to structure
+    variables within netCDF4 datasets with well defined rules for
+    resolving references to out-of-group netCDF variables and
+    dimensions. The group structure defined by a field construct's
+    netCDF interface will, by default, be recreated in the output
+    dataset. See the *group* parameter for details.
+
 
     **NetCDF4 HDF chunk sizes**
 
@@ -482,6 +498,15 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             .. versionadded:: 3.4.0
 
+        group: `bool`, optional
+            If False then create a "flat" netCDF file, i.e. one with
+            only the root group, regardless of any group structure
+            specified by the field constructs. By default any groups
+            defined by the netCDF interface of the field constucts and
+            its components will be created and populated.
+
+            .. versionadded:: 3.6.0
+
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
             to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
@@ -619,7 +644,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      verbose=verbose, string=string,
-                     warn_valid=warn_valid,
+                     warn_valid=warn_valid, group=group,
                      extra_write_vars=extra_write_vars)
     # --- End: if
 

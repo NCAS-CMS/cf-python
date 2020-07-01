@@ -10,8 +10,8 @@ class NetCDFArray(cfdm.NetCDFArray,
     '''A sub-array stored in a netCDF file.
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
-                 dtype=None, ndim=None, shape=None, size=None,
-                 mask=True):
+                 group=None, dtype=None, ndim=None, shape=None,
+                 size=None, mask=True):
         '''**Initialization**
 
     :Parameters:
@@ -27,6 +27,28 @@ class NetCDFArray(cfdm.NetCDFArray,
             The UNIDATA netCDF interface ID of the variable containing the
             array. Required if *ncvar* is not set, ignored if *ncvar* is
             set.
+
+        group: `None` or sequence of `str`, optional
+            Specify the netCDF4 group to which the netCDF variable
+            belongs. By default, or if *group* is `None` or an empty
+            sequence, it assumed to be in the root group. The last
+            element in the sequence isw the name of the group in which
+            the variable lies, with other elements naming any parent
+            groups (excluding the root group).
+
+            :Parameter example:
+              To specify that a variable is in the root group:
+              ``group=()` or ``group=None`
+
+            :Parameter example:
+              To specify that a variable is in the group '/forecasts':
+              ``group=['forecasts']``
+
+            :Parameter example:
+              To specify that a variable is in the group
+              '/forecasts/model2': ``group=['forecasts', 'model2']``
+
+            .. versionadded:: 3.6.0
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -58,13 +80,14 @@ class NetCDFArray(cfdm.NetCDFArray,
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
     >>> v = nc.variable['tas']
-    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype,
+    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas',
+    ...                     group=['forecast'], dtype=v.dtype,
     ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid,
-                         dtype=dtype, ndim=ndim, shape=shape,
-                         size=size, mask=mask)
+                         group=group, dtype=dtype, ndim=ndim,
+                         shape=shape, size=size, mask=mask)
 
         # By default, keep the netCDF file open after data array
         # access
