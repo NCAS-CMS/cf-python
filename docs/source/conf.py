@@ -99,6 +99,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.githubpages',
 #              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
               'sphinx_copybutton',
+              'sphinx_toggleprompt',
 ]
 
 
@@ -409,12 +410,17 @@ man_pages = [
      'NCAS', 1)
     ]
 
-# Configurecopybutton
-copybutton_skip_text = ">>> "  # Python prompt for Python code snippets
-# Awaiting extension to sphinx-copybutton to strip out other prompts (see
-# 'https://github.com/choldgraf/sphinx-copybutton/issues/52') and ideally
-# remove lines of output characterised by not having an initial prompt.
-# copybutton_skip_text = "$ "  # shell ('..code-block:: console') prompt
+
+# Configure copybutton
+# Note the below, skipping of text via copybutton, is no longer required for
+# Python prompts as those can be included or excluded in copied code via the
+# toggle button (sphinx-toggleprompt). So we skip console prompts which we
+# also have in the docs as the second most-common case.
+copybutton_prompt_text = "$ "   # prompt to skip automatically on copying
+
+# Configure toggleprompt
+toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
+
 
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
