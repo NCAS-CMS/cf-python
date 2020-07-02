@@ -1132,11 +1132,11 @@ class TimeDuration:
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         traceback: `bool`, optional
             If True then print a traceback highlighting where the two
@@ -1210,11 +1210,11 @@ class TimeDuration:
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         traceback: `bool`, optional
             If True then print a traceback highlighting where the two

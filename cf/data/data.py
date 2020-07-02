@@ -103,7 +103,7 @@ from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
 from ..units import Units
 from ..constants import masked as cf_masked
-from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
+from ..functions import (CHUNKSIZE, FM_THRESHOLD, rtol, atol,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
@@ -989,18 +989,18 @@ place.
         return False
 
     @property
-    def _ATOL(self):
-        '''Return the current value of the `ATOL` function.
+    def _atol(self):
+        '''Return the current value of the `atol` function.
 
         '''
-        return ATOL()
+        return atol()
 
     @property
-    def _RTOL(self):
-        '''Return the current value of the `RTOL` function.
+    def _rtol(self):
+        '''Return the current value of the `rtol` function.
 
         '''
-        return RTOL()
+        return rtol()
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO
@@ -4629,8 +4629,8 @@ place.
         # ------------------------------------------------------------
         if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
             new_dtype = numpy_dtype(bool)
-            rtol = self._RTOL
-            atol = self._ATOL
+            rtol = self._rtol
+            atol = self._atol
         else:
             if 'true' in method:
                 new_dtype = numpy_dtype(float)
@@ -8582,11 +8582,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -10569,11 +10569,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         ignore_fill_value: `bool`, optional
             If True then data arrays with different fill values are
@@ -10584,11 +10584,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -10612,9 +10612,9 @@ False
         '''
         # Set default tolerances
         if rtol is None:
-            rtol = self._RTOL
+            rtol = self._rtol
         if atol is None:
-            atol = self._ATOL
+            atol = self._atol
 
         if not super().equals(other, rtol=rtol, atol=atol,
                               verbose=verbose,
@@ -10899,11 +10899,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -12237,11 +12237,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -12270,9 +12270,9 @@ False
 
         '''
         if atol is None:
-            atol = self._ATOL
+            atol = self._atol
         if rtol is None:
-            rtol = self._RTOL
+            rtol = self._rtol
 
         units0 = self.Units
         units1 = getattr(y, 'Units', _units_None)
@@ -12838,11 +12838,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to

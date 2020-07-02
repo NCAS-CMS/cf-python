@@ -283,7 +283,7 @@ logging.basicConfig(
     stream=sys.stdout,
     style='{',              # default is old style ('%') string formatting
     format='{message}',     # no module names or datetimes etc. for basic case
-    level=logging.WARNING,  # default but change level via LOG_LEVEL()
+    level=logging.WARNING,  # default but change level via log_level()
 )
 
 # And create custom level inbetween 'INFO' & 'DEBUG', to understand value see:

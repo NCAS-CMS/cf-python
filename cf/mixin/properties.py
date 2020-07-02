@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from ..functions import ATOL, RTOL
+from ..functions import atol, rtol
 
 from ..query import Query
 from ..units import Units
@@ -21,24 +21,24 @@ class Properties:
     # Private attributes
     # ----------------------------------------------------------------
     @property
-    def _ATOL(self):
+    def _atol(self):
         '''Return the tolerance on absolute differences between real numbers,
-    as returned by the `cf.ATOL` function.
+    as returned by the `cf.atol` function.
 
     This is used by, for example, the `_equals` method.
 
         '''
-        return ATOL()
+        return atol()
 
     @property
-    def _RTOL(self):
+    def _rtol(self):
         '''Return the tolerance on relative differences between real numbers,
-    as returned by the `cf.RTOL` function.
+    as returned by the `cf.rtol` function.
 
     This is used by, for example, the `_equals` method.
 
         '''
-        return RTOL()
+        return rtol()
 
     # ----------------------------------------------------------------
     # Private methods

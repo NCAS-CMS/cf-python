@@ -60,8 +60,8 @@ class FieldTest(unittest.TestCase):
 
         self.chunk_sizes = (100000, 300, 34, 17)
         self.original_chunksize = cf.CHUNKSIZE()
-        self.atol = cf.ATOL()
-        self.rtol = cf.RTOL()
+        self.atol = cf.atol()
+        self.rtol = cf.rtol()
         self.f = cf.read(self.filename, verbose=0)[0]
 
         self.test_only = []
@@ -636,7 +636,7 @@ class FieldTest(unittest.TestCase):
             f.domain_axis('domainaxis1').equals(
                 f.axis('domainaxis1'), verbose=2))
 
-    def test_Field_ATOL_RTOL(self):
+    def test_Field_atol_rtol(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -649,20 +649,20 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(g))
         self.assertTrue(f.equals(g, atol=0.1, verbose=2))
         self.assertFalse(f.equals(g))
-        atol = cf.ATOL(0.1)
+        atol = cf.atol(0.1)
         self.assertTrue(f.equals(g, verbose=2))
-        cf.ATOL(atol)
+        cf.atol(atol)
         self.assertFalse(f.equals(g))
 
         self.assertTrue(f.equals(g, rtol=10, verbose=2))
         self.assertFalse(f.equals(g))
-        rtol = cf.RTOL(10)
+        rtol = cf.rtol(10)
         self.assertTrue(f.equals(g, verbose=2))
-        cf.RTOL(rtol)
+        cf.rtol(rtol)
         self.assertFalse(f.equals(g))
 
-        cf.ATOL(self.atol)
-        cf.RTOL(self.rtol)
+        cf.atol(self.atol)
+        cf.rtol(self.rtol)
 
     def test_Field_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

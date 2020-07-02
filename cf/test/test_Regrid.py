@@ -44,7 +44,7 @@ class RegridTest(unittest.TestCase):
             return
 
         # Set tolerance for array equality
-        original_atol = cf.ATOL(1e-12)
+        original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
@@ -98,14 +98,14 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f1.regridc(f6, axes='T', method='linear')
 
-        cf.ATOL(original_atol)
+        cf.atol(original_atol)
 
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        original_atol = cf.ATOL(1e-12)
+        original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
@@ -148,7 +148,7 @@ class RegridTest(unittest.TestCase):
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
-        cf.ATOL(original_atol)
+        cf.atol(original_atol)
 
 
 # --- End: class

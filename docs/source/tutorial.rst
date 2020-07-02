@@ -60,7 +60,7 @@ The cf package is imported as follows:
          .. code-block:: python
             :caption: *Increase the verbosity of cf from the default.*
 
-            >>> cf.LOG_LEVEL('INFO')
+            >>> cf.log_level('INFO')
 
          See :ref:`the section on 'Logging' <Logging>` for
          more information.
@@ -4624,22 +4624,22 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cf.ATOL` and `cf.RTOL` functions:
+`cf.atol` and `cf.rtol` functions:
 
 .. code-block:: python
-   :caption: *The ATOL and RTOL functions allow the numerical equality
+   :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
       
-   >>> cf.ATOL()
+   >>> cf.atol()
    2.220446049250313e-16
-   >>> cf.RTOL()
+   >>> cf.rtol()
    2.220446049250313e-16
-   >>> original = cf.RTOL(0.00001)
-   >>> cf.RTOL()
+   >>> original = cf.rtol(0.00001)
+   >>> cf.rtol()
    1e-05
-   >>> cf.RTOL(original)
+   >>> cf.rtol(original)
    1e-05
-   >>> cf.RTOL()
+   >>> cf.rtol()
    2.220446049250313e-16
 
 Note that the above equation is not symmetric in :math:`x` and
@@ -6222,7 +6222,7 @@ the sub-sections below. Namely, you may configure the extent of
 messaging:
 
 * **globally** i.e. for all cf operations, by setting the
-  `cf.LOG_LEVEL` which controls the project-wide logging;
+  `cf.log_level` which controls the project-wide logging;
 * **for a specific function only** (for many functions) by setting
   that function's *verbose* keyword argument (which overrides the
   global setting for the duration of the function call).
@@ -6247,13 +6247,13 @@ verbosity. From highest to lowest on this scale, these levels are:
 * ``'DEBUG'``: produces highly-verbose information intended mainly for
   the purposes of debugging and cf library development.
 
-The function `cf.LOG_LEVEL` sets the minimum of these levels for
+The function `cf.log_level` sets the minimum of these levels for
 which messages are displayed. Any message marked as being of any lower
 level will be filtered out. Note it sets the verbosity *globally*, for
 *all* cf library operations (unless these are overridden for
 individual functions, as covered below).
 
-As well as the named log levels above, `cf.LOG_LEVEL` accepts a
+As well as the named log levels above, `cf.log_level` accepts a
 further identifier, ``'DISABLE'``. Each of these potential settings
 has a numerical value that is treated interchangeably and may instead
 be set (as this may be easier to recall and write, if less
@@ -6292,7 +6292,7 @@ to ``-1`` rather than ``4`` which would follow the increasing integer
 code pattern.  ``-1`` reflects that it is the final value in the
 sequence, as with Python indexing.
 
-The default value for `cf.LOG_LEVEL` is ``'WARNING'`` (``1``).
+The default value for `cf.log_level` is ``'WARNING'`` (``1``).
 However, whilst completing this tutorial, it may be instructive to set
 the log level` to a higher verbosity level such as `'INFO'` to gain
 insight into the internal workings of cf calls.
@@ -6308,13 +6308,13 @@ or especially complex processing, for example the `cf.read` and
 `cf.write` functions, accept a keyword argument *verbose*. This be
 set to change the minimum log level at which messages are displayed
 for the function/method call only, without being influenced by, or
-influencing, the global `cf.LOG_LEVEL` value.
+influencing, the global `cf.log_level` value.
 
-A *verbose* value effectively overrides the value of `cf.LOG_LEVEL`
+A *verbose* value effectively overrides the value of `cf.log_level`
 for the function/method along with any functions/methods it calls in
 turn, until the origin function/method completes.
 
-The *verbose* argument accepts the same levels as `cf.LOG_LEVEL`
+The *verbose* argument accepts the same levels as `cf.log_level`
 (including ``0`` for ``'DISABLE'``), as described in :ref:`the logging
 section <logging>`, however to keep the keyword simple, only the
 integer code is recognised and should be used, not the string
@@ -6322,7 +6322,7 @@ name. For example, ``verbose=2`` should be set rather than
 ``verbose='INFO'``.
 
 By default, *verbose* is set to `None`, in which case the value of the
-`cf.LOG_LEVEL` setting is used to determine which messages,
+`cf.log_level` setting is used to determine which messages,
 if any, are filtered out.
 
 

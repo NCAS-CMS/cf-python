@@ -261,22 +261,22 @@ def FREE_MEMORY_FACTOR(*args):
 # --------------------------------------------------------------------
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
-ATOL = cfdm.ATOL
-RTOL = cfdm.RTOL
+atol = cfdm.atol
+rtol = cfdm.rtol
 CF = cfdm.CF
 
 _disable_logging = cfdm._disable_logging
-# We can inherit the generic logic for the cf-python LOG_LEVEL() function
-# as contained in _log_level, but can't inherit the user-facing LOG_LEVEL()
+# We can inherit the generic logic for the cf-python log_level() function
+# as contained in _log_level, but can't inherit the user-facing log_level()
 # from cfdm as it operates on cfdm's CONSTANTS dict. Define cf-python's own.
-# This also means the LOG_LEVEL dostrings are independent which is important
+# This also means the log_level dostrings are independent which is important
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
 _is_valid_log_level_int =  cfdm._is_valid_log_level_int
 
 
-def LOG_LEVEL(*log_level):
+def log_level(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -318,15 +318,15 @@ def LOG_LEVEL(*log_level):
 
     **Examples:**
 
-    >>> LOG_LEVEL()  # get the current value
+    >>> log_level()  # get the current value
     'WARNING'
-    >>> LOG_LEVEL('INFO')  # change the value to 'INFO'
+    >>> log_level('INFO')  # change the value to 'INFO'
     'WARNING'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'INFO'
-    >>> LOG_LEVEL(0)  # set to 'DISABLE' via corresponding integer
+    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
     'INFO'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'DISABLE'
 
     '''
@@ -1046,11 +1046,11 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -1136,11 +1136,11 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -1560,9 +1560,9 @@ def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
     '''
     '''
     if rtol is None:
-        rtol = RTOL()
+        rtol = rtol()
     if atol is None:
-        atol = ATOL()
+        atol = atol()
 
     return _equals(x, y, rtol=rtol, atol=atol,
                    ignore_data_type=ignore_data_type,
@@ -1583,11 +1583,11 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
 
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         traceback : bool, optional
             If True then print a traceback highlighting where the two
@@ -1626,9 +1626,9 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     '''
 
     if rtol is None:
-        rtol = RTOL()
+        rtol = rtol()
     if atol is None:
-        atol = ATOL()
+        atol = atol()
 
     eq = getattr(x, 'equivalent', None)
     if callable(eq):
@@ -2216,11 +2216,11 @@ def allclose(x, y, rtol=None, atol=None):
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -2231,9 +2231,9 @@ def allclose(x, y, rtol=None, atol=None):
 
     '''
     if rtol is None:
-        rtol = RTOL()
+        rtol = rtol()
     if atol is None:
-        atol = ATOL()
+        atol = atol()
 
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):

@@ -2891,22 +2891,22 @@ class Field(mixin.PropertiesData,
 
         atol: `float`, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `ATOL` function.
+            numbers. The default value is set by the `atol` function.
 
         rtol: `float`, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `RTOL` function.
+            numbers. The default value is set by the `rtol` function.
 
         verbose: `int` or `None`, optional
             If an integer from ``0`` to ``3``, corresponding to increasing
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -7587,11 +7587,11 @@ class Field(mixin.PropertiesData,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -14835,11 +14835,11 @@ class Field(mixin.PropertiesData,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -17036,11 +17036,11 @@ class Field(mixin.PropertiesData,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
