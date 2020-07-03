@@ -3,8 +3,10 @@ import logging
 import cfdm
 
 from .constants import cr_coordinates, cr_canonical_units, cr_default_values
-from .functions import rtol, atol, allclose
-from .functions import inspect as cf_inspect
+from .functions import allclose
+from .functions import (inspect as cf_inspect,
+                        atol as cf_atol,
+                        rtol as cf_rtol)
 from .query import Query
 
 from . import CoordinateConversion
@@ -361,9 +363,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         # Check the parameter terms and their values
         # ------------------------------------------------------------
         if rtol is None:
-            rtol = rtol()
+            rtol = cf_rtol()
         if atol is None:
-            atol = atol()
+            atol = cf_atol()
 
 #        parameters0 = self._conversion['parameter']
 #        parameters1 = other._conversion['parameter']

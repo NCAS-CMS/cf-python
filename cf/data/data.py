@@ -103,16 +103,17 @@ from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
 from ..units import Units
 from ..constants import masked as cf_masked
-from ..functions import (CHUNKSIZE, FM_THRESHOLD, rtol, atol,
+
+from ..functions import (CHUNKSIZE, FM_THRESHOLD,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals,
                          abspath)
-
+from ..functions import (atol as cf_atol,
+                         rtol as cf_rtol)
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
-
 from ..functions import inspect as cf_inspect
 from ..functions import _section
 
@@ -993,14 +994,14 @@ place.
         '''Return the current value of the `atol` function.
 
         '''
-        return atol()
+        return cf_atol()
 
     @property
     def _rtol(self):
         '''Return the current value of the `rtol` function.
 
         '''
-        return rtol()
+        return cf_rtol()
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO

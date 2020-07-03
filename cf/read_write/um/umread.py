@@ -38,10 +38,11 @@ import cfdm
 from ...                   import __version__, __Conventions__, __file__
 from ...decorators         import (_manage_log_level_via_verbosity,
                                    _manage_log_level_via_verbose_attr)
-from ...functions          import (rtol, atol, equals,
-                                   open_files_threshold_exceeded,
+from ...functions          import (equals, open_files_threshold_exceeded,
                                    close_one_file, abspath,
                                    load_stash2standard_name)
+from ...functions import (atol as cf_atol,
+                          rtol as cf_rtol)
 from ...units              import Units
 
 from ...data.data import Data, Partition, PartitionMatrix
@@ -416,7 +417,7 @@ class UMField:
         self.byte_ordering = byte_ordering
         self.word_size = word_size
 
-        self.atol = atol()
+        self.atol = cf_atol()
 
         self.field = self.implementation.initialise_Field()
 
@@ -2192,7 +2193,8 @@ class UMField:
 
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
-            if (abs(BPLAT-90.0) <= atol + rtol()*90.0 and abs(BPLON) <= atol):
+            if (abs(BPLAT-90.0) <= atol + cf_rtol()*90.0 and
+                abs(BPLON) <= atol):
                 return True
 
         elif um_condition == 'rotated_latitude_longitude':
@@ -2201,7 +2203,7 @@ class UMField:
 
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
-            if not (abs(BPLAT-90.0) <= atol + rtol()*90.0 and
+            if not (abs(BPLAT-90.0) <= atol + cf_rtol()*90.0 and
                     abs(BPLON) <= atol):
                 return True
 

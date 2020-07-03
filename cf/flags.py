@@ -6,7 +6,9 @@ from numpy import ndarray as numpy_ndarray
 
 from copy import deepcopy
 
-from .functions import rtol, atol, equals
+from .functions import equals
+from .functions import (atol as cf_atol,
+                        rtol as cf_rtol)
 from .functions import inspect as cf_inspect
 
 from .decorators import (_deprecated_kwarg_check,
@@ -358,9 +360,9 @@ class Flags:
 
         # Set default tolerances
         if rtol is None:
-            rtol = rtol()
+            rtol = cf_rtol()
         if atol is None:
-            atol = atol()
+            atol = cf_atol()
 
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):

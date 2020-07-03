@@ -261,9 +261,14 @@ def FREE_MEMORY_FACTOR(*args):
 # --------------------------------------------------------------------
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
+# User-facing names:
 atol = cfdm.atol
 rtol = cfdm.rtol
 CF = cfdm.CF
+# Module-level alias to avoid name clashes with function keyword arguments
+# (corresponding to 'import atol as cf_atol' etc. in other modules)
+cf_atol = cfdm.atol
+cf_rtol = cfdm.rtol
 
 _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level() function
@@ -1560,9 +1565,9 @@ def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
     '''
     '''
     if rtol is None:
-        rtol = rtol()
+        rtol = cf_rtol()
     if atol is None:
-        atol = atol()
+        atol = cf_atol()
 
     return _equals(x, y, rtol=rtol, atol=atol,
                    ignore_data_type=ignore_data_type,
@@ -1626,9 +1631,9 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     '''
 
     if rtol is None:
-        rtol = rtol()
+        rtol = cf_rtol()
     if atol is None:
-        atol = atol()
+        atol = cf_atol()
 
     eq = getattr(x, 'equivalent', None)
     if callable(eq):
@@ -2231,9 +2236,9 @@ def allclose(x, y, rtol=None, atol=None):
 
     '''
     if rtol is None:
-        rtol = rtol()
+        rtol = cf_rtol()
     if atol is None:
-        atol = atol()
+        atol = cf_atol()
 
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):

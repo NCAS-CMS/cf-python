@@ -20,10 +20,10 @@ class Field_collapseTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['nought']
 #        self.test_only = ['test_Field_collapse']
-#        self.test_only = ['test_Field_collapse_CLIMatolOGICAL_TIME']
+#        self.test_only = ['test_Field_collapse_CLIMATOLOGICAL_TIME']
 #        self.test_only = ['test_Field_collapse_GROUPS']
 
-    def test_Field_collapse_CLIMatolOGICAL_TIME(self):
+    def test_Field_collapse_CLIMATOLOGICAL_TIME(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

@@ -1,6 +1,7 @@
 from copy import deepcopy
 
-from ..functions import atol, rtol
+from ..functions import (atol as cf_atol,
+                         rtol as cf_rtol)
 
 from ..query import Query
 from ..units import Units
@@ -28,7 +29,7 @@ class Properties:
     This is used by, for example, the `_equals` method.
 
         '''
-        return atol()
+        return cf_atol()
 
     @property
     def _rtol(self):
@@ -38,7 +39,7 @@ class Properties:
     This is used by, for example, the `_equals` method.
 
         '''
-        return rtol()
+        return cf_rtol()
 
     # ----------------------------------------------------------------
     # Private methods

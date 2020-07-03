@@ -17,10 +17,11 @@ from .decorators          import (_manage_log_level_via_verbosity,
                                   _manage_log_level_via_verbose_attr,
                                   _deprecated_kwarg_check)
 
-from .functions           import (flat, rtol, atol,
-                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
+from .functions           import (flat,
                                   hash_array,
+                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
                                   _numpy_allclose)
+from .functions           import rtol as cf_rtol, atol as cf_atol
 from .functions           import inspect as cf_inspect
 
 from .data.data import Data
@@ -1587,9 +1588,9 @@ def aggregate(fields,
         exclude = ''
 
     if atol is None:
-        atol = atol()
+        atol = cf_atol()
     if rtol is None:
-        rtol = rtol()
+        rtol = cf_rtol()
 
     if axes is not None and isinstance(axes, str):
         axes = (axes,)
