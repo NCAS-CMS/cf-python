@@ -4,6 +4,7 @@ import time
 import unittest
 
 import numpy
+import cftime
 
 import cf
 # from cfunits import Units
@@ -179,7 +180,33 @@ class DatetimeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             d < cf.dt(2005, 2, 29, calendar='noleap')
 
-
+    def test_Datetime_dt_vector(self):
+        for v in (2000,
+                  [2000],
+                  [[2000]],
+                  '2000-01-1',
+                  ['2000-01-1'],
+        ):
+            x = cf.dt_vector(v)
+            self.assertIsInstance(x, numpy.ndarray)
+            self.assertEqual(x[0], cf.dt(2000, 1, 1))
+            
+        for v in ([2000, 2001],
+                  [[2000], [2001]],
+        ):
+            x = cf.dt_vector(v)
+            self.assertIsInstance(x, numpy.ndarray)
+            self.assertEqual(x.tolist(),
+                             [cf.dt(2000, 1, 1), cf.dt(2001, 1, 1)])
+            
+        for v in ([[2000, 1], [2001, 2]],
+                  ['2000-01-1', '2001-02-1'],
+        ):
+            x = cf.dt_vector(v)
+            self.assertIsInstance(x, numpy.ndarray)
+            self.assertEqual(x.tolist(),
+                             [cf.dt(2000, 1, 1), cf.dt(2001, 2, 1)])
+            
 # --- End: class
 
 

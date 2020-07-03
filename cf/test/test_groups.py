@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 import netCDF4
-#import netcdf_flattener
+import netcdf_flattener
 
 import cf
 
@@ -46,29 +46,31 @@ class GroupsTest(unittest.TestCase):
     def test_groups(self):
         f = cf.example_field(1)
 
-#        # Add a second grid mapping    
-#        datum = cf.Datum(parameters={'earth_radius': 7000000})
-#        conversion = cf.CoordinateConversion(
-#            parameters={'grid_mapping_name': 'latitude_longitude'})
-#        
-#        grid = cf.CoordinateReference(
-#            coordinate_conversion=conversion,
-#            datum=datum,
-#            coordinates=['auxiliarycoordinate0', 'auxiliarycoordinate1']
-#        )
-#
-#        f.set_construct(grid)
-#        
-#        grid0 = f.construct('grid_mapping_name:rotated_latitude_longitude')
-#        grid0.del_coordinate('auxiliarycoordinate0')
-#        grid0.del_coordinate('auxiliarycoordinate1')
-#        
-#        f.dump()
+        # Add a second grid mapping    
+        datum = cf.Datum(parameters={'earth_radius': 7000000})
+        conversion = cf.CoordinateConversion(
+            parameters={'grid_mapping_name': 'latitude_longitude'})
         
-        ungrouped_file = 'ungrouped1.nc'
+        grid = cf.CoordinateReference(
+            coordinate_conversion=conversion,
+            datum=datum,
+            coordinates=['auxiliarycoordinate0', 'auxiliarycoordinate1']
+        )
+
+        f.set_construct(grid)
+        
+        grid0 = f.construct('grid_mapping_name:rotated_latitude_longitude')
+        grid0.del_coordinate('auxiliarycoordinate0')
+        grid0.del_coordinate('auxiliarycoordinate1')
+
+        f.dump()
+        ungrouped_file = 'ungrouped0.nc'
         cf.write(f, ungrouped_file)
-        g = cf.read(ungrouped_file)[0]
-        self.assertTrue(f.equals(g, verbose=2))
+        g = cf.read(ungrouped_file, verbose=3)[0]
+        g.dump()
+        print (g.constructs)
+        print ('\n\n______________________\n\n')
+        self.assertTrue(f.equals(g, verbose=-1))
 
         grouped_file = 'delme1.nc'
         filename = grouped_file
@@ -93,7 +95,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move constructs one by one to the /forecast group
         # ------------------------------------------------------------
-        for name in ( #'time',  # Dimension coordinate
+        for name in ('time',  # Dimension coordinate
                      'grid_latitude',  # Dimension coordinate
                      'longitude', # Auxiliary coordinate
                      'measure:area',  # Cell measure
@@ -101,11 +103,9 @@ class GroupsTest(unittest.TestCase):
                      'air_temperature standard_error',  # Field ancillary
                      'grid_mapping_name:rotated_latitude_longitude',
     ):
-#        for name in ('grid_latitude',):  # Dimension coordinate
-            print(9999999999, name)
             g.construct(name).nc_set_variable_groups(['forecast'])
             cf.write(g, filename, verbose=1)
-            g.dump()
+
             # Check that the variable is in the right group
             nc = netCDF4.Dataset(filename, 'r')
             self.assertIn(
@@ -114,10 +114,10 @@ class GroupsTest(unittest.TestCase):
             nc.close()
 
             # Check that the field construct hasn't changed
-            h = cf.read(filename, verbose=-1)
+            h = cf.read(filename, verbose=1)
             self.assertEqual(len(h), 1, repr(h))
             self.assertTrue(f.equals(h[0], verbose=2), name)
-        
+
         # ------------------------------------------------------------
         # Move bounds to the /forecast group
         # ------------------------------------------------------------
@@ -131,27 +131,23 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
 
-        h = cf.read(filename)
+        h = cf.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
-        f.dump()
-        
     def test_groups_geometry(self):
         f = cf.example_field(6)
-
+    
 #        return True
-#        pnc = cf.PartNodeCountProperties()
-#        pnc.set_property('long_name', 'part node count')
-#        pnc.nc_set_variable('part_node_count')
-#        f.construct('longitude').set_part_node_count(pnc)
             
-        ungrouped_file = 'ungrouped1.nc'
+#        ungrouped_file = 'ungrouped1.nc'
         cf.write(f, ungrouped_file)
-        g = cf.read(ungrouped_file)[0]
-        self.assertTrue(f.equals(g, verbose=2))
+        g = cf.read(ungrouped_file, verbose=1)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g, verbose=-1))
 
-        grouped_file = 'delme2.nc'
+#        grouped_file = 'delme2.nc'
         filename = grouped_file
 
         # ------------------------------------------------------------
@@ -277,32 +273,36 @@ class GroupsTest(unittest.TestCase):
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
         
-        ungrouped_file = 'ungrouped1.nc'
+#        ungrouped_file = 'ungrouped1.nc'
         cf.write(f, ungrouped_file , verbose=1)
         g = cf.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 
-        grouped_file = 'delme3.nc'
+#        grouped_file = 'delme3.nc'
         filename = grouped_file
 
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
+        
         # ------------------------------------------------------------
         # Move the count variable to the /forecast group
         # ------------------------------------------------------------        
         g.data.get_count().nc_set_variable_groups(['forecast'])
+        
         # ------------------------------------------------------------
         # Move the index variable to the /forecast group
         # ------------------------------------------------------------        
         g.data.get_index().nc_set_variable_groups(['forecast'])
+        
         # ------------------------------------------------------------
         # Move the coordinates that span the element dimension to the
         # /forecast group
         # ------------------------------------------------------------
         name = 'altitude'
         g.construct(name).nc_set_variable_groups(['forecast'])
+        
         # ------------------------------------------------------------
         # Move the sample dimension to the /forecast group
         # ------------------------------------------------------------        

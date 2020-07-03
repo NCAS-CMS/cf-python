@@ -2381,15 +2381,20 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         return field0
 
-    def _conform_coordinate_references(self, key):
-        '''Where possible, replace the content of ref.coordinates with
-    coordinate construct keys and the values of domain ancillary terms
-    with domain ancillary construct keys.
+    def _conform_coordinate_references(self, key, coordref=None):
+        '''Where possible replace the content of coordiante refence construct
+    coordinates with coordinate construct keys.
+
+    .. versionadded:: 3.0.0
 
     :Parameters:
 
         key: `str`
             Coordinate construct key.
+
+        coordref: `CoordianteReference`, optional
+
+            .. versionadded:: 3.6.0
 
     :Returns:
 
@@ -2398,16 +2403,23 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> f._conform_coordinate_references('auxiliarycoordinate1')
+    >>> f._conform_coordinate_references('auxiliarycoordinate1', 
+    ...                                  coordref=cr)
 
         '''
-        identity = self.constructs[key].identity(strict=True)
+        identity = self.constructs[key].identity(strict=True)        
+        
+        if coordref is None:
+            refs = self.coordinate_references.values()
+        else:
+            refs = [coordref]
 
-        for ref in self.coordinate_references.values():
-            if key in ref.coordinates():
-                continue
-
-            if identity in ref._coordinate_identities:
+        for ref in refs:
+            coordinates = ref.coordinates()
+            if identity in coordinates:
+                ref.del_coordinate(identity, None)
                 ref.set_coordinate(key)
+        #--- End: for
 
     def _coordinate_reference_axes(self, key):
         '''TODO
@@ -3875,14 +3887,9 @@ class Field(mixin.PropertiesData,
             for key in ref.coordinates():
                 axes.update(dst.get_data_axes(key))
 
-#            axes = dst.axes(ref.coordinates(), exact=True)
             if axes and set(axes).issubset(dst_axis_keys):
                 # This coordinate reference's coordinates span the X
                 # and/or Y axes
-
-                # self.insert_ref(dst._unconform_ref(ref), copy=False)
-                # self.set_construct(
-                #     dst._unconform_coordinate_reference(ref), copy=False)
                 self.set_coordinate_reference(ref, field=dst, strict=True)
 
     @classmethod
@@ -14890,7 +14897,7 @@ class Field(mixin.PropertiesData,
         dims = self.dimension_coordinates('X')
 
         if len(dims) != 1:
-            logger.info(
+            logger.debug(
                 "Not one 'X' dimension coordinate construct: {}".format(
                     len(dims))
             )  # pragma: no cover
@@ -14903,20 +14910,20 @@ class Field(mixin.PropertiesData,
             if dim.get_property('standard_name', None) not in (
                     'longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
-                logger.debug(1)
+                logger.debug(1)  # pragma: no cover
                 return False
         # --- End: if
 
         bounds = dim.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
-            logger.debug(2)
+            logger.debug(2)  # pragma: no cover
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
-            logger.debug(3)
+            logger.debug(3)  # pragma: no cover
             return False
 
         bounds = bounds_data.array
@@ -14927,11 +14934,11 @@ class Field(mixin.PropertiesData,
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
             self.cyclic(key, iscyclic=False)
-            logger.debug(4)
+            logger.debug(4)  # pragma: no cover
             return False
 
         self.cyclic(key, iscyclic=True, period=period)
-        logger.debug(5)
+        logger.debug(5)  # pragma: no cover
 
         return True
 
@@ -16850,7 +16857,7 @@ class Field(mixin.PropertiesData,
 
         elif construct_type == 'coordinate_reference':
             for ckey in self.coordinates:
-                self._conform_coordinate_references(ckey)
+                self._conform_coordinate_references(ckey, coordref=construct)
         # --- End: if
 
         # Return the construct key

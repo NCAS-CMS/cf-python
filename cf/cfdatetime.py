@@ -166,7 +166,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
 
 
 def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
-              microsecond=0, calendar=None):
+              microsecond=0, calendar=''):
     '''Return a 1-d array of date-time objects.
 
     .. seealso:: `cf.dt`
@@ -265,9 +265,10 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
             _[:, 5] = second
             _[:, 6] = microsecond
             arg = _
-
+            
             out = [dt(*args, calendar=calendar) for args in arg]
-    # --- End: if
+    else:
+         out = [dt(*args, calendar=calendar) for args in arg]
 
     out = numpy.array(out)
 
