@@ -46,7 +46,7 @@ class CachedArray(abstract.FileArray):
         # the temporary file when done with it.
         # ------------------------------------------------------------
         _partition_dir = mkdtemp(
-            prefix='cf_cachedarray_', dir=CONSTANTS['tempdir'])
+            prefix='cf_cachedarray_', dir=CONSTANTS['TEMPDIR'])
         fd, _partition_file = mkstemp(prefix='cf_cachedarray_', suffix='.npy',
                                       dir=_partition_dir)
         close(fd)

@@ -41,7 +41,7 @@ class ppTest(unittest.TestCase):
         text_file.close()
 
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
-        self.original_chunksize = cf.CHUNKSIZE()
+        self.original_chunksize = cf.chunksize()
         self.test_only = ()
 
     def test_PP_load_stash2standard_name(self):
@@ -71,7 +71,7 @@ class ppTest(unittest.TestCase):
         array = f.array
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             f = cf.read(self.ppfilename)[0]
 
@@ -91,7 +91,7 @@ class ppTest(unittest.TestCase):
                 self.assertTrue(f.equals(g, verbose=2),
                                 'Bad writing/reading. format='+fmt)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
 
 # --- End: class

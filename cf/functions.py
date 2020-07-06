@@ -235,7 +235,7 @@ def _WORKSPACE_FACTOR_2():
 def free_memory_factor(*args):
     '''Set the fraction of memory kept free as a temporary
     workspace. Users should set the free memory factor through
-    cf.SET_PERFORMANCE so that the upper limit to the chunksize is
+    cf.set_performance so that the upper limit to the chunksize is
     recalculated appropriately. The free memory factor must be a
     sensible value between zero and one. If no arguments are passed
     the existing free memory factor is returned.
@@ -369,7 +369,7 @@ def LOG_LEVEL(*new_log_level):
     return log_level(*new_log_level)
 
 
-def CHUNKSIZE(*args):
+def chunksize(*args):
     '''Set the chunksize used by LAMA for partitioning the data
     array. This must be smaller than an upper limit determined by the
     free memory factor, which is the fraction of memory kept free as a
@@ -443,7 +443,7 @@ def FM_THRESHOLD(*new_fm_threshold):
     return fm_threshold(*new_fm_threshold)
 
 
-def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
+def set_performance(chunksize=None, free_memory_factor=None):
     '''Tune performance of parallelisation by setting chunksize and free
     memory factor. By just providing the chunksize it can be changed
     to a smaller value than an upper limit, which is determined by the
@@ -474,14 +474,14 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     '''
-    old = CHUNKSIZE(), free_memory_factor()
+    old = chunksize(), free_memory_factor()
     if free_memory_factor is None:
         if chunksize is not None:
-            CHUNKSIZE(chunksize)
+            chunksize(chunksize)
     else:
         free_memory_factor(free_memory_factor)
         try:
-            CHUNKSIZE(chunksize)
+            chunksize(chunksize)
         except ValueError:
             free_memory_factor(old[1])
             raise
@@ -571,7 +571,7 @@ def TEMPDIR(*new_tempdir):
     return tempdir(*new_tempdir)
 
 
-def OF_FRACTION(*arg):
+def of_fraction(*arg):
     '''The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
 
@@ -598,21 +598,21 @@ def OF_FRACTION(*arg):
 
     **Examples:**
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
-    >>> old = cf.OF_FRACTION(0.33)
-    >>> cf.OF_FRACTION(old)
+    >>> old = cf.of_fraction(0.33)
+    >>> cf.of_fraction(old)
     0.33
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
 
     The fraction may be translated to an actual number of files as
     follows:
 
-    >>> old = cf.OF_FRACTION(0.75)
+    >>> old = cf.of_fraction(0.75)
     >>> import resource
     >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
-    >>> threshold = int(max_open_files * cf.OF_FRACTION())
+    >>> threshold = int(max_open_files * cf.of_fraction())
     >>> max_open_files, threshold
     (1024, 768)
 
@@ -665,7 +665,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
-def COLLAPSE_PARALLEL_MODE(*arg):
+def collapse_parallel_mode(*arg):
     '''Which mode to use when collapse is run in parallel. There are three
     possible modes:
 
@@ -697,11 +697,11 @@ def COLLAPSE_PARALLEL_MODE(*arg):
 
     **Examples:**
 
-    >>> cf.COLLAPSE_PARALLEL_MODE()
+    >>> cf.collapse_parallel_mode()
     0
-    >>> cf.COLLAPSE_PARALLEL_MODE(1)
+    >>> cf.collapse_parallel_mode(1)
     0
-    >>> cf.COLLAPSE_PARALLEL_MODE()
+    >>> cf.collapse_parallel_mode()
     1
 
     '''
@@ -852,7 +852,7 @@ if _linux:
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `OF_FRACTION` function.
+    fraction is retrieved and set with the `of_fraction` function.
 
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
@@ -868,17 +868,17 @@ if _linux:
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
     >>> cf.open_files_threshold_exceeded()
     True
-    >>> cf.OF_FRACTION(0.9)
+    >>> cf.of_fraction(0.9)
     >>> cf.open_files_threshold_exceeded()
     False
 
         '''
         return (len(listdir(_fd_dir)) >
-                _max_number_of_open_files * OF_FRACTION())
+                _max_number_of_open_files * of_fraction())
 
 
 else:
@@ -893,7 +893,7 @@ else:
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `OF_FRACTION` function.
+    fraction is retrieved and set with the `of_fraction` function.
 
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
@@ -909,17 +909,17 @@ else:
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
     >>> cf.open_files_threshold_exceeded()
     True
-    >>> cf.OF_FRACTION(0.9)
+    >>> cf.of_fraction(0.9)
     >>> cf.open_files_threshold_exceeded()
     False
 
         '''
         return (len(_process.open_files()) >
-                _max_number_of_open_files * OF_FRACTION())
+                _max_number_of_open_files * of_fraction())
 
 
 # --- End: if
@@ -2458,7 +2458,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         # array.
         #
         # I.e. factor = 1/(the number of words per chunk)
-        factor = (x.dtype.itemsize + 1.0)/CHUNKSIZE()
+        factor = (x.dtype.itemsize + 1.0)/chunksize()
 
         # n_chunks = number of equal sized bits the partition needs to
         #            be split up into so that each bit's size is less

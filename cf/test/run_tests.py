@@ -66,7 +66,7 @@ def run_test_suite(verbosity=2):
 
 
 if __name__ == '__main__':
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
     print('--------------------')
     print('CF-PYTHON TEST SUITE')
     print('--------------------')
@@ -75,10 +75,10 @@ if __name__ == '__main__':
     print('')
     print('Running tests from', os.path.abspath(os.curdir))
 
-    cf.CHUNKSIZE(original_chunksize)
+    cf.chunksize(original_chunksize)
 
     run_test_suite_setup_0()
     run_test_suite_setup_1()
     run_test_suite()
 
-    cf.CHUNKSIZE(original_chunksize)
+    cf.chunksize(original_chunksize)

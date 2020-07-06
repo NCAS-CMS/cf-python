@@ -41,7 +41,7 @@ class read_writeTest(unittest.TestCase):
                                    'string_char.nc')
 
     chunk_sizes = (17, 34, 300, 100000)[::-1]
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
@@ -239,7 +239,7 @@ class read_writeTest(unittest.TestCase):
 
         for string in (True, False):
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 for fmt in ('NETCDF3_CLASSIC',
                             'NETCDF3_64BIT',
                             'NETCDF3_64BIT_OFFSET',
@@ -267,7 +267,7 @@ class read_writeTest(unittest.TestCase):
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.filename)[0]
             for fmt in ('NETCDF4',
                         'NETCDF4_CLASSIC',
@@ -284,7 +284,7 @@ class read_writeTest(unittest.TestCase):
                             "{0}, {1}, {2}".format(
                                 fmt, compress, shuffle))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -294,7 +294,7 @@ class read_writeTest(unittest.TestCase):
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.filename)[0]
             self.assertTrue(f.dtype == numpy.dtype(float))
             cf.write(f, tmpfile, fmt='NETCDF4',
@@ -303,7 +303,7 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(g.dtype == numpy.dtype('float32'),
                             'datatype read in is '+str(g.dtype))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         # Keyword single
         f = cf.read(self.filename)[0]
@@ -343,7 +343,7 @@ class read_writeTest(unittest.TestCase):
 
         for reference_datetime in ('1751-2-3', '1492-12-30'):
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 f = cf.read(self.filename)[0]
                 t = cf.DimensionCoordinate(data=cf.Data(
                     123, 'days since 1750-1-1'))
@@ -360,7 +360,7 @@ class read_writeTest(unittest.TestCase):
                     ('Units written were ' + repr(t.Units.reftime)
                      + ' not ' + repr(reference_datetime)))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
 #    def test_write_HDF_chunks(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -368,12 +368,12 @@ class read_writeTest(unittest.TestCase):
 #
 #        for chunksize in self.chunk_sizes:
 #            for fmt in ('NETCDF3_CLASSIC', 'NETCDF4'):
-#                cf.CHUNKSIZE(chunksize)
+#                cf.chunksize(chunksize)
 #                f = cf.read(self.filename)[0]
 #                f.HDF_chunks({'T': 10000, 1: 3, 'grid_lat': 222, 45:45})
 #                cf.write(f, tmpfile, fmt=fmt, HDF_chunksizes={'X': 6})
 #        # --- End: for
-#        cf.CHUNKSIZE(self.original_chunksize)
+#        cf.chunksize(self.original_chunksize)
 
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

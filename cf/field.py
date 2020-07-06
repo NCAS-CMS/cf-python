@@ -65,7 +65,7 @@ from . import List
 
 from .constants import masked as cf_masked
 
-from .functions import (parse_indices, CHUNKSIZE, equals, _section)
+from .functions import (parse_indices, chunksize, equals, _section)
 from .functions import relaxed_identities as cf_relaxed_identities
 from .query import Query, ge, gt, le, lt, eq
 from .regrid import Regrid
@@ -19757,7 +19757,7 @@ class Field(mixin.PropertiesData,
             # create sections that exceed 1 chunk of memory proceed to get
             # the coordinate and associated data for the extra dimension.
             if src_shape[src_axis_indices].prod() * max_length * 8 < (
-                    CHUNKSIZE()
+                    chunksize()
             ):
                 axis_keys_ext, coords_ext = f._regrid_get_cartesian_coords(
                     'source', [max_ind])

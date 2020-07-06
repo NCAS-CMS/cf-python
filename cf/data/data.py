@@ -104,13 +104,14 @@ from ..cfdatetime import dt as cf_dt
 from ..units import Units
 from ..constants import masked as cf_masked
 
-from ..functions import (CHUNKSIZE, fm_threshold as cf_fm_threshold,
-                         free_memory, COLLAPSE_PARALLEL_MODE,
+from ..functions import (fm_threshold as cf_fm_threshold,
+                         free_memory, collapse_parallel_mode,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals,
                          abspath)
 from ..functions import (atol as cf_atol,
+                         chunksize as cf_chunksize,
                          rtol as cf_rtol)
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
@@ -473,7 +474,7 @@ place.
             If False then the data array will be stored in a single
             partition. By default the data array will be partitioned
             if it is larger than the chunk size, as returned by the
-            `cf.CHUNKSIZE` function.
+            `cf.chunksize` function.
 
     **Examples:**
 
@@ -2750,9 +2751,9 @@ place.
                 self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
             self.varray
 
-        org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_ranks)
+        org_chunksize = cf_chunksize(cf_chunksize()/n_ranks)
         sections = self.section(axes, chunks=True)
-        CHUNKSIZE(org_chunksize)
+        cf_chunksize(org_chunksize)
 
         for key, data in sections.items():
             array = data.array
@@ -3040,7 +3041,7 @@ place.
         chunk: `bool`, optional
             If True (the default) then the reset data array will be
             re-partitions according the current chunk size, as defined
-            by the `cf.CHUNKSIZE` function.
+            by the `cf.chunksize` function.
 
     :Returns:
 
@@ -3636,7 +3637,7 @@ place.
         '''
         if not chunksize:
             # Set the default chunk size
-            chunksize = CHUNKSIZE()
+            chunksize = cf_chunksize()
 
 # TODO - check intger division for python3
 
@@ -4588,7 +4589,7 @@ place.
 #                    max_size = broadcast_size
 #            # --- End: for
 #
-#            chunksize = CHUNKSIZE()
+#            chunksize = cf_chunksize()
 #            ffff = max_size*(new_dtype.itemsize + 1)
 #            if ffff > chunksize:
 #                data0.chunk(chunksize*(chunksize/ffff))
@@ -6218,7 +6219,7 @@ place.
         )
 
         if mpi_on:
-            mode = COLLAPSE_PARALLEL_MODE()
+            mode = collapse_parallel_mode()
             if mode == 0:
                 # Calculate the number of partitions in each subspace,
                 # assuming this will always be the same in each one and
@@ -9950,7 +9951,7 @@ False
                           units=self.Units)
 
         # Find the number of array elements that fit in one chunk
-        n = int(CHUNKSIZE()//(self.dtype.itemsize + 1.0))
+        n = int(cf_chunksize()//(self.dtype.itemsize + 1.0))
 
         # Loop around each chunk's worth of elements and assign the
         # non-missing values to the compressed data
@@ -12737,7 +12738,7 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return (CHUNKSIZE() >= self._size*(itemsize+1) <=
+        return (cf_chunksize() >= self._size*(itemsize+1) <=
                 free_memory() - cf_fm_threshold())
 
     @_deprecated_kwarg_check('i')

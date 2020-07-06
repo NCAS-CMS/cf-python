@@ -14,11 +14,11 @@ class aggregateTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), 'file2.nc')
 
     chunk_sizes = (17, 34, 300, 100000)[::-1]
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     def test_aggregate(self):
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             f = cf.read(self.filename, squeeze=True)[0]
 
@@ -125,7 +125,7 @@ class aggregateTest(unittest.TestCase):
             x = cf.aggregate([c, t], field_identity='long_name')
             self.assertTrue(len(x) == 1)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
 
 # --- End: class

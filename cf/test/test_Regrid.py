@@ -29,7 +29,7 @@ class RegridTest(unittest.TestCase):
                               'regrid_file8.nc')
 
     chunk_sizes = (300, 10000, 100000)[::-1]
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
@@ -47,7 +47,7 @@ class RegridTest(unittest.TestCase):
         original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f1 = cf.read(self.filename1)[0]
             f2 = cf.read(self.filename2)[0]
             f3 = cf.read(self.filename3)[0]
@@ -92,7 +92,7 @@ class RegridTest(unittest.TestCase):
                 'destination = regional Field, CHUNKSIZE = %s' % chunksize
             )
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         f6 = cf.read(self.filename6)[0]
         with self.assertRaises(Exception):
@@ -108,7 +108,7 @@ class RegridTest(unittest.TestCase):
         original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f1 = cf.read(self.filename7)[0]
             f2 = cf.read(self.filename8)[0]
             f3 = cf.read(self.filename9)[0]
@@ -146,7 +146,7 @@ class RegridTest(unittest.TestCase):
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         cf.atol(original_atol)
 

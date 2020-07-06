@@ -59,7 +59,7 @@ class FieldTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
 
         self.chunk_sizes = (100000, 300, 34, 17)
-        self.original_chunksize = cf.CHUNKSIZE()
+        self.original_chunksize = cf.chunksize()
         self.atol = cf.atol()
         self.rtol = cf.rtol()
         self.f = cf.read(self.filename, verbose=0)[0]
@@ -715,7 +715,7 @@ class FieldTest(unittest.TestCase):
         query1 = cf.wi(1, 5) & cf.ne(4)
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             f = cf.read(self.contiguous, verbose=0)[0]
 
@@ -745,7 +745,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a), message)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         query2 = cf.set([1, 3, 5])
 
@@ -763,7 +763,7 @@ class FieldTest(unittest.TestCase):
             (af == 1) | (af == 3) | (af == 5), af, numpy.ma.masked)
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.contiguous)[0]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
@@ -792,7 +792,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a), message)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         ac3 = numpy.ma.masked_all((2, 3))
         ac3[0, 0] = -2
@@ -812,7 +812,7 @@ class FieldTest(unittest.TestCase):
         query3 = cf.set([-2, 3, 4])
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.contiguous)[0].subspace[[0, 2, 3], 1:]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
@@ -839,7 +839,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a),
                     message)
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Field__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2165,14 +2165,14 @@ class FieldTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.filename2)[0][0:100]
             g = f.section(('X', 'Y'))
             self.assertTrue(len(g) == 100,
                             'CHUNKSIZE={}, len(g)={}'.format(chunksize,
                                                              len(g)))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Field_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
