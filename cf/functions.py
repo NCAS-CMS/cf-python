@@ -200,6 +200,12 @@ def free_memory():
     return _free_memory()
 
 
+def FREE_MEMORY(*new_free_memory):
+    '''Alias for `cf.free_memory`.
+    '''
+    return free_memory(*new_free_memory)
+
+
 def _WORKSPACE_FACTOR_1():
     '''The value of workspace factor 1 used in calculating the upper limit
     to the chunksize given the free memory factor.
@@ -256,6 +262,12 @@ def free_memory_factor(*args):
         CONSTANTS['FM_THRESHOLD'] = free_memory_factor * total_memory()
 
     return old
+
+
+def FREE_MEMORY_FACTOR(*new_free_memory_factor):
+    '''Alias for `cf.free_memory_factor`.
+    '''
+    return free_memory_factor(*new_free_memory_factor)
 
 
 # --------------------------------------------------------------------
@@ -425,6 +437,12 @@ def fm_threshold():
     return CONSTANTS['FM_THRESHOLD']
 
 
+def FM_THRESHOLD(*new_fm_threshold):
+    '''Alias for `cf.fm_threshold`.
+    '''
+    return fm_threshold(*new_fm_threshold)
+
+
 def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
     '''Tune performance of parallelisation by setting chunksize and free
     memory factor. By just providing the chunksize it can be changed
@@ -479,10 +497,22 @@ def min_total_memory():
 # --- End: def
 
 
+def MIN_TOTAL_MEMORY(*new_min_total_memory):
+    '''Alias for `cf.min_total_memory`.
+    '''
+    return min_total_memory(*new_min_total_memory)
+
+
 def total_memory():
     '''TODO
     '''
     return CONSTANTS['TOTAL_MEMORY']
+
+
+def TOTAL_MEMORY(*new_total_memory):
+    '''Alias for `cf.total_memory`.
+    '''
+    return total_memory(*new_total_memory)
 
 
 def TEMPDIR(*arg):

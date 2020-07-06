@@ -35,6 +35,15 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(cf.functions.DeprecationError):
             b.squeeze(i=True)
 
+    def test_aliases(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
+        self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
+        self.assertEqual(cf.fm_threshold(), cf.FM_THRESHOLD())
+        self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
+
 
 # --- End: class
 
