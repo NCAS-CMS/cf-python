@@ -65,8 +65,8 @@ from . import List
 
 from .constants import masked as cf_masked
 
-from .functions import (parse_indices, CHUNKSIZE, equals,
-                        RELAXED_IDENTITIES, _section)
+from .functions import (parse_indices, CHUNKSIZE, equals, _section)
+from .functions import relaxed_identities as cf_relaxed_identities
 from .query import Query, ge, gt, le, lt, eq
 from .regrid import Regrid
 from .timeduration import TimeDuration
@@ -703,7 +703,7 @@ class Field(mixin.PropertiesData,
         axis_to_dim = {}
 
         if relaxed_identities is None:
-            relaxed_identities = RELAXED_IDENTITIES()
+            relaxed_identities = cf_relaxed_identities()
 
         dimension_coordinates = self.dimension_coordinates
 
@@ -945,7 +945,7 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         # Analyse each domain
         # ------------------------------------------------------------
-        relaxed_identities = RELAXED_IDENTITIES()
+        relaxed_identities = cf_relaxed_identities()
         s = self.analyse_items(relaxed_identities=relaxed_identities)
         v = other.analyse_items(relaxed_identities=relaxed_identities)
 
@@ -966,7 +966,7 @@ class Field(mixin.PropertiesData,
             raise ValueError(
                 "Can't combine fields: Both fields have not-strictly-defined "
                 "axes: {!r}, {!r}. Consider setting "
-                "cf.RELAXED_IDENTITIES(True)".format(
+                "cf.relaxed_identities(True)".format(
                     tuple(self.constructs.domain_axis_identity(a)
                           for a in s['undefined_axes']),
                     tuple(other.constructs.domain_axis_identity(a)
@@ -1881,7 +1881,7 @@ class Field(mixin.PropertiesData,
         # ============================================================
         # Still here? Then combine the field with another field
         # ============================================================
-        relaxed_identities = RELAXED_IDENTITIES()
+        relaxed_identities = cf_relaxed_identities()
 
         units = self.Units
         sn = self.get_property('standard_name', None)
@@ -18799,7 +18799,7 @@ class Field(mixin.PropertiesData,
     **Logging**
 
     Whether ESMF logging is enabled or not is determined by
-    `cf.REGRID_LOGGING`. If it is logging takes place after every
+    `cf.regrid_logging`. If it is logging takes place after every
     call. By default logging is disabled.
 
 
@@ -19011,7 +19011,7 @@ class Field(mixin.PropertiesData,
             proceed and degenerate cells will be skipped, not
             producing a result, when set to True. Otherwise an error
             will be produced if degenerate cells are found. This will
-            be present in the ESMPy log files if `cf.REGRID_LOGGING`
+            be present in the ESMPy log files if `cf.regrid_logging`
             is set to True. As of ESMF 7.0.0 this only applies to
             conservative regridding.  Other methods always skip
             degenerate cells.
@@ -19455,7 +19455,7 @@ class Field(mixin.PropertiesData,
     **Logging**
 
     Whether ESMF logging is enabled or not is determined by
-    `cf.REGRID_LOGGING`. If it is logging takes place after every
+    `cf.regrid_logging`. If it is logging takes place after every
     call. By default logging is disabled.
 
     .. seealso:: `regrids`
@@ -19609,7 +19609,7 @@ class Field(mixin.PropertiesData,
             proceed and degenerate cells will be skipped, not
             producing a result, when set to True. Otherwise an error
             will be produced if degenerate cells are found. This will
-            be present in the ESMPy log files if cf.REGRID_LOGGING is
+            be present in the ESMPy log files if cf.regrid_logging is
             set to True. As of ESMF 7.0.0 this only applies to
             conservative regridding.  Other methods always skip
             degenerate cells.

@@ -53,7 +53,7 @@ class DataTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-        self.TEMPDIR = os.path.dirname(os.path.abspath(__file__))
+        self.tempdir = os.path.dirname(os.path.abspath(__file__))
 
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
@@ -576,7 +576,7 @@ class DataTest(unittest.TestCase):
 
         factor = 0.99999999999999
 
-        cf.TEMPDIR(self.TEMPDIR)
+        cf.tempdir(self.tempdir)
 
         original_FMF = cf.free_memory_factor(1 - factor)
         d = cf.Data(numpy.arange(100))

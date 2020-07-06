@@ -22,7 +22,7 @@ class CachedArray(abstract.FileArray):
 
     The array is stored on disk in a temporary file until it is
     accessed. The directory containing the temporary file may be found
-    and set with the `cf.TEMPDIR` function.
+    and set with the `cf.tempdir` function.
 
     '''
     def __init__(self, array):
@@ -46,7 +46,7 @@ class CachedArray(abstract.FileArray):
         # the temporary file when done with it.
         # ------------------------------------------------------------
         _partition_dir = mkdtemp(
-            prefix='cf_cachedarray_', dir=CONSTANTS['TEMPDIR'])
+            prefix='cf_cachedarray_', dir=CONSTANTS['tempdir'])
         fd, _partition_file = mkstemp(prefix='cf_cachedarray_', suffix='.npy',
                                       dir=_partition_dir)
         close(fd)

@@ -515,7 +515,7 @@ def TOTAL_MEMORY(*new_total_memory):
     return total_memory(*new_total_memory)
 
 
-def TEMPDIR(*arg):
+def tempdir(*arg):
     '''The directory for internally generated temporary files.
 
     When setting the directory, it is created if the specified path
@@ -541,12 +541,12 @@ def TEMPDIR(*arg):
 
     **Examples:**
 
-    >>> cf.TEMPDIR()
+    >>> cf.tempdir()
     '/tmp'
-    >>> old = cf.TEMPDIR('/home/me/tmp')
-    >>> cf.TEMPDIR(old)
+    >>> old = cf.tempdir('/home/me/tmp')
+    >>> cf.tempdir(old)
     '/home/me/tmp'
-    >>> cf.TEMPDIR()
+    >>> cf.tempdir()
     '/tmp'
 
     '''
@@ -618,7 +618,7 @@ def OF_FRACTION(*arg):
     return old
 
 
-def REGRID_LOGGING(*arg):
+def regrid_logging(*arg):
     '''Whether or not to enable ESMPy logging.
 
     If it is logging is performed after every call to ESMPy.
@@ -638,11 +638,11 @@ def REGRID_LOGGING(*arg):
 
     **Examples:**
 
-    >>> cf.REGRID_LOGGING()
+    >>> cf.regrid_logging()
     False
-    >>> cf.REGRID_LOGGING(True)
+    >>> cf.regrid_logging(True)
     False
-    >>> cf.REGRID_LOGGING()
+    >>> cf.regrid_logging()
     True
 
     '''
@@ -703,7 +703,7 @@ def COLLAPSE_PARALLEL_MODE(*arg):
     return old
 
 
-def RELAXED_IDENTITIES(*arg):
+def relaxed_identities(*arg):
     '''Use 'relaxed' mode when getting a construct identity.
 
     If set to True, sets ``relaxed=True`` as the default in calls to a
@@ -724,16 +724,16 @@ def RELAXED_IDENTITIES(*arg):
 
     **Examples:**
 
-    >>> org = cf.RELAXED_IDENTITIES()
+    >>> org = cf.relaxed_identities()
     >>> org
     False
-    >>> cf.RELAXED_IDENTITIES(True)
+    >>> cf.relaxed_identities(True)
     False
-    >>> cf.RELAXED_IDENTITIES()
+    >>> cf.relaxed_identities()
     True
-    >>> cf.RELAXED_IDENTITIES(org)
+    >>> cf.relaxed_identities(org)
     True
-    >>> cf.RELAXED_IDENTITIES()
+    >>> cf.relaxed_identities()
     False
 
     '''
