@@ -2194,7 +2194,7 @@ class UMField:
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
             if (abs(BPLAT-90.0) <= atol + cf_rtol()*90.0 and
-                abs(BPLON) <= atol):
+                    abs(BPLON) <= atol):
                 return True
 
         elif um_condition == 'rotated_latitude_longitude':

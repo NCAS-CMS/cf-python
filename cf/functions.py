@@ -67,9 +67,10 @@ def _close_proc_meminfo():
         _meminfo_file.close()
     except Exception:
         pass
-    
+
 
 atexit.register(_close_proc_meminfo)
+
 
 class DeprecationError(Exception):
     pass
@@ -293,6 +294,7 @@ CF = cfdm.CF
 cf_atol = cfdm.atol
 cf_rtol = cfdm.rtol
 
+
 # Aliases (for back-compatibility etc.):
 def ATOL(*new_atol):
     '''Alias for `cf.atol`.
@@ -314,7 +316,7 @@ _disable_logging = cfdm._disable_logging
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
-_is_valid_log_level_int =  cfdm._is_valid_log_level_int
+_is_valid_log_level_int = cfdm._is_valid_log_level_int
 
 
 def log_level(*log_level):
