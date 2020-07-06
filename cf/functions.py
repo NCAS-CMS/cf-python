@@ -270,6 +270,17 @@ def FREE_MEMORY_FACTOR(*new_free_memory_factor):
     return free_memory_factor(*new_free_memory_factor)
 
 
+def _cf_free_memory_factor(*new_free_memory_factor):
+    '''Internal alias for `cf.free_memory_factor`.
+
+    Used in this module to prevent a name clash with a function keyword
+    argument (corresponding to 'import X as cf_X' etc. in other modules).
+    Note we don't use FREE_MEMORY_FACTOR() as it will likely be deprecated
+    in future.
+    '''
+    return free_memory_factor(*new_free_memory_factor)
+
+
 # --------------------------------------------------------------------
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
@@ -420,6 +431,22 @@ def chunksize(*args):
     return old
 
 
+def CHUNKSIZE(*new_chunksize):
+    '''Alias for `cf.chunksize`.
+    '''
+    return chunksize(*new_chunksize)
+
+
+def _cf_chunksize(*new_chunksize):
+    '''Internal alias for `cf.chunksize`.
+
+    Used in this module to prevent a name clash with a function keyword
+    argument (corresponding to 'import X as cf_X' etc. in other modules).
+    Note we don't use CHUNKSIZE() as it will likely be deprecated in future.
+    '''
+    return chunksize(*new_chunksize)
+
+
 def fm_threshold():
     '''The amount of memory which is kept free as a temporary work space.
 
@@ -474,20 +501,26 @@ def set_performance(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     '''
-    old = chunksize(), free_memory_factor()
+    old = _cf_chunksize(), _cf_free_memory_factor()
     if free_memory_factor is None:
         if chunksize is not None:
-            chunksize(chunksize)
+            _cf_chunksize(chunksize)
     else:
-        free_memory_factor(free_memory_factor)
+        _cf_free_memory_factor(free_memory_factor)
         try:
-            chunksize(chunksize)
+            _cf_chunksize(chunksize)
         except ValueError:
-            free_memory_factor(old[1])
+            _cf_free_memory_factor(old[1])
             raise
     # --- End: if
 
     return old
+
+
+def SET_PERFORMANCE(*new_set_performance):
+    '''Alias for `cf.set_performance`.
+    '''
+    return set_performance(*new_set_performance)
 
 
 def min_total_memory():
@@ -624,6 +657,12 @@ def of_fraction(*arg):
     return old
 
 
+def OF_FRACTION(*new_of_fraction):
+    '''Alias for `cf.of_fraction`.
+    '''
+    return of_fraction(*new_of_fraction)
+
+
 def regrid_logging(*arg):
     '''Whether or not to enable ESMPy logging.
 
@@ -713,6 +752,12 @@ def collapse_parallel_mode(*arg):
         CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg[0]
 
     return old
+
+
+def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
+    '''Alias for `cf.collapse_parallel_mode`.
+    '''
+    return collapse_parallel_mode(*new_collapse_parallel_mode)
 
 
 def relaxed_identities(*arg):
