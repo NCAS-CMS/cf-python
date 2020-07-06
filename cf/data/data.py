@@ -104,8 +104,8 @@ from ..cfdatetime import dt as cf_dt
 from ..units import Units
 from ..constants import masked as cf_masked
 
-from ..functions import (CHUNKSIZE, FM_THRESHOLD,
-                         FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
+from ..functions import (CHUNKSIZE, fm_threshold as cf_fm_threshold,
+                         free_memory, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals,
@@ -696,7 +696,7 @@ place.
 #
 #            self.partitions = PartitionMatrix(matrix, empty_list)
 #
-#            if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+#            if check_free_memory and free_memory() < cf_fm_threshold():
 #                self.to_disk()
 #
 #            if chunk:
@@ -746,7 +746,7 @@ place.
 
         self.partitions = PartitionMatrix(matrix, empty_list)
 
-        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+        if check_free_memory and free_memory() < cf_fm_threshold():
             self.to_disk()
 
         if chunk:
@@ -779,7 +779,7 @@ place.
         `None`
 
         '''
-        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+        if check_free_memory and free_memory() < cf_fm_threshold():
             compressed_array.to_disk()
 
         new = type(self).empty(shape=compressed_array.shape,
@@ -11716,7 +11716,7 @@ False
 
         '''
         config = self.partition_configuration(readonly=True)
-        fm_threshold = FM_THRESHOLD()
+        fm_threshold = cf_fm_threshold()
 
         # If parallelise is False then all partitions are flagged for
         # processing on this rank, otherwise only a subset are
@@ -11728,7 +11728,7 @@ False
                 # for processing
                 partition.open(config)
                 if (partition.on_disk and
-                        partition.nbytes <= FREE_MEMORY() - fm_threshold):
+                        partition.nbytes <= free_memory() - fm_threshold):
                     partition.array
 
                 partition.close()
@@ -12712,7 +12712,7 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
+        return self._size*(itemsize+1) <= free_memory() - cf_fm_threshold()
 
     def fits_in_one_chunk_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
@@ -12738,7 +12738,7 @@ False
         # including space for a full boolean mask
         # ------------------------------------------------------------
         return (CHUNKSIZE() >= self._size*(itemsize+1) <=
-                FREE_MEMORY() - FM_THRESHOLD())
+                free_memory() - cf_fm_threshold())
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled

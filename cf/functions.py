@@ -176,7 +176,7 @@ else:
 
 # --- End: if
 
-def FREE_MEMORY():
+def free_memory():
     '''The available physical memory.
 
     :Returns:
@@ -187,13 +187,13 @@ def FREE_MEMORY():
     **Examples:**
 
     >>> import numpy
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 88.2728042603 GiB
     >>> a = numpy.arange(10**9)
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 80.8082618713 GiB
     >>> del a
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 88.2727928162 GiB
 
     '''
@@ -226,7 +226,7 @@ def _WORKSPACE_FACTOR_2():
     return CONSTANTS['WORKSPACE_FACTOR_2']
 
 
-def FREE_MEMORY_FACTOR(*args):
+def free_memory_factor(*args):
     '''Set the fraction of memory kept free as a temporary
     workspace. Users should set the free memory factor through
     cf.SET_PERFORMANCE so that the upper limit to the chunksize is
@@ -253,7 +253,7 @@ def FREE_MEMORY_FACTOR(*args):
                 'Free memory factor must be between 0.0 and 1.0 not inclusive')
 
         CONSTANTS['FREE_MEMORY_FACTOR'] = free_memory_factor
-        CONSTANTS['FM_THRESHOLD'] = free_memory_factor * TOTAL_MEMORY()
+        CONSTANTS['FM_THRESHOLD'] = free_memory_factor * total_memory()
 
     return old
 
@@ -387,7 +387,7 @@ def CHUNKSIZE(*args):
     '''
     old = CONSTANTS['CHUNKSIZE']
     if args:
-        upper_chunksize = ((FREE_MEMORY_FACTOR() * MIN_TOTAL_MEMORY())
+        upper_chunksize = ((free_memory_factor() * min_total_memory())
                            / ((mpi_size * _WORKSPACE_FACTOR_1()) +
                               _WORKSPACE_FACTOR_2()))
         if args[0] is None:
@@ -408,7 +408,7 @@ def CHUNKSIZE(*args):
     return old
 
 
-def FM_THRESHOLD():
+def fm_threshold():
     '''The amount of memory which is kept free as a temporary work space.
 
     :Returns:
@@ -418,7 +418,7 @@ def FM_THRESHOLD():
 
     **Examples:**
 
-    >>> cf.FM_THRESHOLD()
+    >>> cf.fm_threshold()
     10000000000.0
 
     '''
@@ -456,30 +456,30 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     '''
-    old = CHUNKSIZE(), FREE_MEMORY_FACTOR()
+    old = CHUNKSIZE(), free_memory_factor()
     if free_memory_factor is None:
         if chunksize is not None:
             CHUNKSIZE(chunksize)
     else:
-        FREE_MEMORY_FACTOR(free_memory_factor)
+        free_memory_factor(free_memory_factor)
         try:
             CHUNKSIZE(chunksize)
         except ValueError:
-            FREE_MEMORY_FACTOR(old[1])
+            free_memory_factor(old[1])
             raise
     # --- End: if
 
     return old
 
 
-def MIN_TOTAL_MEMORY():
+def min_total_memory():
     '''The minumum total memory across nodes.
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
 # --- End: def
 
 
-def TOTAL_MEMORY():
+def total_memory():
     '''TODO
     '''
     return CONSTANTS['TOTAL_MEMORY']

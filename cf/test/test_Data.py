@@ -578,9 +578,9 @@ class DataTest(unittest.TestCase):
 
         cf.TEMPDIR(self.TEMPDIR)
 
-        original_FMF = cf.FREE_MEMORY_FACTOR(1 - factor)
+        original_FMF = cf.free_memory_factor(1 - factor)
         d = cf.Data(numpy.arange(100))
-        cf.FREE_MEMORY_FACTOR(factor)
+        cf.free_memory_factor(factor)
         _ = d.array
 
         for partition in d.partitions.flat:
@@ -591,9 +591,9 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
 
-            cf.FREE_MEMORY_FACTOR(1 - factor)
+            cf.free_memory_factor(1 - factor)
             d = cf.Data(numpy.arange(10000).reshape(100, 100))
-            cf.FREE_MEMORY_FACTOR(factor)
+            cf.free_memory_factor(factor)
 
             _ = d.array
 
@@ -602,7 +602,7 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-        cf.FREE_MEMORY_FACTOR(original_FMF)
+        cf.free_memory_factor(original_FMF)
 
     def test_Data_AUXILIARY_MASK(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
