@@ -5,16 +5,19 @@ import tempfile
 import unittest
 
 import netCDF4
-import netcdf_flattener
 
 import cf
 
 
-n_tmpfiles = 2
+n_tmpfiles = 6
 tmpfiles = [tempfile.mktemp('_test_groups.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(ungrouped_file,
- grouped_file,
+(ungrouped_file1,
+ ungrouped_file2,
+ ungrouped_file3,
+ grouped_file1,
+ grouped_file2,
+ grouped_file3,
 ) = tmpfiles
 
 def _remove_tmpfiles():
@@ -46,6 +49,9 @@ class GroupsTest(unittest.TestCase):
     def test_groups(self):
         f = cf.example_field(1)
 
+        ungrouped_file = ungrouped_file1
+        grouped_file = grouped_file1
+        
         # Add a second grid mapping    
         datum = cf.Datum(parameters={'earth_radius': 7000000})
         conversion = cf.CoordinateConversion(
@@ -63,32 +69,25 @@ class GroupsTest(unittest.TestCase):
         grid0.del_coordinate('auxiliarycoordinate0')
         grid0.del_coordinate('auxiliarycoordinate1')
 
-        f.dump()
-        ungrouped_file = 'ungrouped0.nc'
         cf.write(f, ungrouped_file)
-        g = cf.read(ungrouped_file, verbose=3)[0]
-        g.dump()
-        print (g.constructs)
-        print ('\n\n______________________\n\n')
-        self.assertTrue(f.equals(g, verbose=-1))
+        g = cf.read(ungrouped_file, verbose=1)[0]
 
-        grouped_file = 'delme1.nc'
-        filename = grouped_file
+        self.assertTrue(f.equals(g, verbose=3))
 
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
         
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.nc_get_variable(),
             nc.groups['forecast'].groups['model'].variables
         )
         nc.close()
         
-        h = cf.read(filename, verbose=1)
+        h = cf.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -104,17 +103,17 @@ class GroupsTest(unittest.TestCase):
                      'grid_mapping_name:rotated_latitude_longitude',
     ):
             g.construct(name).nc_set_variable_groups(['forecast'])
-            cf.write(g, filename, verbose=1)
+            cf.write(g, grouped_file, verbose=1)
 
             # Check that the variable is in the right group
-            nc = netCDF4.Dataset(filename, 'r')
+            nc = netCDF4.Dataset(grouped_file, 'r')
             self.assertIn(
                 f.construct(name).nc_get_variable(),
                 nc.groups['forecast'].variables)
             nc.close()
 
             # Check that the field construct hasn't changed
-            h = cf.read(filename, verbose=1)
+            h = cf.read(grouped_file, verbose=1)
             self.assertEqual(len(h), 1, repr(h))
             self.assertTrue(f.equals(h[0], verbose=2), name)
 
@@ -123,15 +122,15 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         name = 'grid_latitude'
         g.construct(name).bounds.nc_set_variable_groups(['forecast'])
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
         
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.construct(name).bounds.nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
 
-        h = cf.read(filename, verbose=1)
+        h = cf.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -140,30 +139,29 @@ class GroupsTest(unittest.TestCase):
     
 #        return True
             
-#        ungrouped_file = 'ungrouped1.nc'
+        ungrouped_file = ungrouped_file2
+        grouped_file = grouped_file2
+        
         cf.write(f, ungrouped_file)
         g = cf.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
         g = g[0]
-        self.assertTrue(f.equals(g, verbose=-1))
-
-#        grouped_file = 'delme2.nc'
-        filename = grouped_file
-
+        self.assertTrue(f.equals(g, verbose=3))
+        
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.nc_get_variable(),
             nc.groups['forecast'].groups['model'].variables
         )
         nc.close()
         
-        h = cf.read(filename)
+        h = cf.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -171,17 +169,17 @@ class GroupsTest(unittest.TestCase):
         # Move the geometry container to the /forecast group
         # ------------------------------------------------------------
         g.nc_set_geometry_variable_groups(['forecast'])
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
         # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(            
             f.nc_get_geometry_variable(),
             nc.groups['forecast'].variables)
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cf.read(filename)
+        h = cf.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -189,17 +187,17 @@ class GroupsTest(unittest.TestCase):
         # Move a node coordinate variable to the /forecast group
         # ------------------------------------------------------------
         g.construct('longitude').bounds.nc_set_variable_groups(['forecast'])
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
         # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(            
             f.construct('longitude').bounds.nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cf.read(filename)
+        h = cf.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
@@ -209,17 +207,17 @@ class GroupsTest(unittest.TestCase):
         ncvar = g.construct('longitude').get_node_count().nc_get_variable()
         g.nc_set_component_variable_groups('node_count', ['forecast'])
 
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
         # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(            
             ncvar,
             nc.groups['forecast'].variables)
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cf.read(filename, verbose=1)
+        h = cf.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
@@ -231,17 +229,17 @@ class GroupsTest(unittest.TestCase):
         )
         g.nc_set_component_variable_groups('part_node_count', ['forecast'])
 
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
         # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(            
             ncvar,
             nc.groups['forecast'].variables)
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cf.read(filename)
+        h = cf.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
@@ -251,35 +249,34 @@ class GroupsTest(unittest.TestCase):
         g.nc_set_component_variable('interior_ring', 'interior_ring')
         g.nc_set_component_variable_groups('interior_ring', ['forecast'])
 
-        cf.write(g, filename)
+        cf.write(g, grouped_file)
 
         # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(            
             f.construct('longitude').get_interior_ring().nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cf.read(filename, verbose=1)
+        h = cf.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
     def test_groups_compression(self):
         f = cf.example_field(4)
 
+        ungrouped_file = ungrouped_file3
+        grouped_file = grouped_file3
+
 #        return True
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
         
-#        ungrouped_file = 'ungrouped1.nc'
         cf.write(f, ungrouped_file , verbose=1)
         g = cf.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
-
-#        grouped_file = 'delme3.nc'
-        filename = grouped_file
 
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
@@ -308,9 +305,9 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------        
         g.data.get_count().nc_set_sample_dimension_groups(['forecast'])
         
-        cf.write(g, filename, verbose=1)
+        cf.write(g, grouped_file, verbose=1)
 
-        nc = netCDF4.Dataset(filename, 'r')
+        nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.nc_get_variable(),
             nc.groups['forecast'].groups['model'].variables
@@ -328,36 +325,11 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
         
-        h = cf.read(filename, verbose=1)
+        h = cf.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
 #--- End: class
-
-#        netcdf_flattener.flatten(i, o)
-#
-#        o.close()
-#
-#        h = cf.read('tmp.nc')[0]
-#
-#        h.del_property('flattener_name_mapping_attributes')
-#        h.del_property('flattener_name_mapping_variables')
-#        h.del_property('flattener_name_mapping_dimensions')
-
-
-#        i = netCDF4.Dataset(ungrouped_file, 'r')
-#        o = netCDF4.Dataset('tmp.nc', 'w')
-#
-#        netcdf_flattener.flatten(i, o)
-#
-#        o.close()
-#
-#        h = cf.read('tmp.nc')[0]
-#
-#        h.del_property('flattener_name_mapping_attributes')
-#        h.del_property('flattener_name_mapping_variables')
-#        h.del_property('flattener_name_mapping_dimensions')
-
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())

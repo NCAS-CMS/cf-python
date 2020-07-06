@@ -17,7 +17,6 @@ class DomainAncillaryTest(unittest.TestCase):
         _ = str(f)
         _ = f.dump(display=False)
 
-
 # --- End: class
 
 if __name__ == '__main__':

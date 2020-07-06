@@ -760,35 +760,6 @@ class Field(mixin.PropertiesData,
                 if identity is None and relaxed_identities:
                     identity = dim.identity(relaxed=True, default=None)
 
-
-#                identity = None
-#                identity = dim.identity(strict=(not relaxed_identities),
-#                                        relaxed=relaxed_identities,
-#                                        default=None)
-#
-#                identity = dim.identity(strict=True, default=None)
-#                if not identity and relaxed_identities:
-#                    identity = dim.identity(relaxed=True, default=None)
-#
-# #                if relaxed_identities:
-# #                    identity = dim.identity(strict=False)
-# #                    identities = dim.identities()
-# #                    print ('P', identities)
-# #                    if identities:
-# #                        identity = identities[0]
-# #                else:
-# #                    identity = dim.identity(strict=True)
-# #                    identity = dim.identity()
-#
-#                if not identity:
-#                    # Dimension coordinate has no identity, but it may
-#                    # have a recognised axis.
-#                    for ctype in ('T', 'X', 'Y', 'Z'):
-#                        if getattr(dim, ctype, False):
-#                            identity = ctype
-#                            break
-#                # --- End: if
-
                 if identity:
                     if identity in id_to_axis:
                         warnings.append(
@@ -1287,7 +1258,6 @@ class Field(mixin.PropertiesData,
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
-#        print ('uuuu' , axes_unD + axes_unM + axes0_M)
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
 
         end_of_undefined0 = len(axes_unD)
@@ -1336,7 +1306,6 @@ class Field(mixin.PropertiesData,
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
-#        print ('rrrr', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -12253,7 +12222,6 @@ class Field(mixin.PropertiesData,
         unique_axes = set()
         n_axes = 0
         for identity, value in kwargs.items():
-            print (identity, value, domain_axes)
             if identity in domain_axes:
                 print(9999)
                 axes = (identity,)
@@ -12265,7 +12233,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't find indices: Ambiguous axis or axes: "
                         "{!r}".format(identity)
-                    )  # ooo
+                    )
 
                 key, construct = dict(c).popitem()
 
@@ -12288,12 +12256,10 @@ class Field(mixin.PropertiesData,
             )
 
         for sorted_axes, axes_key_construct_value in parsed.items():
-            print (sorted_axes, axes_key_construct_value )
             axes, keys, constructs, points = list(zip(
                 *axes_key_construct_value))
             n_items = len(constructs)
             n_axes = len(sorted_axes)
-            print (axes, keys, constructs, points , n_items, n_axes)
 
             if n_items > n_axes:
                 if n_axes == 1:
@@ -12493,9 +12459,6 @@ class Field(mixin.PropertiesData,
 
                 item_matches = [(value == construct).data for
                                 value, construct in zip(points, constructs)]
-
-#                for z in item_matches:
-#                    print ('Z=', repr(z.array))
 
                 item_match = item_matches.pop()
 
