@@ -649,6 +649,7 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(g))
         self.assertTrue(f.equals(g, atol=0.1, verbose=2))
         self.assertFalse(f.equals(g))
+        self.assertEqual(cf.atol(), cf.ATOL())
         atol = cf.atol(0.1)
         self.assertTrue(f.equals(g, verbose=2))
         cf.atol(atol)
@@ -656,6 +657,7 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(f.equals(g, rtol=10, verbose=2))
         self.assertFalse(f.equals(g))
+        self.assertEqual(cf.rtol(), cf.RTOL())
         rtol = cf.rtol(10)
         self.assertTrue(f.equals(g, verbose=2))
         cf.rtol(rtol)

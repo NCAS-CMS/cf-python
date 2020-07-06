@@ -270,6 +270,19 @@ CF = cfdm.CF
 cf_atol = cfdm.atol
 cf_rtol = cfdm.rtol
 
+# Aliases (for back-compatibility etc.):
+def ATOL(*new_atol):
+    '''Alias for `cf.atol`.
+    '''
+    return atol(*new_atol)
+
+
+def RTOL(*new_rtol):
+    '''Alias for `cf.rtol`.
+    '''
+    return rtol(*new_rtol)
+
+
 _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level() function
 # as contained in _log_level, but can't inherit the user-facing log_level()
@@ -336,6 +349,12 @@ def log_level(*log_level):
 
     '''
     return _log_level(CONSTANTS, log_level)
+
+
+def LOG_LEVEL(*new_log_level):
+    '''Alias for `cf.log_level`.
+    '''
+    return log_level(*new_log_level)
 
 
 def CHUNKSIZE(*args):
