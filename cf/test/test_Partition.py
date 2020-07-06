@@ -11,7 +11,7 @@ class PartitionTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
     chunk_sizes = (17, 34, 300, 100000)[::-1]
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     test_only = []
 

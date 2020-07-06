@@ -29,7 +29,7 @@ class RegridTest(unittest.TestCase):
                               'regrid_file8.nc')
 
     chunk_sizes = (300, 10000, 100000)[::-1]
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
@@ -44,10 +44,10 @@ class RegridTest(unittest.TestCase):
             return
 
         # Set tolerance for array equality
-        original_atol = cf.ATOL(1e-12)
+        original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f1 = cf.read(self.filename1)[0]
             f2 = cf.read(self.filename2)[0]
             f3 = cf.read(self.filename3)[0]
@@ -92,23 +92,23 @@ class RegridTest(unittest.TestCase):
                 'destination = regional Field, CHUNKSIZE = %s' % chunksize
             )
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         f6 = cf.read(self.filename6)[0]
         with self.assertRaises(Exception):
             f1.regridc(f6, axes='T', method='linear')
 
-        cf.ATOL(original_atol)
+        cf.atol(original_atol)
 
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        original_atol = cf.ATOL(1e-12)
+        original_atol = cf.atol(1e-12)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f1 = cf.read(self.filename7)[0]
             f2 = cf.read(self.filename8)[0]
             f3 = cf.read(self.filename9)[0]
@@ -146,9 +146,9 @@ class RegridTest(unittest.TestCase):
                 'destination = global dict, CHUNKSIZE = %s' % chunksize
             )
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
-        cf.ATOL(original_atol)
+        cf.atol(original_atol)
 
 
 # --- End: class

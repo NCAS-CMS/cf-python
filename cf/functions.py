@@ -67,9 +67,10 @@ def _close_proc_meminfo():
         _meminfo_file.close()
     except Exception:
         pass
-    
+
 
 atexit.register(_close_proc_meminfo)
+
 
 class DeprecationError(Exception):
     pass
@@ -176,7 +177,7 @@ else:
 
 # --- End: if
 
-def FREE_MEMORY():
+def free_memory():
     '''The available physical memory.
 
     :Returns:
@@ -187,17 +188,23 @@ def FREE_MEMORY():
     **Examples:**
 
     >>> import numpy
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 88.2728042603 GiB
     >>> a = numpy.arange(10**9)
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 80.8082618713 GiB
     >>> del a
-    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
+    >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 88.2727928162 GiB
 
     '''
     return _free_memory()
+
+
+def FREE_MEMORY(*new_free_memory):
+    '''Alias for `cf.free_memory`.
+    '''
+    return free_memory(*new_free_memory)
 
 
 def _WORKSPACE_FACTOR_1():
@@ -226,10 +233,10 @@ def _WORKSPACE_FACTOR_2():
     return CONSTANTS['WORKSPACE_FACTOR_2']
 
 
-def FREE_MEMORY_FACTOR(*args):
+def free_memory_factor(*args):
     '''Set the fraction of memory kept free as a temporary
     workspace. Users should set the free memory factor through
-    cf.SET_PERFORMANCE so that the upper limit to the chunksize is
+    cf.set_performance so that the upper limit to the chunksize is
     recalculated appropriately. The free memory factor must be a
     sensible value between zero and one. If no arguments are passed
     the existing free memory factor is returned.
@@ -253,30 +260,66 @@ def FREE_MEMORY_FACTOR(*args):
                 'Free memory factor must be between 0.0 and 1.0 not inclusive')
 
         CONSTANTS['FREE_MEMORY_FACTOR'] = free_memory_factor
-        CONSTANTS['FM_THRESHOLD'] = free_memory_factor * TOTAL_MEMORY()
+        CONSTANTS['FM_THRESHOLD'] = free_memory_factor * total_memory()
 
     return old
+
+
+def FREE_MEMORY_FACTOR(*new_free_memory_factor):
+    '''Alias for `cf.free_memory_factor`.
+    '''
+    return free_memory_factor(*new_free_memory_factor)
+
+
+def _cf_free_memory_factor(*new_free_memory_factor):
+    '''Internal alias for `cf.free_memory_factor`.
+
+    Used in this module to prevent a name clash with a function keyword
+    argument (corresponding to 'import X as cf_X' etc. in other modules).
+    Note we don't use FREE_MEMORY_FACTOR() as it will likely be deprecated
+    in future.
+    '''
+    return free_memory_factor(*new_free_memory_factor)
 
 
 # --------------------------------------------------------------------
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
-ATOL = cfdm.ATOL
-RTOL = cfdm.RTOL
+# User-facing names:
+atol = cfdm.atol
+rtol = cfdm.rtol
 CF = cfdm.CF
+# Module-level alias to avoid name clashes with function keyword arguments
+# (corresponding to 'import atol as cf_atol' etc. in other modules)
+cf_atol = cfdm.atol
+cf_rtol = cfdm.rtol
+
+
+# Aliases (for back-compatibility etc.):
+def ATOL(*new_atol):
+    '''Alias for `cf.atol`.
+    '''
+    return atol(*new_atol)
+
+
+def RTOL(*new_rtol):
+    '''Alias for `cf.rtol`.
+    '''
+    return rtol(*new_rtol)
+
 
 _disable_logging = cfdm._disable_logging
-# We can inherit the generic logic for the cf-python LOG_LEVEL() function
-# as contained in _log_level, but can't inherit the user-facing LOG_LEVEL()
+# We can inherit the generic logic for the cf-python log_level() function
+# as contained in _log_level, but can't inherit the user-facing log_level()
 # from cfdm as it operates on cfdm's CONSTANTS dict. Define cf-python's own.
-# This also means the LOG_LEVEL dostrings are independent which is important
+# This also means the log_level dostrings are independent which is important
 # for providing module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
-_is_valid_log_level_int =  cfdm._is_valid_log_level_int
+_is_valid_log_level_int = cfdm._is_valid_log_level_int
 
 
-def LOG_LEVEL(*log_level):
+def log_level(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -318,22 +361,28 @@ def LOG_LEVEL(*log_level):
 
     **Examples:**
 
-    >>> LOG_LEVEL()  # get the current value
+    >>> log_level()  # get the current value
     'WARNING'
-    >>> LOG_LEVEL('INFO')  # change the value to 'INFO'
+    >>> log_level('INFO')  # change the value to 'INFO'
     'WARNING'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'INFO'
-    >>> LOG_LEVEL(0)  # set to 'DISABLE' via corresponding integer
+    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
     'INFO'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'DISABLE'
 
     '''
     return _log_level(CONSTANTS, log_level)
 
 
-def CHUNKSIZE(*args):
+def LOG_LEVEL(*new_log_level):
+    '''Alias for `cf.log_level`.
+    '''
+    return log_level(*new_log_level)
+
+
+def chunksize(*args):
     '''Set the chunksize used by LAMA for partitioning the data
     array. This must be smaller than an upper limit determined by the
     free memory factor, which is the fraction of memory kept free as a
@@ -363,7 +412,7 @@ def CHUNKSIZE(*args):
     '''
     old = CONSTANTS['CHUNKSIZE']
     if args:
-        upper_chunksize = ((FREE_MEMORY_FACTOR() * MIN_TOTAL_MEMORY())
+        upper_chunksize = ((free_memory_factor() * min_total_memory())
                            / ((mpi_size * _WORKSPACE_FACTOR_1()) +
                               _WORKSPACE_FACTOR_2()))
         if args[0] is None:
@@ -384,7 +433,23 @@ def CHUNKSIZE(*args):
     return old
 
 
-def FM_THRESHOLD():
+def CHUNKSIZE(*new_chunksize):
+    '''Alias for `cf.chunksize`.
+    '''
+    return chunksize(*new_chunksize)
+
+
+def _cf_chunksize(*new_chunksize):
+    '''Internal alias for `cf.chunksize`.
+
+    Used in this module to prevent a name clash with a function keyword
+    argument (corresponding to 'import X as cf_X' etc. in other modules).
+    Note we don't use CHUNKSIZE() as it will likely be deprecated in future.
+    '''
+    return chunksize(*new_chunksize)
+
+
+def fm_threshold():
     '''The amount of memory which is kept free as a temporary work space.
 
     :Returns:
@@ -394,14 +459,20 @@ def FM_THRESHOLD():
 
     **Examples:**
 
-    >>> cf.FM_THRESHOLD()
+    >>> cf.fm_threshold()
     10000000000.0
 
     '''
     return CONSTANTS['FM_THRESHOLD']
 
 
-def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
+def FM_THRESHOLD(*new_fm_threshold):
+    '''Alias for `cf.fm_threshold`.
+    '''
+    return fm_threshold(*new_fm_threshold)
+
+
+def set_performance(chunksize=None, free_memory_factor=None):
     '''Tune performance of parallelisation by setting chunksize and free
     memory factor. By just providing the chunksize it can be changed
     to a smaller value than an upper limit, which is determined by the
@@ -432,36 +503,54 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     '''
-    old = CHUNKSIZE(), FREE_MEMORY_FACTOR()
+    old = _cf_chunksize(), _cf_free_memory_factor()
     if free_memory_factor is None:
         if chunksize is not None:
-            CHUNKSIZE(chunksize)
+            _cf_chunksize(chunksize)
     else:
-        FREE_MEMORY_FACTOR(free_memory_factor)
+        _cf_free_memory_factor(free_memory_factor)
         try:
-            CHUNKSIZE(chunksize)
+            _cf_chunksize(chunksize)
         except ValueError:
-            FREE_MEMORY_FACTOR(old[1])
+            _cf_free_memory_factor(old[1])
             raise
     # --- End: if
 
     return old
 
 
-def MIN_TOTAL_MEMORY():
+def SET_PERFORMANCE(*new_set_performance):
+    '''Alias for `cf.set_performance`.
+    '''
+    return set_performance(*new_set_performance)
+
+
+def min_total_memory():
     '''The minumum total memory across nodes.
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
 # --- End: def
 
 
-def TOTAL_MEMORY():
+def MIN_TOTAL_MEMORY(*new_min_total_memory):
+    '''Alias for `cf.min_total_memory`.
+    '''
+    return min_total_memory(*new_min_total_memory)
+
+
+def total_memory():
     '''TODO
     '''
     return CONSTANTS['TOTAL_MEMORY']
 
 
-def TEMPDIR(*arg):
+def TOTAL_MEMORY(*new_total_memory):
+    '''Alias for `cf.total_memory`.
+    '''
+    return total_memory(*new_total_memory)
+
+
+def tempdir(*arg):
     '''The directory for internally generated temporary files.
 
     When setting the directory, it is created if the specified path
@@ -487,12 +576,12 @@ def TEMPDIR(*arg):
 
     **Examples:**
 
-    >>> cf.TEMPDIR()
+    >>> cf.tempdir()
     '/tmp'
-    >>> old = cf.TEMPDIR('/home/me/tmp')
-    >>> cf.TEMPDIR(old)
+    >>> old = cf.tempdir('/home/me/tmp')
+    >>> cf.tempdir(old)
     '/home/me/tmp'
-    >>> cf.TEMPDIR()
+    >>> cf.tempdir()
     '/tmp'
 
     '''
@@ -511,7 +600,13 @@ def TEMPDIR(*arg):
     return old
 
 
-def OF_FRACTION(*arg):
+def TEMPDIR(*new_tempdir):
+    '''Alias for `cf.tempdir`.
+    '''
+    return tempdir(*new_tempdir)
+
+
+def of_fraction(*arg):
     '''The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
 
@@ -538,21 +633,21 @@ def OF_FRACTION(*arg):
 
     **Examples:**
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
-    >>> old = cf.OF_FRACTION(0.33)
-    >>> cf.OF_FRACTION(old)
+    >>> old = cf.of_fraction(0.33)
+    >>> cf.of_fraction(old)
     0.33
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
 
     The fraction may be translated to an actual number of files as
     follows:
 
-    >>> old = cf.OF_FRACTION(0.75)
+    >>> old = cf.of_fraction(0.75)
     >>> import resource
     >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
-    >>> threshold = int(max_open_files * cf.OF_FRACTION())
+    >>> threshold = int(max_open_files * cf.of_fraction())
     >>> max_open_files, threshold
     (1024, 768)
 
@@ -564,7 +659,13 @@ def OF_FRACTION(*arg):
     return old
 
 
-def REGRID_LOGGING(*arg):
+def OF_FRACTION(*new_of_fraction):
+    '''Alias for `cf.of_fraction`.
+    '''
+    return of_fraction(*new_of_fraction)
+
+
+def regrid_logging(*arg):
     '''Whether or not to enable ESMPy logging.
 
     If it is logging is performed after every call to ESMPy.
@@ -584,11 +685,11 @@ def REGRID_LOGGING(*arg):
 
     **Examples:**
 
-    >>> cf.REGRID_LOGGING()
+    >>> cf.regrid_logging()
     False
-    >>> cf.REGRID_LOGGING(True)
+    >>> cf.regrid_logging(True)
     False
-    >>> cf.REGRID_LOGGING()
+    >>> cf.regrid_logging()
     True
 
     '''
@@ -599,7 +700,13 @@ def REGRID_LOGGING(*arg):
     return old
 
 
-def COLLAPSE_PARALLEL_MODE(*arg):
+def REGRID_LOGGING(*new_regrid_logging):
+    '''Alias for `cf.regrid_logging`.
+    '''
+    return regrid_logging(*new_regrid_logging)
+
+
+def collapse_parallel_mode(*arg):
     '''Which mode to use when collapse is run in parallel. There are three
     possible modes:
 
@@ -631,11 +738,11 @@ def COLLAPSE_PARALLEL_MODE(*arg):
 
     **Examples:**
 
-    >>> cf.COLLAPSE_PARALLEL_MODE()
+    >>> cf.collapse_parallel_mode()
     0
-    >>> cf.COLLAPSE_PARALLEL_MODE(1)
+    >>> cf.collapse_parallel_mode(1)
     0
-    >>> cf.COLLAPSE_PARALLEL_MODE()
+    >>> cf.collapse_parallel_mode()
     1
 
     '''
@@ -649,7 +756,13 @@ def COLLAPSE_PARALLEL_MODE(*arg):
     return old
 
 
-def RELAXED_IDENTITIES(*arg):
+def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
+    '''Alias for `cf.collapse_parallel_mode`.
+    '''
+    return collapse_parallel_mode(*new_collapse_parallel_mode)
+
+
+def relaxed_identities(*arg):
     '''Use 'relaxed' mode when getting a construct identity.
 
     If set to True, sets ``relaxed=True`` as the default in calls to a
@@ -670,16 +783,16 @@ def RELAXED_IDENTITIES(*arg):
 
     **Examples:**
 
-    >>> org = cf.RELAXED_IDENTITIES()
+    >>> org = cf.relaxed_identities()
     >>> org
     False
-    >>> cf.RELAXED_IDENTITIES(True)
+    >>> cf.relaxed_identities(True)
     False
-    >>> cf.RELAXED_IDENTITIES()
+    >>> cf.relaxed_identities()
     True
-    >>> cf.RELAXED_IDENTITIES(org)
+    >>> cf.relaxed_identities(org)
     True
-    >>> cf.RELAXED_IDENTITIES()
+    >>> cf.relaxed_identities()
     False
 
     '''
@@ -688,6 +801,12 @@ def RELAXED_IDENTITIES(*arg):
         CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
 
     return old
+
+
+def RELAXED_IDENTITIES(*new_relaxed_identities):
+    '''Alias for `cf.relaxed_identities`.
+    '''
+    return relaxed_identities(*new_relaxed_identities)
 
 
 # def IGNORE_IDENTITIES(*arg):
@@ -780,7 +899,7 @@ if _linux:
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `OF_FRACTION` function.
+    fraction is retrieved and set with the `of_fraction` function.
 
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
@@ -796,17 +915,17 @@ if _linux:
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
     >>> cf.open_files_threshold_exceeded()
     True
-    >>> cf.OF_FRACTION(0.9)
+    >>> cf.of_fraction(0.9)
     >>> cf.open_files_threshold_exceeded()
     False
 
         '''
         return (len(listdir(_fd_dir)) >
-                _max_number_of_open_files * OF_FRACTION())
+                _max_number_of_open_files * of_fraction())
 
 
 else:
@@ -821,7 +940,7 @@ else:
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `OF_FRACTION` function.
+    fraction is retrieved and set with the `of_fraction` function.
 
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
@@ -837,17 +956,17 @@ else:
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
 
-    >>> cf.OF_FRACTION()
+    >>> cf.of_fraction()
     0.5
     >>> cf.open_files_threshold_exceeded()
     True
-    >>> cf.OF_FRACTION(0.9)
+    >>> cf.of_fraction(0.9)
     >>> cf.open_files_threshold_exceeded()
     False
 
         '''
         return (len(_process.open_files()) >
-                _max_number_of_open_files * OF_FRACTION())
+                _max_number_of_open_files * of_fraction())
 
 
 # --- End: if
@@ -1046,11 +1165,11 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -1136,11 +1255,11 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -1560,9 +1679,9 @@ def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
     '''
     '''
     if rtol is None:
-        rtol = RTOL()
+        rtol = cf_rtol()
     if atol is None:
-        atol = ATOL()
+        atol = cf_atol()
 
     return _equals(x, y, rtol=rtol, atol=atol,
                    ignore_data_type=ignore_data_type,
@@ -1583,11 +1702,11 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
 
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         traceback : bool, optional
             If True then print a traceback highlighting where the two
@@ -1626,9 +1745,9 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     '''
 
     if rtol is None:
-        rtol = RTOL()
+        rtol = cf_rtol()
     if atol is None:
-        atol = ATOL()
+        atol = cf_atol()
 
     eq = getattr(x, 'equivalent', None)
     if callable(eq):
@@ -2216,11 +2335,11 @@ def allclose(x, y, rtol=None, atol=None):
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -2231,9 +2350,9 @@ def allclose(x, y, rtol=None, atol=None):
 
     '''
     if rtol is None:
-        rtol = RTOL()
+        rtol = cf_rtol()
     if atol is None:
-        atol = ATOL()
+        atol = cf_atol()
 
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):
@@ -2386,7 +2505,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         # array.
         #
         # I.e. factor = 1/(the number of words per chunk)
-        factor = (x.dtype.itemsize + 1.0)/CHUNKSIZE()
+        factor = (x.dtype.itemsize + 1.0)/chunksize()
 
         # n_chunks = number of equal sized bits the partition needs to
         #            be split up into so that each bit's size is less

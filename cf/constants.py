@@ -50,7 +50,7 @@ provided. This is due to interdependencies between some values.
 
 :Keys:
 
-    ATOL : float
+    atol : float
       The value of absolute tolerance for testing numerically
       tolerant equality.
 
@@ -75,7 +75,7 @@ provided. This is due to interdependencies between some values.
       files which may be used for files containing data
       arrays.
 
-    RTOL : float
+    rtol : float
       The value of relative tolerance for testing numerically
       tolerant equality.
 
@@ -98,9 +98,9 @@ provided. This is due to interdependencies between some values.
       this is 0 to try and automatically determine which mode to
       use.
 
-    LOG_LEVEL : str
+    log_level : str
       The minimal level of seriousness for which log messages are shown.
-      See functions.LOG_LEVEL().
+      See functions.log_level().
 """
 CONSTANTS = {
     'RTOL': sys.float_info.epsilon,
@@ -114,7 +114,7 @@ CONSTANTS = {
     'REGRID_LOGGING': False,
     'COLLAPSE_PARALLEL_MODE': 0,
     'RELAXED_IDENTITIES': False,
-    'IGNORE_IDENTITIES': False,
+    # 'IGNORE_IDENTITIES': False,  # no longer used
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
 }
 

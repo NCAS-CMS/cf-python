@@ -6,7 +6,9 @@ from numpy import ndarray as numpy_ndarray
 
 from copy import deepcopy
 
-from .functions import RTOL, ATOL, equals
+from .functions import equals
+from .functions import (atol as cf_atol,
+                        rtol as cf_rtol)
 from .functions import inspect as cf_inspect
 
 from .decorators import (_deprecated_kwarg_check,
@@ -311,11 +313,11 @@ class Flags:
 
         atol: float, optional
             The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: float, optional
             The relative tolerance for all numerical comparisons, By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         ignore_fill_value: bool, optional
             If True then data arrays with different fill values are
@@ -358,9 +360,9 @@ class Flags:
 
         # Set default tolerances
         if rtol is None:
-            rtol = RTOL()
+            rtol = cf_rtol()
         if atol is None:
-            atol = ATOL()
+            atol = cf_atol()
 
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):

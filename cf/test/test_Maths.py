@@ -15,7 +15,7 @@ class MathTest(unittest.TestCase):
 
     chunk_sizes = (300, 10000, 100000)[::-1]
 #    chunk_sizes = (100000,)
-    original_chunksize = cf.CHUNKSIZE()
+    original_chunksize = cf.chunksize()
 
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
@@ -37,7 +37,7 @@ class MathTest(unittest.TestCase):
         data_2d = numpy.broadcast_to(data_1d[numpy.newaxis, :], (size, size))
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             dim_x = cf.DimensionCoordinate(data=cf.Data(x_1d, 'm'),
                                            properties={'axis': 'X'})
@@ -62,7 +62,7 @@ class MathTest(unittest.TestCase):
             self.assertTrue((rv.array == 0.0).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_relative_vorticity_latlong(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -95,7 +95,7 @@ class MathTest(unittest.TestCase):
                     numpy.tan(lat_1d*numpy.pi/180.0)[numpy.newaxis, :])
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             dim_x = cf.DimensionCoordinate(
                 data=cf.Data(lon_1d, 'degrees_east'), properties={'axis': 'X'})
@@ -123,7 +123,7 @@ class MathTest(unittest.TestCase):
             rv = cf.relative_vorticity(u, v, wrap=True)
             self.assertTrue(numpy.allclose(rv.array, rv_array))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
 
 if __name__ == "__main__":

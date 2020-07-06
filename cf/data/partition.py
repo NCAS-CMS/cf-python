@@ -32,8 +32,9 @@ from numpy.ma.core import MaskedConstant as numpy_ma_core_MaskedConstant
 # from cfunits import Units
 
 from ..units     import Units
-from ..functions import get_subspace, FREE_MEMORY, FM_THRESHOLD
-from ..functions import inspect as cf_inspect
+from ..functions import get_subspace, free_memory
+from ..functions import (inspect as cf_inspect,
+                         fm_threshold as cf_fm_threshold)
 from ..constants import CONSTANTS
 
 # from .filearray import  (_TempFileArray #, SharedMemoryArray,
@@ -814,13 +815,13 @@ class Partition:
                         #         been made to the subaray.
                         logger.debug('    1.1.1.1 revert')
                         self.revert()
-                    elif FREE_MEMORY() <= FM_THRESHOLD():
+                    elif free_memory() <= cf_fm_threshold():
                         # 1.1.1.2 The original subarray was on disk,
                         #         we are happy to keep the current
                         #         subarray in memory, but there is not
                         #         enough free memory to do so.
                         logger.debug('    1.1.1.2 revert ({} <= {})'.format(
-                            FREE_MEMORY(), FM_THRESHOLD()))
+                            free_memory(), cf_fm_threshold()))
                         self.revert()
                     else:
                         # 1.1.1.3 The original subarray was on disk
@@ -837,7 +838,7 @@ class Partition:
                         del self.masked
                         logger.debug(
                             '    1.1.1.3 del masked ({} > {})'.format(
-                                FREE_MEMORY(), FM_THRESHOLD())
+                                free_memory(), cf_fm_threshold())
                         )
 
                 else:
@@ -848,7 +849,7 @@ class Partition:
                         #         subarray in memory
                         logger.debug('    1.1.2.1 to_disk')
                         self.to_disk(reopen=False)
-                    elif FREE_MEMORY() <= FM_THRESHOLD():
+                    elif free_memory() <= cf_fm_threshold():
                         # 1.1.2.2 Original subarray was in memory and
                         #         unique but there is not enough
                         #         memory to keep the current subarray
@@ -877,7 +878,7 @@ class Partition:
 
                         logger.debug('    1.2.1.1 to_disk')
                         self.to_disk(reopen=False)
-                    elif FREE_MEMORY() <= FM_THRESHOLD():
+                    elif free_memory() <= cf_fm_threshold():
                         # 1.2.1.2 Original subarray was on disk but
                         #         there is not enough memory to keep
                         #         it
@@ -903,7 +904,7 @@ class Partition:
                         #         we don't want to keep it
                         logger.debug('    1.2.2.1 to_disk')
                         self.to_disk(reopen=False)
-                    elif FREE_MEMORY() <= FM_THRESHOLD():
+                    elif free_memory() <= cf_fm_threshold():
                         # 1.2.2.2 Original subarray was an in memory
                         #         but there is not enough memory to
                         #         keep it

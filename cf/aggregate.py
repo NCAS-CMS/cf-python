@@ -17,10 +17,11 @@ from .decorators          import (_manage_log_level_via_verbosity,
                                   _manage_log_level_via_verbose_attr,
                                   _deprecated_kwarg_check)
 
-from .functions           import (flat, RTOL, ATOL,
-                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
+from .functions           import (flat,
                                   hash_array,
+                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
                                   _numpy_allclose)
+from .functions           import rtol as cf_rtol, atol as cf_atol
 from .functions           import inspect as cf_inspect
 
 from .data.data import Data
@@ -1346,11 +1347,11 @@ def aggregate(fields,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -1512,14 +1513,14 @@ def aggregate(fields,
             The absolute tolerance for all numerical comparisons. The
             tolerance is a non-negative, typically very small number. Two
             numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `ATOL`
+            atol + rtol*|y|`. By default the value returned by the `atol`
             function is used.
 
         rtol: float, optional
             The relative tolerance for all numerical comparisons. The
             tolerance is a non-negative, typically very small number. Two
             numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `RTOL`
+            atol + rtol*|y|`. By default the value returned by the `rtol`
             function is used.
 
         no_overlap:
@@ -1587,9 +1588,9 @@ def aggregate(fields,
         exclude = ''
 
     if atol is None:
-        atol = ATOL()
+        atol = cf_atol()
     if rtol is None:
-        rtol = RTOL()
+        rtol = cf_rtol()
 
     if axes is not None and isinstance(axes, str):
         axes = (axes,)
