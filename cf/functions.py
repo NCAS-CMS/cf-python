@@ -565,6 +565,12 @@ def tempdir(*arg):
     return old
 
 
+def TEMPDIR(*new_tempdir):
+    '''Alias for `cf.tempdir`.
+    '''
+    return tempdir(*new_tempdir)
+
+
 def OF_FRACTION(*arg):
     '''The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
@@ -651,6 +657,12 @@ def regrid_logging(*arg):
         CONSTANTS['REGRID_LOGGING'] = bool(arg[0])
 
     return old
+
+
+def REGRID_LOGGING(*new_regrid_logging):
+    '''Alias for `cf.regrid_logging`.
+    '''
+    return regrid_logging(*new_regrid_logging)
 
 
 def COLLAPSE_PARALLEL_MODE(*arg):
@@ -742,6 +754,12 @@ def relaxed_identities(*arg):
         CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
 
     return old
+
+
+def RELAXED_IDENTITIES(*new_relaxed_identities):
+    '''Alias for `cf.relaxed_identities`.
+    '''
+    return relaxed_identities(*new_relaxed_identities)
 
 
 # def IGNORE_IDENTITIES(*arg):

@@ -43,6 +43,9 @@ class functionTest(unittest.TestCase):
         self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
         self.assertEqual(cf.fm_threshold(), cf.FM_THRESHOLD())
         self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
+        self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
+        self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
+        self.assertEqual(cf.tempdir(), cf.TEMPDIR())
 
 
 # --- End: class
