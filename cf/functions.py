@@ -177,6 +177,235 @@ else:
 
 # --- End: if
 
+
+def configuration(
+    atol=None,
+    rtol=None,
+    tempdir=None,
+    of_fraction=None,
+    chunksize=None,
+    collapse_parallel_mode=None,
+    free_memory_factor=None,
+    log_level=None,
+    regrid_logging=None,
+    relaxed_identities=None,
+):
+    '''View or set any number of constants in the project-wide configuration.
+
+    The full list of global constants that can be set in any combination
+    are:
+
+    * `atol`
+    * `rtol`
+    * `tempdir`
+    * `of_fraction`
+    * `chunksize`
+    * `collapse_parallel_mode`
+    * `free_memory_factor`
+    * `log_level`
+    * `regrid_logging`
+    * `relaxed_identities`
+
+    The following settings are also included in the dictionary that is
+    returned to view, but they are fixed by external factors so cannot
+    be set, hence there are no corresponding parameters:
+
+    * `total_memory`
+    * `fm_threshold`
+    * `min_total_memory`
+
+    These are all constants that apply throughout `cf`, except for in
+    specific functions only if overriden by the corresponding keyword
+    argument to that function.
+
+    The value of `None`, either taken by default or supplied as a value,
+    will result in the constant in question not being changed from the
+    current value. That is, it will have no effect.
+
+    Note that setting a constant using this function is equivalent to setting
+    it by means of a specific function of the same name, e.g. via `cf.atol`,
+    but in this case multiple constants can be set at once.
+
+    .. versionadded:: 3.5.2
+
+    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`, `chunksize`,
+                 `collapse_parallel_mode`, `total_memory`,
+                 `free_memory_factor`, `fm_threshold`, `min_total_memory`,
+                 `log_level`, `regrid_logging`, `relaxed_identities`
+
+    :Parameters:
+
+        atol: `float`, optional
+            The new value of absolute tolerance. The default is to not
+            change the current value.
+
+        rtol: `float`, optional
+            The new value of relative tolerance. The default is to not
+            change the current value.
+
+        tempdir: `str`, optional
+            The new directory for temporary files. Tilde expansion (an
+            initial component of ``~`` or ``~user`` is replaced by
+            that *user*'s home directory) and environment variable
+            expansion (substrings of the form ``$name`` or ``${name}``
+            are replaced by the value of environment variable *name*)
+            are applied to the new directory name.
+
+            The default is to not change the directory.
+
+        of_fraction: `float`, optional
+            The new fraction (between 0.0 and 1.0). The default is to
+            not change the current behaviour.
+
+        chunksize: `float`, optional
+            The new chunksize in bytes. The default is to not change
+            the current behaviour.
+
+        collapse_parallel_mode: `int`, optional
+            The new value (0, 1 or 2).
+
+        free_memory_factor: `float`
+            The new value of the fraction of memory kept free as a
+            temporary workspace. The default is to not change the
+            current behaviour.
+
+        log_level: `str` or `int`, optional
+            The new value of the minimal log severity level. This can
+            be specified either as a string equal (ignoring case) to
+            the named set of log levels or identifier 'DISABLE', or an
+            integer code corresponding to each of these, namely:
+
+            * ``'DISABLE'`` (``0``);
+            * ``'WARNING'`` (``1``);
+            * ``'INFO'`` (``2``);
+            * ``'DETAIL'`` (``3``);
+            * ``'DEBUG'`` (``-1``).
+
+        regrid_logging: `bool`, optional
+            The new value (either `True` to enable logging or `False`
+            to disable it). The default is to not change the current
+            behaviour.
+
+        `relaxed_identities`: `bool`, optional
+            The new value; if `True`, use 'relaxed' mode when getting a
+            construct identity. The default is to not change the current
+            value.
+
+    :Returns:
+
+        `dict`
+            The names and values of the project-wide constants prior to the
+            change, or the current names and values if no new values are
+            specified.
+
+    **Examples:**
+
+    >>> cf.configuration()  # view full global configuration of constants
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/tmp',
+     'of_fraction': 0.5,
+     'total_memory': 8287346688.0,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'WARNING',
+     'fm_threshold': 828734668.8000001,
+     'min_total_memory': 8287346688.0,
+     'chunksize': 82873466.88000001}
+    >>> cf.chunksize(7.5e7)  # any change to one constant...
+    82873466.88000001
+    >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
+    75000000.0
+
+    >>> cf.configuration(
+    ...     of_fraction=0.7, tempdir='/usr/tmp', log_level='INFO')  # set items
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/tmp',
+     'of_fraction': 0.5,
+     'total_memory': 8287346688.0,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'WARNING',
+     'fm_threshold': 828734668.8000001,
+     'min_total_memory': 8287346688.0,
+     'chunksize': 75000000.0}
+    >>> cf.configuration()  # the items set have been updated accordingly
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'total_memory': 8287346688.0,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'fm_threshold': 828734668.8000001,
+     'min_total_memory': 8287346688.0,
+     'chunksize': 75000000.0}
+
+    '''
+    return _configuration(
+        new_atol=atol,
+        new_rtol=rtol,
+        new_tempdir=tempdir,
+        new_of_fraction=of_fraction,
+        new_chunksize=chunksize,
+        new_collapse_parallel_mode=collapse_parallel_mode,
+        new_free_memory_factor=free_memory_factor,
+        new_log_level=log_level,
+        new_regrid_logging=regrid_logging,
+        new_relaxed_identities=relaxed_identities,
+    )
+
+
+def _configuration(**kwargs):
+    '''Internal helper function to provide the logic for `cf.configuration`.
+
+    We delegate from the user-facing `cf.configuration` for two main reasons:
+
+    1) to avoid a name clash there between the keyword arguments and the
+    functions which they each call (e.g. `atol` and `cf.atol`) which
+    would otherwise necessitate aliasing every such function name; and
+
+    2) because the user-facing function must have the appropriate keywords
+    explicitly listed, but the very similar logic applied for each keyword
+    can be consolidated by iterating over the full dictionary of input kwargs.
+
+    '''
+    # Filter out WORKSPACE_FACTOR_{1,2} constants which are only used
+    # externally and not exposed to the user:
+    old = {name.lower(): val for name, val in CONSTANTS.items() if
+           not name.startswith('WORKSPACE_FACTOR_')}
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
+
+    # Note values are the functions not the keyword arguments of same name:
+    reset_mapping = {
+        'new_atol': atol,
+        'new_rtol': rtol,
+        'new_tempdir': tempdir,
+        'new_of_fraction': of_fraction,
+        'new_chunksize': chunksize,
+        'new_collapse_parallel_mode': collapse_parallel_mode,
+        'new_free_memory_factor': free_memory_factor,
+        'new_log_level': log_level,
+        'new_regrid_logging': regrid_logging,
+        'new_relaxed_identities': relaxed_identities,
+    }
+    for setting_alias, new_value in kwargs.items():  # for all input kwargs...
+        reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    return old
+
+
 def free_memory():
     '''The available physical memory.
 
@@ -673,8 +902,8 @@ def regrid_logging(*arg):
     :Parameters:
 
         arg: `bool`, optional
-            The new value (either True to enable logging or False to
-            disable it).  The default is to not change the current
+            The new value (either `True` to enable logging or `False`
+            to disable it). The default is to not change the current
             behaviour.
 
     :Returns:
