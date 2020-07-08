@@ -1576,12 +1576,6 @@ def aggregate(fields,
             "\ninfo=3 maps to verbose=-1",
             version='3.5.0'
         )  # pragma: no cover
-#            'cf.aggregate', {'info': info},
-#            "Use keyword 'verbose' instead. Note the informational levels "
-#            "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
-#            "excluding I >= 3 which maps to V = -1 (V = 0 disables messages)",
-#            version='3.5.0'
-#        )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
