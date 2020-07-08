@@ -53,6 +53,97 @@ class functionTest(unittest.TestCase):
         self.assertEqual(
             cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE())
 
+    def test_configuration(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # This test assumes 'total_memory' remains constant throughout the
+        # test run, which should be true generally in any reasonable context.
+
+        # Test getting of all config. and store original values to test on:
+        org = cf.configuration()
+        self.assertIsInstance(org, dict)
+
+        # Check all keys that should be there are, with correct value type:
+        self.assertEqual(len(org), 13)  # update expected len if add new key(s)
+        # Floats expected as values for most keys. Store these for later as
+        # floats need assertAlmostEqual rather than assertEqual tests:
+        keys_with_float_values = [
+            'atol',
+            'rtol',
+            'of_fraction',
+            'total_memory',
+            'free_memory_factor',
+            'fm_threshold',
+            'min_total_memory',
+            'chunksize',
+        ]
+        for key in keys_with_float_values:
+            self.assertIsInstance(org[key], float)
+        # Other types expected:
+        self.assertIsInstance(org['collapse_parallel_mode'], int)
+        self.assertIsInstance(org['relaxed_identities'], bool)
+        self.assertIsInstance(org['regrid_logging'], bool)
+        # Log level may be input as an int but always given as equiv. string
+        self.assertIsInstance(org['log_level'], str)
+        self.assertIsInstance(org['tempdir'], str)
+
+        # Store some sensible values to reset items to for testing, ensuring:
+        # 1) they are kept different to the defaults (i.e. org values); and
+        # 2) floats differ sufficiently that they will be picked up as
+        #    different by the assertAlmostEqual decimal places (8, see below)
+        reset_values = {
+            'rtol': 5e-7,
+            'atol': 2e-7,
+            'tempdir': '/my-custom-tmpdir',
+            'of_fraction': 0.1,
+            'total_memory': 5e10,  # can't in fact be (re)set: test for error
+            'free_memory_factor': 0.25,
+            'regrid_logging': True,
+            'collapse_parallel_mode': 2,
+            'relaxed_identities': True,
+            'log_level': 'INFO',
+            'fm_threshold': 4e9,  # also can't be (re)set
+            'min_total_memory': 6e9,  # also can't be (re)set
+            'chunksize': 8e9,
+        }
+
+        # Test the setting of each lone item.
+        expected_post_set = dict(org)  # copy for safety with mutable dict
+        for setting, value in reset_values.items():
+            if setting in (
+                'total_memory',
+                'fm_threshold',
+                'min_total_memory',
+            ):  # these are shown in output but can't be set (no such kwarg)
+                with self.assertRaises(TypeError):  # error from invalid kwarg
+                    cf.configuration(**{setting: value})
+                continue
+            cf.configuration(**{setting: value})
+            post_set = cf.configuration()
+            keys_with_float_values
+
+            # Expect a dict that is identical to the original to start with
+            # but as we set values incrementally they should be reflected:
+            expected_post_set[setting] = value
+            # As a special case, we need to account for the fact that
+            # fm_threshold = free_memory_factor * total_memory, so it
+            # changes when the former is set (latter can't be set):
+            if setting == 'free_memory_factor':
+                expected_post_set['fm_threshold'] = (
+                    value * expected_post_set['total_memory'])
+
+            print("-------------------", setting, value)
+            # Can't trivially do a direct test that the actual and expected
+            # return dicts are the same as there are float values which have
+            # limited float precision so need assertAlmostEqual testing:
+            for name, val in expected_post_set.items():
+                print("CHECK::", post_set[name], val)
+                self.assertAlmostEqual(post_set[name], val, places=8)
+
+        # Reset so later test fixtures don't spam with output messages:
+        cf.log_level('DISABLE')
+
 
 # --- End: class
 
