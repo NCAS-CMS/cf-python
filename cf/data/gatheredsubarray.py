@@ -32,8 +32,6 @@ class GatheredSubarray(abstract.CompressedSubarray):
         compressed_part = compression['compressed_part']
         list_array = compression['indices']
 
-
-#        print ('compressed_part=',compressed_part)
         # Initialise the uncomprssed array
         n_compressed_axes = len(compressed_axes)
 
@@ -64,16 +62,11 @@ class GatheredSubarray(abstract.CompressedSubarray):
             # --- End: for
             u_indices[compressed_axes[-1]] = b
 
-#            print ('sample_indices=', sample_indices, compressed_array.shape,
-#                   end=", ")
             compressed = compressed_array[tuple(sample_indices)].array
-#            print (compressed.shape)
             sample_indices2 = full[:]
             sample_indices2[compressed_dimension] = 0
             compressed = compressed[tuple(sample_indices2)]
 
-#            print ('u_indices=', u_indices, uarray[tuple(u_indices)].shape,
-#                   compressed.shape)
             uarray[tuple(u_indices)] = compressed
         # --- End: for
 
@@ -82,13 +75,5 @@ class GatheredSubarray(abstract.CompressedSubarray):
         else:
             indices = parse_indices(self.shape, indices)
             return get_subspace(uarray, indices)
-
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
-
 
 # --- End: class

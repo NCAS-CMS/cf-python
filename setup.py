@@ -137,6 +137,12 @@ The `cf` package can:
 
 * create new field constructs in memory,
 
+* write field constructs to netCDF datasets on disk,
+
+* read, write, and create coordinates defined by geometry cells.
+
+* read netCDF and CDL datasets containing hierarchical groups,
+
 * inspect field constructs,
 
 * test whether two field constructs are the same,
@@ -145,15 +151,11 @@ The `cf` package can:
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
-
 * incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
-
-* read, write, and create coordinates defined by geometry cells,
 
 * combine field constructs arithmetically,
 
@@ -207,6 +209,10 @@ Tests are run from within the ``cf/test`` directory:
     python run_tests.py
 """
 
+# Get dependencies
+requirements = open('requirements.txt', 'r')
+install_requires = requirements.read().splitlines() 
+
 setup(name = "cf-python",
       long_description = long_description,
       version      = version,
@@ -242,17 +248,18 @@ setup(name = "cf-python",
                      ],
       package_data = {'cf': package_data},
       scripts      = ['scripts/cfa'],
-      install_requires = ['netCDF4>=1.5.3',
-                          'cftime>=1.1.3',
-                          'numpy>=1.15',
-                          'cfdm>=1.8.5, <1.9',
-                          'psutil>=0.6.0',
-                          'cfunits>=3.2.7'
-#                          'scipy>=1.1.0',
-#                          'matplotlib>=3.0.0',
-#                          'mpi4py>=3.0.0',
-#                          'ESMF>=8.0',
-#                          'udunits2==2.2.25',
-                      ],
+      install_requires = install_requires,
+#      install_requires = ['netCDF4>=1.5.3',
+#                          'cftime>=1.1.3',
+#                          'numpy>=1.15',
+#                          'cfdm>=1.8.5, <1.9',
+#                          'psutil>=0.6.0',
+#                          'cfunits>=3.2.7'
+##                          'scipy>=1.1.0',
+##                          'matplotlib>=3.0.0',
+##                          'mpi4py>=3.0.0',
+##                          'ESMF>=8.0',
+##                          'udunits2==2.2.25',
+#                      ],
       cmdclass     = {'build': build_umread}, #https://docs.python.org/2/distutils/apiref.html
   )

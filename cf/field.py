@@ -279,6 +279,38 @@ class Field(mixin.PropertiesData,
     `nc_clear_global_attributes` and `nc_set_global_attribute`
     methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
+    The netCDF group attributes may be accessed with the
+    `nc_group_attributes`, `nc_clear_group_attributes`,
+    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
+   
+    The netCDF geometry variable group structure may be accessed with
+    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
+    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
+    `nc_set_geometry_variable_groups` methods.
+   
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    variable, dimension and sample dimension names and group
+    structures for such components may be set or removed consistently
+    across all such components with the `nc_del_component_variable`,
+    `nc_set_component_variable`, `nc_set_component_variable_groups`,
+    `nc_clear_component_variable_groups`,
+    `nc_del_component_dimension`, `nc_set_component_dimension`,
+    `nc_set_component_dimension_groups`,
+    `nc_clear_component_dimension_groups`,
+    `nc_del_component_sample_dimension`,
+    `nc_set_component_sample_dimension`,
+    `nc_set_component_sample_dimension_groups`,
+    `nc_clear_component_sample_dimension_groups` methods.
+
+    CF-compliance issues for field constructs read from a netCDF
+    dataset may be accessed with the `dataset_compliance` method.
+   
     '''
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
@@ -727,35 +759,6 @@ class Field(mixin.PropertiesData,
 
                 if identity is None and relaxed_identities:
                     identity = dim.identity(relaxed=True, default=None)
-
-
-#                identity = None
-#                identity = dim.identity(strict=(not relaxed_identities),
-#                                        relaxed=relaxed_identities,
-#                                        default=None)
-#
-#                identity = dim.identity(strict=True, default=None)
-#                if not identity and relaxed_identities:
-#                    identity = dim.identity(relaxed=True, default=None)
-#
-# #                if relaxed_identities:
-# #                    identity = dim.identity(strict=False)
-# #                    identities = dim.identities()
-# #                    print ('P', identities)
-# #                    if identities:
-# #                        identity = identities[0]
-# #                else:
-# #                    identity = dim.identity(strict=True)
-# #                    identity = dim.identity()
-#
-#                if not identity:
-#                    # Dimension coordinate has no identity, but it may
-#                    # have a recognised axis.
-#                    for ctype in ('T', 'X', 'Y', 'Z'):
-#                        if getattr(dim, ctype, False):
-#                            identity = ctype
-#                            break
-#                # --- End: if
 
                 if identity:
                     if identity in id_to_axis:
@@ -1255,7 +1258,6 @@ class Field(mixin.PropertiesData,
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
-#        print ('uuuu' , axes_unD + axes_unM + axes0_M)
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
 
         end_of_undefined0 = len(axes_unD)
@@ -1304,7 +1306,6 @@ class Field(mixin.PropertiesData,
                 axes_unD, axes_unM, axes0_M)
         )  # pragma: no cover
 
-#        print ('rrrr', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -2349,15 +2350,20 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         return field0
 
-    def _conform_coordinate_references(self, key):
-        '''Where possible, replace the content of ref.coordinates with
-    coordinate construct keys and the values of domain ancillary terms
-    with domain ancillary construct keys.
+    def _conform_coordinate_references(self, key, coordref=None):
+        '''Where possible replace the content of coordiante refence construct
+    coordinates with coordinate construct keys.
+
+    .. versionadded:: 3.0.0
 
     :Parameters:
 
         key: `str`
             Coordinate construct key.
+
+        coordref: `CoordianteReference`, optional
+
+            .. versionadded:: 3.6.0
 
     :Returns:
 
@@ -2366,16 +2372,23 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> f._conform_coordinate_references('auxiliarycoordinate1')
+    >>> f._conform_coordinate_references('auxiliarycoordinate1', 
+    ...                                  coordref=cr)
 
         '''
-        identity = self.constructs[key].identity(strict=True)
+        identity = self.constructs[key].identity(strict=True)        
+        
+        if coordref is None:
+            refs = self.coordinate_references.values()
+        else:
+            refs = [coordref]
 
-        for ref in self.coordinate_references.values():
-            if key in ref.coordinates():
-                continue
-
-            if identity in ref._coordinate_identities:
+        for ref in refs:
+            coordinates = ref.coordinates()
+            if identity in coordinates:
+                ref.del_coordinate(identity, None)
                 ref.set_coordinate(key)
+        #--- End: for
 
     def _coordinate_reference_axes(self, key):
         '''TODO
@@ -3843,14 +3856,9 @@ class Field(mixin.PropertiesData,
             for key in ref.coordinates():
                 axes.update(dst.get_data_axes(key))
 
-#            axes = dst.axes(ref.coordinates(), exact=True)
             if axes and set(axes).issubset(dst_axis_keys):
                 # This coordinate reference's coordinates span the X
                 # and/or Y axes
-
-                # self.insert_ref(dst._unconform_ref(ref), copy=False)
-                # self.set_construct(
-                #     dst._unconform_coordinate_reference(ref), copy=False)
                 self.set_coordinate_reference(ref, field=dst, strict=True)
 
     @classmethod
@@ -12180,19 +12188,13 @@ class Field(mixin.PropertiesData,
                 "Keywords are now never interpreted as regular expressions."
             )  # pragma: no cover
 
-        if len(mode) > 2:
+        if len(mode) > 1:
             raise ValueError(
-                "Can't provide more than two positional arguments.")
+                "Can't provide more than one positional argument.")
 
         envelope = 'envelope' in mode
         full = 'full' in mode
         compress = 'compress' in mode or not (envelope or full)
-
-        if len(mode) == 2:
-            raise ValueError(
-                "Can't provide {0[0]!r} and {0[1]!r} positional arguments "
-                "in the same call.".format(mode)
-            )
 
         logger.debug('Field.indices:')  # pragma: no cover
         logger.debug(
@@ -12224,7 +12226,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't find indices: Ambiguous axis or axes: "
                         "{!r}".format(identity)
-                    )  # ooo
+                    )
 
                 key, construct = dict(c).popitem()
 
@@ -12450,9 +12452,6 @@ class Field(mixin.PropertiesData,
 
                 item_matches = [(value == construct).data for
                                 value, construct in zip(points, constructs)]
-
-#                for z in item_matches:
-#                    print ('Z=', repr(z.array))
 
                 item_match = item_matches.pop()
 
@@ -14267,7 +14266,6 @@ class Field(mixin.PropertiesData,
     data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
     c.set_data(data)
     b = cf.Bounds()
-    b.set_properties({'units': 'degrees_north'})
     b.nc_set_variable('lat_bnds')
     data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
     b.set_data(data)
@@ -14281,7 +14279,6 @@ class Field(mixin.PropertiesData,
     data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
     c.set_data(data)
     b = cf.Bounds()
-    b.set_properties({'units': 'degrees_east'})
     b.nc_set_variable('lon_bnds')
     data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
     b.set_data(data)
@@ -14334,7 +14331,6 @@ class Field(mixin.PropertiesData,
         data = <CF Data(5): [-75.0, ..., 75.0] degrees_north> # Representative data
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         b.nc_set_variable('lat_bnds')
         data = <CF Data(5, 2): [[-90.0, ..., 90.0]] degrees_north> # Representative data
         b.set_data(data)
@@ -14348,7 +14344,6 @@ class Field(mixin.PropertiesData,
         data = <CF Data(8): [22.5, ..., 337.5] degrees_east> # Representative data
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         b.nc_set_variable('lon_bnds')
         data = <CF Data(8, 2): [[0.0, ..., 360.0]] degrees_east> # Representative data
         b.set_data(data)
@@ -14858,7 +14853,7 @@ class Field(mixin.PropertiesData,
         dims = self.dimension_coordinates('X')
 
         if len(dims) != 1:
-            logger.info(
+            logger.debug(
                 "Not one 'X' dimension coordinate construct: {}".format(
                     len(dims))
             )  # pragma: no cover
@@ -14871,20 +14866,20 @@ class Field(mixin.PropertiesData,
             if dim.get_property('standard_name', None) not in (
                     'longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
-                logger.debug(1)
+                logger.debug(1)  # pragma: no cover
                 return False
         # --- End: if
 
         bounds = dim.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
-            logger.debug(2)
+            logger.debug(2)  # pragma: no cover
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
-            logger.debug(3)
+            logger.debug(3)  # pragma: no cover
             return False
 
         bounds = bounds_data.array
@@ -14895,11 +14890,11 @@ class Field(mixin.PropertiesData,
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
             self.cyclic(key, iscyclic=False)
-            logger.debug(4)
+            logger.debug(4)  # pragma: no cover
             return False
 
         self.cyclic(key, iscyclic=True, period=period)
-        logger.debug(5)
+        logger.debug(5)  # pragma: no cover
 
         return True
 
@@ -16818,7 +16813,7 @@ class Field(mixin.PropertiesData,
 
         elif construct_type == 'coordinate_reference':
             for ckey in self.coordinates:
-                self._conform_coordinate_references(ckey)
+                self._conform_coordinate_references(ckey, coordref=construct)
         # --- End: if
 
         # Return the construct key

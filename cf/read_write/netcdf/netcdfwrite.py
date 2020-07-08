@@ -65,6 +65,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     unset_values=(), compressed=False, attributes={}):
         '''TODO
 
+    .. versionadded:: 3.0.0
+
     :Parameters:
 
         data: `Data`
@@ -134,11 +136,13 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             partition.close()
 
-    def _write_dimension_coordinate(self, f, key, coord):
+    def _write_dimension_coordinate(self, f, key, coord, ncdim=None):
         '''Write a coordinate variable and its bound variable to the file.
 
     This also writes a new netCDF dimension to the file and, if
     required, a new netCDF dimension for the bounds.
+
+    .. versionadded:: 3.0.0
 
     :Parameters:
 
@@ -148,6 +152,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         coord: Dimension coordinate construct
 
+        ncdim: `str` or `None`
+            The name of the netCDF dimension for this dimension
+            coordinate construct, including any groups structure. Note
+            that the group structure may be different to the
+            corodinate variable, and the basename.
+
+            .. versionadded:: 3.6.0
+
     :Returns:
 
         `str`
@@ -156,40 +168,45 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         '''
         coord = self._change_reference_datetime(coord)
 
-        return super()._write_dimension_coordinate(f, key, coord)
+        return super()._write_dimension_coordinate(f, key, coord,
+                                                   ncdim=ncdim)
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis,
                                  coordinates, extra=None):
         '''Write a scalar coordinate and its bounds to the netCDF file.
 
-It is assumed that the input coordinate has size 1, but this is not checked.
+    It is assumed that the input coordinate has size 1, but this is
+    not checked.
 
-If an equal scalar coordinate has already been written to the file
-then the input coordinate is not written.
+    If an equal scalar coordinate has already been written to the file
+    then the input coordinate is not written.
 
-:Parameters:
+    .. versionadded:: 3.0.0
 
-    f: Field construct
-
-    key: `str`
-        The coordinate construct key
-
-    coord_1d: Coordinate construct
-
-    axis: `str`
-        The field's axis identifier for the scalar coordinate.
-
-    coordinates: `list`
-
-:Returns:
-
-    coordinates: `list`
-        The updated list of netCDF auxiliary coordinate names.
+    :Parameters:
+    
+        f: Field construct
+    
+        key: `str`
+            The coordinate construct key
+    
+        coord_1d: Coordinate construct
+    
+        axis: `str`
+            The field's axis identifier for the scalar coordinate.
+    
+        coordinates: `list`
+    
+    :Returns:
+    
+        coordinates: `list`
+            The updated list of netCDF auxiliary coordinate names.
 
         '''
         # Unsafe to set mutable '{}' as default in the func signature.
         if extra is None:  # distinguish from falsy '{}'
             extra = {}
+            
         coord_1d = self._change_reference_datetime(coord_1d)
 
         return super()._write_scalar_coordinate(f, key, coord_1d,
@@ -201,6 +218,8 @@ then the input coordinate is not written.
 
     If an equal auxiliary coordinate has already been written to the
     file then the input coordinate is not written.
+
+    .. versionadded:: 3.0.0
 
     :Parameters:
 
@@ -261,6 +280,8 @@ then the input coordinate is not written.
 
     Any CFA private variables required will be autmatically created
     and written to the file.
+
+    .. versionadded:: 3.0.0
 
     :Parameters:
 
@@ -491,6 +512,8 @@ then the input coordinate is not written.
         '''Return a random hexadecimal string with the given number of
     characters.
 
+    .. versionadded:: 3.0.0
+
     :Parameters:
 
         size: `int`, optional
@@ -526,6 +549,8 @@ then the input coordinate is not written.
     numpy.floating  float          float, float16, float32, float64
     ==============  =============  ======================================
 
+    .. versionadded:: 3.0.0
+
     :Parameters:
 
         x:
@@ -557,6 +582,5 @@ then the input coordinate is not written.
             "{!r} object can't be converted to a JSON serializable type: "
             "{!r}".format(type(x), x)
         )
-
 
 # --- End: class

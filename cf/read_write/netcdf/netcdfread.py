@@ -116,6 +116,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     :Parameters:
 
+        ncvar: `str`
+            The name of the netCDF variable that contains the data.
+
+        construct: optional
+
+        unpacked_dtype: `False` or `numpy.dtype`, optional
+
+        uncompress_override: `bool`, optional
 
     :Returns:
 
@@ -252,6 +260,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         '''TODO
 
     .. versionadded:: 3.0.0
+
+    :Parameters:
+
+        ncvar: `str`
+            The netCDF variable from which to get units and calendar.
 
         '''
         try:

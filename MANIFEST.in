@@ -1,5 +1,6 @@
 include Changelog.rst
 include README.md
+include requirements.txt
 recursive-include cf *
 recursive-include scripts *
 recursive-exclude * *~ *.gz *.pyc

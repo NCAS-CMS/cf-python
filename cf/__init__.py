@@ -81,8 +81,8 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-06-10'
-__version__ = '3.5.1'
+__date__ = '2020-07-??'
+__version__ = '3.6.0'
 
 _requires = (
     'numpy',
@@ -194,7 +194,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.2.6'
+_minimum_vn = '3.2.8'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -202,12 +202,10 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.5'
+_minimum_vn = '1.8.6'
 _maximum_vn = '1.9'
 _cfdm_version = LooseVersion(cfdm.__version__)
-# if (_cfdm_version < LooseVersion(_minimum_vn)
-#     or _cfdm_version >= LooseVersion(_maximum_vn)):
-if not (LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn)):
+if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
         "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
         "at {}".format(_minimum_vn, _maximum_vn,

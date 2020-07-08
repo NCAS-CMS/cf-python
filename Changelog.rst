@@ -1,3 +1,28 @@
+version 3.6.0
+-------------
+----
+
+**2020-07-??**
+
+* Implemented the reading and writing of netCDF4 group hierarchies for
+  CF-1.8 (https://github.com/NCAS-CMS/cf-python/issues/33)
+* New method: `cf.Field.nc_variable_groups`
+* New method: `cf.Field.nc_set_variable_groups`
+* New method: `cf.Field.nc_clear_variable_groups`
+* New method: `cf.Field.nc_group_attributes`
+* New method: `cf.Field.nc_set_group_attribute`
+* New method: `cf.Field.nc_set_group_attributes`
+* New method: `cf.Field.nc_clear_group_attributes`
+* New method: `cf.Field.nc_geometry_variable_groups`
+* New method: `cf.Field.nc_set_geometry_variable_groups`
+* New method: `cf.Field.nc_clear_geometry_variable_groups`
+* New method: `cf.DomainAxis.nc_dimension_groups`
+* New method: `cf.DomainAxis.nc_set_dimension_groups`
+* New method: `cf.DomainAxis.nc_clear_dimension_groups`
+* New keyword parameter to `cf.write`: ``group``
+* Changed dependency: ``1.8.6<=cfdm<1.9.0``
+* Changed dependency: ``cfunits>=3.2.8``
+
 version 3.5.1
 -------------
 ----
@@ -120,7 +145,8 @@ version 3.2.0
 **2020-04-01**
 
 * First release for CF-1.8 (does not include netCDF hierarchical
-  groups functionality).
+  groups functionality)
+  (https://github.com/NCAS-CMS/cf-python/issues/33)
 * Deprecated `True` as a permitted value of the ``weights`` keyword of
   `cf.Field.collapse`.
 * New methods: `cf.Data.compressed`, `cf.Data.diff`

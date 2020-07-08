@@ -1,10 +1,31 @@
+import atexit
 import datetime
 import os
+import tempfile
 import unittest
 
 import numpy
 
 import cf
+
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_CoordinateReference.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,) = tmpfiles
+
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
 
 
 class CoordinateReferenceTest(unittest.TestCase):
@@ -167,27 +188,27 @@ class CoordinateReferenceTest(unittest.TestCase):
     def test_CoordinateReference_default_value(self):
         f = cf.read(self.filename)[0]
 
-        self.assertTrue(cf.CoordinateReference.default_value('qwerty') == 0.0)
-        self.assertTrue(
-            cf.CoordinateReference.default_value('earth_depth') == 0.0)
+        self.assertEqual(cf.CoordinateReference.default_value('qwerty'), 0.0)
+        self.assertEqual(
+            cf.CoordinateReference.default_value('earth_depth'), 0.0)
 
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
-        self.assertTrue(cr.default_value('qwerty') == 0.0)
-        self.assertTrue(cr.default_value('earth_depth') == 0.0)
+        self.assertEqual(cr.default_value('qwerty'), 0.0)
+        self.assertEqual(cr.default_value('earth_depth'), 0.0)
 
     def test_CoordinateReference_canonical_units(self):
         f = cf.read(self.filename)[0]
 
         self.assertIsNone(
             cf.CoordinateReference.canonical_units('qwerty'))
-        self.assertTrue(
-            cf.CoordinateReference.canonical_units('earth_radius') ==
+        self.assertEqual(
+            cf.CoordinateReference.canonical_units('earth_radius'),
             cf.Units('m')
         )
 
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         self.assertIsNone(cr.canonical_units('qwerty'))
-        self.assertTrue(cr.canonical_units('earth_radius') == cf.Units('m'))
+        self.assertEqual(cr.canonical_units('earth_radius'), cf.Units('m'))
 
     def test_CoordinateReference_match(self):
         self.assertTrue(self.vcr.match())
@@ -209,12 +230,12 @@ class CoordinateReferenceTest(unittest.TestCase):
         )
 
     def test_CoordinateReference_get__getitem__(self):
-        self.assertTrue(
-            self.vcr['earth_radius'] ==
+        self.assertEqual(
+            self.vcr['earth_radius'],
             self.datum.get_parameter('earth_radius')
         )
         self.assertTrue(
-            self.vcr['standard_name'] ==
+            self.vcr['standard_name'],
             self.vconversion.get_parameter('standard_name')
         )
         self.assertTrue(
@@ -222,42 +243,42 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.datum.get_parameter('earth_radius')
         )
         self.assertIsNone(self.vcr.get('orog'))
-        self.assertTrue(self.vcr.get('orog', 'qwerty') == 'qwerty')
+        self.assertEqual(self.vcr.get('orog', 'qwerty'), 'qwerty')
         self.assertIsNone(self.vcr.get('qwerty'))
-        self.assertTrue(
-            self.vcr['standard_name'] ==
+        self.assertEqual(
+            self.vcr['standard_name'],
             self.vconversion.get_parameter('standard_name')
         )
         with self.assertRaises(Exception):
             _ = self.vcr['orog']
 
-        self.assertTrue(
-            self.hcr['earth_radius'] ==
+        self.assertEqual(
+            self.hcr['earth_radius'],
             self.datum.get_parameter('earth_radius')
         )
-        self.assertTrue(
-            self.hcr['grid_north_pole_latitude'] ==
+        self.assertEqual(
+            self.hcr['grid_north_pole_latitude'],
             self.hconversion.get_parameter('grid_north_pole_latitude')
         )
-        self.assertTrue(
-            self.hcr['grid_mapping_name'] ==
+        self.assertEqual(
+            self.hcr['grid_mapping_name'],
             self.hconversion.get_parameter('grid_mapping_name')
         )
-        self.assertTrue(
-            self.hcr.get('earth_radius') is
+        self.assertIs(
+            self.hcr.get('earth_radius'),
             self.datum.get_parameter('earth_radius')
         )
-        self.assertTrue(
-            self.hcr.get('grid_north_pole_latitude', 'qwerty') is
+        self.assertIs(
+            self.hcr.get('grid_north_pole_latitude', 'qwerty'),
             self.hconversion.get_parameter('grid_north_pole_latitude')
         )
         self.assertIsNone(self.hcr.get('qwerty'))
-        self.assertTrue(self.hcr.get('qwerty', 12) == 12)
+        self.assertEqual(self.hcr.get('qwerty', 12), 12)
         with self.assertRaises(Exception):
             _ = self.hcr['qwerty']
 
-
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
