@@ -136,7 +136,6 @@ Version |release| for version |version| of the CF conventions.
    cf.free_memory
    cf.free_memory_factor
    cf.fm_threshold
-   cf.minncfm
    cf.of_fraction
    cf.regrid_logging
    cf.set_performance
