@@ -38,10 +38,11 @@ import cfdm
 from ...                   import __version__, __Conventions__, __file__
 from ...decorators         import (_manage_log_level_via_verbosity,
                                    _manage_log_level_via_verbose_attr)
-from ...functions          import (RTOL, ATOL, equals,
-                                   open_files_threshold_exceeded,
+from ...functions          import (equals, open_files_threshold_exceeded,
                                    close_one_file, abspath,
                                    load_stash2standard_name)
+from ...functions import (atol as cf_atol,
+                          rtol as cf_rtol)
 from ...units              import Units
 
 from ...data.data import Data, Partition, PartitionMatrix
@@ -390,11 +391,11 @@ class UMField:
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed
@@ -416,7 +417,7 @@ class UMField:
         self.byte_ordering = byte_ordering
         self.word_size = word_size
 
-        self.atol = ATOL()
+        self.atol = cf_atol()
 
         self.field = self.implementation.initialise_Field()
 
@@ -2192,7 +2193,8 @@ class UMField:
 
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
-            if (abs(BPLAT-90.0) <= atol + RTOL()*90.0 and abs(BPLON) <= atol):
+            if (abs(BPLAT-90.0) <= atol + cf_rtol()*90.0 and
+                    abs(BPLON) <= atol):
                 return True
 
         elif um_condition == 'rotated_latitude_longitude':
@@ -2201,7 +2203,7 @@ class UMField:
 
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
-            if not (abs(BPLAT-90.0) <= atol + RTOL()*90.0 and
+            if not (abs(BPLAT-90.0) <= atol + cf_rtol()*90.0 and
                     abs(BPLON) <= atol):
                 return True
 
@@ -2713,7 +2715,7 @@ class UMField:
                     BRLEV = rec.real_hdr.item(brlev,)
                     BRSVD1 = rec.real_hdr.item(brsvd1,)
 
-                    if abs(BRSVD1-BRLEV) >= ATOL:
+                    if abs(BRSVD1-BRLEV) >= atol:
                         bounds = None
                         break
 
@@ -2916,11 +2918,11 @@ class UMRead(cfdm.read_write.IORead):
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed about

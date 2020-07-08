@@ -59,9 +59,9 @@ class FieldTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
 
         self.chunk_sizes = (100000, 300, 34, 17)
-        self.original_chunksize = cf.CHUNKSIZE()
-        self.atol = cf.ATOL()
-        self.rtol = cf.RTOL()
+        self.original_chunksize = cf.chunksize()
+        self.atol = cf.atol()
+        self.rtol = cf.rtol()
         self.f = cf.read(self.filename, verbose=0)[0]
 
         self.test_only = []
@@ -636,7 +636,7 @@ class FieldTest(unittest.TestCase):
             f.domain_axis('domainaxis1').equals(
                 f.axis('domainaxis1'), verbose=2))
 
-    def test_Field_ATOL_RTOL(self):
+    def test_Field_atol_rtol(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -649,20 +649,22 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(g))
         self.assertTrue(f.equals(g, atol=0.1, verbose=2))
         self.assertFalse(f.equals(g))
-        atol = cf.ATOL(0.1)
+        self.assertEqual(cf.atol(), cf.ATOL())
+        atol = cf.atol(0.1)
         self.assertTrue(f.equals(g, verbose=2))
-        cf.ATOL(atol)
+        cf.atol(atol)
         self.assertFalse(f.equals(g))
 
         self.assertTrue(f.equals(g, rtol=10, verbose=2))
         self.assertFalse(f.equals(g))
-        rtol = cf.RTOL(10)
+        self.assertEqual(cf.rtol(), cf.RTOL())
+        rtol = cf.rtol(10)
         self.assertTrue(f.equals(g, verbose=2))
-        cf.RTOL(rtol)
+        cf.rtol(rtol)
         self.assertFalse(f.equals(g))
 
-        cf.ATOL(self.atol)
-        cf.RTOL(self.rtol)
+        cf.atol(self.atol)
+        cf.rtol(self.rtol)
 
     def test_Field_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -713,7 +715,7 @@ class FieldTest(unittest.TestCase):
         query1 = cf.wi(1, 5) & cf.ne(4)
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             f = cf.read(self.contiguous, verbose=0)[0]
 
@@ -743,7 +745,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a), message)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         query2 = cf.set([1, 3, 5])
 
@@ -761,7 +763,7 @@ class FieldTest(unittest.TestCase):
             (af == 1) | (af == 3) | (af == 5), af, numpy.ma.masked)
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.contiguous)[0]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
@@ -790,7 +792,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a), message)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         ac3 = numpy.ma.masked_all((2, 3))
         ac3[0, 0] = -2
@@ -810,7 +812,7 @@ class FieldTest(unittest.TestCase):
         query3 = cf.set([-2, 3, 4])
 
         for chunksize in self.chunk_sizes[0:2]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.contiguous)[0].subspace[[0, 2, 3], 1:]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
@@ -837,7 +839,7 @@ class FieldTest(unittest.TestCase):
                     cf.functions._numpy_allclose(t.array, a),
                     message)
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Field__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2163,14 +2165,14 @@ class FieldTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.filename2)[0][0:100]
             g = f.section(('X', 'Y'))
             self.assertTrue(len(g) == 100,
                             'CHUNKSIZE={}, len(g)={}'.format(chunksize,
                                                              len(g)))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Field_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

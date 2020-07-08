@@ -35,9 +35,9 @@ class generalTest(unittest.TestCase):
 
     def test_GENERAL(self):
         # Save original chunksize
-        original_chunksize = cf.CHUNKSIZE()
+        original_chunksize = cf.chunksize()
 
-        cf.CHUNKSIZE(60)
+        cf.chunksize(60)
 
         g = self.f.squeeze()
         f = self.f.copy()
@@ -182,12 +182,12 @@ class generalTest(unittest.TestCase):
             pass
 
         # Reset chunk size
-        cf.CHUNKSIZE(original_chunksize)
+        cf.chunksize(original_chunksize)
 
         # Move Data partitions to disk
         f.data.to_disk()
 
-        cf.CHUNKSIZE(original_chunksize)
+        cf.chunksize(original_chunksize)
 
         f.transpose(inplace=True)
         f.flip(inplace=True)
@@ -204,7 +204,7 @@ class generalTest(unittest.TestCase):
         # Remove temporary files
         cf.data.partition._remove_temporary_files()
 
-        cf.CHUNKSIZE(original_chunksize)
+        cf.chunksize(original_chunksize)
 
 
 # --- End: class

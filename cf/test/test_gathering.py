@@ -341,7 +341,7 @@ class DSGTest(unittest.TestCase):
         )
 
         for chunksize in (1000000,):
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             message = 'chunksize='+str(chunksize)
 
             # Set the data for the field

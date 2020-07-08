@@ -42,8 +42,8 @@ Version |release| for version |version| of the CF conventions.
    :toctree: function/
    :template: function.rst
 
-   cf.ATOL
-   cf.RTOL
+   cf.atol
+   cf.rtol
    cf.default_netCDF_fillvals
    cf.histogram
    cf.relative_vorticity
@@ -167,4 +167,4 @@ Version |release| for version |version| of the CF conventions.
    cf.pickle
    cf.relpath
    cf.unpickle
-   cf.LOG_LEVEL
+   cf.log_level

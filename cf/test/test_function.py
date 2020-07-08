@@ -35,6 +35,24 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(cf.functions.DeprecationError):
             b.squeeze(i=True)
 
+    def test_aliases(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
+        self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
+        self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
+        self.assertEqual(cf.fm_threshold(), cf.FM_THRESHOLD())
+        self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
+        self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
+        self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
+        self.assertEqual(cf.tempdir(), cf.TEMPDIR())
+        self.assertEqual(cf.chunksize(), cf.CHUNKSIZE())
+        self.assertEqual(cf.set_performance(), cf.SET_PERFORMANCE())
+        self.assertEqual(cf.of_fraction(), cf.OF_FRACTION())
+        self.assertEqual(
+            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE())
+
 
 # --- End: class
 

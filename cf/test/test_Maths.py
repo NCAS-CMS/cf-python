@@ -11,7 +11,7 @@ import cf
 class MathTest(unittest.TestCase):
     filename1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'regrid_file1.nc')
-
+    
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
 #    test_only = ('test_relative_vorticity_distance')
@@ -50,6 +50,7 @@ class MathTest(unittest.TestCase):
         v.set_construct(dim_y, axes=[Y])
         v.set_data(cf.Data(data_2d, 'm/s'), axes=('X', 'Y'))
 
+
         rv = cf.relative_vorticity(u, v, one_sided_at_boundary=True)
         self.assertTrue((rv.array == 0.0).all())
 
@@ -82,7 +83,6 @@ class MathTest(unittest.TestCase):
 
         rv_array = (u_2d/cf.Data(6371229.0, 'meters') *
                     numpy.tan(lat_1d*numpy.pi/180.0)[numpy.newaxis, :])
-
 
         dim_x = cf.DimensionCoordinate(
             data=cf.Data(lon_1d, 'degrees_east'), properties={'axis': 'X'})

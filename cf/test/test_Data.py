@@ -53,10 +53,10 @@ class DataTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-        self.TEMPDIR = os.path.dirname(os.path.abspath(__file__))
+        self.tempdir = os.path.dirname(os.path.abspath(__file__))
 
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
-        self.original_chunksize = cf.CHUNKSIZE()
+        self.original_chunksize = cf.chunksize()
 
         self.filename6 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
@@ -215,7 +215,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(a, units='m')
 
@@ -266,7 +266,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((b == e.array).all())
             self.assertTrue((b.mask == e.mask.array).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -282,7 +282,7 @@ class DataTest(unittest.TestCase):
         d = cf.Data(self.ma, units='m')
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             # Test user weights in different modes
             for mode in ('reflect', 'constant', 'nearest', 'mirror', 'wrap'):
@@ -292,7 +292,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((e.array == b).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_diff(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -327,7 +327,7 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(self.ma, 'km')
             for n in (0, 1, 2):
@@ -338,7 +338,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue((a_diff.mask == d_diff.mask).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_compressed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -369,16 +369,16 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d.compressed()))
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(self.a, 'km')
             self.assertTrue((self.a.flatten() == d.compressed()).all())
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(self.ma, 'km')
             self.assertTrue((self.ma.compressed() == d.compressed()).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_stats(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -480,7 +480,7 @@ class DataTest(unittest.TestCase):
                 a[2, 0, [12, 14, 17]] = numpy.ma.masked
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 d = cf.Data(a, 'km')
 
@@ -497,7 +497,7 @@ class DataTest(unittest.TestCase):
                         f = d.digitize(bins, upper=upper)
                         self.assertTrue(e.equals(f, verbose=2))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_cumsum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -510,7 +510,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(f, verbose=2))
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(self.a)
 
@@ -526,7 +526,7 @@ class DataTest(unittest.TestCase):
                 e = d.cumsum(axis=i, masked_as_zero=False)
                 self.assertTrue(cf.functions._numpy_allclose(e.array, b))
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -537,7 +537,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.flatten(inplace=True))
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(self.ma.copy())
 
@@ -568,7 +568,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(e.ndim == d.ndim-len(axes)+1)
                 self.assertTrue(e.size == d.size)
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_CachedArray(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -576,11 +576,11 @@ class DataTest(unittest.TestCase):
 
         factor = 0.99999999999999
 
-        cf.TEMPDIR(self.TEMPDIR)
+        cf.tempdir(self.tempdir)
 
-        original_FMF = cf.FREE_MEMORY_FACTOR(1 - factor)
+        original_FMF = cf.free_memory_factor(1 - factor)
         d = cf.Data(numpy.arange(100))
-        cf.FREE_MEMORY_FACTOR(factor)
+        cf.free_memory_factor(factor)
         _ = d.array
 
         for partition in d.partitions.flat:
@@ -589,11 +589,11 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(1000000).reshape(100, 10000)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
-            cf.FREE_MEMORY_FACTOR(1 - factor)
+            cf.free_memory_factor(1 - factor)
             d = cf.Data(numpy.arange(10000).reshape(100, 100))
-            cf.FREE_MEMORY_FACTOR(factor)
+            cf.free_memory_factor(factor)
 
             _ = d.array
 
@@ -601,8 +601,8 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(partition.in_cached_file)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
-        cf.FREE_MEMORY_FACTOR(original_FMF)
+        cf.chunksize(self.original_chunksize)
+        cf.free_memory_factor(original_FMF)
 
     def test_Data_AUXILIARY_MASK(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -648,7 +648,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d._auxiliary_mask_return() == m).all())
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             # --------------------------------------------------------
             d = cf.Data(numpy.arange(120).reshape(30, 4))
@@ -707,7 +707,7 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((f._auxiliary_mask_return().array == fm).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
     # --- End: for
 
     def test_Data___contains__(self):
@@ -715,7 +715,7 @@ class DataTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data([[0.0, 1,  2], [3, 4, 5]], units='m')
             self.assertIn(4, d)
             self.assertNotIn(40, d)
@@ -727,14 +727,14 @@ class DataTest(unittest.TestCase):
             self.assertIn(value, d)
             self.assertIn(numpy.array([[[2]]]), d)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_asdata(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(self.ma)
 
@@ -758,14 +758,14 @@ class DataTest(unittest.TestCase):
             self.assertTrue(cf.Data.asdata([1, 2, 3], dtype=float).equals(
                 cf.Data([1.0, 2, 3]), verbose=2))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_squeeze_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data([list(range(1000))])
             self.assertTrue(d.shape == (1, 1000))
@@ -807,7 +807,7 @@ class DataTest(unittest.TestCase):
             a = f.array
             self.assertTrue(numpy.allclose(a, array))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -818,7 +818,7 @@ class DataTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             for hardmask in (False, True):
                 a = numpy.ma.arange(3000).reshape(50, 60)
                 if hardmask:
@@ -884,14 +884,14 @@ class DataTest(unittest.TestCase):
                     )
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_outerproduct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(numpy.arange(1200).reshape(40, 30))
 
@@ -915,14 +915,14 @@ class DataTest(unittest.TestCase):
             self.assertIsNone(d.outerproduct(e, inplace=True))
             self.assertTrue(d.shape == (40, 30, 5), d.shape)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_all(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(numpy.array([[0] * 1000]))
             self.assertTrue(not d.all())
             d[-1, -1] = 1
@@ -932,14 +932,14 @@ class DataTest(unittest.TestCase):
             d[...] = cf.masked
             self.assertTrue(d.all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_any(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(numpy.array([[0] * 1000]))
             self.assertFalse(d.any())
             d[-1, -1] = 1
@@ -949,7 +949,7 @@ class DataTest(unittest.TestCase):
             d[...] = cf.masked
             self.assertFalse(d.any())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -968,7 +968,7 @@ class DataTest(unittest.TestCase):
         # Non-scalar numeric array
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(b, 'km')
             a = d.array
             a[0, 0, 0, 0] = -999
@@ -983,7 +983,7 @@ class DataTest(unittest.TestCase):
             a = d.array
             self.assertTrue((a == numpy.array([[2.5]])).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_binary_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -994,7 +994,7 @@ class DataTest(unittest.TestCase):
         a[[0, 10, 910]] = 0
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(numpy.arange(1000.), 'radians')
             d[[1, 900]] = cf.masked
@@ -1006,7 +1006,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(b.dtype == numpy.dtype('int32'))
             self.assertTrue((b.array == a).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_clip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1019,7 +1019,7 @@ class DataTest(unittest.TestCase):
         ac = numpy.clip(a, c0, c1)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(a, 'km')
             self.assertIsNotNone(d.clip(c0, c1))
             self.assertIsNone(d.clip(c0, c1, inplace=True))
@@ -1034,7 +1034,7 @@ class DataTest(unittest.TestCase):
             d.clip(c0*100, c1*100, units='10m', inplace=True)
             self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_months_years(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1129,7 +1129,7 @@ class DataTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
             self.assertTrue(d.dtype == numpy.dtype(float))
@@ -1151,7 +1151,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(d.dtype == numpy.dtype(float))
             self.assertFalse(d._isdatetime())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_ceil(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1162,7 +1162,7 @@ class DataTest(unittest.TestCase):
             c = numpy.ceil(a)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 e = d.ceil()
                 self.assertIsNone(d.ceil(inplace=True))
@@ -1171,7 +1171,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_floor(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1182,7 +1182,7 @@ class DataTest(unittest.TestCase):
             c = numpy.floor(a)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 e = d.floor()
                 self.assertIsNone(d.floor(inplace=True))
@@ -1191,7 +1191,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_trunc(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1202,7 +1202,7 @@ class DataTest(unittest.TestCase):
             c = numpy.trunc(a)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 e = d.trunc()
                 self.assertIsNone(d.trunc(inplace=True))
@@ -1211,7 +1211,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_rint(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1222,7 +1222,7 @@ class DataTest(unittest.TestCase):
             c = numpy.rint(a)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 d0 = d.copy()
                 e = d.rint()
@@ -1236,7 +1236,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_round(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1247,7 +1247,7 @@ class DataTest(unittest.TestCase):
             c = numpy.round(a, decimals=decimals)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 e = d.round(decimals=decimals)
 
@@ -1258,14 +1258,14 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_datum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(5, 'metre')
             self.assertTrue(d.datum() == 5)
             self.assertTrue(d.datum(0) == 5)
@@ -1300,14 +1300,14 @@ class DataTest(unittest.TestCase):
             self.assertIs(d.datum([0, -1]), cf.masked)
             self.assertIs(d.datum(-1, -1), cf.masked)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             array = numpy.arange(24000).reshape(120, 200)
             d = cf.Data(array.copy(), 'metre')
 
@@ -1322,7 +1322,7 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((d.array == array).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         array = numpy.arange(3*4*5).reshape(3, 4, 5) + 1
         d = cf.Data(array.copy(), 'metre', chunk=False)
@@ -1356,7 +1356,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (False, True):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
                 self.assertTrue(
                     d.maximum(_preserve_partitions=pp) == cf.Data(6, 'metre'))
@@ -1370,7 +1370,7 @@ class DataTest(unittest.TestCase):
                     d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_min(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1378,7 +1378,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (False, True):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
                 self.assertTrue(
                     d.minimum(_preserve_partitions=pp) == cf.Data(1, 'metre'))
@@ -1393,14 +1393,14 @@ class DataTest(unittest.TestCase):
 #            print('pmshape =', d._pmshape)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_ndindex(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             for d in (cf.Data(5, 'metre'),
                       cf.Data([4, 5, 6, 1, 2, 3], 'metre'),
                       cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
@@ -1409,7 +1409,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue(i == j)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1418,7 +1418,7 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(a.copy())
 
             pmshape = d._pmshape
@@ -1441,20 +1441,20 @@ class DataTest(unittest.TestCase):
             self.assertTrue(f.shape == d.shape)
             self.assertTrue(f.equals(d, verbose=2))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_sample_size(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
             self.assertTrue(d.sample_size() == 6)
             d[1, 0] = cf.masked
             self.assertTrue(d.sample_size() == cf.Data(50, '0.1'))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_swapaxes(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1463,7 +1463,7 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(a.copy())
 
             for i in range(-a.ndim, a.ndim):
@@ -1474,7 +1474,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue(b.shape == e.shape, message)
                     self.assertTrue((b == e.array).all(), message)
         # --- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1483,7 +1483,7 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(a.copy())
 
             for indices in (range(a.ndim), range(-a.ndim, 0)):
@@ -1497,14 +1497,14 @@ class DataTest(unittest.TestCase):
                     self.assertTrue((d.array == a).all(), message)
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_unique(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
             self.assertTrue(
                 (d.unique() == cf.Data([1, 2, 3, 4], 'metre')).all())
@@ -1512,7 +1512,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(
                 (d.unique() == cf.Data([1, 2, 4], 'metre')).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_varray(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1533,7 +1533,7 @@ class DataTest(unittest.TestCase):
 
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             d = cf.Data(b, 'km')
             e = d.copy()
             v = e.varray
@@ -1545,7 +1545,7 @@ class DataTest(unittest.TestCase):
             v[0, 0, 0, 0] = 0
             self.assertTrue((v == b).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1568,14 +1568,14 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.minute.equals(cf.Data([[37, 25]])))
         self.assertTrue(d.second.equals(cf.Data([[26, 26]])))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             array = numpy.arange(3*4*5).reshape(3, 4, 5) + 1
 
             arrays = (numpy.arange(3*4*5).reshape(3, 4, 5) + 1.0,
@@ -1797,7 +1797,7 @@ class DataTest(unittest.TestCase):
                         cf.Data(a0.__truediv__(x.datum()), ''), verbose=1))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_BROADCASTING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1820,7 +1820,7 @@ class DataTest(unittest.TestCase):
         ]
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             for a in A:
                 for b in A:
                     d = cf.Data(a)
@@ -1831,7 +1831,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue((de.array == ab).all())
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_ERROR(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1927,7 +1927,7 @@ class DataTest(unittest.TestCase):
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(numpy.arange(1200).reshape(40, 5, 6))
 
@@ -1939,7 +1939,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e.equals(
                 cf.Data.full(shape=(40, 6), fill_value=4, dtype=int)))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data__collapse_SHAPE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2027,7 +2027,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (True, False):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2084,7 +2084,7 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2092,7 +2092,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (True, False):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2137,7 +2137,7 @@ class DataTest(unittest.TestCase):
                          (axes, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_mean_of_upper_decile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2145,7 +2145,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (True, False):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2203,7 +2203,7 @@ class DataTest(unittest.TestCase):
                          (axes, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_range_mid_range(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2211,7 +2211,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (True, False):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2265,7 +2265,7 @@ class DataTest(unittest.TestCase):
                              (h, axes, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_integral(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2273,7 +2273,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (True, False):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unmasked
                 d = cf.Data(self.a)
@@ -2316,14 +2316,14 @@ class DataTest(unittest.TestCase):
                             axes, e.array, b, e.array-b))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_sum_of_weights_sum_of_weights2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             for pp in (True, False):
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2408,7 +2408,7 @@ class DataTest(unittest.TestCase):
                             (h, axes, e.array, b, e.array-b))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_mean_mean_absolute_value(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2424,7 +2424,7 @@ class DataTest(unittest.TestCase):
                 method = 'mean_absolute_value'
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
@@ -2502,14 +2502,14 @@ class DataTest(unittest.TestCase):
                          (method, axes, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_root_mean_square(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             # unweighted, unmasked
             d = cf.Data(self.a)
@@ -2584,14 +2584,14 @@ class DataTest(unittest.TestCase):
                          axes, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_sample_size(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             # unmasked
             d = cf.Data(self.a)
@@ -2619,7 +2619,7 @@ class DataTest(unittest.TestCase):
                     (axes, e.array, b, e.array-b))
             # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_sd_var(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2629,7 +2629,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             for pp in (False, True):
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
 
                 # unweighted, unmasked
                 d = cf.Data(self.a, units='K')
@@ -2769,14 +2769,14 @@ class DataTest(unittest.TestCase):
                                  (h, axes, pp, ddof, e.array, b, e.array-b)))
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_dumpd_loadd_dumps(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.read(self.filename)[0].data
 
@@ -2787,14 +2787,14 @@ class DataTest(unittest.TestCase):
             d.to_disk()
             self.assertTrue(d.equals(cf.Data(loadd=d.dumpd()), verbose=2))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_section(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in (300, 10000, 100000)[::-1]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
             f = cf.read(self.filename6)[0]
             self.assertTrue(list(sorted(f.data.section((1, 2)).keys())) ==
                             [(x, None, None) for x in range(1800)])
@@ -2804,14 +2804,14 @@ class DataTest(unittest.TestCase):
             e = cf.Data.reconstruct_sectioned_data(x)
             self.assertTrue(e.equals(d))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for chunksize in (300, 10000, 100000)[::-1]:
-            cf.CHUNKSIZE(chunksize)
+            cf.chunksize(chunksize)
 
             d = cf.Data(ma)
             self.assertTrue(d.count() == 284, d.count())
@@ -2821,7 +2821,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(d.count() == d.size)
             self.assertTrue(d.count_masked() == 0)
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2832,7 +2832,7 @@ class DataTest(unittest.TestCase):
             c = numpy.ma.exp(a)
 
             for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
+                cf.chunksize(chunksize)
                 d = cf.Data(a)
                 e = d.exp()
                 self.assertIsNone(d.exp(inplace=True))
@@ -2840,7 +2840,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
         d = cf.Data(a, 'm')
         with self.assertRaises(Exception):
@@ -2869,7 +2869,7 @@ class DataTest(unittest.TestCase):
                         a = numpy.sin(a.data)
                 c = getattr(numpy.ma, method)(a)
                 for chunksize in self.chunk_sizes:
-                    cf.CHUNKSIZE(chunksize)
+                    cf.chunksize(chunksize)
                     for units in (None, '', '1', 'radians', 'K'):
                         d = cf.Data(a, units=units)
                         e = getattr(d, method)()
@@ -2889,7 +2889,7 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
-        cf.CHUNKSIZE(self.original_chunksize)  # reset after changes in loop
+        cf.chunksize(self.original_chunksize)  # reset after changes in loop
 
         # Also test masking behaviour: masking of invalid data occurs for
         # numpy.ma module by default but we don't want that so there is logic
@@ -2924,7 +2924,7 @@ class DataTest(unittest.TestCase):
 
         #     c = numpy.ma.arctan2(a1, a2)
         #     for chunksize in self.chunk_sizes:
-        #         cf.CHUNKSIZE(chunksize)
+        #         cf.chunksize(chunksize)
         #         for units in (None, '', '1', 'radians', 'K'):
         #             d1 = cf.Data(a1, units=units)
         #             d2 = cf.Data(a2, units=units)
@@ -2934,7 +2934,7 @@ class DataTest(unittest.TestCase):
         #             self.assertTrue((e.array == c).all())
         #             self.assertTrue((d1.mask.array == c.mask).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
+        cf.chunksize(self.original_chunksize)
 
 # --- End: class
 

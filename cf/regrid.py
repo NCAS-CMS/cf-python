@@ -6,7 +6,7 @@ from numpy import sum as numpy_sum
 from numpy import finfo as numpy_finfo
 from .data.data import Data
 from .dimensioncoordinate import DimensionCoordinate
-from .functions import REGRID_LOGGING
+from .functions import regrid_logging
 from . import _found_ESMF
 if _found_ESMF:
     try:
@@ -97,7 +97,7 @@ class Regrid:
     def initialize():
         '''Check whether ESMF has been found. If not raise an import
     error. Initialise the ESMPy manager. Whether logging is enabled or
-    not is determined by cf.REGRID_LOGGING. If it is then logging
+    not is determined by cf.regrid_logging. If it is then logging
     takes place after every call to ESMPy.
 
     :Returns:
@@ -110,7 +110,7 @@ class Regrid:
             raise ImportError(
                 'The ESMF package is needed to support regridding.')
 
-        manager = ESMF.Manager(debug=REGRID_LOGGING())
+        manager = ESMF.Manager(debug=regrid_logging())
 
         return manager
 

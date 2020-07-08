@@ -103,16 +103,18 @@ from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
 from ..units import Units
 from ..constants import masked as cf_masked
-from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
-                         FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
+
+from ..functions import (fm_threshold as cf_fm_threshold,
+                         free_memory, collapse_parallel_mode,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals,
                          abspath)
-
+from ..functions import (atol as cf_atol,
+                         chunksize as cf_chunksize,
+                         rtol as cf_rtol)
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
-
 from ..functions import inspect as cf_inspect
 from ..functions import _section
 
@@ -472,7 +474,7 @@ place.
             If False then the data array will be stored in a single
             partition. By default the data array will be partitioned
             if it is larger than the chunk size, as returned by the
-            `cf.CHUNKSIZE` function.
+            `cf.chunksize` function.
 
     **Examples:**
 
@@ -695,7 +697,7 @@ place.
 #
 #            self.partitions = PartitionMatrix(matrix, empty_list)
 #
-#            if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+#            if check_free_memory and free_memory() < cf_fm_threshold():
 #                self.to_disk()
 #
 #            if chunk:
@@ -745,7 +747,7 @@ place.
 
         self.partitions = PartitionMatrix(matrix, empty_list)
 
-        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+        if check_free_memory and free_memory() < cf_fm_threshold():
             self.to_disk()
 
         if chunk:
@@ -778,7 +780,7 @@ place.
         `None`
 
         '''
-        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+        if check_free_memory and free_memory() < cf_fm_threshold():
             compressed_array.to_disk()
 
         new = type(self).empty(shape=compressed_array.shape,
@@ -989,18 +991,18 @@ place.
         return False
 
     @property
-    def _ATOL(self):
-        '''Return the current value of the `ATOL` function.
+    def _atol(self):
+        '''Return the current value of the `atol` function.
 
         '''
-        return ATOL()
+        return cf_atol()
 
     @property
-    def _RTOL(self):
-        '''Return the current value of the `RTOL` function.
+    def _rtol(self):
+        '''Return the current value of the `rtol` function.
 
         '''
-        return RTOL()
+        return cf_rtol()
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO
@@ -2749,9 +2751,9 @@ place.
                 self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
             self.varray
 
-        org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_ranks)
+        org_chunksize = cf_chunksize(cf_chunksize()/n_ranks)
         sections = self.section(axes, chunks=True)
-        CHUNKSIZE(org_chunksize)
+        cf_chunksize(org_chunksize)
 
         for key, data in sections.items():
             array = data.array
@@ -3039,7 +3041,7 @@ place.
         chunk: `bool`, optional
             If True (the default) then the reset data array will be
             re-partitions according the current chunk size, as defined
-            by the `cf.CHUNKSIZE` function.
+            by the `cf.chunksize` function.
 
     :Returns:
 
@@ -3635,7 +3637,7 @@ place.
         '''
         if not chunksize:
             # Set the default chunk size
-            chunksize = CHUNKSIZE()
+            chunksize = cf_chunksize()
 
 # TODO - check intger division for python3
 
@@ -4587,7 +4589,7 @@ place.
 #                    max_size = broadcast_size
 #            # --- End: for
 #
-#            chunksize = CHUNKSIZE()
+#            chunksize = cf_chunksize()
 #            ffff = max_size*(new_dtype.itemsize + 1)
 #            if ffff > chunksize:
 #                data0.chunk(chunksize*(chunksize/ffff))
@@ -4629,8 +4631,8 @@ place.
         # ------------------------------------------------------------
         if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
             new_dtype = numpy_dtype(bool)
-            rtol = self._RTOL
-            atol = self._ATOL
+            rtol = self._rtol
+            atol = self._atol
         else:
             if 'true' in method:
                 new_dtype = numpy_dtype(float)
@@ -6217,7 +6219,7 @@ place.
         )
 
         if mpi_on:
-            mode = COLLAPSE_PARALLEL_MODE()
+            mode = collapse_parallel_mode()
             if mode == 0:
                 # Calculate the number of partitions in each subspace,
                 # assuming this will always be the same in each one and
@@ -8582,11 +8584,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -9949,7 +9951,7 @@ False
                           units=self.Units)
 
         # Find the number of array elements that fit in one chunk
-        n = int(CHUNKSIZE()//(self.dtype.itemsize + 1.0))
+        n = int(cf_chunksize()//(self.dtype.itemsize + 1.0))
 
         # Loop around each chunk's worth of elements and assign the
         # non-missing values to the compressed data
@@ -10569,11 +10571,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
         ignore_fill_value: `bool`, optional
             If True then data arrays with different fill values are
@@ -10584,11 +10586,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -10612,9 +10614,9 @@ False
         '''
         # Set default tolerances
         if rtol is None:
-            rtol = self._RTOL
+            rtol = self._rtol
         if atol is None:
-            atol = self._ATOL
+            atol = self._atol
 
         if not super().equals(other, rtol=rtol, atol=atol,
                               verbose=verbose,
@@ -10899,11 +10901,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -11715,7 +11717,7 @@ False
 
         '''
         config = self.partition_configuration(readonly=True)
-        fm_threshold = FM_THRESHOLD()
+        fm_threshold = cf_fm_threshold()
 
         # If parallelise is False then all partitions are flagged for
         # processing on this rank, otherwise only a subset are
@@ -11727,7 +11729,7 @@ False
                 # for processing
                 partition.open(config)
                 if (partition.on_disk and
-                        partition.nbytes <= FREE_MEMORY() - fm_threshold):
+                        partition.nbytes <= free_memory() - fm_threshold):
                     partition.array
 
                 partition.close()
@@ -12237,11 +12239,11 @@ False
 
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `ATOL` function is used.
+            default the value returned by the `atol` function is used.
 
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
-            default the value returned by the `RTOL` function is used.
+            default the value returned by the `rtol` function is used.
 
     :Returns:
 
@@ -12270,9 +12272,9 @@ False
 
         '''
         if atol is None:
-            atol = self._ATOL
+            atol = self._atol
         if rtol is None:
-            rtol = self._RTOL
+            rtol = self._rtol
 
         units0 = self.Units
         units1 = getattr(y, 'Units', _units_None)
@@ -12711,7 +12713,7 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
+        return self._size*(itemsize+1) <= free_memory() - cf_fm_threshold()
 
     def fits_in_one_chunk_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
@@ -12736,8 +12738,8 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return (CHUNKSIZE() >= self._size*(itemsize+1) <=
-                FREE_MEMORY() - FM_THRESHOLD())
+        return (cf_chunksize() >= self._size*(itemsize+1) <=
+                free_memory() - cf_fm_threshold())
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -12838,11 +12840,11 @@ False
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.LOG_LEVEL`.
+            regardless of the global configured `cf.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cf.LOG_LEVEL` setting.
+            `cf.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to

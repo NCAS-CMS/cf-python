@@ -1899,7 +1899,7 @@ the operation to proceed:
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
   constructs that are known to correspond, then setting "relaxed
-  identities" with the `cf.RELAXED_IDENTITIES` function may
+  identities" with the `cf.relaxed_identities` function may
   help. Setting relaxed identities to `True` allows the `!long_name`
   property and netCDF variable name (see the :ref:`netCDF interface
   <NetCDF-interface>`), to also be considered when identifying

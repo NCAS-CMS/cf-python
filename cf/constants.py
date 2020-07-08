@@ -3,6 +3,7 @@ from .units import Units
 import logging
 import sys
 
+from enum     import Enum
 from psutil   import virtual_memory
 from tempfile import gettempdir
 
@@ -49,7 +50,7 @@ provided. This is due to interdependencies between some values.
 
 :Keys:
 
-    ATOL : float
+    atol : float
       The value of absolute tolerance for testing numerically
       tolerant equality.
 
@@ -74,7 +75,7 @@ provided. This is due to interdependencies between some values.
       files which may be used for files containing data
       arrays.
 
-    RTOL : float
+    rtol : float
       The value of relative tolerance for testing numerically
       tolerant equality.
 
@@ -97,9 +98,9 @@ provided. This is due to interdependencies between some values.
       this is 0 to try and automatically determine which mode to
       use.
 
-    LOG_LEVEL : str
+    log_level : str
       The minimal level of seriousness for which log messages are shown.
-      See functions.LOG_LEVEL().
+      See functions.log_level().
 """
 CONSTANTS = {
     'RTOL': sys.float_info.epsilon,
@@ -113,7 +114,7 @@ CONSTANTS = {
     'REGRID_LOGGING': False,
     'COLLAPSE_PARALLEL_MODE': 0,
     'RELAXED_IDENTITIES': False,
-    'IGNORE_IDENTITIES': False,
+    # 'IGNORE_IDENTITIES': False,  # no longer used
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
 }
 
@@ -323,17 +324,10 @@ cr_default_values = {
 # --------------------------------------------------------------------
 # Logging level setup
 # --------------------------------------------------------------------
-valid_log_levels = [  # order (highest to lowest severity) must be preserved
-    'DISABLE',
-    'WARNING',
-    'INFO',
-    'DETAIL',
-    'DEBUG',
-]
-# Map string level identifiers to ints from 0 to len(valid_log_levels):
-numeric_log_level_map = dict(enumerate(valid_log_levels))
-# We treat 'DEBUG' as a special case so assign to '-1' rather than highest int:
-numeric_log_level_map[-1] = numeric_log_level_map.pop(
-    len(valid_log_levels) - 1)
-# Result for print(numeric_log_level_map) is:
-# {0: 'DISABLE', 1: 'WARNING', 2: 'INFO', 3: 'DETAIL', -1: 'DEBUG'}
+# For explicitness, define here rather than importing identical Enum from cfdm
+class ValidLogLevels(Enum):
+    DISABLE = 0
+    WARNING = 1
+    INFO = 2
+    DETAIL = 3
+    DEBUG = -1
