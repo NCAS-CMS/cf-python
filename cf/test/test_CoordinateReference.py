@@ -14,6 +14,7 @@ tmpfiles = [tempfile.mktemp('_test_CoordinateReference.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (tempfile,) = tmpfiles
 
+
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
     '''
@@ -22,6 +23,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -276,6 +278,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             _ = self.hcr['qwerty']
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

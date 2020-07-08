@@ -19,7 +19,6 @@ class FieldAncillaryTest(unittest.TestCase):
         _ = str(f)
         _ = f.dump(display=False)
 
-
     def test_FieldAncillary_source(self):
         f = cf.read(self.filename)[0]
 
@@ -31,8 +30,8 @@ class FieldAncillaryTest(unittest.TestCase):
         x = f.domain_ancillaries('ncvar%a').value()
 
         x.set_property('long_name', 'qwerty')
-        
-        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+
+        self.assertEqual(x.get_property('long_name'), 'qwerty')
         self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
@@ -80,6 +79,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (1, 9, 10))
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())

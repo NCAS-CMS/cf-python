@@ -12196,12 +12196,6 @@ class Field(mixin.PropertiesData,
         full = 'full' in mode
         compress = 'compress' in mode or not (envelope or full)
 
-#        if len(mode) == 2:
-#            raise ValueError(
-#                "Can't provide {0[0]!r} and {0[1]!r} positional arguments "
-#                "in the same call.".format(mode)
-#            )
-
         logger.debug('Field.indices:')  # pragma: no cover
         logger.debug(
             '    envelope, full, compress = {} {} {}'.format(
@@ -12223,7 +12217,6 @@ class Field(mixin.PropertiesData,
         n_axes = 0
         for identity, value in kwargs.items():
             if identity in domain_axes:
-                print(9999)
                 axes = (identity,)
                 key = None
                 construct = None
