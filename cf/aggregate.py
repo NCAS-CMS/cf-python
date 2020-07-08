@@ -1567,11 +1567,21 @@ def aggregate(fields,
     if info is not False:  # catch 'Falsy' entries e.g. standard info=0
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             'cf.aggregate', {'info': info},
-            "Use keyword 'verbose' instead. Note the informational levels "
-            "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
-            "excluding I >= 3 which maps to V = -1 (V = 0 disables messages)",
+            "Use keyword 'verbose' instead."
+            "\n\n"
+            "Note the informational levels have been remapped: "
+            "\ninfo=0 maps to verbose=1"
+            "\ninfo=1 maps to verbose=2"
+            "\ninfo=2 maps to verbose=3"
+            "\ninfo=3 maps to verbose=-1",
             version='3.5.0'
         )  # pragma: no cover
+#            'cf.aggregate', {'info': info},
+#            "Use keyword 'verbose' instead. Note the informational levels "
+#            "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
+#            "excluding I >= 3 which maps to V = -1 (V = 0 disables messages)",
+#            version='3.5.0'
+#        )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
