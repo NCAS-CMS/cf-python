@@ -1662,9 +1662,9 @@ When the units are changed, the data are automatically converted to
 the new units when next accessed.
 
 .. code-block:: python
-   :caption: *Changing the units automatically results converts the
-             data values.*
-	     
+   :caption: *Changing the units automatically results in conversion of
+             the data values.*
+
    >>> t.data
    <CF Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
    >>> t.Units = cf.Units('degreesC')
@@ -2854,7 +2854,7 @@ the corresponding axis, by specifying the coordinate value via the
 
 .. code-block:: python
    :caption: *Roll the data along the 'X' axis so that the first
-             element of the axis contains 200 degrees east, and
+             element of the axis contains -150 degrees east, and
              also -750 degrees east.*
 
    >>> print(q.anchor('X', -150))                         
@@ -3034,8 +3034,7 @@ Subspaces based on time dimensions may be defined with as
 date-time objects.
 
 .. code-block:: python
-   :caption: *Create a new field construct whose domain's time axis
-              contains a single cell for 2019-01-01. TODO*
+   :caption: *TODO*
 
    >>> a = cf.read('timeseries.nc')[0]
    >>> print (a)     
@@ -6523,7 +6522,6 @@ is straight forward with the `cf.load_stash2standard_name` function.
 
 .. include:: field_analysis.rst
 
-----
 
 .. _Controlling-output-messages:
 
