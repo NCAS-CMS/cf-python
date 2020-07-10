@@ -133,12 +133,10 @@ class functionTest(unittest.TestCase):
                 expected_post_set['fm_threshold'] = (
                     value * expected_post_set['total_memory'])
 
-            print("-------------------", setting, value)
             # Can't trivially do a direct test that the actual and expected
             # return dicts are the same as there are float values which have
             # limited float precision so need assertAlmostEqual testing:
             for name, val in expected_post_set.items():
-                print("CHECK::", post_set[name], val)
                 self.assertAlmostEqual(post_set[name], val, places=8)
 
         # Reset so later test fixtures don't spam with output messages:

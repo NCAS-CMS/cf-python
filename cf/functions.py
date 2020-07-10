@@ -382,6 +382,10 @@ def _configuration(**kwargs):
     # externally and not exposed to the user:
     old = {name.lower(): val for name, val in CONSTANTS.items() if
            not name.startswith('WORKSPACE_FACTOR_')}
+    # Also add rtol and atol from cfdm as they are effective constants in cf:
+    for tolerance in ('ATOL', 'RTOL'):
+        old[tolerance.lower()] = cfdm.constants.CONSTANTS[tolerance]
+
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
     # might be trying to set those, as opposed to None emerging as default.
