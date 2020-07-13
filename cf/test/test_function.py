@@ -172,9 +172,12 @@ class functionTest(unittest.TestCase):
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
         pre_set_config = cf.configuration()
+        with self.assertRaises(ValueError):
+            cf.configuration(of_fraction=0.0)
+        with self.assertRaises(ValueError):
+            cf.configuration(free_memory_factor=0.0)
         new_values = {
             'tempdir': '',
-            'of_fraction': 0,
             'atol': 0.0,
             'regrid_logging': False,
         }

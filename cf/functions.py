@@ -487,7 +487,10 @@ def free_memory_factor(*args):
     '''
     old = CONSTANTS['FREE_MEMORY_FACTOR']
     if args:
-        free_memory_factor = float(args[0])
+        try:
+            free_memory_factor = float(args[0])
+        except (ValueError, TypeError):
+            raise ValueError('Free memory factor must be a float')
         if free_memory_factor <= 0.0 or free_memory_factor >= 1.0:
             raise ValueError(
                 'Free memory factor must be between 0.0 and 1.0 not inclusive')
@@ -839,7 +842,7 @@ def TEMPDIR(*new_tempdir):
     return tempdir(*new_tempdir)
 
 
-def of_fraction(*arg):
+def of_fraction(*args):
     '''The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
 
@@ -886,8 +889,16 @@ def of_fraction(*arg):
 
     '''
     old = CONSTANTS['OF_FRACTION']
-    if arg:
-        CONSTANTS['OF_FRACTION'] = arg[0]
+    if args:
+        try:
+            fraction = float(args[0])
+        except (ValueError, TypeError):
+            raise ValueError('Fraction must be a float')
+        fraction = float(args[0])
+        if fraction <= 0.0 or fraction >= 1.0:
+            raise ValueError(
+                'Fraction must be between 0.0 and 1.0 not inclusive')
+        CONSTANTS['OF_FRACTION'] = fraction
 
     return old
 
@@ -981,8 +992,12 @@ def collapse_parallel_mode(*arg):
     '''
     old = CONSTANTS['COLLAPSE_PARALLEL_MODE']
     if arg:
-        if arg[0] not in (0, 1, 2):
-            raise ValueError('Invalid collapse parallel mode')
+        allowed_values = (0, 1, 2)
+        if arg[0] not in allowed_values:
+            raise ValueError(
+                'Invalid collapse parallel mode. Valid values are '
+                '{}'.format(allowed_values)
+            )
 
         CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg[0]
 
