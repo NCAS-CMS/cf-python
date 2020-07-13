@@ -2873,7 +2873,7 @@ class PropertiesData(Properties):
         if properties:
             for prop in self.inherited_properties():
                 properties.pop(prop, None)
-                
+
             out.append("{}.set_properties({})".format(name,
                                                       properties))
 

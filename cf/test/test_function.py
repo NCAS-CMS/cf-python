@@ -117,7 +117,7 @@ class functionTest(unittest.TestCase):
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
             # These are shown in output but can't be set (no such kwarg):
-            if setting in constants_that_cannot_be_set:  
+            if setting in constants_that_cannot_be_set:
                 with self.assertRaises(TypeError):  # error from invalid kwarg
                     cf.configuration(**{setting: value})
                 continue

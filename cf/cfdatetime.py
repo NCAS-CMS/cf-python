@@ -265,10 +265,10 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
             _[:, 5] = second
             _[:, 6] = microsecond
             arg = _
-            
+
             out = [dt(*args, calendar=calendar) for args in arg]
     else:
-         out = [dt(*args, calendar=calendar) for args in arg]
+        out = [dt(*args, calendar=calendar) for args in arg]
 
     out = numpy.array(out)
 
