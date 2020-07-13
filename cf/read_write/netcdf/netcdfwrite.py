@@ -184,21 +184,21 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     .. versionadded:: 3.0.0
 
     :Parameters:
-    
+
         f: Field construct
-    
+
         key: `str`
             The coordinate construct key
-    
+
         coord_1d: Coordinate construct
-    
+
         axis: `str`
             The field's axis identifier for the scalar coordinate.
-    
+
         coordinates: `list`
-    
+
     :Returns:
-    
+
         coordinates: `list`
             The updated list of netCDF auxiliary coordinate names.
 
@@ -206,7 +206,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Unsafe to set mutable '{}' as default in the func signature.
         if extra is None:  # distinguish from falsy '{}'
             extra = {}
-            
+
         coord_1d = self._change_reference_datetime(coord_1d)
 
         return super()._write_scalar_coordinate(f, key, coord_1d,

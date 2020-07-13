@@ -55,7 +55,7 @@ def read(files, external=None, verbose=None, warnings=False,
 
 
     **NetCDF hierarchical groups**
-    
+
     Hierarchical groups in CF provide a mechanism to structure
     variables within netCDF4 datasets. Field constructs are
     constructed from grouped datasets by applying the well defined

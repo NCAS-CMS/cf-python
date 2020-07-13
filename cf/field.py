@@ -282,16 +282,16 @@ class Field(mixin.PropertiesData,
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-   
+
     The netCDF group attributes may be accessed with the
     `nc_group_attributes`, `nc_clear_group_attributes`,
     `nc_set_group_attribute` and `nc_set_group_attributes` methods.
-   
+
     The netCDF geometry variable group structure may be accessed with
     the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
     `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
     `nc_set_geometry_variable_groups` methods.
-   
+
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
@@ -310,7 +310,7 @@ class Field(mixin.PropertiesData,
 
     CF-compliance issues for field constructs read from a netCDF
     dataset may be accessed with the `dataset_compliance` method.
-   
+
     '''
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
@@ -2372,12 +2372,12 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> f._conform_coordinate_references('auxiliarycoordinate1')
-    >>> f._conform_coordinate_references('auxiliarycoordinate1', 
+    >>> f._conform_coordinate_references('auxiliarycoordinate1',
     ...                                  coordref=cr)
 
         '''
-        identity = self.constructs[key].identity(strict=True)        
-        
+        identity = self.constructs[key].identity(strict=True)
+
         if coordref is None:
             refs = self.coordinate_references.values()
         else:
@@ -2388,7 +2388,7 @@ class Field(mixin.PropertiesData,
             if identity in coordinates:
                 ref.del_coordinate(identity, None)
                 ref.set_coordinate(key)
-        #--- End: for
+        # --- End: for
 
     def _coordinate_reference_axes(self, key):
         '''TODO

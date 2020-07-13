@@ -10,6 +10,8 @@ from tempfile import gettempdir
 from numpy.ma import masked as numpy_ma_masked
 from numpy.ma import nomask as numpy_ma_nomask
 
+import cfdm
+
 from . import mpi_on
 from . import mpi_size
 if mpi_on:
@@ -48,11 +50,13 @@ Whilst the dictionary may be modified directly, it is safer to
 retrieve and set the values with a function where one is
 provided. This is due to interdependencies between some values.
 
-:Keys:
+Note ATOL and RTOL are constants that in essence belong in this
+dict, but since they can be read and manipulated directly from cfdm,
+it is safest to work with cfdm.constants.CONSTANTS['ATOL'] (and
+'RTOL' equivalent) instead of storing separately and synchronising
+them here in cf.
 
-    atol : float
-      The value of absolute tolerance for testing numerically
-      tolerant equality.
+:Keys:
 
     TOTAL_MEMORY : float
       Find the total amount of physical memory (in bytes).
@@ -75,10 +79,6 @@ provided. This is due to interdependencies between some values.
       files which may be used for files containing data
       arrays.
 
-    rtol : float
-      The value of relative tolerance for testing numerically
-      tolerant equality.
-
     TEMPDIR : str
       The location to store temporary files. By default it is
       the default directory used by the :mod:`tempfile` module.
@@ -98,13 +98,12 @@ provided. This is due to interdependencies between some values.
       this is 0 to try and automatically determine which mode to
       use.
 
-    log_level : str
+    LOG_LEVEL : str
       The minimal level of seriousness for which log messages are shown.
-      See functions.log_level().
+      See cf.log_level().
 """
 CONSTANTS = {
-    'RTOL': sys.float_info.epsilon,
-    'ATOL': sys.float_info.epsilon,
+    # See cfdm.constants.CONSTANTS for effective 'ATOL' and 'RTOL' values
     'TEMPDIR': gettempdir(),
     'OF_FRACTION': 0.5,
     'TOTAL_MEMORY': _TOTAL_MEMORY,
