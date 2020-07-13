@@ -88,6 +88,11 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org['log_level'], str)
         self.assertIsInstance(org['tempdir'], str)
 
+        constants_that_cannot_be_set = (
+            'total_memory',
+            'fm_threshold',
+            'min_total_memory',
+        )
         # Store some sensible values to reset items to for testing, ensuring:
         # 1) they are kept different to the defaults (i.e. org values); and
         # 2) floats differ sufficiently that they will be picked up as
@@ -111,11 +116,8 @@ class functionTest(unittest.TestCase):
         # Test the setting of each lone item.
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
-            if setting in (
-                'total_memory',
-                'fm_threshold',
-                'min_total_memory',
-            ):  # these are shown in output but can't be set (no such kwarg)
+            # These are shown in output but can't be set (no such kwarg):
+            if setting in constants_that_cannot_be_set:  
                 with self.assertRaises(TypeError):  # error from invalid kwarg
                     cf.configuration(**{setting: value})
                 continue
@@ -137,7 +139,74 @@ class functionTest(unittest.TestCase):
             # return dicts are the same as there are float values which have
             # limited float precision so need assertAlmostEqual testing:
             for name, val in expected_post_set.items():
+                if isinstance(val, float):
+                    self.assertAlmostEqual(post_set[name], val, places=8)
+                else:
+                    self.assertEqual(post_set[name], val)
+
+        # Test the setting of more than one, but not all, items simultaneously:
+        new_values = {
+            'regrid_logging': True,
+            'tempdir': '/bin/bag',
+            'of_fraction': 0.33,
+        }
+        cf.configuration(**new_values)
+        post_set = cf.configuration()
+        for name, val in new_values.items():  # test values that should change
+            self.assertEqual(post_set[name], val)
+        # ...and some values that should not:
+        self.assertEqual(post_set['log_level'], 'INFO')
+        self.assertAlmostEqual(post_set['rtol'], 5e-7)
+
+        # Test setting all possible items simultaneously (back to originals):
+        for constant_name in constants_that_cannot_be_set:
+            org.pop(constant_name)  # as these can't be set, are just shown
+        cf.configuration(**org)
+        post_set = cf.configuration()
+        for name, val in org.items():
+            if isinstance(val, float):
                 self.assertAlmostEqual(post_set[name], val, places=8)
+            else:
+                self.assertEqual(post_set[name], val)
+
+        # Test edge cases & invalid inputs...
+        # ... 1. Falsy value inputs on some representative items:
+        pre_set_config = cf.configuration()
+        new_values = {
+            'tempdir': '',
+            'of_fraction': 0,
+            'atol': 0.0,
+            'regrid_logging': False,
+        }
+        cf.configuration(**new_values)
+        post_set = cf.configuration()
+        for name, val in new_values.items():  # test values that should change
+            self.assertEqual(post_set[name], val)
+        # ...and some values that should not:
+        self.assertEqual(post_set['log_level'], pre_set_config['log_level'])
+        self.assertAlmostEqual(post_set['rtol'], pre_set_config['rtol'])
+
+        # 2. None as an input kwarg rather than as a default:
+        pre_set_config = cf.configuration()
+        set_of = 0.45
+        cf.configuration(of_fraction=set_of, rtol=None, log_level=None)
+        post_set = cf.configuration()
+        # test values that should change
+        self.assertEqual(post_set['of_fraction'], set_of)
+        # ...and values that should not:
+        self.assertEqual(post_set['rtol'], pre_set_config['rtol'])
+        self.assertAlmostEqual(
+            post_set['log_level'], pre_set_config['log_level'])
+
+        # 3. Gracefully error with invalid inputs:
+        with self.assertRaises(ValueError):
+            cf.configuration(of_fraction='bad')
+        with self.assertRaises(ValueError):
+            cf.configuration(log_level=7)
+
+        # 4. Check invalid kwarg given logic processes **kwargs:
+        with self.assertRaises(TypeError):
+            cf.configuration(bad_kwarg=1e-15)
 
         # Reset so later test fixtures don't spam with output messages:
         cf.log_level('DISABLE')
