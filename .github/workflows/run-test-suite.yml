@@ -24,9 +24,7 @@ jobs:
       matrix:
         # Skip older ubuntu-16.04 & macos-10.15 to save usage resource
         os: [ubuntu-latest, macos-latest]
-        # Note: only 3.7 supported at the moment, but matrix tested to work
-        # e.g. can specify [3.5, 3.6, 3.7, 3.8] and all 4 run in parallel
-        python-version: [3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
     runs-on: ${{ matrix.os }}
