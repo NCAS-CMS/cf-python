@@ -9,7 +9,7 @@ import cf
 class styleTest(unittest.TestCase):
     """Test PEP8 compliance on all Python '.py' files in the 'cf' directory."""
     def setUp(self):
-        pass  # no setup required yet, but keep this in case of extension
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     def test_pep8_compliance(self):
         pep8_check = pycodestyle.StyleGuide()
