@@ -1762,7 +1762,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                             )
 
                         if reverse and step < 0:
-                            # The array is strictly monotoniticall
+                            # The array is strictly monotonically
                             # decreasing, so reverse it so that it's
                             # strictly monotonically increasing.  Make
                             # a note that this dimension will need

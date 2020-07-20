@@ -2910,19 +2910,29 @@ class Field(mixin.PropertiesData,
             The tolerance on relative differences between real
             numbers. The default value is set by the `rtol` function.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cf.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cf.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cf.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about the equivalence check.
 
         '''
@@ -7590,19 +7600,29 @@ class Field(mixin.PropertiesData,
 
             .. versionadded:: 3.2.0
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cf.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cf.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cf.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about the binned field construct creation
             process.
 
@@ -11758,7 +11778,7 @@ class Field(mixin.PropertiesData,
 
         domain_axes: `Constructs`
 
-        verbose: `int` or `None`, optional
+        verbose: `int` or `str` or `None`, optional
 
     :Returns:
 
@@ -14825,19 +14845,29 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cf.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cf.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cf.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about the attempt to set cyclicity on the
             dimensions.
 
@@ -17026,19 +17056,29 @@ class Field(mixin.PropertiesData,
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cf.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cf.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cf.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cf.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about the operation.
 
     :Returns:
