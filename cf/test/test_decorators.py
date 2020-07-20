@@ -150,23 +150,25 @@ class DecoratorsTest(unittest.TestCase):
 
             # Highest verbosity case (note -1 == 'DEBUG', highest verbosity):
             # all messages should appear, regardless of global log_level:
-            test_class.verbose = -1
-            with self.assertLogs(level=cf.log_level()) as catch:
-                test_class.decorated_logging_func()
-                for msg in log_message:
-                    self.assertIn(msg, catch.output)
+            for attr in (-1, 'DEBUG', 'debug', 'Debug', 'DeBuG'):
+                test_class.verbose = attr
+                with self.assertLogs(level=cf.log_level()) as catch:
+                    test_class.decorated_logging_func()
+                    for msg in log_message:
+                        self.assertIn(msg, catch.output)
 
             # Lowest verbosity case ('WARNING' / 1) excluding special case of
             # 'DISABLE' (see note above): only warning messages should appear,
             # regardless of global log_level value set:
-            test_class.verbose = 1
-            with self.assertLogs(level=cf.log_level()) as catch:
-                test_class.decorated_logging_func()
-                for msg in log_message:
-                    if msg.split(":")[0] == 'WARNING':
-                        self.assertIn(msg, catch.output)
-                    else:
-                        self.assertNotIn(msg, catch.output)
+            for attr in (1, 'WARNING', 'warning', 'Warning', 'WaRning'):
+                test_class.verbose = attr
+                with self.assertLogs(level=cf.log_level()) as catch:
+                    test_class.decorated_logging_func()
+                    for msg in log_message:
+                        if msg.split(":")[0] == 'WARNING':
+                            self.assertIn(msg, catch.output)
+                        else:
+                            self.assertNotIn(msg, catch.output)
 
             # Boolean cases for testing backwards compatibility...
 
@@ -186,16 +188,19 @@ class DecoratorsTest(unittest.TestCase):
             # Special 'DISABLE' (0) case: note this needs to be last as we
             # reset the log_level to it but need to use 'NOTSET' for the
             # assertLogs level, which sends all log messages through:
-            test_class.verbose = 0
-            with self.assertLogs(level='NOTSET') as catch:
-                # Note get 'AssertionError' if don't log anything at all, so
-                # avoid this and allow check for disabled logging, first log
-                # something then disable and check nothing else emerges:
-                logger.info("Purely to keep 'assertLog' happy: see comment!")
-                cf.log_level('DISABLE')
-                test_class.decorated_logging_func()
-                for msg in log_message:  # nothing else should be logged
-                    self.assertNotIn(msg, catch.output)
+            for attr in (0, 'DISABLE', 'disable', 'Disable', 'DisAblE'):
+                test_class.verbose = attr
+                with self.assertLogs(level='NOTSET') as catch:
+                    # Note: get 'AssertionError' if don't log anything at all,
+                    # so to avoid this and allow check for disabled logging,
+                    # first log something then disable and check that no other
+                    # messages emerge:
+                    logger.info(
+                        "Purely to keep 'assertLog' happy: see comment!")
+                    cf.log_level('DISABLE')
+                    test_class.decorated_logging_func()
+                    for msg in log_message:  # nothing else should be logged
+                        self.assertNotIn(msg, catch.output)
 
             # verbose=0 should be equivalent in behaviour to verbose=0
             test_class.verbose = False

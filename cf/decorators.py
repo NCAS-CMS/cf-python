@@ -101,6 +101,14 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
         # Increment indicates that one decorated function has started execution
         calls[0] += 1
 
+        invalid_attr_msg = (
+            "Invalid value '{}' for the 'self.verbose' attribute. "
+            "Accepted values are integers corresponding in positive"
+            "cases to increasing verbosity (namely {}), or None, "
+            "to configure the verbosity according to the global "
+            "log_level setting.".format(self.verbose, ", ".join(
+                [val.name + " = " + str(val.value) for val in ValidLogLevels]))
+        )
         # Convert Boolean cases for backwards compatibility. Need 'is' identity
         # rather than '==' (value) equivalency test, since 1 == True, etc.
         # Note: it is safe (and desirable) to change these (to standard form)
@@ -109,25 +117,26 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
         elif self.verbose is False:
             self.verbose = 0  # corresponds to disabling logs i.e. no verbosity
 
-        # Override log levels for the function & all it calls (to reset at end)
-        if self.verbose is not None:  # None as default, note exclude True & False
-            if _is_valid_log_level_int(self.verbose):
-                _reset_log_emergence_level(self.verbose)
+        # May change during decorator, whereas we don't want to amend the attr:
+        verbose_attr = self.verbose
+        # First convert valid string inputs to the enum-mapped int constant:
+        if isinstance(verbose_attr, str):
+            uppercase_attr = verbose_attr.upper()
+            if hasattr(ValidLogLevels, uppercase_attr):
+                verbose_attr = getattr(ValidLogLevels, uppercase_attr).value
             else:
-                raise ValueError(
-                    "Invalid value for the 'self.verbose' keyword argument. "
-                    "Accepted values are integers corresponding in positive"
-                    "cases to increasing verbosity (namely {}), or None, "
-                    "to configure the verbosity according to the global "
-                    "log_level setting.".format(
-                        ", ".join([val.name + " = " + str(val.value)
-                                   for val in ValidLogLevels])
-                    )
-                )
+                raise ValueError(invalid_attr_msg)
+
+        # Override log levels for the function & all it calls (to reset at end)
+        if verbose_attr is not None:  # None as default; exclude True & False
+            if _is_valid_log_level_int(verbose_attr):
+                _reset_log_emergence_level(verbose_attr)
+            else:
+                raise ValueError(invalid_attr_msg)
 
         # First need to (temporarily) re-enable global logging if disabled
         # in the cases where you do not want to disable it anyway:
-        if (log_level() == 'DISABLE' and self.verbose not in (0, None)):
+        if (log_level() == 'DISABLE' and verbose_attr not in (0, None)):
             _disable_logging(at_level='NOTSET')  # enables all logging again
 
         # After method completes, re-set any changes to log level or enabling
@@ -144,12 +153,12 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
             # inner functions complete (which would mean any subsequent code
             # in the outer function would undesirably regain the global level):
             if calls[0] == 0:
-                if self.verbose == 0:
+                if verbose_attr == 0:
                     _disable_logging(at_level='NOTSET')  # lift deactivation
-                elif (self.verbose is not None and
-                      _is_valid_log_level_int(self.verbose)):
+                elif (verbose_attr is not None and
+                      _is_valid_log_level_int(verbose_attr)):
                     _reset_log_emergence_level(log_level())
-                if log_level() == 'DISABLE' and self.verbose != 0:
+                if log_level() == 'DISABLE' and verbose_attr != 0:
                     _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper
