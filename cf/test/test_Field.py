@@ -66,7 +66,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_get_filenames']
+#        self.test_only = ['test_Field_del_domain_axis']
 #        self.test_only = [
 #            'test_Field_convolution_filter', 'test_Field_derivative',
 #            'test_Field_moving_window'
@@ -2631,6 +2631,36 @@ class FieldTest(unittest.TestCase):
         g = f.mask_invalid()
         self.assertIsNone(f.mask_invalid(inplace=True))
 
+    def test_Field_del_domain_axis(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+
+        g = f[0]
+        self.assertIsInstance(g.del_domain_axis('Y', squeeze=True),
+                              cf.DomainAxis)
+        self.assertIsInstance(g.del_domain_axis('T', squeeze=True),
+                              cf.DomainAxis)
+        
+        g = f.copy()
+        self.assertIsInstance(g.del_domain_axis('T', squeeze=True),
+                              cf.DomainAxis)
+        
+        with self.assertRaises(Exception):
+            f.del_domain_axis('T')
+
+        with self.assertRaises(Exception):
+            f.del_domain_axis('X')
+
+        g = f[0]                  
+        with self.assertRaises(Exception):
+            g.del_domain_axis('Y')
+                              
+        g = f[0]                  
+        with self.assertRaises(Exception):
+            f.del_domain_axis('T')
+                              
 # --- End: class
 
 
