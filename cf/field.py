@@ -8325,7 +8325,7 @@ class Field(mixin.PropertiesData,
         '''Remove a domain axis construct.
 
     In general, a domain axis construct can only be removed if it is
-    not spanned by any constructs data. However, a size 1 domain axis
+    not spanned by any construct's data. However, a size 1 domain axis
     construct can be removed in any case if the *squeeze* parameter is
     set to `True`.
 
@@ -8413,6 +8413,28 @@ class Field(mixin.PropertiesData,
             The removed domain axis construct.
 
     **Examples:**
+
+    >>> f = cf.example_field(0)
+    >>> g = f[0]    
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(1), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(1) = [-75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g.del_domain_axis('Y', squeeze=True)
+    <CF DomainAxis: size(1)>
+    >>> g.del_domain_axis('T', squeeze=True)
+    <CF DomainAxis: size(1)>    
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+    
+        
 
     >>> axis = f.del_domain_axis('ncdim%x', squeeze=True)
 
