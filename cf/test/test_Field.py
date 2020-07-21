@@ -71,7 +71,7 @@ class FieldTest(unittest.TestCase):
 #            'test_Field_convolution_filter', 'test_Field_derivative',
 #            'test_Field_moving_window'
 #        ]
-        self.test_only = ['test_Field_match']
+#        self.test_only = ['test_Field_match']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -1730,7 +1730,6 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(f.match_by_property(*mode, **properties),
                                 'Failed with {} {}'.format(mode, properties))
         # match_by_units
-        print (f)
         self.assertTrue(f.match_by_units('m s-1'))
         self.assertTrue(f.match_by_units('km h-1', exact=False))
         self.assertFalse(f.match_by_units('km h-1'))
