@@ -8434,10 +8434,6 @@ class Field(mixin.PropertiesData,
     Cell methods    : area: mean
     Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
     
-        
-
-    >>> axis = f.del_domain_axis('ncdim%x', squeeze=True)
-
         '''
         dakey = self.domain_axis(identity, key=True)
         domain_axis = self.constructs[dakey]
