@@ -8327,7 +8327,8 @@ class Field(mixin.PropertiesData,
     In general, a domain axis construct can only be removed if it is
     not spanned by any construct's data. However, a size 1 domain axis
     construct can be removed in any case if the *squeeze* parameter is
-    set to `True`.
+    set to `True`. In this case, a metadata construct whose data spans
+    only the removed domain axis construct will also be removed.
 
     .. versionadded:: 3.6.0
 
@@ -8425,6 +8426,13 @@ class Field(mixin.PropertiesData,
                     : time(1) = [2019-01-01 00:00:00]
     >>> g.del_domain_axis('Y', squeeze=True)
     <CF DomainAxis: size(1)>
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
     >>> g.del_domain_axis('T', squeeze=True)
     <CF DomainAxis: size(1)>    
     >>> print(g)
@@ -8433,7 +8441,7 @@ class Field(mixin.PropertiesData,
     Data            : specific_humidity(longitude(8)) 1
     Cell methods    : area: mean
     Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
-    
+
         '''
         dakey = self.domain_axis(identity, key=True)
         domain_axis = self.constructs[dakey]
@@ -8459,6 +8467,10 @@ class Field(mixin.PropertiesData,
              construct_axes.remove(dakey)
              self.set_data_axes(axes=construct_axes, key=ckey)
 
+             if not construct_axes:
+                 self.del_construct(ckey)
+        # --- End: for
+             
         return domain_axis
 
     def get_coordinate_reference(self, identity=None, key=False,
