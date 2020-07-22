@@ -74,9 +74,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(range(self.a.ndim), n)]
 
         self.test_only = []
-        self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_Data_months_years']
-
+#        self.test_only = ['NOTHING!!!!!']
+#        self.test_only = ['test_Data_months_years']
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
