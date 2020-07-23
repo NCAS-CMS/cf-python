@@ -74,9 +74,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(range(self.a.ndim), n)]
 
         self.test_only = []
-        self.test_only = ['NOTHING!!!!!']
+#        self.test_only = ['NOTHING!!!!!']
 #        self.test_only = ['test_Data_months_years']
-
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
@@ -1046,39 +1045,44 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([
             cf.dt(2000, 2, 1, 10, 29, 3, 831223, calendar=calendar),
-            cf.dt(2000, 3, 1, 20, 58, 7, 662447, calendar=calendar)
+            cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar)
         ])
-        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
+
+        self.assertTrue((d.datetime_array == a).all(),
+                        '{}, {}'.format(d.datetime_array, a))
 
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([
-            cf.dt(2000, 1, 31, 10, 29, 3, 831203, calendar=calendar),
-            cf.dt(2000, 3, 1, 20, 58, 7, 662447, calendar=calendar)
+            cf.dt(2000, 1, 31, 10, 29, 3, 831223, calendar=calendar),
+            cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar)
         ])
-        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
+        self.assertTrue((d.datetime_array == a).all(),
+                        '{}, {}'.format(d.datetime_array, a))
 
         calendar = '360_day'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([
-            cf.dt(2001, 1, 6, 5, 48, 45, 974677, calendar=calendar),
-            cf.dt(2002, 1, 11, 11, 37, 31, 949355, calendar=calendar)
+            cf.dt(2001, 1, 6, 5, 48, 45, 974678, calendar=calendar),
+            cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar)
         ])
-        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
+        self.assertTrue((d.datetime_array == a).all(),
+                        '{}, {}'.format(d.datetime_array, a))
 
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
                                             calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2000, 12, 31, 5, 48, 45, 974687,
+        a = numpy.array([cf.dt(2000, 12, 31, 5, 48, 45, 974678,
                                calendar=calendar),
-                         cf.dt(2001, 12, 31, 11, 37, 31, 949375,
+                         cf.dt(2001, 12, 31, 11, 37, 31, 949357,
                                calendar=calendar)])
-        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
+        self.assertTrue((d.datetime_array == a).all(),
+                        '{}, {}'.format(d.datetime_array, a))
 
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
                                             calendar='360_day'))

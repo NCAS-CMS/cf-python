@@ -287,7 +287,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = self.f.copy()        
 
         axis = f.set_construct(cf.DomainAxis(1))
         d = cf.DimensionCoordinate()
@@ -717,7 +717,7 @@ class FieldTest(unittest.TestCase):
         for chunksize in self.chunk_sizes[0:2]:
             cf.chunksize(chunksize)
 
-            f = cf.read(self.contiguous, verbose=0)[0]
+            f = cf.read(self.contiguous)[0]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
                                           [ac.shape, ae.shape, af.shape],
