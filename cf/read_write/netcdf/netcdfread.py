@@ -327,7 +327,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     g['variable_dimensions'][ncvar] = tuple(
                         map(str, ncdimensions))
 
-    def file_open(self, filename):
+    def file_open(self, filename, flatten=True, verbose=None):
         '''Open the netCDf file for reading.
 
     :Paramters:
@@ -335,13 +335,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         filename: `str`
             The netCDF file to be read.
 
+        flatten: `bool`, optional
+            If False then do not flatten a grouped file. Ignored if
+            the file has no groups.
+
+            .. versionadded:: 3.6.0
+
     :Returns:
 
         `netCDF4.Dataset`
             The object for the file.
 
         '''
-        out = super().file_open(filename)
+        out = super().file_open(filename, flatten=flatten, verbose=verbose)
         _file_to_fh['netCDF'].pop(filename, None)
         return out
 
