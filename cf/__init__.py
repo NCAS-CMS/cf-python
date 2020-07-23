@@ -104,7 +104,7 @@ except ImportError as error1:
 __cf_version__ = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion
-import importlib
+import importlib.util
 import platform
 
 # Check the version of python
