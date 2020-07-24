@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Bounds.Z &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Bounds.id" href="cf.Bounds.id.html" />
+    <link rel="prev" title="cf.Bounds.Y" href="cf.Bounds.Y.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Bounds.html">cf.Bounds</a><ul>
+      <li>Previous: <a href="cf.Bounds.Y.html" title="previous chapter">cf.Bounds.Y</a></li>
+      <li>Next: <a href="cf.Bounds.id.html" title="next chapter">cf.Bounds.id</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-bounds-z">
+<h1>cf.Bounds.Z<a class="headerlink" href="#cf-bounds-z" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<dt id="cf.Bounds.Z">
+<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">Z</code><a class="headerlink" href="#cf.Bounds.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the data are coordinates for a CF ‘Z’ axis.</p>
+<p>CF ‘Z’ axis coordinates are defined by having one or more of the
+following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code> property has the value <code class="docutils literal notranslate"><span class="pre">'Z'</span></code></p></li>
+<li><p>Units of pressure, level, layer or sigma_level</p></li>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">positive</span></code> property has the value <code class="docutils literal notranslate"><span class="pre">'up'</span></code> or <code class="docutils literal notranslate"><span class="pre">'down'</span></code>
+(case insensitive)</p></li>
+<li><p>The <a class="reference internal" href="../attribute/cf.Bounds.standard_name.html#cf.Bounds.standard_name" title="cf.Bounds.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property is one of
+<code class="docutils literal notranslate"><span class="pre">'atmosphere_ln_pressure_coordinate'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'atmosphere_sigma_coordinate'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'atmosphere_hybrid_sigma_pressure_coordinate'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'atmosphere_hybrid_height_coordinate'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'atmosphere_sleve_coordinate</span></code>’, <code class="docutils literal notranslate"><span class="pre">'ocean_sigma_coordinate'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'ocean_s_coordinate'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ocean_s_coordinate_g1'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'ocean_s_coordinate_g2'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ocean_sigma_z_coordinate'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">'ocean_double_sigma_coordinate'</span></code></p></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctype</span></code>, <a class="reference internal" href="cf.Bounds.T.html#cf.Bounds.T" title="cf.Bounds.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a>, <a class="reference internal" href="cf.Bounds.X.html#cf.Bounds.X" title="cf.Bounds.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></p>
+</div>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: Pa&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">positive</span> <span class="o">==</span> <span class="s1">&#39;up&#39;</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;Z&#39;</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: sigma_level&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;ocean_sigma_coordinate&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-07-24.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
