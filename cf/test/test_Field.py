@@ -287,7 +287,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()        
+        f = self.f.copy()
 
         axis = f.set_construct(cf.DomainAxis(1))
         d = cf.DimensionCoordinate()
