@@ -17,6 +17,7 @@
     <script src="_static/language_data.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -97,7 +99,7 @@
   <div class="section" id="performance">
 <h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.5.1 for version 1.8 of the CF conventions.</p>
+<p>Version 3.6.0 for version 1.8 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#lazy-operations" id="id4"><strong>Lazy operations</strong></a></p></li>
@@ -181,7 +183,7 @@ dimensions, etc.) always reflect the data array in its entirety,
 regardless of how the array is partitioned and whether or not its
 partitions are in memory, constructs containing data arrays may be
 used in the API as if they were normal, in-memory objects (like
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
 this may be minimised for particular applications or hardware
 configurations.</p>
 </li>
@@ -265,7 +267,7 @@ therefore has fast access.</p>
 <li><p>Data arrays larger than a given size are partitioned into
 sub-arrays, each of which is smaller than the chunk size. By default
 this size is set to 1% of the total physical memory and is found and
-set with the <a class="reference internal" href="function/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a> function.</p></li>
+set with the <a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function.</p></li>
 <li><p>In-memory sub-arrays may be written to temporary files on disk when
 the amount of available physical memory falls below a specified
 amount. By default this amount is 10% of the total physical memory
@@ -275,11 +277,11 @@ and is found and set with the <code class="xref py py-obj docutils literal notra
 <div class="section" id="temporary-files">
 <span id="lama-temporary-files"></span><h3><a class="toc-backref" href="#id11">Temporary files</a><a class="headerlink" href="#temporary-files" title="Permalink to this headline">¶</a></h3>
 <p>The directory in which temporary files is found and set with the
-<a class="reference internal" href="function/cf.TEMPDIR.html#cf.TEMPDIR" title="cf.TEMPDIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TEMPDIR</span></code></a> function:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TEMPDIR</span><span class="p">()</span>
+<a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a> function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">tempdir</span><span class="p">()</span>
 <span class="go">&#39;/tmp&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TEMPDIR</span><span class="p">(</span><span class="s1">&#39;/home/me/tmp&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TEMPDIR</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">tempdir</span><span class="p">(</span><span class="s1">&#39;/home/me/tmp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">tempdir</span><span class="p">()</span>
 <span class="go">&#39;/home/me/tmp&#39;</span>
 </pre></div>
 </div>
@@ -345,7 +347,7 @@ the script to <code class="docutils literal notranslate"><span class="pre">mpiru
 </div>
 </div>
 <p>This will work across multiple nodes, as well as on a single node. If
-using across multiple nodes then <a class="reference internal" href="function/cf.TEMPDIR.html#cf.TEMPDIR" title="cf.TEMPDIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TEMPDIR</span></code></a> must be set to a shared
+using across multiple nodes then <a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a> must be set to a shared
 location. Note that internode communication costs my be reduce the
 speed-up when multiple nodes are in use.</p>
 <p>(If you get the error <code class="docutils literal notranslate"><span class="pre">gethostbyname</span> <span class="pre">failed</span></code> you could consider
@@ -355,7 +357,7 @@ adding <code class="docutils literal notranslate"><span class="pre">127.0.0.1</s
 <div class="section" id="optimising-a-parallel-collapse-operation">
 <h3><a class="toc-backref" href="#id16">Optimising a parallel collapse operation</a><a class="headerlink" href="#optimising-a-parallel-collapse-operation" title="Permalink to this headline">¶</a></h3>
 <p>There are three possible modes of optimisation, which can be set in
-your script using <a class="reference internal" href="function/cf.COLLAPSE_PARALLEL_MODE.html#cf.COLLAPSE_PARALLEL_MODE" title="cf.COLLAPSE_PARALLEL_MODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.COLLAPSE_PARALLEL_MODE</span></code></a>:</p>
+your script using <a class="reference internal" href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a>:</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 7%" />
@@ -386,22 +388,22 @@ recommended.</p></td>
 </tr>
 </tbody>
 </table>
-<p>Calling <a class="reference internal" href="function/cf.COLLAPSE_PARALLEL_MODE.html#cf.COLLAPSE_PARALLEL_MODE" title="cf.COLLAPSE_PARALLEL_MODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.COLLAPSE_PARALLEL_MODE</span></code></a> with no arguments returns the
+<p>Calling <a class="reference internal" href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a> with no arguments returns the
 current value, otherwise the value prior to the change is returned.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect and set the ‘collapse’ parallel mode.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">()</span>
 <span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">()</span>
 <span class="go">1</span>
 </pre></div>
 </div>
 </div>
 <p>The parallelism is based on partitions created by <a class="reference internal" href="#lama"><span class="std std-ref">LAMA</span></a>
 and will be affected by the size and number of those partitions. The
-size of the partitions can be changed by calling <a class="reference internal" href="function/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a> before
+size of the partitions can be changed by calling <a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> before
 reading a file.</p>
 <hr class="docutils" />
 </div>
@@ -416,15 +418,12 @@ reading a file.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="_sources/performance.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

@@ -17,11 +17,12 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.ge" href="cf.ge.html" />
-    <link rel="prev" title="cf.relative_vorticity" href="cf.relative_vorticity.html" />
+    <link rel="prev" title="cf.rtol" href="cf.RTOL.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -83,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.relative_vorticity.html" title="previous chapter">cf.relative_vorticity</a></li>
+      <li>Previous: <a href="cf.RTOL.html" title="previous chapter">cf.rtol</a></li>
       <li>Next: <a href="cf.ge.html" title="next chapter">cf.ge</a></li>
   </ul></li>
   </ul></li>
@@ -102,7 +104,7 @@
 <h1>cf.eq<a class="headerlink" href="#cf-eq" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.eq">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">eq</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/query.py#L970-L1025"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.eq" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">eq</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/query.py#L970-L1025"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.eq" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for an “equal” condition.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -168,15 +170,12 @@ with a <code class="docutils literal notranslate"><span class="pre">.</span></co
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/function/cf.eq.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

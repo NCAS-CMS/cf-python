@@ -187,7 +187,7 @@ The data array memory management is configurable as follows:
 * Data arrays larger than a given size are partitioned into
   sub-arrays, each of which is smaller than the chunk size. By default
   this size is set to 1% of the total physical memory and is found and
-  set with the `cf.CHUNKSIZE` function.
+  set with the `cf.chunksize` function.
 
 * In-memory sub-arrays may be written to temporary files on disk when
   the amount of available physical memory falls below a specified
@@ -200,12 +200,12 @@ Temporary files
 ^^^^^^^^^^^^^^^
 
 The directory in which temporary files is found and set with the
-`cf.TEMPDIR` function:
+`cf.tempdir` function:
 
->>> cf.TEMPDIR()
+>>> cf.tempdir()
 '/tmp'
->>> cf.TEMPDIR('/home/me/tmp')
->>> cf.TEMPDIR()
+>>> cf.tempdir('/home/me/tmp')
+>>> cf.tempdir()
 '/home/me/tmp'
 
 The removal of temporary files which are no longer required works in
@@ -289,7 +289,7 @@ the script to ``mpirun``
    $ mpirun -n 3 python my_script.py
 
 This will work across multiple nodes, as well as on a single node. If
-using across multiple nodes then `cf.TEMPDIR` must be set to a shared
+using across multiple nodes then `cf.tempdir` must be set to a shared
 location. Note that internode communication costs my be reduce the
 speed-up when multiple nodes are in use.
 
@@ -301,7 +301,7 @@ Optimising a parallel collapse operation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are three possible modes of optimisation, which can be set in
-your script using `cf.COLLAPSE_PARALLEL_MODE`:
+your script using `cf.collapse_parallel_mode`:
 
 =====  ===============================================================
 Mode   Description
@@ -321,22 +321,22 @@ Mode   Description
        recommended.
 =====  ===============================================================
        
-Calling `cf.COLLAPSE_PARALLEL_MODE` with no arguments returns the
+Calling `cf.collapse_parallel_mode` with no arguments returns the
 current value, otherwise the value prior to the change is returned.
 
 .. code-block:: python
    :caption: *Inspect and set the 'collapse' parallel mode.*
 
-   >>> cf.COLLAPSE_PARALLEL_MODE()
+   >>> cf.collapse_parallel_mode()
    0
-   >>> cf.COLLAPSE_PARALLEL_MODE(1)
+   >>> cf.collapse_parallel_mode(1)
    0
-   >>> cf.COLLAPSE_PARALLEL_MODE()
+   >>> cf.collapse_parallel_mode()
    1
 
 The parallelism is based on partitions created by :ref:`LAMA <LAMA>`
 and will be affected by the size and number of those partitions. The
-size of the partitions can be changed by calling `cf.CHUNKSIZE` before
+size of the partitions can be changed by calling `cf.chunksize` before
 reading a file.
 
 ----

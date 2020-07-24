@@ -17,10 +17,11 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.CF" href="cf.CF.html" />
+    <link rel="next" title="cf.CHUNKSIZE" href="cf.CHUNKSIZE.html" />
     <link rel="prev" title="cf.open_files" href="cf.open_files.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -84,7 +86,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
       <li>Previous: <a href="cf.open_files.html" title="previous chapter">cf.open_files</a></li>
-      <li>Next: <a href="cf.CF.html" title="next chapter">cf.CF</a></li>
+      <li>Next: <a href="cf.CHUNKSIZE.html" title="next chapter">cf.CHUNKSIZE</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -102,12 +104,12 @@
 <h1>cf.open_files_threshold_exceeded<a class="headerlink" href="#cf-open-files-threshold-exceeded" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.open_files_threshold_exceeded">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">open_files_threshold_exceeded</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/functions.py#L765-L797"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files_threshold_exceeded" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">open_files_threshold_exceeded</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/functions.py#L1144-L1176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files_threshold_exceeded" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if the total number of open files is greater than the
 current threshold. GNU/LINUX.</p>
 <p>The threshold is defined as a fraction of the maximum possible number
 of concurrently open files (an operating system dependent amount). The
-fraction is retrieved and set with the <a class="reference internal" href="cf.OF_FRACTION.html#cf.OF_FRACTION" title="cf.OF_FRACTION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OF_FRACTION</span></code></a> function.</p>
+fraction is retrieved and set with the <a class="reference internal" href="cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">of_fraction</span></code></a> function.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.close_files.html#cf.close_files" title="cf.close_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_files</span></code></a>, <a class="reference internal" href="cf.close_one_file.html#cf.close_one_file" title="cf.close_one_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_one_file</span></code></a>,
@@ -125,11 +127,11 @@ threshold.</p>
 <p><strong>Examples:</strong></p>
 <p>In this example, the number of open files is 75% of the maximum
 possible number of concurrently open files:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">OF_FRACTION</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">of_fraction</span><span class="p">()</span>
 <span class="go">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">open_files_threshold_exceeded</span><span class="p">()</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">OF_FRACTION</span><span class="p">(</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">of_fraction</span><span class="p">(</span><span class="mf">0.9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">open_files_threshold_exceeded</span><span class="p">()</span>
 <span class="go">False</span>
 </pre></div>
@@ -146,15 +148,12 @@ possible number of concurrently open files:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/function/cf.open_files_threshold_exceeded.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

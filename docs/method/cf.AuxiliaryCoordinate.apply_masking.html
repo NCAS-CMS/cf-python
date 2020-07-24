@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,7 +106,7 @@
 <h1>cf.AuxiliaryCoordinate.apply_masking<a class="headerlink" href="#cf-auxiliarycoordinate-apply-masking" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.apply_masking">
-<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">bounds=True</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/mixin/propertiesdatabounds.py#L466-L549"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.apply_masking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">bounds=True</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/propertiesdatabounds.py#L436-L533"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.apply_masking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply masking as defined by the CF conventions.</p>
 <p>Masking is applied according to any of the following criteria that
 are applicable:</p>
@@ -158,9 +160,23 @@ operation was in-place.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<blockquote>
-<div><p>TODO DCH</p>
-</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,</span>
+<span class="go"> 9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go">[9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,</span>
+<span class="go"> 9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">masked_c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">masked_c</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[   --    --    --    --    --    --    --    --]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [   --    --    --    --    --    --    --    --]]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -173,15 +189,12 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.AuxiliaryCoordinate.apply_masking.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

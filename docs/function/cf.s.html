@@ -17,10 +17,11 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.CHUNKSIZE" href="cf.CHUNKSIZE.html" />
+    <link rel="next" title="cf.configuration" href="cf.configuration.html" />
     <link rel="prev" title="cf.m" href="cf.m.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -84,7 +86,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
       <li>Previous: <a href="cf.m.html" title="previous chapter">cf.m</a></li>
-      <li>Next: <a href="cf.CHUNKSIZE.html" title="next chapter">cf.CHUNKSIZE</a></li>
+      <li>Next: <a href="cf.configuration.html" title="next chapter">cf.configuration</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -102,7 +104,7 @@
 <h1>cf.s<a class="headerlink" href="#cf-s" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.s">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">s</code><span class="sig-paren">(</span><em class="sig-param">duration=1</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/timeduration.py#L1875-L1925"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.s" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">s</code><span class="sig-paren">(</span><em class="sig-param">duration=1</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/timeduration.py#L1875-L1925"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a time duration of seconds in a <a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p>
 <p><code class="docutils literal notranslate"><span class="pre">cf.s()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">cf.TimeDuration(1,</span> <span class="pre">'second')</span></code>.</p>
 <div class="versionadded">
@@ -167,15 +169,12 @@ details.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/function/cf.s.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

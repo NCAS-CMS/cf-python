@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -103,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.RaggedIndexedContiguousArray">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RaggedIndexedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em>, <em class="sig-param">index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/data/raggedindexedcontiguousarray.py#L6-L24"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedContiguousArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RaggedIndexedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em>, <em class="sig-param">index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/data/raggedindexedcontiguousarray.py#L6-L24"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedContiguousArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.abstract.compressedarray.CompressedArray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray</span></code></p>
 <p>An underlying indexed contiguous ragged array.</p>
 <p>A collection of features, each of which is sequence of (vertical)
@@ -170,7 +172,7 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
 <td><p>Return a subspace, defined by indices, of a numpy array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.RaggedIndexedContiguousArray.source.html#cf.RaggedIndexedContiguousArray.source" title="cf.RaggedIndexedContiguousArray.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
-<td><p>TODO Return the underlying array object.</p></td>
+<td><p>Return the underlying array object.</p></td>
 </tr>
 </tbody>
 </table>
@@ -218,7 +220,7 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
 <td><p>Return a subspace, defined by indices, of a numpy array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.RaggedIndexedContiguousArray.to_memory.html#cf.RaggedIndexedContiguousArray.to_memory" title="cf.RaggedIndexedContiguousArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Bring an array on disk into memory and retain it there.</p></td>
 </tr>
 </tbody>
 </table>
@@ -233,15 +235,12 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/classes/cf.RaggedIndexedContiguousArray.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

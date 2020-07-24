@@ -533,7 +533,21 @@ for augmented assignments, modify the construct's data in-place.
    :template: method.rst
 
    ~cf.FieldAncillary.__invert__ 
- 
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.nc_variable_groups
+   ~cf.FieldAncillary.nc_clear_variable_groups
+   ~cf.FieldAncillary.nc_set_variable_groups
+
 Special
 -------
 

@@ -17,6 +17,7 @@
     <script src="_static/language_data.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
 
 
 
@@ -68,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -95,14 +97,50 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<div class="section" id="version-3-6-0">
+<h2>version 3.6.0<a class="headerlink" href="#version-3-6-0" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-07-??</strong></p>
+<ul class="simple">
+<li><p>Implemented the reading and writing of netCDF4 group hierarchies for
+CF-1.8 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/33">https://github.com/NCAS-CMS/cf-python/issues/33</a>)</p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_variable_groups.html#cf.Field.nc_variable_groups" title="cf.Field.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_set_variable_groups.html#cf.Field.nc_set_variable_groups" title="cf.Field.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_clear_variable_groups.html#cf.Field.nc_clear_variable_groups" title="cf.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_clear_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_group_attributes.html#cf.Field.nc_group_attributes" title="cf.Field.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_set_group_attribute.html#cf.Field.nc_set_group_attribute" title="cf.Field.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_group_attribute</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_set_group_attributes.html#cf.Field.nc_set_group_attributes" title="cf.Field.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_clear_group_attributes.html#cf.Field.nc_clear_group_attributes" title="cf.Field.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_clear_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_geometry_variable_groups.html#cf.Field.nc_geometry_variable_groups" title="cf.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_set_geometry_variable_groups.html#cf.Field.nc_set_geometry_variable_groups" title="cf.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.nc_clear_geometry_variable_groups.html#cf.Field.nc_clear_geometry_variable_groups" title="cf.Field.nc_clear_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_clear_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.DomainAxis.nc_dimension_groups.html#cf.DomainAxis.nc_dimension_groups" title="cf.DomainAxis.nc_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis.nc_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.DomainAxis.nc_set_dimension_groups.html#cf.DomainAxis.nc_set_dimension_groups" title="cf.DomainAxis.nc_set_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis.nc_set_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.DomainAxis.nc_clear_dimension_groups.html#cf.DomainAxis.nc_clear_dimension_groups" title="cf.DomainAxis.nc_clear_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis.nc_clear_dimension_groups</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">group</span></code></p></li>
+<li><p>Keyword parameter <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to multiple methods now accepts named
+strings, not just the equivalent integer levels, to set verbosity.</p></li>
+<li><p>New function: <a class="reference internal" href="function/cf.configuration.html#cf.configuration" title="cf.configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.configuration</span></code></a></p></li>
+<li><p>Renamed to lower-case (but otherwise identical) names all functions which
+get and/or set global constants: <a class="reference internal" href="function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a>, <a class="reference internal" href="function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a>, <a class="reference internal" href="function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>,
+<a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a>, <a class="reference internal" href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a>, <a class="reference internal" href="function/cf.free_memory.html#cf.free_memory" title="cf.free_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory</span></code></a>,
+<a class="reference internal" href="function/cf.free_memory_factor.html#cf.free_memory_factor" title="cf.free_memory_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory_factor</span></code></a>, <a class="reference internal" href="function/cf.fm_threshold.html#cf.fm_threshold" title="cf.fm_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.fm_threshold</span></code></a>, <a class="reference internal" href="function/cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.of_fraction</span></code></a>,
+<a class="reference internal" href="function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>, <a class="reference internal" href="function/cf.set_performance.html#cf.set_performance" title="cf.set_performance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.set_performance</span></code></a>, <a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a>, <a class="reference internal" href="function/cf.total_memory.html#cf.total_memory" title="cf.total_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.total_memory</span></code></a>,
+<a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a>. The upper-case names remain functional as aliases.</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.2.1</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">1.8.6.0&lt;=cfdm&lt;1.8.7.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cfunits&gt;=3.2.9</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-3-5-1">
 <h2>version 3.5.1<a class="headerlink" href="#version-3-5-1" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-06-10</strong></p>
 <ul class="simple">
-<li><p>Fixed bug (emerging from <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>) that prevented the reading of certain
-netCDF files, such as those with at least one external variable.</p></li>
 <li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">1.8.5&lt;=cfdm&lt;1.9.0</span></code></p></li>
+<li><p>Fixed bug (emerging from the cfdm library) that prevented the
+reading of certain netCDF files, such as those with at least one
+external variable.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-5-0">
@@ -123,7 +161,7 @@ functionality.</p></li>
 function/method to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>, with equal granularity but a different
 numbering system: <code class="docutils literal notranslate"><span class="pre">V</span> <span class="pre">=</span> <span class="pre">I</span> <span class="pre">+</span> <span class="pre">1</span></code> maps <code class="docutils literal notranslate"><span class="pre">info=I</span></code> to <code class="docutils literal notranslate"><span class="pre">verbose=V</span></code> except
 for the <code class="docutils literal notranslate"><span class="pre">debug</span></code> case of <code class="docutils literal notranslate"><span class="pre">I=3</span></code> mapping to <code class="docutils literal notranslate"><span class="pre">V=-1</span></code> (<code class="docutils literal notranslate"><span class="pre">V=0</span></code> disables).</p></li>
-<li><p>New function <a class="reference internal" href="function/cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a> to set the minimum log level for which
+<li><p>New function <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code> to set the minimum log level for which
 messages are displayed globally, i.e. to change the project-wide
 verbosity.</p></li>
 <li><p>New method: <a class="reference internal" href="method/cf.Field.halo.html#cf.Field.halo" title="cf.Field.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.halo</span></code></a></p></li>
@@ -215,7 +253,8 @@ construct without bounds.</p></li>
 <p><strong>2020-04-01</strong></p>
 <ul class="simple">
 <li><p>First release for CF-1.8 (does not include netCDF hierarchical
-groups functionality).</p></li>
+groups functionality)
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/33">https://github.com/NCAS-CMS/cf-python/issues/33</a>)</p></li>
 <li><p>Deprecated <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> as a permitted value of the <code class="docutils literal notranslate"><span class="pre">weights</span></code> keyword of
 <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a>.</p></li>
 <li><p>New methods: <a class="reference internal" href="method/cf.Data.compressed.html#cf.Data.compressed" title="cf.Data.compressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.compressed</span></code></a>, <a class="reference internal" href="method/cf.Data.diff.html#cf.Data.diff" title="cf.Data.diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.diff</span></code></a></p></li>
@@ -658,7 +697,7 @@ object.</p></li>
 <hr class="docutils" />
 <p><strong>2018-02-07</strong></p>
 <ul class="simple">
-<li><p>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.4.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</p></li>
+<li><p>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-2">
@@ -930,7 +969,7 @@ coordinates</p></li>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.files</span></code> which report which files are referenced by the data
 array.</p></li>
 <li><p>Fix to stop partitions return <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bool_</span></code> instead of
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></li>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></li>
 <li><p>Fix to determining cyclicity of regridded fields.</p></li>
 <li><p>Functionality to recursively read directories in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
 and <code class="docutils literal notranslate"><span class="pre">cfump</span></code></p></li>
@@ -1346,15 +1385,12 @@ to Jeff Whitaker).</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="_sources/Changelog.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

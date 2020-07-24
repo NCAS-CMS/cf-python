@@ -65,7 +65,7 @@ const temporarilyChangeTooltip = (el, newText) => {
 var copyTargetText = (trigger) => {
   var target = document.querySelector(trigger.attributes['data-clipboard-target'].value);
   var textContent = target.innerText.split('\n');
-  var copybuttonPromptText = ''; // Inserted from config
+  var copybuttonPromptText = '$ '; // Inserted from config
   var onlyCopyPromptLines = true; // Inserted from config
   var removePrompts = true; // Inserted from config
 

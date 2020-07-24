@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -103,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/field.py#L244-L20831"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L244-L20866"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -134,6 +136,33 @@ attributes (e.g. history and institution).</p>
 attributes may be accessed with the <a class="reference internal" href="../method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a>,
 <a class="reference internal" href="../method/cf.Field.nc_clear_global_attributes.html#cf.Field.nc_clear_global_attributes" title="cf.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_global_attribute.html#cf.Field.nc_set_global_attribute" title="cf.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a>
 methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cf.Field.nc_set_variable.html#cf.Field.nc_set_variable" title="cf.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_get_variable.html#cf.Field.nc_get_variable" title="cf.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_variable_groups.html#cf.Field.nc_variable_groups" title="cf.Field.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.nc_clear_variable_groups.html#cf.Field.nc_clear_variable_groups" title="cf.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_variable_groups.html#cf.Field.nc_set_variable_groups" title="cf.Field.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
+<p>The netCDF group attributes may be accessed with the
+<a class="reference internal" href="../method/cf.Field.nc_group_attributes.html#cf.Field.nc_group_attributes" title="cf.Field.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_clear_group_attributes.html#cf.Field.nc_clear_group_attributes" title="cf.Field.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.nc_set_group_attribute.html#cf.Field.nc_set_group_attribute" title="cf.Field.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_group_attributes.html#cf.Field.nc_set_group_attributes" title="cf.Field.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a> methods.</p>
+<p>The netCDF geometry variable group structure may be accessed with
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_geometry_variable</span></code>,
+<a class="reference internal" href="../method/cf.Field.nc_geometry_variable_groups.html#cf.Field.nc_geometry_variable_groups" title="cf.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_geometry_variable_groups</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_clear_variable_groups.html#cf.Field.nc_clear_variable_groups" title="cf.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and
+<a class="reference internal" href="../method/cf.Field.nc_set_geometry_variable_groups.html#cf.Field.nc_set_geometry_variable_groups" title="cf.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable_groups</span></code></a> methods.</p>
+<p>Some components exist within multiple constructs, but when written
+to a netCDF dataset the netCDF names associated with such
+components will be arbitrarily taken from one of them. The netCDF
+variable, dimension and sample dimension names and group
+structures for such components may be set or removed consistently
+across all such components with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_variable</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable_groups</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_variable_groups</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_dimension</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension_groups</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_dimension_groups</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_sample_dimension</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension_groups</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_sample_dimension_groups</span></code> methods.</p>
+<p>CF-compliance issues for field constructs read from a netCDF
+dataset may be accessed with the <a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a> method.</p>
 <p><strong>Initialization</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -431,7 +460,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.dtype.html#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.ndim.html#cf.Field.ndim" title="cf.Field.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>The number of dimensions in the data array.</p></td>
@@ -766,7 +795,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the radius used for calculating cell areas in spherical polar coordinates.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
-<td><p>Uncompress the construct.</p></td>
+<td><p>Uncompress the field construct.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
 <td><p>Join a sequence of fields together.</p></td>
@@ -1570,6 +1599,48 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
+<div class="section" id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_variable_groups.html#cf.Field.nc_variable_groups" title="cf.Field.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_variable_groups.html#cf.Field.nc_set_variable_groups" title="cf.Field.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_variable_groups.html#cf.Field.nc_clear_variable_groups" title="cf.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_group_attributes.html#cf.Field.nc_group_attributes" title="cf.Field.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a></p></td>
+<td><p>Return the selection of properties to be written as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_group_attribute.html#cf.Field.nc_set_group_attribute" title="cf.Field.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a></p></td>
+<td><p>Select a property to be written as a netCDF group attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_group_attributes.html#cf.Field.nc_set_group_attributes" title="cf.Field.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
+<td><p>Set properties to be written as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_group_attributes.html#cf.Field.nc_clear_group_attributes" title="cf.Field.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a></p></td>
+<td><p>Remove the selection of properties to be written as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_geometry_variable_groups.html#cf.Field.nc_geometry_variable_groups" title="cf.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_geometry_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_geometry_variable_groups.html#cf.Field.nc_set_geometry_variable_groups" title="cf.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_geometry_variable_groups.html#cf.Field.nc_clear_geometry_variable_groups" title="cf.Field.nc_clear_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_geometry_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="special">
 <span id="field-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
@@ -1605,15 +1676,12 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/classes/cf.Field.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

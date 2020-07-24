@@ -554,7 +554,21 @@ for augmented assignments, modify the construct's data in-place.
    :template: method.rst
 
    ~cf.AuxiliaryCoordinate.__invert__ 
- 
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.nc_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_clear_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_set_variable_groups
+
 Special
 -------
 

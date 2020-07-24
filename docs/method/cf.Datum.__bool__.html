@@ -17,11 +17,12 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Datum.__deepcopy__" href="cf.Datum.__deepcopy__.html" />
-    <link rel="prev" title="cf.Datum.equals" href="cf.Datum.equals.html" />
+    <link rel="prev" title="cf.Datum.nc_clear_variable_groups" href="cf.Datum.nc_clear_variable_groups.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -84,7 +86,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Datum.html">cf.Datum</a><ul>
-      <li>Previous: <a href="cf.Datum.equals.html" title="previous chapter">cf.Datum.equals</a></li>
+      <li>Previous: <a href="cf.Datum.nc_clear_variable_groups.html" title="previous chapter">cf.Datum.nc_clear_variable_groups</a></li>
       <li>Next: <a href="cf.Datum.__deepcopy__.html" title="next chapter">cf.Datum.__deepcopy__</a></li>
   </ul></li>
   </ul></li>
@@ -104,7 +106,7 @@
 <h1>cf.Datum.__bool__<a class="headerlink" href="#cf-datum-bool" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Datum.__bool__">
-<code class="sig-prename descclassname">Datum.</code><code class="sig-name descname">__bool__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/mixin/parameters.py#L20-L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum.__bool__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Datum.</code><code class="sig-name descname">__bool__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/parameters.py#L17-L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum.__bool__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</p>
 <p>x.__bool__() &lt;==&gt; bool(x)</p>
 <div class="versionadded">
@@ -122,15 +124,12 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.Datum.__bool__.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

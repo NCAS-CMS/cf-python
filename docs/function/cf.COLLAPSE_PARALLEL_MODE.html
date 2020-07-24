@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -102,47 +104,8 @@
 <h1>cf.COLLAPSE_PARALLEL_MODE<a class="headerlink" href="#cf-collapse-parallel-mode" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.COLLAPSE_PARALLEL_MODE">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">COLLAPSE_PARALLEL_MODE</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/functions.py#L590-L637"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.COLLAPSE_PARALLEL_MODE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Which mode to use when collapse is run in parallel. There are three
-possible modes:</p>
-<ol class="arabic simple" start="0">
-<li><p>This attempts to maximise parallelism, possibly at the expense
-of extra communication. This is the default mode.</p></li>
-<li><p>This minimises communication, possibly at the expense of the
-degree of parallelism. If collapse is running slower than you
-would expect, you can try changing to mode 1 to see if this
-improves performance. This is only likely to work if the
-output of collapse will be a sizeable array, not a single
-point.</p></li>
-<li><p>This is here for debugging purposes, but we would expect this
-to maximise communication possibly at the expense of
-parallelism. The use of this mode is, therefore, not
-recommended.</p></li>
-</ol>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>arg: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The new value (0, 1 or 2).</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The value prior to the change, or the current value if no
-new value was specified.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">()</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">COLLAPSE_PARALLEL_MODE</span><span class="p">()</span>
-<span class="go">1</span>
-</pre></div>
-</div>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">COLLAPSE_PARALLEL_MODE</code><span class="sig-paren">(</span><em class="sig-param">*new_collapse_parallel_mode</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/functions.py#L1007-L1010"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.COLLAPSE_PARALLEL_MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a>.</p>
 </dd></dl>
 
 </div>
@@ -155,15 +118,12 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/function/cf.COLLAPSE_PARALLEL_MODE.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

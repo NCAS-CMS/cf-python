@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,7 +106,7 @@
 <h1>cf.Field.regridc<a class="headerlink" href="#cf-field-regridc" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regridc">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/field.py#L19386-L19967"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L19421-L20002"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field with the specified Cartesian axes regridded
 onto a new grid.</p>
 <p>Between 1 and 3 dimensions may be regridded.</p>
@@ -155,7 +157,7 @@ Python interface to the Earth System Modeling Framework (ESMF)
 <a class="reference external" href="https://www.earthsystemcog.org/projects/esmf/regridding">regridding utility</a>.</p>
 <p><strong>Logging</strong></p>
 <p>Whether ESMF logging is enabled or not is determined by
-<a class="reference internal" href="../function/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a>. If it is logging takes place after every
+<a class="reference internal" href="../function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>. If it is logging takes place after every
 call. By default logging is disabled.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -314,7 +316,7 @@ cells when checking the grids for errors. Regridding will
 proceed and degenerate cells will be skipped, not
 producing a result, when set to True. Otherwise an error
 will be produced if degenerate cells are found. This will
-be present in the ESMPy log files if cf.REGRID_LOGGING is
+be present in the ESMPy log files if cf.regrid_logging is
 set to True. As of ESMF 7.0.0 this only applies to
 conservative regridding.  Other methods always skip
 degenerate cells.</p>
@@ -381,15 +383,12 @@ contained in field <code class="docutils literal notranslate"><span class="pre">
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.Field.regridc.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

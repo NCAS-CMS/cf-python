@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -102,27 +104,8 @@
 <h1>cf.FREE_MEMORY_FACTOR<a class="headerlink" href="#cf-free-memory-factor" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.FREE_MEMORY_FACTOR">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FREE_MEMORY_FACTOR</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/functions.py#L218-L247"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FREE_MEMORY_FACTOR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the fraction of memory kept free as a temporary
-workspace. Users should set the free memory factor through
-cf.SET_PERFORMANCE so that the upper limit to the chunksize is
-recalculated appropriately. The free memory factor must be a
-sensible value between zero and one. If no arguments are passed
-the existing free memory factor is returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>The fraction of memory kept free as a temporary workspace.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>The previous value of the free memory factor.</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FREE_MEMORY_FACTOR</code><span class="sig-paren">(</span><em class="sig-param">*new_free_memory_factor</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/functions.py#L504-L507"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FREE_MEMORY_FACTOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="cf.free_memory_factor.html#cf.free_memory_factor" title="cf.free_memory_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory_factor</span></code></a>.</p>
 </dd></dl>
 
 </div>
@@ -135,15 +118,12 @@ the existing free memory factor is returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/function/cf.FREE_MEMORY_FACTOR.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

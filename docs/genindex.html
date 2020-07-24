@@ -18,6 +18,7 @@
     <script src="_static/language_data.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
 
 
 
@@ -68,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -2027,7 +2029,7 @@
       </ul></li>
       <li><a href="method/cf.Data.asdata.html#cf.Data.asdata">asdata() (cf.Data class method)</a>
 </li>
-      <li><a href="function/cf.ATOL.html#cf.ATOL">ATOL() (in module cf)</a>
+      <li><a href="function/cf.ATOL.html#cf.atol">atol() (in module cf)</a>, <a href="function/cf.atol.html#cf.atol">[1]</a>
 </li>
       <li><a href="attribute/cf.Query.attr.html#cf.Query.attr">attr (cf.Query attribute)</a>
 </li>
@@ -2251,6 +2253,8 @@
       </ul></li>
       <li><a href="function/cf.CHUNKSIZE.html#cf.CHUNKSIZE">CHUNKSIZE() (in module cf)</a>
 </li>
+      <li><a href="function/cf.chunksize.html#cf.chunksize">chunksize() (in module cf)</a>
+</li>
       <li><a href="method/cf.FieldList.clear.html#cf.FieldList.clear">clear() (cf.FieldList method)</a>
 </li>
       <li><a href="method/cf.CoordinateReference.clear_coordinates.html#cf.CoordinateReference.clear_coordinates">clear_coordinates() (cf.CoordinateReference method)</a>
@@ -2349,6 +2353,8 @@
 </li>
       <li><a href="function/cf.COLLAPSE_PARALLEL_MODE.html#cf.COLLAPSE_PARALLEL_MODE">COLLAPSE_PARALLEL_MODE() (in module cf)</a>
 </li>
+      <li><a href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode">collapse_parallel_mode() (in module cf)</a>
+</li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.comment.html#cf.AuxiliaryCoordinate.comment">comment (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2415,6 +2421,8 @@
         <li><a href="method/cf.List.concatenate.html#cf.List.concatenate">(cf.List class method)</a>
 </li>
       </ul></li>
+      <li><a href="function/cf.configuration.html#cf.configuration">configuration() (in module cf)</a>
+</li>
       <li><a href="method/cf.Domain.construct.html#cf.Domain.construct">construct() (cf.Domain method)</a>
 
       <ul>
@@ -3383,14 +3391,14 @@
         <li><a href="attribute/cf.Flags.flag_meanings.html#cf.Flags.flag_meanings">(cf.Flags attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Field.flag_values.html#cf.Field.flag_values">flag_values (cf.Field attribute)</a>
 
       <ul>
         <li><a href="attribute/cf.Flags.flag_values.html#cf.Flags.flag_values">(cf.Flags attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Field.Flags.html#cf.Field.Flags">Flags (cf.Field attribute)</a>
 
       <ul>
@@ -3477,9 +3485,15 @@
       </ul></li>
       <li><a href="function/cf.FM_THRESHOLD.html#cf.FM_THRESHOLD">FM_THRESHOLD() (in module cf)</a>
 </li>
+      <li><a href="function/cf.fm_threshold.html#cf.fm_threshold">fm_threshold() (in module cf)</a>
+</li>
       <li><a href="function/cf.FREE_MEMORY.html#cf.FREE_MEMORY">FREE_MEMORY() (in module cf)</a>
 </li>
+      <li><a href="function/cf.free_memory.html#cf.free_memory">free_memory() (in module cf)</a>
+</li>
       <li><a href="function/cf.FREE_MEMORY_FACTOR.html#cf.FREE_MEMORY_FACTOR">FREE_MEMORY_FACTOR() (in module cf)</a>
+</li>
+      <li><a href="function/cf.free_memory_factor.html#cf.free_memory_factor">free_memory_factor() (in module cf)</a>
 </li>
       <li><a href="method/cf.Domain.fromconstructs.html#cf.Domain.fromconstructs">fromconstructs() (cf.Domain class method)</a>
 </li>
@@ -4237,7 +4251,7 @@
         <li><a href="method/cf.List.log.html#cf.List.log">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="function/cf.LOG_LEVEL.html#cf.LOG_LEVEL">LOG_LEVEL() (in module cf)</a>
+      <li><a href="function/cf.LOG_LEVEL.html#cf.log_level">log_level() (in module cf)</a>, <a href="function/cf.log_level.html#cf.log_level">[1]</a>
 </li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.long_name.html#cf.AuxiliaryCoordinate.long_name">long_name (cf.AuxiliaryCoordinate attribute)</a>
 
@@ -4717,10 +4731,50 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Data.nbytes.html#cf.Data.nbytes">nbytes (cf.Data attribute)</a>
 </li>
+      <li><a href="method/cf.Bounds.nc_clear_dimension_groups.html#cf.Bounds.nc_clear_dimension_groups">nc_clear_dimension_groups() (cf.Bounds method)</a>
+
+      <ul>
+        <li><a href="method/cf.Count.nc_clear_dimension_groups.html#cf.Count.nc_clear_dimension_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.nc_clear_dimension_groups.html#cf.DomainAxis.nc_clear_dimension_groups">(cf.DomainAxis method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_clear_dimension_groups.html#cf.Index.nc_clear_dimension_groups">(cf.Index method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.Field.nc_clear_geometry_variable_groups.html#cf.Field.nc_clear_geometry_variable_groups">nc_clear_geometry_variable_groups() (cf.Field method)</a>
+</li>
       <li><a href="method/cf.Field.nc_clear_global_attributes.html#cf.Field.nc_clear_global_attributes">nc_clear_global_attributes() (cf.Field method)</a>
+</li>
+      <li><a href="method/cf.Field.nc_clear_group_attributes.html#cf.Field.nc_clear_group_attributes">nc_clear_group_attributes() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes">nc_clear_hdf5_chunksizes() (cf.Data method)</a>
 </li>
+      <li><a href="method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups">nc_clear_variable_groups() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.nc_clear_variable_groups.html#cf.Bounds.nc_clear_variable_groups">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.nc_clear_variable_groups.html#cf.CellMeasure.nc_clear_variable_groups">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.CoordinateReference.nc_clear_variable_groups.html#cf.CoordinateReference.nc_clear_variable_groups">(cf.CoordinateReference method)</a>
+</li>
+        <li><a href="method/cf.Count.nc_clear_variable_groups.html#cf.Count.nc_clear_variable_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Datum.nc_clear_variable_groups.html#cf.Datum.nc_clear_variable_groups">(cf.Datum method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.nc_clear_variable_groups.html#cf.DimensionCoordinate.nc_clear_variable_groups">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.nc_clear_variable_groups.html#cf.DomainAncillary.nc_clear_variable_groups">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.nc_clear_variable_groups.html#cf.Field.nc_clear_variable_groups">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.nc_clear_variable_groups.html#cf.FieldAncillary.nc_clear_variable_groups">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_clear_variable_groups.html#cf.Index.nc_clear_variable_groups">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.nc_clear_variable_groups.html#cf.List.nc_clear_variable_groups">(cf.List method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.Bounds.nc_del_dimension.html#cf.Bounds.nc_del_dimension">nc_del_dimension() (cf.Bounds method)</a>
 
       <ul>
@@ -4763,6 +4817,18 @@
         <li><a href="method/cf.List.nc_del_variable.html#cf.List.nc_del_variable">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Bounds.nc_dimension_groups.html#cf.Bounds.nc_dimension_groups">nc_dimension_groups() (cf.Bounds method)</a>
+
+      <ul>
+        <li><a href="method/cf.Count.nc_dimension_groups.html#cf.Count.nc_dimension_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.nc_dimension_groups.html#cf.DomainAxis.nc_dimension_groups">(cf.DomainAxis method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_dimension_groups.html#cf.Index.nc_dimension_groups">(cf.Index method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.Field.nc_geometry_variable_groups.html#cf.Field.nc_geometry_variable_groups">nc_geometry_variable_groups() (cf.Field method)</a>
+</li>
       <li><a href="method/cf.Bounds.nc_get_dimension.html#cf.Bounds.nc_get_dimension">nc_get_dimension() (cf.Bounds method)</a>
 
       <ul>
@@ -4808,6 +4874,8 @@
 </li>
       </ul></li>
       <li><a href="method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes">nc_global_attributes() (cf.Field method)</a>
+</li>
+      <li><a href="method/cf.Field.nc_group_attributes.html#cf.Field.nc_group_attributes">nc_group_attributes() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Bounds.nc_has_dimension.html#cf.Bounds.nc_has_dimension">nc_has_dimension() (cf.Bounds method)</a>
 
@@ -4867,11 +4935,27 @@
         <li><a href="method/cf.Index.nc_set_dimension.html#cf.Index.nc_set_dimension">(cf.Index method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Bounds.nc_set_dimension_groups.html#cf.Bounds.nc_set_dimension_groups">nc_set_dimension_groups() (cf.Bounds method)</a>
+
+      <ul>
+        <li><a href="method/cf.Count.nc_set_dimension_groups.html#cf.Count.nc_set_dimension_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.nc_set_dimension_groups.html#cf.DomainAxis.nc_set_dimension_groups">(cf.DomainAxis method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_set_dimension_groups.html#cf.Index.nc_set_dimension_groups">(cf.Index method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.CellMeasure.nc_set_external.html#cf.CellMeasure.nc_set_external">nc_set_external() (cf.CellMeasure method)</a>
+</li>
+      <li><a href="method/cf.Field.nc_set_geometry_variable_groups.html#cf.Field.nc_set_geometry_variable_groups">nc_set_geometry_variable_groups() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Field.nc_set_global_attribute.html#cf.Field.nc_set_global_attribute">nc_set_global_attribute() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Field.nc_set_global_attributes.html#cf.Field.nc_set_global_attributes">nc_set_global_attributes() (cf.Field method)</a>
+</li>
+      <li><a href="method/cf.Field.nc_set_group_attribute.html#cf.Field.nc_set_group_attribute">nc_set_group_attribute() (cf.Field method)</a>
+</li>
+      <li><a href="method/cf.Field.nc_set_group_attributes.html#cf.Field.nc_set_group_attributes">nc_set_group_attributes() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes">nc_set_hdf5_chunksizes() (cf.Data method)</a>
 </li>
@@ -4907,6 +4991,58 @@
         <li><a href="method/cf.Index.nc_set_variable.html#cf.Index.nc_set_variable">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.nc_set_variable.html#cf.List.nc_set_variable">(cf.List method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups">nc_set_variable_groups() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.nc_set_variable_groups.html#cf.Bounds.nc_set_variable_groups">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.nc_set_variable_groups.html#cf.CellMeasure.nc_set_variable_groups">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.CoordinateReference.nc_set_variable_groups.html#cf.CoordinateReference.nc_set_variable_groups">(cf.CoordinateReference method)</a>
+</li>
+        <li><a href="method/cf.Count.nc_set_variable_groups.html#cf.Count.nc_set_variable_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Datum.nc_set_variable_groups.html#cf.Datum.nc_set_variable_groups">(cf.Datum method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.nc_set_variable_groups.html#cf.DimensionCoordinate.nc_set_variable_groups">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.nc_set_variable_groups.html#cf.DomainAncillary.nc_set_variable_groups">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.nc_set_variable_groups.html#cf.Field.nc_set_variable_groups">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.nc_set_variable_groups.html#cf.FieldAncillary.nc_set_variable_groups">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_set_variable_groups.html#cf.Index.nc_set_variable_groups">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.nc_set_variable_groups.html#cf.List.nc_set_variable_groups">(cf.List method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups">nc_variable_groups() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.nc_variable_groups.html#cf.Bounds.nc_variable_groups">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.nc_variable_groups.html#cf.CellMeasure.nc_variable_groups">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.CoordinateReference.nc_variable_groups.html#cf.CoordinateReference.nc_variable_groups">(cf.CoordinateReference method)</a>
+</li>
+        <li><a href="method/cf.Count.nc_variable_groups.html#cf.Count.nc_variable_groups">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Datum.nc_variable_groups.html#cf.Datum.nc_variable_groups">(cf.Datum method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.nc_variable_groups.html#cf.DimensionCoordinate.nc_variable_groups">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.nc_variable_groups.html#cf.DomainAncillary.nc_variable_groups">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.nc_variable_groups.html#cf.Field.nc_variable_groups">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.nc_variable_groups.html#cf.FieldAncillary.nc_variable_groups">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.nc_variable_groups.html#cf.Index.nc_variable_groups">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.nc_variable_groups.html#cf.List.nc_variable_groups">(cf.List method)</a>
 </li>
       </ul></li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.ndim.html#cf.AuxiliaryCoordinate.ndim">ndim (cf.AuxiliaryCoordinate attribute)</a>
@@ -4958,6 +5094,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="function/cf.OF_FRACTION.html#cf.OF_FRACTION">OF_FRACTION() (in module cf)</a>
+</li>
+      <li><a href="function/cf.of_fraction.html#cf.of_fraction">of_fraction() (in module cf)</a>
 </li>
       <li><a href="method/cf.Data.ones.html#cf.Data.ones">ones() (cf.Data class method)</a>
 </li>
@@ -5187,6 +5325,8 @@
 </li>
       <li><a href="function/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING">REGRID_LOGGING() (in module cf)</a>
 </li>
+      <li><a href="function/cf.regrid_logging.html#cf.regrid_logging">regrid_logging() (in module cf)</a>
+</li>
       <li><a href="method/cf.Field.regridc.html#cf.Field.regridc">regridc() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Field.regrids.html#cf.Field.regrids">regrids() (cf.Field method)</a>
@@ -5195,12 +5335,14 @@
 </li>
       <li><a href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES">RELAXED_IDENTITIES() (in module cf)</a>
 </li>
-      <li><a href="function/cf.relpath.html#cf.relpath">relpath() (in module cf)</a>
+      <li><a href="function/cf.relaxed_identities.html#cf.relaxed_identities">relaxed_identities() (in module cf)</a>
 </li>
-      <li><a href="method/cf.FieldList.remove.html#cf.FieldList.remove">remove() (cf.FieldList method)</a>
+      <li><a href="function/cf.relpath.html#cf.relpath">relpath() (in module cf)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="method/cf.FieldList.remove.html#cf.FieldList.remove">remove() (cf.FieldList method)</a>
+</li>
       <li><a href="method/cf.Constructs.replace.html#cf.Constructs.replace">replace() (cf.Constructs method)</a>
 </li>
       <li><a href="method/cf.Field.replace_construct.html#cf.Field.replace_construct">replace_construct() (cf.Field method)</a>
@@ -5281,7 +5423,7 @@
         <li><a href="method/cf.List.round.html#cf.List.round">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="function/cf.RTOL.html#cf.RTOL">RTOL() (in module cf)</a>
+      <li><a href="function/cf.RTOL.html#cf.rtol">rtol() (in module cf)</a>, <a href="function/cf.rtol.html#cf.rtol">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -5488,6 +5630,8 @@
 </li>
       </ul></li>
       <li><a href="function/cf.SET_PERFORMANCE.html#cf.SET_PERFORMANCE">SET_PERFORMANCE() (in module cf)</a>
+</li>
+      <li><a href="function/cf.set_performance.html#cf.set_performance">set_performance() (in module cf)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.set_properties.html#cf.AuxiliaryCoordinate.set_properties">set_properties() (cf.AuxiliaryCoordinate method)</a>
 
@@ -5897,6 +6041,8 @@
       </ul></li>
       <li><a href="function/cf.TEMPDIR.html#cf.TEMPDIR">TEMPDIR() (in module cf)</a>
 </li>
+      <li><a href="function/cf.tempdir.html#cf.tempdir">tempdir() (in module cf)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/cf.TimeDuration.html#cf.TimeDuration">TimeDuration (class in cf)</a>
@@ -5922,6 +6068,8 @@
       <li><a href="method/cf.Data.tolist.html#cf.Data.tolist">tolist() (cf.Data method)</a>
 </li>
       <li><a href="function/cf.TOTAL_MEMORY.html#cf.TOTAL_MEMORY">TOTAL_MEMORY() (in module cf)</a>
+</li>
+      <li><a href="function/cf.total_memory.html#cf.total_memory">total_memory() (in module cf)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.transpose.html#cf.AuxiliaryCoordinate.transpose">transpose() (cf.AuxiliaryCoordinate method)</a>
 
@@ -6391,7 +6539,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

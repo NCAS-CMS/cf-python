@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,8 +106,8 @@
 <h1>cf.Data.nc_hdf5_chunksizes<a class="headerlink" href="#cf-data-nc-hdf5-chunksizes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.nc_hdf5_chunksizes">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/mixin/netcdf.py#L1241-L1273"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/netcdf.py#L2299-L2330"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HDF5 chunksizes for the data.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Chunksizes are cleared from the output of methods that
@@ -126,8 +128,7 @@ HDF5.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>TODO The chunk sizes prior to the new setting, or the current
-current sizes if no new values are specified.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The current chunksizes.</p>
 </dd>
 </dl>
 </dd>
@@ -156,15 +157,12 @@ current sizes if no new values are specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.Data.nc_hdf5_chunksizes.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

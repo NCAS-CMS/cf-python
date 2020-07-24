@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,11 +106,11 @@
 <h1>cf.List.fill_value<a class="headerlink" href="#cf-list-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.List.fill_value">
-<code class="sig-prename descclassname">List.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/mixin/propertiesdata.py#L3812-L3889"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">List.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/mixin/propertiesdata.py#L3825-L3902"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data array missing data value.</p>
 <p>This is the value of the <a class="reference internal" href="../attribute/cf.List.missing_value.html#cf.List.missing_value" title="cf.List.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a> CF property, or if that
 is not set, the value of the <a class="reference internal" href="../attribute/cf.List._FillValue.html#cf.List._FillValue" title="cf.List._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a> CF property, else if
-that is not set, <code class="docutils literal notranslate"><span class="pre">None</span></code>. In the last case the default <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+that is not set, <code class="docutils literal notranslate"><span class="pre">None</span></code>. In the last case the default <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 missing data value for the array’s data type is assumed if a
 missing data value is required.</p>
 <div class="admonition seealso">
@@ -182,15 +184,12 @@ value specified by <em>default</em></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.List.fill_value.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

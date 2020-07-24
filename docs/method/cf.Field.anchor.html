@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,7 +106,7 @@
 <h1>cf.Field.anchor<a class="headerlink" href="#cf-field-anchor" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.anchor">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">anchor</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">value</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">dry_run=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.5.1/cf/field.py#L14528-L14731"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.anchor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">anchor</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">value</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">dry_run=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L14543-L14746"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.anchor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Roll a cyclic axis so that the given value lies in the first
 coordinate cell.</p>
 <p>A unique axis is selected with the <em>axes</em> and <em>kwargs</em> parameters.</p>
@@ -127,7 +129,7 @@ returned by <code class="docutils literal notranslate"><span class="pre">f.domai
 <dt>value:</dt><dd><p>Anchor the dimension coordinate values for the selected
 cyclic axis to the <em>value</em>. May be any numeric scalar
 object that can be converted to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which
-includes <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). If <em>value</em> has units
+includes <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). If <em>value</em> has units
 then they must be compatible with those of the dimension
 coordinates, otherwise it is assumed to have the same
 units as the dimension coordinates. The coordinate values
@@ -238,15 +240,12 @@ is True.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.Field.anchor.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

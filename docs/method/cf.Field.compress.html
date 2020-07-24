@@ -17,6 +17,7 @@
     <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
 
 
 
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -104,7 +106,7 @@
 <h1>cf.Field.compress<a class="headerlink" href="#cf-field-compress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.compress">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">count_properties=None</em>, <em class="sig-param">index_properties=None</em>, <em class="sig-param">list_properties=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/field.py#L561-L1050"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.compress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">count_properties=None</em>, <em class="sig-param">index_properties=None</em>, <em class="sig-param">list_properties=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/field.py#L694-L1155"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compress the field construct.</p>
 <p>Compression can save space by identifying and removing unwanted
 missing data. Such compression techniques store the data more
@@ -113,12 +115,11 @@ efficiently and result in no precision loss.</p>
 metadata constructs.</p>
 <p>Whether or not the field construct is compressed does not alter
 its functionality nor external appearance.</p>
-<p>A field that is already compressed will returned compressed by the
-chosen method.</p>
-<p>When writing a compressed field construct to a dataset space will
-be saved by the creation of compressed netCDF variables, along
-with the supplementary netCDF variables and attributes that are
-required for the encoding.</p>
+<p>A field that is already compressed will be returned compressed by
+the chosen method.</p>
+<p>When writing a compressed field construct to a dataset, compressed
+netCDF variables are written, along with the supplementary netCDF
+variables and attributes that are required for the encoding.</p>
 <p>The following type of compression are available (see the <em>method</em>
 parameter):</p>
 <blockquote>
@@ -225,10 +226,13 @@ was in-place.</p>
 <span class="go"> [0.86  0.8 0.75  0.0 4.56   --   --  --  --]</span>
 <span class="go"> [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s1">&#39;contiguous&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;compressed_file_contiguous.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;compressed_file_contiguous.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span> <span class="s1">&#39;compressed_file_contiguous.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -258,15 +262,12 @@ was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/method/cf.Field.compress.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

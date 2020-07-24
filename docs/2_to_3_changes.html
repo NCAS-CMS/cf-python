@@ -17,6 +17,7 @@
     <script src="_static/language_data.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -34,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.5.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
 
 
 
@@ -67,6 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -118,6 +120,29 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <span class="go">None</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="field-creation">
+<h2>Field creation<a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
+<p>Field construct creation is has changed in two notable ways:</p>
+<p>Firstly, a single method <a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a> has replaced the
+separated methods for each construct type
+(e.g. <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dim</span></code>).</p>
+<p>Secondly, domain axis constructs are no longer created on-demand when
+data or dimension coordinate constructs are set on the new field
+construct. i.e the domain axis constructs have to be created
+explicitly before any data or metadata constructs that use them are
+set on the field construct:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">73</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">96</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">7008.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">73</span><span class="p">,</span> <span class="mi">96</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_data</span></code></a> and <a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a> methods
+are able to match up existing domain axis constructs to the new data
+or construct if the mapping can be made unambiguously (as is the case
+in the above example).</p>
 </div>
 <div class="section" id="new-methods-that-replace-deprecated-ones">
 <h2>New methods that replace deprecated ones<a class="headerlink" href="#new-methods-that-replace-deprecated-ones" title="Permalink to this headline">¶</a></h2>
@@ -433,15 +458,12 @@ arguments are no longer assumed to be an abbreviation.</p></td>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="_sources/2_to_3_changes.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     
