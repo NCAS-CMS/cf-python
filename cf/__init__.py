@@ -81,7 +81,7 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-07-??'
+__date__ = '2020-07-24'
 __version__ = '3.6.0'
 
 _requires = (
@@ -107,7 +107,7 @@ from distutils.version import LooseVersion
 import importlib.util
 import platform
 
-# Check the version of python
+# Check the version of Python
 _minimum_vn = '3.5.0'
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(

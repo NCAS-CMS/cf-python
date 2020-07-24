@@ -20,6 +20,8 @@ version 3.6.0
 * New method: `cf.DomainAxis.nc_set_dimension_groups`
 * New method: `cf.DomainAxis.nc_clear_dimension_groups`
 * New keyword parameter to `cf.write`: ``group``
+* Keyword parameter ``verbose`` to multiple methods now accepts named
+  strings, not just the equivalent integer levels, to set verbosity.
 * New function: `cf.configuration`
 * Renamed to lower-case (but otherwise identical) names all functions which
   get and/or set global constants: `cf.atol`, `cf.rtol`, `cf.log_level`,
