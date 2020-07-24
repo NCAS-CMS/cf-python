@@ -27,8 +27,9 @@ version 3.6.0
   `cf.free_memory_factor`, `cf.fm_threshold`, `cf.of_fraction`,
   `cf.regrid_logging`, `cf.set_performance`, `cf.tempdir`, `cf.total_memory`,
   `cf.relaxed_identities`. The upper-case names remain functional as aliases.
-* Changed dependency: ``1.8.6<=cfdm<1.9.0``
-* Changed dependency: ``cfunits>=3.2.8``
+* Changed dependency: ``cftime>=1.2.1``
+* Changed dependency: ``1.8.6.0<=cfdm<1.8.7.0``
+* Changed dependency: ``cfunits>=3.2.9``
 
 version 3.5.1
 -------------

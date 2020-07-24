@@ -178,7 +178,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.1.3'
+_minimum_vn = '1.2.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
@@ -194,7 +194,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.2.8'
+_minimum_vn = '3.2.9'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -202,8 +202,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.6'
-_maximum_vn = '1.9'
+_minimum_vn = '1.8.6.0'
+_maximum_vn = '1.8.7.0'
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
