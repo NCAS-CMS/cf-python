@@ -296,3 +296,16 @@ def detail(self, message, *args, **kwargs):
 
 
 logging.Logger.detail = detail
+
+
+# Also create level below even 'DEBUG'. It will not be advertised to users.
+logging.PARTITIONING = 5
+logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
+
+
+def partitioning(self, message, *args, **kwargs):
+    if self.isEnabledFor(logging.PARTITIONING):
+        self._log(logging.PARTITIONING, message, args, **kwargs)
+
+
+logging.Logger.partitioning = partitioning
