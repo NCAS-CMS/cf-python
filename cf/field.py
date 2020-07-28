@@ -8111,7 +8111,8 @@ class Field(mixin.PropertiesData,
     .. versionadded:: 3.0.0
 
     .. seealso:: `constructs`, `get_construct`, `has_construct`,
-                 `set_construct`
+                 `set_construct`, `del_domain_axis`,
+                 `del_coordinate_reference`
 
     :Parameters:
 
@@ -8318,6 +8319,159 @@ class Field(mixin.PropertiesData,
         # --- End: for
 
         return out
+
+    def del_domain_axis(self, identity=None, squeeze=False,
+                        default=ValueError()):
+        '''Remove a domain axis construct.
+
+    In general, a domain axis construct can only be removed if it is
+    not spanned by any construct's data. However, a size 1 domain axis
+    construct can be removed in any case if the *squeeze* parameter is
+    set to `True`. In this case, a metadata construct whose data spans
+    only the removed domain axis construct will also be removed.
+
+    .. versionadded:: 3.6.0
+
+    .. seealso:: `del_construct`
+
+    :Parameters:
+
+        identity:
+           Select the domain axis construct by one of:
+
+              * An identity or key of a 1-d coordinate construct that
+                whose data spans the domain axis construct.
+
+              * A domain axis construct identity or key.
+
+              * The position of the domain axis construct in the field
+                construct's data.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time'
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time'
+                'ncvar%t',
+                'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            A position of a domain axis construct in the field
+            construct's data is specified by an integer index.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+            *Parameter example:*
+              ``identity='long_name=Latitude'``
+
+            *Parameter example:*
+              ``identity='dimensioncoordinate1'``
+
+            *Parameter example:*
+              ``identity='domainaxis2'``
+
+            *Parameter example:*
+              ``identity='key%domainaxis2'``
+
+            *Parameter example:*
+              ``identity='ncdim%y'``
+
+            *Parameter example:*
+              ``identity=2``
+
+        squeeze: `bool`, optional
+            If True then allow the removal of a size 1 domain axis
+            construct that is spanned by any data array and squeeze
+            the corresponding dimension from those arrays.
+
+        default: optional
+            Return the value of the *default* parameter if the
+            construct can not be removed, or does not exist. If set to
+            an `Exception` instance then it will be raised instead.
+
+    :Returns:
+
+        `DomainAxis`
+            The removed domain axis construct.
+
+    **Examples:**
+
+    >>> f = cf.example_field(0)
+    >>> g = f[0]    
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(1), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(1) = [-75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g.del_domain_axis('Y', squeeze=True)
+    <CF DomainAxis: size(1)>
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g.del_domain_axis('T', squeeze=True)
+    <CF DomainAxis: size(1)>    
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+
+        '''
+        dakey = self.domain_axis(identity, key=True)
+        domain_axis = self.constructs[dakey]
+
+        if not squeeze:
+            return self.del_construct(dakey)
+
+        if dakey in self.get_data_axes(default=()):
+            self.squeeze(dakey, inplace=True)
+
+        for ckey, construct in self.constructs.filter_by_data().items():
+             data = construct.get_data(None)
+             if data is None:
+                 continue
+             
+             construct_axes = self.get_data_axes(ckey)
+             if dakey not in construct_axes:
+                 continue
+             
+             i = construct_axes.index(dakey)
+             construct.squeeze(i, inplace=True)
+             construct_axes = list(construct_axes)
+             construct_axes.remove(dakey)
+             self.set_data_axes(axes=construct_axes, key=ckey)
+
+             if not construct_axes:
+                 self.del_construct(ckey)
+        # --- End: for
+             
+        return domain_axis
 
     def get_coordinate_reference(self, identity=None, key=False,
                                  construct=None, default=ValueError()):

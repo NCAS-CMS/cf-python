@@ -1,3 +1,11 @@
+version 3.?.?
+-------------
+----
+
+**2020-??-??**
+
+* New method: `cf.Field.del_domain_axis`
+
 version 3.6.0
 -------------
 ----

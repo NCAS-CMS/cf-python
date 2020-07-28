@@ -268,11 +268,13 @@ Metadata constructs
    ~cf.Field.cell_method
    ~cf.Field.coordinate
    ~cf.Field.coordinate_reference
+   ~cf.Field.del_coordinate_reference
    ~cf.Field.dimension_coordinate
    ~cf.Field.domain_ancillary
    ~cf.Field.domain_axis
    ~cf.Field.domain_axis_key
    ~cf.Field.domain_axis_position
+   ~cf.Field.del_domain_axis
    ~cf.Field.field_ancillary
    
 .. rubric:: Attributes
