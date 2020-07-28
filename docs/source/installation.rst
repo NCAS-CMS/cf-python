@@ -179,19 +179,19 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.5 <= version.
+* `Python <https://www.python.org/>`_, 3.5 or newer.
 
-* `numpy <https://pypi.org/project/numpy/>`_, 1.15 <= version.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 <= version.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.1.3 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.2.1 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.4 up to, but
-  not including, 1.9.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.6.0 or up to,
+  but not including, 1.8.7.0.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.7 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.9 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

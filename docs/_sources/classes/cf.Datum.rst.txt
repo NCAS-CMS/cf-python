@@ -57,6 +57,20 @@ Miscellaneous
    ~cf.Datum.copy
    ~cf.Datum.equals
 
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Datum.nc_variable_groups
+   ~cf.Datum.nc_set_variable_groups
+   ~cf.Datum.nc_clear_variable_groups
+
 Special
 -------
 

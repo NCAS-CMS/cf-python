@@ -226,7 +226,7 @@ def configuration(
     it by means of a specific function of the same name, e.g. via `cf.atol`,
     but in this case multiple constants can be set at once.
 
-    .. versionadded:: 3.5.2
+    .. versionadded:: 3.6.0
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`, `chunksize`,
                  `collapse_parallel_mode`, `total_memory`,

@@ -168,6 +168,19 @@ Aliases
 
    ~cf.CoordinateReference.match
 
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CoordinateReference.nc_variable_groups
+   ~cf.CoordinateReference.nc_set_variable_groups
+   ~cf.CoordinateReference.nc_clear_variable_groups
 
 Special
 -------

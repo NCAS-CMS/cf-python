@@ -538,7 +538,24 @@ for augmented assignments, modify the construct's data in-place.
    :template: method.rst
 
    ~cf.Index.__invert__ 
- 
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Index.nc_variable_groups
+   ~cf.Index.nc_clear_variable_groups
+   ~cf.Index.nc_set_variable_groups
+   ~cf.Index.nc_dimension_groups
+   ~cf.Index.nc_clear_dimension_groups
+   ~cf.Index.nc_set_dimension_groups
+
 Special
 -------
 

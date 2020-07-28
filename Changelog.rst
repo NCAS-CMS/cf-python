@@ -20,6 +20,8 @@ version 3.6.0
 * New method: `cf.DomainAxis.nc_set_dimension_groups`
 * New method: `cf.DomainAxis.nc_clear_dimension_groups`
 * New keyword parameter to `cf.write`: ``group``
+* Keyword parameter ``verbose`` to multiple methods now accepts named
+  strings, not just the equivalent integer levels, to set verbosity.
 * New function: `cf.configuration`
 * Renamed to lower-case (but otherwise identical) names all functions which
   get and/or set global constants: `cf.atol`, `cf.rtol`, `cf.log_level`,
@@ -27,8 +29,9 @@ version 3.6.0
   `cf.free_memory_factor`, `cf.fm_threshold`, `cf.of_fraction`,
   `cf.regrid_logging`, `cf.set_performance`, `cf.tempdir`, `cf.total_memory`,
   `cf.relaxed_identities`. The upper-case names remain functional as aliases.
-* Changed dependency: ``1.8.6<=cfdm<1.9.0``
-* Changed dependency: ``cfunits>=3.2.8``
+* Changed dependency: ``cftime>=1.2.1``
+* Changed dependency: ``1.8.6.0<=cfdm<1.8.7.0``
+* Changed dependency: ``cfunits>=3.2.9``
 
 version 3.5.1
 -------------
