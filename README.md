@@ -119,16 +119,6 @@ The `cf` package can:
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.
 
-
-Hierarchical groups
--------------------
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of `cf` will include support
-for netCDF4 files containing data organised in hierarchical groups,
-but this is not available in version 3.2.0 (even though it is allowed
-in CF-1.8).
-
 > **This version of `cf` is for Python 3 only** and there are
 > [incompatible differences between versions 2.x and
 > 3.x](https://ncas-cms.github.io/cf-python/2_to_3_changes.html) of
@@ -142,6 +132,7 @@ in CF-1.8).
 >
 > For version 2.x documentation, see the [older
 >  releases](https://ncas-cms.github.io/cf-python/releases.html) page.
+
 
 Visualization
 =============

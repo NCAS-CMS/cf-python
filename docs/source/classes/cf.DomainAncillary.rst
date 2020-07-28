@@ -551,7 +551,21 @@ for augmented assignments, modify the construct's data in-place.
    :template: method.rst
 
    ~cf.DomainAncillary.__invert__ 
- 
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.nc_variable_groups
+   ~cf.DomainAncillary.nc_clear_variable_groups
+   ~cf.DomainAncillary.nc_set_variable_groups
+
 Special
 -------
 

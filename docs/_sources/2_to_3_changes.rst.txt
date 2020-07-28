@@ -39,6 +39,33 @@ in-place is now *inplace* (rather than *i*).
    >>> print(x)
    None
 
+Field creation
+--------------
+
+Field construct creation is has changed in two notable ways:
+
+Firstly, a single method `cf.Field.set_construct` has replaced the
+separated methods for each construct type
+(e.g. `cf.Field.insert_dim`).
+
+Secondly, domain axis constructs are no longer created on-demand when
+data or dimension coordinate constructs are set on the new field
+construct. i.e the domain axis constructs have to be created
+explicitly before any data or metadata constructs that use them are
+set on the field construct:
+
+.. code:: python
+
+   >>> f = cf.Field()
+   >>> f.set_construct(cf.DomainAxis(73))
+   >>> f.set_construct(cf.DomainAxis(96))
+   >>> data = cf.Data(numpy.arange(7008.).reshape(73, 96))
+   >>> f.set_data(data)
+
+Note that the `cf.Field.set_data` and `cf.Field.set_construct` methods
+are able to match up existing domain axis constructs to the new data
+or construct if the mapping can be made unambiguously (as is the case
+in the above example).
    
 New methods that replace deprecated ones
 ----------------------------------------

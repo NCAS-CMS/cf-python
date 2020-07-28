@@ -42,11 +42,13 @@ Version |release| for version |version| of the CF conventions.
    :toctree: function/
    :template: function.rst
 
-   cf.ATOL
-   cf.RTOL
+   cf.atol
+   cf.rtol
    cf.default_netCDF_fillvals
    cf.histogram
    cf.relative_vorticity
+   cf.ATOL
+   cf.RTOL
 
 **Condition constructors**
 --------------------------
@@ -128,6 +130,21 @@ Version |release| for version |version| of the CF conventions.
    :toctree: function/
    :template: function.rst
 
+   cf.configuration
+   cf.chunksize
+   cf.collapse_parallel_mode
+   cf.free_memory
+   cf.free_memory_factor
+   cf.fm_threshold
+   cf.of_fraction
+   cf.regrid_logging
+   cf.set_performance
+   cf.tempdir
+   cf.total_memory
+   cf.close_files
+   cf.close_one_file
+   cf.open_files
+   cf.open_files_threshold_exceeded
    cf.CHUNKSIZE
    cf.COLLAPSE_PARALLEL_MODE
    cf.FREE_MEMORY
@@ -139,10 +156,6 @@ Version |release| for version |version| of the CF conventions.
    cf.SET_PERFORMANCE
    cf.TEMPDIR
    cf.TOTAL_MEMORY
-   cf.close_files
-   cf.close_one_file
-   cf.open_files
-   cf.open_files_threshold_exceeded
 
 **Miscellaneous**
 -----------------
@@ -153,7 +166,6 @@ Version |release| for version |version| of the CF conventions.
    :template: function.rst
 
    cf.CF
-   cf.RELAXED_IDENTITIES
    cf.abspath
    cf.dirname
    cf.dump
@@ -163,8 +175,11 @@ Version |release| for version |version| of the CF conventions.
    cf.hash_array
    cf.implementation
    cf.inspect
+   cf.log_level
    cf.pathjoin
    cf.pickle
+   cf.relaxed_identities
    cf.relpath
    cf.unpickle
    cf.LOG_LEVEL
+   cf.RELAXED_IDENTITIES

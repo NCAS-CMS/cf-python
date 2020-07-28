@@ -1,7 +1,7 @@
-cf.RTOL
+cf.rtol
 =======
 
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. autofunction:: cf.RTOL
+.. autofunction:: cf.rtol

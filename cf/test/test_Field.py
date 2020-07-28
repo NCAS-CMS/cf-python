@@ -716,7 +716,7 @@ class FieldTest(unittest.TestCase):
         for chunksize in self.chunk_sizes[0:2]:
             cf.chunksize(chunksize)
 
-            f = cf.read(self.contiguous, verbose=0)[0]
+            f = cf.read(self.contiguous)[0]
 
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
                                           [ac.shape, ae.shape, af.shape],

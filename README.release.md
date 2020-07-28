@@ -2,9 +2,8 @@
   `__date__` variables)
 
 * Ensure that the requirements on dependencies & their versions are
-  up-to-date and consistent in both the `install_requires` list of the
-  `setup.py` and in the `_requires` list and `LooseVersion` checks in
-  `cf/__init__.py`.
+  up-to-date and consistent in both the `requirements.txt` and in the
+  `_requires` list and `LooseVersion` checks in `cf/__init__.py`.
 
 * Make sure that `README.md` is up to date.
 
@@ -20,11 +19,6 @@
 
 * Create a link to the new documentation in
   `docs/source/releases.rst`, including the release date.
-
-* If groups are ready then remove the Hierarchical Groups placeholders
-  in the documentation files: `setup.py`, `README.md`,
-  `docs/source/introduction.rst`, `docs/source/tutorial.rst` (and delete
-  this instruction).
 
 * Make sure that all the Data tests will run by setting
   `self.test_only = []` in `cf/test/test_Data.py` (check that none of

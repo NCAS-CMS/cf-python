@@ -81,7 +81,7 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-07-??'
+__date__ = '2020-07-24'
 __version__ = '3.6.0'
 
 _requires = (
@@ -104,10 +104,10 @@ except ImportError as error1:
 __cf_version__ = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion
-import importlib
+import importlib.util
 import platform
 
-# Check the version of python
+# Check the version of Python
 _minimum_vn = '3.5.0'
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
@@ -178,7 +178,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.1.3'
+_minimum_vn = '1.2.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
@@ -194,7 +194,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.2.8'
+_minimum_vn = '3.2.9'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -202,8 +202,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.6'
-_maximum_vn = '1.9'
+_minimum_vn = '1.8.6.0'
+_maximum_vn = '1.8.7.0'
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
@@ -296,3 +296,16 @@ def detail(self, message, *args, **kwargs):
 
 
 logging.Logger.detail = detail
+
+
+# Also create level below even 'DEBUG'. It will not be advertised to users.
+logging.PARTITIONING = 5
+logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
+
+
+def partitioning(self, message, *args, **kwargs):
+    if self.isEnabledFor(logging.PARTITIONING):
+        self._log(logging.PARTITIONING, message, args, **kwargs)
+
+
+logging.Logger.partitioning = partitioning
