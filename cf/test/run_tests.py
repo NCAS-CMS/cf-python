@@ -17,7 +17,11 @@ def randomise_test_order(*_args):
     return choice([1, -1])
 
 
-# Build the test suite from the tests found in the test files.
+# Set the tests to run from the cf/test/ directory even if this script is run
+# from another directory (even one outside the repo root). This makes it easier
+# to set up the individual tests without errors due to e.g. bad relative dirs:
+test_dir = os.path.dirname(os.path.realpath(__file__))
+# Build the test suite from the tests found in the test files:
 test_loader = unittest.TestLoader
 # Randomise the order to run the test methods within each test case (module),
 # i.e. within each test_<TestCase>, e.g. for all in test_AuxiliaryCoordinate:
@@ -25,17 +29,17 @@ test_loader.sortTestMethodsUsing = randomise_test_order
 
 testsuite_setup_0 = unittest.TestSuite()
 testsuite_setup_0.addTests(
-    test_loader().discover('.', pattern='create_test_files.py')
+    test_loader().discover(test_dir, pattern='create_test_files.py')
 )
 
 # Build the test suite from the tests found in the test files.
 testsuite_setup_1 = unittest.TestSuite()
 testsuite_setup_1.addTests(
-    test_loader().discover('.', pattern='setup_create_field.py')
+    test_loader().discover(test_dir, pattern='setup_create_field.py')
 )
 
 testsuite = unittest.TestSuite()
-all_test_cases = test_loader().discover('.', pattern='test_*.py')
+all_test_cases = test_loader().discover(test_dir, pattern='test_*.py')
 # Randomise the order to run the test cases (modules, i.e. test_<TestCase>)
 # TODO: change to a in-built unittest way to specify the above (can't find one
 # after much searching, but want to avoid mutating weakly-private attribute).
