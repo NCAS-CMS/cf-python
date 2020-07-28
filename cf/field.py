@@ -2515,7 +2515,7 @@ class Field(mixin.PropertiesData,
         return True
 
     def _set_construct_parse_axes(self, item, axes=None, allow_scalar=True):
-        '''TODO
+        '''Parse axes for the set_construct method.
 
     :Parameters:
 
@@ -2546,26 +2546,30 @@ class Field(mixin.PropertiesData,
 
                     if not shape or len(shape) != len(set(shape)):
                         raise ValueError(
-                            "Can't insert {0}: Ambiguous shape: {1}. "
+                            "Can't insert {!r}: Ambiguous shape: {}. "
                             "Consider setting the 'axes' parameter.".format(
-                                item.__class__.__name__, shape)
+                                item, shape)
                         )
 
                     axes = []
                     axes_sizes = [domain_axis.get_size(None)
                                   for domain_axis in self.domain_axes.values()]
                     for n in shape:
+                        if not axes_sizes.count(n):                            
+                            raise ValueError(
+                                "Can't insert {!r}: There is no "
+                                "domain axis construct with size {}.".format(
+                                    item, n)
+                            )
+                             
                         if axes_sizes.count(n) == 1:
                             axes.append(
                                 self.domain_axes.filter_by_size(n).key())
                         else:
                             raise ValueError(
-                                "Can't insert {} {}: Ambiguous shape: {}. "
+                                "Can't insert {!r}: Ambiguous shape: {}. "
                                 "Consider setting the 'axes' "
-                                "parameter.".format(
-                                    item.identity(), item.__class__.__name__,
-                                    shape
-                                )
+                                "parameter.".format(item, shape)
                             )
         else:
             # --------------------------------------------------------
@@ -2584,17 +2588,17 @@ class Field(mixin.PropertiesData,
 
                 if len(axes) != ndim or len(set(axes)) != ndim:
                     raise ValueError(
-                        "Can't insert {} {}: Incorrect number of given axes "
+                        "Can't insert {!r}: Incorrect number of given axes "
                         "(got {}, expected {})".format(
-                            item.identity(), item.__class__.__name__,
-                            len(set(axes)), ndim
-                        )
+                            item, len(set(axes)), ndim)
                     )
 
                 axes2 = []
                 for axis, size in zip(axes, item.data.shape):
-                    dakey = self.domain_axis(axis, key=True, default=ValueError(
-                        "Unknown axis: {!r}".format(axis)))
+                    dakey = self.domain_axis(
+                        axis, key=True,
+                        default=ValueError(
+                            "Unknown axis: {!r}".format(axis)))
 #                    dakey = self.domain_axis(axis, key=True, default=None)
 #                    if axis is None:
 #                        raise ValueError("Unknown axis: {!r}".format(axis))
@@ -2602,11 +2606,9 @@ class Field(mixin.PropertiesData,
                     axis_size = self.domain_axes[dakey].get_size(None)
                     if size != axis_size:
                         raise ValueError(
-                            "Can't insert {} {}: Mismatched axis size "
+                            "Can't insert {!r}: Mismatched axis size "
                             "({} != {})".format(
-                                item.identity(), item.__class__.__name__,
-                                size, axis_size
-                            )
+                                item, size, axis_size)
                         )
 
                     axes2.append(dakey)
@@ -2616,11 +2618,9 @@ class Field(mixin.PropertiesData,
 
                 if ndim != len(set(axes)):
                     raise ValueError(
-                        "Can't insert {} {}: Mismatched number of axes "
+                        "Can't insert {!r}: Mismatched number of axes "
                         "({} != {})".format(
-                            item.identity(), item.__class__.__name__,
-                            len(set(axes)), ndim
-                        )
+                            item, len(set(axes)), ndim)
                     )
         # --- End: if
 
