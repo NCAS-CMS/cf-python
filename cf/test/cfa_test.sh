@@ -26,6 +26,7 @@ do
   rm -f $test_file
 done
 
+#echo 0
 rm -f $test_file
 cfa --overwrite -d $test_dir  $sample_files/[a-be-zD]*.[np][cp]
 

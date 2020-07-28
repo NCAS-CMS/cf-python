@@ -1,3 +1,10 @@
+version 3.?.?
+-------------
+----
+
+**2020-??-??**
+* New method: `cf.Field.del_domain_axis`
+
 version 3.6.0
 -------------
 ----
@@ -6,7 +13,6 @@ version 3.6.0
 
 * Implemented the reading and writing of netCDF4 group hierarchies for
   CF-1.8 (https://github.com/NCAS-CMS/cf-python/issues/33)
-* New method: `cf.Field.del_domain_axis`
 * New method: `cf.Field.nc_variable_groups`
 * New method: `cf.Field.nc_set_variable_groups`
 * New method: `cf.Field.nc_clear_variable_groups`
