@@ -6,8 +6,8 @@
 **cf classes**
 ==============
 
-**Field construct class**
--------------------------
+Field construct class
+---------------------
 
 .. autosummary::
    :nosignatures:
@@ -15,8 +15,8 @@
 
    cf.Field	              
 
-**Metadata component classes**
-------------------------------
+Metadata component classes
+--------------------------
 
 .. autosummary::
    :nosignatures:
@@ -31,8 +31,8 @@
    cf.DomainAxis
    cf.FieldAncillary
 
-**Constructs class**
---------------------
+Constructs class
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -40,8 +40,8 @@
 
    cf.Constructs
    
-**Coordinate component classes**
---------------------------------
+Coordinate component classes
+----------------------------
 
 .. autosummary::
    :nosignatures:
@@ -51,8 +51,8 @@
    cf.CoordinateConversion
    cf.Datum  
       
-**Domain class**
-----------------
+Domain class
+------------
 
 .. autosummary::
    :nosignatures:
@@ -60,8 +60,8 @@
 
    cf.Domain
    
-**Field list class**
---------------------
+Field list class
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -69,8 +69,8 @@
 
    cf.FieldList	              
 
-**Data classes**
-----------------
+Data classes
+------------
 
 .. autosummary::
    :nosignatures:
@@ -81,8 +81,8 @@
    cf.NumpyArray
    cf.Array
 
-**Miscellaneous classes**
--------------------------
+Miscellaneous classes
+---------------------
 
 .. autosummary::
    :nosignatures:
@@ -93,8 +93,8 @@
    cf.TimeDuration
    cf.Units
 
-**Data compression classes**
------------------------------
+Data compression classes
+------------------------
 
 Classes that support the creation and storage of compressed arrays.
 

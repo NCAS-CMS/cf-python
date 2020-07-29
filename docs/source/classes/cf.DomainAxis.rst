@@ -1,8 +1,10 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
+.. _cf-DomainAxis:
+
 cf.DomainAxis
-===============
+=============
 
 ----
 
