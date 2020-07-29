@@ -1,6 +1,8 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
+.. _cf-CellMethod:
+
 cf.CellMethod
 =============
 

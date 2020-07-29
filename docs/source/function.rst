@@ -10,8 +10,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
-**Reading and writing**
------------------------
+Reading and writing
+-------------------
 
 .. autosummary::
    :nosignatures:
@@ -22,8 +22,8 @@ Version |release| for version |version| of the CF conventions.
    cf.write
    cf.load_stash2standard_name 
 
-**Aggregation**
----------------
+Aggregation
+-----------
 
 .. autosummary::
    :nosignatures:
@@ -34,8 +34,8 @@ Version |release| for version |version| of the CF conventions.
 
 .. _functions-mathematical-operations:
 
-**Mathematical operations**
----------------------------
+Mathematical operations
+-----------------------
 
 .. autosummary::
    :nosignatures:
@@ -50,8 +50,8 @@ Version |release| for version |version| of the CF conventions.
    cf.ATOL
    cf.RTOL
 
-**Condition constructors**
---------------------------
+Condition constructors
+----------------------
 
 .. rubric:: General conditions
    
@@ -105,8 +105,8 @@ Version |release| for version |version| of the CF conventions.
    cf.cellwi
    cf.cellwo
 
-**Date-time and time duration**
--------------------------------
+Date-time and time duration
+---------------------------
 
 .. autosummary::
    :nosignatures:
@@ -122,8 +122,8 @@ Version |release| for version |version| of the CF conventions.
    cf.m
    cf.s
 
-**Resource management**
------------------------
+Resource management
+-------------------
 
 .. autosummary::
    :nosignatures:
@@ -157,8 +157,8 @@ Version |release| for version |version| of the CF conventions.
    cf.TEMPDIR
    cf.TOTAL_MEMORY
 
-**Miscellaneous**
------------------
+Miscellaneous
+-------------
 
 .. autosummary::
    :nosignatures:
