@@ -2555,13 +2555,13 @@ class Field(mixin.PropertiesData,
                     axes_sizes = [domain_axis.get_size(None)
                                   for domain_axis in self.domain_axes.values()]
                     for n in shape:
-                        if not axes_sizes.count(n):                            
+                        if not axes_sizes.count(n):
                             raise ValueError(
                                 "Can't insert {!r}: There is no "
                                 "domain axis construct with size {}.".format(
                                     item, n)
                             )
-                             
+
                         if axes_sizes.count(n) == 1:
                             axes.append(
                                 self.domain_axes.filter_by_size(n).key())
@@ -8416,7 +8416,7 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     >>> f = cf.example_field(0)
-    >>> g = f[0]    
+    >>> g = f[0]
     Field: specific_humidity (ncvar%q)
     ----------------------------------
     Data            : specific_humidity(latitude(1), longitude(8)) 1
@@ -8434,7 +8434,7 @@ class Field(mixin.PropertiesData,
     Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
     >>> g.del_domain_axis('T', squeeze=True)
-    <CF DomainAxis: size(1)>    
+    <CF DomainAxis: size(1)>
     >>> print(g)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
@@ -8453,24 +8453,24 @@ class Field(mixin.PropertiesData,
             self.squeeze(dakey, inplace=True)
 
         for ckey, construct in self.constructs.filter_by_data().items():
-             data = construct.get_data(None)
-             if data is None:
-                 continue
-             
-             construct_axes = self.get_data_axes(ckey)
-             if dakey not in construct_axes:
-                 continue
-             
-             i = construct_axes.index(dakey)
-             construct.squeeze(i, inplace=True)
-             construct_axes = list(construct_axes)
-             construct_axes.remove(dakey)
-             self.set_data_axes(axes=construct_axes, key=ckey)
+            data = construct.get_data(None)
+            if data is None:
+                continue
 
-             if not construct_axes:
-                 self.del_construct(ckey)
+            construct_axes = self.get_data_axes(ckey)
+            if dakey not in construct_axes:
+                continue
+
+            i = construct_axes.index(dakey)
+            construct.squeeze(i, inplace=True)
+            construct_axes = list(construct_axes)
+            construct_axes.remove(dakey)
+            self.set_data_axes(axes=construct_axes, key=ckey)
+
+            if not construct_axes:
+                self.del_construct(ckey)
         # --- End: for
-             
+
         return domain_axis
 
     def get_coordinate_reference(self, identity=None, key=False,

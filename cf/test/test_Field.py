@@ -2641,25 +2641,25 @@ class FieldTest(unittest.TestCase):
                               cf.DomainAxis)
         self.assertIsInstance(g.del_domain_axis('T', squeeze=True),
                               cf.DomainAxis)
-        
+
         g = f.copy()
         self.assertIsInstance(g.del_domain_axis('T', squeeze=True),
                               cf.DomainAxis)
-        
+
         with self.assertRaises(Exception):
             f.del_domain_axis('T')
 
         with self.assertRaises(Exception):
             f.del_domain_axis('X')
 
-        g = f[0]                  
+        g = f[0]
         with self.assertRaises(Exception):
             g.del_domain_axis('Y')
-                              
-        g = f[0]                  
+
+        g = f[0]
         with self.assertRaises(Exception):
             f.del_domain_axis('T')
-                              
+
 # --- End: class
 
 
