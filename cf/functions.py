@@ -762,7 +762,7 @@ def SET_PERFORMANCE(*new_set_performance):
 
 
 def min_total_memory():
-    '''The minumum total memory across nodes.
+    '''The minimum total memory across nodes.
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
 # --- End: def

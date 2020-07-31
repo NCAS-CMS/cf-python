@@ -1046,7 +1046,7 @@ class Field(mixin.PropertiesData,
         s['size1_broadcast_axes'] = []
         v['size1_broadcast_axes'] = []
 
-# DO SOMETING WITH v['size1_broadcast_axes'] to be symmetrial with regards
+# DO SOMETING WITH v['size1_broadcast_axes'] to be symmetrical with regards
 # coord refs!!!!!
 
         # Map axes in field1 to axes in field0 and vice versa
@@ -3057,7 +3057,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         axis_keys: `list`
-            The keys of the x and y dimension coodinates.
+            The keys of the x and y dimension coordinates.
 
         axis_sizes: `list`
             The sizes of the x and y dimension coordinates.
@@ -4945,7 +4945,7 @@ class Field(mixin.PropertiesData,
 
             raise ValueError(
                 "Can't create linear weights for {!r} axis: Can't find "
-                "dimension coodinate construct.".format(axis)
+                "dimension coordinate construct.".format(axis)
             )
 
         if not measure and dim.size == 1:
@@ -5208,7 +5208,7 @@ class Field(mixin.PropertiesData,
     @property
     def DSG(self):
         '''True if the field contains a collection of discrete sampling
-    geomtries.
+    geometries.
 
     .. versionadded:: 2.0
 
@@ -9196,9 +9196,9 @@ class Field(mixin.PropertiesData,
             *method* parameter has been used, then the *axes*
             parameter is ignored and the axes are derived from the
             *method* parameter. For example, if *method* is ``'T:
-            area: minumum'`` then this defines axes of ``['T',
+            area: minimum'`` then this defines axes of ``['T',
             'area']``. If *method* specifies multiple collapses,
-            e.g. ``'T: minumum area: mean'`` then this implies axes of
+            e.g. ``'T: minimum area: mean'`` then this implies axes of
             ``'T'`` for the first collapse, and axes of ``'area'`` for
             the second collapse.
 
@@ -11984,7 +11984,7 @@ class Field(mixin.PropertiesData,
                             and lastcm_method == method
                             and lastcm_method in (
                                 'mean', 'maximum', 'minimum', 'point', 'sum',
-                                'median', 'mode', 'minumum_absolute_value',
+                                'median', 'mode', 'minimum_absolute_value',
                                 'maximum_absolute_value'
                             )
                             and not lastcm.get_qualifier('within', None)
@@ -14210,7 +14210,7 @@ class Field(mixin.PropertiesData,
 
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
-            defined, realtive to the new cell bounds. By default they
+            defined, relative to the new cell bounds. By default they
             are unchanged from the original field construct. The
             *coordinate* parameter may be one of:
 

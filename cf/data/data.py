@@ -3332,7 +3332,7 @@ place.
                             opposite edge.
             ==============  ==========================  ============================
 
-            The position of the window realtive to each value can be
+            The position of the window relative to each value can be
             changed by using the *origin* parameter.
 
         cval: scalar, optional
