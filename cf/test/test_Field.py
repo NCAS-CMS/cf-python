@@ -13,7 +13,7 @@ from scipy.ndimage import convolve1d
 
 import cf
 
-tmpfile = tempfile.mktemp('.cfdm_test')
+tmpfile = tempfile.mkstemp('.cf_test')[1]
 tmpfiles = [tmpfile]
 
 

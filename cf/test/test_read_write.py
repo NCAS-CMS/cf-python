@@ -11,11 +11,16 @@ import numpy
 
 import cf
 
-tmpfile = tempfile.mktemp('.cf_test')
-tmpfileh = tempfile.mktemp('.cf_test')
-tmpfilec = tempfile.mktemp('.cf_test')
-tmpfile0 = tempfile.mktemp('.cf_test')
-tmpfile1 = tempfile.mktemp('.cf_test')
+
+def _make_tmpfile():
+    return tempfile.mkstemp('.cf_test')[1]
+
+
+tmpfile = _make_tmpfile()
+tmpfileh = _make_tmpfile()
+tmpfilec = _make_tmpfile()
+tmpfile0 = _make_tmpfile()
+tmpfile1 = _make_tmpfile()
 tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
 
 
@@ -56,7 +61,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         f = cf.example_field(0)
@@ -263,7 +268,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
@@ -290,7 +295,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
@@ -313,7 +318,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g.dtype == numpy.dtype('float32'),
                         'datatype read in is '+str(g.dtype))
 
-        tmpfile2 = tempfile.mktemp('.cf_test')
+        tmpfile2 = _make_tmpfile()
         tmpfiles.append(tmpfile2)
 
         # Keyword double

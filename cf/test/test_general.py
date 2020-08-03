@@ -9,8 +9,8 @@ import atexit
 import cf
 
 
-tmpfile = tempfile.mktemp('.nc')
-tmpfile2 = tempfile.mktemp('.nca')
+tmpfile = tempfile.mkstemp('.nc')[1]
+tmpfile2 = tempfile.mkstemp('.nca')[1]
 tmpfiles = [tmpfile, tmpfile2, 'delme.nc', 'delme.nca']
 
 

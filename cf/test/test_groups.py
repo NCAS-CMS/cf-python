@@ -10,7 +10,7 @@ import cf
 
 
 n_tmpfiles = 6
-tmpfiles = [tempfile.mktemp('_test_groups.nc', dir=os.getcwd())
+tmpfiles = [tempfile.mkstemp('_test_groups.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
 (
     ungrouped_file1,

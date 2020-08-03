@@ -10,7 +10,7 @@ import numpy
 import cf
 
 
-tmpfile = tempfile.mktemp('.cf_test')
+tmpfile = tempfile.mkstemp('.cf_test')[1]
 tmpfiles = [tmpfile]
 
 
