@@ -36,19 +36,19 @@ from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA      as _numpy_ma_isMA
 from numpy.ma import masked    as _numpy_ma_masked
 
-from collections import Iterable
-from hashlib     import md5 as hashlib_md5
-from marshal     import dumps as marshal_dumps
-from math        import ceil as math_ceil
-from os          import getpid, listdir, mkdir
-from os.path     import abspath      as _os_path_abspath
-from os.path     import expanduser   as _os_path_expanduser
-from os.path     import expandvars   as _os_path_expandvars
-from os.path     import dirname      as _os_path_dirname
-from os.path     import join         as _os_path_join
-from os.path     import relpath      as _os_path_relpath
-from psutil      import virtual_memory, Process
-from sys         import executable as _sys_executable
+from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from hashlib         import md5 as hashlib_md5
+from marshal         import dumps as marshal_dumps
+from math            import ceil as math_ceil
+from os              import getpid, listdir, mkdir
+from os.path         import abspath      as _os_path_abspath
+from os.path         import expanduser   as _os_path_expanduser
+from os.path         import expandvars   as _os_path_expandvars
+from os.path         import dirname      as _os_path_dirname
+from os.path         import join         as _os_path_join
+from os.path         import relpath      as _os_path_relpath
+from psutil          import virtual_memory, Process
+from sys             import executable as _sys_executable
 import urllib.parse
 
 import cfdm
