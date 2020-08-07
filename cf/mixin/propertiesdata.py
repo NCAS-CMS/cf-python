@@ -920,9 +920,9 @@ class PropertiesData(Properties):
 #
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))
-    @staticmethod
-    def _apply_data_oper(
-            v, oper_name, *oper_args, delete_props=False, **oper_kwargs):
+
+    def _apply_data_oper(self, v, oper_name, oper_args=(),
+                         delete_props=False, **oper_kwargs):
         '''Define a data array operation and delete some properties.
 
     :Parameters:
@@ -1983,11 +1983,11 @@ class PropertiesData(Properties):
             Select the axes to swap. Each axis is identified by its
             original integer position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}`
             The construct with data with swapped axis positions. If
             the operation was in-place then `None` is returned.
 
@@ -2007,7 +2007,8 @@ class PropertiesData(Properties):
         '''
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'swapaxes',
-            axis0, axis1, inplace=inplace, delete_props=True)
+            (axis0, axis1),
+            inplace=inplace, delete_props=True)
 
     def var(self):
         '''The unweighted sample variance of the data array.
@@ -2584,9 +2585,9 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
-            a_max, inplace=inplace, i=i, units=units,
-            delete_props=True)
+            _inplace_enabled_define_and_cleanup(self), 'clip',
+            (a_min, a_max),
+            inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -3479,7 +3480,8 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'flatten', axes,
+            _inplace_enabled_define_and_cleanup(self), 'flatten',
+            (axes,),
             inplace=inplace)
 
     @_deprecated_kwarg_check('i')
@@ -3941,7 +3943,8 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'flip', axes,
+            _inplace_enabled_define_and_cleanup(self), 'flip',
+            (axes,),
             inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
@@ -4627,7 +4630,8 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'log', base,
+            _inplace_enabled_define_and_cleanup(self), 'log',
+            (base,),
             inplace=inplace, i=i, delete_props=True)
 
     @_deprecated_kwarg_check('i')
@@ -5373,15 +5377,13 @@ class PropertiesData(Properties):
         iaxis: `int`
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
-        TODO
+        `{{class}}`
 
     **Examples:**
 
@@ -5389,8 +5391,9 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'roll',  iaxis,
-            shift, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'roll',
+            (iaxis, shift),
+            inplace=inplace, i=i)
 
     def set_data(self, data, copy=True):
         '''Set the data.

@@ -4,7 +4,7 @@ from ..decorators import (_inplace_enabled,
 from ..data.data import Data
 
 
-class Coordinate():
+class Coordinate:
     '''Mixin class for dimension or auxiliary coordinate constructs.
 
     .. versionadded:: 3.2.0

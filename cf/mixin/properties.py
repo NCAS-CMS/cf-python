@@ -9,8 +9,9 @@ from ..units import Units
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR)
 
+from . import Container
 
-class Properties:
+class Properties(Container):
     '''Mixin class for a container of descriptive properties.
 
     .. versionadded:: 3.0.0

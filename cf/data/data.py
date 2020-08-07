@@ -1950,6 +1950,9 @@ place.
         # --- End: if
 
     def _share_lock_files(self, parallelise):
+        '''TODO
+
+        '''
         if parallelise:
             # Only gather the lock files if the subarrays have been
             # gathered between procesors, otherwise this will result
@@ -1967,6 +1970,9 @@ place.
 
     @classmethod
     def _share_partitions(cls, processed_partitions, parallelise):
+        '''TODO
+
+        '''
         # Share the partitions processed on each rank with every other
         # rank. If parallelise is False then there is nothing to be done
         if parallelise:
@@ -6957,6 +6963,9 @@ dimensions.
     # ----------------------------------------------------------------
     @property
     def _Units(self):
+        '''Storage for the units.
+
+        '''
         try:
             return self._custom['_Units']
         except KeyError:
@@ -6969,7 +6978,11 @@ dimensions.
     def _Units(self): self._custom['_Units'] = _units_None
 
     @property
-    def _auxiliary_mask(self): return self._custom['_auxiliary_mask']
+    def _auxiliary_mask(self):
+        '''Storage for the auxiliary mask.
+
+        '''
+        return self._custom['_auxiliary_mask']
 
     @_auxiliary_mask.setter
     def _auxiliary_mask(self, value): self._custom['_auxiliary_mask'] = value
@@ -6978,7 +6991,11 @@ dimensions.
     def _auxiliary_mask(self): del self._custom['_auxiliary_mask']
 
     @property
-    def _cyclic(self): return self._custom['_cyclic']
+    def _cyclic(self):
+        '''Storage for axis cyclicity
+
+        '''
+        return self._custom['_cyclic']
 
     @_cyclic.setter
     def _cyclic(self, value): self._custom['_cyclic'] = value
@@ -6987,7 +7004,11 @@ dimensions.
     def _cyclic(self): del self._custom['_cyclic']
 
     @property
-    def _dtype(self): return self._custom['_dtype']
+    def _dtype(self):
+        '''Storage for the data type.
+
+        '''
+        return self._custom['_dtype']
 
     @_dtype.setter
     def _dtype(self, value): self._custom['_dtype'] = value
@@ -6996,7 +7017,11 @@ dimensions.
     def _dtype(self): del self._custom['_dtype']
 
     @property
-    def _HDF_chunks(self): return self._custom['_HDF_chunks']
+    def _HDF_chunks(self):
+        '''The HDF chunksizes. DO NOT CHANGE IN PLACE.
+
+        '''
+        return self._custom['_HDF_chunks']
 
     @_HDF_chunks.setter
     def _HDF_chunks(self, value): self._custom['_HDF_chunks'] = value
@@ -7005,7 +7030,11 @@ dimensions.
     def _HDF_chunks(self): del self._custom['_HDF_chunks']
 
     @property
-    def partitions(self): return self._custom['partitions']
+    def partitions(self):
+        '''Storage for the partitions matrix.
+
+        '''
+        return self._custom['partitions']
 
     @partitions.setter
     def partitions(self, value): self._custom['partitions'] = value
@@ -7014,7 +7043,11 @@ dimensions.
     def partitions(self): del self._custom['partitions']
 
     @property
-    def _ndim(self): return self._custom['_ndim']
+    def _ndim(self):
+        '''Storage for the number of dimensions
+
+        '''
+        return self._custom['_ndim']
 
     @_ndim.setter
     def _ndim(self, value): self._custom['_ndim'] = value
@@ -7023,7 +7056,11 @@ dimensions.
     def _ndim(self): del self._custom['_ndim']
 
     @property
-    def _size(self): return self._custom['_size']
+    def _size(self):
+        '''Storage for the number of elements.
+
+        '''
+        return self._custom['_size']
 
     @_size.setter
     def _size(self, value): self._custom['_size'] = value
@@ -7032,7 +7069,11 @@ dimensions.
     def _size(self): del self._custom['_size']
 
     @property
-    def _shape(self): return self._custom['_shape']
+    def _shape(self):
+        '''Storage for the data shape.
+        
+        '''
+        return self._custom['_shape']
 
     @_shape.setter
     def _shape(self, value): self._custom['_shape'] = value
@@ -7041,7 +7082,11 @@ dimensions.
     def _shape(self): del self._custom['_shape']
 
     @property
-    def _axes(self): return self._custom['_axes']
+    def _axes(self):
+        '''Storage for the axis names.
+
+        '''
+        return self._custom['_axes']
 
     @_axes.setter
     def _axes(self, value): self._custom['_axes'] = value
@@ -7050,7 +7095,11 @@ dimensions.
     def _axes(self): del self._custom['_axes']
 
     @property
-    def _all_axes(self): return self._custom['_all_axes']
+    def _all_axes(self):
+        '''Storage for TODO. Must be `None` or `tuple`.
+
+        '''
+        return self._custom['_all_axes']
 
     @_all_axes.setter
     def _all_axes(self, value): self._custom['_all_axes'] = value
@@ -10041,20 +10090,6 @@ False
 
         return d
 
-    def _var(self, partition, config):
-        partition.open(config)
-        v = partition.array
-        v = v ** 2
-        v = v + 1
-        v = v ** 0.5
-        v = v ** 2
-        v = v + 1
-        v = v ** 0.5
-        v = numpy_ma_var(v)
-        print(' ', v)
-        partition.close()
-        return v
-
     def count(self):
         '''Count the non-masked elements of the data.
 
@@ -12705,6 +12740,8 @@ False
         return d
 
     def save_to_disk(self, itemsize=None):
+        '''cf.Data.save_to_disk is dead. Use not cf.Data.fits_in_memory
+    instead.'''
         raise NotImplementedError(
             "cf.Data.save_to_disk is dead. Use not "
             "cf.Data.fits_in_memory instead."

@@ -774,7 +774,7 @@ class DimensionCoordinate(mixin.Coordinate,
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
-        '''TODO
+        '''TODO `{{class}}`
 
         '''
         if self.size <= 1:

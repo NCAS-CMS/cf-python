@@ -484,7 +484,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return False
 
-    def _apply_superclass_data_oper(self, v, oper_name, *oper_args,
+    def _apply_superclass_data_oper(self, v, oper_name, oper_args=(),
                                     bounds=True, interior_ring=False,
                                     **oper_kwargs):
         '''Define an operation that can be applied to the data array.
@@ -1082,8 +1082,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
-            a_max, bounds=bounds, inplace=inplace, i=i, units=units)
+            _inplace_enabled_define_and_cleanup(self), 'clip',
+            (a_min, a_max),
+            bounds=bounds, inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -1264,7 +1265,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
+            _inplace_enabled_define_and_cleanup(self), 'cos',
+            bounds=bounds)
 
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
@@ -1820,11 +1822,11 @@ class PropertiesDataBounds(PropertiesData):
 
             No axes are flattened if *axes* is an empty sequence.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {[inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}`
             The construct with flattened data, or `None` if the
             operation was in-place.
 
@@ -2050,8 +2052,9 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
-            'override_calendar', calendar, bounds=True,
-            interior_ring=False, inplace=inplace, i=i)
+            'override_calendar',
+            (calendar,),
+            bounds=True, interior_ring=False, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2104,8 +2107,9 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
-            'override_units', units, bounds=True, interior_ring=False,
-            inplace=inplace, i=i)
+            'override_units',
+            (units,),
+            bounds=True, interior_ring=False, inplace=inplace, i=i)
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
@@ -3107,6 +3111,7 @@ class PropertiesDataBounds(PropertiesData):
         # TODO: 'base' kwarg not used? why?
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'log',
+            (base,),
             bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
@@ -3556,15 +3561,14 @@ class PropertiesDataBounds(PropertiesData):
         iaxis: `int`
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parmaeter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
-    TODO
+        `{{class}}`
+            TODO
 
     **Examples:**
 
@@ -3572,8 +3576,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
-            shift, interior_ring=True, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'roll',
+            (iaxis, shift),
+            bounds=True, interior_ring=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
