@@ -1,10 +1,9 @@
 import cfdm
 
-from . import abstract
+#from . import abstract
 
 
-class RaggedIndexedArray(abstract.CompressedArray,
-                         cfdm.RaggedIndexedArray):
+class RaggedIndexedArray(cfdm.RaggedIndexedArray):
     '''An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

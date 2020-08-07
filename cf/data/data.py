@@ -123,8 +123,8 @@ from ..decorators import (_inplace_enabled,
                           _deprecated_kwarg_check,
                           _manage_log_level_via_verbosity)
 
-from .abstract import (Array,
-                       CompressedArray)
+from .abstract import Array
+#                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
@@ -554,7 +554,8 @@ place.
             self._dtype = dtype
             return
 
-        if not isinstance(data, Array):
+#        if not isinstance(data, Array):
+        if not self._is_abstract_Array_subclass(data):
             check_free_memory = True
 
             if isinstance(data, self.__class__):
@@ -569,7 +570,7 @@ place.
                 return
 
             if not isinstance(data, numpy_ndarray):
-                data = numpy_array(data)
+                data = numpy_asanyarray(data)
 
             if (data.dtype.kind == 'O' and not dt and
                     hasattr(data.item((0,)*data.ndim), 'timetuple')):
@@ -725,7 +726,10 @@ place.
     >>> d._set_partition_matrix(array)
 
         '''
-        if isinstance(array, CompressedArray):
+#        if isinstance(array, CompressedArray):
+        get_compression_type = getattr(array, 'get_compression_type', None)
+        if get_compression_type is not None and get_compression_type():
+            # array is compressed
             self._set_CompressedArray(array,
                                       check_free_memory=check_free_memory)
             return
@@ -1004,6 +1008,20 @@ place.
         '''
         return cf_rtol()
 
+    def _is_abstract_Array_subclass(self, array):
+        '''Whether or not an array is a type of abstract Array.
+
+    :Parameters:
+
+        array: TODO
+
+    :Returns:
+
+        `bool`
+
+        '''
+        return isinstance(array, cfdm.Array)
+    
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO
 

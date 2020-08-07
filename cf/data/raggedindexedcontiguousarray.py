@@ -1,10 +1,9 @@
 import cfdm
 
-from . import abstract
+#from . import abstract
 
 
-class RaggedIndexedContiguousArray(abstract.CompressedArray,
-                                   cfdm.RaggedIndexedContiguousArray):
+class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
     '''An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)
