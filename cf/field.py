@@ -2910,30 +2910,7 @@ class Field(mixin.PropertiesData,
             The tolerance on relative differences between real
             numbers. The default value is set by the `rtol` function.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the equivalence check.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         '''
         item0 = self.constructs[key0]
@@ -7114,8 +7091,7 @@ class Field(mixin.PropertiesData,
         return_bins: `bool`, optional
             If True then also return the bins in their 2-d form.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -7600,31 +7576,7 @@ class Field(mixin.PropertiesData,
 
             .. versionadded:: 3.2.0
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the binned field construct creation
-            process.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -10096,11 +10048,9 @@ class Field(mixin.PropertiesData,
               1990), cf.year(cf.wi(2001, 2005)]`` (see `cf.year` and
               `cf.wi`).
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -11932,7 +11882,7 @@ class Field(mixin.PropertiesData,
 
         domain_axes: `Constructs`
 
-        verbose: `int` or `str` or `None`, optional
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -12125,8 +12075,7 @@ class Field(mixin.PropertiesData,
             data array. By default the new axis has position 0, the
             slowest varying position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -13556,8 +13505,7 @@ class Field(mixin.PropertiesData,
               To scale all weights so that they lie between 0 and 0.5:
               ``scale=0.5``.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -13863,11 +13811,9 @@ class Field(mixin.PropertiesData,
             construct that spans the convolved axis are updated to
             reflect the width and origin of the window.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         weights: deprecated at version 3.3.0
             Use the *window* parameter instead.
@@ -14234,8 +14180,7 @@ class Field(mixin.PropertiesData,
             *Parameter Example:*
               ``coordinate='maximum'``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -14637,11 +14582,9 @@ class Field(mixin.PropertiesData,
 
             If no axes are provided then all axes are flipped.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -14759,16 +14702,14 @@ class Field(mixin.PropertiesData,
               implies transformed coordinates of ``390, 385, ...,
               30``.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
         dry_run: `bool`, optional
             Return a dictionary of parameters which describe the
             anchoring process. The field is not changed, even if *i*
             is True.
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -14999,31 +14940,7 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the attempt to set cyclicity on the
-            dimensions.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -15157,11 +15074,9 @@ class Field(mixin.PropertiesData,
 
             If no axes are provided then all size 1 axes are squeezed.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -15215,11 +15130,11 @@ class Field(mixin.PropertiesData,
             Select the axes to swap. Each axis is identified by its
             original integer position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `Field` or `None`
             The field construct with data with swapped axis
             positions. If the operation was in-place then `None` is
             returned.
@@ -15302,14 +15217,12 @@ class Field(mixin.PropertiesData,
             transposed data array of the field. By default metadata
             constructs are not altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
         items: deprecated at version 3.0.0
             Use the *constructs* parameter instead.
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -15384,8 +15297,7 @@ class Field(mixin.PropertiesData,
 #
 #    :Parameters:
 #
-#        inplace: `bool`, optional
-#            If True then do the operation in-place and return `None`.
+#        {{inplace: `bool`, optional}}
 #
 #    :Returns:
 #
@@ -15421,11 +15333,9 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         axes: deprecated at version 3.0.0
 
@@ -17207,33 +17117,9 @@ class Field(mixin.PropertiesData,
             index. By default it is assumed to be the last
             index. Ignored if *tripolar* is `None`.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the operation.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -17985,8 +17871,7 @@ class Field(mixin.PropertiesData,
             domain axis construct; or `None` if the axes to be
             flattened do not span the data.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -18226,11 +18111,9 @@ class Field(mixin.PropertiesData,
             The number of places by which the selected cyclic axis is
             to be rolled.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
 
@@ -18451,11 +18334,9 @@ class Field(mixin.PropertiesData,
               construct='latitude')`` will set all data values within
               30 degrees of the equator to missing data.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         item: deprecated at version 3.0.0
             Use the *construct* parameter instead.
@@ -19206,11 +19087,9 @@ class Field(mixin.PropertiesData,
             degenerate cells.
 
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         _compute_field_mass: `dict`, optional
             If this is a dictionary then the field masses of the
@@ -19804,11 +19683,9 @@ class Field(mixin.PropertiesData,
             degenerate cells.
 
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         _compute_field_mass: `dict`, optional
             If this is a dictionary then the field masses of the
@@ -20187,11 +20064,10 @@ class Field(mixin.PropertiesData,
             If True then one-sided finite differences are used at the
             boundary, otherwise missing values are used.
 
-        inplace: `bool`, optional
+        {{inplace: `bool`, optional}}
             If True then do the operation in-place and return `None`.
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
