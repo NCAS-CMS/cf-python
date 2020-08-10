@@ -14453,7 +14453,7 @@ False
     :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is
 
     .. math:: \tilde{s} = \sqrt{\frac{f \sum_{i=1}^{N} w_i}{f
-                          \sum_{i=1}^{N} w_i - ddof}} \tilde{s}_N
+                          \sum_{i=1}^{N} w_i - ddof} } \tilde{s}_N
 
     where :math:`f` is the smallest positive number whose product with
     each weight is an integer. :math:`f \sum_{i=1}^{N} w_i` is the

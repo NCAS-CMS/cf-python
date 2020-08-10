@@ -81,21 +81,30 @@ class DocstringTest(unittest.TestCase):
                     if f is None or not hasattr(f, '__doc__'):
                         continue
                     
-                    self.assertIsNotNone(f.__doc__,
-                                         '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(
-                                             klass, name, f, f.__doc__))
+                    self.assertIsNotNone(
+                        f.__doc__,
+                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(                            
+                            klass, name, f, f.__doc__))
                     
-                    self.assertNotIn('{{', f.__doc__,
-                                     '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(klass, name, f))
+                    self.assertNotIn(
+                        '{{', f.__doc__,
+                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                            klass, name, f))
 
-                    self.assertNotIn('}}', f.__doc__,
-                                     '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(klass, name, f))
+                    self.assertNotIn(
+                        '}}', f.__doc__,
+                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                            klass, name, f))
 
     def test_docstring_package(self):
         string = '>>> f = {}.'.format(self.package)
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
-                self.assertIn(string, x._has_component.__doc__, klass)
+                f = x._has_component
+                self.assertIn(
+                    string, f.__doc__,
+                    '\nCLASS: {}\nMETHOD NAME: {}'.format(
+                        klass, '_has_component'))
 
         string = '>>> f = {}.'.format(self.package)
         for klass in self.subclasses_of_Properties:
@@ -136,7 +145,10 @@ class DocstringTest(unittest.TestCase):
         string = '<{}Data'.format(self.repr)
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
-                self.assertIn(string, x.has_data.__doc__, klass)
+                self.assertIn(
+                    string, x.has_data.__doc__, 
+                    '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                        klass, 'has_data', x.has_data))
 
     def test_docstring_default(self):
         string = 'Return the value of the *default* parameter'
@@ -167,7 +179,10 @@ class DocstringTest(unittest.TestCase):
             for x in (klass, klass()):
                 d = x._docstring_substitutions()
                 self.assertIsInstance(d, dict)
-                self.assertIn('{{repr}}', d)
+                self.assertIn(
+                    '{{repr}}', d,
+                    '\nCLASS: {}'.format(
+                    klass))
 
 # --- End: class
 
