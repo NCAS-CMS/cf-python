@@ -70,7 +70,7 @@ class DocstringTest(unittest.TestCase):
         )
 
     def test_docstring(self):
-        # Test that all {{ and }} occurences have been substituted
+        # Test that all {{ occurences have been substituted
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
@@ -88,11 +88,6 @@ class DocstringTest(unittest.TestCase):
                     
                     self.assertNotIn(
                         '{{', f.__doc__,
-                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
-                            klass, name, f))
-
-                    self.assertNotIn(
-                        '}}', f.__doc__,
                         '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
                             klass, name, f))
 
@@ -177,7 +172,7 @@ class DocstringTest(unittest.TestCase):
     def test_docstring_docstring_substitutions(self):
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
-                d = x._docstring_substitutions()
+                d = x._docstring_substitution()
                 self.assertIsInstance(d, dict)
                 self.assertIn(
                     '{{repr}}', d,

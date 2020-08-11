@@ -1,3 +1,6 @@
+from ..docstring import _docstring_substitution_definitions
+
+
 class Container:
     '''Base class for storing components.
 
@@ -5,43 +8,39 @@ class Container:
 
     '''
     def __docstring_substitution__(self):
-        '''TODO
-    Substitutions may be easily modified by overriding the
-    __docstring_substitution__ method.
-    Modifications can be applied to any class, and will only apply to
-    that class and all of its subclases.
-    If the key is a string then the special subtitutions will be
-    applied to the dictionary values after replacement in the
-    docstring.
-    If the key is a compiled regular expession then the special
-    subtitutions will be applied to the match of the regular
-    expression after replacement in the docstring.
-    For example::
-       def __docstring_substitution__(self):
-           def _upper(match):
-               return match.group(1).upper()
-           out = {
-                  # Simple substitutions 
-                  '{{repr}}': 'CF '
-                  '{{foo}}': 'bar'
-                  '{{parameter: `int`}}': """parameter: `int`
-               This parameter does something to `{{class}}`
-               instances. It has no default value.""",
-                   # Regular expression subsititions
-                   # 
-                   # Convert text to upper case
-                   re.compile('{{<upper (.*?)>}}'): _upper
-            }
-           return out
-        '''
-        return {
-            # Examples with repr output
-            '{{repr}}': 'CF ',
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
 
-            # i
-            '{{i: deprecated at version 3.0.0}}':
-            """i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.""",
-        }
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    Text to be replaced is specified as a key in the returned
+    dictionary, with the replacement text defined by the corresponding
+    value.
+
+    Keys must be `str` or `re.Pattern` objects.
+
+    If a key is a `str` then the corresponding value must be a string.
+        
+    If a key is a `re.Pattern` object then the corresponding value
+    must be a string or a callable, as accepted by the
+    `re.Pattern.sub` method.
+
+    Special docstring subtitutions, as defined by
+    `_special_docstring_substitutions`, may be used in the replacement
+    text, and will be substituted as ususal.
+
+    .. versionaddedd:: 3.7.0
+
+    .. seealso:: `_docstring_substitutions`,
+                 `_special_docstring_substitutions`
+
+    :Returns:
+
+        `dict`
+            The doctring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
 
 # --- End: class
