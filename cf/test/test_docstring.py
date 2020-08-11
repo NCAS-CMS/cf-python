@@ -29,7 +29,6 @@ class DocstringTest(unittest.TestCase):
 
             cf.Data,
             cf.NetCDFArray,
-#            cf.NumpyArray,
             cf.GatheredArray,
             cf.RaggedContiguousArray,
             cf.RaggedIndexedArray,
@@ -76,16 +75,16 @@ class DocstringTest(unittest.TestCase):
                 for name in dir(x):
                     if name.startswith('__'):
                         continue
-                    
+
                     f = getattr(klass, name, None)
                     if f is None or not hasattr(f, '__doc__'):
                         continue
-                    
+
                     self.assertIsNotNone(
                         f.__doc__,
-                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(                            
+                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(
                             klass, name, f, f.__doc__))
-                    
+
                     self.assertNotIn(
                         '{{', f.__doc__,
                         '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
@@ -141,7 +140,7 @@ class DocstringTest(unittest.TestCase):
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(
-                    string, x.has_data.__doc__, 
+                    string, x.has_data.__doc__,
                     '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
                         klass, 'has_data', x.has_data))
 
@@ -168,7 +167,7 @@ class DocstringTest(unittest.TestCase):
                     x._test_docstring_substitution_classmethod(1, 2),
                     (1, 2)
                 )
-                
+
     def test_docstring_docstring_substitutions(self):
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
@@ -177,7 +176,7 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(
                     '{{repr}}', d,
                     '\nCLASS: {}'.format(
-                    klass))
+                        klass))
 
 # --- End: class
 

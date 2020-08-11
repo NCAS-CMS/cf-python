@@ -12,16 +12,17 @@ import numpy
 import cf
 
 
-def _make_tmpfile():
-    return tempfile.mkstemp('.cf_test')[1]
-
-
-tmpfile = _make_tmpfile()
-tmpfileh = _make_tmpfile()
-tmpfilec = _make_tmpfile()
-tmpfile0 = _make_tmpfile()
-tmpfile1 = _make_tmpfile()
-tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
+n_tmpfiles = 6
+tmpfiles = [tempfile.mkstemp('_test_read_write.nc', dir=os.getcwd())[1]
+            for i in range(n_tmpfiles)]
+(
+    tmpfile,
+    tmpfileh,
+    tmpfilec,
+    tmpfile0,
+    tmpfile1,
+    tmpfile2,
+ ) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -45,7 +46,7 @@ class read_writeTest(unittest.TestCase):
     string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'string_char.nc')
 
-    chunk_sizes = (17, 34, 300, 100000)[::-1]
+    chunk_sizes = (100000, 300)
     original_chunksize = cf.chunksize()
 
     test_only = []
@@ -61,7 +62,6 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         f = cf.example_field(0)
@@ -242,33 +242,31 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for string in (True, False):
-            for chunksize in self.chunk_sizes:
-                cf.chunksize(chunksize)
-                for fmt in ('NETCDF3_CLASSIC',
-                            'NETCDF3_64BIT',
-                            'NETCDF3_64BIT_OFFSET',
-                            'NETCDF3_64BIT_DATA',
-                            'NETCDF4',
-                            'NETCDF4_CLASSIC',
-                            'CFA',):
-                    # print (fmt, string)
-                    f = cf.read(self.filename)[0]
-                    f0 = f.copy()
-                    cf.write(f, tmpfile, fmt=fmt, verbose=0, string=string)
-                    g = cf.read(tmpfile, verbose=0)
-                    self.assertTrue(len(g) == 1, 'g = '+repr(g))
-                    g0 = g[0]
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+            for fmt in ('NETCDF3_CLASSIC',
+                        'NETCDF3_64BIT',
+                        'NETCDF3_64BIT_OFFSET',
+                        'NETCDF3_64BIT_DATA',
+                        'NETCDF4',
+                        'NETCDF4_CLASSIC',
+                        'CFA',):
+                # print (fmt, string)
+                f = cf.read(self.filename)[0]
+                f0 = f.copy()
+                cf.write(f, tmpfile, fmt=fmt)
+                g = cf.read(tmpfile, verbose=0)
+                self.assertTrue(len(g) == 1, 'g = '+repr(g))
+                g0 = g[0]
 
-                    self.assertTrue(
-                        f0.equals(g0, verbose=1),
-                        'Bad read/write of format {!r}'.format(fmt))
+                self.assertTrue(
+                    f0.equals(g0, verbose=1),
+                    'Bad read/write of format {!r}'.format(fmt))
 
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
@@ -277,8 +275,8 @@ class read_writeTest(unittest.TestCase):
             for fmt in ('NETCDF4',
                         'NETCDF4_CLASSIC',
                         'CFA4'):
-                for shuffle in (True, False):
-                    for compress in (4,):  # range(10):
+                for shuffle in (True,):
+                    for compress in (1,):  # range(10):
                         cf.write(f, tmpfile, fmt=fmt,
                                  compress=compress,
                                  shuffle=shuffle)
@@ -295,7 +293,6 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = _make_tmpfile()
         tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
@@ -318,7 +315,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g.dtype == numpy.dtype('float32'),
                         'datatype read in is '+str(g.dtype))
 
-        tmpfile2 = _make_tmpfile()
         tmpfiles.append(tmpfile2)
 
         # Keyword double
@@ -366,19 +362,6 @@ class read_writeTest(unittest.TestCase):
                      + ' not ' + repr(reference_datetime)))
         # --- End: for
         cf.chunksize(self.original_chunksize)
-
-#    def test_write_HDF_chunks(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        for chunksize in self.chunk_sizes:
-#            for fmt in ('NETCDF3_CLASSIC', 'NETCDF4'):
-#                cf.chunksize(chunksize)
-#                f = cf.read(self.filename)[0]
-#                f.HDF_chunks({'T': 10000, 1: 3, 'grid_lat': 222, 45:45})
-#                cf.write(f, tmpfile, fmt=fmt, HDF_chunksizes={'X': 6})
-#        # --- End: for
-#        cf.chunksize(self.original_chunksize)
 
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -462,26 +445,15 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
                             "{!r} {!r}".format(f[j], f[i]))
 
+        f0 = cf.read(self.string_filename)
         for string0 in (True, False):
             for fmt0 in ('NETCDF4',
-                         'NETCDF3_CLASSIC',
-                         'NETCDF4_CLASSIC',
-                         'NETCDF3_64BIT',
-                         'NETCDF3_64BIT_OFFSET',
-                         'NETCDF3_64BIT_DATA'):
-                # print ('fmt0=', fmt0)
-                f0 = cf.read(self.string_filename)
+                         'NETCDF3_CLASSIC'):
                 cf.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
                 for string1 in (True, False):
                     for fmt1 in ('NETCDF4',
-                                 'NETCDF3_CLASSIC',
-                                 'NETCDF4_CLASSIC',
-                                 'NETCDF3_64BIT',
-                                 'NETCDF3_64BIT_OFFSET',
-                                 'NETCDF3_64BIT_DATA'):
-                        # print ('fmt1=', fmt1)
-                        f1 = cf.read(self.string_filename)
+                                 'NETCDF3_CLASSIC'):
                         cf.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
                         for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
