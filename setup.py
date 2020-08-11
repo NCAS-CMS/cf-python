@@ -14,6 +14,7 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
+
 def find_test_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
@@ -22,6 +23,7 @@ def find_test_files(directory):
                 fnmatch.fnmatch(basename, '*.pp')):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
+
 
 def _read(fname):
     '''Returns content of a file.
@@ -32,6 +34,7 @@ def _read(fname):
     with open(fpath, 'r') as file_:
         return file_.read()
 
+
 def _get_version():
     '''Returns library version by inspecting __init__.py file.
 
@@ -39,6 +42,7 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cf/__init__.py"),
                      re.MULTILINE).group(1)
+
 
 version      = _get_version()
 packages     = ['cf']
@@ -240,6 +244,7 @@ setup(name = "cf-python",
                       'cf.mixin',
                       'cf.data',
                       'cf.data.abstract',
+                      'cf.docstring',
                       'cf.read_write',
                       'cf.read_write.um',
                       'cf.read_write.netcdf',

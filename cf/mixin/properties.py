@@ -11,6 +11,7 @@ from ..functions import (_DEPRECATION_ERROR_METHOD,
 
 from . import Container
 
+
 class Properties(Container):
     '''Mixin class for a container of descriptive properties.
 

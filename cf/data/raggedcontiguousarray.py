@@ -1,7 +1,5 @@
 import cfdm
 
-#from . import abstract
-
 
 class RaggedContiguousArray(cfdm.RaggedContiguousArray):
     '''An underlying contiguous ragged array.

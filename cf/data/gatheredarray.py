@@ -1,7 +1,5 @@
 import cfdm
 
-#from . import abstract
-
 
 class GatheredArray(cfdm.GatheredArray):
     '''An underlying gathered array.

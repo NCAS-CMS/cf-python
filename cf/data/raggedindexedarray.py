@@ -1,7 +1,5 @@
 import cfdm
 
-#from . import abstract
-
 
 class RaggedIndexedArray(cfdm.RaggedIndexedArray):
     '''An underlying indexed ragged array.

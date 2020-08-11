@@ -1021,7 +1021,7 @@ place.
 
         '''
         return isinstance(array, cfdm.Array)
-    
+
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO
 
@@ -7089,7 +7089,7 @@ dimensions.
     @property
     def _shape(self):
         '''Storage for the data shape.
-        
+
         '''
         return self._custom['_shape']
 

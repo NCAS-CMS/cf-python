@@ -21,7 +21,7 @@ class Container:
     Keys must be `str` or `re.Pattern` objects.
 
     If a key is a `str` then the corresponding value must be a string.
-        
+
     If a key is a `re.Pattern` object then the corresponding value
     must be a string or a callable, as accepted by the
     `re.Pattern.sub` method.
@@ -38,7 +38,7 @@ class Container:
     :Returns:
 
         `dict`
-            The doctring substitutions that have been applied.
+            The docstring substitutions that have been applied.
 
         '''
         return _docstring_substitution_definitions
