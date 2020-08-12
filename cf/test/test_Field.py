@@ -230,8 +230,8 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(u.equals(c, verbose=2), message)
                     self.assertTrue(f.equals(c, verbose=2), message)
 
-                    cf.write(c, 'delme.nc')
-                    c = cf.read('delme.nc')[0]
+                    cf.write(c, tmpfile)
+                    c = cf.read(tmpfile)[0]
 
                     self.assertTrue(
                         bool(c.data.get_compression_type()), message)
@@ -509,7 +509,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f[0, 3] *= -1
         f[0, 5, ::2] = cf.masked
-
+        print (1, datetime.datetime.utcnow())
         for axes in axes_combinations(f):
             for method in (
                     'sum',
@@ -563,7 +563,7 @@ class FieldTest(unittest.TestCase):
                     '{} weighted axes={}, {!r}, {!r}'.format(
                         method, axes, a, b))
         # --- End: for
-
+        print (3, datetime.datetime.utcnow())
         for axes in axes_combinations(f):
             if axes == (0,):
                 continue
@@ -599,7 +599,7 @@ class FieldTest(unittest.TestCase):
                         '{} weights={}, axes={}, {!r}, {!r}'.format(
                             method, weights, axes, a, b))
         # --- End: for
-
+        print (4, datetime.datetime.utcnow())
     def test_Field_all(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

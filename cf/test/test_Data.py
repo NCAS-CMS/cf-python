@@ -55,7 +55,7 @@ class DataTest(unittest.TestCase):
 
         self.tempdir = os.path.dirname(os.path.abspath(__file__))
 
-        self.chunk_sizes = (17, 34, 300, 100000)[::-1]
+        self.chunk_sizes = (100000, 300, 34) #, 17)
         self.original_chunksize = cf.chunksize()
 
         self.filename6 = os.path.join(
@@ -75,7 +75,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_months_years']
+#        self.test_only = ['test_Data_flatten']
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
@@ -547,10 +547,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(e.shape == b.shape)
                 self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
-            # now do for subsets of axes TODO
-
             for axes in self.axes_combinations:
-                # print('axes=', axes, 'd._pmshape=', d._pmshape, d.shape)
                 e = d.flatten(axes)
 
                 if len(axes) <= 1:
@@ -896,23 +893,23 @@ class DataTest(unittest.TestCase):
 
             e = cf.Data(numpy.arange(5))
             f = d.outerproduct(e)
-            self.assertTrue(f.shape == (40, 30, 5))
+            self.assertEqual(f.shape, (40, 30, 5))
 
             e = cf.Data(numpy.arange(5).reshape(5, 1))
             f = d.outerproduct(e)
-            self.assertTrue(f.shape == (40, 30, 5, 1))
+            self.assertEqual(f.shape, (40, 30, 5, 1))
 
             e = cf.Data(numpy.arange(30).reshape(6, 5))
             f = d.outerproduct(e)
-            self.assertTrue(f.shape == (40, 30, 6, 5))
+            self.assertEqual(f.shape, (40, 30, 6, 5))
 
             e = cf.Data(7)
             f = d.outerproduct(e)
-            self.assertTrue(f.shape == (40, 30), f.shape)
+            self.assertEqual(f.shape, (40, 30), f.shape)
 
             e = cf.Data(numpy.arange(5))
             self.assertIsNone(d.outerproduct(e, inplace=True))
-            self.assertTrue(d.shape == (40, 30, 5), d.shape)
+            self.assertEqual(d.shape, (40, 30, 5), d.shape)
 
         cf.chunksize(self.original_chunksize)
 
@@ -957,11 +954,11 @@ class DataTest(unittest.TestCase):
         # Scalar numeric array
         d = cf.Data(9, 'km')
         a = d.array
-        self.assertTrue(a.shape == ())
-        self.assertTrue(a == numpy.array(9))
+        self.assertEqual(a.shape, ())
+        self.assertEqual(a, numpy.array(9))
         d[...] = cf.masked
         a = d.array
-        self.assertTrue(a.shape == ())
+        self.assertEqual(a.shape, ())
         self.assertIs(a[()], numpy.ma.masked)
 
         # Non-scalar numeric array
@@ -972,8 +969,8 @@ class DataTest(unittest.TestCase):
             a = d.array
             a[0, 0, 0, 0] = -999
             a2 = d.array
-            self.assertTrue(a2[0, 0, 0, 0] == 0)
-            self.assertTrue(a2.shape == b.shape)
+            self.assertEqual(a2[0, 0, 0, 0], 0)
+            self.assertEqual(a2.shape, b.shape)
             self.assertTrue((a2 == b).all())
             self.assertFalse((a2 == a).all())
 
@@ -1001,8 +998,8 @@ class DataTest(unittest.TestCase):
 
             b = d.binary_mask
 
-            self.assertTrue(b.Units == cf.Units('1'))
-            self.assertTrue(b.dtype == numpy.dtype('int32'))
+            self.assertEqual(b.Units, cf.Units('1'))
+            self.assertEqual(b.dtype, numpy.dtype('int32'))
             self.assertTrue((b.array == a).all())
 
         cf.chunksize(self.original_chunksize)
@@ -1098,18 +1095,18 @@ class DataTest(unittest.TestCase):
                          cf.Data('2000-12-1 12:00', dt=True)],
                         [11292.5, 0]):
             a = d.datetime_array
-            self.assertTrue(a.shape == ())
-            self.assertTrue(a == numpy.array(cf.dt('2000-12-1 12:00',
-                                                   calendar='standard')))
+            self.assertEqual(a.shape, ())
+            self.assertEqual(a, numpy.array(cf.dt('2000-12-1 12:00',
+                                                  calendar='standard')))
 
             a = d.array
-            self.assertTrue(a.shape == ())
-            self.assertTrue(a == x)
+            self.assertEqual(a.shape, ())
+            self.assertEqual(a, x)
 
             a = d.datetime_array
             a = d.array
-            self.assertTrue(a.shape == ())
-            self.assertTrue(a == x)
+            self.assertEqual(a.shape, ())
+            self.assertEqual(a, x)
 
         # Non-scalar array
         for d, x in zip([cf.Data([[11292.5, 11293.5]], 'days since 1970-1-1'),
@@ -1136,23 +1133,23 @@ class DataTest(unittest.TestCase):
             cf.chunksize(chunksize)
 
             d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
-            self.assertTrue(d.dtype == numpy.dtype(float))
+            self.assertEqual(d.dtype, numpy.dtype(float))
             self.assertFalse(d._isdatetime())
 
             self.assertIsNone(d._asreftime(inplace=True))
-            self.assertTrue(d.dtype == numpy.dtype(float))
+            self.assertEqual(d.dtype, numpy.dtype(float))
             self.assertFalse(d._isdatetime())
 
             self.assertIsNone(d._asdatetime(inplace=True))
-            self.assertTrue(d.dtype == numpy.dtype(object))
+            self.assertEqual(d.dtype, numpy.dtype(object))
             self.assertTrue(d._isdatetime())
 
             self.assertIsNone(d._asdatetime(inplace=True))
-            self.assertTrue(d.dtype == numpy.dtype(object))
+            self.assertEqual(d.dtype, numpy.dtype(object))
             self.assertTrue(d._isdatetime())
 
             self.assertIsNone(d._asreftime(inplace=True))
-            self.assertTrue(d.dtype == numpy.dtype(float))
+            self.assertEqual(d.dtype, numpy.dtype(float))
             self.assertFalse(d._isdatetime())
 
         cf.chunksize(self.original_chunksize)
@@ -1171,7 +1168,7 @@ class DataTest(unittest.TestCase):
                 e = d.ceil()
                 self.assertIsNone(d.ceil(inplace=True))
                 self.assertTrue(d.equals(e, verbose=2))
-                self.assertTrue(d.shape == c.shape)
+                self.assertEqual(d.shape, c.shape)
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
@@ -1191,7 +1188,7 @@ class DataTest(unittest.TestCase):
                 e = d.floor()
                 self.assertIsNone(d.floor(inplace=True))
                 self.assertTrue(d.equals(e, verbose=2))
-                self.assertTrue(d.shape == c.shape)
+                self.assertEqual(d.shape, c.shape)
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
@@ -1211,7 +1208,7 @@ class DataTest(unittest.TestCase):
                 e = d.trunc()
                 self.assertIsNone(d.trunc(inplace=True))
                 self.assertTrue(d.equals(e, verbose=2))
-                self.assertTrue(d.shape == c.shape)
+                self.assertEqual(d.shape, c.shape)
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
@@ -1236,7 +1233,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(d0, verbose=2))
                 self.assertIsNone(d.rint(inplace=True))
                 self.assertTrue(d.equals(e, verbose=2))
-                self.assertTrue(d.shape == c.shape)
+                self.assertEqual(d.shape, c.shape)
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
@@ -1258,7 +1255,7 @@ class DataTest(unittest.TestCase):
                 self.assertIsNone(d.round(decimals=decimals, inplace=True))
 
                 self.assertTrue(d.equals(e, verbose=2))
-                self.assertTrue(d.shape == c.shape)
+                self.assertEqual(d.shape, c.shape)
                 self.assertTrue((d.array == c).all())
         # --- End: for
 
@@ -1271,18 +1268,18 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
             d = cf.Data(5, 'metre')
-            self.assertTrue(d.datum() == 5)
-            self.assertTrue(d.datum(0) == 5)
-            self.assertTrue(d.datum(-1) == 5)
+            self.assertEqual(d.datum(), 5)
+            self.assertEqual(d.datum(0),5)
+            self.assertEqual(d.datum(-1), 5)
 
             for d in [cf.Data([4, 5, 6, 1, 2, 3], 'metre'),
                       cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')]:
-                self.assertTrue(d.datum(0) == 4)
-                self.assertTrue(d.datum(-1) == 3)
+                self.assertEqual(d.datum(0), 4)
+                self.assertEqual(d.datum(-1), 3)
                 for index in d.ndindex():
-                    self.assertTrue(d.datum(index) == d.array[index].item())
-                    self.assertTrue(
-                        d.datum(*index) == d.array[index].item(),
+                    self.assertEqual(d.datum(index), d.array[index].item())
+                    self.assertEqual(
+                        d.datum(*index), d.array[index].item(),
                         '{}, {}'.format(
                             d.datum(*index), d.array[index].item()))
             # --- End: for
@@ -1332,27 +1329,27 @@ class DataTest(unittest.TestCase):
         d = cf.Data(array.copy(), 'metre', chunk=False)
         d.chunk(total=[0], omit_axes=[1, 2])
 
-        self.assertTrue(d._pmshape == (3,))
-        self.assertTrue(d[0].shape == (1, 4, 5))
-        self.assertTrue(d[-1].shape == (1, 4, 5))
-        self.assertTrue(d[0].maximum() == 4*5)
-        self.assertTrue(d[-1].maximum() == 3*4*5)
+        self.assertEqual(d._pmshape, (3,))
+        self.assertEqual(d[0].shape, (1, 4, 5))
+        self.assertEqual(d[-1].shape, (1, 4, 5))
+        self.assertEqual(d[0].maximum(), 4*5)
+        self.assertEqual(d[-1].maximum(), 3*4*5)
 
         for i in (2, 1):
             e = d.flip(i)
-            self.assertTrue(e._pmshape == (3,))
-            self.assertTrue(e[0].shape == (1, 4, 5))
-            self.assertTrue(e[-1].shape == (1, 4, 5))
-            self.assertTrue(e[0].maximum() == 4*5)
-            self.assertTrue(e[-1].maximum() == 3*4*5)
+            self.assertEqual(e._pmshape, (3,))
+            self.assertEqual(e[0].shape, (1, 4, 5))
+            self.assertEqual(e[-1].shape, (1, 4, 5))
+            self.assertEqual(e[0].maximum(), 4*5)
+            self.assertEqual(e[-1].maximum(), 3*4*5)
 
         i = 0
         e = d.flip(i)
-        self.assertTrue(e._pmshape == (3,))
-        self.assertTrue(e[0].shape == (1, 4, 5))
-        self.assertTrue(e[-1].shape == (1, 4, 5))
-        self.assertTrue(e[0].maximum() == 3*4*5)
-        self.assertTrue(e[-1].maximum() == 4*5)
+        self.assertEqual(e._pmshape, (3,))
+        self.assertEqual(e[0].shape, (1, 4, 5))
+        self.assertEqual(e[-1].shape, (1, 4, 5))
+        self.assertEqual(e[0].maximum(), 3*4*5)
+        self.assertEqual(e[-1].maximum(), 4*5)
 
     def test_Data_max(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
