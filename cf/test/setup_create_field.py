@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 import unittest
 
 import numpy

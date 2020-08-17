@@ -1,7 +1,6 @@
 import logging
 import os
 
-from ctypes.util import find_library
 from glob        import glob
 from os.path     import isdir
 

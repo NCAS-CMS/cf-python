@@ -1,7 +1,5 @@
 import logging
 
-from os import close
-from operator import mul
 
 from numpy import empty as numpy_empty
 

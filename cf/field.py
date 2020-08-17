@@ -1,5 +1,4 @@
 from collections import namedtuple
-from copy import deepcopy
 from functools import reduce
 from operator import mul as operator_mul
 from operator import itemgetter

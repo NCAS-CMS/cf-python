@@ -9,7 +9,6 @@ from numpy import squeeze     as numpy_squeeze
 
 from copy import deepcopy
 
-from operator import mul
 
 from .partition import Partition
 

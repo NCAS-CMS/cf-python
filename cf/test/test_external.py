@@ -2,7 +2,6 @@ from __future__ import print_function
 import datetime
 import os
 import tempfile
-import time
 import unittest
 
 import numpy

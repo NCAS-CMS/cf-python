@@ -897,7 +897,6 @@ class Partition:
                         #         there is enough memory to keep it
                         logger.partitioning('    1.2.1.3 pass')
                         del self.masked
-                        pass
                 else:
                     if config.get('to_disk', False):
                         # 1.2.2.1 Original subarray was in memory but

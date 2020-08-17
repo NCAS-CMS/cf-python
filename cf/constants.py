@@ -1,7 +1,6 @@
 from .units import Units
 
 import logging
-import sys
 
 from enum     import Enum
 from psutil   import virtual_memory

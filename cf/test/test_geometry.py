@@ -5,7 +5,6 @@ import os
 import tempfile
 import unittest
 
-from distutils.version import LooseVersion
 
 import numpy
 import netCDF4
