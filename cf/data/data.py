@@ -118,6 +118,8 @@ from ..functions import (_DEPRECATION_ERROR_METHOD,
 from ..functions import inspect as cf_inspect
 from ..functions import _section
 
+from ..mixin_container import Container
+
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
@@ -282,7 +284,8 @@ def _initialise_axes(ndim):
     return axes
 
 
-class Data(cfdm.Data):
+class Data(Container,
+           cfdm.Data):
     '''An N-dimensional data array with units and masked values.
 
 * Contains an N-dimensional, indexable and broadcastable array with
@@ -2158,8 +2161,7 @@ place.
             The number of times values are differenced. If zero, the
             input is returned as-is. By default *n* is ``1``.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2681,8 +2683,7 @@ place.
               datum if more than 25% of its input array elements are
               missing data: ``mtol=0.25``.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -3256,11 +3257,9 @@ place.
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -3383,8 +3382,7 @@ place.
               the average is shifted to include the previous point and
               the and the next three points.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -3512,8 +3510,7 @@ place.
                       data, regardless of the setting of
                       *masked_as_zero*.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
             .. verisionadded:: 3.3.0
 
@@ -3899,11 +3896,9 @@ place.
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -3966,8 +3961,7 @@ place.
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -4019,7 +4013,7 @@ place.
         method: `str`
             The TODO
 
-        inplace: `bool`
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -6033,11 +6027,9 @@ place.
 
         weights: *optional*
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         _preserve_partitions: `bool`, optional
             If True then preserve the shape of the partition matrix of
@@ -8241,8 +8233,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8329,8 +8320,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8378,8 +8368,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8427,8 +8416,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8472,8 +8460,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8521,8 +8508,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -8793,8 +8779,7 @@ False
               ``valid_range=[-999, 10000]`` is equivalent to setting
               ``valid_min=-999, valid_max=10000``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -9302,11 +9287,9 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -9339,8 +9322,7 @@ False
         squeeze : bool, optional
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -9380,11 +9362,9 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -9419,8 +9399,7 @@ False
         squeeze : bool, optional
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -9496,11 +9475,9 @@ False
 
         mtol: number, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -9631,8 +9608,7 @@ False
         squeeze : bool, optional
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -9701,8 +9677,7 @@ False
 
         mtol: number, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -9747,11 +9722,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
         '''
         return self._collapse(sample_size_f, sample_size_fpartial,
@@ -9838,14 +9811,13 @@ False
             Specify the units of *a_min* and *a_max*. By default the
             same units as the data are assumed.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `Data` or `None`
             The clipped data. If the operation was in-place then
             `None` is returned.
 
@@ -9969,8 +9941,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -10066,11 +10037,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -10443,8 +10412,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -10611,11 +10579,7 @@ False
                ignore_compression=False):
         '''True if two data arrays are logically equal, False otherwise.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     :Parameters:
 
@@ -10634,30 +10598,7 @@ False
             If True then data arrays with different fill values are
             considered equal. By default they are considered unequal.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         traceback: deprecated at version 3.0.0
             Use *verbose* parameter instead.
@@ -10732,11 +10673,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -10779,8 +10718,7 @@ False
             array axes. By default the new axis has position 0, the
             slowest varying position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -10956,33 +10894,9 @@ False
             index. By default it is assumed to be the last
             index. Ignored if *tripolar* is `None`.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the operation.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -11372,8 +11286,7 @@ False
 
             No axes are flattened if *axes* is an empty sequence.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -11504,11 +11417,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -11542,11 +11453,9 @@ False
         e: data-like
             The data array with which to form the outer product.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -11643,11 +11552,9 @@ False
         units: `str` or `Units`
             The new units for the data array.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -11707,11 +11614,9 @@ False
         calendar: `str`
             The new calendar.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12022,11 +11927,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12129,11 +12032,9 @@ False
 
         squeeze: `bool`, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12166,11 +12067,9 @@ False
             axis is identified by its integer position. No axes are
             flipped if *axes* is an empty sequence.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12296,11 +12195,7 @@ False
         '''Return where data are element-wise equal to other, broadcastable
     data.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     For numeric data arrays, ``d.isclose(y, rtol, atol)`` is
     equivalent to ``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it
@@ -12378,14 +12273,13 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `Data` or `None`
             The rounded data. If the operation was in-place then
             `None` is returned.
 
@@ -12451,11 +12345,9 @@ False
 
         mtol: number, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12499,11 +12391,9 @@ False
             decimals is negative, it specifies the number of positions
             to the left of the decimal point.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12713,11 +12603,9 @@ False
             Select the axes to swap. Each axis is identified by its
             original integer position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12907,37 +12795,11 @@ False
               sign of all negative data values, and set all other data
               values to missing data.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the condition-based assignment
-            process.
-
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -12979,9 +12841,9 @@ False
 
         :Parameters:
 
-            data0: `cf.Data`
+            data0: `Data`
 
-            data1: `cf.Data`
+            data1: `Data`
 
             do_not_broadcast: `list`
 
@@ -13307,11 +13169,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -13368,8 +13228,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -13424,8 +13283,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -13483,8 +13341,7 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -13531,11 +13388,9 @@ False
 
         base:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -13577,11 +13432,9 @@ False
 
             No axes are removed if *axes* is an empty sequence.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -13726,11 +13579,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -13812,11 +13663,9 @@ False
             is reversed. Each axis of the new order is identified by
             its original integer position.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -13898,11 +13747,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14046,15 +13893,13 @@ False
 
         out: `bool`, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
         preserve_invalid: `bool`, optional
             For MaskedArray arrays only, if True any invalid values produced
             by the operation will be preserved, otherwise they are masked.
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14153,11 +13998,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14181,11 +14024,9 @@ False
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14253,11 +14094,9 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14292,8 +14131,7 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -14338,11 +14176,9 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {[inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14389,11 +14225,9 @@ False
 
         squeeze : bool, optional
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14541,11 +14375,9 @@ False
             freedom used in the calculation is (N-*ddof*) where N
             represents the number of elements. By default *ddof* is 0
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -14597,11 +14429,9 @@ False
 
         weights :
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 

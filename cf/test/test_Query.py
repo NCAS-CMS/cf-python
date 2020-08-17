@@ -92,7 +92,7 @@ class QueryTest(unittest.TestCase):
             for q in [q1, q2, q3, q4]:
                 self.assertIsInstance(q, cf.query.Query)
                 # TODO: should q4 should return s_ or l_unit? ATM is s_unit.
-                self.assertTrue(q._value.Units._units == s_unit)
+                self.assertEqual(q._value.Units._units, s_unit)
 
             with self.assertRaises(ValueError):
                 # Case 4: provide non-equivalent units i.e. non-sensical query
@@ -326,25 +326,25 @@ class QueryTest(unittest.TestCase):
         )
 
         d = cf.dt(2002, 6, 16)
-        self.assertFalse(cf.eq(cf.dt(1990, 1, 1)) == d)
-        self.assertTrue(cf.eq(cf.dt(2002, 6, 16)) == d)
-        self.assertFalse(cf.eq(cf.dt('2100-1-1')) == d)
-        self.assertFalse(
-            cf.eq(cf.dt('2001-1-1')) & cf.eq(cf.dt(2010, 12, 31)) == d)
+        self.assertEqual(cf.eq(cf.dt(2002, 6, 16)), d)
+        self.assertNotEqual(cf.eq(cf.dt(1990, 1, 1)), d)
+        self.assertNotEqual(cf.eq(cf.dt('2100-1-1')), d)
+        self.assertNotEqual(
+            cf.eq(cf.dt('2001-1-1')) & cf.eq(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
-        self.assertTrue(cf.ge(cf.dt(1990, 1, 1)) == d)
-        self.assertTrue(cf.ge(cf.dt(2002, 6, 16)) == d)
-        self.assertFalse(cf.ge(cf.dt('2100-1-1')) == d)
-        self.assertFalse(
-            cf.ge(cf.dt('2001-1-1')) & cf.ge(cf.dt(2010, 12, 31)) == d)
+        self.assertEqual(cf.ge(cf.dt(1990, 1, 1)), d)
+        self.assertEqual(cf.ge(cf.dt(2002, 6, 16)), d)
+        self.assertNotEqual(cf.ge(cf.dt('2100-1-1')), d)
+        self.assertNotEqual(
+            cf.ge(cf.dt('2001-1-1')) & cf.ge(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
-        self.assertTrue(cf.gt(cf.dt(1990, 1, 1)) == d)
-        self.assertFalse(cf.gt(cf.dt(2002, 6, 16)) == d)
-        self.assertFalse(cf.gt(cf.dt('2100-1-1')) == d)
-        self.assertTrue(
-            cf.gt(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)) == d)
+        self.assertEqual(cf.gt(cf.dt(1990, 1, 1)), d)
+        self.assertNotEqual(cf.gt(cf.dt(2002, 6, 16)), d)
+        self.assertNotEqual(cf.gt(cf.dt('2100-1-1')), d)
+        self.assertEqual(
+            cf.gt(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
         self.assertTrue(cf.ne(cf.dt(1990, 1, 1)) == d)
@@ -369,32 +369,32 @@ class QueryTest(unittest.TestCase):
 
     def test_Query_evaluate(self):
         for x in (5, cf.Data(5, 'kg m-2'), cf.Data([5], 'kg m-2 s-1')):
-            self.assertTrue(x == cf.eq(5))
-            self.assertTrue(x == cf.lt(8))
-            self.assertTrue(x == cf.le(8))
-            self.assertTrue(x == cf.gt(3))
-            self.assertTrue(x == cf.ge(3))
-            self.assertTrue(x == cf.wi(3, 8))
-            self.assertTrue(x == cf.wo(8, 11))
-            self.assertTrue(x == cf.set([3, 5, 8]))
+            self.assertEqual(x, cf.eq(5))
+            self.assertEqual(x, cf.lt(8))
+            self.assertEqual(x, cf.le(8))
+            self.assertEqual(x, cf.gt(3))
+            self.assertEqual(x, cf.ge(3))
+            self.assertEqual(x, cf.wi(3, 8))
+            self.assertEqual(x, cf.wo(8, 11))
+            self.assertEqual(x, cf.set([3, 5, 8]))
 
-            self.assertTrue(cf.eq(5) == x)
-            self.assertTrue(cf.lt(8) == x)
-            self.assertTrue(cf.le(8) == x)
-            self.assertTrue(cf.gt(3) == x)
-            self.assertTrue(cf.ge(3) == x)
-            self.assertTrue(cf.wi(3, 8) == x)
-            self.assertTrue(cf.wo(8, 11) == x)
-            self.assertTrue(cf.set([3, 5, 8]) == x)
+            self.assertEqual(cf.eq(5), x)
+            self.assertEqual(cf.lt(8), x)
+            self.assertEqual(cf.le(8), x)
+            self.assertEqual(cf.gt(3), x)
+            self.assertEqual(cf.ge(3), x)
+            self.assertEqual(cf.wi(3, 8), x)
+            self.assertEqual(cf.wo(8, 11), x)
+            self.assertEqual(cf.set([3, 5, 8]), x)
 
-            self.assertFalse(x == cf.eq(8))
-            self.assertFalse(x == cf.lt(3))
-            self.assertFalse(x == cf.le(3))
-            self.assertFalse(x == cf.gt(8))
-            self.assertFalse(x == cf.ge(8))
-            self.assertFalse(x == cf.wi(8, 11))
-            self.assertFalse(x == cf.wo(3, 8))
-            self.assertFalse(x == cf.set([3, 8, 11]))
+            self.assertNotEqual(x, cf.eq(8))
+            self.assertNotEqual(x, cf.lt(3))
+            self.assertNotEqual(x, cf.le(3))
+            self.assertNotEqual(x, cf.gt(8))
+            self.assertNotEqual(x, cf.ge(8))
+            self.assertNotEqual(x, cf.wi(8, 11))
+            self.assertNotEqual(x, cf.wo(3, 8))
+            self.assertNotEqual(x, cf.set([3, 8, 11]))
 
             # Test that the evaluation is commutative i.e. A == B means B == A
             self.assertFalse(x == cf.eq(8) == x)
@@ -434,28 +434,28 @@ class QueryTest(unittest.TestCase):
         self.assertFalse(e == 5)
 
         x = 'qwerty'
-        self.assertTrue(x == cf.eq('qwerty'))
-        self.assertTrue(x == cf.eq(re.compile('^qwerty$')))
-        self.assertTrue(x == cf.eq(re.compile('qwe')))
-        self.assertTrue(x == cf.eq(re.compile('qwe.*')))
-        self.assertTrue(x == cf.eq(re.compile('.*qwe')))
-        self.assertTrue(x == cf.eq(re.compile('.*rty')))
-        self.assertTrue(x == cf.eq(re.compile('.*rty$')))
-        self.assertTrue(x == cf.eq(re.compile('^.*rty$')))
-        self.assertTrue(x == cf.eq(re.compile('rty$')))
+        self.assertEqual(x, cf.eq('qwerty'))
+        self.assertEqual(x, cf.eq(re.compile('^qwerty$')))
+        self.assertEqual(x, cf.eq(re.compile('qwe')))
+        self.assertEqual(x, cf.eq(re.compile('qwe.*')))
+        self.assertEqual(x, cf.eq(re.compile('.*qwe')))
+        self.assertEqual(x, cf.eq(re.compile('.*rty')))
+        self.assertEqual(x, cf.eq(re.compile('.*rty$')))
+        self.assertEqual(x, cf.eq(re.compile('^.*rty$')))
+        self.assertEqual(x, cf.eq(re.compile('rty$')))
 
-        self.assertTrue(x != cf.eq('QWERTY'))
-        self.assertTrue(x != cf.eq(re.compile('QWERTY')))
-        self.assertTrue(x != cf.eq(re.compile('^QWERTY$')))
-        self.assertTrue(x != cf.eq(re.compile('QWE')))
-        self.assertTrue(x != cf.eq(re.compile('QWE.*')))
-        self.assertTrue(x != cf.eq(re.compile('.*QWE')))
-        self.assertTrue(x != cf.eq(re.compile('.*RTY')))
-        self.assertTrue(x != cf.eq(re.compile('.*RTY$')))
-        self.assertTrue(x != cf.eq(re.compile('^.*RTY$')))
-
+        self.assertNotEqual(x, cf.eq('QWERTY'))
+        self.assertNotEqual(x, cf.eq(re.compile('QWERTY')))
+        self.assertNotEqual(x, cf.eq(re.compile('^QWERTY$')))
+        self.assertNotEqual(x, cf.eq(re.compile('QWE')))
+        self.assertNotEqual(x, cf.eq(re.compile('QWE.*')))
+        self.assertNotEqual(x, cf.eq(re.compile('.*QWE')))
+        self.assertNotEqual(x, cf.eq(re.compile('.*RTY')))
+        self.assertNotEqual(x, cf.eq(re.compile('.*RTY$')))
+        self.assertNotEqual(x, cf.eq(re.compile('^.*RTY$')))
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

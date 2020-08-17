@@ -13,7 +13,7 @@ class aggregateTest(unittest.TestCase):
     file2 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'file2.nc')
 
-    chunk_sizes = (17, 34, 300, 100000)[::-1]
+    chunk_sizes = (100000, 300, 34)
     original_chunksize = cf.chunksize()
 
     def test_aggregate(self):
@@ -35,10 +35,10 @@ class aggregateTest(unittest.TestCase):
 
             h = cf.aggregate(g, verbose=2)
 
-            self.assertTrue(len(h) == 1)
+            self.assertEqual(len(h), 1)
 
-            self.assertTrue(
-                h[0].shape == (10, 9),
+            self.assertEqual(
+                h[0].shape, (10, 9),
                 'h[0].shape = ' + repr(h[0].shape) + ' != (10, 9)'
             )
 
@@ -101,34 +101,34 @@ class aggregateTest(unittest.TestCase):
             d = cf.aggregate([c, t], verbose=1, relaxed_identities=True)
             e = cf.aggregate([t, c], verbose=1, relaxed_identities=True)
 
-            self.assertTrue(len(d) == 1)
-            self.assertTrue(len(e) == 1)
-            self.assertTrue(d[0].shape == (3,) + t.shape)
+            self.assertEqual(len(d), 1)
+            self.assertEqual(len(e), 1)
+            self.assertEqual(d[0].shape, (3,) + t.shape)
             self.assertTrue(d[0].equals(e[0], verbose=2))
 
             x = cf.read(['file.nc', 'file2.nc'], aggregate=False)
-            self.assertTrue(len(x) == 3)
+            self.assertEqual(len(x), 3)
 
             x = cf.read(
                 ['file.nc', 'file2.nc'],
                 aggregate={'relaxed_identities': True}
             )
-            self.assertTrue(len(x) == 2)
+            self.assertEqual(len(x), 2)
 
             del t.standard_name
             del c.standard_name
             x = cf.aggregate([c, t])
-            self.assertTrue(len(x) == 2)
+            self.assertEqual(len(x), 2)
 
             t.long_name = 'qwerty'
             c.long_name = 'qwerty'
             x = cf.aggregate([c, t], field_identity='long_name')
-            self.assertTrue(len(x) == 1)
+            self.assertEqual(len(x), 1)
 
         cf.chunksize(self.original_chunksize)
 
-
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

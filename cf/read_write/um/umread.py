@@ -2406,12 +2406,13 @@ class UMField:
         if time is None:
             # It is important to use the same time_units as dtime
             try:
-                if self.calendar == 'gregorian':
-                    time = netCDF4_date2num(
-                        datetime(*LBVTIME), units, calendar)
-                else:
-                    time = netCDF4_date2num(cftime.datetime(*LBVTIME),
-                                            units, calendar)
+#                if self.calendar == 'gregorian':
+#                    time = netCDF4_date2num(
+#                        datetime(*LBVTIME), units, calendar)
+#                else:
+#                    time = netCDF4_date2num(cftime.datetime(*LBVTIME),
+                time = cftime.date2num(
+                    cftime.datetime(*LBVTIME), units, calendar)
 
                 _cached_date2num[key] = time
             except ValueError:

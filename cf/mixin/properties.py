@@ -9,7 +9,7 @@ from ..units import Units
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR)
 
-from . import Container
+from ..mixin_container import Container
 
 
 class Properties(Container):
@@ -111,7 +111,8 @@ class Properties(Container):
                 self.__class__.__name__))
 
     @id.setter
-    def id(self, value):   self._custom['id'] = value
+    def id(self, value):
+        self._custom['id'] = value
 
     @id.deleter
     def id(self):
@@ -537,10 +538,7 @@ class Properties(Container):
             *Parameter example:*
               ``prop='long_name'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property does not exist. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -637,10 +635,7 @@ class Properties(Container):
             *Parameter example:*
                ``prop='long_name'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property does not exist. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 

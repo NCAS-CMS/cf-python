@@ -65,42 +65,33 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = f.auxiliary_coordinates('latitude').value()
 
         x.positive = 'up'
-        self.assertTrue(x.positive == 'up')
+        self.assertEqual(x.positive, 'up')
         del x.positive
         self.assertIsNone(getattr(x, 'positive', None))
 
         x.axis = 'Z'
-        self.assertTrue(x.axis == 'Z')
+        self.assertEqual(x.axis, 'Z')
         del x.axis
         self.assertIsNone(getattr(x, 'axis', None))
 
-
-#        x.axis = 'T'
-#        self.assertTrue(x.ndim == 2)
-#        self.assertTrue(x.T)
-#        self.assertTrue(x.ctype == 'T')
-
         d = f.dimension_coordinates('X').value()
         x = cf.AuxiliaryCoordinate(source=d)
-#       x.axis = 'T'
-#       self.assertTrue(x.ndim == 1)
-#       self.assertTrue(x.T)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
         d = f.dimension_coordinates('X').value()
         x = cf.AuxiliaryCoordinate(source=d)
 
-        self.assertTrue(x.shape == (9,))
-        self.assertTrue(x.bounds.shape == (9, 2))
+        self.assertEqual(x.shape, (9,))
+        self.assertEqual(x.bounds.shape, (9, 2))
 
         y = x.insert_dimension(0)
-        self.assertTrue(y.shape == (1, 9))
-        self.assertTrue(y.bounds.shape == (1, 9, 2), y.bounds.shape)
+        self.assertEqual(y.shape, (1, 9))
+        self.assertEqual(y.bounds.shape, (1, 9, 2), y.bounds.shape)
 
         x.insert_dimension(-1, inplace=True)
-        self.assertTrue(x.shape == (9, 1))
-        self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
+        self.assertEqual(x.shape, (9, 1))
+        self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_transpose(self):
         f = cf.read(self.filename)[0]
@@ -327,8 +318,8 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.assertIsNone(aux.clip(-15, 25, inplace=True))
 
-
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

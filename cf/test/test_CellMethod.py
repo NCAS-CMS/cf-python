@@ -70,7 +70,7 @@ class CellMethodTest(unittest.TestCase):
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             t = ' '.join(map(str, cms))
-            self.assertTrue(t == s, '{!r} != {!r}'.format(t, s))
+            self.assertEqual(t, s, '{!r} != {!r}'.format(t, s))
             for cm in cms:
                 _ = repr(cm)
 
@@ -134,15 +134,16 @@ class CellMethodTest(unittest.TestCase):
         cm0, cm1 = cf.CellMethod.create(
             'time: minimum within days time: sum over years')
 
-        self.assertTrue(cm0.within == 'days')
+        self.assertEqual(cm0.within, 'days')
+        self.assertEqual(cm1.over, 'years')
+        self.assertEqual(cm0.method, 'minimum')
+        self.assertEqual(cm1.method, 'sum')
+        self.assertEqual(cm0.axes, ('time',))
+        self.assertEqual(cm1.axes, ('time',))
+
         self.assertIsNone(cm1.get_qualifier('within', None))
         self.assertIsNone(cm0.get_qualifier('where', None))
         self.assertIsNone(cm0.get_qualifier('over', None))
-        self.assertTrue(cm1.over == 'years')
-        self.assertTrue(cm0.method == 'minimum')
-        self.assertTrue(cm1.method == 'sum')
-        self.assertTrue(cm0.axes == ('time',))
-        self.assertTrue(cm1.axes == ('time',))
 
     def test_CellMethod_intervals(self):
         cm = cf.CellMethod.create('lat: mean (interval: 1 hour)')[0]

@@ -40,7 +40,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse(
             'T: max within years time: minimum over years',
@@ -53,7 +53,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f.collapse('T: mean within years time: minimum over years',
                        within_years=cf.M())
@@ -64,7 +64,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f.collapse(
             'T: max within years time: minimum over years',
@@ -77,7 +77,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: mean within years time: minimum over years',
                             within_years=cf.seasons())
@@ -88,7 +88,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: max within years time: minimum over years',
                             within_years=cf.seasons())
@@ -99,7 +99,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: mean within years time: minimum over years',
                             within_years=cf.M())
@@ -110,7 +110,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: max within years time: minimum over years',
                             within_years=cf.M())
@@ -121,7 +121,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         for key in f.cell_methods:
             f.del_construct(key)
@@ -135,7 +135,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f.collapse(
             'T: max within years time: min over years', within_years=cf.M())
@@ -146,7 +146,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: max within years time: minimum over years',
                             within_years=cf.seasons())
@@ -157,7 +157,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[:12].collapse('T: max within years time: minimum over years',
                             within_years=cf.M())
@@ -168,7 +168,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f.collapse('T: max within years time: minimum over years',
                        within_years=cf.seasons(), over_years=cf.Y(2))
@@ -179,7 +179,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
         g = f[::-1, ...].collapse(
             'T: max within years time: minimum over years',
@@ -192,7 +192,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f[::-1, ...])
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape)
+        self.assertEqual(list(g.shape), expected_shape)
 
     def test_Field_collapse(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -207,14 +207,14 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 1, 1), g.shape)
+        self.assertEqual(g.shape, (1, 1, 1), g.shape)
 
         g = f.collapse('mean', axes=['T', 'X'])
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 4, 1))
+        self.assertEqual(g.shape, (1, 4, 1))
 
         g = f.collapse('mean', axes=[0, 2])
 
@@ -222,56 +222,56 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 4, 1))
+        self.assertEqual(g.shape, (1, 4, 1))
 
         g = f.collapse('mean', axes=[0, 1])
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 1, 5))
+        self.assertEqual(g.shape, (1, 1, 5))
 
         g = f.collapse('mean', axes='domainaxis1')
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1800, 1, 5))
+        self.assertEqual(g.shape, (1800, 1, 5))
 
         g = f.collapse('mean', axes=['domainaxis1'])
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1800, 1, 5))
+        self.assertEqual(g.shape, (1800, 1, 5))
 
         g = f.collapse('mean', axes=[1])
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1800, 1, 5))
+        self.assertEqual(g.shape, (1800, 1, 5))
 
         g = f.collapse('mean', axes=1)
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1800, 1, 5))
+        self.assertEqual(g.shape, (1800, 1, 5))
 
         g = f.collapse('T: mean')
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 4, 5))
+        self.assertEqual(g.shape, (1, 4, 5))
 
         g = f.collapse('T: mean X: maximum')
         if verbose:
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (1, 4, 1))
+        self.assertEqual(g.shape, (1, 4, 1))
 
         g = f.collapse('T: mean within years time: minimum over years',
                        within_years=cf.M())
@@ -279,7 +279,7 @@ class Field_collapseTest(unittest.TestCase):
             print('\n', f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertEqual(g.shape, (12, 4, 5))
 
         for m in range(1, 13):
             a = numpy.empty((5, 4, 5))
@@ -302,13 +302,13 @@ class Field_collapseTest(unittest.TestCase):
                       cf.M(12, month=11, day=27)):
             g = f.collapse('T: mean', group=group)
             bound = g.coord('T').bounds.datetime_array[0, 1]
-            self.assertTrue(
-                bound.month == group.offset.month,
+            self.assertEqual(
+                bound.month, group.offset.month,
                 "{}!={}, group={}".format(
                     bound.month, group.offset.month, group)
             )
-            self.assertTrue(
-                bound.day == group.offset.day,
+            self.assertEqual(
+                bound.day, group.offset.day,
                 "{}!={}, group={}".format(bound.day, group.offset.day, group)
             )
         # --- End: for
@@ -319,8 +319,8 @@ class Field_collapseTest(unittest.TestCase):
 #                          cf.D(30, month=11, day=27)):
 #                g = f.collapse('T: mean', group=group)
 #                bound = g.coord('T').bounds.datetime_array[0, 1]
-#                self.assertTrue(
-#                    bound.day == group.offset.day,
+#                self.assertEqual(
+#                    bound.day, group.offset.day,
 #                    "{}!={}, bound={}, group={}".format(
 #                        bound.day, group.offset.day, bound, group)
 #                )
@@ -357,7 +357,7 @@ class Field_collapseTest(unittest.TestCase):
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(12, month=12), group_span=cf.Y())
         expected_shape = list(f.shape)
@@ -367,7 +367,7 @@ class Field_collapseTest(unittest.TestCase):
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(12, day=16), group_span=cf.Y())
         expected_shape = list(f.shape)
@@ -377,7 +377,7 @@ class Field_collapseTest(unittest.TestCase):
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse(
             'T: mean', group=cf.M(12, month=11, day=27), group_span=cf.Y())
@@ -388,7 +388,7 @@ class Field_collapseTest(unittest.TestCase):
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse(
             'T: mean', group=cf.M(12, month=6, day=27), group_span=cf.Y())
@@ -402,7 +402,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse(
             'T: mean', group=cf.M(5, month=12), group_span=cf.M(5),
@@ -418,7 +418,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse(
             'T: mean', group=cf.M(5, month=12), group_span=cf.M(5),
@@ -434,7 +434,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=3), group_span=cf.M(5),
                        group_contiguous=1)
@@ -448,7 +448,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=2), group_span=cf.M(5),
                        group_contiguous=1)
@@ -462,7 +462,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5),
                        group_contiguous=2)
@@ -476,7 +476,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=3))
         expected_shape = list(f.shape)
@@ -489,7 +489,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
         # TODO - look into month offset when M< 12
 
         g = f.collapse('T: mean', group=cf.M(5, month=3), group_span=cf.M(5),
@@ -504,7 +504,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_contiguous=1)
         expected_shape = list(f.shape)
@@ -517,7 +517,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=3), group_contiguous=1)
         expected_shape = list(f.shape)
@@ -530,7 +530,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_contiguous=2)
         expected_shape = list(f.shape)
@@ -543,14 +543,14 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         # Test method=integral with groups
         g = f.collapse('T: integral', group=cf.M(5, month=12),
                        weights=True, measure=True)
         expected_shape = list(f.shape)
         expected_shape[0] = 7
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=3), group_contiguous=2)
         expected_shape = list(f.shape)
@@ -563,7 +563,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean within years time: minimum over years',
                        within_years=cf.M(3), group_span=True)
@@ -577,7 +577,7 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
         g = f.collapse('T: mean within years time: minimum over years',
                        within_years=cf.seasons(), group_span=cf.M(3))
@@ -591,11 +591,10 @@ class Field_collapseTest(unittest.TestCase):
                 g.dimension_coordinates('T').value().bounds.data.datetime_array
             )
             print(g.constructs)
-        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        self.assertEqual(list(g.shape), expected_shape, g.shape)
 
 #            g = f[::2].collapse('T: mean', group=cf.M(5, month=12),
 #                                group_span=cf.M(5),group_contiguous=1)
-#            print (g)
 #            g = f.collapse('T: mean', group=cf.M(5, month= 3),
 #                           group_contiguous=1)
 #            g = f.collapse('T: mean', group=cf.M(5, month=12),

@@ -14,7 +14,7 @@ tmpfiles = [
     tempfile.mkstemp('_test_CoordinateReference.nc', dir=os.getcwd())[1] for
     i in range(n_tmpfiles)
 ]
-(tempfile,) = tmpfiles
+[tempfile] = tmpfiles
 
 
 def _remove_tmpfiles():

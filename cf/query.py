@@ -7,7 +7,7 @@ from .functions  import equals  as _equals
 from .functions  import inspect as _inspect
 from .units      import Units
 
-from .data.data import Data
+from .data import Data
 
 from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
                          _DEPRECATION_ERROR_ATTRIBUTE,

@@ -7,7 +7,7 @@ import numpy
 import cftime
 
 import cf
-# from cfunits import Units
+
 from cf import Units
 
 
@@ -22,8 +22,8 @@ class DatetimeTest(unittest.TestCase):
         d = cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
 
     def test_Datetime_rt2dt(self):
-        self.assertTrue(
-            cf.cfdatetime.rt2dt(1, Units('days since 2004-2-28')) ==
+        self.assertEqual(
+            cf.cfdatetime.rt2dt(1, Units('days since 2004-2-28')),
             numpy.array(cf.dt(2004, 2, 29, calendar='standard'), dtype='O'))
         self.assertTrue((
             cf.cfdatetime.rt2dt(
@@ -61,8 +61,8 @@ class DatetimeTest(unittest.TestCase):
             numpy.array([1., 3.])
         ).all())
         units = Units('seconds since 2004-2-28')
-        self.assertTrue(
-            cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units) ==
+        self.assertEqual(
+            cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units),
             numpy.array(86400.0)
         )
 
@@ -114,7 +114,7 @@ class DatetimeTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
+    print('Run date:', datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

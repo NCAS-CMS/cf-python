@@ -17,9 +17,9 @@ import cf
 n_tmpfiles = 1
 tmpfiles = [tempfile.mkstemp('_test_Field.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
-(
-    tmpfile,
-) = tmpfiles
+[
+    tmpfile
+] = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -129,9 +129,6 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.example_field(0)
-
-        tmpfile = 'cfdm_test_Field_get_filenames.nc'
-        tmpfiles.append(tmpfile)
 
         cf.write(f, tmpfile)
         g = cf.read(tmpfile)[0]
@@ -509,7 +506,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f[0, 3] *= -1
         f[0, 5, ::2] = cf.masked
-        print (1, datetime.datetime.utcnow())
+
         for axes in axes_combinations(f):
             for method in (
                     'sum',
@@ -563,7 +560,7 @@ class FieldTest(unittest.TestCase):
                     '{} weighted axes={}, {!r}, {!r}'.format(
                         method, axes, a, b))
         # --- End: for
-        print (3, datetime.datetime.utcnow())
+
         for axes in axes_combinations(f):
             if axes == (0,):
                 continue
@@ -599,7 +596,7 @@ class FieldTest(unittest.TestCase):
                         '{} weights={}, axes={}, {!r}, {!r}'.format(
                             method, weights, axes, a, b))
         # --- End: for
-        print (4, datetime.datetime.utcnow())
+
     def test_Field_all(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2010,7 +2007,7 @@ class FieldTest(unittest.TestCase):
 
         f = cf.read(self.filename2)[0][0:10]
         g = f.section(('X', 'Y'))
-        self.assertTrue(len(g) == 10,'len(g)={}'.format(len(g)))
+        self.assertEqual(len(g), 10, 'len(g)={}'.format(len(g)))
 
     def test_Field_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

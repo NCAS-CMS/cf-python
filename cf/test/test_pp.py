@@ -46,17 +46,17 @@ class ppTest(unittest.TestCase):
 
     def test_PP_load_stash2standard_name(self):
         f = cf.read(self.ppfilename)[0]
-        self.assertTrue(f.identity() == 'surface_temperature')
-        self.assertTrue(f.Units == cf.Units('K'))
+        self.assertEqual(f.identity(), 'surface_temperature')
+        self.assertEqual(f.Units, cf.Units('K'))
         for merge in (True, False):
             cf.load_stash2standard_name(self.new_table, merge=merge)
             f = cf.read(self.ppfilename)[0]
-            self.assertTrue(f.identity() == 'NEW_NAME')
-            self.assertTrue(f.Units == cf.Units('Pa'))
+            self.assertEqual(f.identity(), 'NEW_NAME')
+            self.assertEqual(f.Units, cf.Units('Pa'))
             cf.load_stash2standard_name()
             f = cf.read(self.ppfilename)[0]
-            self.assertTrue(f.identity() == 'surface_temperature')
-            self.assertTrue(f.Units == cf.Units('K'))
+            self.assertEqual(f.identity(), 'surface_temperature')
+            self.assertEqual(f.Units, cf.Units('K'))
 
         cf.load_stash2standard_name()
 
@@ -93,11 +93,11 @@ class ppTest(unittest.TestCase):
 
         cf.chunksize(self.original_chunksize)
 
-
 # --- End: class
 
+
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
+    print('Run date:', datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

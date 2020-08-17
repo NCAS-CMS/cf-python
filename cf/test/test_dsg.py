@@ -132,11 +132,7 @@ class DSGTest(unittest.TestCase):
 
         f = cf.read(self.contiguous, verbose=0)
 
-        self.assertTrue(len(f) == 2)
-
-#        print ('\nf\n')
-#        for x in f:
-#            x.dump()
+        self.assertEqual(len(f), 2)
 
         # Select the specific humidity field
         q = [g for g in f
@@ -150,11 +146,7 @@ class DSGTest(unittest.TestCase):
         cf.write(f, self.tempfilename, verbose=0)
         g = cf.read(self.tempfilename)
 
-#        print ('\ng\n')
-#        for x in g:
-#            print(x)
-
-        self.assertTrue(len(g) == len(f))
+        self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=2))
@@ -202,7 +194,7 @@ class DSGTest(unittest.TestCase):
 
         f = cf.read(self.indexed)
 
-        self.assertTrue(len(f) == 2)
+        self.assertEqual(len(f), 2)
 
         # Select the specific humidity field
         q = [g for g in f
@@ -215,19 +207,10 @@ class DSGTest(unittest.TestCase):
             '\nself.a=\n' + str(self.a) + '\nq.array=\n' + str(q.array)
         )
 
-
-#        print ('\nf\n')
-#        for x in f:
-#            print(x)
-
         cf.write(f, self.tempfilename, verbose=0)
         g = cf.read(self.tempfilename)
 
-#        print ('\ng\n')
-#        for x in g:
-#            print(x)
-
-        self.assertTrue(len(g) == len(f))
+        self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=2))
@@ -238,17 +221,12 @@ class DSGTest(unittest.TestCase):
 
         f = cf.read(self.indexed_contiguous, verbose=0)
 
-        self.assertTrue(len(f) == 2)
+        self.assertEqual(len(f), 2)
 
         # Select the specific humidity field
         q = f.select('specific_humidity')[0]
-#        q = [g for g in f
-#             if g.get_property('standard_name') == 'specific_humidity'][0]
 
         qa = q.data.array
-
-#        print (qa[0, 12])
-#        print (self.b[0, 12])
 
         for n in range(qa.shape[0]):
             for m in range(qa.shape[1]):
@@ -263,18 +241,10 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(q._equals(qa, self.b), message)
 
-#        print ('\nf\n')
-#        for x in f:
-#            print(x)
-
         cf.write(f, self.tempfilename, verbose=0)
         g = cf.read(self.tempfilename, verbose=0)
 
-#        print ('\ng\n')
-#        for x in g:
-#            print(x)
-
-        self.assertTrue(len(g) == len(f))
+        self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=2))
@@ -315,7 +285,7 @@ class DSGTest(unittest.TestCase):
             fill_value=1e+20,
             dtype='float32')).all())
 
-        self.assertTrue(z.data.get_compression_type() == 'ragged contiguous')
+        self.assertEqual(z.data.get_compression_type(), 'ragged contiguous')
 
         self.assertTrue((z.data.compressed_array == numpy.array(
             [1., 3., 4., 3., 6.], dtype='float32')).all())
@@ -323,12 +293,11 @@ class DSGTest(unittest.TestCase):
         self.assertTrue((z.data.get_count().data.array == numpy.array(
             [2, 3])).all())
 
-
 # --- End: class
 
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
-    print(cf.environment(display=False))
+    print('Run date:', datetime.datetime.now())
+    print(cf.environment())
     print()
     unittest.main(verbosity=2)
