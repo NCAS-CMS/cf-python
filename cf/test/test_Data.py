@@ -49,31 +49,36 @@ mones = numpy.ma.array(ones, mask=ma.mask)
 
 
 class DataTest(unittest.TestCase):
-    def setUp(self):
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    
+    chunk_sizes = (100000, 300, 34)  # 17
+    original_chunksize = cf.chunksize()
 
-        self.tempdir = os.path.dirname(os.path.abspath(__file__))
+    axes_permutations = [
+        axes
+        for n in range(1, a.ndim+1)
+        for axes in itertools.permutations(range(a.ndim), n)]
+    
+    axes_combinations = [
+        axes
+        for n in range(1, a.ndim+1)
+        for axes in itertools.combinations(range(a.ndim), n)]
 
-        self.chunk_sizes = (100000, 300, 34) #, 17)
-        self.original_chunksize = cf.chunksize()
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-        self.filename6 = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
+    tempdir = os.path.dirname(os.path.abspath(__file__))
 
-        self.a = a
-        self.w = w
-        self.ma = ma
-        self.mw = mw
-        self.ones = ones
-        self.mones = mones
+    filename6 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
 
-        self.axes_combinations = [
-            axes
-            for n in range(1, self.a.ndim+1)
-            for axes in itertools.permutations(range(self.a.ndim), n)]
+    a = a
+    w = w
+    ma = ma
+    mw = mw
+    ones = ones
+    mones = mones
 
-        self.test_only = []
+    test_only = []
 #        self.test_only = ['NOTHING!!!!!']
 #        self.test_only = ['test_Data_flatten']
 #        self.test_only = [
@@ -1269,7 +1274,7 @@ class DataTest(unittest.TestCase):
             cf.chunksize(chunksize)
             d = cf.Data(5, 'metre')
             self.assertEqual(d.datum(), 5)
-            self.assertEqual(d.datum(0),5)
+            self.assertEqual(d.datum(0), 5)
             self.assertEqual(d.datum(-1), 5)
 
             for d in [cf.Data([4, 5, 6, 1, 2, 3], 'metre'),
@@ -1441,19 +1446,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue(f.shape == d.shape)
             self.assertTrue(f.equals(d, verbose=2))
-
-        cf.chunksize(self.original_chunksize)
-
-    def test_Data_sample_size(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for chunksize in self.chunk_sizes:
-            cf.chunksize(chunksize)
-            d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-            self.assertTrue(d.sample_size() == 6)
-            d[1, 0] = cf.masked
-            self.assertTrue(d.sample_size() == cf.Data(50, '0.1'))
 
         cf.chunksize(self.original_chunksize)
 
@@ -1840,8 +1832,6 @@ class DataTest(unittest.TestCase):
 
         return  # !!!!!!
 
-#        print ('\n')
-#        print(cf.Data.seterr())
         d = cf.Data([0., 1])
         e = cf.Data([1., 2])
 
@@ -1984,8 +1974,8 @@ class DataTest(unittest.TestCase):
                     shape[i] = 1
 
                 shape = tuple(shape)
-                self.assertTrue(
-                    e.shape == shape,
+                self.assertEqual(
+                    e.shape, shape,
                     "{}, axes={}, not squeezed bad shape: {} != {}".format(
                         h, axes, e.shape, shape))
 
@@ -1997,8 +1987,8 @@ class DataTest(unittest.TestCase):
                     shape.pop(i)
 
                 shape = tuple(shape)
-                self.assertTrue(
-                    e.shape == shape,
+                self.assertEqual(
+                    e.shape, shape,
                     "{}, axes={}, squeezed bad shape: {} != {}".format(
                         h, axes, e.shape, shape)
                 )
@@ -2006,8 +1996,8 @@ class DataTest(unittest.TestCase):
             e = getattr(d, h)(squeeze=True,
                               _preserve_partitions=False)
             shape = ()
-            self.assertTrue(
-                e.shape == shape,
+            self.assertEqual(
+                e.shape, shape,
                 "{}, axes={}, squeezed bad shape: {} != {}".format(
                     h, None, e.shape, shape)
             )
@@ -2015,8 +2005,8 @@ class DataTest(unittest.TestCase):
             e = getattr(d, h)(squeeze=False,
                               _preserve_partitions=False)
             shape = (1,) * d.ndim
-            self.assertTrue(
-                e.shape == shape,
+            self.assertEqual(
+                e.shape, shape,
                 "{}, axes={}, not squeezed bad shape: {} != {}".format(
                     h, None, e.shape, shape)
             )
@@ -2034,7 +2024,8 @@ class DataTest(unittest.TestCase):
                 d = cf.Data(self.a)
                 for np, h in zip(
                         (numpy.sum, numpy.amin, numpy.amax, numpy.sum),
-                        ('sum', 'min', 'max', 'sum_of_squares')):
+                        ('sum', 'min', 'max', 'sum_of_squares')
+                ):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
                         if h == 'sum_of_squares':
@@ -2801,7 +2792,7 @@ class DataTest(unittest.TestCase):
                             [(x, None, None) for x in range(1800)])
             d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
             x = d.section([1, 3])
-            self.assertTrue(len(x) == 8)
+            self.assertEqual(len(x), 8)
             e = cf.Data.reconstruct_sectioned_data(x)
             self.assertTrue(e.equals(d))
 
@@ -2811,12 +2802,13 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in (300, 10000, 100000)[::-1]:
+        for chunksize in (100000, 10000, 300):
             cf.chunksize(chunksize)
 
             d = cf.Data(ma)
-            self.assertTrue(d.count() == 284, d.count())
-            self.assertTrue(d.count_masked() == d.size - 284, d.count_masked())
+            self.assertEqual(d.count(), 284, d.count())
+            self.assertEqual(d.count_masked(), d.size - 284,
+                             d.count_masked())
 
             d = cf.Data(a)
             self.assertTrue(d.count() == d.size)
