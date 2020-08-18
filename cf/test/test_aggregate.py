@@ -73,8 +73,8 @@ class aggregateTest(unittest.TestCase):
                 'g !=itself after the third aggregation'
             )
 
-            self.assertTrue(
-                i[0].shape == (10, 9), 'i[0].shape is ' + repr(i[0].shape))
+            self.assertEqual(i[0].shape, (10, 9),
+                             'i[0].shape is ' + repr(i[0].shape))
 
             i = cf.aggregate(
                 g, verbose=2, axes='grid_latitude',
@@ -91,8 +91,8 @@ class aggregateTest(unittest.TestCase):
                 'g != itself after the fourth aggregation'
             )
 
-            self.assertTrue(
-                i[0].shape == (10, 9), 'i[0].shape is ' + repr(i[0].shape))
+            self.assertEqual(i[0].shape, (10, 9),
+                             'i[0].shape is ' + repr(i[0].shape))
 
             #
             q, t = cf.read(self.file)

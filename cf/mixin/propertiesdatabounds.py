@@ -2417,8 +2417,9 @@ class PropertiesDataBounds(PropertiesData):
 
         if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
-                "Can't set bounds: Bounds units of {!r} are not equivalent "
-                "to {!r}".format(bounds.Units, self.Units)
+                "Can't set bounds: Bounds units {!r} are not equivalent "
+                "to {!r}, the units of {!r}".format(
+                    bounds.Units, self.Units, self)
             )
 
             bounds.Units = self_units

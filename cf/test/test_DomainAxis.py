@@ -38,10 +38,10 @@ class DomainAxisTest(unittest.TestCase):
 
         self.assertEqual(int(x), 56)
 
-        self.assertTrue(x > 1)
-        self.assertTrue(x < 100)
-        self.assertTrue(x >= 1)
-        self.assertTrue(x <= 100)
+        self.assertGreater(x, 1)
+        self.assertLess(x, 100)
+        self.assertGreaterEqual(x, 1)
+        self.assertLessEqual(x, 100)
         self.assertNotEqual(x, 100)
 
         _ = hash(x)

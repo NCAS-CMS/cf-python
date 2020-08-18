@@ -92,26 +92,26 @@ class read_writeTest(unittest.TestCase):
         cf.write(f, tmpfile)
 
         g = cf.read(tmpfile)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         g = cf.read(tmpfile, mask=False)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N)
+        self.assertEqual(numpy.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         f.set_property('_FillValue', 999)
         f.set_property('missing_value', -111)
         cf.write(f, tmpfile)
 
         g = cf.read(tmpfile)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         g = cf.read(tmpfile, mask=False)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N)
+        self.assertEqual(numpy.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
     def test_read_directory(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -150,25 +150,25 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
 
         f = cf.read(dir, aggregate=False)
-        self.assertTrue(len(f) == 1, f)
+        self.assertEqual(len(f),1, f)
 
         f = cf.read(dir, recursive=True, aggregate=False)
-        self.assertTrue(len(f) == 3, f)
+        self.assertEqual(len(f), 3, f)
 
         f = cf.read([dir, subdir], aggregate=False)
-        self.assertTrue(len(f) == 3, f)
+        self.assertEqual(len(f), 3, f)
 
         f = cf.read([subdir, dir], aggregate=False)
-        self.assertTrue(len(f) == 3, f)
+        self.assertEqual(len(f), 3, f)
 
         f = cf.read([dir, subdir], recursive=True, aggregate=False)
-        self.assertTrue(len(f) == 5, f)
+        self.assertEqual(len(f), 5, f)
 
         f = cf.read(subdir, aggregate=False)
-        self.assertTrue(len(f) == 2, f)
+        self.assertEqual(len(f), 2, f)
 
         f = cf.read(subdir, recursive=True, aggregate=False)
-        self.assertTrue(len(f) == 2, f)
+        self.assertEqual(len(f), 2, f)
 
         shutil.rmtree(dir)
 
@@ -208,35 +208,35 @@ class read_writeTest(unittest.TestCase):
         filename = self.filename
 
         f = cf.read(filename)
-        self.assertTrue(len(f) == 1, '\n'+str(f))
+        self.assertEqual(len(f), 1, '\n'+str(f))
 
         f = cf.read(filename, extra=['auxiliary_coordinate'])
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cf.read(filename, extra='cell_measure')
-        self.assertTrue(len(f) == 2, '\n'+str(f))
+        self.assertEqual(len(f), 2, '\n'+str(f))
 
         f = cf.read(filename, extra=['field_ancillary'])
-        self.assertTrue(len(f) == 5, '\n'+str(f))
+        self.assertEqual(len(f), 5, '\n'+str(f))
 
         f = cf.read(filename, extra='domain_ancillary', verbose=0)
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cf.read(filename, extra=['field_ancillary',
                                      'auxiliary_coordinate'])
-        self.assertTrue(len(f) == 8, '\n'+str(f))
+        self.assertEqual(len(f), 8, '\n'+str(f))
 
-        self.assertTrue(len(cf.read(filename,
-                                    extra=['domain_ancillary',
-                                           'auxiliary_coordinate'])) == 7)
+        self.assertEqual(len(cf.read(filename,
+                                     extra=['domain_ancillary',
+                                            'auxiliary_coordinate'])), 7)
         f = cf.read(filename, extra=['domain_ancillary', 'cell_measure',
                                      'auxiliary_coordinate'])
-        self.assertTrue(len(f) == 8, '\n'+str(f))
+        self.assertEqual(len(f), 8, '\n'+str(f))
 
         f = cf.read(filename, extra=('field_ancillary', 'dimension_coordinate',
                                      'cell_measure', 'auxiliary_coordinate',
                                      'domain_ancillary'))
-        self.assertTrue(len(f) == 15, '\n'+str(f))
+        self.assertEqual(len(f), 15, '\n'+str(f))
 
     def test_read_write_format(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -256,7 +256,7 @@ class read_writeTest(unittest.TestCase):
                 f0 = f.copy()
                 cf.write(f, tmpfile, fmt=fmt)
                 g = cf.read(tmpfile, verbose=0)
-                self.assertTrue(len(g) == 1, 'g = '+repr(g))
+                self.assertEqual(len(g), 1, 'g = '+repr(g))
                 g0 = g[0]
 
                 self.assertTrue(
@@ -298,31 +298,31 @@ class read_writeTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
             f = cf.read(self.filename)[0]
-            self.assertTrue(f.dtype == numpy.dtype(float))
+            self.assertEqual(f.dtype, numpy.dtype(float))
             cf.write(f, tmpfile, fmt='NETCDF4',
                      datatype={numpy.dtype(float): numpy.dtype('float32')})
             g = cf.read(tmpfile)[0]
-            self.assertTrue(g.dtype == numpy.dtype('float32'),
+            self.assertEqual(g.dtype, numpy.dtype('float32'),
                             'datatype read in is '+str(g.dtype))
 
         cf.chunksize(self.original_chunksize)
 
         # Keyword single
         f = cf.read(self.filename)[0]
-        self.assertTrue(f.dtype == numpy.dtype(float))
+        self.assertEqual(f.dtype, numpy.dtype(float))
         cf.write(f, tmpfile, fmt='NETCDF4', single=True)
         g = cf.read(tmpfile)[0]
-        self.assertTrue(g.dtype == numpy.dtype('float32'),
+        self.assertEqual(g.dtype, numpy.dtype('float32'),
                         'datatype read in is '+str(g.dtype))
 
         tmpfiles.append(tmpfile2)
 
         # Keyword double
         f = g
-        self.assertTrue(f.dtype == numpy.dtype('float32'))
+        self.assertEqual(f.dtype, numpy.dtype('float32'))
         cf.write(f, tmpfile2, fmt='NETCDF4', double=True)
         g = cf.read(tmpfile2)[0]
-        self.assertTrue(g.dtype == numpy.dtype(float),
+        self.assertEqual(g.dtype, numpy.dtype(float),
                         'datatype read in is '+str(g.dtype))
 
         for single in (True, False):
@@ -356,8 +356,8 @@ class read_writeTest(unittest.TestCase):
                          reference_datetime=reference_datetime)
                 g = cf.read(tmpfile)[0]
                 t = g.dimension_coordinate('T')
-                self.assertTrue(
-                    t.Units == cf.Units('days since ' + reference_datetime),
+                self.assertEqual(
+                    t.Units, cf.Units('days since ' + reference_datetime),
                     ('Units written were ' + repr(t.Units.reftime)
                      + ' not ' + repr(reference_datetime)))
         # --- End: for

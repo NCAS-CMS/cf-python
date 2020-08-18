@@ -134,26 +134,26 @@ class FieldTest(unittest.TestCase):
         g = cf.read(tmpfile)[0]
 
         abspath_tmpfile = os.path.abspath(tmpfile)
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
-                        g.get_filenames())
+        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]),
+                         g.get_filenames())
 
         g.data[...] = -99
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
-                        g.get_filenames())
+        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]),
+                         g.get_filenames())
 
         for c in g.constructs.filter_by_data().values():
             c.data[...] = -99
 
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
-                        g.get_filenames())
+        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]),
+                         g.get_filenames())
 
         for c in g.constructs.filter_by_data().values():
             if c.has_bounds():
                 c.bounds.data[...] = -99
         # --- End: for
 
-        self.assertTrue(g.get_filenames() == set(),
-                        g.get_filenames())
+        self.assertEqual(g.get_filenames(), set(),
+                         g.get_filenames())
 
     def test_Field_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -260,7 +260,7 @@ class FieldTest(unittest.TestCase):
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x])
         self.assertTrue(e.equals(g.data, verbose=1))
-        self.assertTrue(g.data.array.count() == g.data.size - 1)
+        self.assertEqual(g.data.array.count(), g.data.size - 1)
 
         f.set_property('valid_range', [y, z])
         d = f.data.copy()
@@ -321,9 +321,9 @@ class FieldTest(unittest.TestCase):
                              numpy.prod([n for i, n in enumerate(f.shape)
                                          if i in axes]))
 
-            self.assertTrue(g.shape == tuple(shape))
-            self.assertTrue(g.ndim == f.ndim-len(axes)+1)
-            self.assertTrue(g.size == f.size)
+            self.assertEqual(g.shape, tuple(shape))
+            self.assertEqual(g.ndim, f.ndim - len(axes) + 1)
+            self.assertEqual(g.size, f.size)
 
         self.assertTrue(f.equals(f.flatten([]), verbose=2))
         self.assertIsNone(f.flatten(inplace=True))
@@ -386,18 +386,18 @@ class FieldTest(unittest.TestCase):
         f = self.f
 
         for i in range(f.ndim):
-            self.assertTrue(f.domain_axis_position(i) == i)
+            self.assertEqual(f.domain_axis_position(i), i)
 
         for i in range(1, f.ndim+1):
-            self.assertTrue(f.domain_axis_position(-i) == -i + 3)
+            self.assertEqual(f.domain_axis_position(-i), -i + 3)
 
         data_axes = f.get_data_axes()
         for key in data_axes:
-            self.assertTrue(
-                f.domain_axis_position(key) == data_axes.index(key))
+            self.assertEqual(f.domain_axis_position(key),
+                             data_axes.index(key))
 
-        self.assertTrue(f.domain_axis_position('Z') == 0)
-        self.assertTrue(f.domain_axis_position('grid_latitude') == 1)
+        self.assertEqual(f.domain_axis_position('Z'), 0)
+        self.assertEqual(f.domain_axis_position('grid_latitude'), 1)
 
     def test_Field_weights(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -425,14 +425,14 @@ class FieldTest(unittest.TestCase):
 
         w = f.weights(None, components=True)
         self.assertIsInstance(w, dict)
-        self.assertTrue(w == {})
+        self.assertEqual(w, {})
 
         w = f.weights(methods=True)
         self.assertIsInstance(w, dict)
 
         w = f.weights(None, methods=True)
         self.assertIsInstance(w, dict)
-        self.assertTrue(w == {})
+        self.assertEqual(w, {})
 
         w = f.weights()
         x = f.weights(w)
@@ -675,17 +675,17 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
 
         g = cf.Field.concatenate([f.copy()], axis=0)
-        self.assertTrue(g.shape == (1, 10, 9))
+        self.assertEqual(g.shape, (1, 10, 9))
 
         x = [f.copy() for i in range(8)]
 
         g = cf.Field.concatenate(x, axis=0)
-        self.assertTrue(g.shape == (8, 10, 9))
+        self.assertEqual(g.shape, (8, 10, 9))
 
         key = x[3].construct_key('latitude')
         x[3].del_construct(key)
         g = cf.Field.concatenate(x, axis=0)
-        self.assertTrue(g.shape == (8, 10, 9))
+        self.assertEqual(g.shape, (8, 10, 9))
 
         with self.assertRaises(Exception):
             g = cf.Field.concatenate([], axis=0)

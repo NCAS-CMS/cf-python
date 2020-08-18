@@ -347,25 +347,25 @@ class QueryTest(unittest.TestCase):
             cf.gt(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
-        self.assertTrue(cf.ne(cf.dt(1990, 1, 1)) == d)
-        self.assertFalse(cf.ne(cf.dt(2002, 6, 16)) == d)
-        self.assertTrue(cf.ne(cf.dt('2100-1-1')) == d)
-        self.assertTrue(
-            cf.ne(cf.dt('2001-1-1')) & cf.ne(cf.dt(2010, 12, 31)) == d)
+        self.assertEqual(cf.ne(cf.dt(1990, 1, 1)), d)
+        self.assertNotEqual(cf.ne(cf.dt(2002, 6, 16)), d)
+        self.assertEqual(cf.ne(cf.dt('2100-1-1')), d)
+        self.assertEqual(
+            cf.ne(cf.dt('2001-1-1')) & cf.ne(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
-        self.assertFalse(cf.le(cf.dt(1990, 1, 1)) == d)
-        self.assertTrue(cf.le(cf.dt(2002, 6, 16)) == d)
-        self.assertTrue(cf.le(cf.dt('2100-1-1')) == d)
-        self.assertFalse(
-            cf.le(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)) == d)
+        self.assertNotEqual(cf.le(cf.dt(1990, 1, 1)), d)
+        self.assertEqual(cf.le(cf.dt(2002, 6, 16)), d)
+        self.assertEqual(cf.le(cf.dt('2100-1-1')), d)
+        self.assertNotEqual(
+            cf.le(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)), d)
 
         d = cf.dt(2002, 6, 16)
-        self.assertFalse(cf.lt(cf.dt(1990, 1, 1)) == d)
-        self.assertFalse(cf.lt(cf.dt(2002, 6, 16)) == d)
-        self.assertTrue(cf.lt(cf.dt('2100-1-1')) == d)
-        self.assertFalse(
-            cf.lt(cf.dt('2001-1-1')) & cf.lt(cf.dt(2010, 12, 31)) == d)
+        self.assertNotEqual(cf.lt(cf.dt(1990, 1, 1)), d)
+        self.assertNotEqual(cf.lt(cf.dt(2002, 6, 16)), d)
+        self.assertEqual(cf.lt(cf.dt('2100-1-1')), d)
+        self.assertNotEqual(
+            cf.lt(cf.dt('2001-1-1')) & cf.lt(cf.dt(2010, 12, 31)), d)
 
     def test_Query_evaluate(self):
         for x in (5, cf.Data(5, 'kg m-2'), cf.Data([5], 'kg m-2 s-1')):
@@ -396,15 +396,25 @@ class QueryTest(unittest.TestCase):
             self.assertNotEqual(x, cf.wo(3, 8))
             self.assertNotEqual(x, cf.set([3, 8, 11]))
 
-            # Test that the evaluation is commutative i.e. A == B means B == A
-            self.assertFalse(x == cf.eq(8) == x)
-            self.assertFalse(x == cf.lt(3) == x)
-            self.assertFalse(x == cf.le(3) == x)
-            self.assertFalse(x == cf.gt(8) == x)
-            self.assertFalse(x == cf.ge(8) == x)
-            self.assertFalse(x == cf.wi(8, 11) == x)
-            self.assertFalse(x == cf.wo(3, 8) == x)
-            self.assertFalse(x == cf.set([3, 8, 11]) == x)
+            # Test that the evaluation is commutative i.e. A == B
+            # means B == A
+            self.assertNotEqual(x, cf.eq(8))
+            self.assertNotEqual(x, cf.lt(3))
+            self.assertNotEqual(x, cf.le(3))
+            self.assertNotEqual(x, cf.gt(8))
+            self.assertNotEqual(x, cf.ge(8))
+            self.assertNotEqual(x, cf.wi(8, 11))
+            self.assertNotEqual(x, cf.wo(3, 8))
+            self.assertNotEqual(x, cf.set([3, 8, 11]))
+
+            self.assertNotEqual(cf.eq(8), x)
+            self.assertNotEqual(cf.lt(3), x)
+            self.assertNotEqual(cf.le(3), x)
+            self.assertNotEqual(cf.gt(8), x)
+            self.assertNotEqual(cf.ge(8), x)
+            self.assertNotEqual(cf.wi(8, 11), x)
+            self.assertNotEqual(cf.wo(3, 8), x)
+            self.assertNotEqual(cf.set([3, 8, 11]), x)
         # --- End: for
 
         c = cf.wi(2, 4)
@@ -419,19 +429,19 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(e.evaluate(7))
         self.assertFalse(e.evaluate(5))
 
-        self.assertTrue(3 == c)
-        self.assertFalse(5 == c)
+        self.assertEqual(3, c)
+        self.assertNotEqual(5, c)
 
-        self.assertTrue(c == 3)
-        self.assertFalse(c == 5)
+        self.assertEqual(c, 3)
+        self.assertNotEqual(c, 5)
 
-        self.assertTrue(3 == e)
-        self.assertTrue(7 == e)
-        self.assertFalse(5 == e)
+        self.assertEqual(3, e)
+        self.assertEqual(7, e)
+        self.assertNotEqual(5, e)
 
-        self.assertTrue(e == 3)
-        self.assertTrue(e == 7)
-        self.assertFalse(e == 5)
+        self.assertEqual(e, 3)
+        self.assertEqual(e, 7)
+        self.assertNotEqual(e, 5)
 
         x = 'qwerty'
         self.assertEqual(x, cf.eq('qwerty'))

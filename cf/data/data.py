@@ -10586,13 +10586,9 @@ False
         other:
             The object to compare for equality.
 
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons. By
-            default the value returned by the `atol` function is used.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons. By
-            default the value returned by the `rtol` function is used.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then data arrays with different fill values are
@@ -10601,7 +10597,7 @@ False
         {{verbose: `int` or `str` or `None`, optional}}
 
         traceback: deprecated at version 3.0.0
-            Use *verbose* parameter instead.
+            Use the *verbose* parameter instead.
 
     :Returns:
 

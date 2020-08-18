@@ -101,16 +101,16 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
             data=cf.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
         x.set_bounds(bounds)
 
-        self.assertTrue(x.shape == (9, 10))
-        self.assertTrue(x.bounds.shape == (9, 10, 4))
+        self.assertEqual(x.shape, (9, 10))
+        self.assertEqual(x.bounds.shape, (9, 10, 4))
 
         y = x.transpose()
-        self.assertTrue(y.shape == (10, 9))
-        self.assertTrue(y.bounds.shape == (10, 9, 4), y.bounds.shape)
+        self.assertEqual(y.shape, (10, 9))
+        self.assertEqual(y.bounds.shape, (10, 9, 4), y.bounds.shape)
 
         x.transpose([1, 0], inplace=True)
-        self.assertTrue(x.shape == (10, 9))
-        self.assertTrue(x.bounds.shape == (10, 9, 4), x.bounds.shape)
+        self.assertEqual(x.shape, (10, 9))
+        self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_squeeze(self):
         f = cf.read(self.filename)[0]
@@ -122,16 +122,16 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x.insert_dimension(1, inplace=True)
         x.insert_dimension(0, inplace=True)
 
-        self.assertTrue(x.shape == (1, 9, 1, 10))
-        self.assertTrue(x.bounds.shape == (1, 9, 1, 10, 4))
+        self.assertEqual(x.shape, (1, 9, 1, 10))
+        self.assertEqual(x.bounds.shape, (1, 9, 1, 10, 4))
 
         y = x.squeeze()
-        self.assertTrue(y.shape == (9, 10))
-        self.assertTrue(y.bounds.shape == (9, 10, 4), y.bounds.shape)
+        self.assertEqual(y.shape, (9, 10))
+        self.assertEqual(y.bounds.shape, (9, 10, 4), y.bounds.shape)
 
         x.squeeze(2, inplace=True)
-        self.assertTrue(x.shape == (1, 9, 10))
-        self.assertTrue(x.bounds.shape == (1, 9, 10, 4), x.bounds.shape)
+        self.assertEqual(x.shape, (1, 9, 10))
+        self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_floor(self):
         aux = self.aux1.copy()
@@ -250,9 +250,9 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_cyclic(self):
         aux = self.aux1.copy()
 
-        self.assertTrue(aux.cyclic() == set())
-        self.assertTrue(aux.cyclic(0) == set())
-        self.assertTrue(aux.cyclic() == set([0]))
+        self.assertEqual(aux.cyclic(), set())
+        self.assertEqual(aux.cyclic(0), set())
+        self.assertEqual(aux.cyclic(), set([0]))
 
     def test_AuxiliaryCoordinate_roll(self):
         aux = self.aux1.copy()

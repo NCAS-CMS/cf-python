@@ -11,73 +11,80 @@ import cf
 
 class TimeDurationTest(unittest.TestCase):
     def test_TimeDuration(self):
-        self.assertTrue(
-            cf.TimeDuration(2, 'calendar_years') >
+        self.assertGreater(
+            cf.TimeDuration(2, 'calendar_years'),
             cf.TimeDuration(1, 'calendar_years')
         )
-        self.assertTrue(
-            cf.TimeDuration(2, 'calendar_years') <
+        self.assertLess(
+            cf.TimeDuration(2, 'calendar_years'),
             cf.TimeDuration(25, 'calendar_months')
         )
-        self.assertTrue(
-            cf.TimeDuration(2, 'hours') <=
+        self.assertLessEqual(
+            cf.TimeDuration(2, 'hours'),
             cf.TimeDuration(1, 'days')
         )
-        self.assertTrue(
-            cf.TimeDuration(2, 'hours') ==
+        self.assertEqual(
+            cf.TimeDuration(2, 'hours'),
             cf.TimeDuration(1/12.0, 'days')
         )
-        self.assertTrue(
-            cf.TimeDuration(2, 'days') ==
+        self.assertEqual(
+            cf.TimeDuration(2, 'days'),
             cf.TimeDuration(48, 'hours')
         )
-        self.assertTrue(cf.TimeDuration(2, 'days') == cf.Data(2))
-        self.assertTrue(cf.TimeDuration(2, 'days') == cf.Data([2.], 'days'))
-        self.assertTrue(
-            cf.TimeDuration(2, 'days') > cf.Data([[60]], 'seconds'))
-        self.assertTrue(cf.TimeDuration(2, 'hours') <= 2)
-        self.assertTrue(cf.TimeDuration(0.1, units='seconds') == 0.1)
-        self.assertTrue(cf.TimeDuration(2, 'days') != 30.5)
-        self.assertTrue(
-            cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5))
-        self.assertTrue(
-            cf.TimeDuration(2, 'calendar_months') < numpy.array([[12]]))
+        self.assertEqual(cf.TimeDuration(2, 'days'), cf.Data(2))
+        self.assertEqual(cf.TimeDuration(2, 'days'), cf.Data([2.], 'days'))
+        self.assertGreater(
+            cf.TimeDuration(2, 'days'), cf.Data([[60]], 'seconds'))
+        self.assertLessEqual(cf.TimeDuration(2, 'hours'), 2)
+        self.assertEqual(cf.TimeDuration(0.1, units='seconds'), 0.1)
+        self.assertNotEqual(cf.TimeDuration(2, 'days'), 30.5)
+        self.assertGreater(
+            cf.TimeDuration(2, 'calendar_years'), numpy.array(1.5))
+        self.assertLess(
+            cf.TimeDuration(2, 'calendar_months'), numpy.array([[12]]))
 
-        self.assertFalse(
-            cf.TimeDuration(2, 'calendar_years') <=
+        self.assertGreater(
+            cf.TimeDuration(2, 'calendar_years'),
             cf.TimeDuration(1, 'calendar_years')
         )
-        self.assertFalse(
-            cf.TimeDuration(2, 'calendar_years') >=
+        self.assertLessEqual(
+            cf.TimeDuration(1, 'calendar_years'),
+            cf.TimeDuration(2, 'calendar_years')
+        )
+        
+        self.assertGreaterEqual(
+            cf.TimeDuration(25, 'calendar_months'),
+            cf.TimeDuration(2, 'calendar_years')
+        )
+        self.assertLess(
+            cf.TimeDuration(2, 'calendar_years'),
             cf.TimeDuration(25, 'calendar_months')
         )
-        self.assertFalse(
-            cf.TimeDuration(2, 'hours') > cf.TimeDuration(1, 'days'))
-        self.assertFalse(
-            cf.TimeDuration(2, 'hours') != cf.TimeDuration(1/12.0, 'days'))
-        self.assertFalse(
-            cf.TimeDuration(2, 'days') != cf.TimeDuration(48, 'hours'))
-        self.assertFalse(cf.TimeDuration(2, 'days') != cf.Data(2))
-#        self.assertFalse(cf.TimeDuration(2, 'days') <= cf.Data(1.5, ''))
-#        self.assertFalse(cf.TimeDuration(2, 'days') <= cf.Data(1.5, '1'))
-#        self.assertFalse(cf.TimeDuration(2, 'days') >= cf.Data(0.03, '100'))
-        self.assertFalse(cf.TimeDuration(2, 'days') != cf.Data([2.], 'days'))
-        self.assertFalse(
-            cf.TimeDuration(2, 'days') <= cf.Data([[60]], 'seconds'))
-        self.assertFalse(cf.TimeDuration(2, 'hours') > 2)
-        self.assertFalse(cf.TimeDuration(2, 'days') == 30.5)
-        self.assertFalse(
-            cf.TimeDuration(2, 'calendar_years') <= numpy.array(1.5))
-        self.assertFalse(
-            cf.TimeDuration(2, 'calendar_months') >= numpy.array([[12]]))
 
-        self.assertTrue(cf.TimeDuration(64, 'calendar_years') + 2 == cf.Y(66))
-        self.assertTrue(
-            cf.TimeDuration(64, 'calendar_years') - 2.5 == cf.Y(61.5))
-        self.assertTrue(
-            cf.M(23) + cf.TimeDuration(64, 'calendar_years') == cf.M(791))
-        self.assertTrue(
-            cf.TimeDuration(64, 'calendar_years') + cf.M(24) == cf.Y(66))
+        self.assertGreaterEqual(
+            cf.TimeDuration(1, 'days'), cf.TimeDuration(2, 'hours'))
+        self.assertEqual(
+            cf.TimeDuration(2, 'hours'), cf.TimeDuration(1/12.0, 'days'))
+        self.assertEqual(
+            cf.TimeDuration(2, 'days'), cf.TimeDuration(48, 'hours'))
+        self.assertEqual(cf.TimeDuration(2, 'days'), cf.Data(2))
+        self.assertEqual(cf.TimeDuration(2, 'days'), cf.Data([2.], 'days'))
+        self.assertGreater(
+            cf.TimeDuration(2, 'days'), cf.Data([[60]], 'seconds'))
+        self.assertEqual(cf.TimeDuration(2, 'hours'), 2)
+        self.assertNotEqual(cf.TimeDuration(2, 'days'), 30.5)
+        self.assertGreater(
+            cf.TimeDuration(2, 'calendar_years'), numpy.array(1.5))
+        self.assertLess(
+            cf.TimeDuration(2, 'calendar_months'), numpy.array([[12]]))
+
+        self.assertEqual(cf.TimeDuration(64, 'calendar_years') + 2, cf.Y(66))
+        self.assertEqual(
+            cf.TimeDuration(64, 'calendar_years') - 2.5, cf.Y(61.5))
+        self.assertEqual(
+            cf.M(23) + cf.TimeDuration(64, 'calendar_years'), cf.M(791))
+        self.assertEqual(
+            cf.TimeDuration(64, 'calendar_years') + cf.M(24), cf.Y(66))
 
         self.assertTrue(
             cf.TimeDuration(36, 'calendar_months') / 8 == cf.M(4.5))
