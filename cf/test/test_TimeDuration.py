@@ -51,7 +51,7 @@ class TimeDurationTest(unittest.TestCase):
             cf.TimeDuration(1, 'calendar_years'),
             cf.TimeDuration(2, 'calendar_years')
         )
-        
+
         self.assertGreaterEqual(
             cf.TimeDuration(25, 'calendar_months'),
             cf.TimeDuration(2, 'calendar_years')

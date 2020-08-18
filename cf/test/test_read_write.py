@@ -150,7 +150,7 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
 
         f = cf.read(dir, aggregate=False)
-        self.assertEqual(len(f),1, f)
+        self.assertEqual(len(f), 1, f)
 
         f = cf.read(dir, recursive=True, aggregate=False)
         self.assertEqual(len(f), 3, f)
@@ -303,7 +303,7 @@ class read_writeTest(unittest.TestCase):
                      datatype={numpy.dtype(float): numpy.dtype('float32')})
             g = cf.read(tmpfile)[0]
             self.assertEqual(g.dtype, numpy.dtype('float32'),
-                            'datatype read in is '+str(g.dtype))
+                            'datatype read in is ' + str(g.dtype))
 
         cf.chunksize(self.original_chunksize)
 
@@ -313,7 +313,7 @@ class read_writeTest(unittest.TestCase):
         cf.write(f, tmpfile, fmt='NETCDF4', single=True)
         g = cf.read(tmpfile)[0]
         self.assertEqual(g.dtype, numpy.dtype('float32'),
-                        'datatype read in is '+str(g.dtype))
+                        'datatype read in is ' + str(g.dtype))
 
         tmpfiles.append(tmpfile2)
 
@@ -323,7 +323,7 @@ class read_writeTest(unittest.TestCase):
         cf.write(f, tmpfile2, fmt='NETCDF4', double=True)
         g = cf.read(tmpfile2)[0]
         self.assertEqual(g.dtype, numpy.dtype(float),
-                        'datatype read in is '+str(g.dtype))
+                        'datatype read in is ' + str(g.dtype))
 
         for single in (True, False):
             for dousble in (True, False):

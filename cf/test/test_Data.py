@@ -569,7 +569,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(e.ndim, d.ndim - len(axes) + 1)
                 self.assertEqual(e.size, d.size)
         # --- End: for
-        
+
         cf.chunksize(self.original_chunksize)
 
     def test_Data_CachedArray(self):
@@ -1870,7 +1870,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(len(cf.Data([1, 2, 3])), 3)
         self.assertEqual(len(cf.Data([[1, 2, 3]])), 1)
         self.assertEqual(len(cf.Data([[1, 2, 3], [4, 5, 6]])), 2)
-        
+
         with self.assertRaises(Exception):
             _ = len(cf.Data(1))
 

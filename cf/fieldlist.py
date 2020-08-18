@@ -2,6 +2,10 @@ from copy import copy
 
 import logging
 
+import cfdm
+
+from .mixin_container import Container
+
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
@@ -14,7 +18,8 @@ from .decorators import (_deprecated_kwarg_check,
 logger = logging.getLogger(__name__)
 
 
-class FieldList(list):
+class FieldList(list,
+                cfdm.Container):
     '''An ordered sequence of fields.
 
     Each element of a field list is a field construct.
@@ -46,6 +51,17 @@ class FieldList(list):
     operator.
 
     '''
+    # Exclude method_descriptors inherited from `list` from the
+    # docstring substitution process
+    _docstring_substitution_exclusions = (
+        'append',
+        'extend',
+        'insert',
+        'pop',
+        'reverse',
+        'clear',
+    )
+
     def __init__(self, fields=None):
         '''**Initialization**
 
@@ -55,6 +71,8 @@ class FieldList(list):
              Create a new field list with these fields.
 
         '''
+        super(cfdm.Container, self).__init__()
+        
         if fields is not None:
             if getattr(fields, 'construct_type', None) == 'field':
                 self.append(fields)
@@ -76,6 +94,14 @@ class FieldList(list):
         out = [repr(f) for f in self]
         out = ',\n '.join(out)
         return '['+out+']'
+
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+    x.__str__() <==> str(x)
+
+        '''
+        return repr(self)
 
     # ----------------------------------------------------------------
     # Overloaded list methods
@@ -479,11 +505,7 @@ class FieldList(list):
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     If data arrays are compressed then the compression type and the
     underlying compressed arrays must be the same, as well as the
@@ -498,45 +520,16 @@ class FieldList(list):
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If `True` then the "_FillValue" and "missing_value"
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
@@ -544,25 +537,9 @@ class FieldList(list):
             that the "Conventions" property is always omitted by
             default.
 
-        ignore_data_type: `bool`, optional
-            If `True` then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If `True` then any compression applied to underlying arrays
-            is ignored and only uncompressed arrays are tested for
-            equality. By default the compression type and, if
-            applicable, the underlying compressed arrays must be the
-            same, as well as the arrays in their uncompressed forms
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another field list, or a subclass of
-            one. If *ignore_type* is True then
-            ``FieldList(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_compression: `bool`, optional}}
 
         unordered: `bool`, optional
             TODO
