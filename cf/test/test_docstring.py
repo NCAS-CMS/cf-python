@@ -129,12 +129,6 @@ class DocstringTest(unittest.TestCase):
                     '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
                         klass, klass.__name__, 'swapaxes'))
 
-    def test_docstring_plus_class(self):
-        string = '>>> d = {}.{}'.format(self.package, 'Data')
-        for klass in self.subclasses_of_PropertiesData:
-            for x in (klass, klass()):
-                self.assertIn(string, x.has_data.__doc__, klass)
-
     def test_docstring_repr(self):
         string = '<{}Data'.format(self.repr)
         for klass in self.subclasses_of_PropertiesData:
@@ -170,8 +164,8 @@ class DocstringTest(unittest.TestCase):
 
     def test_docstring_docstring_substitutions(self):
         for klass in self.subclasses_of_Container:
-            for x in (klass, klass()):
-                d = x._docstring_substitution()
+            for x in (klass,):
+                d = x._docstring_substitutions(klass)
                 self.assertIsInstance(d, dict)
                 self.assertIn(
                     '{{repr}}', d,

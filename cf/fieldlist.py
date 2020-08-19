@@ -1,3 +1,4 @@
+
 from copy import copy
 
 import logging
@@ -51,17 +52,6 @@ class FieldList(list,
     operator.
 
     '''
-    # Exclude method_descriptors inherited from `list` from the
-    # docstring substitution process
-    _docstring_substitution_exclusions = (
-        'append',
-        'extend',
-        'insert',
-        'pop',
-        'reverse',
-        'clear',
-    )
-
     def __init__(self, fields=None):
         '''**Initialization**
 
@@ -72,7 +62,7 @@ class FieldList(list,
 
         '''
         super(cfdm.Container, self).__init__()
-        
+
         if fields is not None:
             if getattr(fields, 'construct_type', None) == 'field':
                 self.append(fields)
@@ -102,6 +92,22 @@ class FieldList(list,
 
         '''
         return repr(self)
+
+    def __docstring_method_exclusions__(self):
+        '''Return the names of methods to exclude from docstring
+    substitutions.
+
+    See `_docstring_method_exclusions` for details.
+
+        '''
+        return (
+            'append',
+            'extend',
+            'insert',
+            'pop',
+            'reverse',
+            'clear',
+        )
 
     # ----------------------------------------------------------------
     # Overloaded list methods

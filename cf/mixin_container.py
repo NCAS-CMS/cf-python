@@ -13,7 +13,7 @@ class Container:
     .. versionadded:: 3.7.0
 
     '''
-    def __docstring_substitution__(self):
+    def __docstring_substitutions__(self):
         '''Define docstring substitutions that apply to this class and all of
     its subclasses.
 
@@ -48,5 +48,13 @@ class Container:
 
         '''
         return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 0
 
 # --- End: class
