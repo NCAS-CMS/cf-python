@@ -71,7 +71,7 @@ class Query:
        >>> lt5 = cf.Query('lt', 5)
        >>> c = ge3 & lt5
        >>> c
-       >>> <CF Query: [(ge 3) & (lt 5)]>
+       <CF Query: [(ge 3) & (lt 5)]>
        >>> c == 2
        False
        >>> c != 2
