@@ -14274,7 +14274,7 @@ class Field(mixin.PropertiesData,
                     : latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
-    >>>  print(g.dimension_coordinate('T').bounds[[0, -1]].datetime_array)
+    >>> print(g.dimension_coordinate('T').bounds[[0, -1]].datetime_array)
     [[cftime.DatetimeGregorian(1959-12-01 00:00:00)
       cftime.DatetimeGregorian(1960-01-01 00:00:00)]
      [cftime.DatetimeGregorian(1959-12-01 00:00:00)
