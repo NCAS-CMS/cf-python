@@ -330,6 +330,10 @@ Mathematical operations
    ~cf.AuxiliaryCoordinate.sum  
    ~cf.AuxiliaryCoordinate.sd
    ~cf.AuxiliaryCoordinate.var
+   ~cf.AuxiliaryCoordinate.standard_deviation
+   ~cf.AuxiliaryCoordinate.variance
+   ~cf.AuxiliaryCoordinate.maximum
+   ~cf.AuxiliaryCoordinate.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

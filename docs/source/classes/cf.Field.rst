@@ -477,6 +477,10 @@ Mathematical operations
    ~cf.Field.sd
    ~cf.Field.var
    ~cf.Field.weights
+   ~cf.Field.standard_deviation
+   ~cf.Field.variance
+   ~cf.Field.maximum
+   ~cf.Field.minimum
 
 .. rubric:: Exponential and logarithmic functions
 	    

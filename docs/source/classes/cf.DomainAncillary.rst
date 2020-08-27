@@ -327,6 +327,10 @@ Mathematical operations
    ~cf.DomainAncillary.sum  
    ~cf.DomainAncillary.sd
    ~cf.DomainAncillary.var
+   ~cf.DomainAncillary.standard_deviation
+   ~cf.DomainAncillary.variance
+   ~cf.DomainAncillary.maximum
+   ~cf.DomainAncillary.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

@@ -450,6 +450,8 @@ Order statistics
    ~cf.Data.minimum
    ~cf.Data.minimum_absolute_value
    ~cf.Data.percentile
+   ~cf.Data.max
+   ~cf.Data.min
 
 Averages and variances
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -468,6 +470,8 @@ Averages and variances
    ~cf.Data.root_mean_square
    ~cf.Data.standard_deviation
    ~cf.Data.variance
+   ~cf.Data.sd
+   ~cf.Data.var
 
 Sums
 ^^^^

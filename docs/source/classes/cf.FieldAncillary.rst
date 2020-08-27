@@ -307,6 +307,10 @@ Mathematical operations
    ~cf.FieldAncillary.sum  
    ~cf.FieldAncillary.sd
    ~cf.FieldAncillary.var
+   ~cf.FieldAncillary.standard_deviation
+   ~cf.FieldAncillary.variance
+   ~cf.FieldAncillary.maximum
+   ~cf.FieldAncillary.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

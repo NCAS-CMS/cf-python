@@ -334,6 +334,10 @@ Mathematical operations
    ~cf.DimensionCoordinate.sum  
    ~cf.DimensionCoordinate.sd
    ~cf.DimensionCoordinate.var
+   ~cf.DimensionCoordinate.standard_deviation
+   ~cf.DimensionCoordinate.variance
+   ~cf.DimensionCoordinate.maximum
+   ~cf.DimensionCoordinate.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

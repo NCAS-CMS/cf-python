@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 cf.Bounds
-=================
+=========
 
 ----
 
@@ -306,6 +306,10 @@ Mathematical operations
    ~cf.Bounds.sum  
    ~cf.Bounds.sd
    ~cf.Bounds.var
+   ~cf.Bounds.standard_deviation
+   ~cf.Bounds.variance
+   ~cf.Bounds.maximum
+   ~cf.Bounds.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    
