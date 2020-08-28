@@ -14382,23 +14382,23 @@ False
 
     The unweighted standard deviation, :math:`s`, of :math:`N` values
     :math:`x_i` with mean :math:`m` and with :math:`N-ddof` degrees of
-    freedom (:math:`ddof\ge0`) is
+    freedom (:math:`ddof\ge0`) is:
 
-    .. math:: s=\sqrt{\frac{1}{N-ddof} \sum_{i=1}^{N} (x_i - m)^2}
+    .. math:: s=\sqrt{\\frac{1}{N-ddof} \sum_{i=1}^{N} (x_i - m)^2}
 
-    The weighted standard deviation, :math:`\tilde{s}_N`, of :math:`N`
+    The weighted standard deviation, :math:`\\tilde{s}_N`, of :math:`N`
     values :math:`x_i` with corresponding weights :math:`w_i`, weighted
-    mean :math:`\tilde{m}` and with :math:`N` degrees of freedom is
+    mean :math:`\\tilde{m}` and with :math:`N` degrees of freedom is:
 
-    .. math:: \tilde{s}_N=\sqrt{\frac{1}{\sum_{i=1}^{N} w_i}
-                          \sum_{i=1}^{N} w_i(x_i - \tilde{m})^2}
+    .. math:: \\tilde{s}_N=\sqrt{\\frac{1}{\sum_{i=1}^{N} w_i}
+                          \sum_{i=1}^{N} w_i(x_i - \\tilde{m})^2}
 
-    The weighted standard deviation, :math:`\tilde{s}`, of :math:`N`
+    The weighted standard deviation, :math:`\\tilde{s}`, of :math:`N`
     values :math:`x_i` with corresponding weights :math:`w_i` and with
-    :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is
+    :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is:
 
-    .. math:: \tilde{s} = \sqrt{\frac{f \sum_{i=1}^{N} w_i}{f
-                          \sum_{i=1}^{N} w_i - ddof}} \tilde{s}_N
+    .. math:: \\tilde{s} = \sqrt{\\frac{f \sum_{i=1}^{N} w_i}{f
+                          \sum_{i=1}^{N} w_i - ddof}} \\tilde{s}_N
 
     where :math:`f` is the smallest positive number whose product with
     each weight is an integer. :math:`f \sum_{i=1}^{N} w_i` is the
@@ -14412,10 +14412,10 @@ False
     integer if its decimal part is sufficiently small (no greater than
     :math:`10^{-8}` plus :math:`10^{-5}` times its integer part). This
     approximation will never overestimate :math:`f`, so
-    :math:`\tilde{s}` will never be underestimated when the
+    :math:`\\tilde{s}` will never be underestimated when the
     approximation is used. If the weights are all integers which are
     collectively coprime then setting :math:`f=1` will guarantee that
-    :math:`\tilde{s}` is exact.
+    :math:`\\tilde{s}` is exact.
 
     :Parameters:
 
@@ -14431,7 +14431,7 @@ False
             result is guaranteed to broadcast correctly against the
             original array.
 
-            *Paameter example:*
+            *Parameter example:*
               Suppose that an array, ``d``, has shape (2, 3, 4) and
               ``e = d.sd(axis=1)``. Then ``e`` has shape (2, 1, 4)
               and, for example, ``d/e`` is allowed. If ``e =
