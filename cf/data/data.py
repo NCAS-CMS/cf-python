@@ -9262,7 +9262,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9342,7 +9343,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9440,7 +9442,8 @@ False
         `Data` or `None`
             The collapsed array.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -9552,7 +9555,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9643,7 +9647,8 @@ False
             The collapsed data, or `None` of the operation was
             in-place.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -12068,7 +12073,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `range`, `sum`, `sd`, `var`
 
     :Parameters:
 
@@ -12409,7 +12414,8 @@ False
         `Data` or `None`
             The collapsed array.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -14092,7 +14098,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sample_size`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sample_size`,
                  `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
                  `var`
 
@@ -14188,7 +14194,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
                  `sample_size`, `sd`, `sum_of_weights`,
                  `sum_of_weights2`, `var`
 
@@ -14227,7 +14233,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
                  `sample_size`, `sd`, `sum_of_weights`,
                  `sum_of_weights2`, `var`
 
@@ -14274,7 +14280,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`, `sum_of_weights2`, `var`
 
     :Parameters:
@@ -14325,7 +14331,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`, `sum_of_weights`, `var`
 
     :Parameters:
@@ -14528,7 +14534,7 @@ False
     The units of the returned array are the square of the units of the
     array.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`, `sum`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`, `sum`,
                  `sd`, `stats`
 
     :Parameters:
