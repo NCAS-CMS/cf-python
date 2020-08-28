@@ -14369,9 +14369,9 @@ False
                               _preserve_partitions=_preserve_partitions)
 
     @_deprecated_kwarg_check('i')
-    def standard_deviation(self, axes=None, squeeze=False, mtol=1,
-                           weights=None, ddof=0, inplace=False, i=False,
-                           _preserve_partitions=False):
+    def sd(self, axes=None, squeeze=False, mtol=1,
+           weights=None, ddof=0, inplace=False, i=False,
+           _preserve_partitions=False):
         '''Collapse axes by calculating their standard deviation.
 
     The standard deviation may be adjusted for the number of degrees of
@@ -14498,8 +14498,6 @@ False
 
     **Examples:**
 
-    Some, not wholly comprehensive, examples:
-
     >>> d = cf.Data([1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4])
     >>> e = cf.Data([1, 2, 3, 4])
     >>> d.sd(squeeze=False)
@@ -14523,9 +14521,8 @@ False
                               _preserve_partitions=_preserve_partitions)
 
     @_deprecated_kwarg_check('i')
-    def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
-                 ddof=0, inplace=False, i=False,
-                 _preserve_partitions=False):
+    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
+            ddof=0, inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their weighted variance.
 
     The units of the returned array are the square of the units of the
@@ -14555,6 +14552,7 @@ False
 
     **Examples:**
 
+    TODO
         '''
         units = self.Units
         if units:
@@ -14649,24 +14647,27 @@ False
             _preserve_partitions=_preserve_partitions
         )
 
-    def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
-           ddof=0, inplace=False, i=False, _preserve_partitions=False):
-        '''Alias for `standard_deviation`
+    def standard_deviation(
+        self, axes=None, squeeze=False, mtol=1, weights=None,
+        ddof=0, inplace=False, i=False, _preserve_partitions=False
+    ):
+        '''Alias for `sd`
 
         '''
-        return self.standard_deviation(
+        return self.sd(
             axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
             ddof=ddof, inplace=inplace,
             _preserve_partitions=_preserve_partitions
         )
 
-    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
-            ddof=0, inplace=False, i=False,
-            _preserve_partitions=False):
-        '''Alias of `variance`
+    def variance(
+        self, axes=None, squeeze=False, weights=None, mtol=1,
+        ddof=0, inplace=False, i=False, _preserve_partitions=False
+    ):
+        '''Alias for `var`
 
         '''
-        return self.variance(
+        return self.var(
             axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
             ddof=ddof, inplace=inplace,
             _preserve_partitions=_preserve_partitions
