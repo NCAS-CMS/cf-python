@@ -12837,7 +12837,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the data. By default the data
-            are not copied.
+            are copied.
 
     :Returns:
 
@@ -16925,7 +16925,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the construct. By default the
-            construct is not copied.
+            construct is copied.
 
     :Returns:
 
@@ -17835,7 +17835,6 @@ class Field(mixin.PropertiesData,
     def replace_construct(self, identity, construct, copy=True):
         '''Replace a metadata construct.
 
-
     Replacement assigns the same construct key and, if applicable, the
     domain axes of the original construct to the new, replacing
     construct.
@@ -17909,7 +17908,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the new construct. By default
-            the construct is not copied.
+            the construct is copied.
 
     :Returns:
 
