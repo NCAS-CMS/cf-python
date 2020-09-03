@@ -9,9 +9,10 @@ import numpy
 
 import cf
 
-
-tmpfile = tempfile.mkstemp('.cf_test')[1]
-tmpfiles = [tmpfile]
+n_tmpfiles = 1
+tmpfiles = [tempfile.mkstemp('_test_pp.nc', dir=os.getcwd())[1]
+            for i in range(n_tmpfiles)]
+[tmpfile] = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -40,14 +41,14 @@ class ppTest(unittest.TestCase):
             '1!24!SURFACE TEMPERATURE AFTER TIMESTEP  !Pa!!!NEW_NAME!!')
         text_file.close()
 
-        self.chunk_sizes = (17, 34, 300, 100000)[::-1]
+        self.chunk_sizes = (100000, 300, 34)
         self.original_chunksize = cf.chunksize()
-        self.test_only = ()
 
     def test_PP_load_stash2standard_name(self):
         f = cf.read(self.ppfilename)[0]
         self.assertEqual(f.identity(), 'surface_temperature')
         self.assertEqual(f.Units, cf.Units('K'))
+        
         for merge in (True, False):
             cf.load_stash2standard_name(self.new_table, merge=merge)
             f = cf.read(self.ppfilename)[0]
@@ -86,10 +87,10 @@ class ppTest(unittest.TestCase):
                 g = cf.read(tmpfile)[0]
 
                 self.assertTrue((f.array == array).all(),
-                                'Bad unpacking of WGDOS packed data')
+                                'Bad unpacking of PP WGDOS packed data')
 
                 self.assertTrue(f.equals(g, verbose=2),
-                                'Bad writing/reading. format='+fmt)
+                                'Bad writing/reading. fmt='+fmt)
 
         cf.chunksize(self.original_chunksize)
 
