@@ -3562,21 +3562,20 @@ class PropertiesData(Properties):
         units: `str` or `re.Pattern` or `Units`, optional
             Units to be compared.
 
-            Units are specified by a string or compiled regular
-            expression (e.g. ``'km'``, ``'m s-1'``,
-            ``re.compile('^kilo')``, etc.) or a `Units` object
-            (e.g. ``Units('km')``, ``Units('m s-1')``, etc.).
+            Units are specified by a string (e.g. ``'m s-1'``), or a
+            compiled regular expression (e.g. ``re.compile('^m')``),
+            or a `Units` object (e.g. ``Units('m s-1')``).
 
             If no units are provided then there is always a match.
 
         exact: `bool`, optional
-            If False then a match occurs if the construct's units
-            are equivalent to any of those given by *units*. For
-            example, metres and are equivelent to kilometres. By
-            default, a match only occurs if the construct's units are
-            exactly one of those given by *units*. Note that the
-            format of the units is not important, i.e. 'm' is exactly
-            the same as 'metres' for this purpose.
+            If False then a match occurs if the construct's units are
+            equivalent to any of those given by *units*. For example,
+            metres and are equivelent to kilometres. By default, a
+            match only occurs if the construct's units are exactly one
+            of those given by *units*. Note that the format of the
+            units is not important, i.e. 'm' is exactly the same as
+            'metres' for this purpose.
 
     :Returns:
 
@@ -3613,15 +3612,15 @@ class PropertiesData(Properties):
         self_units = self.Units
 
         ok = False
-        for value0 in units:
+        for value in units:
             try:
-                # re.compile object
-                ok = value0.search(self_units.units)
+                # re.Pattern object
+                ok = value.search(self_units.units)
             except (AttributeError, TypeError):
                 if exact:
-                    ok = Units(value0).equals(self_units)
+                    ok = Units(value).equals(self_units)
                 else:
-                    ok = Units(value0).equivalent(self_units)
+                    ok = Units(value).equivalent(self_units)
             # --- End: try
 
             if ok:
