@@ -14,9 +14,6 @@ class Field_collapseTest(unittest.TestCase):
         self.filename2 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
 
-        self.chunk_sizes = (17, 50, 100, 300, 3000, 300000)[::-1]
-        self.original_chunksize = cf.chunksize()
-
         self.test_only = []
 #        self.test_only = ['nought']
 #        self.test_only = ['test_Field_collapse']
