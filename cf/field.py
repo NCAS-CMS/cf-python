@@ -313,6 +313,8 @@ class Field(mixin.PropertiesData,
 
     '''
     def __new__(cls, *args, **kwargs):
+        '''
+        '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain = Domain

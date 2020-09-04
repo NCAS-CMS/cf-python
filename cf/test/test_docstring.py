@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import unittest
 
 import cf
@@ -73,11 +74,12 @@ class DocstringTest(unittest.TestCase):
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
-                    if name.startswith('__'):
+                    f = getattr(klass, name, None)
+
+                    if f is None or not hasattr(f, '__doc__'):
                         continue
 
-                    f = getattr(klass, name, None)
-                    if f is None or not hasattr(f, '__doc__'):
+                    if name.startswith('__') and not inspect.isfunction(f):
                         continue
 
                     self.assertIsNotNone(
