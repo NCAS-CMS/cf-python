@@ -302,6 +302,10 @@ Mathematical operations
    ~cf.Index.sum  
    ~cf.Index.sd
    ~cf.Index.var
+   ~cf.Index.standard_deviation
+   ~cf.Index.variance
+   ~cf.Index.maximum
+   ~cf.Index.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

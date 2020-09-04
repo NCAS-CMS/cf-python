@@ -8797,7 +8797,7 @@ False
      [4 --  6  7]
      [8  9 10 11]]
 
-    >>>  print(d.apply_masking().array)
+    >>> print(d.apply_masking().array)
     [[0  1  2  3]
      [4 --  6  7]
      [8  9 10 11]]
@@ -9312,7 +9312,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9389,7 +9390,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9484,7 +9486,8 @@ False
         `Data` or `None`
             The collapsed array.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -9596,7 +9599,8 @@ False
 
     Missing data elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
+                 `var`
 
     :Parameters:
 
@@ -9685,7 +9689,8 @@ False
             The collapsed data, or `None` of the operation was
             in-place.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -12020,7 +12025,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mean`, `range`, `sum`, `sd`, `var`
 
     :Parameters:
 
@@ -12350,7 +12355,8 @@ False
         `Data` or `None`
             The collapsed array.
 
-    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+                 `var`
 
     **Examples:**
 
@@ -13988,7 +13994,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sample_size`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sample_size`,
                  `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
                  `var`
 
@@ -14080,7 +14086,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
                  `sample_size`, `sd`, `sum_of_weights`,
                  `sum_of_weights2`, `var`
 
@@ -14117,7 +14123,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
                  `sample_size`, `sd`, `sum_of_weights`,
                  `sum_of_weights2`, `var`
 
@@ -14163,7 +14169,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`, `sum_of_weights2`, `var`
 
     :Parameters:
@@ -14212,7 +14218,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`, `sum_of_weights`, `var`
 
     :Parameters:
@@ -14254,9 +14260,9 @@ False
                               _preserve_partitions=_preserve_partitions)
 
     @_deprecated_kwarg_check('i')
-    def standard_deviation(self, axes=None, squeeze=False, mtol=1,
-                           weights=None, ddof=0, inplace=False, i=False,
-                           _preserve_partitions=False):
+    def sd(self, axes=None, squeeze=False, mtol=1,
+           weights=None, ddof=0, inplace=False, i=False,
+           _preserve_partitions=False):
         '''Collapse axes by calculating their standard deviation.
 
     The standard deviation may be adjusted for the number of degrees of
@@ -14267,23 +14273,23 @@ False
 
     The unweighted standard deviation, :math:`s`, of :math:`N` values
     :math:`x_i` with mean :math:`m` and with :math:`N-ddof` degrees of
-    freedom (:math:`ddof\ge0`) is
+    freedom (:math:`ddof\ge0`) is:
 
-    .. math:: s=\sqrt{\frac{1}{N-ddof} \sum_{i=1}^{N} (x_i - m)^2}
+    .. math:: s=\sqrt{\\frac{1}{N-ddof} \sum_{i=1}^{N} (x_i - m)^2}
 
-    The weighted standard deviation, :math:`\tilde{s}_N`, of :math:`N`
+    The weighted standard deviation, :math:`\\tilde{s}_N`, of :math:`N`
     values :math:`x_i` with corresponding weights :math:`w_i`, weighted
-    mean :math:`\tilde{m}` and with :math:`N` degrees of freedom is
+    mean :math:`\\tilde{m}` and with :math:`N` degrees of freedom is:
 
-    .. math:: \tilde{s}_N=\sqrt{\frac{1}{\sum_{i=1}^{N} w_i}
-                          \sum_{i=1}^{N} w_i(x_i - \tilde{m})^2}
+    .. math:: \\tilde{s}_N=\sqrt{\\frac{1}{\sum_{i=1}^{N} w_i}
+                          \sum_{i=1}^{N} w_i(x_i - \\tilde{m})^2}
 
-    The weighted standard deviation, :math:`\tilde{s}`, of :math:`N`
+    The weighted standard deviation, :math:`\\tilde{s}`, of :math:`N`
     values :math:`x_i` with corresponding weights :math:`w_i` and with
-    :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is
+    :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is:
 
-    .. math:: \tilde{s} = \sqrt{\frac{f \sum_{i=1}^{N} w_i}{f
-                          \sum_{i=1}^{N} w_i - ddof} } \tilde{s}_N
+    .. math:: \\tilde{s} = \sqrt{\\frac{f \sum_{i=1}^{N} w_i}{f
+                          \sum_{i=1}^{N} w_i - ddof}} \\tilde{s}_N
 
     where :math:`f` is the smallest positive number whose product with
     each weight is an integer. :math:`f \sum_{i=1}^{N} w_i` is the
@@ -14297,10 +14303,10 @@ False
     integer if its decimal part is sufficiently small (no greater than
     :math:`10^{-8}` plus :math:`10^{-5}` times its integer part). This
     approximation will never overestimate :math:`f`, so
-    :math:`\tilde{s}` will never be underestimated when the
+    :math:`\\tilde{s}` will never be underestimated when the
     approximation is used. If the weights are all integers which are
     collectively coprime then setting :math:`f=1` will guarantee that
-    :math:`\tilde{s}` is exact.
+    :math:`\\tilde{s}` is exact.
 
     :Parameters:
 
@@ -14316,7 +14322,7 @@ False
             result is guaranteed to broadcast correctly against the
             original array.
 
-            *Paameter example:*
+            *Parameter example:*
               Suppose that an array, ``d``, has shape (2, 3, 4) and
               ``e = d.sd(axis=1)``. Then ``e`` has shape (2, 1, 4)
               and, for example, ``d/e`` is allowed. If ``e =
@@ -14381,8 +14387,6 @@ False
 
     **Examples:**
 
-    Some, not wholly comprehensive, examples:
-
     >>> d = cf.Data([1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4])
     >>> e = cf.Data([1, 2, 3, 4])
     >>> d.sd(squeeze=False)
@@ -14406,15 +14410,14 @@ False
                               _preserve_partitions=_preserve_partitions)
 
     @_deprecated_kwarg_check('i')
-    def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
-                 ddof=0, inplace=False, i=False,
-                 _preserve_partitions=False):
+    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
+            ddof=0, inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their weighted variance.
 
     The units of the returned array are the square of the units of the
     array.
 
-    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`, `sum`,
+    .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`, `sum`,
                  `sd`, `stats`
 
     :Parameters:
@@ -14436,6 +14439,7 @@ False
 
     **Examples:**
 
+    TODO
         '''
         units = self.Units
         if units:
@@ -14530,24 +14534,27 @@ False
             _preserve_partitions=_preserve_partitions
         )
 
-    def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
-           ddof=0, inplace=False, i=False, _preserve_partitions=False):
-        '''Alias for `standard_deviation`
+    def standard_deviation(
+        self, axes=None, squeeze=False, mtol=1, weights=None,
+        ddof=0, inplace=False, i=False, _preserve_partitions=False
+    ):
+        '''Alias for `sd`
 
         '''
-        return self.standard_deviation(
+        return self.sd(
             axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
             ddof=ddof, inplace=inplace,
             _preserve_partitions=_preserve_partitions
         )
 
-    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
-            ddof=0, inplace=False, i=False,
-            _preserve_partitions=False):
-        '''Alias of `variance`
+    def variance(
+        self, axes=None, squeeze=False, weights=None, mtol=1,
+        ddof=0, inplace=False, i=False, _preserve_partitions=False
+    ):
+        '''Alias for `var`
 
         '''
-        return self.variance(
+        return self.var(
             axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
             ddof=ddof, inplace=inplace,
             _preserve_partitions=_preserve_partitions

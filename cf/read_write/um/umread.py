@@ -1,8 +1,6 @@
 import logging
 import os
 import netCDF4
-import csv
-import re
 import textwrap
 
 from datetime import datetime

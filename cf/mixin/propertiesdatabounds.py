@@ -1,5 +1,3 @@
-from functools import reduce
-from operator  import mul
 
 import logging
 

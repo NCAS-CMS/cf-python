@@ -1,7 +1,6 @@
 import datetime
 import inspect
 import os
-import sys
 import unittest
 
 import cf

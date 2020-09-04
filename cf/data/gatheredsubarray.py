@@ -1,5 +1,4 @@
 from functools import reduce
-from os        import close
 from operator  import mul
 
 import numpy

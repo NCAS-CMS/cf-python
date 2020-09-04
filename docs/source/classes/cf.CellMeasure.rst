@@ -331,6 +331,10 @@ Mathematical operations
    ~cf.CellMeasure.sum  
    ~cf.CellMeasure.sd
    ~cf.CellMeasure.var
+   ~cf.CellMeasure.standard_deviation
+   ~cf.CellMeasure.variance
+   ~cf.CellMeasure.maximum
+   ~cf.CellMeasure.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

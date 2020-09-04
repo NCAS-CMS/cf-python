@@ -303,6 +303,10 @@ Mathematical operations
    ~cf.Count.sum  
    ~cf.Count.sd
    ~cf.Count.var
+   ~cf.Count.standard_deviation
+   ~cf.Count.variance
+   ~cf.Count.maximum
+   ~cf.Count.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    

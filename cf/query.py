@@ -71,7 +71,7 @@ class Query:
        >>> lt5 = cf.Query('lt', 5)
        >>> c = ge3 & lt5
        >>> c
-       >>> <CF Query: [(ge 3) & (lt 5)]>
+       <CF Query: [(ge 3) & (lt 5)]>
        >>> c == 2
        False
        >>> c != 2
@@ -1247,7 +1247,7 @@ def contains(value, units=None):
     <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
     >>> cf.contains(30, 'degrees_east')
     <CF Query: [lower_bounds(le 30 degrees_east) & upper_bounds(ge 30 degrees_east)]>
-    >>>  cf.contains(cf.Data(10, 'km'))
+    >>> cf.contains(cf.Data(10, 'km'))
     <CF Query: [lower_bounds(le 10 km) & upper_bounds(ge 10 km)]>
 
     >>> c

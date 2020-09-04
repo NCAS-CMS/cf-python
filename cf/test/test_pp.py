@@ -2,7 +2,6 @@ import atexit
 import datetime
 import os
 import tempfile
-import time
 import unittest
 
 import numpy

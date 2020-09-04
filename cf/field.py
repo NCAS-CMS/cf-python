@@ -1,5 +1,4 @@
 from collections import namedtuple
-from copy import deepcopy
 from functools import reduce
 from operator import mul as operator_mul
 from operator import itemgetter
@@ -12790,7 +12789,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the data. By default the data
-            are not copied.
+            are copied.
 
     :Returns:
 
@@ -14223,7 +14222,7 @@ class Field(mixin.PropertiesData,
                     : latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
-    >>>  print(g.dimension_coordinate('T').bounds[[0, -1]].datetime_array)
+    >>> print(g.dimension_coordinate('T').bounds[[0, -1]].datetime_array)
     [[cftime.DatetimeGregorian(1959-12-01 00:00:00)
       cftime.DatetimeGregorian(1960-01-01 00:00:00)]
      [cftime.DatetimeGregorian(1959-12-01 00:00:00)
@@ -16839,7 +16838,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the construct. By default the
-            construct is not copied.
+            construct is copied.
 
     :Returns:
 
@@ -17725,7 +17724,6 @@ class Field(mixin.PropertiesData,
     def replace_construct(self, identity, construct, copy=True):
         '''Replace a metadata construct.
 
-
     Replacement assigns the same construct key and, if applicable, the
     domain axes of the original construct to the new, replacing
     construct.
@@ -17799,7 +17797,7 @@ class Field(mixin.PropertiesData,
 
         copy: `bool`, optional
             If True then set a copy of the new construct. By default
-            the construct is not copied.
+            the construct is copied.
 
     :Returns:
 

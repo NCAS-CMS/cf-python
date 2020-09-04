@@ -3,8 +3,6 @@ import inspect
 import itertools
 from operator import mul
 import os
-import sys
-import time
 import unittest
 
 from functools import reduce

@@ -1942,6 +1942,12 @@ class PropertiesData(Properties):
             "array"
         )
 
+    def standard_deviation(self):
+        '''Alias for `sd`
+
+        '''
+        return self.sd()
+
     def sum(self):
         '''The sum of the data array.
 
@@ -2034,6 +2040,12 @@ class PropertiesData(Properties):
                 "ERROR: Can't get the variance when there is no data array")
 
         return data.var(squeeze=True, ddof=0)
+
+    def variance(self):
+        '''Alias for `var`
+
+        '''
+        return self.var()
 
     @property
     def subspace(self):

@@ -1,10 +1,8 @@
-import copy
 import datetime
 import unittest
 
 import cf
 
-import logging
 
 # Note: it is important we test on the cf logging config rather than the
 # generic Python module logging (i.e. 'cf.logging' not just 'logging').

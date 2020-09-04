@@ -1,7 +1,6 @@
 import datetime
 import tempfile
 import os
-import sys
 import numpy
 import unittest
 import atexit
