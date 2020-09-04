@@ -48,7 +48,7 @@ class ppTest(unittest.TestCase):
         f = cf.read(self.ppfilename)[0]
         self.assertEqual(f.identity(), 'surface_temperature')
         self.assertEqual(f.Units, cf.Units('K'))
-        
+
         for merge in (True, False):
             cf.load_stash2standard_name(self.new_table, merge=merge)
             f = cf.read(self.ppfilename)[0]

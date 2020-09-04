@@ -324,7 +324,7 @@ class read_writeTest(unittest.TestCase):
         g = cf.read(tmpfile2)[0]
         self.assertEqual(g.dtype, numpy.dtype(float),
                          'datatype read in is ' + str(g.dtype))
-        
+
         for single in (True, False):
             for dousble in (True, False):
                 with self.assertRaises(Exception):
