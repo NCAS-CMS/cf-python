@@ -2,6 +2,14 @@ import cfdm
 
 
 class Array(cfdm.Array):
+    '''Abstract base class for a container of an underlying array.
+
+    The form of the array is defined by the initialization parameters
+    of a subclass.
+
+    .. versionadded:: 3.0.0
+
+    '''
     def __repr__(self):
         '''Called by the `repr` built-in function.
 

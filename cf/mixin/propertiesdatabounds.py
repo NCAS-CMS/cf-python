@@ -482,7 +482,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return False
 
-    def _apply_superclass_data_oper(self, v, oper_name, *oper_args,
+    def _apply_superclass_data_oper(self, v, oper_name, oper_args=(),
                                     bounds=True, interior_ring=False,
                                     **oper_kwargs):
         '''Define an operation that can be applied to the data array.
@@ -827,14 +827,13 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with masked elements.
 
     **Examples:**
@@ -974,14 +973,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with ceilinged of data. If the operation was
             in-place then `None` is returned.
 
@@ -1062,14 +1060,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any bounds
             are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with clipped data. If the operation was
             in-place then `None` is returned.
 
@@ -1080,8 +1077,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
-            a_max, bounds=bounds, inplace=inplace, i=i, units=units)
+            _inplace_enabled_define_and_cleanup(self), 'clip',
+            (a_min, a_max),
+            bounds=bounds, inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -1227,14 +1225,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the cosine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -1262,7 +1259,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
+            _inplace_enabled_define_and_cleanup(self), 'cos',
+            bounds=bounds)
 
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
@@ -1693,14 +1691,13 @@ class PropertiesDataBounds(PropertiesData):
             passages of the sun through vernal equinox
             (i.e. 365.242198781 days).
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with converted reference time data values.
 
     **Examples:**
@@ -1747,10 +1744,7 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``prop='long_name'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property does not exist. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
         bounds: `bool`
             TODO 1.8
@@ -1818,11 +1812,11 @@ class PropertiesDataBounds(PropertiesData):
 
             No axes are flattened if *axes* is an empty sequence.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with flattened data, or `None` if the
             operation was in-place.
 
@@ -1874,11 +1868,9 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -2029,11 +2021,9 @@ class PropertiesDataBounds(PropertiesData):
         calendar: `str`
             The new calendar.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -2048,8 +2038,9 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
-            'override_calendar', calendar, bounds=True,
-            interior_ring=False, inplace=inplace, i=i)
+            'override_calendar',
+            (calendar,),
+            bounds=True, interior_ring=False, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2072,11 +2063,9 @@ class PropertiesDataBounds(PropertiesData):
         units: `str` or `Units`
             The new units for the data array.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
@@ -2102,8 +2091,9 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
-            'override_units', units, bounds=True, interior_ring=False,
-            inplace=inplace, i=i)
+            'override_units',
+            (units,),
+            bounds=True, interior_ring=False, inplace=inplace, i=i)
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
@@ -2225,33 +2215,9 @@ class PropertiesDataBounds(PropertiesData):
             index. By default it is assumed to be the last
             index. Ignored if *tripolar* is `None`.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the operation.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -2285,14 +2251,13 @@ class PropertiesDataBounds(PropertiesData):
 
             If no axes are specified then all axes are flipped.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with flipped axes, or `None` if the operation
             was in-place.
 
@@ -2362,14 +2327,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the exponential of data values. If the
             operation was in-place then `None` is returned.
 
@@ -2451,8 +2415,9 @@ class PropertiesDataBounds(PropertiesData):
 
         if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
-                "Can't set bounds: Bounds units of {!r} are not equivalent "
-                "to {!r}".format(bounds.Units, self.Units)
+                "Can't set bounds: Bounds units {!r} are not equivalent "
+                "to {!r}, the units of {!r}".format(
+                    bounds.Units, self.Units, self)
             )
 
             bounds.Units = self_units
@@ -2491,14 +2456,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the sine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -2546,11 +2510,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the trigonometric inverse tangent of data
             values. If the operation was in-place then `None` is returned.
 
@@ -2593,11 +2557,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the inverse hyperbolic tangent of data
             values. If the operation was in-place then `None` is returned.
 
@@ -2642,11 +2606,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the trigonometric inverse sine of data
             values. If the operation was in-place then `None` is returned.
 
@@ -2691,11 +2655,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the inverse hyperbolic sine of data values.
             If the operation was in-place then `None` is returned.
 
@@ -2738,11 +2702,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the trigonometric inverse cosine of data
             values. If the operation was in-place then `None` is returned.
 
@@ -2776,7 +2740,8 @@ class PropertiesDataBounds(PropertiesData):
     def arccosh(self, bounds=True, inplace=False):
         '''Take the inverse hyperbolic cosine of the data element-wise.
 
-    Units are ignored in the calculation. The result has units of radians.
+    Units are ignored in the calculation. The result has units of
+    radians.
 
     The "standard_name" and "long_name" properties are removed from
     the result.
@@ -2787,13 +2752,14 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the inverse hyperbolic cosine of data
-            values. If the operation was in-place then `None` is returned.
+            values. If the operation was in-place then `None` is
+            returned.
 
     **Examples:**
 
@@ -2840,16 +2806,16 @@ class PropertiesDataBounds(PropertiesData):
 
     .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`
 
-
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-            The construct with the hyperbolic tangent of data values. If the
-            operation was in-place then `None` is returned.
+        `{{class}}` or `None`
+            The construct with the hyperbolic tangent of data
+            values. If the operation was in-place then `None` is
+            returned.
 
     **Examples:**
 
@@ -2899,13 +2865,13 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-            The construct with the hyperbolic sine of data values. If the
-            operation was in-place then `None` is returned.
+        `{{class}}` or `None`
+            The construct with the hyperbolic sine of data values. If
+            the operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -2954,13 +2920,14 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-            The construct with the hyperbolic cosine of data values. If the
-            operation was in-place then `None` is returned.
+        `{{class}}` or `None`
+            The construct with the hyperbolic cosine of data
+            values. If the operation was in-place then `None` is
+            returned.
 
     **Examples:**
 
@@ -3011,11 +2978,11 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the tangent of data values. If the
             operation was in-place then `None` is returned.
 
@@ -3066,14 +3033,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with the logarithm of data values. If the
             operation was in-place then `None` is returned.
 
@@ -3105,6 +3071,7 @@ class PropertiesDataBounds(PropertiesData):
         # TODO: 'base' kwarg not used? why?
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'log',
+            (base,),
             bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
@@ -3134,14 +3101,13 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with removed data axes. If the operation
             was in-place then `None` is returned.
 
@@ -3183,14 +3149,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with truncated data. If the operation was
             in-place then `None` is returned.
 
@@ -3460,14 +3425,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
 
@@ -3515,14 +3479,13 @@ class PropertiesDataBounds(PropertiesData):
             If False then do not alter any bounds. By default any
             bounds are also altered.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
 
@@ -3554,15 +3517,14 @@ class PropertiesDataBounds(PropertiesData):
         iaxis: `int`
             TODO
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parmaeter instead.
+        {{i: deprecated at version 3.0.0}}
 
     :Returns:
 
-    TODO
+        `{{class}}` or `None`
+            TODO
 
     **Examples:**
 
@@ -3570,8 +3532,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
-            shift, interior_ring=True, inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'roll',
+            (iaxis, shift),
+            bounds=True, interior_ring=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

@@ -10,7 +10,6 @@ import cf
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
-    chunk_sizes = (17, 34, 300, 100000)[::-1]
 
     def test_create_field(self):
         # Dimension coordinates
@@ -165,14 +164,6 @@ class create_fieldTest(unittest.TestCase):
                 'grid_longitude: mean grid_latitude: max'):
             f.set_construct(cm)
 
-
-#        print(f.constructs.data_axes())
-#        print(repr(f.constructs))
-#        print(f.cell_measures)
-#        print(f.constructs)
-#
-#        f.dump()
-
         # Write the file, and read it in
         cf.write(f, self.filename, verbose=0, string=True)
 
@@ -184,8 +175,8 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

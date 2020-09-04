@@ -1,10 +1,7 @@
 import cfdm
 
-from . import abstract
 
-
-class GatheredArray(abstract.CompressedArray,
-                    cfdm.GatheredArray):
+class GatheredArray(cfdm.GatheredArray):
     '''An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array

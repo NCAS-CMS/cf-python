@@ -78,7 +78,7 @@ class CellMethod(cfdm.CellMethod):
 
     **Examples:**
 
-    c = CellMethod.create('lat: mean (interval: 1 hour)')
+    >>> c = CellMethod.create('lat: mean (interval: 1 hour)')
 
         '''
         incorrect_interval = 'Cell method interval is incorrectly formatted'
@@ -616,13 +616,14 @@ class CellMethod(cfdm.CellMethod):
         other:
             The object to compare for equality.
 
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
+        {{rtol: number, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
+
+        traceback: deprecated at version 3.0.0
+            Use the *verbose* parameter instead.
 
     :Returns:
 

@@ -1,10 +1,7 @@
 import cfdm
 
-from . import abstract
 
-
-class RaggedContiguousArray(abstract.CompressedArray,
-                            cfdm.RaggedContiguousArray):
+class RaggedContiguousArray(cfdm.RaggedContiguousArray):
     '''An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array

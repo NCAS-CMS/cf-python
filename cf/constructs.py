@@ -125,7 +125,6 @@ class Constructs(cfdm.Constructs):
     :Parameters:
 
         identities: optional
-
             Select constructs that have any of the given identities or
             construct keys.
 

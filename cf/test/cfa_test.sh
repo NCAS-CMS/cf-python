@@ -1,43 +1,39 @@
 # --------------------------------------------------------------------
 # Test cfa
 # --------------------------------------------------------------------
-sample_files=$PWD
+sample_files=tmp_cfa_dir_in
+test_file=tmp_test_cfa.nc
+test_dir=tmp_cfa_dir
 
-test_file=delme_cfa.nc
-test_dir=delme_cfa_dir
+rm -fr $sample_files $test_dir $test_file
+mkdir -p $sample_files
 
-rm -fr $test_dir $test_file
-mkdir $test_dir
-
-for opt in vs vm vc
+for f in `ls -1 test_file.nc file*.nc *.pp`
 do
-#  echo $opt
-  cfa    -$opt $sample_files/[a-be-zD]*.[np][cp] >/dev/null
-  cfa -1 -$opt $sample_files/[a-be-zD]*.[np][cp] >/dev/null
-  for f in `ls $sample_files/[a-be-zD]*.[np][cp] | grep -v $test_file`
-  do
-#    echo $f
-    cfa -$opt $f >/dev/null
-    if [ $opt = vs ] ; then
-      cfa --overwrite -o $test_file $f
-      cfa --overwrite -d $test_dir  $f
-    fi
-  done
-  rm -f $test_file
+    ln -sf $PWD/$f $sample_files/$f
 done
 
+mkdir -p $test_dir
+
+cfa -vm $sample_files/test_file.nc >/dev/null
+cfa --overwrite -o $test_file $sample_files/test_file.nc
+cfa --overwrite -d $test_dir  $sample_files/test_file.nc
+
+cfa -vm $sample_files/* >/dev/null
+cfa -vc $sample_files/* >/dev/null
+cfa -1 -vs $sample_files/file* >/dev/null  
+
 #echo 0
-rm -f $test_file
-cfa --overwrite -d $test_dir  $sample_files/[a-be-zD]*.[np][cp]
+cfa --overwrite -d $test_dir $sample_files/*
 
 #echo 1
 rm -f $test_file
-cfa -o $test_file $sample_files/test*.[np][cp]
+cfa -o $test_file $sample_files
 
 #echo 2
 rm -f $test_file
-cfa -n -o $test_file $test_dir/file*.[np][cp]
+cfa -n -o $test_file $sample_files/*
 
 #echo 3
-rm -fr $test_dir $test_file
+rm -fr $test_dir $test_file $sample_files
 

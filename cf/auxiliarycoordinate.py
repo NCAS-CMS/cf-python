@@ -62,5 +62,4 @@ class AuxiliaryCoordinate(mixin.Coordinate,
         '''
         return True
 
-
 # --- End: class

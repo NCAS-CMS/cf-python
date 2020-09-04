@@ -9,16 +9,18 @@ import netCDF4
 import cf
 
 
-n_tmpfiles = 6
+n_tmpfiles = 8
 tmpfiles = [tempfile.mkstemp('_test_groups.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
 (
     ungrouped_file1,
     ungrouped_file2,
     ungrouped_file3,
+    ungrouped_file4,
     grouped_file1,
     grouped_file2,
     grouped_file3,
+    grouped_file4,
 ) = tmpfiles
 
 
@@ -73,9 +75,10 @@ class GroupsTest(unittest.TestCase):
         grid0.del_coordinate('auxiliarycoordinate1')
 
         cf.write(f, ungrouped_file)
-        g = cf.read(ungrouped_file, verbose=1)[0]
-
-        self.assertTrue(f.equals(g, verbose=3))
+        g = cf.read(ungrouped_file, verbose=1)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g, verbose=2))
 
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
@@ -95,16 +98,19 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
-        # Move constructs one by one to the /forecast group
+        # Move constructs one by one to the /forecast group. The order
+        # in which we do this matters!
         # ------------------------------------------------------------
         for name in (
-                'time',  # Dimension coordinate
-                'grid_latitude',  # Dimension coordinate
                 'longitude',  # Auxiliary coordinate
+                'latitude',  # Auxiliary coordinate
+                'long_name=Grid latitude name',  # Auxiliary coordinate
                 'measure:area',  # Cell measure
                 'surface_altitude',  # Domain ancillary
                 'air_temperature standard_error',  # Field ancillary
                 'grid_mapping_name:rotated_latitude_longitude',
+                'time',  # Dimension coordinate
+                'grid_latitude',  # Dimension coordinate
         ):
             g.construct(name).nc_set_variable_groups(['forecast'])
             cf.write(g, grouped_file, verbose=1)
@@ -134,14 +140,12 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
 
-        h = cf.read(grouped_file, verbose=1)
+        h = cf.read(grouped_file, verbose='WARNING')
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_geometry(self):
         f = cf.example_field(6)
-
-#        return True
 
         ungrouped_file = ungrouped_file2
         grouped_file = grouped_file2
@@ -150,6 +154,7 @@ class GroupsTest(unittest.TestCase):
         g = cf.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
         g = g[0]
+
         self.assertTrue(f.equals(g, verbose=3))
 
         # ------------------------------------------------------------
@@ -167,7 +172,7 @@ class GroupsTest(unittest.TestCase):
 
         h = cf.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        self.assertTrue(f.equals(h[0], verbose=3))
 
         # ------------------------------------------------------------
         # Move the geometry container to the /forecast group
@@ -273,7 +278,6 @@ class GroupsTest(unittest.TestCase):
         ungrouped_file = ungrouped_file3
         grouped_file = grouped_file3
 
-#        return True
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
@@ -333,11 +337,79 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
+    def test_groups_dimension(self):
+        f = cf.example_field(0)
+
+        ungrouped_file = ungrouped_file4
+        grouped_file = grouped_file4
+
+        cf.write(f, ungrouped_file)
+        g = cf.read(ungrouped_file, verbose=1)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g, verbose=3))
+
+        # ------------------------------------------------------------
+        # Move the field construct to the /forecast/model group
+        # ------------------------------------------------------------
+        g.nc_set_variable_groups(['forecast', 'model'])
+
+        # ------------------------------------------------------------
+        # Move all data constructs to the /forecast group
+        # ------------------------------------------------------------
+        for construct in g.constructs.filter_by_data().values():
+            construct.nc_set_variable_groups(['forecast'])
+
+        # ------------------------------------------------------------
+        # Move all coordinate bounds constructs to the /forecast group
+        # ------------------------------------------------------------
+        for construct in g.coordinates.values():
+            try:
+                construct.bounds.nc_set_variable_groups(['forecast'])
+            except ValueError:
+                pass
+        # --- End: for
+
+        cf.write(g, grouped_file, verbose=1)
+
+        nc = netCDF4.Dataset(grouped_file, 'r')
+        self.assertIn(
+            f.nc_get_variable(),
+            nc.groups['forecast'].groups['model'].variables
+        )
+
+        for key, construct in g.constructs.filter_by_data().items():
+            self.assertIn(
+                f.constructs[key].nc_get_variable(),
+                nc.groups['forecast'].variables
+            )
+
+        nc.close()
+
+        h = cf.read(grouped_file, verbose=1)
+        self.assertEqual(len(h), 1)
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=3))
+
+        # ------------------------------------------------------------
+        # Move all the lat dimension to the /forecast group
+        # ------------------------------------------------------------
+        key = g.domain_axis_key('latitude')
+        domain_axis = g.constructs[key]
+        domain_axis.nc_set_dimension_groups(['forecast'])
+
+        cf.write(g, grouped_file, verbose=1)
+
+        h = cf.read(grouped_file, verbose=1)
+        self.assertEqual(len(h), 1)
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=3))
+
 # --- End: class
 
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
+    print('Run date:', datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

@@ -84,6 +84,8 @@ class CoordinateReference(cfdm.CoordinateReference):
 
     '''
     def __new__(cls, *args, **kwargs):
+        '''
+        '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum = Datum
@@ -291,17 +293,14 @@ class CoordinateReference(cfdm.CoordinateReference):
         other: cf.CoordinateReference
             The object to compare for equality.
 
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `cf.atol` function is used.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `cf.rtol` function is used.
+        {{rtol: number, optional}}
 
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            instances differ. TODO
+        {{verbose: `int` or `str` or `None`, optional}}
+
+        traceback: deprecated at version 3.0.0
+            Use the *verbose* parameter instead.
 
     :Returns:
 
@@ -532,12 +531,13 @@ class CoordinateReference(cfdm.CoordinateReference):
     :Parameters:
 
         identity_map: dict
-            For example: ``{'dim2': 'dim3', 'aux2': 'latitude', 'aux4': None}``
+            For example: ``{'dim2': 'dim3', 'aux2': 'latitude',
+            'aux4': None}``
 
         strict: `bool`, optional
-            If True then coordinate or domain ancillary identifiers not
-            set in the *identity_map* dictiontary are set to `None`. By
-            default they are left unchanged.
+            If True then coordinate or domain ancillary identifiers
+            not set in the *identity_map* dictiontary are set to
+            `None`. By default they are left unchanged.
 
         i: `bool`, optional
 

@@ -26,24 +26,24 @@ class CellMeasureTest(unittest.TestCase):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()
 
-        self.assertTrue(x.measure == 'area')
+        self.assertEqual(x.measure, 'area')
         del x.measure
         self.assertIsNone(getattr(x, 'measure', None))
         x.measure = 'qwerty'
-        self.assertTrue(x.measure == 'qwerty')
+        self.assertEqual(x.measure, 'qwerty')
 
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()
 
-        self.assertTrue(x.identity() == 'measure:area')
+        self.assertEqual(x.identity(), 'measure:area')
         del x.measure
-        self.assertTrue(x.identity() == 'ncvar%cell_measure', x.identity())
+        self.assertEqual(x.identity(), 'ncvar%cell_measure', x.identity())
         x.nc_del_variable()
-        self.assertTrue(x.identity() == '')
-
+        self.assertEqual(x.identity(), '')
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

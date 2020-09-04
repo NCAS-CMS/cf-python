@@ -140,9 +140,8 @@ class DimensionCoordinateTest(unittest.TestCase):
                 self.assertTrue((g_rolled.array == g_rolled_0.array).all())
 
             for index in range(0, 10):  # check all elements are rolled
-                self.assertTrue(
-                    g_rolled.array[0, index, 0] == g.array[0, index, -shift_by]
-                )
+                self.assertEqual(g_rolled.array[0, index, 0],
+                                 g.array[0, index, -shift_by])
 
     def test_DimensionCoordinate_cellsize(self):
         d = self.dim.copy()
@@ -230,30 +229,30 @@ class DimensionCoordinateTest(unittest.TestCase):
         x = f.dimension_coordinates('X').value()
 
         x.positive = 'up'
-        self.assertTrue(x.positive == 'up')
+        self.assertEqual(x.positive, 'up')
         del x.positive
 
         x.axis = 'Z'
-        self.assertTrue(x.axis == 'Z')
+        self.assertEqual(x.axis, 'Z')
         del x.axis
 
         x.axis = 'T'
-        self.assertTrue(x.ndim == 1)
+        self.assertEqual(x.ndim, 1)
 
     def test_DimensionCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
 
-        self.assertTrue(x.shape == (9,))
-        self.assertTrue(x.bounds.shape == (9, 2))
+        self.assertEqual(x.shape, (9,))
+        self.assertEqual(x.bounds.shape, (9, 2))
 
         y = x.insert_dimension(0)
-        self.assertTrue(y.shape == (1, 9))
-        self.assertTrue(y.bounds.shape == (1, 9, 2), y.bounds.shape)
+        self.assertEqual(y.shape, (1, 9))
+        self.assertEqual(y.bounds.shape, (1, 9, 2), y.bounds.shape)
 
         x.insert_dimension(-1, inplace=True)
-        self.assertTrue(x.shape == (9, 1))
-        self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
+        self.assertEqual(x.shape, (9, 1))
+        self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DimensionCoordinate_binary_operation(self):
         f = cf.read(self.filename)[0]
