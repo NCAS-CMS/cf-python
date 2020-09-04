@@ -11,6 +11,19 @@ class styleTest(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+        # Note these must be specified relative to the roor dir of the repo:
+        non_cf_python_files = [
+            'scripts/cfa',
+            'docs/source/conf.py',
+            'setup.py',
+        ]
+        root_dir_relative_to_pwd = os.path.abspath(
+            os.path.join(os.pardir, os.pardir))
+        self.non_cf_dir_python_paths = [
+            os.path.join(root_dir_relative_to_pwd, *(path.split("/")))
+            for path in non_cf_python_files
+        ]
+
     def test_pep8_compliance(self):
         pep8_check = pycodestyle.StyleGuide()
 
@@ -32,9 +45,10 @@ class styleTest(unittest.TestCase):
             'E731',  # ... one lambda expression, need to check is OK to convert
         )  # TODO these remove incrementally as move towards full compliance
 
-        # Find all Python source code ('.py') files in the 'cf' directory,
+        # First add Python files which lie outside of the cf directory:
+        python_files = self.non_cf_dir_python_paths
+        # Then find all Python source code ('.py') files in the 'cf' directory,
         # including all unskipped sub-directories within e.g. test directory:
-        python_files = []
         for root_dir, dirs, filelist in os.walk('..'):
             if os.path.basename(root_dir) in skip_dirs:
                 continue
