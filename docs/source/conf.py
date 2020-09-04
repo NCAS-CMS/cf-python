@@ -27,6 +27,7 @@ print()
 
 cfdm_version = cfdm.__version__
 
+
 def _read(fname):
     """Returns content of a file.
 
@@ -50,7 +51,7 @@ def _get_cf_version():
     """Returns CF version by inspecting core/__init__.py file.
 
     """
-    return cf.__cf_version__ #re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+    return cf.__cf_version__  # re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
 #                     _read("../../cf/__init__.py"),
 #                     re.MULTILINE).group(1)
 
@@ -80,26 +81,27 @@ sys.path.insert(0, os.path.abspath('../..'))
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = '2.3.1'
 
-#rst_prolog = """
-#.. |CF| replace:: """+_get_cf_version()+"""
-#"""
+# rst_prolog = """
+# .. |CF| replace:: """+_get_cf_version()+"""
+# """
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.autosummary',
-#              'sphinx.ext.viewcode',
-              'sphinx.ext.linkcode',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.graphviz',
-#              'sphinx.ext.inheritance_diagram',
-              'sphinx.ext.intersphinx',
-              'sphinx.ext.doctest',
-              'sphinx.ext.githubpages',
-#              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
-              'sphinx_copybutton',
-              'sphinx_toggleprompt',
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    # 'sphinx.ext.viewcode',
+    'sphinx.ext.linkcode',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.graphviz',
+    # 'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.doctest',
+    'sphinx.ext.githubpages',
+    # 'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
+    'sphinx_copybutton',
+    'sphinx_toggleprompt',
 ]
 
 
@@ -112,9 +114,9 @@ autosummary_generate = True
 # and inserted.
 autoclass_content = 'both'
 
-#inheritance_graph_attrs = {'rankdir': "TB",
+# inheritance_graph_attrs = {'rankdir': "TB",
 #                           'clusterrank': 'local'}
-#inheritance_node_attrs  = {'style': 'filled'}
+# inheritance_node_attrs  = {'style': 'filled'}
 
 # This value selects how automatically documented members are sorted
 # (http://sphinx-doc.org/latest/ext/autodoc.html)
@@ -123,22 +125,23 @@ autodoc_member_order = 'groupwise'
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
 # directives. (http://sphinx-doc.org/latest/ext/autodoc.html)
-autodoc_default_flags = ['members', 'inherited-members', 'show-inheritance'] # v1.8.5
-#autodoc_default_options = {'members'          : True, # v2
+autodoc_default_flags = [
+    'members', 'inherited-members', 'show-inheritance']  # v1.8.5
+# autodoc_default_options = {'members'          : True,  # v2
 #                           'inherited-members': True,
 #                           'show-inheritance' : True,}
 
 intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
-    'sphinx' : ('https://www.sphinx-doc.org/en/master/',  None),
-    'python' : ('https://docs.python.org/3', None),
-    'numpy'  : ('https://docs.scipy.org/doc/numpy', None),
-    'scipy'  : ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'sphinx': ('https://www.sphinx-doc.org/en/master/',  None),
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     # 'netCDF4': ('https://unidata.github.io/netcdf4-python', None),
-    'cftime' : ('https://unidata.github.io/cftime', None),
+    'cftime': ('https://unidata.github.io/cftime', None),
     'cfunits': ('https://ncas-cms.github.io/cfunits', None),
-    'cfdm'   : ('https://ncas-cms.github.io/cfdm', None),
-    'cfplot' : ('https://ajheaps.github.io/cf-plot', None),
+    'cfdm': ('https://ncas-cms.github.io/cfdm', None),
+    'cfplot': ('https://ajheaps.github.io/cf-plot', None),
     }
 
 # This extension is meant to help with the common pattern of having
@@ -147,21 +150,24 @@ intersphinx_mapping = {
 # simply subpages in other websites. It does so by providing aliases
 # to base URLs, so that you only need to give the subpage name when
 # creating a link.
-# extlinks = {'CF': ('http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#%s', 'cf')}
+# extlinks = {
+#     'CF': (
+#          'http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#%s', 'cf')
+# }
 
 # The name of the default domain. Can also be None to disable a
 # default domain. The default is 'py'.
-#primary_domain = 'cf'
+# primary_domain = 'cf'
 
 # Add any paths that contain templates here, relative to this directory.
-#templates_path = ['../_templates', '../../_templates']
+# templates_path = ['../_templates', '../../_templates']
 templates_path = ['../_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
 
 # The encoding of source files.
-#source_encoding = 'utf-8-sig'
+# source_encoding = 'utf-8-sig'
 
 # The master toctree document.
 master_doc = 'index'
@@ -182,21 +188,21 @@ version = _get_cf_version()
 
 # The language for content autogenerated by Sphinx. Refer to
 # documentation for a list of supported languages.
-#language = None
+# language = None
 
 # There are two options for replacing |today|: either, you set today
 # to some non-false value, then it is used:
-#today = ''
-#Else, today_fmt is used as the format for a strftime call.
-#today_fmt = '%B %d, %Y'
+# today = ''
+# Else, today_fmt is used as the format for a strftime call.
+# today_fmt = '%B %d, %Y'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = []
 
 # The reST default role (used for this markup: `text`) to use for all
-#documents.
-#default_role = None
+# documents.
+# default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = False
@@ -210,61 +216,61 @@ add_module_names = True
 show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-#pygments_style = 'sphinx'
+# pygments_style = 'sphinx'
 
 # The default language to highlight source code
 highlight_language = 'python'
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+# modindex_common_prefix = []
 
 # -- Options for HTML output --------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the
 # documentation for a list of builtin themes.
-#html_theme = 'nature'
-html_theme = 'alabaster' #'default' #'haiku' #'default'
+# html_theme = 'nature'
+html_theme = 'alabaster'  # 'default' #'haiku' #'default'
 
 # body_min_width (int or str): Minimal width of the document
 # body. This can be an int, which is interpreted as pixels or a valid
 # CSS dimension string such as ‘70em’ or ‘50%’. Use 0 if you don’t
 # want a width limit. Defaults may depend on the theme (often 450px).
-#body_min_width = '100000px' #180em'
+# body_min_width = '100000px' #180em'
 
-#/home/opt-user/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/Sphinx-1.2.2-py2.7.egg/sphinx/themes
+# /home/opt-user/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/Sphinx-1.2.2-py2.7.egg/sphinx/themes
 
 # Theme options are theme-specific and customize the look and feel of
 # a theme further.  For a list of options available for each theme,
 # see the documentation.
-#default html_theme_options = {"stickysidebar"   : "true",
-#default                       "externalrefs"    : "false",
-#default                       'sidebarbgcolor'  : '#F2F2F2',
-#default                       'sidebartextcolor': '#777777',
-#default                       'sidebarbgcolor'  : '#F2F2F2',
-#default                       'sidebartextcolor': '#777777',
-#default                       'sidebarlinkcolor': '#003469',
-#default                       'relbarbgcolor'   : '#5682AD',
-#default                       'relbartextcolor' : '#ffffff',
-#default                       'relbarlinkcolor' : '#ffffff',
-#default                       'headbgcolor'     : '#FFFFFF',
-#default                       'headtextcolor'   : '#000000',
-#default                       }
+# default html_theme_options = {"stickysidebar"   : "true",
+# default                       "externalrefs"    : "false",
+# default                       'sidebarbgcolor'  : '#F2F2F2',
+# default                       'sidebartextcolor': '#777777',
+# default                       'sidebarbgcolor'  : '#F2F2F2',
+# default                       'sidebartextcolor': '#777777',
+# default                       'sidebarlinkcolor': '#003469',
+# default                       'relbarbgcolor'   : '#5682AD',
+# default                       'relbartextcolor' : '#ffffff',
+# default                       'relbarlinkcolor' : '#ffffff',
+# default                       'headbgcolor'     : '#FFFFFF',
+# default                       'headtextcolor'   : '#000000',
+# default                       }
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-    'show_related'    : 'true',
+    'show_related': 'true',
     'sidebar_collapse': 'false',
-    'fixed_sidebar'   : 'true',
-    'page_width'      : '85%',
-    'seealso_bg'      : 'transparent',
-    'seealso_border'  : 'transparent',
-    'shadow'          : 'false',
-    'show_powered_by' : 'true',
-    'font_size'       : '13pt',
-    'code_font_size'  : '10pt',
-    'font_family'     : 'Arial',
+    'fixed_sidebar': 'true',
+    'page_width': '85%',
+    'seealso_bg': 'transparent',
+    'seealso_border': 'transparent',
+    'shadow': 'false',
+    'show_powered_by': 'true',
+    'font_size': '13pt',
+    'code_font_size': '10pt',
+    'font_family': 'Arial',
     'head_font_family': 'Arial',
     'link_hover': '#6b0000',
     'github_button': 'true',
@@ -282,16 +288,16 @@ html_title = "Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as
 # html_title.
-#html_short_title = None
+# html_short_title = None
 
 # The name of an image file (relative to this directory) to place at
 # the top of the sidebar.
-#html_logo = None
+# html_logo = None
 
 # The name of an image file (within the static path) to use as favicon
 # of the docs.  This file should be a Windows icon file (.ico) being
 # 16x16 or 32x32 pixels large.
-#html_favicon = None
+# html_favicon = None
 
 # Add any paths that contain custom static files (such as style
 # sheets) here, relative to this directory. They are copied after the
@@ -308,23 +314,24 @@ html_css_files = [
 # bottom, using the given strftime format.
 html_last_updated_fmt = '%b %d, %Y'
 
-## If true, SmartyPants will be used to convert quotes and dashes to
-## typographically correct entities.
+# If true, SmartyPants will be used to convert quotes and dashes to
+# typographically correct entities.
 html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
-html_sidebars = { '**': ['about.html',
-                         'searchbox.html',
-                         'globaltoc.html',
-                         'relations.html',
-#                         'sourcelink.html',
-]
+# html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
+html_sidebars = {'**': [
+    'about.html',
+    'searchbox.html',
+    'globaltoc.html',
+    'relations.html',
+    # 'sourcelink.html',
+    ]
 }
 
 # Additional templates that should be rendered to pages, maps page
 # names to template names.
-#html_additional_pages = {}
+# html_additional_pages = {}
 
 # If false, no module index is generated.
 html_domain_indices = True
@@ -340,19 +347,19 @@ html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default
 # is True.
-#html_show_sphinx = True
+# html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is
 # True.
-#html_show_copyright = True
+# html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all
 # pages will contain a <link> tag referring to it.  The value of this
 # option must be the base URL from which the finished HTML is served.
-#html_use_opensearch = ''
+# html_use_opensearch = ''
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
-#html_file_suffix = None
+# html_file_suffix = None
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'cfdoc'
@@ -360,11 +367,11 @@ htmlhelp_basename = 'cfdoc'
 
 # -- Options for LaTeX output -------------------------------------------------
 
-## The paper size ('letter' or 'a4').
-#latex_paper_size = 'a4'
+# The paper size ('letter' or 'a4').
+# latex_paper_size = 'a4'
 
 # The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
+# latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples (source
 # start file, target name, title, author, documentclass
@@ -376,7 +383,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at
 # the top of the title page.
-#latex_logo = None
+# latex_logo = None
 
 # For "manual" documents, if this is true, then toplevel headings are
 # parts, not chapters.
@@ -389,10 +396,10 @@ latex_show_pagerefs = False
 latex_show_urls = 'footnote'
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+# latex_preamble = ''
 
 # Documents to append as an appendix to all manuals.
-#latex_appendices = []
+# latex_appendices = []
 
 # If false, no module index is generated.
 latex_domain_indices = True
@@ -425,19 +432,21 @@ toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
 
-import inspect, cf
+import inspect
+import cf
 from os.path import relpath, dirname
 
 link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
 
+
 def linkcode_resolve(domain, info):
 
-    #=================================================================
+    # =================================================================
     # Must delete all .doctrees directories in build for changes to be
     # picked up. E.g.:
     #
     # >> rm -fr build/.doctrees build/*/.doctrees build/*/*/.doctrees
-    #=================================================================
+    # =================================================================
 
     online_source_code = True
 
@@ -463,12 +472,12 @@ def linkcode_resolve(domain, info):
     # Get the object wrapped by obj. This makes sure that the actual
     # code, rather that the decorator's code, get used.
     obj = inspect.unwrap(obj)
-    
+
     try:
         fn = inspect.getsourcefile(obj)
     except:
         fn = None
-    
+
     if not fn:
         return None
 
@@ -511,5 +520,3 @@ def linkcode_resolve(domain, info):
     else:
         # Point to local source code relative to this directory.
         return "../../../cf/{0}{1}".format(fn, linespec)
-
-
