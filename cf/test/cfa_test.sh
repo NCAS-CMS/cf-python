@@ -1,6 +1,13 @@
-# --------------------------------------------------------------------
+#!/bin/sh
+
+# -------------------------------------------------------------------------
 # Test cfa
-# --------------------------------------------------------------------
+# -------------------------------------------------------------------------
+# Note: use 'exit N' for different N on cfa commands instead of 'set -e'
+# once to make it easier to determine downstream which cfa command fails
+# (first), since the Python unittest calls this script by subprocess
+# which just conveys that the script, not a specific line, errors.
+
 sample_files=tmp_cfa_dir_in
 test_file=tmp_test_cfa.nc
 test_dir=tmp_cfa_dir
@@ -15,25 +22,24 @@ done
 
 mkdir -p $test_dir
 
-cfa -vm $sample_files/test_file.nc >/dev/null
-cfa --overwrite -o $test_file $sample_files/test_file.nc
-cfa --overwrite -d $test_dir  $sample_files/test_file.nc
+cfa -vm $sample_files/test_file.nc 2>&1 >/dev/null || exit 2
+cfa --overwrite -o $test_file $sample_files/test_file.nc 2>&1 || exit 3
+cfa --overwrite -d $test_dir  $sample_files/test_file.nc 2>&1 || exit 4
 
-cfa -vm $sample_files/* >/dev/null
-cfa -vc $sample_files/* >/dev/null
-cfa -1 -vs $sample_files/file* >/dev/null  
+cfa -vm $sample_files/* 2>&1 >/dev/null || exit 5
+cfa -vc $sample_files/* 2>&1 >/dev/null || exit 6
+cfa -1 -vs $sample_files/file* 2>&1 >/dev/null || exit 7
 
 #echo 0
-cfa --overwrite -d $test_dir $sample_files/*
+cfa --overwrite -d $test_dir $sample_files/* 2>&1 || exit 8
 
 #echo 1
 rm -f $test_file
-cfa -o $test_file $sample_files
+cfa -o $test_file $sample_files 2>&1 || exit 9
 
 #echo 2
 rm -f $test_file
-cfa -n -o $test_file $sample_files/*
+cfa -n -o $test_file $sample_files/* 2>&1 || exit 10
 
 #echo 3
 rm -fr $test_dir $test_file $sample_files
-
