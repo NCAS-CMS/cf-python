@@ -19,8 +19,8 @@ def find_test_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
             if (fnmatch.fnmatch(basename, '*.sh') or
-                fnmatch.fnmatch(basename, '*.nc') or
-                fnmatch.fnmatch(basename, '*.pp')):
+                    fnmatch.fnmatch(basename, '*.nc') or
+                    fnmatch.fnmatch(basename, '*.pp')):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
@@ -44,13 +44,14 @@ def _get_version():
                      re.MULTILINE).group(1)
 
 
-version      = _get_version()
-packages     = ['cf']
-etc_files    = [f for f in find_package_data_files('cf/etc')]
+version = _get_version()
+packages = ['cf']
+etc_files = [f for f in find_package_data_files('cf/etc')]
 umread_files = [f for f in find_package_data_files('cf/umread_lib/c-lib')]
-test_files   = [f for f in find_test_files('cf/test')]
+test_files = [f for f in find_test_files('cf/test')]
 
 package_data = etc_files + umread_files + test_files
+
 
 class build_umread(build):
     '''Adpated from
@@ -64,7 +65,8 @@ class build_umread(build):
         # Build umread
         print('Running build_umread')
 
-        build_dir = os.path.join(os.path.abspath(self.build_lib), 'cf/umread_lib/c-lib')
+        build_dir = os.path.join(
+            os.path.abspath(self.build_lib), 'cf/umread_lib/c-lib')
 
         cmd = ['make', '-C', build_dir]
 
@@ -85,9 +87,17 @@ class build_umread(build):
                 print('SUCCESSFULLY built UM read C library')
             else:
                 print('WARNING: Failed to build the UM read C library.')
-                print('         Attempting to read UKMO PP and UM format files will result in failure.')
-                print('         This will not affect any other cf functionality.')
-                print('         In particular, netCDF file processing is unaffected.')
+                print(
+                    '         Attempting to read UKMO PP and UM format files '
+                    'will result in failure.'
+                )
+                print(
+                    '         This will not affect any other cf functionality.'
+                )
+                print(
+                    '         In particular, netCDF file processing is '
+                    'unaffected.'
+                )
 
             print('-' * 80)
             print('\n', '*' * 80)
@@ -95,12 +105,12 @@ class build_umread(build):
             print("cf build successful")
             print()
 
-
         self.execute(compile, [], 'compiling umread')
-#--- End: class
+
+    # --- End: class
 
 
-long_description="""
+long_description = """
 CF Python
 =========
 
@@ -215,57 +225,65 @@ Tests are run from within the ``cf/test`` directory:
 
 # Get dependencies
 requirements = open('requirements.txt', 'r')
-install_requires = requirements.read().splitlines() 
+install_requires = requirements.read().splitlines()
 
-setup(name = "cf-python",
-      long_description = long_description,
-      version      = version,
-      description  = "A CF-compliant earth science data analysis library",
-      author       = "David Hassell",
-      maintainer   = "David Hassell",
-      maintainer_email  = "david.hassell@ncas.ac.uk",
-      author_email = "david.hassell@ncas.ac.uk",
-      url          = "https://ncas-cms.github.io/cf-python",
-      platforms    = ["Linux", "MacOS"],
-      keywords     = ['cf', 'netcdf', 'UM', 'data', 'science',
-                      'oceanography', 'meteorology', 'climate'],
-      classifiers  = ["Development Status :: 5 - Production/Stable",
-                      "Intended Audience :: Science/Research",
-                      "License :: OSI Approved :: MIT License",
-                      "Topic :: Scientific/Engineering :: Mathematics",
-                      "Topic :: Scientific/Engineering :: Physics",
-                      "Topic :: Scientific/Engineering :: Atmospheric Science",
-                      "Topic :: Utilities",
-                      "Operating System :: POSIX :: Linux",
-                      "Operating System :: MacOS"
-                      ],
-      packages     = ['cf',
-                      'cf.abstract',
-                      'cf.mixin',
-                      'cf.data',
-                      'cf.data.abstract',
-                      'cf.docstring',
-                      'cf.read_write',
-                      'cf.read_write.um',
-                      'cf.read_write.netcdf',
-                      'cf.umread_lib',
-                      'cf.test'
-                     ],
-      package_data = {'cf': package_data},
-      scripts      = ['scripts/cfa'],
-      python_requires = '>=3.5',
-      install_requires = install_requires,
-#      install_requires = ['netCDF4>=1.5.3',
-#                          'cftime>=1.1.3',
-#                          'numpy>=1.15',
-#                          'cfdm>=1.8.5, <1.9',
-#                          'psutil>=0.6.0',
-#                          'cfunits>=3.2.7'
-##                          'scipy>=1.1.0',
-##                          'matplotlib>=3.0.0',
-##                          'mpi4py>=3.0.0',
-##                          'ESMF>=8.0',
-##                          'udunits2==2.2.25',
-#                      ],
-      cmdclass     = {'build': build_umread}, #https://docs.python.org/2/distutils/apiref.html
-  )
+setup(
+    name="cf-python",
+    long_description=long_description,
+    version=version,
+    description="A CF-compliant earth science data analysis library",
+    author="David Hassell",
+    maintainer="David Hassell",
+    maintainer_email="david.hassell@ncas.ac.uk",
+    author_email="david.hassell@ncas.ac.uk",
+    url="https://ncas-cms.github.io/cf-python",
+    platforms=["Linux", "MacOS"],
+    keywords=[
+        'cf', 'netcdf', 'UM', 'data', 'science', 'oceanography',
+        'meteorology', 'climate'
+    ],
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Topic :: Scientific/Engineering :: Mathematics",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Atmospheric Science",
+        "Topic :: Utilities",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS"
+    ],
+    packages=[
+        'cf',
+        'cf.abstract',
+        'cf.mixin',
+        'cf.data',
+        'cf.data.abstract',
+        'cf.docstring',
+        'cf.read_write',
+        'cf.read_write.um',
+        'cf.read_write.netcdf',
+        'cf.umread_lib',
+        'cf.test'
+    ],
+    package_data={'cf': package_data},
+    scripts=['scripts/cfa'],
+    python_requires='>=3.5',
+    install_requires=install_requires,
+    # install_requires=[
+    #     'netCDF4>=1.5.3',
+    #     'cftime>=1.1.3',
+    #     'numpy>=1.15',
+    #     'cfdm>=1.8.5, <1.9',
+    #     'psutil>=0.6.0',
+    #     'cfunits>=3.2.7'
+    #     'scipy>=1.1.0',
+    #     'matplotlib>=3.0.0',
+    #     'mpi4py>=3.0.0',
+    #     'ESMF>=8.0',
+    #     'udunits2==2.2.25',
+    # ],
+    #
+    # https://docs.python.org/2/distutils/apiref.html:
+    cmdclass={'build': build_umread},
+)
