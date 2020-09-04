@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-#-*-python-*-
+# !/usr/bin/env python
+# -*-python-*-
 
 if __name__ == '__main__':
 
@@ -886,13 +886,13 @@ Open Source Initiative MIT License
 Written by David Hassell
 '''.format(version, date, os.path.dirname(os.path.abspath(cf.__file__)))
 
-        p = subprocess.Popen(['man', '-r',
-                              ' Manual page cfa(1)\ ?ltline\ %lt?L/%L.:',
-                              '-l', '-'],
-                             stdin=subprocess.PIPE,
-                             universal_newlines=True)
+        p = subprocess.Popen(
+            ['man', '-r', ' Manual page cfa(1)\ ?ltline\ %lt?L/%L.:',
+             '-l', '-'],
+            stdin=subprocess.PIPE,
+            universal_newlines=True
+        )
         p.communicate(input=manpage)
-
 
     def _check_overwrite(outfile, files, overwrite):
         '''
@@ -924,10 +924,12 @@ Written by David Hassell
         # Remove the pre-existing output file
         os.remove(outfile)
 
-
-    iam   = os.path.basename(sys.argv[0])
-    usage = "USAGE: {0} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] [-n] [-o file] [-s property] [-u] [-v mode] [-x] [OPTIONS] INPUTS".format(
-        iam)
+    iam = os.path.basename(sys.argv[0])
+    usage = (
+        "USAGE: {0} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] "
+        "[-n] [-o file] [-s property] [-u] [-v mode] [-x] [OPTIONS] "
+        "INPUTS".format(iam)
+    )
 
     short_help = '''\
 {0}
@@ -976,59 +978,64 @@ Written by David Hassell
   INPUTS                 Input files and directories
 
 Using cf-python library version {1} at {2}'''.format(
-    usage, cf.__version__, os.path.dirname(os.path.abspath(cf.__file__)))
+            usage, cf.__version__, os.path.dirname(
+                os.path.abspath(cf.__file__)
+            )
+    )
 
     # --------------------------------------------------------------------
     # Parse command line options
     # --------------------------------------------------------------------
     try:
-        opts, infiles = getopt(sys.argv[1:], "1aDd:f:hino:r:s:uv:x:",
-                               longopts=['axis=',
-                                         'cfa_base=',
-                                         'compress=',
-                                         'contiguous',
-                                         'Directory',
-                                         'directory=',
-                                         'double',
-                                         'equal=',
-                                         'equal_all',
-                                         'exclude=',
-                                         'exist=',
-                                         'exist_all',
-                                         'external=',
-                                         'fletcher32',
-                                         'follow_symlinks',
-                                         'format=',
-                                         'help',
-                                         'ignore=',
-                                         'ignore_read_error',
-                                         'info=',
-                                         'least_sig_digit=',
-                                         'ncvar_identities',
-                                         'no_aggregation',
-                                         'no_overlap',
-                                         'no_shuffle',
-                                         'one',
-                                         'outfile=',
-                                         'overwrite',
-                                         'promote=',
-                                         'recursive',
-                                         'reference_datetime=',
-                                         'relaxed_identities',
-                                         'relaxed_units',
-                                         'respect_valid',
-                                         'select=',
-                                         'single',
-                                         'shared_nc_domain',
-                                         'squeeze',
-                                         'unlimited=',
-                                         'um_version=',
-                                         'um=',
-                                         'unsqueeze',
-                                         'view=',
-                                         # Deprecated options
-                                         'all', 'aggregate=', 'read=', 'write=', 'verbose=',
-                                         ])
+        opts, infiles = getopt(
+            sys.argv[1:], "1aDd:f:hino:r:s:uv:x:",
+            longopts=[
+                'axis=',
+                'cfa_base=',
+                'compress=',
+                'contiguous',
+                'Directory',
+                'directory=',
+                'double',
+                'equal=',
+                'equal_all',
+                'exclude=',
+                'exist=',
+                'exist_all',
+                'external=',
+                'fletcher32',
+                'follow_symlinks',
+                'format=',
+                'help',
+                'ignore=',
+                'ignore_read_error',
+                'info=',
+                'least_sig_digit=',
+                'ncvar_identities',
+                'no_aggregation',
+                'no_overlap',
+                'no_shuffle',
+                'one',
+                'outfile=',
+                'overwrite',
+                'promote=',
+                'recursive',
+                'reference_datetime=',
+                'relaxed_identities',
+                'relaxed_units',
+                'respect_valid',
+                'select=',
+                'single',
+                'shared_nc_domain',
+                'squeeze',
+                'unlimited=',
+                'um_version=',
+                'um=',
+                'unsqueeze',
+                'view=',
+                # Deprecated options
+                'all', 'aggregate=', 'read=', 'write=', 'verbose=',
+            ])
     except GetoptError as err:
         # print help information and exit:
         print("{} ERROR: {}".format(iam, str(err)), file=sys.stderr)
@@ -1039,27 +1046,27 @@ Using cf-python library version {1} at {2}'''.format(
         sys.exit(0)
 
     # Defaults
-    fmt                = 'NETCDF4'
-    one_to_one         = True
-    one                = False
-    exclude            = False  # By default unaggregatable fields are output
-    no_aggregation     = False  # By default fields are aggregated
-    overwrite          = False  # By default existing output files are not overwritten
-    directory_output   = False
-    view               = None
-    Directory          = None
-    directory          = None
-    outfile            = None
-    verbose            = 1      # By default no info is printed to STDOUT
-    axes               = []
-    equal              = []
-    exist              = []
-    ignore             = []
-    promote            = []
-    unlimited          = []
-    aggregate_options  = {}
-    read_options       = {}     # Keyword parameters to cf.read
-    write_options      = {}     # Keyword parameters to cf.write
+    fmt = 'NETCDF4'
+    one_to_one = True
+    one = False
+    exclude = False  # By default unaggregatable fields are output
+    no_aggregation = False  # By default fields are aggregated
+    overwrite = False  # By default existing output files are not overwritten
+    directory_output = False
+    view = None
+    Directory = None
+    directory = None
+    outfile = None
+    verbose = 1      # By default no info is printed to STDOUT
+    axes = []
+    equal = []
+    exist = []
+    ignore = []
+    promote = []
+    unlimited = []
+    aggregate_options = {}
+    read_options = {}     # Keyword parameters to cf.read
+    write_options = {}     # Keyword parameters to cf.write
 
     for option, arg in opts:
         if option in ('-h', '--help'):
@@ -1120,7 +1127,7 @@ Using cf-python library version {1} at {2}'''.format(
             read_options['recursive'] = True
         elif option == '--follow_symlinks':
             read_options['follow_symlinks'] = True
-        elif option  in ('-s', '--select'):
+        elif option in ('-s', '--select'):
             read_options.setdefault('select', []).append(arg)
         elif option in ('-n', '--no_aggregation'):
             no_aggregation = True
@@ -1170,7 +1177,8 @@ Using cf-python library version {1} at {2}'''.format(
                     iam, option), file=sys.stderr
             )
             sys.exit(2)
-        elif option in ('-r', '-w', '--aggregate', '--read', '--write', '--verbose'):
+        elif option in (
+                '-r', '-w', '--aggregate', '--read', '--write', '--verbose'):
             print(
                 "{} ERROR: The {} option has been deprecated.".format(
                     iam, option), file=sys.stderr
@@ -1179,7 +1187,7 @@ Using cf-python library version {1} at {2}'''.format(
         else:
             print(usage)
             assert False, "Unknown option: "+option
-    #--- End: for
+    # --- End: for
 
     if outfile is None and not directory_output and view is None:
         # No output file or directory options are set, then output a
@@ -1233,12 +1241,15 @@ Using cf-python library version {1} at {2}'''.format(
             if key.startswith('endian='):
                 read_options['um']['endian'] = key.lstrip('endian=')
             if key.startswith('word_size='):
-                read_options['um']['word_size'] = int(key.lstrip('word_size='))
+                read_options['um']['word_size'] = int(
+                    key.lstrip('word_size='))
             if key.startswith('stash_table='):
                 stash_table = key.lstrip('stash_table=')
-                stash_table = os.path.expanduser(os.path.expandvars(stash_table))
-                cf.um.read.load_stash2standard_name(stash_table, delimiter='!', merge=True)
-    #--- End: if
+                stash_table = os.path.expanduser(
+                    os.path.expandvars(stash_table))
+                cf.um.read.load_stash2standard_name(
+                    stash_table, delimiter='!', merge=True)
+    # --- End: if
 
     write_options['fmt'] = fmt
 
@@ -1260,7 +1271,11 @@ Using cf-python library version {1} at {2}'''.format(
         )
         sys.exit(2)
 
-    if sum([outfile is not None, directory is not None, Directory is not None]) > 1:
+    if sum(
+            [outfile is not None,
+             directory is not None,
+             Directory is not None]
+    ) > 1:
         print(
             "{} ERROR: Can only set one of the -o, -d and -D "
             "options".format(iam), file=sys.stderr
@@ -1271,7 +1286,7 @@ Using cf-python library version {1} at {2}'''.format(
         # Check that the directory is ok and replace it with its
         # absolute, normalised path.
         if (not os.path.isdir(directory) or
-            not os.access(directory, os.W_OK)):
+                not os.access(directory, os.W_OK)):
             print(
                 "{} ERROR: Can't write to output directory "
                 "{}".format(iam, directory), file=sys.stderr
@@ -1282,7 +1297,7 @@ Using cf-python library version {1} at {2}'''.format(
 
     # Replace the input files with their absolute, normalised paths
     # and recursively scan input directories
-    recursive       = read_options.get('recursive', False)
+    recursive = read_options.get('recursive', False)
     follow_symlinks = read_options.get('follow_symlinks', False)
     if follow_symlinks and not recursive:
         print(
@@ -1297,11 +1312,12 @@ Using cf-python library version {1} at {2}'''.format(
             infiles2.append(x)
         else:
             # Walk through directories
-            for path, subdirs, filenames in os.walk(x, followlinks=follow_symlinks):
+            for path, subdirs, filenames in os.walk(
+                    x, followlinks=follow_symlinks):
                 infiles2.extend([os.path.join(path, f) for f in filenames])
                 if not recursive:
                     break
-    #--- End: for
+    # --- End: for
     infiles = infiles2
 
     # Initialise the set of all input and output files
@@ -1372,4 +1388,4 @@ Using cf-python library version {1} at {2}'''.format(
                     file=sys.stderr
                 )
                 sys.exit(1)
-    #--- End: for
+    # --- End: for
