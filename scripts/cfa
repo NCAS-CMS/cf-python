@@ -901,16 +901,24 @@ Written by David Hassell
             return
 
         if not overwrite:
-            print("{} ERROR: Can't overwrite output file {} unless --overwrite is set".format(
-                iam, outfile))
+            print(
+                "{} ERROR: Can't overwrite output file {} unless "
+                "--overwrite is set".format(iam, outfile), file=sys.stderr
+            )
             sys.exit(2)
 
         if not os.access(outfile, os.W_OK):
-            print("{} ERROR: Can't overwrite output file {} without permission".format(iam, outfile))
+            print(
+                "{} ERROR: Can't overwrite output file {} without "
+                "permission".format(iam, outfile), file=sys.stderr
+            )
             sys.exit(2)
 
         if set((outfile,)).intersection(files):
-            print("{} ERROR: Can't overwrite input file {}".format(iam, outfile))
+            print(
+                "{} ERROR: Can't overwrite input file {}".format(
+                    iam, outfile), file=sys.stderr
+            )
             sys.exit(2)
 
         # Remove the pre-existing output file
@@ -1023,7 +1031,7 @@ Using cf-python library version {1} at {2}'''.format(
                                          ])
     except GetoptError as err:
         # print help information and exit:
-        print("{} ERROR: {}".format(iam, str(err)))
+        print("{} ERROR: {}".format(iam, str(err)), file=sys.stderr)
         sys.exit(2)
 
     if not (infiles or opts):
@@ -1119,8 +1127,11 @@ Using cf-python library version {1} at {2}'''.format(
         elif option == '--squeeze':
             read_options['squeeze'] = True
         elif option == '--um_version':
-            print("{} ERROR: The {} option has been removed. Use --um=version=VN instead.".format(
-                iam, option))
+            print(
+                "{} ERROR: The {} option has been removed. Use "
+                "--um=version=VN instead.".format(iam, option),
+                file=sys.stderr
+            )
             sys.exit(2)
         elif option == '--um':
             read_options.setdefault('um', []).append(arg)
@@ -1147,15 +1158,23 @@ Using cf-python library version {1} at {2}'''.format(
         elif option in ('-v', '--view'):
             view = arg
             if view not in 'smc':
-                print("{} ERROR: The {} option must have an argument of either s, m or c".format(iam, option))
+                print(
+                    "{} ERROR: The {} option must have an argument of "
+                    "either s, m or c".format(iam, option), file=sys.stderr
+                )
                 sys.exit(2)
         elif option in ('-a', '--all'):
-            print("{} ERROR: The {} option has been deprecated and is now the default behaviour. See the -x option.".format(
-                iam, option))
+            print(
+                "{} ERROR: The {} option has been deprecated and is now "
+                "the default behaviour. See the -x option.".format(
+                    iam, option), file=sys.stderr
+            )
             sys.exit(2)
         elif option in ('-r', '-w', '--aggregate', '--read', '--write', '--verbose'):
-            print("{} ERROR: The {} option has been deprecated.".format(
-                iam, option))
+            print(
+                "{} ERROR: The {} option has been deprecated.".format(
+                    iam, option), file=sys.stderr
+            )
             sys.exit(2)
         else:
             print(usage)
@@ -1168,7 +1187,10 @@ Using cf-python library version {1} at {2}'''.format(
         view = 's'
 
     if one and view is None:
-        print("{} ERROR: Can only set the -1 option if the -v option is also set.".format(iam))
+        print(
+            "{} ERROR: Can only set the -1 option if the -v option is "
+            "also set.".format(iam), file=sys.stderr
+        )
         sys.exit(2)
 
     if promote:
@@ -1224,16 +1246,25 @@ Using cf-python library version {1} at {2}'''.format(
         write_options['unlimited'] = unlimited
 
     if fmt == 'CFA':
-        print("{} ERROR: '-f CFA' has been replaced by '-f CFA3' or '-f CFA4' for netCDF3 classic and netCDF4 CFA output formats respectively".format(
-            iam))
+        print(
+            "{} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
+            "'-f CFA4' for netCDF3 classic and netCDF4 CFA output formats "
+            "respectively".format(iam), file=sys.stderr
+        )
         sys.exit(2)
 
     if not infiles:
-        print("{} ERROR: Must provide at least one input file".format(iam))
+        print(
+            "{} ERROR: Must provide at least one input file".format(iam),
+            file=sys.stderr,
+        )
         sys.exit(2)
 
     if sum([outfile is not None, directory is not None, Directory is not None]) > 1:
-        print("{} ERROR: Can only set one of the -o, -d and -D options".format(iam))
+        print(
+            "{} ERROR: Can only set one of the -o, -d and -D "
+            "options".format(iam), file=sys.stderr
+        )
         sys.exit(2)
 
     if directory is not None:
@@ -1241,7 +1272,10 @@ Using cf-python library version {1} at {2}'''.format(
         # absolute, normalised path.
         if (not os.path.isdir(directory) or
             not os.access(directory, os.W_OK)):
-            print("{} ERROR: Can't write to output directory {}".format(iam, directory))
+            print(
+                "{} ERROR: Can't write to output directory "
+                "{}".format(iam, directory), file=sys.stderr
+            )
             sys.exit(2)
 
         directory = cf.abspath(directory)
@@ -1251,7 +1285,10 @@ Using cf-python library version {1} at {2}'''.format(
     recursive       = read_options.get('recursive', False)
     follow_symlinks = read_options.get('follow_symlinks', False)
     if follow_symlinks and not recursive:
-        print("{} ERROR: Can't set --follow_symlinks without setting --recursive".format(iam))
+        print(
+            "{} ERROR: Can't set --follow_symlinks without setting "
+            "--recursive".format(iam), file=sys.stderr
+        )
         sys.exit(2)
 
     infiles2 = []
@@ -1302,7 +1339,10 @@ Using cf-python library version {1} at {2}'''.format(
         try:
             f = cf.read(infile, **read_options)
         except Exception as error:
-            print("{} ERROR reading {}: {}".format(iam, infile, error))
+            print(
+                "{} ERROR reading {}: {}".format(iam, infile, error),
+                file=sys.stderr
+            )
             sys.exit(1)
 
         if view is not None:
@@ -1327,7 +1367,9 @@ Using cf-python library version {1} at {2}'''.format(
             try:
                 cf.write(f, outfile, **write_options)
             except Exception as error:
-                print("{} ERROR writing {}: {}".format(iam, outfile, error))
+                print(
+                    "{} ERROR writing {}: {}".format(iam, outfile, error),
+                    file=sys.stderr
+                )
                 sys.exit(1)
     #--- End: for
-
