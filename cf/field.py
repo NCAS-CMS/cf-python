@@ -318,7 +318,7 @@ class Field(mixin.PropertiesData,
         instance._Constructs = Constructs
         instance._Domain = Domain
         instance._DomainAxis = DomainAxis
-        instance._Data = Data
+#        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -6939,7 +6939,7 @@ class Field(mixin.PropertiesData,
 
         return field
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def digitize(self, bins, upper=False, open_ends=False,
                  closed_ends=None, return_bins=False, inplace=False):
         '''Return the indices of the bins to which each value belongs.
@@ -12051,7 +12051,7 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Insert a size 1 axis into the data array.
 
@@ -12736,7 +12736,9 @@ class Field(mixin.PropertiesData,
         # may be None)
         return indices
 
-    def set_data(self, data, axes=None, set_axes=True, copy=True):
+    @_inplace_enabled(default=True)
+    def set_data(self, data, axes=None, set_axes=True, copy=True,
+                 inplace=True):
         '''Set the field construct data.
 
     .. versionadded:: 3.0.0
@@ -12748,6 +12750,8 @@ class Field(mixin.PropertiesData,
 
         data: `Data`
             The data to be inserted.
+
+            {{data_like}}
 
         axes: (sequence of) `str` or `int`, optional
             Set the domain axes constructs that are spanned by the
@@ -12791,47 +12795,51 @@ class Field(mixin.PropertiesData,
             If True then set a copy of the data. By default the data
             are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: 3.7.0
+
     :Returns:
 
-        `None`
+        `None` or `Field`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `Field` instance containing the new
+            data.
 
     **Examples:**
 
-    >>> f.axes()
-    {'dim0': 1, 'dim1': 3}
-    >>> f.insert_data(cf.Data([[0, 1, 2]]))
-
-    >>> f.axes()
-    {'dim0': 1, 'dim1': 3}
-    >>> f.insert_data(cf.Data([[0, 1, 2]]), axes=['dim0', 'dim1'])
-
-    >>> f.axes()
-    {}
-    >>> f.insert_data(cf.Data([[0, 1], [2, 3, 4]]))
-    >>> f.axes()
-    {'dim0': 2, 'dim1': 3}
-
-    >>> f.insert_data(cf.Data(4))
-
-    >>> f.insert_data(cf.Data(4), axes=[])
-
-    >>> f.axes()
-    {'dim0': 3, 'dim1': 2}
-    >>> data = cf.Data([[0, 1], [2, 3, 4]])
-    >>> f.insert_data(data, axes=['dim1', 'dim0'], copy=False)
-
-    >>> f.insert_data(cf.Data([0, 1, 2]))
-    >>> f.insert_data(cf.Data([3, 4, 5]), replace=False)
-    ValueError: Can't initialize data: Data already exists
-    >>> f.insert_data(cf.Data([3, 4, 5]))
+    >>> f = cf.Field()
+    >>> f.set_data([1, 2, 3])
+    >>> f.has_data()
+    True
+    >>> f.get_data()
+    <CF Data(3): [1, 2, 3]>
+    >>> f.data
+    <CF Data(3): [1, 2, 3]>
+    >>> f.del_data()
+    <CF Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <CF Data(3): [4, 5, 6]>
+    >>> f.has_data()
+    False
+    >>> print(f.get_data(None))
+    None
+    >>> print(f.del_data(None))
+    None
 
         '''
-        if axes is None and not self.domain_axes:
+        data = self._Data(data, copy=False)
+
+        # Construct new field
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        if axes is None and not f.domain_axes:
             set_axes = False
 
         if not set_axes:
             if not data.Units:
-                units = getattr(self, 'Units', None)
+                units = getattr(f, 'Units', None)
                 if units is not None:
                     if copy:
                         copy = False
@@ -12840,8 +12848,10 @@ class Field(mixin.PropertiesData,
                         data.override_units(units, inplace=True)
             # --- End: if
 
-            super(cfdm.Field, self).set_data(data, axes=None, copy=copy)
-            return
+            super(cfdm.Field, f).set_data(data, axes=None, copy=copy,
+                                          inplace=True)
+
+            return f
 
         if data.isscalar:
             # --------------------------------------------------------
@@ -12862,7 +12872,7 @@ class Field(mixin.PropertiesData,
             if isinstance(axes, (str, int, slice)):
                 axes = (axes,)
 
-            axes = [self.domain_axis(axis, key=True) for axis in axes]
+            axes = [f.domain_axis(axis, key=True) for axis in axes]
 
             if len(axes) != data.ndim:
                 raise ValueError(
@@ -12870,7 +12880,7 @@ class Field(mixin.PropertiesData,
                         len(axes), data.ndim)
                 )
 
-            domain_axes = self.domain_axes()
+            domain_axes = f.domain_axes()
             for axis, size in zip(axes, data.shape):
                 axis_size = domain_axes[axis].get_size(None)
                 if size != axis_size:
@@ -12883,14 +12893,14 @@ class Field(mixin.PropertiesData,
                     )
             # --- End: for
 
-        elif self.get_data_axes(default=None) is None:
+        elif f.get_data_axes(default=None) is None:
             # --------------------------------------------------------
             # The data is not scalar and axes have not been set and
             # the domain does not have data axes defined
             #
             # => infer the axes
             # --------------------------------------------------------
-            domain_axes = self.domain_axes
+            domain_axes = f.domain_axes
             if not domain_axes:
                 raise ValueError(
                     "Can't set data: No domain axes exist")
@@ -12920,12 +12930,12 @@ class Field(mixin.PropertiesData,
             # The data is not scalar and axes have not been set, but
             # there are data axes defined on the field.
             # --------------------------------------------------------
-            axes = self.get_data_axes()
+            axes = f.get_data_axes()
             if len(axes) != data.ndim:
                 raise ValueError(
                     "Wrong number of axes for data array: {!r}".format(axes))
 
-#            domain_axes = self.domain_axes
+#            domain_axes = f.domain_axes
 #            for n in data.shape:
 #                da = domain_axes.filter_by_size(n)
 #                if len(da) != 1:
@@ -12937,7 +12947,7 @@ class Field(mixin.PropertiesData,
 #                    )
 #            # --- End: for
 
-            domain_axes = self.domain_axes
+            domain_axes = f.domain_axes
             for axis, size in zip(axes, data.shape):
                 if domain_axes[axis].get_size(None) != size:
                     raise ValueError(
@@ -12946,7 +12956,7 @@ class Field(mixin.PropertiesData,
                     )
 
 #                try:
-#                    self.set_construct(
+#                    f.set_construct(
 #                        DomainAxis(size), key=axis, replace=False)
 #                except ValueError:
 #                    raise ValueError(
@@ -12957,7 +12967,7 @@ class Field(mixin.PropertiesData,
         # --- End: if
 
         if not data.Units:
-            units = getattr(self, 'Units', None)
+            units = getattr(f, 'Units', None)
             if units is not None:
                 if copy:
                     copy = False
@@ -12966,7 +12976,10 @@ class Field(mixin.PropertiesData,
                     data.override_units(units, inplace=True)
         # --- End: if
 
-        super(cfdm.Field, self).set_data(data, axes=axes, copy=copy)
+        super(cfdm.Field, f).set_data(data, axes=axes, copy=copy,
+                                      inplace=True)
+
+        return f
 
     def domain_mask(self, **kwargs):
         '''Return a boolean field that is True where criteria are met.
@@ -13317,7 +13330,7 @@ class Field(mixin.PropertiesData,
 
         return False
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def moving_window(self, method, window_size=None, axis=None,
                       weights=None, mode=None, cval=None, origin=0,
                       scale=None, radius='earth', great_circle=False,
@@ -13696,7 +13709,7 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def convolution_filter(self, window=None, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
                            inplace=False, weights=None, i=False):
@@ -14122,22 +14135,17 @@ class Field(mixin.PropertiesData,
 
         return f
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cumsum(self, axis, masked_as_zero=False, coordinate=None,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
-
     The cell bounds of the axis are updated to describe the range over
     which the sums apply, and a new "sum" cell method construct is
     added to the resulting field construct.
-
     .. versionadded:: 3.0.0
-
     .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
                  `sum`
-
     :Parameters:
-
         axis:
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
@@ -14145,53 +14153,39 @@ class Field(mixin.PropertiesData,
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X')`` is selected.
-
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
             calculating the cumulative sum. By default the output data
             will be masked at the same locations as the original data.
-
             .. note:: Sums produced entirely from masked elements will
                       always result in masked values in the output
                       data, regardless of the setting of
                       *masked_as_zero*.
-
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined, relative to the new cell bounds. By default they
             are unchanged from the original field construct. The
             *coordinate* parameter may be one of:
-
             ===============  =========================================
             *coordinate*     Description
             ===============  =========================================
             `None`           This is the default.
-
                              Output coordinates are unchanged.
-
             ``'mid_range'``  An output coordinate is the average of
                              its output coordinate bounds.
-
             ``'minimum'``    An output coordinate is the minimum of
                              its output coordinate bounds.
-
             ``'maximum'``    An output coordinate is the maximum of
                              its output coordinate bounds.
             ===============  =========================================
-
             *Parameter Example:*
               ``coordinate='maximum'``
-
         {{inplace: `bool`, optional}}
-
     :Returns:
-
         `Field` or `None`
             The field construct with the cumulatively summed axis, or
             `None` if the operation was in-place.
-
     **Examples:**
-
     >>> f = cf.example_field(2)
     >>> print(f)
     Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -14211,7 +14205,6 @@ class Field(mixin.PropertiesData,
     [210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2
      212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4
      304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]
-
     >>> g = f.cumsum('T')
     >>> print(g)
     Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -14232,13 +14225,9 @@ class Field(mixin.PropertiesData,
      2678.7 2934.9 3147.2 3378.9 3634.  3847.9 4103.7 4404.9 4618.2 4818.3
      5022.9 5226.1 5470.7 5709.1 6013.6 6283.4 6551.3 6833.7 7048.7 7337.4
      7554.7 7861.8 8161.1 8377.  8667.2 8907.1]
-
     >>> g = f.cumsum('latitude', masked_as_zero=True)
-
     >>> g = f.cumsum('latitude', coordinate='mid_range')
-
     >>> f.cumsum('latitude', inplace=True)
-
         '''
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
@@ -14290,9 +14279,7 @@ class Field(mixin.PropertiesData,
                           namespace='cf', indent=0, string=True,
                           name='f'):
         '''Return the commands that would create the field construct.
-
     **Construct keys**
-
     The *key* parameter of the output `set_construct` commands is
     utilised in order minimise the number of commands needed to
     implement cross-referencing between constructs (e.g. between a
@@ -14300,52 +14287,39 @@ class Field(mixin.PropertiesData,
     usually not necessary when building field constructs, as by
     default the `set_construct` method returns a unique construct key
     for the construct being set.
-
     .. versionadded:: 3.0.4
-
     .. seealso:: `set_construct`, `cf.Data.creation_commands`,
                  `cf.example_field`
-
     :Parameters:
-
         representative_data: `bool`, optional
             Return one-line representations of `Data` instances, which
             are not executable code but prevent the data being
             converted in its entirety to a string representation.
-
         namespace: `str`, optional
             The namespace containing classes of the ``cf``
             package. This is prefixed to the class name in commands
             that instantiate instances of ``cf`` objects. By default,
             *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
             was imported as ``import cf``.
-
             *Parameter example:*
               If ``cf`` was imported as ``import cf as cfp`` then set
               ``namespace='cfp'``
-
             *Parameter example:*
               If ``cf`` was imported as ``from cf import *`` then set
               ``namespace=''``
-
         indent: `int`, optional
             Indent each line by this many spaces. By default no
             indentation is applied. Ignored if *string* is False.
-
         string: `bool`, optional
             If False then return each command as an element of a
             `list`. By default the commands are concatenated into
             a string, with a new line inserted between each command.
-
     :Returns:
-
         `str` or `list`
             The commands in a string, with a new line inserted between
             each command. If *string* is False then the separate
             commands are returned as each element of a `list`.
-
     **Examples:**
-
     >>> q = cf.example_field(0)
     >>> print(q)
     Field: specific_humidity (ncvar%q)
@@ -14419,7 +14393,6 @@ class Field(mixin.PropertiesData,
     c.set_method('mean')
     c.set_axes(('area',))
     f.set_construct(c)
-
     >>> print(q.creation_commands(representative_data=True, namespace='', indent=4))
         # field: specific_humidity
         f = Field()
@@ -14484,7 +14457,6 @@ class Field(mixin.PropertiesData,
         c.set_method('mean')
         c.set_axes(('area',))
         f.set_construct(c)
-
         '''
         if name in ('b', 'c', 'd', 'i'):
             raise ValueError(
@@ -14514,10 +14486,11 @@ class Field(mixin.PropertiesData,
         # Domain axes
         for key, c in self.domain_axes.items():
             out.append("")
-            out.extend(c.creation_commands(representative_data=representative_data,
-                                           string=False,
-                                           namespace=namespace0,
-                                           name='c'))
+            out.extend(c.creation_commands(
+                representative_data=representative_data,
+                string=False,
+                namespace=namespace0,
+                name='c'))
             out.append("{}.set_construct(c, key={!r}, copy=False)".format(
                 name, key))
 
@@ -14529,18 +14502,21 @@ class Field(mixin.PropertiesData,
             out.append("{}.set_data_axes({})".format(name, data_axes))
 
         # Metadata constructs with data
-        for key, c in self.constructs.filter_by_type('dimension_coordinate',
-                                                     'auxiliary_coordinate',
-                                                     'cell_measure',
-                                                     'domain_ancillary',
-                                                     'field_ancillary').items():
+        for key, c in self.constructs.filter_by_type(
+                'dimension_coordinate',
+                'auxiliary_coordinate',
+                'cell_measure',
+                'domain_ancillary',
+                'field_ancillary').items():
             out.append("")
-            out.extend(c.creation_commands(representative_data=representative_data,
-                                           string=False,
-                                           namespace=namespace0,
-                                           name='c', data_name='d'))
-            out.append("{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                name, self.get_data_axes(key), key))
+            out.extend(c.creation_commands(
+                representative_data=representative_data,
+                string=False,
+                namespace=namespace0,
+                name='c', data_name='d'))
+            out.append(
+                "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
+                    name, self.get_data_axes(key), key))
 
         # Cell method constructs
         for key, c in self.cell_methods.items():
@@ -14564,8 +14540,7 @@ class Field(mixin.PropertiesData,
 
         return out
 
-    @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -14640,7 +14615,7 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def anchor(self, axis, value, inplace=False, dry_run=False,
                i=False, **kwargs):
         '''Roll a cyclic axis so that the given value lies in the first
@@ -15119,7 +15094,7 @@ class Field(mixin.PropertiesData,
         # Squeeze the field's data array
         return super().squeeze(iaxes, inplace=inplace)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of the data.
 
@@ -15272,7 +15247,7 @@ class Field(mixin.PropertiesData,
         return super().transpose(iaxes, constructs=constructs,
                                  inplace=inplace)
 
-#    @_inplace_enabled
+#    @_inplace_enabled(default=False)
 #    def uncompress(self, inplace=False):
 #        '''Uncompress the construct.
 #
@@ -15321,7 +15296,7 @@ class Field(mixin.PropertiesData,
 #        return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
 
@@ -16991,7 +16966,7 @@ class Field(mixin.PropertiesData,
 
         return super().get_data_axes(key=key, default=default)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None,
              fold_index=-1, inplace=False, verbose=None):
@@ -17828,7 +17803,7 @@ class Field(mixin.PropertiesData,
 
         return c
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, return_axis=False, inplace=False):
         '''Flatten axes of the field.
 
@@ -18089,7 +18064,7 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
 
@@ -18459,22 +18434,26 @@ class Field(mixin.PropertiesData,
 
             data_axes = g.get_data_axes()
 
+            construct_data = construct.get_data(None)
+            if construct_data is None:
+                raise ValueError("{!r} has no data".format(construct))
+
             if construct_data_axes != data_axes:
                 s = [i for i, axis in enumerate(construct_data_axes)
                      if axis not in data_axes]
                 if s:
-                    construct.squeeze(s, inplace=True)
+                    construct_data.squeeze(s, inplace=True)
                     construct_data_axes = [axis for axis in
                                            construct_data_axes if
                                            axis not in data_axes]
 
                 for i, axis in enumerate(data_axes):
                     if axis not in construct_data_axes:
-                        construct.insert_dimension(i, inplace=True)
+                        construct_data.insert_dimension(i, inplace=True)
             # --- End: if
-# TODO some error checking, here
 
-            condition = condition.evaluate(construct).get_data()
+            condition = condition.evaluate(construct_data)
+
         # --- End: if
 
         if x is not None and isinstance(x, self_class):
@@ -18789,7 +18768,7 @@ class Field(mixin.PropertiesData,
         return FieldList(_section(self, axes, data=False, stop=stop, **kwargs))
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def regrids(self, dst, method, src_cyclic=None, dst_cyclic=None,
                 use_src_mask=True, use_dst_mask=False,
                 fracfield=False, src_axes=None, dst_axes=None,
@@ -19453,7 +19432,7 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def regridc(self, dst, axes, method, use_src_mask=True,
                 use_dst_mask=False, fracfield=False, axis_order=None,
                 ignore_degenerate=True, inplace=False, i=False,
@@ -20034,7 +20013,7 @@ class Field(mixin.PropertiesData,
         return f
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def derivative(self, axis, wrap=None, one_sided_at_boundary=False,
                    inplace=False, i=False, cyclic=None):
         '''Return the derivative along the specified axis.

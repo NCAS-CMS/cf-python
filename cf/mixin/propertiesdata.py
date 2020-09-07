@@ -1590,7 +1590,7 @@ class PropertiesData(Properties):
     # Methods
     # ----------------------------------------------------------------
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.
 
@@ -1975,7 +1975,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get the sum when there is no data array")
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Interchange two axes of an array.
 
@@ -2497,7 +2497,7 @@ class PropertiesData(Properties):
         return data.isscalar
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -2552,7 +2552,7 @@ class PropertiesData(Properties):
             data.chunk(chunksize)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Limit the values in the data.
 
@@ -2706,7 +2706,7 @@ class PropertiesData(Properties):
 #        return out
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data element-wise.
 
@@ -3238,7 +3238,7 @@ class PropertiesData(Properties):
         return True
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def convert_reference_time(self, units=None,
                                calendar_months=False,
                                calendar_years=False, inplace=False,
@@ -3413,7 +3413,7 @@ class PropertiesData(Properties):
         return v
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -3469,7 +3469,7 @@ class PropertiesData(Properties):
             inplace=inplace)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         '''Floor the data array, element-wise.
 
@@ -3886,7 +3886,7 @@ class PropertiesData(Properties):
         return fillval
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
 
@@ -3929,7 +3929,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         '''The exponential of the data, element-wise.
 
@@ -3973,7 +3973,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data element-wise.
 
@@ -4030,7 +4030,7 @@ class PropertiesData(Properties):
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
@@ -4080,7 +4080,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         '''Take the inverse hyperbolic tangent of the data element-wise.
 
@@ -4131,7 +4131,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         '''Take the trigonometric inverse sine of the data element-wise.
 
@@ -4183,7 +4183,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         '''Take the inverse hyperbolic sine of the data element-wise.
 
@@ -4232,7 +4232,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         '''Take the trigonometric inverse cosine of the data element-wise.
 
@@ -4284,7 +4284,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         '''Take the inverse hyperbolic cosine of the data element-wise.
 
@@ -4336,7 +4336,7 @@ class PropertiesData(Properties):
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data element-wise.
 
@@ -4393,7 +4393,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         '''Take the hyperbolic tangent of the data array.
 
@@ -4452,7 +4452,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         '''Take the hyperbolic sine of the data element-wise.
 
@@ -4509,7 +4509,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         '''Take the hyperbolic cosine of the data element-wise.
 
@@ -4566,7 +4566,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         '''The logarithm of the data array.
 
@@ -4624,7 +4624,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         '''Truncate the data, element-wise.
 
@@ -4982,7 +4982,7 @@ class PropertiesData(Properties):
         '''
         return super().get_data(default=default, _units=False)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None, fold_index=-1,
              inplace=False, verbose=None):
@@ -5102,7 +5102,7 @@ class PropertiesData(Properties):
         return v
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
 
@@ -5158,7 +5158,7 @@ class PropertiesData(Properties):
         return v
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
 
@@ -5225,7 +5225,7 @@ class PropertiesData(Properties):
         return v
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -5261,7 +5261,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         '''Round the data to the given number of decimals.
 
@@ -5310,7 +5310,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, decimals=decimals)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
 
@@ -5341,7 +5341,7 @@ class PropertiesData(Properties):
             (iaxis, shift),
             inplace=inplace, i=i)
 
-    def set_data(self, data, copy=True):
+    def set_data(self, data, copy=True, inplace=True):
         '''Set the data.
 
     The units, calendar and fill value of the incoming `Data` instance
@@ -5356,24 +5356,38 @@ class PropertiesData(Properties):
         data: `Data`
             The data to be inserted.
 
+            {{data_like}}
+
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: 3.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
-    >>> d = Data(range(10))
-    >>> f.set_data(d)
+    >>> f = cf.{{class}}()
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <CF Data(3): [1, 2, 3]>
+    >>> f.data
+    <CF Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <CF Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <CF Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -5382,6 +5396,8 @@ class PropertiesData(Properties):
     None
 
         '''
+        data = self._Data(data, copy=False)
+
         if not data.Units:
             units = getattr(self, 'Units', None)
             if units is not None:
@@ -5392,13 +5408,15 @@ class PropertiesData(Properties):
                     data.override_units(units, inplace=True)
         # --- End: if
 
-        if copy:
-            data = data.copy()
+        return super().set_data(data, copy=copy, inplace=inplace)
 
-        self._set_component('data', data, copy=False)
+#        if copy:
+#            data = data.copy()
+#
+#        self._set_component('data', data, copy=False)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               verbose=None):
         '''Set data array elements depending on a condition.

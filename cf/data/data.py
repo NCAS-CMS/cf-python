@@ -2134,7 +2134,7 @@ place.
         # --- End: if
         return processed_partitions
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         '''Calculate the n-th discrete difference along the given axis.
 
@@ -2569,7 +2569,7 @@ place.
             _preserve_partitions=_preserve_partitions
         )
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def mean_of_upper_decile(
             self, axes=None, include_decile=True, squeeze=False,
             weights=None, mtol=1, inplace=False, _preserve_partitions=False):
@@ -3280,7 +3280,7 @@ place.
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def convolution_filter(self, window=None, axis=None, mode=None,
                            cval=None, origin=0, inplace=False):
         '''Return the data convolved along the given axis with the specified
@@ -3486,7 +3486,7 @@ place.
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cumsum(self, axis, masked_as_zero=False, inplace=False):
         '''Return the data cumulatively summed along the given axis.
 
@@ -3878,7 +3878,7 @@ place.
 #            self.add_partitions(sorted(set(extra_bounds)), axis)
 #        # --- End: for
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         '''Change the internal representation of data array elements from
     numeric reference times to datatime-like objects.
@@ -3943,7 +3943,7 @@ place.
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         '''Change the internal representation of data array elements from
     datatime-like objects to numeric reference times.
@@ -5999,7 +5999,7 @@ place.
         self.partitions.change_axis_names(axis_map)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
                   inplace=False, i=False, _preserve_partitions=False,
@@ -8221,7 +8221,7 @@ False
         return old
 
     # `arctan2`, AT2 seealso
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
@@ -8308,7 +8308,7 @@ False
 #        '''
 #        return cls(numpy_arctan2(y, x), units=_units_radians)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         '''Take the inverse hyperbolic tangent of the data element-wise.
 
@@ -8356,7 +8356,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         '''Take the trigonometric inverse sine of the data element-wise.
 
@@ -8404,7 +8404,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         '''Take the inverse hyperbolic sine of the data element-wise.
 
@@ -8448,7 +8448,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         '''Take the trigonometric inverse cosine of the data element-wise.
 
@@ -8496,7 +8496,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         '''Take the inverse hyperbolic cosine of the data element-wise.
 
@@ -8716,7 +8716,7 @@ False
 
         return False
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, fill_values=None, valid_min=None,
                       valid_max=None, valid_range=None, inplace=False):
         '''Apply masking.
@@ -9791,7 +9791,7 @@ False
         return binary_mask
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Clip (limit) the values in the data array in place.
 
@@ -9933,7 +9933,7 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
         '''Return all non-masked values in a one dimensional data array.
 
@@ -10027,7 +10027,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data element-wise.
 
@@ -10388,7 +10388,7 @@ False
         '''
         return self._YMDhms('second')
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the underlying data.
 
@@ -10668,7 +10668,7 @@ False
         return True
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         '''Take the exponential of the data array.
 
@@ -10703,7 +10703,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array in place.
 
@@ -10805,7 +10805,7 @@ False
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(self, size, axes=None, tripolar=None,
              fold_index=-1, inplace=False, verbose=None):
@@ -11169,7 +11169,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         '''TODO
 
@@ -11509,7 +11509,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
         '''Change the calendar of the data array elements.
 
@@ -11538,7 +11538,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         '''Override the data array units.
 
@@ -11600,7 +11600,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of the data array elements.
 
@@ -11907,7 +11907,7 @@ False
         return cf_masked
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur (NaN or inf).
 
@@ -12054,7 +12054,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
 
@@ -12592,7 +12592,7 @@ False
         return out
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
 
@@ -12707,7 +12707,7 @@ False
                 free_memory() - cf_fm_threshold())
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               verbose=None):
@@ -13156,7 +13156,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data element-wise.
 
@@ -13212,7 +13212,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         '''Take the hyperbolic sine of the data element-wise.
 
@@ -13268,7 +13268,7 @@ False
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         '''Take the hyperbolic cosine of the data element-wise.
 
@@ -13324,7 +13324,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         '''Take the hyperbolic tangent of the data element-wise.
 
@@ -13382,7 +13382,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         '''TODO
 
@@ -13414,7 +13414,7 @@ False
         return d
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 axes from the data array.
 
@@ -13565,7 +13565,7 @@ False
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data element-wise.
 
@@ -13651,7 +13651,7 @@ False
         return self.array.tolist()
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
         '''Permute the axes of the data array.
 
@@ -13881,7 +13881,7 @@ False
                         calendar=calendar, chunk=chunk)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def func(self, f, units=None, out=False, inplace=False,
              preserve_invalid=False, i=False, **kwargs):
         '''Apply an element-wise array operation to the data array.

@@ -518,7 +518,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         return self.match_by_identity(*identities)
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def change_identifiers(self, identity_map, coordinate=True,
                            ancillary=True, strict=False,
                            inplace=False, i=False):

@@ -6,6 +6,8 @@ from ..functions import (atol as cf_atol,
 from ..query import Query
 from ..units import Units
 
+from ..data import Data
+
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR)
 
@@ -19,6 +21,18 @@ class Properties(Container):
 
     '''
     _special_properties = ()
+
+    def __new__(cls, *args, **kwargs):
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
 
     # ----------------------------------------------------------------
     # Private attributes
