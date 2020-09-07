@@ -568,7 +568,7 @@ class CellMethod(cfdm.CellMethod):
         return out
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def expand_intervals(self, inplace=False, i=False):
         '''TODO
 
@@ -582,7 +582,7 @@ class CellMethod(cfdm.CellMethod):
         return c
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
         '''TODO
 

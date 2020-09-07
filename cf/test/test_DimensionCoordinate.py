@@ -329,8 +329,29 @@ class DimensionCoordinateTest(unittest.TestCase):
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
 
+    def test_DimensionCoordinate_set_data(self):
+        x = cf.DimensionCoordinate()
+
+        y = x.set_data(cf.Data([1, 2, 3]))
+        self.assertIsNone(y)
+        self.assertTrue(x.has_data())
+
+        # Test inplace
+        x.del_data()
+        y = x.set_data(cf.Data([1, 2, 3]), inplace=False)
+        self.assertIsInstance(y, cf.DimensionCoordinate)
+        self.assertFalse(x.has_data())
+        self.assertTrue(y.has_data())
+
+        # Exceptions should be raised for 0-d and N-d (N>=2) data
+        with self.assertRaises(Exception):
+            y = x.set_data(cf.Data([[1, 2, 3]]))
+
+        with self.assertRaises(Exception):
+            y = x.set_data(cf.Data(1))
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

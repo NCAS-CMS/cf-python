@@ -344,7 +344,7 @@ class Coordinate:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def autoperiod(self, inplace=False):
         '''TODO Set dimensions to be cyclic.
 

@@ -648,7 +648,7 @@ class DimensionCoordinate(mixin.Coordinate,
         return bounds
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
         '''
@@ -769,7 +769,7 @@ class DimensionCoordinate(mixin.Coordinate,
 #        return True
 
     @_deprecated_kwarg_check('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO `{{class}}`
 

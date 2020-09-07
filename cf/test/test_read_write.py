@@ -346,8 +346,9 @@ class read_writeTest(unittest.TestCase):
             for chunksize in self.chunk_sizes:
                 cf.chunksize(chunksize)
                 f = cf.read(self.filename)[0]
-                t = cf.DimensionCoordinate(data=cf.Data(
-                    123, 'days since 1750-1-1'))
+                t = cf.DimensionCoordinate(
+                    data=cf.Data([123], 'days since 1750-1-1')
+                )
 
                 t.standard_name = 'time'
                 axisT = f.set_construct(cf.DomainAxis(1))

@@ -509,7 +509,7 @@ Attribute   Description
             return type(self)(new_matrix, self.axes)
 
     # 0
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, axis, inplace=False):
         '''Insert a new size 1 axis in place.
 
@@ -607,7 +607,7 @@ Attribute   Description
         return boundaries
 
     # 0
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Swap the positions of two axes.
 
@@ -724,7 +724,7 @@ Attribute   Description
         # --- End: for
 
     # 0
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, inplace=False):
         '''Remove all size 1 axes.
 
@@ -767,7 +767,7 @@ Attribute   Description
 
         return p
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
         '''Permute the partition dimensions of the partition matrix in place.
 

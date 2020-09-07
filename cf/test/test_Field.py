@@ -77,7 +77,7 @@ class FieldTest(unittest.TestCase):
 #            'test_Field_convolution_filter', 'test_Field_derivative',
 #            'test_Field_moving_window'
 #        ]
-#        self.test_only = ['test_Field_match']
+#        self.test_only = ['test_Field_set_get_del_has_data']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -91,7 +91,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_mask_invalid']
 #        self.test_only = ['test_Field_test_Field_creation_commands']
 #        self.test_only = ['test_Field_section']
-#        self.test_only = ['test_Field_flip']
+#        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_Field_domain_mask']
 #        self.test_only = ['test_Field_compress_uncompress']
 #        self.test_only = ['test_Field_coordinate_reference']
@@ -294,7 +294,7 @@ class FieldTest(unittest.TestCase):
         axis = f.set_construct(cf.DomainAxis(1))
         d = cf.DimensionCoordinate()
         d.standard_name = 'time'
-        d.set_data(cf.Data(123., 'days since 2000-01-02'))
+        d.set_data(cf.Data([123.], 'days since 2000-01-02'))
         f.set_construct(d, axes=axis)
 
         g = f.flatten()
@@ -1218,7 +1218,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = f.radius(default=None)
 
-    def test_Field_DATA(self):
+    def test_Field_set_get_del_has_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -1279,6 +1279,15 @@ class FieldTest(unittest.TestCase):
             g.set_data(cf.Data(list(range(9))), axes=b)
         with self.assertRaises(Exception):
             g.set_data(cf.Data(list(range(9))), axes=[b, a])
+
+        # Test inplace
+        f = self.f.copy()
+        d = f.del_data()
+        g = f.set_data(d, inplace=False)
+        self.assertIsInstance(g, cf.Field)
+        self.assertFalse(f.has_data())
+        self.assertTrue(g.has_data())
+        self.assertTrue(g.data.equals(d))
 
         g = cf.Field()
 #        with self.assertRaises(Exception):
