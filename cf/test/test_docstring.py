@@ -35,10 +35,10 @@ class DocstringTest(unittest.TestCase):
 
         self.subclasses_of_Container = tuple(
             set(_get_all_abbrev_subclasses(
-                cf.mixin.properties.Container)).union(
+                cf.mixin_container.Container)).union(
                 set(_get_all_abbrev_subclasses(
                     cfdm.data.abstract.array.Array)),
-                [   # other key classes not in subclass heirarchy above
+                [   # other key classes not in subclass hierarchy above
                     cf.coordinatereference.CoordinateReference,
                     cf.cellmethod.CellMethod,
                     cf.domainaxis.DomainAxis,
