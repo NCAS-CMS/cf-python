@@ -3,71 +3,57 @@ import inspect
 import unittest
 
 import cf
+import cfdm
+
+
+def _recurse_on_subclasses(klass):
+    """Return as a set all subclasses in a classes' subclass hierarchy."""
+    return set(klass.__subclasses__()).union(
+        [sub for cls in klass.__subclasses__() for sub in
+         _recurse_on_subclasses(cls)]
+    )
+
+
+def _get_all_abbrev_subclasses(klass):
+    """Return set of all subclasses in class hierarchy, filtering some out.
+
+    Filter out cf.mixin.properties*.Properties* (by means of there not being
+    any abbreviated cf.Properties* classes) plus any cfdm classes, since
+    this function needs to take cf subclasses from cfdm classes as well.
+    """
+    return tuple([
+        sub for sub in _recurse_on_subclasses(klass) if
+        hasattr(cf, sub.__name__) and
+        sub.__module__.split('.')[0] == 'cf'  # i.e. not 'cfdm'
+    ])
 
 
 class DocstringTest(unittest.TestCase):
     def setUp(self):
         self.package = 'cf'
         self.repr = 'CF '
-        self.subclasses_of_Container = (
-            cf.Field,
-            cf.AuxiliaryCoordinate,
-            cf.DimensionCoordinate,
-            cf.DomainAncillary,
-            cf.FieldAncillary,
-            cf.CellMeasure,
-            cf.DomainAxis,
-            cf.CoordinateReference,
-            cf.CellMethod,
 
-            cf.NodeCountProperties,
-            cf.PartNodeCountProperties,
-            cf.Bounds,
-            cf.InteriorRing,
-            cf.List,
-            cf.Index,
-            cf.Count,
+        self.subclasses_of_Container = tuple(
+            set(_get_all_abbrev_subclasses(
+                cf.mixin.properties.Container)).union(
+                set(_get_all_abbrev_subclasses(
+                    cfdm.data.abstract.array.Array)),
+                [   # other key classes not in subclass heirarchy above
+                    cf.coordinatereference.CoordinateReference,
+                    cf.cellmethod.CellMethod,
+                    cf.domainaxis.DomainAxis,
+                ]
+            )
+        )
 
-            cf.Data,
-            cf.NetCDFArray,
-            cf.GatheredArray,
-            cf.RaggedContiguousArray,
-            cf.RaggedIndexedArray,
-            cf.RaggedIndexedContiguousArray,
-        )
-        self.subclasses_of_Properties = (
-            cf.Field,
-            cf.AuxiliaryCoordinate,
-            cf.DimensionCoordinate,
-            cf.DomainAncillary,
-            cf.FieldAncillary,
-            cf.CellMeasure,
-            cf.NodeCountProperties,
-            cf.PartNodeCountProperties,
-            cf.Bounds,
-            cf.InteriorRing,
-            cf.List,
-            cf.Index,
-            cf.Count,
-        )
-        self.subclasses_of_PropertiesData = (
-            cf.Field,
-            cf.AuxiliaryCoordinate,
-            cf.DimensionCoordinate,
-            cf.DomainAncillary,
-            cf.FieldAncillary,
-            cf.CellMeasure,
-            cf.Bounds,
-            cf.InteriorRing,
-            cf.List,
-            cf.Index,
-            cf.Count,
-        )
-        self.subclasses_of_PropertiesDataBounds = (
-            cf.AuxiliaryCoordinate,
-            cf.DimensionCoordinate,
-            cf.DomainAncillary,
-        )
+        self.subclasses_of_Properties = _get_all_abbrev_subclasses(
+            cf.mixin.properties.Properties)
+
+        self.subclasses_of_PropertiesData = _get_all_abbrev_subclasses(
+            cf.mixin.propertiesdata.PropertiesData)
+
+        self.subclasses_of_PropertiesDataBounds = _get_all_abbrev_subclasses(
+            cf.mixin.propertiesdatabounds.PropertiesDataBounds)
 
     def test_docstring(self):
         # Test that all {{ occurences have been substituted
