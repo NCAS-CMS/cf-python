@@ -326,7 +326,7 @@ class Partition:
                 if (FileArray is not None and isinstance(subarray, FileArray)):
                     try:
                         filename = subarray.get_filename()
-                    except:
+                    except Exception:
                         filename = None
 
                     if self.file_counter.get(filename, 999) <= 0:
@@ -334,7 +334,7 @@ class Partition:
                         # which is not referenced by any other
                         # partitions, so close the file.
                         subarray.close()
-            except:
+            except Exception:
                 # If we're here then it is likely that FileArray has been
                 # torn down, so just do nothing.
                 pass
@@ -411,7 +411,7 @@ class Partition:
                     not isinstance(subarray, CachedArray)):
                 try:
                     filename = subarray.get_filename()
-                except:
+                except Exception:
                     filename = None
 
                 if filename is None:
@@ -428,7 +428,7 @@ class Partition:
                     file_counter.pop(filename, None)
                 else:
                     file_counter[filename] = count
-        except:
+        except Exception:
             # If we're here then it is likely that FileArray has been
             # torn down, so just do nothing.
             pass
@@ -1750,7 +1750,7 @@ class Partition:
         '''
 #        try:
         tfa = CachedArray(self.array)
-#        except:
+#        except Exception:
 #            return False
 
         fd, _lock_file = mkstemp(prefix=tfa._partition_file + '_',
@@ -1793,7 +1793,7 @@ class Partition:
 #
 #        try:
 #            self.subarray = SharedMemoryArray(self.array)
-#        except:
+#        except Exception:
 #            return False
 #
 #        # Re-open the partition

@@ -137,7 +137,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
     except Exception as error:
         try:
             f.close_fd()
-        except:
+        except Exception:
             pass
         raise Exception(error)
 

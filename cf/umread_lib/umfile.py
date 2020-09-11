@@ -83,7 +83,7 @@ class File:
         c = self._c_interface
         try:
             file_type_obj = c.detect_file_type(self.fd)
-        except:
+        except Exception:
             self.close_fd()
             raise IOError("File {0} has unsupported format".format(self.path))
 

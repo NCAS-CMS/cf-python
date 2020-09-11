@@ -1604,7 +1604,7 @@ class DataTest(unittest.TestCase):
 
                     try:
                         d ** x
-                    except:
+                    except Exception:
                         pass
                     else:
                         message = 'Failed in {!r}**{!r}'.format(d, x)
@@ -1671,7 +1671,7 @@ class DataTest(unittest.TestCase):
 
                     try:
                         x ** d
-                    except:
+                    except Exception:
                         pass
                     else:
                         message = 'Failed in {}**{!r}'.format(x, d)
@@ -1777,7 +1777,7 @@ class DataTest(unittest.TestCase):
 
                     try:
                         d ** x
-                    except:
+                    except Exception:
                         pass
                     else:
                         self.assertTrue((x**d).all(), '%s**%s' % (x, repr(d)))

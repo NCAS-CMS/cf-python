@@ -125,7 +125,7 @@ class read_writeTest(unittest.TestCase):
             os.mkdir(dir)
         except FileExistsError:
             pass
-        except:
+        except Exception:
             raise ValueError("Can not mkdir {}{}".format(pwd, dir))
 
         f = 'test_file2.nc'
@@ -139,7 +139,7 @@ class read_writeTest(unittest.TestCase):
             os.mkdir(subdir)
         except FileExistsError:
             pass
-        except:
+        except Exception:
             raise ValueError("Can not mkdir {}{}".format(pwd, subdir))
 
         for f in ('test_file3.nc', 'test_file.nc'):

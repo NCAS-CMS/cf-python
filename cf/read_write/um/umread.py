@@ -3019,7 +3019,7 @@ class UMRead(cfdm.read_write.IORead):
 
         try:
             f.close_fd()
-        except:
+        except Exception:
             pass
 
         return True

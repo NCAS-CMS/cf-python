@@ -7557,7 +7557,7 @@ False
         '''
         try:
             return self._shape
-        except:
+        except Exception:
             raise AttributeError(
                 "{!r} object has no attribute 'shape'".format(
                     self.__class__.__name__)
