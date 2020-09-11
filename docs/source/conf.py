@@ -466,7 +466,7 @@ def linkcode_resolve(domain, info):
     for part in fullname.split('.'):
         try:
             obj = getattr(obj, part)
-        except:
+        except AttributeError:
             return None
 
     # Get the object wrapped by obj. This makes sure that the actual
@@ -475,7 +475,7 @@ def linkcode_resolve(domain, info):
 
     try:
         fn = inspect.getsourcefile(obj)
-    except:
+    except TypeError:
         fn = None
 
     if not fn:
@@ -483,11 +483,11 @@ def linkcode_resolve(domain, info):
 
     try:
         source, lineno = inspect.findsource(obj)
-    except:
+    except OSError:
         lineno = None
     try:
         nlines = len(inspect.getsourcelines(obj)[0])
-    except:
+    except (OSError, IndexError):
         nlines = None
 
     fn = relpath(fn, start=dirname(cf.__file__))

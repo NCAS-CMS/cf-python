@@ -2883,7 +2883,7 @@ def environment(display=True, paths=True, string=True):
 
     try:
         import scipy
-    except:
+    except ImportError:
         out.append('scipy: not available')
     else:
         out.append('scipy: ' + str(scipy.__version__))
@@ -2893,7 +2893,7 @@ def environment(display=True, paths=True, string=True):
 
     try:
         import matplotlib
-    except:
+    except ImportError:
         out.append('matplotlib: not available')
     else:
         out.append('matplotlib: ' + str(matplotlib.__version__))
@@ -2903,7 +2903,7 @@ def environment(display=True, paths=True, string=True):
 
     try:
         import ESMF
-    except:
+    except ImportError:
         out.append('ESMF: not available')
     else:
         out.append('ESMF: ' + str(ESMF.__version__))

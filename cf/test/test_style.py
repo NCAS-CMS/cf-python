@@ -36,14 +36,13 @@ class styleTest(unittest.TestCase):
         # descriptions for each code see:
         # https://pep8.readthedocs.io/en/latest/intro.html#error-codes
         pep8_check.options.ignore += (  # ignored because...
-            'W605',  # ...false positives on regex and LaTeX expressions
+            'W605',  # ... false positives on regex and LaTeX expressions
             'E272',  # ... >1 spaces to align keywords in long import listings
             'E402',  # ... justified lower module imports in units and __init__
             'E501',  # ... docstring examples include output lines >79 chars
             'E712',  # ... query module requires a (specific) '== False' check
-            'E722',  # ... lots of "bare except" cases need to be addressed
             'E731',  # ... one lambda expression, need to check is OK to convert
-        )  # TODO these remove incrementally as move towards full compliance
+        )  # TODO remove these incrementally as move towards full compliance
 
         # First add Python files which lie outside of the cf directory:
         python_files = self.non_cf_dir_python_paths

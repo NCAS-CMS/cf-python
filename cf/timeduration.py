@@ -715,7 +715,7 @@ class TimeDuration:
     def __rsub__(self, other):
         '''The binary arithmetic operation ``-`` with reflected operands
 
-    x.__rsub__(y) <==> y-x
+    x.__rsub__(y) <==> y - x
 
     .. versionadded:: 1.4
 
@@ -727,7 +727,7 @@ class TimeDuration:
             # other is a date-time object
             try:
                 return self._datetime_arithmetic(other, __sub__)
-            except:
+            except TypeError:
                 return NotImplemented
 
         return NotImplemented
