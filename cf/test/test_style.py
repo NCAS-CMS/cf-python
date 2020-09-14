@@ -41,7 +41,7 @@ class styleTest(unittest.TestCase):
             'E402',  # ... justified lower module imports in units and __init__
             'E501',  # ... docstring examples include output lines >79 chars
             'E712',  # ... query module requires a (specific) '== False' check
-            'E731',  # ... one lambda expression, need to check is OK to convert
+            'E731',  # ... one sensible (default sort key) lambda expression
         )  # TODO remove these incrementally as move towards full compliance
 
         # First add Python files which lie outside of the cf directory:
