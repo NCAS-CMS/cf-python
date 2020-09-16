@@ -97,9 +97,8 @@ jobs:
     - name: Make UMRead
       shell: bash -l {0}
       run: |
-        cd cf/umread_lib/c-lib
+        cd ${{ github.workspace }}/main/cf/umread_lib/c-lib
         make
-        cd -
 
     # Provide another notification message
     - name: Notify about starting testing
@@ -109,7 +108,7 @@ jobs:
     - name: Run test suite
       shell: bash -l {0}
       run: |
-        cd cf/test
+        cd ${{ github.workspace }}/main/cf/test
         python run_tests.py
 
     # End with a message indicating the suite has completed its run
