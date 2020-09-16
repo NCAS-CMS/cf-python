@@ -88,9 +88,9 @@ jobs:
     - name: Install development cfdm and cf-python
       shell: bash -l {0}
       run: |
-        cd ../cfdm
+        cd ${{ github.workspace }}/cfdm
         pip install -e .
-        cd ../cf-python
+        cd ${{ github.workspace }}/main
         pip install -e .
 
     # Make UMRead library
