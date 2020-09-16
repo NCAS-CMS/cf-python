@@ -677,8 +677,8 @@ class _Meta:
                               (exist and p not in ex)]
             # --- End: if
 
-            self.properties = tuple(sorted(ex_all + ex +
-                                           eq_all.items() + eq.items()))
+            self.properties = tuple(
+                sorted(ex_all + ex + list(eq_all.items()) + list(eq.items())))
         # --- End: if
 
         # Attributes
@@ -1655,10 +1655,11 @@ def aggregate(fields,
 
         if ignore:
             ignore = _signature_properties.union(ignore)
-        else:
-            ignore = _signature_properties
+
     # --- End: if
 
+    if not ignore:
+        ignore = _signature_properties
     unaggregatable = False
     status = 0
 
