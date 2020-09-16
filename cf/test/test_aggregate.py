@@ -16,7 +16,7 @@ class aggregateTest(unittest.TestCase):
     chunk_sizes = (100000, 300, 34)
     original_chunksize = cf.chunksize()
 
-    def test_aggregate(self):
+    def test_basic_aggregate(self):
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
 
@@ -124,6 +124,27 @@ class aggregateTest(unittest.TestCase):
             c.long_name = 'qwerty'
             x = cf.aggregate([c, t], field_identity='long_name')
             self.assertEqual(len(x), 1)
+
+        cf.chunksize(self.original_chunksize)
+
+    def test_aggregate_exist_equal_ignore_opts(self):
+        # TODO: extend the option-checking coverage so all options and all
+        # reasonable combinations of them are tested. For now, this is
+        # testing options that previously errored due to a bug.
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+
+            f = cf.read(self.filename, squeeze=True)[0]
+
+            # Use f as-is: simple test that aggregate works and does not
+            # change anything with the given options:
+            g = cf.aggregate(f, exist_all=True)[0]
+            self.assertEqual(g, f)
+            h = cf.aggregate(f, equal_all=True)[0]
+            self.assertEqual(h, f)
+
+            with self.assertRaises(ValueError):  # contradictory options
+                cf.aggregate(f, exist_all=True, equal_all=True)
 
         cf.chunksize(self.original_chunksize)
 
