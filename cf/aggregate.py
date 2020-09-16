@@ -1332,11 +1332,6 @@ def aggregate(fields,
     the *ncvar_identities* parameter forces field and metadata
     constructs to be identified by their netCDF file variable names.
 
-    **Units**
-
-
-
-
     :Parameters:
 
         fields: `FieldList` or sequence of `Field`
@@ -1616,7 +1611,11 @@ def aggregate(fields,
         dimension = (dimension,)
 
     if exist_all and equal_all:
-        raise ValueError("asdasdas  jnf0____")
+        raise ValueError(
+            "Only one of 'exist_all' and 'equal_all' can be True, since "
+            "these options are conflicting. Run 'help(cf.aggregate)' to read "
+            "descriptions of each option to see which is applicable."
+        )
 
     if equal or exist or ignore:
         properties = {
@@ -1647,7 +1646,12 @@ def aggregate(fields,
 
         if equal and exist:
             if set(equal).intersection(exist):
-                raise AttributeError("TODO 888888888888888 asdasdas  jnf0____")
+                raise AttributeError(
+                    "Only one of 'exist' and 'equal' can be True for any "
+                    "given property, since these options are conflicting. "
+                    "Run 'help(cf.aggregate)' to read descriptions of each "
+                    "option to see which is applicable."
+                )
 
         if ignore:
             ignore = _signature_properties.union(ignore)
@@ -3095,7 +3099,7 @@ def ensemble(f, prop, **kwargs):
     # Check that the fields are all compatible
     kwargs['copy'] = True
     if len(cf.aggregate(f, **kwargs)) != len(f):
-        raise ValueError("")
+        raise ValueError("Not all of the fields are compatible.")
 
     f = f.copy()
 
@@ -3118,8 +3122,11 @@ def ensemble(f, prop, **kwargs):
     kwargs['copy'] = False
     f = aggregate(f, **kwargs)
 
-    # Check that the fields were aggreageted down to one field
+    # Check that the fields were aggregated down to one field
     if len(f) != 1:
-        raise ValueError("TODO")
+        raise ValueError(
+            "The aggregation resulted in more than one field, but a single "
+            "field was expected."
+        )
 
     return f
