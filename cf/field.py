@@ -20389,7 +20389,7 @@ class Field(mixin.PropertiesData,
         return self.field_ancillaries.filter_by_identity(*identities)
 
     def item(self, identity, key=False, default=ValueError(), **kwargs):
-        '''Alias for `cf.Field.construct``.
+        '''Alias for `cf.Field.construct`.
 
         '''
         if kwargs:
