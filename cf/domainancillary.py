@@ -45,6 +45,7 @@ class DomainAncillary(mixin.PropertiesDataBounds,
 
     **Examples:**
 
+    >>>f = cf.DomainAncillary()
     >>> f.isdomainancillary
     True
 

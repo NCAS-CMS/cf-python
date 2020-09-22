@@ -240,6 +240,7 @@ class DimensionCoordinate(mixin.Coordinate,
 
     **Examples:**
 
+    >>> c = cf.DimensionCoordinate()
     >>> c.isdimension
     True
 

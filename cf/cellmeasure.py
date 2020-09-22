@@ -53,6 +53,7 @@ class CellMeasure(mixin.PropertiesData,
 
     **Examples:**
 
+    >>> c = cf.CellMeasure()
     >>> c.ismeasure
     True
 

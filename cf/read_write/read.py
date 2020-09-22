@@ -38,8 +38,11 @@ def read(files, external=None, verbose=None, warnings=False,
          chunk=True, field=None, height_at_top_of_model=None,
          select_options=None, follow_symlinks=False, mask=True,
          warn_valid=False):
-    '''Read field constructs from netCDF, CDL, PP or UM fields files.
+    '''Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
+    Input datasets are mapped to field constructs in memory which are
+    returned as elements of a `FieldList`.
+    
     NetCDF files may be on disk or on an OPeNDAP server.
 
     Any amount of files of any combination of file types may be read.
@@ -308,11 +311,19 @@ def read(files, external=None, verbose=None, warnings=False,
             If True then insert size 1 axes from each field
             construct's domain into its data array.
 
-        select: (sequence of) str, optional
-            Only return field constructs which have given identities,
-            i.e. those that satisfy
-            ``f.match_by_identity(*select)``. See
+        select: (sequence of) `str` or `Query` or `re.Pattern`, optional
+            Only return field constructs whose identities match the
+            given values(s), i.e. those fields ``f`` for which
+            ``f.match_by_identity(*select)`` is `True`. See
             `cf.Field.match_by_identity` for details.
+
+            This is equivalent to, but possibly faster than, not using
+            the *select* parameter but applying its value to the
+            returned field list with its
+            `cf.FieldList.select_by_identity` method. For example,
+            ``fl = cf.read(file, select='air_temperature')`` is
+            equivalent to ``fl =
+            cf.read(file).select_by_identity('air_temperature')``.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -462,8 +473,8 @@ def read(files, external=None, verbose=None, warnings=False,
     :Returns:
 
         `FieldList`
-            The field constructs found in the input file(s). The list
-            may be empty.
+            The field constructs found in the input dataset(s). The
+            list may be empty.
 
     **Examples:**
 

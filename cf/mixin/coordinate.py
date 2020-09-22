@@ -53,8 +53,8 @@ class Coordinate:
 
     **Examples:**
 
-    >>> c.Units
-    <CF Units: seconds since 1992-10-8>
+    >>> c = cf.{{class}}()
+    >>> c.Units = cf.Units('seconds since 1992-10-08')
     >>> c.T
     True
 

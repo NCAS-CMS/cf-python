@@ -50,6 +50,7 @@ class FieldAncillary(mixin.PropertiesData,
 
     **Examples:**
 
+    >>> f = cf.FieldAncillary()
     >>> f.isfieldancillary
     True
 

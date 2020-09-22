@@ -1271,6 +1271,51 @@ class FieldList(list,
 
         return out[0]
 
+    def unique_domains(self):
+        '''Return the unique domains used by the field constructs.
+
+    .. versionadded:: 3.7.0
+
+    :Returns:
+
+        `list`
+            The unique domains. May be an empty list.
+
+    **Examples:**
+
+    >>> f = cf.example_fields(0)
+    >>> g = cf.example_fields(1)
+    >>> f
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
+    >>> g
+    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+    >>> fl = cf.FieldList([f, f, g])
+    >>> fl.unique_domains():
+    >>> [<CF Domain: {1, 5, 8}>, <CF Domain: {1, 1, 9, 10}>]
+
+        '''
+        if not self:
+            return []
+        
+        out = [self[0].domain]
+
+        for f in self[1:]:
+            domain = f.domain
+        
+            found_new_domain = False
+            for d in out:
+                if not d.equals(domain):
+                    found_new_domain = True
+                    break
+            # --- End: for
+        
+            if found_new_domain:
+                out.append(domain)
+        # --- End: for
+        
+        return out
+
+
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------

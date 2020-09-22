@@ -15,6 +15,15 @@ Field construct class
 
    cf.Field	              
 
+Field list class
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cf.FieldList	              
+
 Metadata component classes
 --------------------------
 
@@ -60,15 +69,6 @@ Domain class
 
    cf.Domain
    
-Field list class
-----------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cf.FieldList	              
-
 Data classes
 ------------
 
@@ -78,8 +78,6 @@ Data classes
 
    cf.Data
    cf.NetCDFArray
-   cf.NumpyArray
-   cf.Array
 
 Miscellaneous classes
 ---------------------
