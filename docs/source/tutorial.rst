@@ -3783,9 +3783,10 @@ be specified. See the `~Field.where` method documentation for details.
 
 There are various methods for creating a field construct in memory:
 
-* :ref:`manual creation <Manual-creation>`: Instantiate instances of
-  field and metadata construct classes and manually provide the
-  connections between them.
+* :ref:`Ab initio creation <Ab-initio-creation>`: Instantiate
+  instances of field and metadata construct classes and manually
+  provide the connections between them.
+..
 
 ..
 
@@ -4272,70 +4273,76 @@ the desired field construct. The commands are produced by the
 	
    >>> q, t = cf.read('file.nc')
    >>> print(q.creation_commands())
+   # field: specific_humidity
    f = cf.Field()
-   
    f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+   d = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+   f.set_data(d)
    f.nc_set_variable('q')
+   
+   # netCDF global attributes
    f.nc_set_global_attributes({'Conventions': None, 'project': None})
    
-   # domain_axis
-   c = cf.DomainAxis(size=5)
+   # domain_axis: ncdim%lat
+   c = cf.DomainAxis()
+   c.set_size(5)
    c.nc_set_dimension('lat')
-   f.set_construct(c, key='domainaxis0')
+   f.set_construct(c, key='domainaxis0', copy=False)
    
-   # domain_axis
-   c = cf.DomainAxis(size=8)
+   # domain_axis: ncdim%lon
+   c = cf.DomainAxis()
+   c.set_size(8)
    c.nc_set_dimension('lon')
-   f.set_construct(c, key='domainaxis1')
+   f.set_construct(c, key='domainaxis1', copy=False)
    
-   # domain_axis
-   c = cf.DomainAxis(size=1)
-   f.set_construct(c, key='domainaxis2')
+   # domain_axis: 
+   c = cf.DomainAxis()
+   c.set_size(1)
+   f.set_construct(c, key='domainaxis2', copy=False)
    
-   # field data
-   data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
-   f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+   # field data axes
+   f.set_data_axes(('domainaxis0', 'domainaxis1'))
    
-   # dimension_coordinate
+   # dimension_coordinate: latitude
    c = cf.DimensionCoordinate()
    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+   d = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+   c.set_data(d)
    c.nc_set_variable('lat')
-   data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
-   c.set_data(data)
    b = cf.Bounds()
-   b.set_properties({'units': 'degrees_north'})
+   b.set_properties({})
+   d = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+   b.set_data(d)
    b.nc_set_variable('lat_bnds')
-   data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
-   b.set_data(data)
    c.set_bounds(b)
    f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
    
-   # dimension_coordinate
+   # dimension_coordinate: longitude
    c = cf.DimensionCoordinate()
    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+   d = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+   c.set_data(d)
    c.nc_set_variable('lon')
-   data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
-   c.set_data(data)
    b = cf.Bounds()
-   b.set_properties({'units': 'degrees_east'})
+   b.set_properties({})
+   d = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+   b.set_data(d)
    b.nc_set_variable('lon_bnds')
-   data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
-   b.set_data(data)
    c.set_bounds(b)
    f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
    
-   # dimension_coordinate
+   # dimension_coordinate: time
    c = cf.DimensionCoordinate()
    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+   d = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
+   c.set_data(d)
    c.nc_set_variable('time')
-   data = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
-   c.set_data(data)
    f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
    
    # cell_method
    c = cf.CellMethod()
-   c.method = 'mean'
-   c.axes = ('area',)
+   c.set_method('mean')
+   c.set_axes(('area',))
    f.set_construct(c)
 
 Some example fields are always available from the `cf.example_field`
