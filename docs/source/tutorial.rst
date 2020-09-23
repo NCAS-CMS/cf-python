@@ -3816,12 +3816,12 @@ CF-compliance is the responsibility of the user. For example, a
 <https://www.unidata.ucar.edu/software/udunits>`_ string is not
 CF-compliant, but is allowed by the cf package.
 
-.. _Manual-creation:
+.. _Ab-initio-creation:
 
-Manual creation
-^^^^^^^^^^^^^^^
+Ab initio creation
+^^^^^^^^^^^^^^^^^^
 
-Manual creation of a field construct has three stages:
+Ab initio creation of a field construct has three stages:
 
 **Stage 1:** The field construct is created without metadata
 constructs.
