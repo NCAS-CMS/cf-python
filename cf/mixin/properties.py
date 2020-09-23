@@ -108,7 +108,7 @@ class Properties(Container):
     constructs. This can be useful when identification is not possible
     from the existing properties, either because they are missing or
     because they do not provide sufficiently unique information.
-    
+
     In general it will only be defined if explicitly set by the user.
 
     Note that `id` is not a CF property and so is not read from, nor

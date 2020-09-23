@@ -42,7 +42,7 @@ def read(files, external=None, verbose=None, warnings=False,
 
     Input datasets are mapped to field constructs in memory which are
     returned as elements of a `FieldList`.
-    
+
     NetCDF files may be on disk or on an OPeNDAP server.
 
     Any amount of files of any combination of file types may be read.

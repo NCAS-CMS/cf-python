@@ -523,6 +523,24 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = g.index(a, start=1)
 
+    def test_unique_domains(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+        g = cf.example_field(1)
+
+        fl = cf.FieldList()
+        self.assertFalse(fl.unique_domains())
+
+        fl = cf.FieldList([f])
+        self.assertEqual(len(fl.unique_domains()), 1)
+
+        fl = cf.FieldList([f, f.copy()])
+        self.assertEqual(len(fl.unique_domains()), 1)
+
+        fl = cf.FieldList([f, f.copy(), g])
+        self.assertEqual(len(fl.unique_domains()), 2)
 # --- End: class
 
 

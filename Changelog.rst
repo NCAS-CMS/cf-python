@@ -6,6 +6,7 @@ version 3.7.0
 
 * New method: `cf.Field.del_domain_axis`
 * New method: `cf.FieldList.unique_domains`
+* Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
 
 version 3.6.0
 -------------

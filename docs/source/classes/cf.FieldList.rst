@@ -52,6 +52,7 @@ Miscellaneous
    ~cf.FieldList.close
    ~cf.FieldList.concatenate
    ~cf.FieldList.copy 
+   ~cf.FieldList.unique_domains 
 
 Aliases
 -------

@@ -1,4 +1,3 @@
-
 from copy import copy
 
 import logging
@@ -1271,14 +1270,21 @@ class FieldList(list,
 
         return out[0]
 
-    def unique_domains(self):
+    def unique_domains(self, copy=True):
         '''Return the unique domains used by the field constructs.
 
     .. versionadded:: 3.7.0
 
+    :Parameters:
+
+        copy: `bool`, optional
+            If False then do not copy returned domains. By default the
+            returned domains are deep copies from their parent field
+            constructs.
+
     :Returns:
 
-        `list`
+        `list` of `Domain`
             The unique domains. May be an empty list.
 
     **Examples:**
@@ -1294,27 +1300,7 @@ class FieldList(list,
     >>> [<CF Domain: {1, 5, 8}>, <CF Domain: {1, 1, 9, 10}>]
 
         '''
-        if not self:
-            return []
-        
-        out = [self[0].domain]
-
-        for f in self[1:]:
-            domain = f.domain
-        
-            found_new_domain = False
-            for d in out:
-                if not d.equals(domain):
-                    found_new_domain = True
-                    break
-            # --- End: for
-        
-            if found_new_domain:
-                out.append(domain)
-        # --- End: for
-        
-        return out
-
+        return cfdm.unique_domains(self, copy=copy)
 
     # ----------------------------------------------------------------
     # Aliases
