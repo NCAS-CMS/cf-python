@@ -251,7 +251,6 @@ Data
    ~cf.AuxiliaryCoordinate.chunk
    ~cf.AuxiliaryCoordinate.close
    ~cf.AuxiliaryCoordinate.convert_reference_time
-   ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.period
    ~cf.AuxiliaryCoordinate.get_filenames
@@ -268,6 +267,7 @@ Miscellaneous
 
    ~cf.AuxiliaryCoordinate.concatenate
    ~cf.AuxiliaryCoordinate.copy
+   ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.equals
    ~cf.AuxiliaryCoordinate.inspect
    ~cf.AuxiliaryCoordinate.uncompress

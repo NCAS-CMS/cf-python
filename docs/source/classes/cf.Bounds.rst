@@ -214,7 +214,6 @@ Data
    ~cf.Bounds.chunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
-   ~cf.Bounds.creation_commands
    ~cf.Bounds.cyclic
    ~cf.Bounds.period
    ~cf.Bounds.get_filenames
@@ -232,6 +231,7 @@ Miscellaneous
 
    ~cf.Bounds.concatenate
    ~cf.Bounds.copy
+   ~cf.Bounds.creation_commands
    ~cf.Bounds.equals
    ~cf.Bounds.uncompress
 

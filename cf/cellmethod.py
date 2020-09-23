@@ -7,6 +7,8 @@ import logging
 
 import cfdm
 
+from .data import Data
+
 from .functions import inspect as cf_inspect
 
 from .data.data import Data
@@ -55,6 +57,16 @@ class CellMethod(cfdm.CellMethod):
     applied only over El Nino years).
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+    .. versionadded:: (cfdm) 3.7.0
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -471,101 +483,101 @@ class CellMethod(cfdm.CellMethod):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def creation_commands(self, representative_data=False,
-                          namespace='cf', indent=0, string=True,
-                          name='c'):
-        '''Return the commands that would create the cell measure construct.
-
-    .. versionadded:: 3.2.0
-
-    .. seealso:: `cf.Data.creation_commands`,
-                 `cf.Field.creation_commands`
-
-    :Parameters:
-
-        representative_data: `bool`, optional
-            Ignored.
-
-        namespace: `str`, optional
-            The namespace containing classes of the ``cf``
-            package. This is prefixed to the class name in commands
-            that instantiate instances of ``cf`` objects. By default,
-            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
-            was imported as ``import cf``.
-
-            *Parameter example:*
-              If ``cf`` was imported as ``import cf as cfp`` then set
-              ``namespace='cfp'``
-
-            *Parameter example:*
-              If ``cf`` was imported as ``from cf import *`` then set
-              ``namespace=''``
-
-        indent: `int`, optional
-            Indent each line by this many spaces. By default no
-            indentation is applied. Ignored if *string* is False.
-
-        string: `bool`, optional
-            If False then return each command as an element of a
-            `list`. By default the commands are concatenated into
-            a string, with a new line inserted between each command.
-
-    :Returns:
-
-        `str` or `list`
-            The commands in a string, with a new line inserted between
-            each command. If *string* is False then the separate
-            commands are returned as each element of a `list`.
-
-    **Examples:**
-
-        TODO
-        '''
-        namespace0 = namespace
-        if namespace0:
-            namespace = namespace+"."
-        else:
-            namespace = ""
-
-        indent = ' ' * indent
-
-        out = []
-        out.append("# {}".format(self.construct_type))
-        out.append("{} = {}{}()".format(name, namespace,
-                                        self.__class__.__name__))
-        method = self.get_method(None)
-        if method is not None:
-            out.append("{}.set_method({!r})".format(name, method))
-
-        axes = self.get_axes(None)
-        if axes is not None:
-            out.append("{}.set_axes({!r})".format(name, axes))
-
-        for term, value in self.qualifiers().items():
-            if term == 'interval':
-                value = deepcopy(value)
-                for i, data in enumerate(value[:]):
-                    if isinstance(data, Data):
-                        value[i] = data.creation_commands(
-                            name=None, namespace=namespace0,
-                            indent=0, string=True)
-                    else:
-                        value[i] = str(data)
-                # --- End: for
-
-                value = ', '.join(value)
-                value = "["+value+"]"
-            else:
-                value = repr(value)
-
-            out.append("{}.set_qualifier({!r}, {})".format(name, term,
-                                                           value))
-
-        if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
-
-        return out
+#    def creation_commands(self, representative_data=False,
+#                          namespace='cf', indent=0, string=True,
+#                          name='c'):
+#        '''Return the commands that would create the cell measure construct.
+#
+#    .. versionadded:: 3.2.0
+#
+#    .. seealso:: `cf.Data.creation_commands`,
+#                 `cf.Field.creation_commands`
+#
+#    :Parameters:
+#
+#        representative_data: `bool`, optional
+#            Ignored.
+#
+#        namespace: `str`, optional
+#            The namespace containing classes of the ``cf``
+#            package. This is prefixed to the class name in commands
+#            that instantiate instances of ``cf`` objects. By default,
+#            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+#            was imported as ``import cf``.
+#
+#            *Parameter example:*
+#              If ``cf`` was imported as ``import cf as cfp`` then set
+#              ``namespace='cfp'``
+#
+#            *Parameter example:*
+#              If ``cf`` was imported as ``from cf import *`` then set
+#              ``namespace=''``
+#
+#        indent: `int`, optional
+#            Indent each line by this many spaces. By default no
+#            indentation is applied. Ignored if *string* is False.
+#
+#        string: `bool`, optional
+#            If False then return each command as an element of a
+#            `list`. By default the commands are concatenated into
+#            a string, with a new line inserted between each command.
+#
+#    :Returns:
+#
+#        `str` or `list`
+#            The commands in a string, with a new line inserted between
+#            each command. If *string* is False then the separate
+#            commands are returned as each element of a `list`.
+#
+#    **Examples:**
+#
+#        TODO
+#        '''
+#        namespace0 = namespace
+#        if namespace0:
+#            namespace = namespace+"."
+#        else:
+#            namespace = ""
+#
+#        indent = ' ' * indent
+#
+#        out = []
+#        out.append("# {}".format(self.construct_type))
+#        out.append("{} = {}{}()".format(name, namespace,
+#                                        self.__class__.__name__))
+#        method = self.get_method(None)
+#        if method is not None:
+#            out.append("{}.set_method({!r})".format(name, method))
+#
+#        axes = self.get_axes(None)
+#        if axes is not None:
+#            out.append("{}.set_axes({!r})".format(name, axes))
+#
+#        for term, value in self.qualifiers().items():
+#            if term == 'interval':
+#                value = deepcopy(value)
+#                for i, data in enumerate(value[:]):
+#                    if isinstance(data, Data):
+#                        value[i] = data.creation_commands(
+#                            name=None, namespace=namespace0,
+#                            indent=0, string=True)
+#                    else:
+#                        value[i] = str(data)
+#                # --- End: for
+#
+#                value = ', '.join(value)
+#                value = "["+value+"]"
+#            else:
+#                value = repr(value)
+#
+#            out.append("{}.set_qualifier({!r}, {})".format(name, term,
+#                                                           value))
+#
+#        if string:
+#            out[0] = indent+out[0]
+#            out = ('\n'+indent).join(out)
+#
+#        return out
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)

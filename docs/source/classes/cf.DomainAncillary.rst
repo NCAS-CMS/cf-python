@@ -248,7 +248,6 @@ Data
    ~cf.DomainAncillary.chunk
    ~cf.DomainAncillary.close
    ~cf.DomainAncillary.convert_reference_time
-   ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.cyclic
    ~cf.DomainAncillary.period
    ~cf.DomainAncillary.get_filenames
@@ -265,6 +264,7 @@ Miscellaneous
 
    ~cf.DomainAncillary.concatenate
    ~cf.DomainAncillary.copy
+   ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.equals
    ~cf.DomainAncillary.inspect
    ~cf.DomainAncillary.uncompress

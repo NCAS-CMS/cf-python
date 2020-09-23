@@ -211,7 +211,6 @@ Data
    ~cf.List.chunk
    ~cf.List.close
    ~cf.List.convert_reference_time
-   ~cf.List.creation_commands
    ~cf.List.cyclic
    ~cf.List.period
    ~cf.List.get_filenames
@@ -229,6 +228,7 @@ Miscellaneous
 
    ~cf.List.concatenate
    ~cf.List.copy
+   ~cf.List.creation_commands
    ~cf.List.equals
 
 .. rubric:: Attributes
