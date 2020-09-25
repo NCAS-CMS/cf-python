@@ -1860,7 +1860,7 @@ A construct's identity may be any one of the following
   <NetCDF-interface>`), 
 * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
   (see the :ref:`netCDF interface <NetCDF-interface>`), and 
-* The construct key, optionally proceeded by "key%",
+* The construct key, optionally preceded by "key%",
   e.g. ``'auxiliarycoordinate2'`` or ``'key%auxiliarycoordinate2'``.
 
 .. code-block:: python

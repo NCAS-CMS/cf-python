@@ -149,11 +149,11 @@ class CellMeasure(mixin.PropertiesData,
 
     By default the identity is the first found of the following:
 
-    * The `measure` attribute, preceeded by ``'measure:'``.
+    * The `measure` attribute, preceded by ``'measure:'``.
     * The `standard_name` property.
-    * The `id` attribute, preceeded by ``'id%'``.
-    * The `long_name` property, preceeded by ``'long_name='``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The `id` attribute, preceded by ``'id%'``.
+    * The `long_name` property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
     .. versionadded:: 3.0.0

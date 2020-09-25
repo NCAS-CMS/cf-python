@@ -9890,7 +9890,7 @@ class Field(mixin.PropertiesData,
             would also be together in a different group.
 
             .. note:: For CF compliance, an "over days" collapse
-                      should be preceeded by a "within days" collapse.
+                      should be preceded by a "within days" collapse.
 
             The default groups may be split into smaller groups if the
             *over_days* parameter is one of:
@@ -9978,7 +9978,7 @@ class Field(mixin.PropertiesData,
             would be together in a group.
 
             .. note:: For CF compliance, an "over years" collapse
-                      should be preceeded by a "within years" or "over
+                      should be preceded by a "within years" or "over
                       days" collapse.
 
             The default groups may be split into smaller groups if the

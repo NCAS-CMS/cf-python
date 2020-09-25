@@ -3179,14 +3179,14 @@ class PropertiesDataBounds(PropertiesData):
     The identities comprise:
 
     * The "standard_name" property.
-    * The "id" attribute, preceeded by ``'id%'``.
-    * The "cf_role" property, preceeded by ``'cf_role='``.
-    * The "axis" property, preceeded by ``'axis='``.
-    * The "long_name" property, preceeded by ``'long_name='``.
-    * All other properties (including "standard_name"), preceeded by
+    * The "id" attribute, preceded by ``'id%'``.
+    * The "cf_role" property, preceded by ``'cf_role='``.
+    * The "axis" property, preceded by ``'axis='``.
+    * The "long_name" property, preceded by ``'long_name='``.
+    * All other properties (including "standard_name"), preceded by
       the property name and an ``'='``.
     * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
 
     The identities of the bounds, if present, are included (with the
     exception of the bounds netCDF variable name).
@@ -3242,11 +3242,11 @@ class PropertiesDataBounds(PropertiesData):
     By default the identity is the first found of the following:
 
     * The "standard_name" property.
-    * The "id" attribute, preceeded by ``'id%'``.
-    * The "cf_role" property, preceeded by ``'cf_role='``.
-    * The "axis" property, preceeded by ``'axis='``.
-    * The "long_name" property, preceeded by ``'long_name='``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The "id" attribute, preceded by ``'id%'``.
+    * The "cf_role" property, preceded by ``'cf_role='``.
+    * The "axis" property, preceded by ``'axis='``.
+    * The "long_name" property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
     * The value of the *default* parameter.
 
