@@ -4252,8 +4252,8 @@ The new field construct may now be inspected:
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
-   Domain ancils   : domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                   : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
+   Domain ancils   : key%domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : key%domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
 
 .. _Command-modification:
