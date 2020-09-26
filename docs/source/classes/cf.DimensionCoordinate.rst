@@ -255,7 +255,6 @@ Data
    ~cf.DimensionCoordinate.chunk
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
-   ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.cyclic
    ~cf.DimensionCoordinate.period
    ~cf.DimensionCoordinate.get_filenames
@@ -272,6 +271,7 @@ Miscellaneous
 
    ~cf.DimensionCoordinate.concatenate
    ~cf.DimensionCoordinate.copy
+   ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
    ~cf.DimensionCoordinate.uncompress

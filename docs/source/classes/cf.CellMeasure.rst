@@ -239,7 +239,6 @@ Data
    ~cf.CellMeasure.chunk
    ~cf.CellMeasure.close
    ~cf.CellMeasure.convert_reference_time
-   ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.cyclic
    ~cf.CellMeasure.period
    ~cf.CellMeasure.get_filenames
@@ -257,6 +256,7 @@ Miscellaneous
 
    ~cf.CellMeasure.concatenate
    ~cf.CellMeasure.copy
+   ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.equals
    ~cf.CellMeasure.uncompress
 
