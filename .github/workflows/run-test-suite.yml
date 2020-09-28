@@ -118,6 +118,24 @@ jobs:
         cd ${{ github.workspace }}/main/cf/test
         ./run_tests_and_coverage --nohtml
 
+    # For one job only, generate a coverage report:
+    - name: Upload coverage report to Codecov
+      # Get coverage from only one job (choose with Ubuntu Python 3.7 as
+      # representative). Note that we could use a separate workflow
+      # to setup Codecov reports, but given the amount of steps required to
+      # install including dependencies via conda, that a separate workflow
+      # would have to run anyway, it is simplest to add it in this flow.
+      # Also, it means code coverage is only generated if the test suite is
+      # passing at least for that job, avoiding useless coverage reports.
+      uses: codecov/codecov-action@v1.0.13
+      if: |
+        matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
+      with:
+        file: ./cfdm/test/cfdm_coverage_reports/coverage.xml
+        fail_ci_if_error: true
+        flags: unittests
+        name: codecov-umbrella
+
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
       run: |
