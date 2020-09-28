@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------------
+# Run the full test suite and produce a coverage report:
+#
+# $ run_test_and_coverage
+#
+# Or to omit the generation of an html report:
+#
+# $ run_test_and_coverage --nohtml
+#
+# An XML report is required by Codecov (a code coverage service providing
+# detailed reports with visualisations in-browser) so is created unless set:
+#
+# $ run_test_and_coverage --noxml
+#
+# where running with both the --nohtml and --noxml arguments will omit both
+# reports, just printing a concise result table to STDOUT.
+# --------------------------------------------------------------------------
+
+#set -x
+
+
+library=cf
+
+# Parse arguments. Note that XML output is required for codecov:
+generate_xml="true"
+generate_html="true"
+for arg in "$@"
+do
+    if [[ $arg == "--noxml" ]]
+    then
+        generate_xml="false"
+    fi
+    if [[ $arg == "--nohtml" ]]
+    then
+        generate_html="false"
+    fi
+done
+
+if ! command -v coverage &> /dev/null
+then
+    echo \
+"Requires the coverage module: install it e.g. via \
+'pip install coverage'"
+    exit 3
+fi
+
+coverage erase
+coverage run --source=.. --omit="*/test/*" run_tests.py
+# Capture exit status from unit tests
+rc=$?
+
+coverage report
+
+cov_dir=${library}_coverage_reports
+mkdir -p $cov_dir
+echo "coverage docs: https://coverage.readthedocs.io"
+if [[ $generate_html == "true" ]] ; then
+    html_dir=$cov_dir/html
+    mkdir -p $html_dir
+    coverage html --title "$library test suite coverage report" -d $html_dir
+
+    echo "coverage HTML report URL: file://$PWD/$html_dir/index.html"
+fi
+if [[ $generate_xml == "true" ]] ; then
+    coverage xml
+    mv "coverage.xml" $cov_dir/"coverage.xml"
+
+    echo "coverage XML report URL: file://$PWD/$cov_dir/coverage.xml"
+fi
+
+# Return exit status from unit tests
+exit $rc
+
+#set +x
