@@ -322,8 +322,8 @@ def read(files, external=None, verbose=None, warnings=False,
             returned field list with its
             `cf.FieldList.select_by_identity` method. For example,
             ``fl = cf.read(file, select='air_temperature')`` is
-            equivalent to ``fl =
-            cf.read(file).select_by_identity('air_temperature')``.
+            equivalent to
+            ``fl = cf.read(file).select_by_identity('air_temperature')``.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any

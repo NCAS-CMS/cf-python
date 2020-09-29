@@ -560,7 +560,11 @@ class Properties(Container):
             *Parameter example:*
               ``prop='long_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -569,7 +573,7 @@ class Properties(Container):
 
     **Examples:**
 
-
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -619,6 +623,7 @@ class Properties(Container):
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -657,14 +662,19 @@ class Properties(Container):
             *Parameter example:*
                ``prop='long_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
 
-    :Returns:
+            {{default Exception}}
+
+     :Returns:
 
             The removed property.
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -1057,6 +1067,7 @@ class Properties(Container):
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True

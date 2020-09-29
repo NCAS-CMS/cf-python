@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------
+# Run the full test suite and produce a coverage report.
+#
+# $ run_test_and_coverage
+#
+# Or to omit the generation of an html report:
+#
+# $ run_test_and_coverage --nohtml
+# --------------------------------------------------------------------
+#set -x
+
+library=cf
+
+if [[ $1 == "--nohtml" ]] ; then 
+    generate_html="false"
+else
+    generate_html="true"
+fi
+
+if ! command -v coverage &> /dev/null
+then
+    echo "Requires the coverage module: install it e.g. via 'pip install coverage'"
+    exit 3
+fi
+
+coverage erase
+coverage run --source=.. --omit="*/test/*" run_tests.py
+# Capture exit status from unit tests
+rc=$?
+
+coverage report
+
+if [[ $generate_html == "true" ]] ; then
+    dir=${library}_coverage_report
+    mkdir -p $dir
+    coverage html --title "$library test suite coverage report" -d $dir
+    
+    echo "coverage docs: https://coverage.readthedocs.io"
+    echo "coverage report URL: file://$PWD/$dir/index.html"
+fi
+
+# Return exit status from unit tests
+exit $rc
+
+#set +x
