@@ -56,6 +56,7 @@ class AuxiliaryCoordinate(mixin.Coordinate,
 
     **Examples:**
 
+    >>> c = cf.AuxiliaryCoordinate()
     >>> c.isauxiliary
     True
 

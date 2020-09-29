@@ -240,6 +240,7 @@ class DimensionCoordinate(mixin.Coordinate,
 
     **Examples:**
 
+    >>> c = cf.DimensionCoordinate()
     >>> c.isdimension
     True
 
@@ -672,8 +673,8 @@ class DimensionCoordinate(mixin.Coordinate,
     :Parameters:
 
         default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set.
+            Return the value of the *default* parameter if bounds have
+            not been set.
 
             {{default Exception}}
 

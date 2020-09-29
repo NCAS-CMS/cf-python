@@ -1634,12 +1634,12 @@ class PropertiesDataBounds(PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the
-            parameter has not been set.
+            property has not been set.
 
             {{default Exception}}
 
         bounds: `bool`
-            TODO 1.8
+            TODO
 
     :Returns:
 
@@ -1648,6 +1648,7 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True

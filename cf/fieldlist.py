@@ -1,4 +1,3 @@
-
 from copy import copy
 
 import logging
@@ -1270,6 +1269,38 @@ class FieldList(list,
             return default
 
         return out[0]
+
+    def unique_domains(self, copy=True):
+        '''Return the unique domains used by the field constructs.
+
+    .. versionadded:: 3.7.0
+
+    :Parameters:
+
+        copy: `bool`, optional
+            If False then do not copy returned domains. By default the
+            returned domains are deep copies from their parent field
+            constructs.
+
+    :Returns:
+
+        `list` of `Domain`
+            The unique domains. May be an empty list.
+
+    **Examples:**
+
+    >>> f = cf.example_fields(0)
+    >>> g = cf.example_fields(1)
+    >>> f
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
+    >>> g
+    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+    >>> fl = cf.FieldList([f, f, g])
+    >>> fl.unique_domains():
+    >>> [<CF Domain: {1, 5, 8}>, <CF Domain: {1, 1, 9, 10}>]
+
+        '''
+        return cfdm.unique_domains(self, copy=copy)
 
     # ----------------------------------------------------------------
     # Aliases
