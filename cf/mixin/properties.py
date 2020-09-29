@@ -25,9 +25,9 @@ class Properties(Container):
     def __new__(cls, *args, **kwargs):
         '''Store component classes.
 
-    NOTE: If a child class requires a different component classes than
-    the ones defined here, then they must be redefined in the child
-    class.
+    .. note:: If a child class requires a different component classes
+              than the ones defined here, then they must be redefined
+              in the child class.
 
         '''
         instance = super().__new__(cls)
@@ -102,19 +102,27 @@ class Properties(Container):
     # ----------------------------------------------------------------
     @property
     def id(self):
-        '''A canonical identity.
+        '''An identity for the {{class}} object.
 
     The `id` attribute can be used to unambiguously identify
-    constructs in the absence of a `standard_name` property.
+    constructs. This can be useful when identification is not possible
+    from the existing properties, either because they are missing or
+    because they do not provide sufficiently unique information.
 
-    Note that `id` is not a CF property and so is not read from, or
+    In general it will only be defined if explicitly set by the user.
+
+    Note that `id` is not a CF property and so is not read from, nor
     written to, datasets.
+
+    .. seealso:: `identity`, `identities`, `match_by_identity`
 
     **Examples:**
 
     >>> f.id = 'um01002'
     >>> f.id
     'um01002'
+    >>> f.match_by_identity('id%um10002')
+    True
     >>> del f.id
 
         '''
@@ -552,7 +560,11 @@ class Properties(Container):
             *Parameter example:*
               ``prop='long_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -561,7 +573,7 @@ class Properties(Container):
 
     **Examples:**
 
-
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -611,6 +623,7 @@ class Properties(Container):
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -649,14 +662,19 @@ class Properties(Container):
             *Parameter example:*
                ``prop='long_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
 
-    :Returns:
+            {{default Exception}}
+
+     :Returns:
 
             The removed property.
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -1049,6 +1067,7 @@ class Properties(Container):
 
     **Examples:**
 
+    >>> f = cf.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True

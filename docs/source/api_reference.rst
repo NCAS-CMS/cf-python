@@ -1,7 +1,6 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
-
 **API reference**
 =================
 

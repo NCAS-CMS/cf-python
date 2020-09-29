@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class Query:
-    '''Encapsulate a condition.
+    '''Encapsulate a condition for subsequent evaluation.
 
     A condition that may be applied to any object may be stored in a
     `Query` object. A `Query` object encapulates a condition, such as

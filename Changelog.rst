@@ -1,16 +1,18 @@
-version 3.?.?
+version 3.7.0
 -------------
 ----
 
-**2020-??-??**
+**2020-09-??**
 
 * New method: `cf.Field.del_domain_axis`
+* New method: `cf.FieldList.unique_domains`
+* Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
 
 version 3.6.0
 -------------
 ----
 
-**2020-07-??**
+**2020-07-24**
 
 * Implemented the reading and writing of netCDF4 group hierarchies for
   CF-1.8 (https://github.com/NCAS-CMS/cf-python/issues/33)
