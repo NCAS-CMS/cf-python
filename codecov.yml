@@ -1,0 +1,35 @@
+# This config overrides the default Codecov config, as outlined at:
+# https://docs.codecov.io/docs/codecov-yaml
+
+coverage:
+  round: up
+  range: "70...100"
+  precision: 2
+
+  status:
+    project:
+      default:
+        target: auto
+        threshold: "0%"
+        base: auto
+        branches: 
+          - master
+        if_no_uploads: success
+        if_not_found: success  
+        if_ci_failed: error
+        only_pulls: true
+    patch:
+      default:
+        target: "90%"
+        threshold: "10%"
+        base: auto
+        branches:
+          - master
+        if_no_uploads: success
+        if_not_found: success
+        if_ci_failed: error
+        only_pulls: false
+
+# Note: there is a Codecov 'ignore' key to ignore certain paths, but this is
+# not needed (I think) since we ignore the test directory path etc. in
+# generating our coverage XML, so it should already not be processed.
