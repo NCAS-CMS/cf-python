@@ -671,7 +671,11 @@ class DimensionCoordinate(mixin.Coordinate,
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            parameter has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
