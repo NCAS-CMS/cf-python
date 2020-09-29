@@ -131,7 +131,8 @@ jobs:
       if: |
         matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
       with:
-        file: ./cfdm/test/cfdm_coverage_reports/coverage.xml
+        file: |
+          ${{ github.workspace }}/main/cf/test/cf_coverage_reports/coverage.xml
         fail_ci_if_error: true
         flags: unittests
         name: codecov-umbrella
