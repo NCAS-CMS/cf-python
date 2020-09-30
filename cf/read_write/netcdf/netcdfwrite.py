@@ -136,7 +136,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             partition.close()
 
-    def _write_dimension_coordinate(self, f, key, coord, ncdim=None):
+    def _write_dimension_coordinate(self, f, key, coord, ncdim=None,
+                                    coordinates=None):
         '''Write a coordinate variable and its bound variable to the file.
 
     This also writes a new netCDF dimension to the file and, if
@@ -160,6 +161,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             .. versionadded:: 3.6.0
 
+        coordinates: `list`
+           This list may get updated in-place.
+
+            .. versionadded:: 3.7.0
+
     :Returns:
 
         `str`
@@ -169,7 +175,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         coord = self._change_reference_datetime(coord)
 
         return super()._write_dimension_coordinate(f, key, coord,
-                                                   ncdim=ncdim)
+                                                   ncdim=ncdim,
+                                                   coordinates=coordinates)
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis,
                                  coordinates, extra=None):
