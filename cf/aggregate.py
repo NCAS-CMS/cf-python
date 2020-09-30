@@ -1437,10 +1437,6 @@ def aggregate(fields,
             `~cf.Field.long_name`), with the same values. See the
             *concatenate* parameter.
 
-        equal_ignore: (sequence of) `str`, optional
-            Specify CF properties to omit from any properties specified by
-            or implied by the *equal_all* and *equal* parameters.
-
         equal: (sequence of) `str`, optional
             Specify CF properties for which it is required that aggregated
             fields all contain the properties, with the same values. See
@@ -1452,14 +1448,15 @@ def aggregate(fields,
             long_name), but not requiring the values to be the same. See
             the *concatenate* parameter.
 
-        exist_ignore: (sequence of) `str`, optional
-            Specify CF properties to omit from the properties specified by
-            or implied by the *exist_all* and *exist* parameters.
-
         exist: (sequence of) `str`, optional
             Specify CF properties for which it is required that aggregated
             fields all contain the properties, but not requiring the
             values to be the same. See the *concatenate* parameter.
+
+        ignore: (sequence of) `str`, optional
+            Specify CF properties to omit from any properties
+            specified by or implied by the *equal_all*, *exist_all*,
+            *equal* and *exist* parameters.
 
         respect_valid: `bool`, optional
             If True then the CF properties `~cf.Field.valid_min`,
@@ -1628,7 +1625,7 @@ def aggregate(fields,
             if not value:
                 continue
 
-            if isinstance(equal, str):
+            if isinstance(value, str):
                 # If it is a string then convert to a single element
                 # sequence
                 properties[key] = (value,)
@@ -1644,22 +1641,19 @@ def aggregate(fields,
         exist = properties['exist']
         ignore = properties['ignore']
 
-        if equal and exist:
-            if set(equal).intersection(exist):
-                raise AttributeError(
-                    "Only one of 'exist' and 'equal' can be True for any "
-                    "given property, since these options are conflicting. "
-                    "Run 'help(cf.aggregate)' to read descriptions of each "
-                    "option to see which is applicable."
+        if equal and exist and set(equal).intersection(exist):
+            raise AttributeError(
+                "Can't specify the same properties in both the 'equal' "
+                " and 'exist' parameters: {!r}".format(
+                    set(equal).intersection(exist)
                 )
-
+            )
+            
         if ignore:
-            ignore = _signature_properties.union(ignore)
-
-    # --- End: if
-
-    if not ignore:
+            ignore = _signature_properties.union(ignore)            
+    elif not ignore:
         ignore = _signature_properties
+
     unaggregatable = False
     status = 0
 
