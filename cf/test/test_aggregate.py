@@ -1,6 +1,7 @@
 import datetime
 import os
 import unittest
+import warnings
 
 import cf
 
@@ -33,7 +34,20 @@ class aggregateTest(unittest.TestCase):
             g0 = g.copy()
             self.assertTrue(g.equals(g0, verbose=2), "g != g0")
 
-            h = cf.aggregate(g, verbose=2)
+            with warnings.catch_warnings():
+                # Suppress noise throughout the test fixture from:
+                #
+                #   ~/cf-python/cf/__init__.py:1459: FutureWarning: elementwise
+                #   comparison failed; returning scalar instead, but in the
+                #   future will perform elementwise comparison
+                #
+                # TODO: it is not clear where the above emerges from, e.g.
+                # since __init__ file ref'd does not have that many lines.
+                # It seems like this warning arises from NumPy comparisons
+                # done at some point in (only) some aggregate calls (see e.g:
+                # https://github.com/numpy/numpy/issues/6784).
+                warnings.filterwarnings('ignore', category=FutureWarning)
+                h = cf.aggregate(g, verbose=2)
 
             self.assertEqual(len(h), 1)
 
@@ -49,7 +63,9 @@ class aggregateTest(unittest.TestCase):
 
             self.assertTrue(h[0].equals(f, verbose=2), 'h[0] != f')
 
-            i = cf.aggregate(g, verbose=2)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=FutureWarning)
+                i = cf.aggregate(g, verbose=2)
 
             self.assertTrue(
                 i.equals(h, verbose=2),
@@ -61,7 +77,9 @@ class aggregateTest(unittest.TestCase):
                 'g != itself after the second aggregation'
             )
 
-            i = cf.aggregate(g, verbose=2, axes='grid_latitude')
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=FutureWarning)
+                i = cf.aggregate(g, verbose=2, axes='grid_latitude')
 
             self.assertTrue(
                 i.equals(h, verbose=2),
@@ -76,10 +94,12 @@ class aggregateTest(unittest.TestCase):
             self.assertEqual(i[0].shape, (10, 9),
                              'i[0].shape is ' + repr(i[0].shape))
 
-            i = cf.aggregate(
-                g, verbose=2, axes='grid_latitude',
-                donotchecknonaggregatingaxes=1
-            )
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=FutureWarning)
+                i = cf.aggregate(
+                    g, verbose=2, axes='grid_latitude',
+                    donotchecknonaggregatingaxes=1
+                )
 
             self.assertTrue(
                 i.equals(h, verbose=2),
@@ -94,7 +114,6 @@ class aggregateTest(unittest.TestCase):
             self.assertEqual(i[0].shape, (10, 9),
                              'i[0].shape is ' + repr(i[0].shape))
 
-            #
             q, t = cf.read(self.file)
             c = cf.read(self.file2)[0]
 
