@@ -80,7 +80,7 @@ class DataTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_Data_exp']
 #    test_only = [
-#        'test_Data_trigonometric_hyperbolic'
+#        'test_Data_trigonometric_hyperbolic']
 #        'test_Data_AUXILIARY_MASK',
 #        'test_Data_datum',
 #        'test_Data_ERROR',
@@ -2852,6 +2852,7 @@ class DataTest(unittest.TestCase):
         for method in trig_and_hyperbolic_methods:
             for x in (1, -1):
                 a = 0.9 * x * self.ma
+
                 # Use more appropriate data for testing for inverse methods;
                 # apply some trig operation to convert it to valid range:
                 if method.startswith('arc'):
@@ -2865,9 +2866,14 @@ class DataTest(unittest.TestCase):
                     cf.chunksize(chunksize)
                     for units in (None, '', '1', 'radians', 'K'):
                         d = cf.Data(a, units=units)
-                        e = getattr(d, method)()
-
-                        self.assertIsNone(getattr(d, method)(inplace=True))
+                        # Suppress warnings that some values are invalid
+                        # (NaN, +/- inf) or there is attempted division by
+                        # zero, as this is expected with inverse trig:
+                        with numpy.errstate(
+                                invalid='ignore', divide='ignore'):
+                            e = getattr(d, method)()
+                            self.assertIsNone(
+                                getattr(d, method)(inplace=True))
 
                         self.assertTrue(
                             d.equals(e, verbose=2), "{}".format(method))
@@ -2889,9 +2895,11 @@ class DataTest(unittest.TestCase):
         # to workaround it. So check that invalid values do emerge.
         inverse_methods = [method for method in trig_and_hyperbolic_methods
                            if method.startswith('arc')]
+
         d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
         for method in inverse_methods:
-            e = getattr(d, method)()
+            with numpy.errstate(invalid='ignore', divide='ignore'):
+                e = getattr(d, method)()
             self.assertTrue(
                 (e.mask.array == d.mask.array).all(),
                 "{}, {}".format(method, e.array-d)
@@ -2899,7 +2907,8 @@ class DataTest(unittest.TestCase):
 
         # In addition, test that 'nan', inf' and '-inf' emerge distinctly
         f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
-        g = f.arctanh().array  # expect [ nan, -inf,  inf,  --]
+        with numpy.errstate(invalid='ignore', divide='ignore'):
+            g = f.arctanh().array  # expect [ nan, -inf,  inf,  --]
         self.assertTrue(numpy.isnan(g[0]))
         self.assertTrue(numpy.isneginf(g[1]))
         self.assertTrue(numpy.isposinf(g[2]))
