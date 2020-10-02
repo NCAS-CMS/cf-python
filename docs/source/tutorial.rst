@@ -4605,9 +4605,18 @@ field construct's `~Field.equals` method.
    True
    >>> t.equals(q)
    False
-   >>> t.equals(q, verbose=True)
+   >>> t.equals(q, verbose=2)
    Field: Different Units: <Units: K> != <Units: 1>
    False
+
+.. tip:: To return specific detail about the differences between two
+         constructs, should they not be equal, increase the verbosity
+         of the `equals` method (or globally, see
+         :ref:`Controlling-output-messages`),
+         as demonstrated in an example above.
+
+         Otherwise, for default verbosity, only a `True` or `False`
+         result will be given.
 
 Equality is strict by default. This means that for two field
 constructs to be considered equal they must have corresponding
