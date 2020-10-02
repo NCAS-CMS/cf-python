@@ -1653,9 +1653,9 @@ def aggregate(fields,
                     set(equal).intersection(exist)
                 )
             )
-            
+
         if ignore:
-            ignore = _signature_properties.union(ignore)            
+            ignore = _signature_properties.union(ignore)
     elif not ignore:
         ignore = _signature_properties
 
