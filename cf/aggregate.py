@@ -421,14 +421,19 @@ class _Meta:
                     ncdim = True
             # --- End: if
 
+            axis_identities = {
+                 'ids': 'identity',
+                 'keys': 'key',
+                 'units': 'units',
+                 'hasdata': 'hasdata',
+                 'hasbounds': 'hasbounds',
+                 'coordrefs': 'coordrefs',
+                 # 'size': None,
+            }
             self.axis[identity] = {
-                 'ids': tuple([i['identity'] for i in info_1d_coord]),
-                 'keys': tuple([i['key'] for i in info_1d_coord]),
-                 'units': tuple([i['units'] for i in info_1d_coord]),
-                 'hasdata': tuple([i['hasdata'] for i in info_1d_coord]),
-                 'hasbounds': tuple([i['hasbounds'] for i in info_1d_coord]),
-                 'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])
-            }  # 'size': None} #tuple([i['size'] for i in info_1d_coord])}
+                name: tuple(i[idt] for i in info_1d_coord)
+                for name, idt in axis_identities.items()
+            }
 
             if info_dim:
                 self.axis[identity]['dim_coord_index'] = 0
