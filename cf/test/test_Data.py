@@ -2926,6 +2926,25 @@ class DataTest(unittest.TestCase):
 
         cf.chunksize(self.original_chunksize)
 
+    def test_Data_filled(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data([[1, 2, 3]])
+        self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
+
+        d[0, 0] = cf.masked
+        self.assertTrue(
+            (d.filled().array == [[-9223372036854775806, 2, 3, ]]).all())
+
+        d.set_fill_value(-99)
+        self.assertTrue((d.filled().array == [[-99, 2, 3, ]]).all())
+
+        self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3, ]]).all())
+
+        d = cf.Data(['a', 'b', 'c'], mask=[1, 0, 0])
+        self.assertTrue((d.filled().array == ['', 'b', 'c']).all())
+
 # --- End: class
 
 
