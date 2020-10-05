@@ -41,12 +41,12 @@ class CFImplementation(cfdm.CFDMImplementation):
     '''
 #    def set_bounds(self, construct, bounds, copy=True):
 #        '''Set the bounds component of a construct.
-#    
+#
 #    If a ValueError is raised by the called set_bounds method then
 #    this is trapped and no action is carried out.
 #
 #    .. versionadded:: 3.7.0
-#    
+#
 #    :Parameters:
 #
 #        construct: construct
@@ -60,9 +60,9 @@ class CFImplementation(cfdm.CFDMImplementation):
 #        `None`
 #
 #        '''
-#        try:            
+#        try:
 #            construct.set_bounds(bounds, copy=copy)
-#        except ValueError:            
+#        except ValueError:
 #            pass
 
 # --- End: class
