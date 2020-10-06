@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------
+# Check the documentation method-coverage of all classes listed in
+# docs/source/class.rst
+#
+# If being used on the cfdm library, the classes listed in
+# docs/source/class_core.rst are also checked.
+#
+# Call as:
+#
+#   $ ./check_docs_api_coverage
+# --------------------------------------------------------------------
+
+python docs/source/check_docs_api_coverage.py docs/source

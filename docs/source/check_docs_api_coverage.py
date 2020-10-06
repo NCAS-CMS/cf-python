@@ -53,7 +53,7 @@ for core in ('', '_core'):
         
         klass = getattr(package, class_name)
         
-       methods = [method for method in dir(klass)
+        methods = [method for method in dir(klass)
                    if not method.startswith('_')]
         
         class_name = '.'.join([package.__name__, class_name])

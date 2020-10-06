@@ -38,6 +38,12 @@
   cd $d
   ```
 
+* Check that the documentaion API coverage is complete:
+
+  ```bash
+  ./check_docs_api_coverage
+  ```
+
 * Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
   formatting has not been adversely affected for comprehension by any
