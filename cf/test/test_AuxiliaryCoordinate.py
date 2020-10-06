@@ -49,8 +49,6 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         _ = str(x)
         _ = x.dump(display=False)
 
-        self.assertTrue(x.isauxiliary)
-
     def test_AuxiliaryCoordinate_bounds(self):
         f = cf.read(self.filename, verbose=0)[0]
         d = f.dimension_coordinates('X').value()

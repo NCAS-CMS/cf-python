@@ -35,8 +35,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         _ = str(x)
         _ = x.dump(display=False)
 
-        self.assertTrue(x.isdimension)
-
     def test_DimensionCoordinate_convert_reference_time(self):
         d = cf.DimensionCoordinate()
         d.set_data(
