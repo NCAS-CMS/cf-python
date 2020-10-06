@@ -22,6 +22,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.direction
    ~cf.AuxiliaryCoordinate.dump
    ~cf.AuxiliaryCoordinate.identity  
    ~cf.AuxiliaryCoordinate.identities
@@ -69,6 +70,42 @@ Bounds
    ~cf.AuxiliaryCoordinate.cellsize
    ~cf.AuxiliaryCoordinate.lower_bounds  
    ~cf.AuxiliaryCoordinate.upper_bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.del_geometry
+   ~cf.AuxiliaryCoordinate.get_geometry
+   ~cf.AuxiliaryCoordinate.has_geometry
+   ~cf.AuxiliaryCoordinate.set_geometry
+   ~cf.AuxiliaryCoordinate.del_interior_ring
+   ~cf.AuxiliaryCoordinate.get_interior_ring
+   ~cf.AuxiliaryCoordinate.has_interior_ring
+   ~cf.AuxiliaryCoordinate.set_interior_ring
+   ~cf.AuxiliaryCoordinate.del_node_count
+   ~cf.AuxiliaryCoordinate.get_node_count
+   ~cf.AuxiliaryCoordinate.has_node_count
+   ~cf.AuxiliaryCoordinate.set_node_count
+   ~cf.AuxiliaryCoordinate.del_part_node_count
+   ~cf.AuxiliaryCoordinate.get_part_node_count
+   ~cf.AuxiliaryCoordinate.has_part_node_count
+   ~cf.AuxiliaryCoordinate.set_part_node_count
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.AuxiliaryCoordinate.interior_ring
 
 Selection
 ---------
@@ -151,7 +188,6 @@ Units
 
    ~cf.AuxiliaryCoordinate.Units
 
-
 Data
 ----
 
@@ -201,6 +237,15 @@ Data
    ~cf.AuxiliaryCoordinate.swapaxes
    ~cf.AuxiliaryCoordinate.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.halo
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -240,6 +285,28 @@ Data
    ~cf.AuxiliaryCoordinate.subspace
    ~cf.AuxiliaryCoordinate.where
 
+Cyclicity
+---------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.AuxiliaryCoordinate.autoperiod
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+	      
+   ~cf.AuxiliaryCoordinate.iscyclic
+   ~cf.AuxiliaryCoordinate.isperiodic
+   
 .. rubric:: *Miscellaneous*
 
 .. autosummary::
@@ -321,19 +388,15 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.AuxiliaryCoordinate.max
+   ~cf.AuxiliaryCoordinate.maximum
    ~cf.AuxiliaryCoordinate.mean
    ~cf.AuxiliaryCoordinate.mid_range
-   ~cf.AuxiliaryCoordinate.min
+   ~cf.AuxiliaryCoordinate.minimum
    ~cf.AuxiliaryCoordinate.range
    ~cf.AuxiliaryCoordinate.sample_size
    ~cf.AuxiliaryCoordinate.sum  
-   ~cf.AuxiliaryCoordinate.sd
-   ~cf.AuxiliaryCoordinate.var
    ~cf.AuxiliaryCoordinate.standard_deviation
    ~cf.AuxiliaryCoordinate.variance
-   ~cf.AuxiliaryCoordinate.maximum
-   ~cf.AuxiliaryCoordinate.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    
@@ -412,6 +475,20 @@ NetCDF
    ~cf.AuxiliaryCoordinate.nc_has_variable
    ~cf.AuxiliaryCoordinate.nc_set_variable 
    
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.AuxiliaryCoordinate.nc_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_set_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_clear_variable_groups
+  
 Aliases
 -------
 
@@ -423,7 +500,11 @@ Aliases
    :template: method.rst  
 
    ~cf.AuxiliaryCoordinate.match
-
+   ~cf.AuxiliaryCoordinate.max
+   ~cf.AuxiliaryCoordinate.min
+   ~cf.AuxiliaryCoordinate.sd
+   ~cf.AuxiliaryCoordinate.var
+	      
 .. rubric:: Attributes
    
 .. autosummary::
@@ -561,20 +642,6 @@ for augmented assignments, modify the construct's data in-place.
 
    ~cf.AuxiliaryCoordinate.__invert__ 
 
-Groups
-^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.AuxiliaryCoordinate.nc_variable_groups
-   ~cf.AuxiliaryCoordinate.nc_clear_variable_groups
-   ~cf.AuxiliaryCoordinate.nc_set_variable_groups
-
 Special
 -------
 
@@ -597,30 +664,44 @@ Special
    ~cf.AuxiliaryCoordinate.__query_wi__
    ~cf.AuxiliaryCoordinate.__query_wo__
 
+Deprecated
+----------
 
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-.. todo for CF-1.8  
-      ~AuxiliaryCoordinate.del_geometry
-      ~AuxiliaryCoordinate.get_geometry
-      ~AuxiliaryCoordinate.has_geometry
-      ~AuxiliaryCoordinate.set_geometry
-      
-      ~AuxiliaryCoordinate.del_node_count
-      ~AuxiliaryCoordinate.del_part_node_count
+   ~cf.AuxiliaryCoordinate.asdatetime
+   ~cf.AuxiliaryCoordinate.asreftime
+   ~cf.AuxiliaryCoordinate.delprop
+   ~cf.AuxiliaryCoordinate.expand_dims
+   ~cf.AuxiliaryCoordinate.files
+   ~cf.AuxiliaryCoordinate.getprop
+   ~cf.AuxiliaryCoordinate.hasprop
+   ~cf.AuxiliaryCoordinate.insert_data
+   ~cf.AuxiliaryCoordinate.name
+   ~cf.AuxiliaryCoordinate.remove_data
+   ~cf.AuxiliaryCoordinate.select
+   ~cf.AuxiliaryCoordinate.setprop
 
-      ~AuxiliaryCoordinate.get_interior_ring
-      ~AuxiliaryCoordinate.get_node_count
-      ~AuxiliaryCoordinate.get_part_node_count
+.. rubric:: Attributes
 
-      ~AuxiliaryCoordinate.has_interior_ring
-      ~AuxiliaryCoordinate.has_node_count
-      ~AuxiliaryCoordinate.has_part_node_count
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-      ~AuxiliaryCoordinate.set_interior_ring
-      ~AuxiliaryCoordinate.set_node_count
-      ~AuxiliaryCoordinate.set_part_node_count
-   
-      ~AuxiliaryCoordinate.interior_ring
-   
-   
+   ~cf.AuxiliaryCoordinate.attributes
+   ~cf.AuxiliaryCoordinate.Data
+   ~cf.AuxiliaryCoordinate.dtvarray
+   ~cf.AuxiliaryCoordinate.hasbounds
+   ~cf.AuxiliaryCoordinate.hasdata
+   ~cf.AuxiliaryCoordinate.isauxiliary
+   ~cf.AuxiliaryCoordinate.isdimension
+   ~cf.AuxiliaryCoordinate.isdomainancillary
+   ~cf.AuxiliaryCoordinate.isfieldancillary
+   ~cf.AuxiliaryCoordinate.ismeasure
+   ~cf.AuxiliaryCoordinate.unsafe_array

@@ -12,7 +12,6 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary(self):
         f = cf.FieldAncillary()
-        self.assertTrue(f.isfieldancillary)
 
         _ = repr(f)
         _ = str(f)

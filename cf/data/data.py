@@ -11042,21 +11042,36 @@ False
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
-        '''TODO
+        '''Replace masked elements with the fill value.
+
+    .. versionadded:: 3.4.0
 
     :Parameters:
 
         fill_value: scalar, optional
-            TODO
+            The fill value. By default the fill returned by
+            `get_fill_value` is used, or if this is not set then the
+            netCDF default fill value for the data type is used (as
+            defined by `netCDF.fillvals`).
+
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
         `Data` or `None`
-            TODO
+            The filled data, or `None` if the operation was in-place.
 
     **Examples:**
 
-    TODO
+    >>> d = {{package}}.Data([[1, 2, 3]])
+    >>> print(d.filled().array)
+    [[1 2 3]]
+    >>> d[0, 0] = cfdm.masked
+    >>> print(d.filled().array)
+    [-9223372036854775806                    2                    3]
+    >>> d.set_fill_value(-99)
+    >>> print(d.filled().array)
+    [[-99   2   3]]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -11070,7 +11085,10 @@ False
                     fill_value = default_netCDF_fillvals().get('S1', None)
 
                 if fill_value is None:  # should not be None by this stage
-                    raise ValueError("TODO {}".format(d.dtype.str))
+                    raise ValueError(
+                        "Can't determine fill value for "
+                        "data type {!r}".format(d.dtype.str)
+                    )
         # --- End: if
 
         hardmask = d.hardmask
@@ -14436,9 +14454,7 @@ False
     # ----------------------------------------------------------------
     @property
     def Data(self):
-        '''The data array object as an object identity.
-
-    Deprecated at version 3.0.0. Use attribute 'data' instead.
+        '''Deprecated at version 3.0.0, use attribute `data` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -14447,28 +14463,23 @@ False
 
     @property
     def dtvarray(self):
-        '''A numpy array view the data array converted to date-time objects.
+        '''Deprecated at version 3.0.0.
 
-        Deprecated at version 3.0.0.
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
     def files(self):
-        '''Return the names of files containing parts of the data array.
-
-    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
+        '''Deprecated at version 3.4.0, use method `get_filenames` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
-            self, 'files', "Use method 'get_filenames' instead.",
+            self, 'files', "Use method `get_filenames` instead.",
             version='3.4.0'
         )  # pragma: no cover
 
     @property
     def unsafe_array(self):
-        '''A numpy array of the data.
-
-        Deprecated at version 3.0.0. Use 'array' attribute instead.
+        '''Deprecated at version 3.0.0, use `array` attribute instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -14477,10 +14488,7 @@ False
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        '''Expand the shape of the data array in place.
-
-    Deprecated at version 3.0.0. Use method 'insert_dimension'
-    instead.
+        '''Deprecated at version 3.0.0, use method `insert_dimension` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

@@ -11844,7 +11844,10 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             # Sort the list of collapsed fields
             # --------------------------------------------------------
-            if coord is not None and coord.isdimension:
+            if (
+                    coord is not None
+                    and coord.construct_type == 'dimension_coordinate'
+            ):
                 fl.sort(
                     key=lambda g: g.dimension_coordinates.filter_by_axis(
                         'exact', axis).value().datum(0),
@@ -12438,7 +12441,7 @@ class Field(mixin.PropertiesData,
                 elif (item is not None
                       and isinstance(value, Query)
                       and value.operator in ('wi', 'wo')
-                      and item.isdimension
+                      and item.construct_type == 'dimension_coordinate'
                       and self.iscyclic(axis)):
                     # self.iscyclic(sorted_axes)):
                     # ------------------------------------------------

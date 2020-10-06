@@ -11,25 +11,25 @@ Field construct class
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
-   cf.Field	              
+   cf.Field
 
 Field list class
 ----------------
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
-   cf.FieldList	              
+   cf.FieldList
 
 Metadata component classes
 --------------------------
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.AuxiliaryCoordinate
    cf.CellMeasure
@@ -45,7 +45,7 @@ Constructs class
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Constructs
    
@@ -54,18 +54,18 @@ Coordinate component classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Bounds
    cf.CoordinateConversion
-   cf.Datum  
+   cf.Datum
       
 Domain class
 ------------
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Domain
    
@@ -74,7 +74,7 @@ Data classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Data
    cf.NetCDFArray
@@ -84,7 +84,7 @@ Miscellaneous classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Flags
    cf.Query
@@ -98,7 +98,7 @@ Classes that support the creation and storage of compressed arrays.
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cf.Count
    cf.Index

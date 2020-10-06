@@ -20,8 +20,6 @@ class CellMeasureTest(unittest.TestCase):
         _ = str(x)
         _ = x.dump(display=False)
 
-        self.assertTrue(x.ismeasure)
-
     def test_CellMeasure_measure(self):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()

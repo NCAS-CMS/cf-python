@@ -2057,7 +2057,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 last_values.append(last)
 
                 if coord.has_bounds():
-                    if coord.isdimension:
+                    if coord.construct_type == 'dimension_coordinate':
                         # Get the hash of the dimension coordinate
                         # bounds data array and its first and last
                         # cell values
