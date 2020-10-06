@@ -104,9 +104,16 @@ We would like to acknowledge and thank all those who have contributed
 ideas, code, and documentation to the cf library:
 
 * A James Phillips
+* Alan Iwi
 * Bruno P. Kinoshita
 * Bryan Lawrence
 * Charles Roberts
 * David Hassell
+* Evert Rol  
+* Javier Dehesa
 * Jonathan Gregory
+* Klaus Zimmermann
+* Kristian Sebastián
+* Michael Decker
 * Sadie Bartholomew  
+* Tim Bradshaw
