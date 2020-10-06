@@ -233,9 +233,9 @@ class Bounds(mixin.Coordinate,
     By default the identity is the first found of the following:
 
     1. The "standard_name" property.
-    2. The "cf_role" property, preceeded by ``'cf_role='``.
-    3. The "long_name" property, preceeded by ``'long_name='``.
-    4. The netCDF variable name, preceeded by ``'ncvar%'``.
+    2. The "cf_role" property, preceded by ``'cf_role='``.
+    3. The "long_name" property, preceded by ``'long_name='``.
+    4. The netCDF variable name, preceded by ``'ncvar%'``.
     5. The value of the *default* parameter.
 
     Properties include any inherited properties.

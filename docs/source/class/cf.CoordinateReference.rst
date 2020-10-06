@@ -136,6 +136,7 @@ Miscellaneous
    ~cf.CoordinateReference.change_identifiers
    ~cf.CoordinateReference.close
    ~cf.CoordinateReference.copy
+   ~cf.CoordinateReference.creation_commands
    ~cf.CoordinateReference.default_value
    ~cf.CoordinateReference.equals
    ~cf.CoordinateReference.equivalent

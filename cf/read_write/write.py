@@ -30,8 +30,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           fletcher32=False, shuffle=True, reference_datetime=None,
           verbose=None, cfa_options=None, mode='w', single=None,
           double=None, variable_attributes=None, string=True,
-          warn_valid=True, group=True, HDF_chunksizes=None,
-          no_shuffle=None, unlimited=None):
+          warn_valid=True, group=True, coordinates=False,
+          HDF_chunksizes=None, no_shuffle=None, unlimited=None):
     '''Write field constructs to a netCDF file.
 
 
@@ -517,6 +517,14 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             .. versionadded:: 3.6.0
 
+        coordinates: `bool`, optional
+            If True then include CF-netCDF coordinate variable names
+            in the 'coordinates' attribute of output data
+            variables. By default only auxiliary and scalar coordinate
+            variables are included.
+
+            .. versionadded:: (cfdm) 3.7.0
+
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
             to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
@@ -655,6 +663,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      shuffle=shuffle, fletcher32=fletcher32,
                      verbose=verbose, string=string,
                      warn_valid=warn_valid, group=group,
+                     coordinates=coordinates,
                      extra_write_vars=extra_write_vars)
     # --- End: if
 

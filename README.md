@@ -12,6 +12,8 @@ is built on a complete implementation of the CF data model.
 [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F)](https://ncas-cms.github.io/cf-python/index.html)
 [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/master/LICENSE)
 
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/NCAS-CMS/cf-python/Run%20test%20suite?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cf-python/actions) [![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cf-python?color=006666)](https://codecov.io/gh/NCAS-CMS/cf-python)
+
 #### References
 
 [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5281%2Fzenodo.3894533&label=DOI&up_color=264d73&up_message=10.5281%2Fzenodo.3894533&url=https%3A%2F%2Fdoi.org%2F10.5281%2Fzenodo.3894533)](https://doi.org/10.5281/zenodo.3894533)

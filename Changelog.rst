@@ -2,10 +2,17 @@ version 3.7.0
 -------------
 ----
 
-**2020-09-??**
+**2020-10-??**
 
 * New method: `cf.Field.del_domain_axis`
 * New method: `cf.FieldList.unique_domains`
+* New method: `cf.Field._docstring_special_substitutions`
+* New method: `cf.Field._docstring_substitutions`
+* New method: `cf.Field._docstring_package_depth`
+* New method: `cf.Field._docstring_method_exclusions`
+* New keyword parameter to `cf.Field.set_data`: ``inplace``
+* New keyword parameter to `cf.write`: ``coordinates``
+  (https://github.com/NCAS-CMS/cf-python/issues/125)
 * Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
 
 version 3.6.0

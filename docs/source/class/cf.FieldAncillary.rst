@@ -215,7 +215,6 @@ Data
    ~cf.FieldAncillary.chunk
    ~cf.FieldAncillary.close
    ~cf.FieldAncillary.convert_reference_time
-   ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.cyclic
    ~cf.FieldAncillary.period
    ~cf.FieldAncillary.get_filenames
@@ -233,6 +232,7 @@ Miscellaneous
 
    ~cf.FieldAncillary.concatenate
    ~cf.FieldAncillary.copy
+   ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.equals
    ~cf.FieldAncillary.uncompress
 

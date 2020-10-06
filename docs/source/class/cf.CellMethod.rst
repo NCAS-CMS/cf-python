@@ -88,6 +88,7 @@ Miscellaneous
    ~cf.CellMethod.copy
    ~cf.CellMethod.change_axes
    ~cf.CellMethod.create
+   ~cf.CellMethod.creation_commands
    ~cf.CellMethod.equals
    ~cf.CellMethod.equivalent
    ~cf.CellMethod.expand_intervals

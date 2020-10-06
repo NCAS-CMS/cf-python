@@ -60,74 +60,6 @@ class CellMeasure(mixin.PropertiesData,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def creation_commands(self, representative_data=False,
-                          namespace='cf', indent=0, string=True,
-                          name='c', data_name='d'):
-        '''Return the commands that would create the cell measure construct.
-
-    .. versionadded:: 3.2.0
-
-    .. seealso:: `cf.Data.creation_commands`,
-                 `cf.Field.creation_commands`
-
-    :Parameters:
-
-        representative_data: `bool`, optional
-            Return one-line representations of `Data` instances, which
-            are not executable code but prevent the data being
-            converted in its entirety to a string representation.
-
-        namespace: `str`, optional
-            The namespace containing classes of the ``cf``
-            package. This is prefixed to the class name in commands
-            that instantiate instances of ``cf`` objects. By default,
-            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
-            was imported as ``import cf``.
-
-            *Parameter example:*
-              If ``cf`` was imported as ``import cf as cfp`` then set
-              ``namespace='cfp'``
-
-            *Parameter example:*
-              If ``cf`` was imported as ``from cf import *`` then set
-              ``namespace=''``
-
-        indent: `int`, optional
-            Indent each line by this many spaces. By default no
-            indentation is applied. Ignored if *string* is False.
-
-        string: `bool`, optional
-            If False then return each command as an element of a
-            `list`. By default the commands are concatenated into
-            a string, with a new line inserted between each command.
-
-    :Returns:
-
-        `str` or `list`
-            The commands in a string, with a new line inserted between
-            each command. If *string* is False then the separate
-            commands are returned as each element of a `list`.
-
-    **Examples:**
-
-        TODO
-
-        '''
-        out = super().creation_commands(
-            representative_data=representative_data, indent=indent,
-            namespace=namespace, string=False, name=name,
-            data_name=data_name)
-
-        measure = self.get_measure(None)
-        if measure is not None:
-            out.append("{}.set_measure({!r})".format(name, measure))
-
-        if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
-
-        return out
-
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=None, relaxed=False,
                  nc_only=False, relaxed_identity=None):
@@ -135,11 +67,11 @@ class CellMeasure(mixin.PropertiesData,
 
     By default the identity is the first found of the following:
 
-    * The `measure` attribute, preceeded by ``'measure:'``.
+    * The `measure` attribute, preceded by ``'measure:'``.
     * The `standard_name` property.
-    * The `id` attribute, preceeded by ``'id%'``.
-    * The `long_name` property, preceeded by ``'long_name='``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The `id` attribute, preceded by ``'id%'``.
+    * The `long_name` property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
     .. versionadded:: 3.0.0

@@ -211,7 +211,6 @@ Data
    ~cf.Count.chunk
    ~cf.Count.close
    ~cf.Count.convert_reference_time
-   ~cf.Count.creation_commands
    ~cf.Count.cyclic
    ~cf.Count.period
    ~cf.Count.get_filenames
@@ -229,6 +228,7 @@ Miscellaneous
 
    ~cf.Count.concatenate
    ~cf.Count.copy
+   ~cf.Count.creation_commands
    ~cf.Count.equals
    ~cf.Count.uncompress
 

@@ -77,55 +77,55 @@ class DataTest(unittest.TestCase):
     mones = mones
 
     test_only = []
-#        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_flatten']
-#        self.test_only = [
-#                          'test_Data_trigonometric_hyperbolic']
-#                          'test_Data_AUXILIARY_MASK',
-#                          'test_Data_datum',
-#                          'test_Data_ERROR',
-#                          'test_Data_array',
-#                          'test_Data_varray',
-#                          'test_Data_stats',
-#                          'test_Data_datetime_array',
-#                          'test_Data_cumsum',
-#                          'test_Data_dumpd_loadd_dumps',
-#                          'test_Data_root_mean_square',
-#                          'test_Data_mean_mean_absolute_value',
-#                          'test_Data_squeeze_insert_dimension',
-#                          'test_Data_months_years',
-#                          'test_Data_binary_mask',
-#                          'test_Data_CachedArray',
-#                          'test_Data_digitize',
-#                          'test_Data_outerproduct',
-#                          'test_Data_flatten',
-#                          'test_Data_transpose',
-#                          'test_Data__collapse_SHAPE',
-#                          'test_Data_range_mid_range',
-#                          'test_Data_median',
-#                          'test_Data_mean_of_upper_decile',
-#                          'test_Data__init__dtype_mask',
-#        ]
+#    test_only = ['NOTHING!!!!!']
+#    test_only = ['test_Data_exp']
+#    test_only = [
+#        'test_Data_trigonometric_hyperbolic'
+#        'test_Data_AUXILIARY_MASK',
+#        'test_Data_datum',
+#        'test_Data_ERROR',
+#        'test_Data_array',
+#        'test_Data_varray',
+#        'test_Data_stats',
+#        'test_Data_datetime_array',
+#        'test_Data_cumsum',
+#        'test_Data_dumpd_loadd_dumps',
+#        'test_Data_root_mean_square',
+#        'test_Data_mean_mean_absolute_value',
+#        'test_Data_squeeze_insert_dimension',
+#        'test_Data_months_years',
+#        'test_Data_binary_mask',
+#        'test_Data_CachedArray',
+#        'test_Data_digitize',
+#        'test_Data_outerproduct',
+#        'test_Data_flatten',
+#        'test_Data_transpose',
+#        'test_Data__collapse_SHAPE',
+#        'test_Data_range_mid_range',
+#        'test_Data_median',
+#        'test_Data_mean_of_upper_decile',
+#        'test_Data__init__dtype_mask',
+#    ]
 
-#        self.test_only = ['test_Data_mean_mean_absolute_value']
-#        self.test_only = ['test_Data_AUXILIARY_MASK']
-#        self.test_only = ['test_Data_mean_of_upper_decile']
-#        self.test_only = ['test_Data__collapse_SHAPE']
-#        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
-#        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
-#        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
-#        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
-#        self.test_only = ['test_Data_ERROR']
-#        self.test_only = ['test_Data_diff', 'test_Data_compressed']
-#        self.test_only = ['test_Data__init__dtype_mask']
-#        self.test_only = ['test_Data_section']
-#        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
-#        self.test_only = ['test_Data_max_min_sum_sum_of_squares']
-#        self.test_only = ['test_Data___setitem__']
-#        self.test_only = ['test_Data_year_month_day_hour_minute_second']
-#        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
-#        self.test_only = ['test_Data_clip']
-#        self.test_only = ['test_Data__init__dtype_mask']
+#    test_only = ['test_Data_mean_mean_absolute_value']
+#    test_only = ['test_Data_AUXILIARY_MASK']
+#    test_only = ['test_Data_mean_of_upper_decile']
+#    test_only = ['test_Data__collapse_SHAPE']
+#    test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
+#    test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
+#    test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
+#    test_only = ['test_Data__collapse_WEIGHTED_MASKED']
+#    test_only = ['test_Data_ERROR']
+#    test_only = ['test_Data_diff', 'test_Data_compressed']
+#    test_only = ['test_Data__init__dtype_mask']
+#    test_only = ['test_Data_section']
+#    test_only = ['test_Data_sum_of_weights_sum_of_weights2']
+#    test_only = ['test_Data_max_min_sum_sum_of_squares']
+#    test_only = ['test_Data___setitem__']
+#    test_only = ['test_Data_year_month_day_hour_minute_second']
+#    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
+#    test_only = ['test_Data_clip']
+#    test_only = ['test_Data__init__dtype_mask']
 
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2827,7 +2827,10 @@ class DataTest(unittest.TestCase):
                 self.assertIsNone(d.exp(inplace=True))
                 self.assertTrue(d.equals(e, verbose=2))
                 self.assertEqual(d.shape, c.shape)
-                self.assertTrue((d.array == c).all())
+                # The CI at one point gave a failure due to precision with:
+                #   self.assertTrue((d.array == c).all())
+                # so need a check which accounts for floating point calcs:
+                numpy.testing.assert_allclose(d.array, c)
 
         cf.chunksize(self.original_chunksize)
 
