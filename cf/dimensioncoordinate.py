@@ -40,7 +40,7 @@ class DimensionCoordinate(mixin.Coordinate,
     The dimension coordinate construct consists of a data array of the
     coordinate values which spans a subset of the domain axis
     constructs, an optional array of cell bounds recording the extents
-    of each cell (stored in a `cf.Bounds` object), and properties to
+    of each cell (stored in a `Bounds` object), and properties to
     describe the coordinates. An array of cell bounds spans the same
     domain axes as its coordinate array, with the addition of an extra
     dimension whose size is that of the number of vertices of each
@@ -55,6 +55,10 @@ class DimensionCoordinate(mixin.Coordinate,
     The netCDF variable name of the construct may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
+
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
     '''
     def __repr__(self):
@@ -230,22 +234,6 @@ class DimensionCoordinate(mixin.Coordinate,
 
         '''
         return self.direction()
-
-    @property
-    def isdimension(self):
-        '''True, denoting that the variable is a dimension coordinate object.
-
-    .. seealso::`isauxiliary`, `isdomainancillary`, `isfieldancillary`,
-                `ismeasure`
-
-    **Examples:**
-
-    >>> c = cf.DimensionCoordinate()
-    >>> c.isdimension
-    True
-
-        '''
-        return True
 
 #    @property
 #    def lower_bounds(self):
@@ -853,7 +841,7 @@ class DimensionCoordinate(mixin.Coordinate,
     # ----------------------------------------------------------------
     @property
     def role(self):
-        '''Deprecated at version 3.0.0. Use attribute 'construct_type'
+        '''Deprecated at version 3.0.0, use `construct_type` attribute
     instead.
 
         '''

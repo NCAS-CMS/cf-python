@@ -352,9 +352,6 @@ Miscellaneous
 
    ~cf.Field.Flags
    ~cf.Field.has_bounds
-   ~cf.Field.isauxiliary
-   ~cf.Field.isdimension
-   ~cf.Field.ismeasure
    ~cf.Field.rank
    ~cf.Field.T
    ~cf.Field.X
@@ -362,7 +359,7 @@ Miscellaneous
    ~cf.Field.Z
 
 .. _Field-NetCDF:
-   
+
 NetCDF
 ------
 
@@ -381,7 +378,65 @@ NetCDF
    ~cf.Field.nc_clear_global_attributes
    ~cf.Field.nc_set_global_attribute
    ~cf.Field.nc_set_global_attributes
-   ~cf.Field.dataset_compliance
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Field.nc_variable_groups
+   ~cf.Field.nc_set_variable_groups
+   ~cf.Field.nc_clear_variable_groups
+   ~cf.Field.nc_group_attributes
+   ~cf.Field.nc_clear_group_attributes
+   ~cf.Field.nc_set_group_attribute
+   ~cf.Field.nc_set_group_attributes
+  
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Field.nc_del_geometry_variable
+   ~cf.Field.nc_get_geometry_variable
+   ~cf.Field.nc_has_geometry_variable
+   ~cf.Field.nc_set_geometry_variable 
+   ~cf.Field.nc_geometry_variable_groups
+   ~cf.Field.nc_set_geometry_variable_groups
+   ~cf.Field.nc_clear_geometry_variable_groups
+
+Components
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Field.nc_del_component_variable
+   ~cf.Field.nc_set_component_variable
+   ~cf.Field.nc_set_component_variable_groups
+   ~cf.Field.nc_clear_component_variable_groups      
+   ~cf.Field.nc_del_component_dimension
+   ~cf.Field.nc_set_component_dimension
+   ~cf.Field.nc_set_component_dimension_groups
+   ~cf.Field.nc_clear_component_dimension_groups
+   ~cf.Field.nc_del_component_sample_dimension
+   ~cf.Field.nc_set_component_sample_dimension   
+   ~cf.Field.nc_set_component_sample_dimension_groups
+   ~cf.Field.nc_clear_component_sample_dimension_groups
 
 .. _field_methods:
 
@@ -401,7 +456,7 @@ Domain axes
    ~cf.Field.axis_size
    ~cf.Field.cyclic
    ~cf.Field.data_axes
-   ~cf.Field.iscyclic 
+   ~cf.Field.iscyclic
    ~cf.Field.item_axes
    ~cf.Field.items_axes
 
@@ -630,12 +685,11 @@ Logic functions
 
    ~cf.Field.unique
 
-
 Aliases
 -------
 
 .. rubric:: Methods
-   
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
@@ -848,136 +902,66 @@ Special
    ~cf.Field.__repr__
    ~cf.Field.__str__
 
-.. 'add_offset',
-   'all',
-   'allclose',
-   'analyse_items',
-   'any',
-   'array',
-   'asdatetime',
-   'asreftime',
-   'attributes',
-   'autocyclic',
-   'auxiliary_coordinate',
-   'auxiliary_coordinates',
-   'axes_names',
-   'axis_name',
-   'axis_size',
-   'binary_mask',
-   'calendar',
-   'cell_area',
-   'cell_measure',
-   'cell_measures',
-   'cell_method',
-   'cell_methods',
-   'chunk',
-   'climatological_time_axes',
-   'close',
-   'collapse',
-   'comment',
-   'concatenate',
-   'construct',
-   'construct_key',
-   'construct_type',
-   'constructs',
-   'convert',
-   'convert_reference_time',
-   'convolution_filter',
-   'coord',
-   'coordinate',
-   'coordinate_reference',
-   'coordinate_reference_domain_axes',
-   'coordinate_references',
-   'coordinates',
-   'coords',
-   'copy',
-   'count',
-   'count_masked',
-   'cyclic',
-   'data',
-   'data_axes',
-   'dataset_compliance',
-   'datetime_array',
-   'datum',
-   'day',
-   'del_construct',
-   'del_coordinate_reference',
-   'del_data',
-   'del_data_axes',
-   'derivative',
-   'dimension_coordinate',
-   'dimension_coordinates',
-   'direction',
-   'directions',
-   'domain',
-   'domain_ancillaries',
-   'domain_ancillary',
-   'domain_axes',
-   'domain_axis',
-   'domain_axis_key',
-   'domain_mask',
-   'dump',
-   'equals',
-   'equivalent',
-   'featureType',
-   'field',
-   'field_ancillaries',
-   'field_ancillary',
-   'fill_value',
-   'flag_masks',
-   'flag_meanings',
-   'flag_values',
-   'floor',
-   'get_construct',
-   'get_data',
-   'get_data_axes',
-   'get_domain',
-   'hardmask',
-   'has_bounds',
-   'has_construct',
-   'has_data',
-   'has_data_axes',
-   'history',
-   'hour',
-   'id',
-   'inspect',
-   'isauxiliary',
-   'iscyclic',
-   'isdimension',
-   'isdomainancillary',
-   'isfieldancillary',
-   'ismeasure',
-   'isscalar',
-   'item',
-   'item_axes',
-   'items',
-   'items_axes',
-   'key_item',
-   'map_axes',
-   'mask',
-   'mask_invalid',
-   'minute',
-   'missing_value',
-   'name',
-   'ncdimensions',
-   'new_identifier',
-   'period',
-   'properties',
-   'reference_datetime',
-   'second',
-   'section',
-   'select',
-   'set_construct',
-   'set_coordinate_reference',
-   'set_data',
-   'set_data_axes',
-   'shape',
-   'size',
-   'source',
-   'standard_error_multiplier',
-   'standard_name',
-   'unique',
-   'valid_max',
-   'valid_min',
-   'valid_range',
-   'year']
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.asdatetime
+   ~cf.Field.asreftime
+   ~cf.Field.axis_name
+   ~cf.Field.data_axes
+   ~cf.Field.equivalent
+   ~cf.Field.example_field
+   ~cf.Field.expand_dims
+   ~cf.Field.field
+   ~cf.Field.HDF_chunks
+   ~cf.Field.insert_aux
+   ~cf.Field.insert_axis
+   ~cf.Field.insert_cell_methods
+   ~cf.Field.insert_data
+   ~cf.Field.insert_domain_anc
+   ~cf.Field.insert_field_anc
+   ~cf.Field.insert_item
+   ~cf.Field.insert_measure
+   ~cf.Field.insert_ref
+   ~cf.Field.isauxiliary
+   ~cf.Field.isdimension
+   ~cf.Field.isdomainancillary
+   ~cf.Field.isfieldancillary
+   ~cf.Field.ismeasure
+   ~cf.Field.item_axes
+   ~cf.Field.key_item
+   ~cf.Field.name
+   ~cf.Field.new_identifier
+   ~cf.Field.remove_axes
+   ~cf.Field.remove_axis
+   ~cf.Field.remove_data
+   ~cf.Field.remove_item
+   ~cf.Field.remove_items
+   ~cf.Field.select
+   ~cf.Field.transpose_item
+   ~cf.Field.unlimited
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Field.attributes
+   ~cf.Field._Axes
+   ~cf.Field.CellMethods
+   ~cf.Field.CM
+   ~cf.Field.Data
+   ~cf.Field.dtvarray
+   ~cf.Field.hasbounds
+   ~cf.Field.hasdata
+   ~cf.Field.Items
+   ~cf.Field.unsafe_array

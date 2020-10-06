@@ -37,20 +37,4 @@ class DomainAncillary(mixin.PropertiesDataBounds,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-    @property
-    def isdomainancillary(self):
-        '''True, denoting that the variable is a domain ancillary object.
-
-    .. versionadded:: 2.0
-
-    **Examples:**
-
-    >>>f = cf.DomainAncillary()
-    >>> f.isdomainancillary
-    True
-
-        '''
-        return True
-
-
 # --- End: class

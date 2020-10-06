@@ -18,7 +18,10 @@ from ..data import Data
 
 from . import Properties
 
-from ..functions import _DEPRECATION_ERROR_METHOD
+from ..functions import (
+    _DEPRECATION_ERROR_METHOD,
+    _DEPRECATION_ERROR_ATTRIBUTE,
+)
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
@@ -1665,7 +1668,8 @@ class PropertiesData(Properties):
         '''The maximum of the data array.
 
     .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
-                 `sample_size`, `sd`, `sum`, `var`
+                 `sample_size`, `standard_devitation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1690,8 +1694,9 @@ class PropertiesData(Properties):
     def mean(self):
         '''The unweighted mean the data array.
 
-    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`,
+                 `sample_size`, `standard_devitation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1717,8 +1722,8 @@ class PropertiesData(Properties):
         '''The unweighted average of the maximum and minimum of the data
     array.
 
-    .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`, `sd`,
-                 `sum`, `var`
+    .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`,
+                 `standard_devitation`, `sum`, `variance`
 
     :Returns:
 
@@ -1914,11 +1919,11 @@ class PropertiesData(Properties):
         raise ValueError(
             "ERROR: Can't get the sample size when there is no data array")
 
-    def sd(self):
+    def standard_deviation(self):
         '''The unweighted sample standard deviation of the data array.
 
     .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                 `sample_size`, `sum`, `var`
+                 `sample_size`, `sum`, `variance`
 
     :Returns:
 
@@ -1929,7 +1934,7 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.sd()
+    >>> f.standard_deviation()
     <CF Data(): 22.685052535 K>
 
         '''
@@ -1942,17 +1947,17 @@ class PropertiesData(Properties):
             "array"
         )
 
-    def standard_deviation(self):
-        '''Alias for `sd`
+    def sd(self):
+        '''Alias for `standard_deviation`
 
         '''
-        return self.sd()
+        return self.standard_deviation()
 
     def sum(self):
         '''The sum of the data array.
 
     .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                 `sample_size`, `sd`, `var`
+                 `sample_size`, `standard_devitation`, `variance`
 
     :Returns:
 
@@ -2015,11 +2020,11 @@ class PropertiesData(Properties):
             (axis0, axis1),
             inplace=inplace, delete_props=True)
 
-    def var(self):
+    def variance(self):
         '''The unweighted sample variance of the data array.
 
     .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                 `sample_size`, `sd`, `sum`
+                 `sample_size`, `standard_deviation`, `sum`
 
     :Returns:
 
@@ -2030,7 +2035,7 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.var()
+    >>> f.variance()
     <CF Data(): 514.611608515 K2>
 
         '''
@@ -2041,11 +2046,11 @@ class PropertiesData(Properties):
 
         return data.var(squeeze=True, ddof=0)
 
-    def variance(self):
-        '''Alias for `var`
+    def var(self):
+        '''Alias for `variance`
 
         '''
-        return self.var()
+        return self.variance()
 
     @property
     def subspace(self):
@@ -2390,81 +2395,6 @@ class PropertiesData(Properties):
                 "{} has no data array".format(self.__class__.__name__))
 
         return data.varray
-
-    @property
-    def isauxiliary(self):
-        '''True if the variable is an auxiliary coordinate object.
-
-    .. seealso:: `isdimension`, `isdomainancillary`,
-                 `isfieldancillary`, `ismeasure`
-
-    **Examples:**
-
-    >>> f.isauxiliary
-    False
-
-        '''
-        return False
-
-    @property
-    def isdimension(self):
-        '''True if the variable is a dimension coordinate object.
-
-    .. seealso:: `isauxiliary`, `isdomainancillary`,
-                 `isfieldancillary`, `ismeasure`
-
-    **Examples:**
-
-    >>> f.isdimension
-    False
-
-        '''
-        return False
-
-    @property
-    def isdomainancillary(self):
-        '''True if the variable is a domain ancillary object.
-
-    .. seealso:: `isauxiliary`, `isdimension`, `isfieldancillary`,
-                 `ismeasure`
-
-    **Examples:**
-
-    >>> f.isdomainancillary
-    False
-
-        '''
-        return False
-
-    @property
-    def isfieldancillary(self):
-        '''True if the variable is a field ancillary object.
-
-    .. seealso:: `isauxiliary`, `isdimension`, `isdomainancillary`,
-                 `ismeasure`
-
-    **Examples:**
-
-    >>> f.isfieldancillary
-    False
-
-        '''
-        return False
-
-    @property
-    def ismeasure(self):
-        '''True if the variable is a cell measure object.
-
-    .. seealso:: `isauxiliary`, `isdimension`, `isdomainancillary`,
-                 `isfieldancillary`
-
-    **Examples:**
-
-    >>> f.ismeasure
-    False
-
-        '''
-        return False
 
     @property
     def isscalar(self):
@@ -5403,19 +5333,15 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     @property
     def attributes(self):
-        '''A dictionary of the attributes which are not CF properties.
-
-        Deprecated at version 3.0.0.
+        '''Deprecated at version 3.0.0.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'attributes')
 
     @property
     def Data(self):
-        '''The `Data` object containing the data array.
-
-        Deprecated at version 3.0.0. Use 'data' attribute or
-        'get_data' method instead.
+        '''Deprecated at version 3.0.0, use `data` attribute or `get_data`
+    method instead.
 
         '''
         _DEPRECATATION_ERROR_ATTRIBUTE(
@@ -5425,6 +5351,9 @@ class PropertiesData(Properties):
 
     @data.setter
     def Data(self, value):
+        '''Deprecated at version 3.0.0, use `set_data` method instead.
+
+        '''
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, 'Data',
             "Use 'data' attribute or 'set_data' method instead."
@@ -5432,6 +5361,9 @@ class PropertiesData(Properties):
 
     @data.deleter
     def Data(self):
+        '''Deprecated at version 3.0.0, use `del_data` method instead.
+
+        '''
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, 'Data',
             "Use 'data' attribute or 'del_data' method instead."
@@ -5439,25 +5371,14 @@ class PropertiesData(Properties):
 
     @property
     def dtvarray(self):
-        '''A numpy array view the data array converted to date-time objects.
-
-        Deprecated at version 3.0.0.
+        '''Deprecated at version 3.0.0.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
     @property
     def hasbounds(self):
-        '''`True` if there are cell bounds.
-
-    Deprecated at version 3.0.0. Use 'has_bounds' method instead.
-
-    If present, cell bounds are stored in the `!bounds` attribute.
-
-    **Examples:**
-
-    >>> if c.hasbounds:
-    ...     b = c.bounds
+        '''Deprecated at version 3.0.0, use `has_bounds` method instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -5465,97 +5386,90 @@ class PropertiesData(Properties):
 
     @property
     def hasdata(self):
-        '''True if there is a data array.
-
-    Deprecated at version 3.0.0. Use 'has_data' method instead.
-
-    If present, the data array is stored in the `data` attribute.
-
-    .. seealso:: `data`, `hasbounds`
-
-    **Examples:**
-
-    >>> if f.hasdata:
-    ...     print(f.data)
+        '''Deprecated at version 3.0.0, use `has_data` method instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'hasdata', "Use 'has_data' method instead")
 
     @property
-    def unsafe_array(self):
-        '''A numpy array of the data.
+    def isauxiliary(self):
+        '''Deprecated at version 3.7.0, use `construct_type` attribute
+    instead.
 
-        Deprecated at version 3.0.0. Use 'array' attribute instead.
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'isauxiliary',
+            "Use 'construct_type'' attribute instead.", version='3.7.0'
+        )  # pragma: no cover
+
+    @property
+    def isdimension(self):
+        '''Deprecated at version 3.7.0, use `construct_type` attribute
+    instead.
+
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'isdimension',
+            "Use 'construct_type'' attribute instead.", version='3.7.0'
+        )  # pragma: no cover
+
+    @property
+    def isdomainancillary(self):
+        '''Deprecated at version 3.7.0, use `construct_type` attribute
+    instead.
+
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'isdomainancillary',
+            "Use 'construct_type'' attribute instead.", version='3.7.0'
+        )  # pragma: no cover
+
+    @property
+    def isfieldancillary(self):
+        '''Deprecated at version 3.7.0, use `construct_type` attribute
+    instead.
+
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'isfieldancillary',
+            "Use 'construct_type'' attribute instead.")  # pragma: no cover
+
+    @property
+    def ismeasure(self):
+        '''Deprecated at version 3.7.0, use `construct_type` attribute
+    instead.
+
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'ismeasure',
+            "Use 'construct_type'' attribute instead.", version='3.7.0'
+        )  # pragma: no cover
+
+    @property
+    def unsafe_array(self):
+        '''Deprecated at version 3.0.0, use `array` attribute instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'unsafe_array',
-            "Use 'array' attribute instead.")  # pragma: no cover
+            "Use 'array' attribute instead.", version='3.0.0'
+        )  # pragma: no cover
 
     def asdatetime(self, i=False):
-        '''Convert the internal representation of data array elements to
-    date-time objects.
-
-    Only applicable to construct with reference time units.
-
-    If the calendar has not been set then the CF default calendar will be
-    used and the units will be updated accordingly.
-
-    .. seealso:: `asreftime`
-
-    :Parameters:
-
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
-
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
-
-    **Examples:**
-
-    >>> t.asdatetime().dtype
-    dtype('float64')
-    >>> t.asdatetime().dtype
-    dtype('O')
+        '''Deprecated at version 3.0.0.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'asdatetime')  # pragma: no cover
 
     def asreftime(self, i=False):
-        '''Convert the internal representation of data array elements
-    to numeric reference times.
-
-    Only applicable to constructs with reference time units.
-
-    If the calendar has not been set then the CF default calendar will be
-    used and the units will be updated accordingly.
-
-    .. seealso:: `asdatetime`
-
-    :Parameters:
-
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
-
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
-
-    **Examples:**
-
-    >>> t.asdatetime().dtype
-    dtype('O')
-    >>> t.asreftime().dtype
-    dtype('float64')
+        '''Deprecated at version 3.0.0.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'asreftime')  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        '''Insert a size 1 axis into the data array.
-
-        Deprecated at version 3.0.0. Use method 'insert_dimension'
-        instead.
+        '''Deprecated at version 3.0.0, use `insert_dimension` method instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -5563,7 +5477,7 @@ class PropertiesData(Properties):
             "Use method 'insert_dimension' instead.")  # pragma: no cover
 
     def insert_data(self, data, copy=True):
-        '''Deprecated at version 3.0.0. Use method 'set_data' instead.
+        '''Deprecated at version 3.0.0, use `set_data` method instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -5572,9 +5486,7 @@ class PropertiesData(Properties):
 
     def name(self, default=None, identity=False, ncvar=False,
              relaxed_identity=None):
-        '''Return a name for construct.
-
-        Deprecated at version 3.0.0. Use method 'identity' instead.
+        '''Deprecated at version 3.0.0, use method 'identity' instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -5582,9 +5494,7 @@ class PropertiesData(Properties):
             "Use method 'identity' instead")  # pragma: no cover
 
     def remove_data(self):
-        '''Remove and return the data array.
-
-        Deprecated at version 3.0.0. Use method 'del_data' instead.
+        '''Deprecated at version 3.0.0, use method `del_data` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

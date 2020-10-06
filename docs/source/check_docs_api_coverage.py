@@ -4,12 +4,8 @@ docs/source/class.rst
 All non-private methods of all such classes are checked for having an
 entry in their corresponding class's file in docs/source/class/
 
-For example, all cf.Field methods that do not start with an
-underscore are checked for having an entry in
-docs/source/class/cf.Field.rst
-
-If being used on the cfdm library, the classes listed in
-docs/source/class_core.rst are also checked.
+For example, all cf.Field methods that do not start with an underscore
+are checked for having an entry in docs/source/class/cf.Field.rst
 
 Call as:
 
@@ -53,13 +49,17 @@ for core in ('', '_core'):
                    if package.__name__+'.' in i]
     
     for class_name in class_names:
+        class_name = class_name.rstrip()
+        
         klass = getattr(package, class_name)
-        methods = [method for method in dir(klass)
+        
+       methods = [method for method in dir(klass)
                    if not method.startswith('_')]
         
         class_name = '.'.join([package.__name__, class_name])
         
-        rst_file = os.path.join(source, 'classes', class_name+'.rst')
+        rst_file = os.path.join(source, 'class', class_name+'.rst')
+
         
         try:
             with open(rst_file) as f:
@@ -71,8 +71,8 @@ for core in ('', '_core'):
                     n_undocumented_methods += 1
                     print (
                         "Method {} not in {}".format(
-                            method, os.path.join(source, 'classes', rst_file)
-                        )
+                            method, os.path.join(source, 'class', rst_file)
+                       )
                     )
         except FileNotFoundError:
             n_missing_files += 1

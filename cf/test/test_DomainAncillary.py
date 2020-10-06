@@ -9,7 +9,6 @@ import cf
 class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary(self):
         f = cf.DomainAncillary()
-        self.assertTrue(f.isdomainancillary)
 
         _ = repr(f)
         _ = str(f)

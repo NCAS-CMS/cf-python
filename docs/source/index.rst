@@ -22,7 +22,7 @@
    introduction
    cf_data_model
    installation
-   support
+   contributing
    tutorial
    analysis
    api_reference

@@ -6,7 +6,8 @@ from cfunits import Units as cfUnits
 _libpath = find_library('udunits2')
 if _libpath is None:
     raise FileNotFoundError(
-        "cf requires UNIDATA UDUNITS-2. Can't find the 'udunits2' library.")
+        "cf requires UNIDATA UDUNITS-2. Can't find the 'udunits2' library."
+    )
 
 
 class Units:
@@ -16,7 +17,8 @@ class Units:
     This is a convenience class that creates a `cfunits.Units`
     instance.
 
-    The full documentation is available with ``help(cf.Units())``.
+    The full documentation is available via a `cf.Units` instance,
+    e.g. ``help(cf.Units())``.
 
     '''
     def __new__(cls, *args, **kwargs):
