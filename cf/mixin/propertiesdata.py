@@ -18,7 +18,10 @@ from ..data import Data
 
 from . import Properties
 
-from ..functions import _DEPRECATION_ERROR_METHOD
+from ..functions import (
+    _DEPRECATION_ERROR_METHOD,
+    _DEPRECATION_ERROR_ATTRIBUTE,
+)
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
