@@ -59,6 +59,7 @@ for core in ('', '_core'):
         class_name = '.'.join([package.__name__, class_name])
         
         rst_file = os.path.join(source, 'class', class_name+'.rst')
+
         
         try:
             with open(rst_file) as f:
@@ -71,7 +72,7 @@ for core in ('', '_core'):
                     print (
                         "Method {} not in {}".format(
                             method, os.path.join(source, 'class', rst_file)
-                        )
+                       )
                     )
         except FileNotFoundError:
             n_missing_files += 1

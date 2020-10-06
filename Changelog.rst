@@ -14,6 +14,7 @@ version 3.7.0
 * New keyword parameter to `cf.write`: ``coordinates``
   (https://github.com/NCAS-CMS/cf-python/issues/125)
 * Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
+* Changed dependency: ``cfunits>=3.3.0``
 
 version 3.6.0
 -------------
