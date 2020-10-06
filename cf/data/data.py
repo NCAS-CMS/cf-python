@@ -14583,9 +14583,7 @@ False
     # ----------------------------------------------------------------
     @property
     def Data(self):
-        '''The data array object as an object identity.
-
-    Deprecated at version 3.0.0. Use attribute 'data' instead.
+        '''Deprecated at version 3.0.0, use attribute `data` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -14594,28 +14592,23 @@ False
 
     @property
     def dtvarray(self):
-        '''A numpy array view the data array converted to date-time objects.
+        '''Deprecated at version 3.0.0.
 
-        Deprecated at version 3.0.0.
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
     def files(self):
-        '''Return the names of files containing parts of the data array.
-
-    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
+        '''Deprecated at version 3.4.0, use method `get_filenames` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
-            self, 'files', "Use method 'get_filenames' instead.",
+            self, 'files', "Use method `get_filenames` instead.",
             version='3.4.0'
         )  # pragma: no cover
 
     @property
     def unsafe_array(self):
-        '''A numpy array of the data.
-
-        Deprecated at version 3.0.0. Use 'array' attribute instead.
+        '''Deprecated at version 3.0.0, use `array` attribute instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -14624,10 +14617,7 @@ False
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        '''Expand the shape of the data array in place.
-
-    Deprecated at version 3.0.0. Use method 'insert_dimension'
-    instead.
+        '''Deprecated at version 3.0.0, use method `insert_dimension` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

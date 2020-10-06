@@ -46,21 +46,6 @@ class CellMeasure(mixin.PropertiesData,
     # Attributes
     # ----------------------------------------------------------------
     @property
-    def ismeasure(self):
-        '''Always True.
-
-    .. seealso:: `isauxiliary`, `isdimension`
-
-    **Examples:**
-
-    >>> c = cf.CellMeasure()
-    >>> c.ismeasure
-    True
-
-        '''
-        return True
-
-    @property
     def measure(self):
         '''TODO
         '''

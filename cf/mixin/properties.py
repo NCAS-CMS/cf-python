@@ -1125,9 +1125,7 @@ class Properties(Container):
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
     def setprop(self, *args, **kwargs):
-        '''Delete a CF property.
-
-    Deprecated at version 3.0.0. Use method 'set_property' instead.
+        '''Deprecated at version 3.0.0, use method `set_property` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -1135,9 +1133,7 @@ class Properties(Container):
         )  # pragma: no cover
 
     def delprop(self, prop):
-        '''Delete a CF property.
-
-    Deprecated at version 3.0.0. Use method 'del_property' instead.
+        '''Deprecated at version 3.0.0, use method `del_property` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -1145,9 +1141,7 @@ class Properties(Container):
         )  # pragma: no cover
 
     def hasprop(self, prop):
-        '''Whether a property has been set.
-
-    Deprecated at version 3.0.0. Use method 'has_property' instead.
+        '''Deprecated at version 3.0.0, use method `has_property` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -1155,9 +1149,7 @@ class Properties(Container):
         )  # pragma: no cover
 
     def getprop(self, prop):
-        '''Get a property.
-
-    Deprecated at version 3.0.0. Use method 'get_property' instead.
+        '''Deprecated at version 3.0.0, use method `get_property` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

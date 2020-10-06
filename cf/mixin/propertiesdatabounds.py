@@ -3545,7 +3545,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     @property
     def hasbounds(self):
-        '''Deprecated at version 3.0.0. Use method 'has_bounds' instead.
+        '''Deprecated at version 3.0.0, use method `has_bounds` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -3553,9 +3553,7 @@ class PropertiesDataBounds(PropertiesData):
             "Use method 'has_bounds' instead.")  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        '''Insert a size 1 axis into the data array.
-
-    Deprecated at version 3.0.0. Use method 'insert_dimension'
+        '''Deprecated at version 3.0.0, use method `insert_dimension`
     instead.
 
         '''
@@ -3564,9 +3562,7 @@ class PropertiesDataBounds(PropertiesData):
             "Use method 'insert_dimension' instead.")  # pragma: no cover
 
     def files(self):
-        '''Return the names of any files containing parts of the data array.
-
-    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
+        '''Deprecated at version 3.4.0, use method `get_filenames` instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

@@ -42,20 +42,5 @@ class FieldAncillary(mixin.PropertiesData,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-    @property
-    def isfieldancillary(self):
-        '''True, denoting that the variable is a field ancillary object.
-
-    .. versionadded:: 2.0
-
-    **Examples:**
-
-    >>> f = cf.FieldAncillary()
-    >>> f.isfieldancillary
-    True
-
-        '''
-        return True
-
 
 # --- End: class

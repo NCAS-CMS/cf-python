@@ -22,6 +22,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.direction
    ~cf.DimensionCoordinate.dump
    ~cf.DimensionCoordinate.identity  
    ~cf.DimensionCoordinate.identities
@@ -204,7 +205,16 @@ Data
    ~cf.DimensionCoordinate.squeeze
    ~cf.DimensionCoordinate.swapaxes
    ~cf.DimensionCoordinate.transpose
-   
+      
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.halo
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -244,6 +254,28 @@ Data
    ~cf.DimensionCoordinate.subspace
    ~cf.DimensionCoordinate.where
 
+Cyclicity
+---------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.DimensionCoordinate.autoperiod
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+	      
+   ~cf.DimensionCoordinate.iscyclic
+   ~cf.DimensionCoordinate.isperiodic
+   
 .. rubric:: *Miscellaneous*
 
 .. autosummary::
@@ -325,19 +357,16 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DimensionCoordinate.max
+
+   ~cf.DimensionCoordinate.maximum
    ~cf.DimensionCoordinate.mean
    ~cf.DimensionCoordinate.mid_range
-   ~cf.DimensionCoordinate.min
+   ~cf.DimensionCoordinate.minimum
    ~cf.DimensionCoordinate.range
    ~cf.DimensionCoordinate.sample_size
    ~cf.DimensionCoordinate.sum  
-   ~cf.DimensionCoordinate.sd
-   ~cf.DimensionCoordinate.var
    ~cf.DimensionCoordinate.standard_deviation
    ~cf.DimensionCoordinate.variance
-   ~cf.DimensionCoordinate.maximum
-   ~cf.DimensionCoordinate.minimum
 
 .. rubric:: *Exponential and logarithmic functions*
 	    
@@ -400,7 +429,7 @@ Logic functions
    :template: method.rst
 
    ~cf.DimensionCoordinate.unique
-
+   
 NetCDF
 ------
 
@@ -416,6 +445,20 @@ NetCDF
    ~cf.DimensionCoordinate.nc_has_variable
    ~cf.DimensionCoordinate.nc_set_variable 
    
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.DimensionCoordinate.nc_variable_groups
+   ~cf.DimensionCoordinate.nc_set_variable_groups
+   ~cf.DimensionCoordinate.nc_clear_variable_groups
+  
 Aliases
 -------
 
@@ -427,7 +470,11 @@ Aliases
    :template: method.rst  
 
    ~cf.DimensionCoordinate.match
-
+   ~cf.DimensionCoordinate.max
+   ~cf.DimensionCoordinate.min
+   ~cf.DimensionCoordinate.sd
+   ~cf.DimensionCoordinate.var
+	      
 .. rubric:: Attributes
    
 .. autosummary::
@@ -565,20 +612,6 @@ for augmented assignments, modify the construct's data in-place.
 
    ~cf.DimensionCoordinate.__invert__ 
 
-Groups
-^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.nc_variable_groups
-   ~cf.DimensionCoordinate.nc_clear_variable_groups
-   ~cf.DimensionCoordinate.nc_set_variable_groups
-
 Special
 -------
 
@@ -601,30 +634,45 @@ Special
    ~cf.DimensionCoordinate.__query_wi__
    ~cf.DimensionCoordinate.__query_wo__
 
+Deprecated
+----------
 
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-.. todo for CF-1.8  
-      ~DimensionCoordinate.del_geometry
-      ~DimensionCoordinate.get_geometry
-      ~DimensionCoordinate.has_geometry
-      ~DimensionCoordinate.set_geometry
-      
-      ~DimensionCoordinate.del_node_count
-      ~DimensionCoordinate.del_part_node_count
+   ~cf.DimensionCoordinate.asdatetime
+   ~cf.DimensionCoordinate.asreftime
+   ~cf.DimensionCoordinate.delprop
+   ~cf.DimensionCoordinate.expand_dims
+   ~cf.DimensionCoordinate.files
+   ~cf.DimensionCoordinate.getprop
+   ~cf.DimensionCoordinate.hasprop
+   ~cf.DimensionCoordinate.insert_data
+   ~cf.DimensionCoordinate.name
+   ~cf.DimensionCoordinate.remove_data
+   ~cf.DimensionCoordinate.select
+   ~cf.DimensionCoordinate.setprop
 
-      ~DimensionCoordinate.get_interior_ring
-      ~DimensionCoordinate.get_node_count
-      ~DimensionCoordinate.get_part_node_count
+.. rubric:: Attributes
 
-      ~DimensionCoordinate.has_interior_ring
-      ~DimensionCoordinate.has_node_count
-      ~DimensionCoordinate.has_part_node_count
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-      ~DimensionCoordinate.set_interior_ring
-      ~DimensionCoordinate.set_node_count
-      ~DimensionCoordinate.set_part_node_count
-   
-      ~DimensionCoordinate.interior_ring
-   
-   
+   ~cf.DimensionCoordinate.attributes
+   ~cf.DimensionCoordinate.Data
+   ~cf.DimensionCoordinate.dtvarray
+   ~cf.DimensionCoordinate.hasbounds
+   ~cf.DimensionCoordinate.hasdata
+   ~cf.DimensionCoordinate.isauxiliary
+   ~cf.DimensionCoordinate.isdimension
+   ~cf.DimensionCoordinate.isdomainancillary
+   ~cf.DimensionCoordinate.isfieldancillary
+   ~cf.DimensionCoordinate.ismeasure
+   ~cf.DimensionCoordinate.role
+   ~cf.DimensionCoordinate.unsafe_array
