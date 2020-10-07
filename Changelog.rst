@@ -4,6 +4,7 @@ version 3.7.0
 
 **2020-10-??**
 
+* Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cf.Field.del_domain_axis`
 * New method: `cf.Field._docstring_special_substitutions`
 * New method: `cf.Field._docstring_substitutions`

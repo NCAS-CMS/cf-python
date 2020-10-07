@@ -268,7 +268,7 @@ setup(
     ],
     package_data={'cf': package_data},
     scripts=['scripts/cfa'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=install_requires,
     # install_requires=[
     #     'netCDF4>=1.5.3',

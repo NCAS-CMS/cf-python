@@ -108,7 +108,7 @@ import importlib.util
 import platform
 
 # Check the version of Python
-_minimum_vn = '3.5.0'
+_minimum_vn = '3.6.0'
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad python version: cf requires python version {} or later. "

@@ -37,7 +37,7 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package at versions 3.0.0 or later works only for Python 3.5 or
+The cf package at versions 3.0.0 or later works only for Python 3.6 or
 later. (Versions 2.x of cf work only for Python 2.7.)
 
 ----
@@ -179,7 +179,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.5 or newer.
+* `Python <https://www.python.org/>`_, 3.6 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
