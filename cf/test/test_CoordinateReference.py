@@ -33,6 +33,7 @@ atexit.register(_remove_tmpfiles)
 class CoordinateReferenceTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
+    f = cf.read(filename)[0]
 
     datum = cf.Datum(parameters={'earth_radius': 6371007})
 
@@ -69,7 +70,7 @@ class CoordinateReferenceTest(unittest.TestCase):
     )
 
     def test_CoordinateReference__repr__str__dump(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         coordinate_conversion = cf.CoordinateConversion(
             parameters={
@@ -103,7 +104,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = str(coordinate_conversion)
 
     def test_CoordinateReference_equals(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         # Create a vertical grid mapping coordinate reference
         t = cf.CoordinateReference(
@@ -188,7 +189,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(t.equals(t.copy(), verbose=2))
 
     def test_CoordinateReference_default_value(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         self.assertEqual(cf.CoordinateReference.default_value('qwerty'), 0.0)
         self.assertEqual(
@@ -199,7 +200,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertEqual(cr.default_value('earth_depth'), 0.0)
 
     def test_CoordinateReference_canonical_units(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         self.assertIsNone(
             cf.CoordinateReference.canonical_units('qwerty'))

@@ -8,23 +8,23 @@ import cf
 
 
 class AuxiliaryCoordinateTest(unittest.TestCase):
-    def setUp(self):
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        aux1 = cf.AuxiliaryCoordinate()
-        aux1.standard_name = 'latitude'
-        a = numpy.array(
-            [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7,
-             11.30003, 17.8678678, 23.5, 30]
-        )
-        aux1.set_data(cf.Data(a, 'degrees_north'))
-        bounds = cf.Bounds()
-        b = numpy.empty(a.shape + (2,))
-        b[:, 0] = a - 0.1
-        b[:, 1] = a + 0.1
-        bounds.set_data(cf.Data(b))
-        aux1.set_bounds(bounds)
-        self.aux1 = aux1
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    f = cf.read(filename)[0]
+
+    aux1 = cf.AuxiliaryCoordinate()
+    aux1.standard_name = 'latitude'
+    a = numpy.array(
+        [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7,
+         11.30003, 17.8678678, 23.5, 30]
+    )
+    aux1.set_data(cf.Data(a, 'degrees_north'))
+    bounds = cf.Bounds()
+    b = numpy.empty(a.shape + (2,))
+    b[:, 0] = a - 0.1
+    b[:, 1] = a + 0.1
+    bounds.set_data(cf.Data(b))
+    aux1.set_bounds(bounds)
 
     def test_AuxiliaryCoordinate_mask_invalid(self):
         a = self.aux1.copy()
@@ -42,7 +42,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         a.chunk()
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.auxiliary_coordinates('latitude').value()
 
         _ = repr(x)
@@ -50,7 +50,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         _ = x.dump(display=False)
 
     def test_AuxiliaryCoordinate_bounds(self):
-        f = cf.read(self.filename, verbose=0)[0]
+        f = self.f.copy()
         d = f.dimension_coordinates('X').value()
         x = cf.AuxiliaryCoordinate(source=d)
 
@@ -58,7 +58,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         _ = x.lower_bounds
 
     def test_AuxiliaryCoordinate_properties(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.auxiliary_coordinates('latitude').value()
 
         x.positive = 'up'
@@ -75,7 +75,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = cf.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         d = f.dimension_coordinates('X').value()
         x = cf.AuxiliaryCoordinate(source=d)
 
@@ -91,7 +91,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_transpose(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.auxiliary_coordinates('longitude').value()
 
         bounds = cf.Bounds(
@@ -110,7 +110,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_squeeze(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.auxiliary_coordinates('longitude').value()
 
         bounds = cf.Bounds(

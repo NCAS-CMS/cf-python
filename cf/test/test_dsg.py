@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import inspect
 import os
@@ -8,123 +9,133 @@ import numpy
 
 import cf
 
+n_tmpfiles = 1
+tmpfiles = [tempfile.mkstemp('_test_dsg.nc', dir=os.getcwd())[1]
+            for i in range(n_tmpfiles)]
+[
+    tmpfile
+] = tmpfiles
+
+
+def _remove_tmpfiles():
+    '''TODO
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+    # --- End: for
+
+
+atexit.register(_remove_tmpfiles)
+
 
 class DSGTest(unittest.TestCase):
-    def setUp(self):
-        self.contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_contiguous.nc'
-        )
-        self.indexed = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_indexed.nc'
-        )
-        self.indexed_contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeriesProfile_indexed_contiguous.nc'
-        )
+    contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_contiguous.nc'
+    )
+    indexed = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_indexed.nc'
+    )
+    indexed_contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeriesProfile_indexed_contiguous.nc'
+    )
 
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cf_', dir='.')
-        os.close(fd)
+    a = numpy.ma.masked_all((4, 9), dtype=float)
+    a[0, 0:3] = [0.0, 1.0, 2.0]
+    a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
+    a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
+    a[3, 0:9] = [3.0, 1003.0, 2003.0, 3003.0, 4003.0, 5003.0, 6003.0,
+                 7003.0, 8003.0]
 
-        a = numpy.ma.masked_all((4, 9), dtype=float)
-        a[0, 0:3] = [0.0, 1.0, 2.0]
-        a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
-        a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
-        a[3, 0:9] = [3.0, 1003.0, 2003.0, 3003.0, 4003.0, 5003.0, 6003.0,
-                     7003.0, 8003.0]
-        self.a = a
+    b = numpy.array([[[20.7, -99, -99, -99],
+                      [10.1, 11.8, 18.2, -99],
+                      [11.0, 11.8, -99, -99],
+                      [16.3, 20.0, -99, -99],
+                      [13.8, 18.3, -99, -99],
+                      [15.9, -99, -99, -99],
+                      [15.7, 21.2, -99, -99],
+                      [22.5, -99, -99, -99],
+                      [18.0, -99, -99, -99],
+                      [12.6, 21.7, -99, -99],
+                      [10.5, 12.9, 21.0, -99],
+                      [16.0, 19.7, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99]],
 
-        b = numpy.array([[[20.7, -99, -99, -99],
-                          [10.1, 11.8, 18.2, -99],
-                          [11.0, 11.8, -99, -99],
-                          [16.3, 20.0, -99, -99],
-                          [13.8, 18.3, -99, -99],
-                          [15.9, -99, -99, -99],
-                          [15.7, 21.2, -99, -99],
-                          [22.5, -99, -99, -99],
-                          [18.0, -99, -99, -99],
-                          [12.6, 21.7, -99, -99],
-                          [10.5, 12.9, 21.0, -99],
-                          [16.0, 19.7, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99]],
+                     [[5.2, 5.8, 10.8, 13.8],
+                      [2.6, 9.2, -99, -99],
+                      [0.7, 4.0, -99, -99],
+                      [15.7, -99, -99, -99],
+                      [2.5, 16.0, -99, -99],
+                      [4.6, 9.8, -99, -99],
+                      [0.6, 3.1, -99, -99],
+                      [3.8, -99, -99, -99],
+                      [5.7, 12.9, 18.1, -99],
+                      [3.9, 6.9, 16.9, -99],
+                      [7.3, 13.8, 16.0, -99],
+                      [4.5, 9.8, 11.3, -99],
+                      [1.5, -99, -99, -99],
+                      [0.9, 4.3, 6.2, -99],
+                      [1.7, 9.9, -99, -99],
+                      [9.3, -99, -99, -99],
+                      [0.7, -99, -99, -99],
+                      [15.7, -99, -99, -99],
+                      [0.7, 1.2, -99, -99],
+                      [4.5, 12.4, 13.0, -99],
+                      [3.5, 6.8, 7.9, -99],
+                      [8.1, 12.2, -99, -99],
+                      [5.9, -99, -99, -99],
+                      [1.0, 9.6, -99, -99],
+                      [5.6, 7.8, 9.1, -99],
+                      [7.1, 9.0, 10.4, -99]],
 
-                         [[5.2, 5.8, 10.8, 13.8],
-                          [2.6, 9.2, -99, -99],
-                          [0.7, 4.0, -99, -99],
-                          [15.7, -99, -99, -99],
-                          [2.5, 16.0, -99, -99],
-                          [4.6, 9.8, -99, -99],
-                          [0.6, 3.1, -99, -99],
-                          [3.8, -99, -99, -99],
-                          [5.7, 12.9, 18.1, -99],
-                          [3.9, 6.9, 16.9, -99],
-                          [7.3, 13.8, 16.0, -99],
-                          [4.5, 9.8, 11.3, -99],
-                          [1.5, -99, -99, -99],
-                          [0.9, 4.3, 6.2, -99],
-                          [1.7, 9.9, -99, -99],
-                          [9.3, -99, -99, -99],
-                          [0.7, -99, -99, -99],
-                          [15.7, -99, -99, -99],
-                          [0.7, 1.2, -99, -99],
-                          [4.5, 12.4, 13.0, -99],
-                          [3.5, 6.8, 7.9, -99],
-                          [8.1, 12.2, -99, -99],
-                          [5.9, -99, -99, -99],
-                          [1.0, 9.6, -99, -99],
-                          [5.6, 7.8, 9.1, -99],
-                          [7.1, 9.0, 10.4, -99]],
+                     [[35.2, -99, -99, -99],
+                      [34.7, 38.9, 48.1, -99],
+                      [35.2, 39.3, 39.6, -99],
+                      [40.3, 40.4, 48.0, -99],
+                      [30.0, 36.5, -99, -99],
+                      [33.3, 43.3, -99, -99],
+                      [37.7, -99, -99, -99],
+                      [33.5, -99, -99, -99],
+                      [31.9, 33.7, -99, -99],
+                      [34.1, 35.4, 41.0, -99],
+                      [30.2, 33.7, 38.7, -99],
+                      [32.4, 42.4, -99, -99],
+                      [33.2, 34.9, 39.7, -99],
+                      [33.2, -99, -99, -99],
+                      [38.5, -99, -99, -99],
+                      [37.3, 39.9, -99, -99],
+                      [30.0, 39.1, -99, -99],
+                      [36.4, 39.1, 45.6, -99],
+                      [41.0, -99, -99, -99],
+                      [31.1, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99],
+                      [-99, -99, -99, -99]]])
 
-                         [[35.2, -99, -99, -99],
-                          [34.7, 38.9, 48.1, -99],
-                          [35.2, 39.3, 39.6, -99],
-                          [40.3, 40.4, 48.0, -99],
-                          [30.0, 36.5, -99, -99],
-                          [33.3, 43.3, -99, -99],
-                          [37.7, -99, -99, -99],
-                          [33.5, -99, -99, -99],
-                          [31.9, 33.7, -99, -99],
-                          [34.1, 35.4, 41.0, -99],
-                          [30.2, 33.7, 38.7, -99],
-                          [32.4, 42.4, -99, -99],
-                          [33.2, 34.9, 39.7, -99],
-                          [33.2, -99, -99, -99],
-                          [38.5, -99, -99, -99],
-                          [37.3, 39.9, -99, -99],
-                          [30.0, 39.1, -99, -99],
-                          [36.4, 39.1, 45.6, -99],
-                          [41.0, -99, -99, -99],
-                          [31.1, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99],
-                          [-99, -99, -99, -99]]])
+    b = numpy.ma.where(b == -99, numpy.ma.masked, b)
 
-        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
-        self.b = b
-
-        self.test_only = []
-#        self.test_only = ['test_DSG_indexed']
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
+    test_only = []
 
     def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -143,8 +154,8 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(q._equals(self.a, q.data.array),
                         '\nself.a=\n'+str(self.a)+'\nq.array=\n'+str(q.array))
 
-        cf.write(f, self.tempfilename, verbose=0)
-        g = cf.read(self.tempfilename)
+        cf.write(f, tmpfile, verbose=0)
+        g = cf.read(tmpfile)
 
         self.assertEqual(len(g), len(f))
 
@@ -186,7 +197,7 @@ class DSGTest(unittest.TestCase):
         # Set the data for the field
         tas.set_data(cf.Data(array), axes=[Y, X])
 
-        cf.write(tas, self.tempfilename)
+        cf.write(tas, tmpfile)
 
     def test_DSG_indexed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -207,8 +218,8 @@ class DSGTest(unittest.TestCase):
             '\nself.a=\n' + str(self.a) + '\nq.array=\n' + str(q.array)
         )
 
-        cf.write(f, self.tempfilename, verbose=0)
-        g = cf.read(self.tempfilename)
+        cf.write(f, tmpfile, verbose=0)
+        g = cf.read(tmpfile)
 
         self.assertEqual(len(g), len(f))
 
@@ -241,8 +252,8 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(q._equals(qa, self.b), message)
 
-        cf.write(f, self.tempfilename, verbose=0)
-        g = cf.read(self.tempfilename, verbose=0)
+        cf.write(f, tmpfile, verbose=0)
+        g = cf.read(tmpfile, verbose=0)
 
         self.assertEqual(len(g), len(f))
 

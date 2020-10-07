@@ -28,6 +28,17 @@ class RegridTest(unittest.TestCase):
     filename10 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               'regrid_file8.nc')
 
+#    f1 = cf.read(filename1)[0]
+#    f2 = cf.read(filename2)[0]
+#    f3 = cf.read(filename3)[0]
+#    f4 = cf.read(filename4)[0]
+#    f5 = cf.read(filename5)[0]
+#    f6 = cf.read(filename6)[0]
+#    f7 = cf.read(filename7)[0]
+#    f8 = cf.read(filename8)[0]
+#    f9 = cf.read(filename9)[0]
+#    f10 = cf.read(filename10)[0]
+
     chunk_sizes = (300, 10000, 100000)[::-1]
     original_chunksize = cf.chunksize()
 

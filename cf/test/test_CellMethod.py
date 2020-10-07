@@ -7,9 +7,6 @@ import cf
 
 
 class CellMethodTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
-
     strings = (
         't: mean',
         'time: point',

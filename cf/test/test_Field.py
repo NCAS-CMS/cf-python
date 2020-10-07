@@ -43,34 +43,62 @@ def axes_combinations(f):
 
 
 class FieldTest(unittest.TestCase):
-    def setUp(self):
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        self.filename2 = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), 'test_file2.nc')
-        self.contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_contiguous.nc'
-        )
-        self.indexed = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_indexed.nc'
-        )
-        self.indexed_contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeriesProfile_indexed_contiguous.nc'
-        )
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    filename1 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
+    filename2 = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), 'test_file2.nc')
+    contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_contiguous.nc'
+    )
+    indexed = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_indexed.nc'
+    )
+    indexed_contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeriesProfile_indexed_contiguous.nc'
+    )
 
-        self.filename1 = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
+    f = cf.read(filename)[0]
 
-        self.chunk_sizes = (100000, 300, 34, 17)
-        self.original_chunksize = cf.chunksize()
-        self.atol = cf.atol()
-        self.rtol = cf.rtol()
-        self.f = cf.read(self.filename, verbose=0)[0]
+    chunk_sizes = (100000, 300, 34, 17)
+    original_chunksize = cf.chunksize()
+    atol = cf.atol()
+    rtol = cf.rtol()
 
-        self.test_only = []
+    test_only = []
+
+#    def setUp(self):
+#        self.filename = os.path.join(
+#            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+#        self.filename2 = os.path.join(os.path.dirname(
+#            os.path.abspath(__file__)), 'test_file2.nc')
+#        self.contiguous = os.path.join(
+#            os.path.dirname(os.path.abspath(__file__)),
+#            'DSG_timeSeries_contiguous.nc'
+#        )
+#        self.indexed = os.path.join(
+#            os.path.dirname(os.path.abspath(__file__)),
+#            'DSG_timeSeries_indexed.nc'
+#        )
+#        self.indexed_contiguous = os.path.join(
+#            os.path.dirname(os.path.abspath(__file__)),
+#            'DSG_timeSeriesProfile_indexed_contiguous.nc'
+#        )
+#
+#        self.filename1 = os.path.join(
+#            os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
+#
+#        self.chunk_sizes = (100000, 300, 34, 17)
+#        self.original_chunksize = cf.chunksize()
+#        self.atol = cf.atol()
+#        self.rtol = cf.rtol()
+#        self.f = cf.read(self.filename, verbose=0)[0]
+#
+#        self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_del_domain_axis']
 #        self.test_only = [
@@ -847,9 +875,9 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
         d = f.data
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
 
         g = f[...]
         self.assertTrue((g.data == d).all())
@@ -888,7 +916,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
 
         f[...] = 0
         self.assertTrue((f == 0).all())
@@ -903,7 +931,7 @@ class FieldTest(unittest.TestCase):
         f[[7, 4, 1], slice(6, 8)] = [-4]
         self.assertTrue((f[[7, 4, 1], slice(6, 8)].array == -4).all())
 
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
         g = f.copy()
         f[...] = g
         self.assertTrue(f.data.allclose(g.data))
@@ -932,7 +960,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]  # .squeeze()
+        f = self.f.copy()
 
         g = f * 0
         self.assertTrue((f + g).equals(f, verbose=2))
@@ -967,7 +995,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
 
         f.standard_name = 'qwerty'
         g = f * f
@@ -978,7 +1006,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0].squeeze()
+        f = self.f.copy().squeeze()
 
         f.standard_name = 'qwerty'
         g = f > f.mean()
@@ -999,7 +1027,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         g = f.copy()
         h = g.cumsum(2)
@@ -1041,7 +1069,6 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        f = self.f.copy()
         g = f[(slice(None, None, -1),) * f.ndim]
 
         h = f.flip()
@@ -1067,7 +1094,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         self.assertIsNone(f.close())
 
         _ = repr(f.data)
@@ -1331,7 +1358,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         g = f.copy()
         self.assertTrue(f.equals(f, verbose=2))
         self.assertTrue(f.equals(g, verbose=2))
@@ -1643,7 +1670,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         f.long_name = 'qwerty'
         f.nc_set_variable('tas')
 
@@ -2372,7 +2399,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         f0 = f.copy()
 
         # Null transpose
@@ -2382,7 +2409,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.transpose([0, 1, 2], inplace=True))
         self.assertTrue(f0.equals(f))
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         h = f.transpose((1, 2, 0))
 #        h0 = h.transpose(
 #            (re.compile('^atmos'), 'grid_latitude', 'grid_longitude'))
@@ -2424,7 +2451,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         a = f.array
 
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         f0 = f.copy()
 
         landfrac = f.squeeze()

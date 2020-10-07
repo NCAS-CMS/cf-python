@@ -5,7 +5,6 @@ version 3.7.0
 **2020-10-??**
 
 * New method: `cf.Field.del_domain_axis`
-* New method: `cf.FieldList.unique_domains`
 * New method: `cf.Field._docstring_special_substitutions`
 * New method: `cf.Field._docstring_substitutions`
 * New method: `cf.Field._docstring_package_depth`

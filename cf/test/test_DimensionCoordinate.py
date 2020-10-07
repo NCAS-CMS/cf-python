@@ -8,27 +8,27 @@ import cf
 
 
 class DimensionCoordinateTest(unittest.TestCase):
-    def setUp(self):
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-        dim1 = cf.DimensionCoordinate()
-        dim1.standard_name = 'latitude'
-        a = numpy.array(
-            [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003,
-             17.8678678, 23.5, 30]
-        )
-        dim1.set_data(cf.Data(a, 'degrees_north'))
-        bounds = cf.Bounds()
-        b = numpy.empty(a.shape + (2,))
-        b[:, 0] = a - 0.1
-        b[:, 1] = a + 0.1
-        bounds.set_data(cf.Data(b))
-        dim1.set_bounds(bounds)
-        self.dim = dim1
+    f = cf.read(filename)[0]
+
+    dim = cf.DimensionCoordinate()
+    dim.standard_name = 'latitude'
+    a = numpy.array(
+        [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003,
+         17.8678678, 23.5, 30]
+    )
+    dim.set_data(cf.Data(a, 'degrees_north'))
+    bounds = cf.Bounds()
+    b = numpy.empty(a.shape + (2,))
+    b[:, 0] = a - 0.1
+    b[:, 1] = a + 0.1
+    bounds.set_data(cf.Data(b))
+    dim.set_bounds(bounds)
 
     def test_DimensionCoordinate__repr__str__dump(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
 
         _ = repr(x)
@@ -99,7 +99,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((d.array == [1., 2, 3]).all())
 
     def test_DimensionCoordinate_roll(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         x = f.dimension_coordinates('X').value()
         y = f.dimension_coordinates('Y').value()
@@ -202,7 +202,7 @@ class DimensionCoordinateTest(unittest.TestCase):
                 cf.Units('days since 2000-01-01', calendar='365_day')))
 
     def test_DimensionCoordinate_bounds(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
 
         _ = x.upper_bounds
@@ -223,7 +223,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         b = y.create_bounds()
 
     def test_DimensionCoordinate_properties(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
 
         x.positive = 'up'
@@ -238,7 +238,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.ndim, 1)
 
     def test_DimensionCoordinate_insert_dimension(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
 
         self.assertEqual(x.shape, (9,))
@@ -253,7 +253,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DimensionCoordinate_binary_operation(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
 
         d = x.array
@@ -296,7 +296,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # --------------------------------------------------------
         # Out-of-place addition (no bounds)
         # --------------------------------------------------------
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.dimension_coordinates('X').value()
         x.del_bounds()
 

@@ -8,12 +8,12 @@ import cf
 
 
 class CellMeasureTest(unittest.TestCase):
-    def setUp(self):
-        self.filename = os.path.join(
+    filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    f = cf.read(filename)[0]
 
     def test_CellMeasure__repr__str__dump(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.cell_measures('measure:area').value()
 
         _ = repr(x)
@@ -21,7 +21,7 @@ class CellMeasureTest(unittest.TestCase):
         _ = x.dump(display=False)
 
     def test_CellMeasure_measure(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.cell_measures('measure:area').value()
 
         self.assertEqual(x.measure, 'area')
@@ -31,7 +31,7 @@ class CellMeasureTest(unittest.TestCase):
         self.assertEqual(x.measure, 'qwerty')
 
     def test_CellMeasure_identity(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         x = f.cell_measures('measure:area').value()
 
         self.assertEqual(x.identity(), 'measure:area')

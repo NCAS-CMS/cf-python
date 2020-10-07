@@ -13,8 +13,10 @@ class QueryTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
 
+    f = cf.read(filename)[0]
+
     def test_Query_contains(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
         c = f.dim('X')
         self.assertTrue(((cf.contains(21.1) == c).array ==
                          numpy.array([0, 1, 0, 0, 0, 0, 0, 0, 0], bool)).all())
@@ -22,7 +24,7 @@ class QueryTest(unittest.TestCase):
                          numpy.array([0, 0, 0, 0, 0, 0, 0, 0, 0], bool)).all())
 
     def test_Query(self):
-        f = cf.read(self.filename)[0]
+        f = self.f.copy()
 
         q = cf.Query('wi', [2, 5])
         r = cf.Query('le', 67)
