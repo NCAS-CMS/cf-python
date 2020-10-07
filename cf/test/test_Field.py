@@ -62,7 +62,7 @@ class FieldTest(unittest.TestCase):
         'DSG_timeSeriesProfile_indexed_contiguous.nc'
     )
 
-    f = cf.read(filename)[0]
+#    f = cf.read(filename)[0]
 
     chunk_sizes = (100000, 300, 34, 17)
     original_chunksize = cf.chunksize()
@@ -71,58 +71,8 @@ class FieldTest(unittest.TestCase):
 
     test_only = []
 
-#    def setUp(self):
-#        self.filename = os.path.join(
-#            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-#        self.filename2 = os.path.join(os.path.dirname(
-#            os.path.abspath(__file__)), 'test_file2.nc')
-#        self.contiguous = os.path.join(
-#            os.path.dirname(os.path.abspath(__file__)),
-#            'DSG_timeSeries_contiguous.nc'
-#        )
-#        self.indexed = os.path.join(
-#            os.path.dirname(os.path.abspath(__file__)),
-#            'DSG_timeSeries_indexed.nc'
-#        )
-#        self.indexed_contiguous = os.path.join(
-#            os.path.dirname(os.path.abspath(__file__)),
-#            'DSG_timeSeriesProfile_indexed_contiguous.nc'
-#        )
-#
-#        self.filename1 = os.path.join(
-#            os.path.dirname(os.path.abspath(__file__)), 'regrid_file1.nc')
-#
-#        self.chunk_sizes = (100000, 300, 34, 17)
-#        self.original_chunksize = cf.chunksize()
-#        self.atol = cf.atol()
-#        self.rtol = cf.rtol()
-#        self.f = cf.read(self.filename, verbose=0)[0]
-#
-#        self.test_only = []
-#        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_del_domain_axis']
-#        self.test_only = [
-#            'test_Field_convolution_filter', 'test_Field_derivative',
-#            'test_Field_moving_window'
-#        ]
-#        self.test_only = ['test_Field_set_get_del_has_data']
-#        self.test_only = ['test_Field_collapse']
-#        self.test_only = ['test_Field_radius']
-#        self.test_only = ['test_Field_field_ancillary']
-#        self.test_only = ['test_Field_AUXILIARY_MASK']
-#        self.test_only = ['test_Field__getitem__']
-#        self.test_only = ['test_Field_dimension_coordinate']
-#        self.test_only = ['test_Field_insert_dimension']
-#        self.test_only = ['test_Field_where']
-#        self.test_only = ['test_Field_autocyclic']
-#        self.test_only = ['test_Field_anchor']
-#        self.test_only = ['test_Field_mask_invalid']
-#        self.test_only = ['test_Field_test_Field_creation_commands']
-#        self.test_only = ['test_Field_section']
-#        self.test_only = ['test_Field_flatten']
-#        self.test_only = ['test_Field_Field_domain_mask']
-#        self.test_only = ['test_Field_compress_uncompress']
-#        self.test_only = ['test_Field_coordinate_reference']
+    def setUp(self):
+        self.f = cf.read(self.filename)[0]
 
     def test_Field_creation_commands(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

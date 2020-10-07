@@ -33,7 +33,6 @@ atexit.register(_remove_tmpfiles)
 class CoordinateReferenceTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
-    f = cf.read(filename)[0]
 
     datum = cf.Datum(parameters={'earth_radius': 6371007})
 
@@ -69,6 +68,9 @@ class CoordinateReferenceTest(unittest.TestCase):
         coordinates=['x', 'y', 'lat', 'lon']
     )
 
+    def setUp(self):
+        self.f = cf.read(self.filename)[0]
+    
     def test_CoordinateReference__repr__str__dump(self):
         f = self.f.copy()
 

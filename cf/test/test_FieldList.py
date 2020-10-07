@@ -14,7 +14,7 @@ class FieldTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
     filename2 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
-    f = cf.read(filename)
+#    f = cf.read(filename)
     f2 = cf.read(filename2)
 
     test_only = []
@@ -29,7 +29,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
 
         f = f + f.copy()
         self.assertEqual(len(f), 2)
@@ -55,7 +55,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f.append(f[0].copy())
         f[1] *= 10
         g = self.f[0] * 10
@@ -66,7 +66,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         self.assertIsNone(f.close())
 
         _ = repr(f[0])
@@ -75,7 +75,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
 
         self.assertEqual(len(cf.FieldList()), 0)
         self.assertEqual(len(f), 1)
@@ -98,12 +98,12 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f), 0)
         self.assertIsInstance(f, cf.FieldList)
 
-        f = self.f.copy() * 4
+        f = cf.read(self.filename) * 4
 #        f = f * 4
         self.assertEqual(len(f), 4)
         self.assertIsInstance(f, cf.FieldList)
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f *= 4
         self.assertEqual(len(f), 4)
         self.assertIsInstance(f, cf.FieldList)
@@ -120,7 +120,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f += f
 
         _ = repr(f)
@@ -161,7 +161,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f.append(f[0].copy())
         g = f.copy()
         self.assertTrue(f.equals(f, verbose=2))
@@ -171,7 +171,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f.append(f[0])
 
         _ = f[0:1]
@@ -183,7 +183,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
 
         self.assertEqual(f.count(f[0]), 1)
 
@@ -199,7 +199,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         g = f.copy()
         self.assertTrue(f.equals(f, verbose=2))
         self.assertTrue(f.equals(g, verbose=2))
@@ -237,7 +237,7 @@ class FieldTest(unittest.TestCase):
             return
 
         # Insert
-        f = self.f.copy()
+        f = cf.read(self.filename)
         g = f[0].copy()
 
         f.insert(0, g)
@@ -251,7 +251,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f, cf.FieldList)
 
         # Pop
-        f = self.f.copy()
+        f = cf.read(self.filename)
         g = f[0]
         h = f[0] + 10
         f.append(h)
@@ -267,7 +267,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f, cf.FieldList)
 
         # Remove
-        f = self.f.copy()
+        f = cf.read(self.filename)
         g = f[0] + 10
 
         f.append(g)
@@ -288,7 +288,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         g = f[0]
         h = f[0] + 10
         f.append(h)
@@ -306,7 +306,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
 
         g = f('not this one')
         self.assertIsInstance(g, cf.FieldList)
@@ -374,7 +374,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
         f.extend(self.f2.copy())
 
         g = f.select_by_construct()
@@ -462,7 +462,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = cf.read(self.filename)
 
         with self.assertRaises(Exception):
             _ = f.select_field('not this one')
