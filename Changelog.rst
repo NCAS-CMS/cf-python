@@ -17,7 +17,6 @@ version 3.7.0
   incompatible bounds units. Now a warning is given (controllable by
   the logging level) and the offending bounds are returned as a
   separate field construct.
-  (https://github.com/NCAS-CMS/cf-python/issues/76).
 * Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
 * Changed dependency: ``cfunits>=3.3.0``
 
