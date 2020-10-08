@@ -2275,7 +2275,7 @@ class PropertiesDataBounds(PropertiesData):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> b = {{package}}.Bounds(data=numpy.arange(10).reshape(5, 2))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
@@ -2308,9 +2308,10 @@ class PropertiesDataBounds(PropertiesData):
 
         if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
-                "Can't set bounds: Bounds units {!r} are not equivalent "
+                "Can't set bounds: {!r} units of {!r} are not equivalent "
                 "to {!r}, the units of {!r}".format(
-                    bounds.Units, self.Units, self)
+                    bounds, bounds.Units, self.Units, self
+                )
             )
 
             bounds.Units = self_units
