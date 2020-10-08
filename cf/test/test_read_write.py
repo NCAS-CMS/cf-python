@@ -44,7 +44,7 @@ class read_writeTest(unittest.TestCase):
                             'test_file.nc')
 
     broken_bounds = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'broken_bounds.cdl')
+                                 'broken_bounds.cdl')
 
     string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'string_char.nc')
@@ -470,6 +470,7 @@ class read_writeTest(unittest.TestCase):
 
         f = cf.read(self.broken_bounds, verbose=0)
         self.assertEqual(len(f), 2)
+
 # --- End: class
 
 
