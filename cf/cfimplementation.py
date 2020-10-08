@@ -57,13 +57,18 @@ class CFImplementation(cfdm.CFDMImplementation):
 #
 #    :Returns:
 #
-#        `None`
+#        `bool`
+#            Return `True` if the bounds were set successfully,
+#            otherwise return False.
+#
 #
 #        '''
 #        try:
 #            construct.set_bounds(bounds, copy=copy)
-#        except ValueError:
-#            pass
+#        except ValueError as error:
+#            return error
+#
+#        return ''
 
 # --- End: class
 

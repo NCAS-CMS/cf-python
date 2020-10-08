@@ -43,6 +43,9 @@ class read_writeTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
 
+    broken_bounds = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 'broken_bounds.cdl')
+
     string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'string_char.nc')
 
@@ -460,6 +463,13 @@ class read_writeTest(unittest.TestCase):
                         for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=1))
         # --- End: for
+
+    def test_read_broken_bounds(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.broken_bounds, verbose=0)
+        self.assertEqual(len(f), 2)
 
 # --- End: class
 

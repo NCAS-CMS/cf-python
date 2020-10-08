@@ -70,7 +70,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
     def setUp(self):
         self.f = cf.read(self.filename)[0]
-    
+
     def test_CoordinateReference__repr__str__dump(self):
         f = self.f.copy()
 
