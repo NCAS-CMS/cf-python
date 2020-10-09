@@ -1463,6 +1463,11 @@ def aggregate(fields,
             specified by or implied by the *equal_all*, *exist_all*,
             *equal* and *exist* parameters.
 
+        exclude: `bool`, optional
+            If True then do not return unaggregatable field
+            constructs. By default, all input field constructs are
+            represent in the outputs.
+
         respect_valid: `bool`, optional
             If True then the CF properties `~cf.Field.valid_min`,
             `~cf.Field.valid_max` and `~cf.Field.valid_range` are taken
