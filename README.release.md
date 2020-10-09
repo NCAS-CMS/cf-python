@@ -2,17 +2,23 @@
   `__date__` variables)
 
 * Ensure that the requirements on dependencies & their versions are
-  up-to-date and consistent in both the `requirements.txt` and in the
-  `_requires` list and `LooseVersion` checks in `cf/__init__.py`.
+  up-to-date and consistent in both the `requirements.txt` and in
+  `docs/source/installation.rst`; and in the `_requires` list and
+  `LooseVersion` checks in `cf/__init__.py`.
 
 * Make sure that `README.md` is up to date.
 
 * Make sure that `Changelog.rst` is up to date.
 
-* Make sure that any new attributes, methods, functions and keyword arguments
-  (as listed in the change log) have on-line documentation. This may
-  require additions to the `.rst` files in `docs/source/classes/` and/or
-  `docs/source/function`.
+* Check that the documentation API coverage is complete:
+
+  ```bash
+  ./check_docs_api_coverage
+  ```
+
+  * If it is not complete, add any undocumented attributes, methods,
+    functions and keyword arguments (e.g. as listed in the change log)
+    to the `.rst` files in `docs/source/class/`.
 
 * Check external links to the CF conventions are up to date in
   `docs/source/tutorial.rst` and `docs/source/field_analysis.rst`
@@ -36,12 +42,6 @@
   cd test_tutorial
   python ../tutorial.py
   cd $d
-  ```
-
-* Check that the documentaion API coverage is complete:
-
-  ```bash
-  ./check_docs_api_coverage
   ```
 
 * Build a development copy of the documentation using to check API
