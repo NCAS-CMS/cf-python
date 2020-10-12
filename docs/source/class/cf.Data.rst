@@ -8,7 +8,6 @@ cf.Data
    :no-members:
    :no-inherited-members:
 
-
 Inspection
 ----------
 
@@ -73,6 +72,7 @@ Ones and zeros
    ~cf.Data.full
    ~cf.Data.ones
    ~cf.Data.zeros
+   ~cf.Data.masked_all
 
 From existing data
 ^^^^^^^^^^^^^^^^^^
@@ -130,6 +130,7 @@ Joining data
    :template: method.rst
 
    ~cf.Data.concatenate
+   ~cf.Data.concatenate_data
    
 Adding and removing elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -183,6 +184,7 @@ Date-time support
    ~cf.Data.datetime_array
    ~cf.Data.datetime_as_string
    ~cf.Data.day
+   ~cf.Data.dtarray
    ~cf.Data.hour
    ~cf.Data.minute
    ~cf.Data.month
@@ -328,7 +330,6 @@ Trigonometric functions
 Hyperbolic functions
 ^^^^^^^^^^^^^^^^^^^^
 
-  
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
@@ -396,6 +397,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Data.clip
+   ~cf.Data.func
 
 Set routines
 -------------
@@ -582,13 +584,17 @@ Performance
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration
+   ~cf.Data.partitions
+   ~cf.Data.ispartitioned
    ~cf.Data.to_disk
    ~cf.Data.to_memory
+   ~cf.Data.in_memory
    ~cf.Data.fits_in_memory
    ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.section
    ~cf.Data.reconstruct_sectioned_data
- 
+   ~cf.Data.HDF_chunks
+
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
 
@@ -748,3 +754,20 @@ Special
    ~cf.Data.__query_set__
    ~cf.Data.__query_wi__
    ~cf.Data.__query_wo__
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.Data
+   ~cf.Data.dtvarray
+   ~cf.Data.expand_dims
+   ~cf.Data.files
+   ~cf.Data.save_to_disk
+   ~cf.Data.unsafe_array

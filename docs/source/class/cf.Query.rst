@@ -37,5 +37,5 @@ Methods
    ~cf.Query.equals
    ~cf.Query.equivalent
    ~cf.Query.evaluate
+   ~cf.Query.exact
    ~cf.Query.inspect
-   

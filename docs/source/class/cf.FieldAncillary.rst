@@ -25,6 +25,7 @@ Inspection
    ~cf.FieldAncillary.dump
    ~cf.FieldAncillary.identity  
    ~cf.FieldAncillary.identities
+   ~cf.FieldAncillary.inspect
    
 .. rubric:: Attributes
    
@@ -127,6 +128,7 @@ Data
    :template: attribute.rst
 
    ~cf.FieldAncillary.array
+   ~cf.FieldAncillary.Data
    ~cf.FieldAncillary.data
    ~cf.FieldAncillary.datetime_array
    ~cf.FieldAncillary.datum
@@ -200,6 +202,7 @@ Data
    :template: method.rst
 
    ~cf.FieldAncillary.__setitem__
+   ~cf.FieldAncillary.halo
    ~cf.FieldAncillary.mask_invalid
    ~cf.FieldAncillary.subspace
    ~cf.FieldAncillary.where
@@ -217,6 +220,8 @@ Data
    ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.cyclic
    ~cf.FieldAncillary.period
+   ~cf.FieldAncillary.iscyclic
+   ~cf.FieldAncillary.isperiodic
    ~cf.FieldAncillary.get_filenames
    ~cf.FieldAncillary.has_bounds
 
@@ -575,6 +580,35 @@ Special
    ~cf.FieldAncillary.__query_set__
    ~cf.FieldAncillary.__query_wi__
    ~cf.FieldAncillary.__query_wo__
-   
 
-   
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.asdatetime
+   ~cf.FieldAncillary.asreftime
+   ~cf.FieldAncillary.attributes
+   ~cf.FieldAncillary.delprop
+   ~cf.FieldAncillary.dtvarray
+   ~cf.FieldAncillary.expand_dims
+   ~cf.FieldAncillary.getprop
+   ~cf.FieldAncillary.hasbounds
+   ~cf.FieldAncillary.hasdata
+   ~cf.FieldAncillary.hasprop
+   ~cf.FieldAncillary.insert_data
+   ~cf.FieldAncillary.isauxiliary
+   ~cf.FieldAncillary.isdimension
+   ~cf.FieldAncillary.isdomainancillary
+   ~cf.FieldAncillary.isfieldancillary
+   ~cf.FieldAncillary.ismeasure
+   ~cf.FieldAncillary.name
+   ~cf.FieldAncillary.remove_data
+   ~cf.FieldAncillary.select
+   ~cf.FieldAncillary.setprop
+   ~cf.FieldAncillary.unsafe_array

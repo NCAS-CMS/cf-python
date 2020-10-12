@@ -27,7 +27,7 @@ Version |release| for version |version| of the CF conventions.
   * :ref:`cf.AuxiliaryCoordinate <cf-AuxiliaryCoordinate>`
   * :ref:`cf.CellMeasure <cf-CellMeasure>`
   * :ref:`cf.CellMethod <cf-CellMethod>`
-  * :ref:`cf.Coordinatereference <cf-Coordinatereference>`
+  * :ref:`cf.CoordinateReference <cf-CoordinateReference>`
   * :ref:`cf.DimensionCoordinate <cf-DimensionCoordinate>`
   * :ref:`cf.DomainAncillary <cf-DomainAncillary>`
   * :ref:`cf.DomainAxis <cf-DomainAxis>`
