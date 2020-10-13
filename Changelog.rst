@@ -21,6 +21,8 @@ version 3.7.0
   separate field construct.
 * Fixed bug in `cf.aggregate` that caused it to error if either the
   `equal_all` or `exist_all` parameter were set to `True`.
+* Fixed bug in `Data.percentile` that caused it to error for non-singular
+  ranks if the squeeze parameter was set to `True`.
 * ``cfa`` now prints error messages to the stderr stream rather than
   stdout.
 * Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``

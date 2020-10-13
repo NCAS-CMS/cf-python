@@ -80,7 +80,8 @@ class DataTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_Data_exp']
 #    test_only = [
-#        'test_Data_trigonometric_hyperbolic']
+#        'test_Data_percentile',
+#        'test_Data_trigonometric_hyperbolic'
 #        'test_Data_AUXILIARY_MASK',
 #        'test_Data_datum',
 #        'test_Data_ERROR',
@@ -2126,6 +2127,33 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.chunksize(self.original_chunksize)
+
+    def test_Data_percentile(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+            d = cf.Data(self.a)
+
+            # Percentiles taken across *all axes*
+            ranks = [[30, 60, 90], [20], 80]  # include valid singular form
+
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but numpy has an
+                # inverse parameter called keepdims which is by default False
+                # also, one must be set to the non-default for equivalents.
+                # So first cases (n1, n1) are both squeezed, (n2, n2) are not:
+                a1 = numpy.percentile(d, rank)  # has keepdims=False default
+                b1 = d.percentile(rank, squeeze=True)
+                self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
+                a2 = numpy.percentile(d, rank, keepdims=True)
+                b2 = d.percentile(rank)  # has squeeze=False default
+                self.assertTrue(b2.shape, a2.shape)
+                self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+
+        # TODO: add loop to check get same shape and close enough data
+        # for every possible axes combo (as with test_Data_median above).
 
     def test_Data_mean_of_upper_decile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

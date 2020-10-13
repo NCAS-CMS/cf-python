@@ -17343,7 +17343,7 @@ class Field(mixin.PropertiesData,
         out.set_construct(dim, axes=axis, copy=False)
 
         if squeeze:
-            out.squeeze(axes, inplace=True)
+            out.squeeze(inplace=True)
 
         return out
 

@@ -2482,6 +2482,32 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f.del_domain_axis('T')
 
+    def test_Field_percentile(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(1)
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+            # Percentiles taken across *all axes*
+            ranks = [[30, 60, 90], [20], 80]  # include valid singular form
+
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but numpy has an
+                # inverse parameter called keepdims which is by default False
+                # also, one must be set to the non-default for equivalents.
+                # So first cases (n1, n1) are both squeezed, (n2, n2) are not:
+                a1 = numpy.percentile(f, rank)  # has keepdims=False default
+                b1 = f.percentile(rank, squeeze=True)
+                self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
+                a2 = numpy.percentile(f, rank, keepdims=True)
+                b2 = f.percentile(rank)  # has squeeze=False default
+                self.assertTrue(b2.shape, a2.shape)
+                self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+
+        # TODO: add loop to check get same shape and close enough data
+        # for every possible axis combo (see also test_Data_percentile).
+
 # --- End: class
 
 
