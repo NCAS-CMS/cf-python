@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
+  <li><a href="../class/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="cf.Data.datetime_array.html" title="previous chapter">cf.Data.datetime_array</a></li>
       <li>Next: <a href="cf.Data.day.html" title="next chapter">cf.Data.day</a></li>
   </ul></li>
@@ -115,7 +115,7 @@ of times since a reference date.</p>
 Udunits) will be used.</p>
 <p>Conversions are carried out with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.num2date</span></code> function.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.8.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -130,12 +130,12 @@ Udunits) will be used.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">datetime_as_string</span><span class="p">)</span>
 <span class="go">[&#39;2019-01-01 00:00:00&#39; &#39;2019-02-01 00:00:00&#39; &#39;2019-03-01 00:00:00&#39;]</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">,</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">,</span>
 <span class="gp">... </span>         <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">datetime_as_string</span><span class="p">)</span>
 <span class="go">[&#39;2019-01-02 00:00:00&#39; &#39;2019-02-03 00:00:00&#39; &#39;2019-03-01 00:00:00&#39;]</span>
@@ -153,7 +153,7 @@ Udunits) will be used.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

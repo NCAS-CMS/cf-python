@@ -10,6 +10,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
+Note that this page is duplicated in the :ref:`tutorial <Tutorial>`.
+
 .. important:: **This version of cf is for Python 3 only** and there are
           :ref:`incompatible differences between versions 2.x and 3.x
           <two-to-three-changes>` of cf.
@@ -20,8 +22,8 @@ Version |release| for version |version| of the CF conventions.
           that the outputs of older scripts are checked when running
           with Python 3 versions of the cf library.
 
-	  For version 2.x documentation, see the :ref:`older releases
-	  <Older-releases>` page.
+	  For version 2.x documentation, see the :ref:`releases
+	  <Releases>` page.
 
 .. contents::
    :local:

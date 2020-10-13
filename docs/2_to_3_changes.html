@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.7.0</a></h1>
 
 
 
@@ -68,13 +68,13 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -102,6 +102,8 @@ either work as expected, or provide informative error messages on the
 new API usage. However, it is advised that the outputs of older
 scripts are checked when running with Python 3 versions of the cf
 library.</p>
+<p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#releases"><span class="std std-ref">releases</span></a>
+page.</p>
 <div class="section" id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x only works for Python 3.5 or later. Version 2.x only works
@@ -109,7 +111,7 @@ for python version 2.7.</p>
 </div>
 <div class="section" id="in-place-operations">
 <h2>In-place operations<a class="headerlink" href="#in-place-operations" title="Permalink to this headline">¶</a></h2>
-<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
+<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
 modified construct. The keyword that defines the operation to be
 in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span>
@@ -159,23 +161,23 @@ in the above example).</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_methods.ordered</span></code></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.CellMethods</span></code></p></td>
+<td><p><a class="reference internal" href="attribute/cf.Field.CellMethods.html#cf.Field.CellMethods" title="cf.Field.CellMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.CellMethods</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convert</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.field.html#cf.Field.field" title="cf.Field.field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_axis_identity</span></code></p></td>
 <td><p><a class="reference internal" href="method/cf.Field.axis_name.html#cf.Field.axis_name" title="cf.Field.axis_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis_name</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.del_construct.html#cf.Field.del_construct" title="cf.Field.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.del_construct</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.remove_item</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.remove_item.html#cf.Field.remove_item" title="cf.Field.remove_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.remove_item</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.get_data_axes.html#cf.Field.get_data_axes" title="cf.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.get_data_axes</span></code></a></p></td>
 <td><p><a class="reference internal" href="method/cf.Field.data_axes.html#cf.Field.data_axes" title="cf.Field.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.data_axes</span></code></a>,
 <a class="reference internal" href="method/cf.Field.item_axes.html#cf.Field.item_axes" title="cf.Field.item_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item_axes</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dimension</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.expand_dims</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.expand_dims.html#cf.Field.expand_dims" title="cf.Field.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.expand_dims</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.nc_del_variable.html#cf.Field.nc_del_variable" title="cf.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_del_variable</span></code></a></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncvar</span></code></p></td>
@@ -187,29 +189,29 @@ in the above example).</p>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncvar</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_aux</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_axis</span></code>,
+<td><p><a class="reference internal" href="method/cf.Field.insert_aux.html#cf.Field.insert_aux" title="cf.Field.insert_aux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_aux</span></code></a>,
+<a class="reference internal" href="method/cf.Field.insert_axis.html#cf.Field.insert_axis" title="cf.Field.insert_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_axis</span></code></a>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dim</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_domain_anc</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_field_anc</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_item</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_measure</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_ref</span></code></p></td>
+<a class="reference internal" href="method/cf.Field.insert_domain_anc.html#cf.Field.insert_domain_anc" title="cf.Field.insert_domain_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_domain_anc</span></code></a>,
+<a class="reference internal" href="method/cf.Field.insert_field_anc.html#cf.Field.insert_field_anc" title="cf.Field.insert_field_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_field_anc</span></code></a>,
+<a class="reference internal" href="method/cf.Field.insert_item.html#cf.Field.insert_item" title="cf.Field.insert_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_item</span></code></a>,
+<a class="reference internal" href="method/cf.Field.insert_measure.html#cf.Field.insert_measure" title="cf.Field.insert_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_measure</span></code></a>,
+<a class="reference internal" href="method/cf.Field.insert_ref.html#cf.Field.insert_ref" title="cf.Field.insert_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_ref</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_data</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_data</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.insert_data.html#cf.Field.insert_data" title="cf.Field.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_data</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs.data_axes</span></code></a></p></td>
 <td><p><a class="reference internal" href="method/cf.Field.items_axes.html#cf.Field.items_axes" title="cf.Field.items_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.items_axes</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.HDF_chunks.html#cf.Field.HDF_chunks" title="cf.Field.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.HDF_chunks.html#cf.Field.HDF_chunks" title="cf.Field.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></p></td>
+<td><p><a class="reference internal" href="method/cf.Field.HDF_chunks.html#cf.Field.HDF_chunks" title="cf.Field.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -244,7 +246,7 @@ are no longer assumed to be an abbreviation.</p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
 are no longer assumed to be an abbreviation.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes_names</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.axes_names.html#cf.Field.axes_names" title="cf.Field.axes_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes_names</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
 are no longer assumed to be an abbreviation.</p></td>
 </tr>
@@ -309,7 +311,7 @@ arguments are no longer assumed to be an abbreviation.</p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
 arguments are no longer assumed to be an abbreviation.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.direction</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.direction.html#cf.Field.direction" title="cf.Field.direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.direction</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">axes</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
 arguments are no longer assumed to be an abbreviation.</p></td>
@@ -458,7 +460,7 @@ arguments are no longer assumed to be an abbreviation.</p></td>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

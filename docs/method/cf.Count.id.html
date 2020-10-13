@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Count.html">cf.Count</a><ul>
+  <li><a href="../class/cf.Count.html">cf.Count</a><ul>
       <li>Previous: <a href="cf.Count.Z.html" title="previous chapter">cf.Count.Z</a></li>
       <li>Next: <a href="cf.Count.arccos.html" title="next chapter">cf.Count.arccos</a></li>
   </ul></li>
@@ -107,15 +107,24 @@
 <dl class="attribute">
 <dt id="cf.Count.id">
 <code class="sig-prename descclassname">Count.</code><code class="sig-name descname">id</code><a class="headerlink" href="#cf.Count.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A canonical identity.</p>
+<dd><p>An identity for the Count object.</p>
 <p>The <a class="reference internal" href="#cf.Count.id" title="cf.Count.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute can be used to unambiguously identify
-constructs in the absence of a <a class="reference internal" href="../attribute/cf.Count.standard_name.html#cf.Count.standard_name" title="cf.Count.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</p>
-<p>Note that <a class="reference internal" href="#cf.Count.id" title="cf.Count.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> is not a CF property and so is not read from, or
+constructs. This can be useful when identification is not possible
+from the existing properties, either because they are missing or
+because they do not provide sufficiently unique information.</p>
+<p>In general it will only be defined if explicitly set by the user.</p>
+<p>Note that <a class="reference internal" href="#cf.Count.id" title="cf.Count.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> is not a CF property and so is not read from, nor
 written to, datasets.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Count.identity.html#cf.Count.identity" title="cf.Count.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>, <a class="reference internal" href="cf.Count.identities.html#cf.Count.identities" title="cf.Count.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a>, <a class="reference internal" href="cf.Count.match_by_identity.html#cf.Count.match_by_identity" title="cf.Count.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p>
+</div>
 <p><strong>Examples:</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;um01002&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span>
 <span class="go">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_identity</span><span class="p">(</span><span class="s1">&#39;id</span><span class="si">%u</span><span class="s1">m10002&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">id</span>
 </pre></div>
 </div>
@@ -131,7 +140,7 @@ written to, datasets.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

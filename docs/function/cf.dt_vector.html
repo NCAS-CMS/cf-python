@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -104,7 +104,7 @@
 <h1>cf.dt_vector<a class="headerlink" href="#cf-dt-vector" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.dt_vector">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">dt_vector</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em>, <em class="sig-param">microsecond=0</em>, <em class="sig-param">calendar=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/cfdatetime.py#L168-L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.dt_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">dt_vector</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em>, <em class="sig-param">microsecond=0</em>, <em class="sig-param">calendar=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/cfdatetime.py#L168-L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.dt_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a 1-d array of date-time objects.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -115,20 +115,20 @@
 <dd class="field-odd"><dl>
 <dt>arg:</dt><dd><p>A multi-purpose argument that is one of:</p>
 <ul class="simple">
-<li><p>An <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, or sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, specifying the calendar
+<li><p>An <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, or sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, specifying the calendar
 years, used in conjunction with the <em>month</em>, <em>day</em>,
 <em>hour</em>, <em>minute</em>, <em>second</em> and <em>microsecond</em> parameters.</p></li>
-<li><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, or sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, specifying ISO 8601-like
+<li><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, or sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, specifying ISO 8601-like
 date-time strings (in which non-Gregorian calendar dates
 are allowed).</p></li>
-<li><p>A two dimensional array of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>. There may be up to 7
+<li><p>A two dimensional array of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>. There may be up to 7
 columns, each one specifying the years, months, days,
 hours minutes, seconds and microseconds respectively. If
 fewer than 7 trailing dimensions are provided then the
 default value for the missing components are used</p></li>
 </ul>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for the date-times. By default the Gregorian
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for the date-times. By default the Gregorian
 calendar is used.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">calendar='360_day'</span></code></p>
@@ -158,7 +158,7 @@ calendar is used.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

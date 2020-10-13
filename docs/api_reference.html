@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -99,7 +99,7 @@
   <div class="section" id="api-reference">
 <h1><strong>API reference</strong><a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.6.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.7.0 for version 1.8 of the CF conventions.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p><strong>This version of cf is for Python 3 only</strong> and there are
@@ -109,30 +109,45 @@
 error messages on the new API usage. However, it is advised
 that the outputs of older scripts are checked when running
 with Python 3 versions of the cf library.</p>
-<p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#older-releases"><span class="std std-ref">older releases</span></a> page.</p>
+<p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#releases"><span class="std std-ref">releases</span></a> page.</p>
 </div>
+<ul class="simple">
+<li><p><strong>Construct classes</strong></p>
+<ul>
+<li><p><a class="reference internal" href="class/cf.Field.html#cf-field"><span class="std std-ref">cf.Field</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.AuxiliaryCoordinate.html#cf-auxiliarycoordinate"><span class="std std-ref">cf.AuxiliaryCoordinate</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.CellMeasure.html#cf-cellmeasure"><span class="std std-ref">cf.CellMeasure</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.CellMethod.html#cf-cellmethod"><span class="std std-ref">cf.CellMethod</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.CoordinateReference.html#cf-coordinatereference"><span class="std std-ref">cf.CoordinateReference</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.DimensionCoordinate.html#cf-dimensioncoordinate"><span class="std std-ref">cf.DimensionCoordinate</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.DomainAncillary.html#cf-domainancillary"><span class="std std-ref">cf.DomainAncillary</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.DomainAxis.html#cf-domainaxis"><span class="std std-ref">cf.DomainAxis</span></a></p></li>
+<li><p><a class="reference internal" href="class/cf.FieldAncillary.html#cf-fieldancillary"><span class="std std-ref">cf.FieldAncillary</span></a></p></li>
+</ul>
+</li>
+</ul>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="function.html"><strong>cf functions</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="function.html#reading-and-writing"><strong>Reading and writing</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#aggregation"><strong>Aggregation</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#mathematical-operations"><strong>Mathematical operations</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#condition-constructors"><strong>Condition constructors</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#date-time-and-time-duration"><strong>Date-time and time duration</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#resource-management"><strong>Resource management</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#miscellaneous"><strong>Miscellaneous</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#reading-and-writing">Reading and writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#aggregation">Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#mathematical-operations">Mathematical operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#condition-constructors">Condition constructors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#date-time-and-time-duration">Date-time and time duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#resource-management">Resource management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="class.html"><strong>cf classes</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="class.html#field-construct-class"><strong>Field construct class</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#metadata-component-classes"><strong>Metadata component classes</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#constructs-class"><strong>Constructs class</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#coordinate-component-classes"><strong>Coordinate component classes</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#domain-class"><strong>Domain class</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#field-list-class"><strong>Field list class</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#data-classes"><strong>Data classes</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#miscellaneous-classes"><strong>Miscellaneous classes</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#data-compression-classes"><strong>Data compression classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#field-construct-class">Field construct class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#field-list-class">Field list class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#metadata-component-classes">Metadata component classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#constructs-class">Constructs class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#coordinate-component-classes">Coordinate component classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#domain-class">Domain class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#data-classes">Data classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#miscellaneous-classes">Miscellaneous classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#data-compression-classes">Data compression classes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="constant.html"><strong>cf constants</strong></a></li>
@@ -148,7 +163,7 @@ with Python 3 versions of the cf library.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

@@ -16,6 +16,9 @@ new API usage. However, it is advised that the outputs of older
 scripts are checked when running with Python 3 versions of the cf
 library.
 
+For version 2.x documentation, see the :ref:`releases <Releases>`
+page.
+
 
 Python
 ------

@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.nc_variable_groups.html" title="previous chapter">cf.Field.nc_variable_groups</a></li>
       <li>Next: <a href="cf.Field.nc_clear_variable_groups.html" title="next chapter">cf.Field.nc_clear_variable_groups</a></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.nc_set_variable_groups<a class="headerlink" href="#cf-field-nc-set-variable-groups" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.nc_set_variable_groups">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_variable_groups</code><span class="sig-paren">(</span><em class="sig-param">groups</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/netcdf.py#L778-L833"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_variable_groups" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_variable_groups</code><span class="sig-paren">(</span><em class="sig-param">groups</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/mixin/netcdf.py#L778-L833"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_variable_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -117,7 +117,7 @@ then an empty sequence is returned, signifying the root group.</p>
 the netCDF variable name, with <a class="reference internal" href="cf.Field.nc_set_variable.html#cf.Field.nc_set_variable" title="cf.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, with the group
 structure delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> characters.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.8.6.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.6</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -126,13 +126,13 @@ structure delimited by <code class="docutils literal notranslate"><span class="p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>groups: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new group structure.</p>
+<dt>groups: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new group structure.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure prior to being reset.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure prior to being reset.</p>
 </dd>
 </dl>
 </dd>
@@ -174,7 +174,7 @@ structure delimited by <code class="docutils literal notranslate"><span class="p
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

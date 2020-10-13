@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Domain.construct" href="cf.Domain.construct.html" />
-    <link rel="prev" title="cf.Domain" href="../classes/cf.Domain.html" />
+    <link rel="prev" title="cf.Domain" href="../class/cf.Domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,8 +85,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Domain.html">cf.Domain</a><ul>
-      <li>Previous: <a href="../classes/cf.Domain.html" title="previous chapter">cf.Domain</a></li>
+  <li><a href="../class/cf.Domain.html">cf.Domain</a><ul>
+      <li>Previous: <a href="../class/cf.Domain.html" title="previous chapter">cf.Domain</a></li>
       <li>Next: <a href="cf.Domain.construct.html" title="next chapter">cf.Domain.construct</a></li>
   </ul></li>
   </ul></li>
@@ -106,15 +106,18 @@
 <h1>cf.Domain.dump<a class="headerlink" href="#cf-domain-dump" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.dump">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">_level=0</em>, <em class="sig-param">_title=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/domain.py#L190-L290"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.dump" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">_level=0</em>, <em class="sig-param">_title=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/domain.py#L191-L293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>A full description of the domain.</p>
 <p>The domain components are described without abbreviation with the
 exception of data arrays, which are abbreviated to their first and
 last values.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description as a string. By
+<dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description as a string. By
 default the description is printed.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.dump()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">print</span>
@@ -126,8 +129,8 @@ default the description is printed.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>If <em>display</em> is True then the description is printed and
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the description is returned
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>If <em>display</em> is True then the description is printed and
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the description is returned
 as a string.</p>
 </dd>
 </dl>
@@ -145,7 +148,7 @@ as a string.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

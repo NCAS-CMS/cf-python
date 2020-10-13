@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.match_by_property.html" title="previous chapter">cf.Field.match_by_property</a></li>
       <li>Next: <a href="cf.Field.match_by_units.html" title="next chapter">cf.Field.match_by_units</a></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.match_by_rank<a class="headerlink" href="#cf-field-match-by-rank" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.match_by_rank">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">match_by_rank</code><span class="sig-paren">(</span><em class="sig-param">*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L13158-L13213"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.match_by_rank" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">match_by_rank</code><span class="sig-paren">(</span><em class="sig-param">*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/field.py#L13279-L13334"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.match_by_rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not the number of domain axis constructs satisfies
 conditions.</p>
 <div class="versionadded">
@@ -125,8 +125,8 @@ conditions.</p>
 <p>A condition is one of:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></li>
-<li><p>a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></li>
+<li><p>a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object</p></li>
 </ul>
 </div></blockquote>
 <p>The condition is satisfied if the number of domain axis
@@ -144,7 +144,7 @@ constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not at least one of the conditions are met.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not at least one of the conditions are met.</p>
 </dd>
 </dl>
 </dd>
@@ -171,7 +171,7 @@ constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-13.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
