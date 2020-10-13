@@ -631,6 +631,7 @@ Data array operations
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Field.argmax
    ~cf.Field.chunk
    ~cf.Field.isscalar
 

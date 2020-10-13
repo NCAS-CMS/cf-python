@@ -141,6 +141,7 @@ Miscellaneous
    ~cf.CoordinateReference.equals
    ~cf.CoordinateReference.equivalent
    ~cf.CoordinateReference.has_bounds
+   ~cf.CoordinateReference.hasbounds
    ~cf.CoordinateReference.inspect
    ~cf.CoordinateReference.structural_signature
 
