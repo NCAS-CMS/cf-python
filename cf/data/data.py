@@ -2825,7 +2825,7 @@ place.
             out.where(mask, cf_masked, inplace=True)
 
         if squeeze:
-            out.squeeze(axes, inplace=True)
+            out.squeeze(inplace=True)
 
         if inplace:
             self.__dict__ = out.__dict__
