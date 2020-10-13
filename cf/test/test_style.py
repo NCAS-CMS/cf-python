@@ -56,6 +56,12 @@ class styleTest(unittest.TestCase):
                 if fname.endswith('.py')
             ]
 
+        # Ignore non-existent files which lie outside of the cf-python
+        # directory
+        python_files = [python_file
+                        for python_file in python_files
+                        if os.path.isfile(python_file)]
+
         pep8_issues = pep8_check.check_files(python_files).total_errors
         self.assertEqual(
             pep8_issues, 0,
