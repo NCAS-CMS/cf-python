@@ -79,10 +79,10 @@ See the :ref:`cf-python home page <cf-python-home>` for documentation,
 installation and source code.
 
 '''
-__Conventions__ = 'CF-1.8'
+__Conventions__ = 'CF-1.9'
 __author__ = 'David Hassell'
-__date__ = '2020-??-??'
-__version__ = '3.7.0'
+__date__ = '2021-??-??'
+__version__ = '3.?.0'
 
 _requires = (
     'numpy',
@@ -202,8 +202,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.7.0'
-_maximum_vn = '1.8.8.0'
+_minimum_vn = '1.9.0.0'
+_maximum_vn = '1.9.1.0'
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(

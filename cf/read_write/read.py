@@ -37,7 +37,7 @@ def read(files, external=None, verbose=None, warnings=False,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
          select_options=None, follow_symlinks=False, mask=True,
-         warn_valid=False):
+         warn_valid=False, domain=False):
     '''Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
     Input datasets are mapped to field constructs in memory which are
@@ -134,9 +134,8 @@ def read(files, external=None, verbose=None, warnings=False,
     constructs that may be read within a session, and makes the read
     operation fast.
 
-    .. seealso:: `cf.aggregate`, `cf.load_stash2standard_name`,
-                 `cf.write`, `cf.Field.convert`,
-                 `cf.Field.dataset_compliance`
+    .. seealso:: `cf.aggregate`,`cf.write`, `cf.Field`, `cf.Domain`,
+                 `cf.load_stash2standard_name`, `cf.unique_constructs`
 
     :Parameters:
 
@@ -455,6 +454,31 @@ def read(files, external=None, verbose=None, warnings=False,
 
             .. versionadded:: 1.5
 
+        domain: `bool`, optional
+            If True then return only the domain constructs that are
+            explicitly defined by CF-netCDF domain variables, ignoring
+            all CF-netCDF data variables. By default only the field
+            constructs defined by CF-netCDF data variables are
+            returned.
+
+            CF-netCDF domain variables are only defined from CF-1.9,
+            so older datasets automatically contain no CF-netCDF
+            domain variables.
+
+            The unique domain constructs of the dataset are easily
+            found with the `cf.unique_constructs` function. For
+            example::
+
+               >>> d = cf.read('file.nc', domain=True)
+               >>> ud = cf.unique_constructs(d)
+               >>> f = cf.read('file.nc')
+               >>> ufd = cf.unique_constructs(x.domain for x in f)
+
+            Only field constructs can be read from UM and PP
+            datasests.
+
+            .. versionadded:: 3.TODO.0
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -654,6 +678,7 @@ def read(files, external=None, verbose=None, warnings=False,
                 chunk=chunk,
                 mask=mask,
                 warn_valid=warn_valid,
+                domain=domain,
             )
 
             # --------------------------------------------------------
@@ -760,62 +785,36 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                  verbose=None, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
                  height_at_top_of_model=None, chunk=True, mask=True,
-                 warn_valid=False):
+                 warn_valid=False, domain=False):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
 
         filename: `str`
-            The file name.
+            See `cf.read` for details.
 
         ftype: `str`
             TODO
 
         aggregate_options: `dict`, optional
-            The keys and values of this dictionary may be passed as
-            keyword parameters to an external call of the aggregate
-            function.
+            See `cf.read` for details.
 
         ignore_read_error: `bool`, optional
-            If True then return an empty field list if reading the
-            file produces an IOError, as would be the case for an
-            empty file, unknown file format, etc. By default the
-            IOError is raised.
+            See `cf.read` for details.
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
-
-            .. versionadded:: 3.4.0
+            See `cf.read` for details.
 
         verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+            See `cf.read` for details.
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed.
+        domain: `bool`, optional
+            See `cf.read` for details.
 
     :Returns:
 
-        `FieldList`
-            The fields in the file.
+        `FieldList` or `list` of `Domain`
+            The field or domain constructs in the dataset.
 
     '''
     if aggregate_options is None:
@@ -872,7 +871,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     }
 
     # ----------------------------------------------------------------
-    # Still here? Read the file into fields.
+    # Still here? Read the file into fields or domains.
     # ----------------------------------------------------------------
     if ftype == 'CDL':
         # Create a temporary netCDF file from input CDL
@@ -897,17 +896,22 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # --- End: if
 
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
-        fields = netcdf.read(filename, external=external, extra=extra,
-                             verbose=verbose, warnings=warnings,
-                             extra_read_vars=extra_read_vars,
-                             mask=mask, warn_valid=warn_valid)
+        out = netcdf.read(filename, external=external, extra=extra,
+                          verbose=verbose, warnings=warnings,
+                          extra_read_vars=extra_read_vars, mask=mask,
+                          warn_valid=warn_valid, domain=domain)
 
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
-        fields = UM.read(filename, um_version=umversion,
-                         verbose=verbose, set_standard_name=False,
-                         height_at_top_of_model=height_at_top_of_model,
-                         fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk)  # , mask=mask, warn_valid=warn_valid)
+        if domain:
+            raise ValueError(
+                "Can't set domain=True when reading UM or PP datasets"
+            )
+        
+        out = UM.read(filename, um_version=umversion, verbose=verbose,
+                      set_standard_name=False,
+                      height_at_top_of_model=height_at_top_of_model,
+                      fmt=fmt, word_size=word_size, endian=endian,
+                      chunk=chunk)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
@@ -916,18 +920,21 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             if 'strict_units' not in aggregate_options:
                 aggregate_options['relaxed_units'] = True
     else:
-        fields = ()
+        out = []
 
     # ----------------------------------------------------------------
     # Check for cyclic dimensions
     # ----------------------------------------------------------------
-    for f in fields:
+    for f in out:
         f.autocyclic()
 
     # ----------------------------------------------------------------
-    # Return the fields
+    # Return the fields or domains
     # ----------------------------------------------------------------
-    return FieldList(fields)
+    if domain:
+        return out
+    
+    return FieldList(out)
 
 
 def file_type(filename):
