@@ -6312,7 +6312,7 @@ creates a simple field construct with an underlying gathered array:
    X = P.set_construct(cf.DomainAxis(2))
 
    # Set the data for the field
-   P.set_data(cf.Data(array), axes=[T, Y, X])			      
+   P.set_data(cf.Data(array), axes=[T, Y, X])
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the

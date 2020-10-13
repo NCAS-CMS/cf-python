@@ -610,6 +610,7 @@ key = p.set_construct(dc, axes=longitude_axis)
 key
 cm = cf.CellMethod(axes=longitude_axis, method='minimum')
 p.set_construct(cm)
+
 import numpy
 import cf
 
@@ -679,7 +680,9 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
+
 Q.dump()
+
 import numpy
 import cf
 
@@ -700,10 +703,10 @@ tas.set_data(cf.Data(numpy.arange(90.).reshape(10, 9)))
 
 # Create and set the cell method constructs
 cell_method1 = cf.CellMethod(
-   axes=[axis_Y, axis_X],
-   method='mean',
-   qualifiers={'where': 'land',
-               'interval': [cf.Data(0.1, units='degrees')]})
+         axes=[axis_Y, axis_X],
+         method='mean',
+         qualifiers={'where': 'land',
+                     'interval': [cf.Data(0.1, units='degrees')]})
 
 cell_method2 = cf.CellMethod(axes=axis_T, method='maximum')
 
@@ -712,34 +715,34 @@ tas.set_construct(cell_method2)
 
 # Create and set the field ancillary constructs
 field_ancillary = cf.FieldAncillary(
-   properties={'standard_name': 'air_temperature standard_error',
-               'units': 'K'},
-   data=cf.Data(numpy.arange(90.).reshape(10, 9)))
+            properties={'standard_name': 'air_temperature standard_error',
+                         'units': 'K'},
+            data=cf.Data(numpy.arange(90.).reshape(10, 9)))
 
 tas.set_construct(field_ancillary)
 
 # Create and set the dimension coordinate constructs
 dimension_coordinate_T = cf.DimensionCoordinate(
-   properties={'standard_name': 'time',
-               'units': 'days since 2018-12-01'},
-   data=cf.Data([15.5]),
-   bounds=cf.Bounds(data=cf.Data([[0., 31]])))
+                          properties={'standard_name': 'time',
+                                      'units': 'days since 2018-12-01'},
+                          data=cf.Data([15.5]),
+                          bounds=cf.Bounds(data=cf.Data([[0., 31]])))
 
 dimension_coordinate_Z = cf.DimensionCoordinate(
-   properties={'computed_standard_name': 'altitude',
-               'standard_name': 'atmosphere_hybrid_height_coordinate'},
-   data = cf.Data([1.5]),
-   bounds=cf.Bounds(data=cf.Data([[1.0, 2.0]])))
+       properties={'computed_standard_name': 'altitude',
+                   'standard_name': 'atmosphere_hybrid_height_coordinate'},
+       data = cf.Data([1.5]),
+       bounds=cf.Bounds(data=cf.Data([[1.0, 2.0]])))
 
 dimension_coordinate_Y = cf.DimensionCoordinate(
-   properties={'standard_name': 'grid_latitude',
-               'units': 'degrees'},
-   data=cf.Data(numpy.arange(10.)),
-   bounds=cf.Bounds(data=cf.Data(numpy.arange(20).reshape(10, 2))))
+       properties={'standard_name': 'grid_latitude',
+                   'units': 'degrees'},
+       data=cf.Data(numpy.arange(10.)),
+       bounds=cf.Bounds(data=cf.Data(numpy.arange(20).reshape(10, 2))))
 
 dimension_coordinate_X = cf.DimensionCoordinate(
-   properties={'standard_name': 'grid_longitude',
-               'units': 'degrees'},
+       properties={'standard_name': 'grid_longitude',
+                   'units': 'degrees'},
    data=cf.Data(numpy.arange(9.)),
    bounds=cf.Bounds(data=cf.Data(numpy.arange(18).reshape(9, 2))))
 
@@ -750,20 +753,20 @@ dim_X = tas.set_construct(dimension_coordinate_X)
 
 # Create and set the auxiliary coordinate constructs
 auxiliary_coordinate_lat = cf.AuxiliaryCoordinate(
-   properties={'standard_name': 'latitude',
-               'units': 'degrees_north'},
-   data=cf.Data(numpy.arange(90.).reshape(10, 9)))
+                     properties={'standard_name': 'latitude',
+                                 'units': 'degrees_north'},
+                     data=cf.Data(numpy.arange(90.).reshape(10, 9)))
 
 auxiliary_coordinate_lon = cf.AuxiliaryCoordinate(
-   properties={'standard_name': 'longitude',
-               'units': 'degrees_east'},
-   data=cf.Data(numpy.arange(90.).reshape(9, 10)))
+                 properties={'standard_name': 'longitude',
+                             'units': 'degrees_east'},
+                 data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 array = numpy.ma.array(list('abcdefghij'))
 array[0] = numpy.ma.masked
 auxiliary_coordinate_name = cf.AuxiliaryCoordinate(
-   properties={'long_name': 'Grid latitude name'},
-   data=cf.Data(array))
+                      properties={'long_name': 'Grid latitude name'},
+                      data=cf.Data(array))
 
 aux_LAT  = tas.set_construct(auxiliary_coordinate_lat) 
 aux_LON  = tas.set_construct(auxiliary_coordinate_lon) 
@@ -771,19 +774,19 @@ aux_NAME = tas.set_construct(auxiliary_coordinate_name)
 
 # Create and set domain ancillary constructs
 domain_ancillary_a = cf.DomainAncillary(
-   properties={'units': 'm'},
-   data=cf.Data([10.]),
-   bounds=cf.Bounds(data=cf.Data([[5., 15.]])))
+                  properties={'units': 'm'},
+                  data=cf.Data([10.]),
+                  bounds=cf.Bounds(data=cf.Data([[5., 15.]])))
 
 domain_ancillary_b = cf.DomainAncillary(
-   properties={'units': '1'},
-   data=cf.Data([20.]),
-   bounds=cf.Bounds(data=cf.Data([[14, 26.]])))
+                      properties={'units': '1'},
+                      data=cf.Data([20.]),
+                      bounds=cf.Bounds(data=cf.Data([[14, 26.]])))
 
 domain_ancillary_orog = cf.DomainAncillary(
-   properties={'standard_name': 'surface_altitude',
-               'units': 'm'},
-   data=cf.Data(numpy.arange(90.).reshape(10, 9)))
+                         properties={'standard_name': 'surface_altitude',
+                                     'units': 'm'},
+                         data=cf.Data(numpy.arange(90.).reshape(10, 9)))
 
 domain_anc_A    = tas.set_construct(domain_ancillary_a, axes=axis_Z)
 domain_anc_B    = tas.set_construct(domain_ancillary_b, axes=axis_Z)
@@ -795,33 +798,33 @@ datum = cf.Datum(parameters={'earth_radius': 6371007.})
 # Create the coordinate conversion for the horizontal coordinate
 # reference construct
 coordinate_conversion_h = cf.CoordinateConversion(
-   parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-               'grid_north_pole_latitude': 38.0,
-               'grid_north_pole_longitude': 190.0})
+             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                         'grid_north_pole_latitude': 38.0,
+                         'grid_north_pole_longitude': 190.0})
 
 # Create the coordinate conversion for the vertical coordinate
 # reference construct
 coordinate_conversion_v = cf.CoordinateConversion(
-   parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
-               'computed_standard_name': 'altitude'},
-   domain_ancillaries={'a': domain_anc_A,
-                       'b': domain_anc_B,
-                       'orog': domain_anc_OROG})
+        parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
+                    'computed_standard_name': 'altitude'},
+        domain_ancillaries={'a': domain_anc_A,
+                            'b': domain_anc_B,
+                            'orog': domain_anc_OROG})
 
 # Create the vertical coordinate reference construct
 horizontal_crs = cf.CoordinateReference(
-   datum=datum,
-   coordinate_conversion=coordinate_conversion_h,
-   coordinates=[dim_X,
-                dim_Y,
-                aux_LAT,
-                aux_LON])
+                  datum=datum,
+                  coordinate_conversion=coordinate_conversion_h,
+                  coordinates=[dim_X,
+                               dim_Y,
+                               aux_LAT,
+                               aux_LON])
 
 # Create the vertical coordinate reference construct
 vertical_crs = cf.CoordinateReference(
-   datum=datum,
-   coordinate_conversion=coordinate_conversion_v,
-   coordinates=[dim_Z])
+                datum=datum,
+                coordinate_conversion=coordinate_conversion_v,
+                coordinates=[dim_Z])
 
 # Set the coordinate reference constructs
 tas.set_construct(horizontal_crs)
@@ -829,10 +832,11 @@ tas.set_construct(vertical_crs)
 
 # Create and set the cell measure constructs
 cell_measure = cf.CellMeasure(measure='area',
-                             properties={'units': 'km2'},
-                             data=cf.Data(numpy.arange(90.).reshape(9, 10)))
+                properties={'units': 'km2'},
+                data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
+
 print(tas)
 q, t = cf.read('file.nc')
 print(q.creation_commands())
@@ -1015,6 +1019,7 @@ h.data.get_compression_type()
 h.data[1, 2] = -9
 print(h.array)
 h.data.get_compression_type()
+
 import numpy
 import cf
 
@@ -1038,8 +1043,9 @@ T.set_data(data)
 
 # Compress the data 
 T.compress('contiguous',
-          count_properties={'long_name': 'number of obs for this timeseries'},
-          inplace=True)
+      count_properties={'long_name': 'number of obs for this timeseries'},
+      inplace=True)
+
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1048,6 +1054,7 @@ count_variable = T.data.get_count()
 count_variable
 print(count_variable.array)
 cf.write(T, 'T_contiguous.nc')
+
 import numpy
 import cf
 
@@ -1080,6 +1087,7 @@ Y = T.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cf.Data(array))
+
 p = cf.read('gathered.nc')[0]
 print(p)
 print(p.array)
@@ -1093,6 +1101,7 @@ p[1, :, 3:5]
 p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
+
 import numpy	  
 import cf
 
@@ -1125,6 +1134,7 @@ X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 P.set_data(cf.Data(array), axes=[T, Y, X])
+
 P
 print(P.data.array)
 P.data.get_compression_type()

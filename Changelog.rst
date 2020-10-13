@@ -2,7 +2,7 @@ version 3.7.0
 -------------
 ----
 
-**2020-10-12**
+**2020-10-13**
 
 * Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cf.Field.del_domain_axis`

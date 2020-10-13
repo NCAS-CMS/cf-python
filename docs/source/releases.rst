@@ -17,7 +17,7 @@ Version |release| for version |version| of the CF conventions.
 **CF-1.8**
 ----------
 
-* `version 3.7.0 <https://ncas-cms.github.io/cf-python/3.7.0>`_ (2020-10-??)
+* `version 3.7.0 <https://ncas-cms.github.io/cf-python/3.7.0>`_ (2020-10-13)
 * `version 3.6.0 <https://ncas-cms.github.io/cf-python/3.6.0>`_ (2020-07-24)
 * `version 3.5.0 <https://ncas-cms.github.io/cf-python/3.5.0>`_ (2020-06-09)
 * `version 3.4.0 <https://ncas-cms.github.io/cf-python/3.4.0>`_ (2020-04-30)
