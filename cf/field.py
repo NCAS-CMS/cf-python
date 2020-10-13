@@ -17271,8 +17271,11 @@ class Field(mixin.PropertiesData,
                         [bounds.min().datum(), bounds.max().datum()],
                         units=c.Units
                     )
-                    data = bounds.mean(squeeze=True)
+
+                    data = bounds.mean()
                     c.set_data(data, copy=False)
+
+                    bounds.insert_dimension(inplace=True)
                     c.set_bounds(Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
@@ -17319,6 +17322,8 @@ class Field(mixin.PropertiesData,
         dim = DimensionCoordinate()
         data = Data(ranks).squeeze()
         data.override_units(Units(), inplace=True)
+        if not data.shape:
+            data.insert_dimension(inplace=True)
         dim.set_data(data, copy=False)
 
         if out.ndim == self.ndim:
