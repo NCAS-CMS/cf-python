@@ -15,17 +15,19 @@ def find_package_data_files(directory):
                 yield filename.replace('cf/', '', 1)
 
 
-def find_test_files(directory):
-    for root, dirs, files in os.walk(directory):
-        for basename in files:
-            if (
-                    fnmatch.fnmatch(basename, '*.sh')
-                    or fnmatch.fnmatch(basename, '*.nc')
-                    or fnmatch.fnmatch(basename, '*.pp')
-                    or fnmatch.fnmatch(basename, '*.cdl')
-            ):
-                filename = os.path.join(root, basename)
-                yield filename.replace('cf/', '', 1)
+def find_test_files():
+    '''Yield the data files in cf/test/
+
+    '''
+    for filename in os.listdir('cf/test'):
+        if (
+                fnmatch.fnmatch(filename, '*.sh')
+                or fnmatch.fnmatch(filename, '*.nc')
+                or fnmatch.fnmatch(filename, '*.pp')
+                or fnmatch.fnmatch(filename, '*.cdl')
+        ):
+            filename = os.path.join('test', filename)
+            yield filename
 
 
 def _read(fname):
@@ -51,7 +53,7 @@ version = _get_version()
 packages = ['cf']
 etc_files = [f for f in find_package_data_files('cf/etc')]
 umread_files = [f for f in find_package_data_files('cf/umread_lib/c-lib')]
-test_files = [f for f in find_test_files('cf/test')]
+test_files = [f for f in find_test_files()]
 
 package_data = etc_files + umread_files + test_files
 
