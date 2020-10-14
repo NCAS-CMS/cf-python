@@ -18,9 +18,12 @@ def find_package_data_files(directory):
 def find_test_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
-            if (fnmatch.fnmatch(basename, '*.sh') or
-                    fnmatch.fnmatch(basename, '*.nc') or
-                    fnmatch.fnmatch(basename, '*.pp')):
+            if (
+                    fnmatch.fnmatch(basename, '*.sh')
+                    or fnmatch.fnmatch(basename, '*.nc')
+                    or fnmatch.fnmatch(basename, '*.pp')
+                    or fnmatch.fnmatch(basename, '*.cdl')
+            ):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
