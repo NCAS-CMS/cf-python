@@ -11,10 +11,8 @@ import cf
 class cfaTest(unittest.TestCase):
     def setUp(self):
         self.test_only = ()
-        cwd = os.getcwd()
-        print(cwd)
         self.test_file = 'cfa_test.sh'
-        self.test_path = os.path.join(cwd, self.test_file)
+        self.test_path = os.path.join(os.getcwd(), self.test_file)
 
         # Need ./cfa_test.sh to be made executable to run it. Locally that
         # may already be true but for testing dists etc. must chmod here:
