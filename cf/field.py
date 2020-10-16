@@ -240,7 +240,8 @@ _xxx = namedtuple(
 )
 
 
-class Field(mixin.PropertiesData,
+class Field(mixin.ConstructsMixin,
+            mixin.PropertiesData,
             cfdm.Field):
     '''A field construct of the CF data model.
 
@@ -422,10 +423,12 @@ class Field(mixin.PropertiesData,
 
         '''
         logger.debug(
-            self.__class__.__name__ + '.__getitem__')  # pragma: no cover
-        logger.debug(
-            '    input indices = {}'.format(indices))  # pragma: no cover
-
+            "{}.__getitem__\n"
+            "    input indices  = {}".format(
+                self.__class__.__name__, indices
+            )
+        )  # pragma: no cover
+        
         if indices is Ellipsis:
             return self.copy()
 
@@ -445,22 +448,28 @@ class Field(mixin.PropertiesData,
 
         indices, roll = parse_indices(shape, indices2, cyclic=True)
 
+        logger.debug(
+            "    parsed indices = {}\n"
+            "    roll           = {}".format(
+                indices, roll
+            )
+        )  # pragma: no cover
+        
         if roll:
             new = self
-            axes = data._axes
-            cyclic_axes = data._cyclic
-            for iaxis, shift in roll.items():
+#            axes = data._axes
+            axes = self.get_data_axes()
+#            cyclic_axes = data._cyclic
+            cyclic_axes = self.cyclic()
+            for iaxis, shift in roll.items():                
                 axis = axes[iaxis]
                 if axis not in cyclic_axes:
-                    _ = self.get_data_axes()[iaxis]
+#                    x = self.get_data_axes()[iaxis]
                     raise IndexError(
                         "Can't take a cyclic slice from non-cyclic {!r} "
                         "axis".format(
-                            self.constructs.domain_axis_identity(_))
+                            self.constructs.domain_axis_identity(axis))
                     )
-
-                logger.debug('    roll, iaxis, shift = {} {} {}'.format(
-                    roll, iaxis, shift))  # pragma: no cover
 
                 new = new.roll(iaxis, shift)
         else:
@@ -475,12 +484,14 @@ class Field(mixin.PropertiesData,
         else:
             findices = indices
 
-        logger.debug('    shape    = {}'.format(shape))  # pragma: no cover
-        logger.debug('    indices  = {}'.format(indices))  # pragma: no cover
         logger.debug(
-            '    indices2 = {}'.format(indices2))  # pragma: no cover
-        logger.debug(
-            '    findices = {}'.format(findices))  # pragma: no cover
+            "    shape          = {}\n"
+            "    indices        = {}\n"
+            "    indices2       = {}\n"
+            "    findices       = {}".format(
+                shape, indices, indices2, findices
+            )
+        )  # pragma: no cover
 
         new_data = new.data[tuple(findices)]
 
@@ -14352,208 +14363,208 @@ class Field(mixin.PropertiesData,
 
         return f
 
-    @_deprecated_kwarg_check('i')
-    @_inplace_enabled(default=False)
-    def anchor(self, axis, value, inplace=False, dry_run=False,
-               i=False, **kwargs):
-        '''Roll a cyclic axis so that the given value lies in the first
-    coordinate cell.
-
-    A unique axis is selected with the *axes* and *kwargs* parameters.
-
-    .. versionadded:: 1.0
-
-    .. seealso:: `axis`, `cyclic`, `iscyclic`, `period`, `roll`
-
-    :Parameters:
-
-        axis:
-            The cyclic axis to be rolled, defined by that which would
-            be selected by passing the given axis description to a
-            call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
-
-        value:
-            Anchor the dimension coordinate values for the selected
-            cyclic axis to the *value*. May be any numeric scalar
-            object that can be converted to a `Data` object (which
-            includes `numpy` and `Data` objects). If *value* has units
-            then they must be compatible with those of the dimension
-            coordinates, otherwise it is assumed to have the same
-            units as the dimension coordinates. The coordinate values
-            are transformed so that *value* is "equal to or just
-            before" the new first coordinate value. More specifically:
-
-              * Increasing dimension coordinates with positive period,
-                P, are transformed so that *value* lies in the
-                half-open range (L-P, F], where F and L are the
-                transformed first and last coordinate values,
-                respectively.
-
-        ..
-
-              * Decreasing dimension coordinates with positive period,
-                P, are transformed so that *value* lies in the
-                half-open range (L+P, F], where F and L are the
-                transformed first and last coordinate values,
-                respectively.
-
-            *Parameter example:*
-              If the original dimension coordinates are ``0, 5, ...,
-              355`` (evenly spaced) and the period is ``360`` then
-              ``value=0`` implies transformed coordinates of ``0, 5,
-              ..., 355``; ``value=-12`` implies transformed
-              coordinates of ``-10, -5, ..., 345``; ``value=380``
-              implies transformed coordinates of ``380, 385, ...,
-              715``.
-
-            *Parameter example:*
-              If the original dimension coordinates are ``355, 350,
-              ..., 0`` (evenly spaced) and the period is ``360`` then
-              ``value=355`` implies transformed coordinates of ``355,
-              350, ..., 0``; ``value=0`` implies transformed
-              coordinates of ``0, -5, ..., -355``; ``value=392``
-              implies transformed coordinates of ``390, 385, ...,
-              30``.
-
-        {{inplace: `bool`, optional}}
-
-        dry_run: `bool`, optional
-            Return a dictionary of parameters which describe the
-            anchoring process. The field is not changed, even if *i*
-            is True.
-
-        {{i: deprecated at version 3.0.0}}
-
-        kwargs: deprecated at version 3.0.0
-
-    :Returns:
-
-        `Field`
-            The rolled field.
-
-    **Examples:**
-
-    >>> f.iscyclic('X')
-    True
-    >>> f.dimension_coordinate('X').data
-    <CF Data(8): [0, ..., 315] degrees_east> TODO
-    >>> print(f.dimension_coordinate('X').array)
-    [  0  45  90 135 180 225 270 315]
-    >>> g = f.anchor('X', 230)
-    >>> print(g.dimension_coordinate('X').array)
-    [270 315   0  45  90 135 180 225]
-    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
-    >>> print(g.dimension_coordinate('X').array)
-    [630 675 360 405 450 495 540 585]
-    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
-    >>> print(g.dimension_coordinate('X').array)
-    [-450 -405 -720 -675 -630 -585 -540 -495]
-
-    >>> f.iscyclic('X')
-    True
-    >>> f.dimension_coordinate('X').data
-    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
-    >>> f.anchor('X', 10000).dimension_coordinate('X').data
-    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-    >>> d = f.anchor('X', 10000, dry_run=True)
-    >>> d
-    {'axis': 'domainaxis2',
-     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
-     'roll': 28}
-    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
-    ...     d['axis']) + d['nperiod']).data
-    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-
-        '''
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'anchor', kwargs)  # pragma: no cover
-
-        axis = self.domain_axis(axis, key=True)
-
-        if dry_run:
-            f = self
-        else:
-            f = _inplace_enabled_define_and_cleanup(self)
-
-        dim = f.dimension_coordinates.filter_by_axis('and', axis).value(
-            default=None)
-        if dim is None:
-            raise ValueError(
-                "Can't shift non-cyclic {!r} axis".format(
-                    f.constructs.domain_axis_identity(axis))
-            )
-
-        period = dim.period()
-        if period is None:
-            raise ValueError(
-                "Cyclic {!r} axis has no period".format(dim.identity()))
-
-        value = Data.asdata(value)
-        if not value.Units:
-            value = value.override_units(dim.Units)
-        elif not value.Units.equivalent(dim.Units):
-            raise ValueError(
-                "Anchor value has incompatible units: {!r}".format(
-                    value.Units)
-            )
-
-#        axis_size = f.axis_size(axis)
-        axis_size = f.domain_axes[axis].get_size()
-        if axis_size <= 1:
-            # Don't need to roll a size one axis
-            if dry_run:
-                return {'axis': axis, 'roll': 0, 'nperiod': 0}
-            else:
-                if inplace:
-                    f = None
-                return f
-        # --- End: if
-
-        c = dim.get_data()
-
-        if dim.increasing:
-            # Adjust value so it's in the range [c[0], c[0]+period)
-            n = ((c[0] - value) / period).ceil()
-            value1 = value + n * period
-
-            shift = axis_size - numpy_argmax((c - value1 >= 0).array)
-            if not dry_run:
-                f.roll(axis, shift, inplace=True)
-
-            dim = f.dimension_coordinates.filter_by_axis('and', axis).value()
-            #        dim = f.item(axis)
-            n = ((value - dim.data[0]) / period).ceil()
-        else:
-            # Adjust value so it's in the range (c[0]-period, c[0]]
-            n = ((c[0] - value) / period).floor()
-            value1 = value + n * period
-
-            shift = axis_size - numpy_argmax((value1 - c >= 0).array)
-
-            if not dry_run:
-                f.roll(axis, shift, inplace=True)
-
-            dim = f.dimension_coordinate(axis)
+#    @_deprecated_kwarg_check('i')
+#    @_inplace_enabled(default=False)
+#    def anchor(self, axis, value, inplace=False, dry_run=False,
+#               i=False, **kwargs):
+#        '''Roll a cyclic axis so that the given value lies in the first
+#    coordinate cell.
+#
+#    A unique axis is selected with the *axes* and *kwargs* parameters.
+#
+#    .. versionadded:: 1.0
+#
+#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `period`, `roll`
+#
+#    :Parameters:
+#
+#        axis:
+#            The cyclic axis to be rolled, defined by that which would
+#            be selected by passing the given axis description to a
+#            call of the field construct's `domain_axis` method. For
+#            example, for a value of ``'X'``, the domain axis construct
+#            returned by ``f.domain_axis('X')`` is selected.
+#
+#        value:
+#            Anchor the dimension coordinate values for the selected
+#            cyclic axis to the *value*. May be any numeric scalar
+#            object that can be converted to a `Data` object (which
+#            includes `numpy` and `Data` objects). If *value* has units
+#            then they must be compatible with those of the dimension
+#            coordinates, otherwise it is assumed to have the same
+#            units as the dimension coordinates. The coordinate values
+#            are transformed so that *value* is "equal to or just
+#            before" the new first coordinate value. More specifically:
+#
+#              * Increasing dimension coordinates with positive period,
+#                P, are transformed so that *value* lies in the
+#                half-open range (L-P, F], where F and L are the
+#                transformed first and last coordinate values,
+#                respectively.
+#
+#        ..
+#
+#              * Decreasing dimension coordinates with positive period,
+#                P, are transformed so that *value* lies in the
+#                half-open range (L+P, F], where F and L are the
+#                transformed first and last coordinate values,
+#                respectively.
+#
+#            *Parameter example:*
+#              If the original dimension coordinates are ``0, 5, ...,
+#              355`` (evenly spaced) and the period is ``360`` then
+#              ``value=0`` implies transformed coordinates of ``0, 5,
+#              ..., 355``; ``value=-12`` implies transformed
+#              coordinates of ``-10, -5, ..., 345``; ``value=380``
+#              implies transformed coordinates of ``380, 385, ...,
+#              715``.
+#
+#            *Parameter example:*
+#              If the original dimension coordinates are ``355, 350,
+#              ..., 0`` (evenly spaced) and the period is ``360`` then
+#              ``value=355`` implies transformed coordinates of ``355,
+#              350, ..., 0``; ``value=0`` implies transformed
+#              coordinates of ``0, -5, ..., -355``; ``value=392``
+#              implies transformed coordinates of ``390, 385, ...,
+#              30``.
+#
+#        {{inplace: `bool`, optional}}
+#
+#        dry_run: `bool`, optional
+#            Return a dictionary of parameters which describe the
+#            anchoring process. The field is not changed, even if *i*
+#            is True.
+#
+#        {{i: deprecated at version 3.0.0}}
+#
+#        kwargs: deprecated at version 3.0.0
+#
+#    :Returns:
+#
+#        `Field`
+#            The rolled field.
+#
+#    **Examples:**
+#
+#    >>> f.iscyclic('X')
+#    True
+#    >>> f.dimension_coordinate('X').data
+#    <CF Data(8): [0, ..., 315] degrees_east> TODO
+#    >>> print(f.dimension_coordinate('X').array)
+#    [  0  45  90 135 180 225 270 315]
+#    >>> g = f.anchor('X', 230)
+#    >>> print(g.dimension_coordinate('X').array)
+#    [270 315   0  45  90 135 180 225]
+#    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
+#    >>> print(g.dimension_coordinate('X').array)
+#    [630 675 360 405 450 495 540 585]
+#    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
+#    >>> print(g.dimension_coordinate('X').array)
+#    [-450 -405 -720 -675 -630 -585 -540 -495]
+#
+#    >>> f.iscyclic('X')
+#    True
+#    >>> f.dimension_coordinate('X').data
+#    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
+#    >>> f.anchor('X', 10000).dimension_coordinate('X').data
+#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+#    >>> d = f.anchor('X', 10000, dry_run=True)
+#    >>> d
+#    {'axis': 'domainaxis2',
+#     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
+#     'roll': 28}
+#    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
+#    ...     d['axis']) + d['nperiod']).data
+#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+#
+#        '''
+#        if kwargs:
+#            _DEPRECATION_ERROR_KWARGS(
+#                self, 'anchor', kwargs)  # pragma: no cover
+#
+#        axis = self.domain_axis(axis, key=True)
+#
+#        if dry_run:
+#            f = self
+#        else:
+#            f = _inplace_enabled_define_and_cleanup(self)
+#
+#        dim = f.dimension_coordinates.filter_by_axis('and', axis).value(
+#            default=None)
+#        if dim is None:
+#            raise ValueError(
+#                "Can't shift non-cyclic {!r} axis".format(
+#                    f.constructs.domain_axis_identity(axis))
+#            )
+#
+#        period = dim.period()
+#        if period is None:
+#            raise ValueError(
+#                "Cyclic {!r} axis has no period".format(dim.identity()))
+#
+#        value = Data.asdata(value)
+#        if not value.Units:
+#            value = value.override_units(dim.Units)
+#        elif not value.Units.equivalent(dim.Units):
+#            raise ValueError(
+#                "Anchor value has incompatible units: {!r}".format(
+#                    value.Units)
+#            )
+#
+##        axis_size = f.axis_size(axis)
+#        axis_size = f.domain_axes[axis].get_size()
+#        if axis_size <= 1:
+#            # Don't need to roll a size one axis
+#            if dry_run:
+#                return {'axis': axis, 'roll': 0, 'nperiod': 0}
+#            else:
+#                if inplace:
+#                    f = None
+#                return f
+#        # --- End: if
+#
+#        c = dim.get_data()
+#
+#        if dim.increasing:
+#            # Adjust value so it's in the range [c[0], c[0]+period)
+#            n = ((c[0] - value) / period).ceil()
+#            value1 = value + n * period
+#
+#            shift = axis_size - numpy_argmax((c - value1 >= 0).array)
+#            if not dry_run:
+#                f.roll(axis, shift, inplace=True)
+#
 #            dim = f.dimension_coordinates.filter_by_axis('and', axis).value()
-#            dim = f.item(axis)
-            n = ((value - dim.data[0]) / period).floor()
-        # --- End: if
-
-        if dry_run:
-            return {'axis': axis, 'roll': shift, 'nperiod': n * period}
-
-        if n:
-            np = n * period
-            dim += np
-            bounds = dim.get_bounds(None)
-            if bounds is not None:
-                bounds += np
-        # --- End: if
-
-        return f
+#            #        dim = f.item(axis)
+#            n = ((value - dim.data[0]) / period).ceil()
+#        else:
+#            # Adjust value so it's in the range (c[0]-period, c[0]]
+#            n = ((c[0] - value) / period).floor()
+#            value1 = value + n * period
+#
+#            shift = axis_size - numpy_argmax((value1 - c >= 0).array)
+#
+#            if not dry_run:
+#                f.roll(axis, shift, inplace=True)
+#
+#            dim = f.dimension_coordinate(axis)
+##            dim = f.dimension_coordinates.filter_by_axis('and', axis).value()
+##            dim = f.item(axis)
+#            n = ((value - dim.data[0]) / period).floor()
+#        # --- End: if
+#
+#        if dry_run:
+#            return {'axis': axis, 'roll': shift, 'nperiod': n * period}
+#
+#        if n:
+#            np = n * period
+#            dim += np
+#            bounds = dim.get_bounds(None)
+#            if bounds is not None:
+#                bounds += np
+#        # --- End: if
+#
+#        return f
 
     def argmax(self, axis=None):
         '''Return the indices of the maximum values along an axis.
@@ -15209,130 +15220,130 @@ class Field(mixin.PropertiesData,
 
         return c.value(default=default)
 
-    def construct(self, identity=None, default=ValueError(), key=False):
-        '''Select a metadata construct by its identity.
-
-    .. seealso:: `del_construct`, `get_construct`, `has_construct`,
-                 `set_construct`
-
-    :Parameters:
-
-        identity: optional
-            Select the construct. Must be
-
-              * The identity or key of a metadata construct.
-
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); a `Query` object
-            (e.g. ``cf.eq('longitude')``); or a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``) that
-            selects the relevant constructs whose identities match via
-            `re.search`.
-
-            A construct has a number of identities, and is selected if
-            any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
-
-               >>> x.identities()
-               ['time',
-                'long_name=Time',
-                'foo=bar',
-                'standard_name=time',
-                'ncvar%t',
-                'T']
-
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
-
-            *Parameter example:*
-              ``identity='T'
-
-            *Parameter example:*
-              ``identity='measure:area'``
-
-            *Parameter example:*
-              ``identity='cell_area'``
-
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
-
-            *Parameter example:*
-              ``identity='cellmeasure1'``
-
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found. If set to an `Exception` instance then
-            it will be raised instead.
-
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
-
-    :Returns:
-
-            The selected coordinate construct, or its key.
-
-    **Examples:**
-
-    >>> f = cf.example_field(1)
-    >>> print(f)
-    Field: air_temperature (ncvar%ta)
-    ---------------------------------
-    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                    : time(1) = [2019-01-01 00:00:00]
-    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-    Coord references: grid_mapping_name:rotated_latitude_longitude
-                    : standard_name:atmosphere_hybrid_height_coordinate
-    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-
-    >>> f.construct('long_name=Grid latitude name')
-    <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
-    >>> f.construct('ncvar%a')
-    <CF DomainAncillary: ncvar%a(1) m>
-    >>> f.construct('measure:area')
-    <CF CellMeasure: measure:area(9, 10) km2>
-    >>> f.construct('domainaxis0')
-    <CF DomainAxis: size(1)>
-    >>> f.construct('height')
-    Traceback (most recent call last):
-        ...
-    ValueError: Can't return zero constructs
-    >>> f.construct('height', default=False)
-    False
-    >>> f.construct('height', default=TypeError("No height coordinates"))
-    Traceback (most recent call last):
-        ...
-    TypeError: No height coordinates
-
-        '''
-        c = self.constructs
-
-        if identity is not None:
-            c = c(identity)
-
-        if key:
-            return c.key(default=default)
-
-        return c.value(default=default)
+#    def construct(self, identity=None, default=ValueError(), key=False):
+#        '''Select a metadata construct by its identity.
+#
+#    .. seealso:: `del_construct`, `get_construct`, `has_construct`,
+#                 `set_construct`
+#
+#    :Parameters:
+#
+#        identity: optional
+#            Select the construct. Must be
+#
+#              * The identity or key of a metadata construct.
+#
+#            A construct identity is specified by a string
+#            (e.g. ``'latitude'``, ``'long_name=time'``,
+#            ``'ncvar%lat'``, etc.); a `Query` object
+#            (e.g. ``cf.eq('longitude')``); or a compiled regular
+#            expression (e.g. ``re.compile('^atmosphere')``) that
+#            selects the relevant constructs whose identities match via
+#            `re.search`.
+#
+#            A construct has a number of identities, and is selected if
+#            any of them match any of those provided. A construct's
+#            identities are those returned by its `!identities`
+#            method. In the following example, the construct ``x`` has
+#            six identities:
+#
+#               >>> x.identities()
+#               ['time',
+#                'long_name=Time',
+#                'foo=bar',
+#                'standard_name=time',
+#                'ncvar%t',
+#                'T']
+#
+#            A construct key may optionally have the ``'key%'``
+#            prefix. For example ``'dimensioncoordinate2'`` and
+#            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#            Note that in the output of a `print` call or `!dump`
+#            method, a construct is always described by one of its
+#            identities, and so this description may always be used as
+#            an *identity* argument.
+#
+#            *Parameter example:*
+#              ``identity='T'
+#
+#            *Parameter example:*
+#              ``identity='measure:area'``
+#
+#            *Parameter example:*
+#              ``identity='cell_area'``
+#
+#            *Parameter example:*
+#              ``identity='long_name=Cell Area'``
+#
+#            *Parameter example:*
+#              ``identity='cellmeasure1'``
+#
+#        default: optional
+#            Return the value of the *default* parameter if a construct
+#            can not be found. If set to an `Exception` instance then
+#            it will be raised instead.
+#
+#        key: `bool`, optional
+#            If True then return the selected construct key. By
+#            default the construct itself is returned.
+#
+#    :Returns:
+#
+#            The selected coordinate construct, or its key.
+#
+#    **Examples:**
+#
+#    >>> f = cf.example_field(1)
+#    >>> print(f)
+#    Field: air_temperature (ncvar%ta)
+#    ---------------------------------
+#    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+#    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+#    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+#    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+#                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+#                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+#                    : time(1) = [2019-01-01 00:00:00]
+#    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+#                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+#                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+#    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+#    Coord references: grid_mapping_name:rotated_latitude_longitude
+#                    : standard_name:atmosphere_hybrid_height_coordinate
+#    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+#                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+#                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+#
+#    >>> f.construct('long_name=Grid latitude name')
+#    <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
+#    >>> f.construct('ncvar%a')
+#    <CF DomainAncillary: ncvar%a(1) m>
+#    >>> f.construct('measure:area')
+#    <CF CellMeasure: measure:area(9, 10) km2>
+#    >>> f.construct('domainaxis0')
+#    <CF DomainAxis: size(1)>
+#    >>> f.construct('height')
+#    Traceback (most recent call last):
+#        ...
+#    ValueError: Can't return zero constructs
+#    >>> f.construct('height', default=False)
+#    False
+#    >>> f.construct('height', default=TypeError("No height coordinates"))
+#    Traceback (most recent call last):
+#        ...
+#    TypeError: No height coordinates
+#
+#        '''
+#        c = self.constructs
+#
+#        if identity is not None:
+#            c = c(identity)
+#
+#        if key:
+#            return c.key(default=default)
+#
+#        return c.value(default=default)
 
     def domain_ancillary(self, identity=None, default=ValueError(),
                          key=False):
@@ -16672,8 +16683,9 @@ class Field(mixin.PropertiesData,
 
         default: optional
             Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -17851,35 +17863,36 @@ class Field(mixin.PropertiesData,
             axis, key=True, default=ValueError(
                 "Can't roll: Bad axis specification: {!r}".format(axis))
         )
+
         f = _inplace_enabled_define_and_cleanup(self)
 
         if self.domain_axes[axis].get_size() <= 1:
-            if inplace:
-                f = None
             return f
 
-        dim = self.dimension_coordinates.filter_by_axis('exact', axis).value(
-            None)
-        if dim is not None and dim.period() is None:
-            raise ValueError(
-                "Can't roll: {!r} axis has non-periodic dimension "
-                "coordinates".format(dim.identity())
-            )
+        super(mixin.ConstructsMixin, f).roll(axis, shift, inplace=True)
+
+#        dim = self.dimension_coordinates.filter_by_axis('exact', axis).value(
+#            None)
+#        if dim is not None and dim.period() is None:
+#            raise ValueError(
+#                "Can't roll: {!r} axis has non-periodic dimension "
+#                "coordinates".format(dim.identity())
+#            )
 
         try:
             iaxis = self.get_data_axes().index(axis)
         except ValueError:
-            if inplace:
-                f = None
             return f
 
-        super(Field, f).roll(iaxis, shift, inplace=True)
+#        super(Field, f).roll(iaxis, shift, inplace=True)
+        super(mixin.PropertiesData, f).roll(iaxis, shift, inplace=True)
 
-        for key, construct in f.constructs.filter_by_data().items():
-            axes = f.get_data_axes(key, default=())
-            if axis in axes:
-                construct.roll(axes.index(axis), shift, inplace=True)
-        # --- End: for
+
+#        for key, construct in f.constructs.filter_by_data().items():
+#            axes = f.get_data_axes(key, default=())
+#            if axis in axes:
+#                construct.roll(axes.index(axis), shift, inplace=True)
+#        # --- End: for
 
         return f
 
