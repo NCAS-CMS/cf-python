@@ -229,6 +229,9 @@ the <a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dtype=numpy.dtype('i2')</span></code></p>
 </dd>
 </dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.4.</span></p>
+</div>
 </dd>
 <dt>mask: optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
 parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
@@ -238,6 +241,9 @@ broadcastable to the shape of <em>array</em>. Masking will be
 carried out where the mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <p>This mask will applied in addition to any mask already
 defined by the <em>array</em> parameter.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.5.</span></p>
+</div>
 </dd>
 <dt>source: optional</dt><dd><p>Initialize the array, units, calendar and fill value from
 those of <em>source</em>.</p>
@@ -1631,7 +1637,7 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-15.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

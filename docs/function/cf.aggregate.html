@@ -153,6 +153,49 @@ be shown according to the value of the <a class="reference internal" href="cf.lo
 that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
 increasing verbosity, the more description that is printed to
 convey information about the aggregation process. Explicitly:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value set</p></th>
+<th class="head"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><ul class="simple">
+<li><p>No information is displayed.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><ul class="simple">
+<li><p>Display information on which fields are</p></li>
+</ul>
+<p>unaggregatable, and why.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><ul class="simple">
+<li><p>As well as the above, display the structural</p></li>
+</ul>
+<p>signatures of the fields and, when there is more
+than one field construct with the same structural
+signature, their canonical first and last
+coordinate values.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">-1</span></code></p></td>
+<td><ul class="simple">
+<li><p>As well as the above, display the field</p></li>
+</ul>
+<p>construct’s complete aggregation metadata.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 <dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
@@ -333,7 +376,7 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-15.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
