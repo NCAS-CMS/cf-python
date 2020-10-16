@@ -3246,7 +3246,7 @@ class PropertiesDataBounds(PropertiesData):
     def period(self, *value):
         '''Return or set the period for cyclic values.
 
-    .. seeslso:: `cyclic`
+    .. seealso:: `cyclic`
 
     :Parameters:
 

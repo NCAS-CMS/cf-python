@@ -38,7 +38,7 @@ class NetCDFArray(cfdm.NetCDFArray,
 
             :Parameter example:
               To specify that a variable is in the root group:
-              ``group=()` or ``group=None`
+              ``group=()`` or ``group=None``
 
             :Parameter example:
               To specify that a variable is in the group '/forecasts':

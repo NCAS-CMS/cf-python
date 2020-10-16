@@ -1778,7 +1778,7 @@ class PropertiesData(Properties):
 
     This is distinct from the cyclicity of individual axes.
 
-    .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
+    .. seealso:: `cyclic`, `iscyclic`, `isperiodic`
 
     :Parameters:
 

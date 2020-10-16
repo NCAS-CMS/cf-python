@@ -14142,13 +14142,18 @@ class Field(mixin.PropertiesData,
     def cumsum(self, axis, masked_as_zero=False, coordinate=None,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
+
     The cell bounds of the axis are updated to describe the range over
     which the sums apply, and a new "sum" cell method construct is
     added to the resulting field construct.
+
     .. versionadded:: 3.0.0
+
     .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
                  `sum`
+
     :Parameters:
+
         axis:
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
@@ -14156,6 +14161,7 @@ class Field(mixin.PropertiesData,
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X')`` is selected.
+
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
             calculating the cumulative sum. By default the output data
@@ -14164,11 +14170,13 @@ class Field(mixin.PropertiesData,
                       always result in masked values in the output
                       data, regardless of the setting of
                       *masked_as_zero*.
+
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined, relative to the new cell bounds. By default they
             are unchanged from the original field construct. The
             *coordinate* parameter may be one of:
+
             ===============  =========================================
             *coordinate*     Description
             ===============  =========================================
@@ -14181,13 +14189,16 @@ class Field(mixin.PropertiesData,
             ``'maximum'``    An output coordinate is the maximum of
                              its output coordinate bounds.
             ===============  =========================================
+
             *Parameter Example:*
               ``coordinate='maximum'``
         {{inplace: `bool`, optional}}
+
     :Returns:
         `Field` or `None`
             The field construct with the cumulatively summed axis, or
             `None` if the operation was in-place.
+
     **Examples:**
     >>> f = cf.example_field(2)
     >>> print(f)
@@ -20278,7 +20289,7 @@ class Field(mixin.PropertiesData,
 
     @property
     def Items(self):
-        '''Deprecated at version 3.0.0. Use attribute `constructs`r instead.
+        '''Deprecated at version 3.0.0. Use attribute `constructs` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(

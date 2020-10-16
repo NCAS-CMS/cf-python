@@ -23,7 +23,7 @@ Keys must be `str` or `re.Pattern` objects:
   be a string or a callable, as accepted by the `re.Pattern.sub`
   method.
 
-.. versionaddedd:: 3.7.0
+.. versionadded:: 3.7.0
 
 '''
 _docstring_substitution_definitions = {

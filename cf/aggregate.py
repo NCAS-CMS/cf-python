@@ -1381,7 +1381,7 @@ def aggregate(fields,
                            signature, their canonical first and last
                            coordinate values.
 
-            ``3``/``-1``  * As well as the above, display the field
+            ``3``/``-1``   * As well as the above, display the field
                            construct's complete aggregation metadata.
             =============  =================================================
 

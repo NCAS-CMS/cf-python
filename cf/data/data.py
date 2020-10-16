@@ -431,7 +431,7 @@ place.
             *Parameter example:*
                 ``dtype=numpy.dtype('i2')``
 
-            .. versionaddedd:: 3.0.4
+            .. versionadded:: 3.0.4
 
         mask: optional
             Apply this mask to the data given by the *array*
@@ -444,7 +444,7 @@ place.
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
 
-            .. versionaddedd:: 3.0.5
+            .. versionadded:: 3.0.5
 
         source: optional
             Initialize the array, units, calendar and fill value from
@@ -3512,7 +3512,7 @@ place.
 
         {{inplace: `bool`, optional}}
 
-            .. verisionadded:: 3.3.0
+            .. versionadded:: 3.3.0
 
     :Returns:
 
