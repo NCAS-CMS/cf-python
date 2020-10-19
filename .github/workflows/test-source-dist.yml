@@ -1,0 +1,109 @@
+# A GitHub Action to test a source distribution created from the repo state.
+name: Test source distribution
+
+# Triggers the workflow on PR events for the master branch (only)
+on:
+  pull_request:
+    # 'reopened' enables manual retrigger via close & re-open. Disable for all
+    # edits to manage limited resource (PRs often change before merge-ready).
+    types: [opened, reopened, ready_for_review]
+    branches:
+      - master
+
+jobs:
+  source-dist-test:
+    # Set-up the build matrix.
+    # Note: only use one Python version, but it is easier to update in future
+    # by setting it here and refering to it as ${{ matrix.python-version }}.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7]
+    runs-on: ${{ matrix.os }}
+
+    # The sequence of tasks that will be executed as part of this job:
+    steps:
+    # Need to checkout the repo in order to build the source dist from it,
+    # but don't install codebase directly in this case, only test the sdist.
+    - name: Checkout cf-python
+      uses: actions/checkout@v2
+      with:
+        path: main
+
+    # Provide a notification message
+    - name: Notify about setup
+      run: echo Now setting up the environment for cf-python...
+
+    - name: Checkout the current cfdm master to use as the dependency
+      uses: actions/checkout@v2
+      with:
+        repository: NCAS-CMS/cfdm
+        path: cfdm
+
+    # Prepare to test the source dist using the given Python version
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Setup conda, which is the simplest way to access all dependencies,
+    # especially as some are C-based so otherwise difficult to setup.
+    - name: Setup Miniconda
+      uses: goanpeca/setup-miniconda@v1.1.2
+      with:
+        auto-update-conda: true
+        miniconda-version: 'latest'
+        activate-environment: cf-latest
+        python-version: ${{ matrix.python-version }}
+        channels: ncas, conda-forge
+
+    # Ensure shell is configured with conda activated:
+    - name: Check conda config
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
+
+    # Install cf-python dependencies, excluding cfdm, pre-testing
+    # We do so with conda which was setup in a previous step.
+    - name: Install dependencies
+      shell: bash -l {0}
+      run: |
+        conda install -c ncas -c conda-forge udunits2=2.2.25
+        conda install -c conda-forge mpich esmpy
+        conda install scipy matplotlib
+        pip install pycodestyle
+
+    # Install cfdm from the cfdm development master branch.
+    # We do so with conda which was setup in a previous step.
+    - name: Install development cfdm.
+      shell: bash -l {0}
+      run: |
+        cd ${{ github.workspace }}/cfdm
+        pip install -e .
+
+    # Provide another notification message
+    - name: Notify about starting the sdist test
+      run: echo Setup complete. Now creating and testing the source dist...
+
+    - name: Create the source distribution and store the version as an env var
+      shell: bash -l {0}
+      run: |
+        cd ${{ github.workspace }}/main
+        python setup.py sdist
+        # Get the cf-python version and put it in an environment variable for
+        # the next step (only available in steps subsequent to one set in).
+        echo "CF_VERSION=$(python -c "import cf; import sys; sys.stdout.write(cf.__version__)")" >> $GITHUB_ENV
+
+    - name: Test the source distribution
+      shell: bash -l {0}
+      run: |
+        ./test_release $CF_VERSION
+
+    # End with a message indicating the sdist test has completed its run
+    - name: Notify about a completed run
+      run: |
+        echo The test of the latest cf-python source distribution has now
+        echo completed and you may inspect the results.

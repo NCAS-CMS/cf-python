@@ -140,5 +140,5 @@ jobs:
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
       run: |
-        echo The cf-python test-suite has completed and you may now
+        echo The cf-python test suite has completed and you may now
         echo inspect the results.
