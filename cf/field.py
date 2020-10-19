@@ -16237,25 +16237,7 @@ class Field(mixin.ConstructsMixin,
         else:
             identity = da_key
 
-        domain_axes = self.domain_axes(identity)
-        if len(domain_axes) == 1:
-            # identity is a unique domain axis construct identity
-            da_key = domain_axes.key()
-        else:
-            # identity is not a unique domain axis construct identity
-            da_key = self.domain_axis_key(identity, default=None)
-
-        if da_key is None:
-            return self._default(
-                default,
-                "No unique domain axis construct is identifable from "
-                "{!r}".format(identity)
-            )
-
-        if key:
-            return da_key
-
-        return self.constructs[da_key]
+        return super().domain_axis(identity, key=key, default=default)
 
     def domain_axis_position(self, identity):
         '''Return the position in the data of a domain axis construct.
@@ -16708,13 +16690,9 @@ class Field(mixin.ConstructsMixin,
 
         '''
         if identity is None:
-            return super().get_data_axes(default=default)
+            return super(cfdm.Field, self).get_data_axes(default=default)
 
-        key = self.construct_key(identity, default=None)
-        if key is None:
-            return self.construct_key(identity, default=default)
-
-        return super().get_data_axes(key=key, default=default)
+        return super().get_data_axes(identity, default=default)
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
@@ -17860,10 +17838,12 @@ class Field(mixin.ConstructsMixin,
 
         '''
         axis = self.domain_axis(
-            axis, key=True, default=ValueError(
-                "Can't roll: Bad axis specification: {!r}".format(axis))
+            axis, key=True,
+            default=ValueError(
+                "Can't roll: Bad axis specification: {!r}".format(axis)
+            )
         )
-
+        
         f = _inplace_enabled_define_and_cleanup(self)
 
         if self.domain_axes[axis].get_size() <= 1:
