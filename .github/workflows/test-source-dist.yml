@@ -95,7 +95,7 @@ jobs:
         python setup.py sdist
         # Get the cf-python version and put it in an environment variable for
         # the next step (only available in steps subsequent to one set in).
-        echo "CF_VERSION=$(python -c "import cf; import sys; sys.stdout.write(cf.__version__)")" >> $GITHUB_ENV
+        echo "CF_VERSION=$(python setup.py --version 2> /dev/null)" >> $GITHUB_ENV
 
     - name: Test the source distribution
       shell: bash -l {0}
