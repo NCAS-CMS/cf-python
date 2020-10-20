@@ -76,13 +76,19 @@ jobs:
         conda install scipy matplotlib
         pip install pycodestyle
 
-    # Install cfdm from the cfdm development master branch.
+    # Install cfdm from the cfdm development master branch, then all other
+    # dependencies, but not cf-python itself (only want to test sdist build).
     # We do so with conda which was setup in a previous step.
     - name: Install development cfdm.
       shell: bash -l {0}
       run: |
         cd ${{ github.workspace }}/cfdm
         pip install -e .
+        cd ${{ github.workspace }}/main
+        # This next (very meta) command is needed to install requirements.txt
+        # spec (next) in the conda env rather than globally to the PYTHONPATH:
+        conda install pip
+        pip install -r requirements.txt
 
     # Provide another notification message
     - name: Notify about starting the sdist test
