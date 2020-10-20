@@ -28,6 +28,22 @@ class Domain(mixin.ConstructsMixin,
     to describe the domain.
 
     '''
+    # ----------------------------------------------------------------
+    # Private attributes
+    # ----------------------------------------------------------------
+    @property
+    def _cyclic(self):
+        '''Storage for axis cyclicity
+
+        '''
+        return self._custom['_cyclic']
+
+    @_cyclic.setter
+    def _cyclic(self, value): self._custom['_cyclic'] = value
+
+    @_cyclic.deleter
+    def _cyclic(self): del self._custom['_cyclic']
+
     def subspace(self):
         '''TODO
 
@@ -221,25 +237,25 @@ class Domain(mixin.ConstructsMixin,
 
         return out
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    def size(self):
-        '''TODO
-
-        '''
-        size = 1
-        for domain_axis in self.constructs.filter_by_type('domain_axis'):
-            n = domain_axis.get_size(None)
-            if n is None:
-                raise ValueError(
-                    "Can't get domain size when domain axis "
-                    "has no size: {!r}".format(domain_axis)
-                )
-
-            size *= n
-
-        return size
+#    # ----------------------------------------------------------------
+#    # Attributes
+#    # ----------------------------------------------------------------
+#    def size(self):
+#        '''TODO
+#
+#        '''
+#        size = 1
+#        for domain_axis in self.constructs.filter_by_type('domain_axis'):
+#            n = domain_axis.get_size(None)
+#            if n is None:
+#                raise ValueError(
+#                    "Can't get domain size when domain axis "
+#                    "has no size: {!r}".format(domain_axis)
+#                )
+#
+#            size *= n
+#
+#        return size
 
     # ----------------------------------------------------------------
     # Methods
@@ -300,7 +316,9 @@ class Domain(mixin.ConstructsMixin,
     set()
 
         '''
-        old = set([data_axes[i] for i in data.cyclic()])
+        cyclic = self._cyclic
+        old = cyclic.copy()
+        
         if identity is None:
             return old
 
@@ -315,6 +333,8 @@ class Domain(mixin.ConstructsMixin,
                     raise ValueError(
                         "A cyclic dimension coordinate must have a period")
         # --- End: if
+
+        self._cyclic = cyclic.union((axis,))
 
         return old
 
@@ -919,6 +939,59 @@ class Domain(mixin.ConstructsMixin,
 
         # Return the indices and the auxiliary mask
         return indices
+
+    def iscyclic(self, identity):
+        '''Returns True if the given axis is cyclic.
+
+    .. versionadded:: 3.TODO.0
+
+    .. seealso:: `axis`, `cyclic`, `period`
+
+    :Parameters:
+
+        identity:
+           Select the domain axis construct by one of:
+
+              * An identity or key of a 1-d coordinate construct that
+                whose data spans the domain axis construct.
+
+              * A domain axis construct identity or key.
+
+              * The position of the domain axis construct in the field
+                construct's data.
+
+            The *identity* parameter selects the domain axis as
+            returned by this call of the field construct's
+            `domain_axis` method: ``f.domain_axis(identity)``.
+
+    :Returns:
+
+        `bool`
+            True if the selected axis is cyclic, otherwise False.
+
+    **Examples:**
+
+    >>> f.iscyclic('X')
+    True
+    >>> f.iscyclic('latitude')
+    False
+
+    >>> x = f.iscyclic('long_name=Latitude')
+    >>> x = f.iscyclic('dimensioncoordinate1')
+    >>> x = f.iscyclic('domainaxis2')
+    >>> x = f.iscyclic('key%domainaxis2')
+    >>> x = f.iscyclic('ncdim%y')
+    >>> x = f.iscyclic(2)
+
+        '''
+        axis = self.domain_axis(identity, key=True, default=None)
+        if axis is None:
+            raise ValueError(
+                "Can't identify unique axis from identity "
+                "{!r}".format(identity)
+            )
+candidate fo another mixin?
+        return axis in self.cyclic()
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
