@@ -100,6 +100,7 @@ jobs:
     - name: Test the source distribution
       shell: bash -l {0}
       run: |
+        cd ${{ github.workspace }}/main
         ./test_release $CF_VERSION
 
     # End with a message indicating the sdist test has completed its run
