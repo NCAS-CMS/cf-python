@@ -10553,7 +10553,7 @@ class Field(mixin.PropertiesData,
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
                 for key in c.filter_by_axis('or', axis):
                     logger.info(
-                        '    Removing {!r}'.format(value)
+                        '    Removing {!r}'.format(key)
                     )  # pragma: no cover
 
                     f.del_construct(key)
