@@ -1,3 +1,7 @@
+import logging
+
+from numpy import size as numpy_size
+
 import cfdm
 
 from . import mixin
@@ -10,9 +14,10 @@ from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
                          _manage_log_level_via_verbosity)
 
+logger = logging.getLogger(__name__)
+
 
 class Domain(mixin.FieldDomainMixin,
-             mixin.ConstructsMixin,
              mixin.Properties,
              cfdm.Domain):
     '''A domain construct of the CF data model.
@@ -29,6 +34,21 @@ class Domain(mixin.FieldDomainMixin,
     to describe the domain.
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+    x.__repr__() <==> repr(x)
+
+        '''
+        return super().__repr__().replace('<', '<CF ', 1)
+
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------
@@ -44,165 +64,6 @@ class Domain(mixin.FieldDomainMixin,
 
     @_cyclic.deleter
     def _cyclic(self): del self._custom['_cyclic']
-
-    def subspace(self):
-        '''TODO
-
-        '''
-        logger.debug(
-            "{}.__getitem__\n"
-            "    input indices  = {}".format(
-                self.__class__.__name__, indices
-            )
-        )  # pragma: no cover
-        
-        if indices is Ellipsis:
-            return self.copy()
-
-        data = self.data
-        shape = data.shape
-
-        # Parse the index
-        if not isinstance(indices, tuple):
-            indices = (indices,)
-
-        if isinstance(indices[0], str) and indices[0] == 'mask':
-            auxiliary_mask = indices[:2]
-            indices2 = indices[2:]
-        else:
-            auxiliary_mask = None
-            indices2 = indices
-
-        indices, roll = parse_indices(shape, indices2, cyclic=True)
-
-        logger.debug(
-            "    parsed indices = {}\n"
-            "    roll           = {}".format(
-                indices, roll
-            )
-        )  # pragma: no cover
-        
-        if roll:
-            new = self
-            axes = self.get_data_axes()
-            cyclic_axes = self.cyclic()
-            for iaxis, shift in roll.items():                
-                axis = axes[iaxis]
-                if axis not in cyclic_axes:
-                    raise IndexError(
-                        "Can't take a cyclic slice from non-cyclic {!r} "
-                        "axis".format(
-                            self.constructs.domain_axis_identity(axis))
-                    )
-
-                new = new.roll(iaxis, shift)
-        else:
-            new = self.copy()
-
-        # ------------------------------------------------------------
-        # Subspace the field construct's data
-        # ------------------------------------------------------------
-        if auxiliary_mask:
-            auxiliary_mask = list(auxiliary_mask)
-            findices = auxiliary_mask + indices
-        else:
-            findices = indices
-
-        logger.debug(
-            "    shape          = {}\n"
-            "    indices        = {}\n"
-            "    indices2       = {}\n"
-            "    findices       = {}".format(
-                shape, indices, indices2, findices
-            )
-        )  # pragma: no cover
-
-        new_data = new.data[tuple(findices)]
-
-        # Set sizes of domain axes
-        data_axes = new.get_data_axes()
-        domain_axes = new.domain_axes
-        for axis, size in zip(data_axes, new_data.shape):
-            domain_axes[axis].set_size(size)
-
-        # ------------------------------------------------------------
-        # Subspace constructs with data
-        # ------------------------------------------------------------
-        if data_axes:
-            construct_data_axes = new.constructs.data_axes()
-
-            for key, construct in new.constructs.filter_by_axis(
-                    'or', *data_axes).items():                
-#                construct_axes = construct_data_axes[key]
-                dice = [
-                    indices[data_axes.index(axis)]
-                    for axis in construct_data_axes[key]
-                ]
-#                dice = []
-#                needs_slicing = False
-#                for axis in construct_axes:
-#                    if axis in data_axes:
-#                        needs_slicing = True
-#                    dice.append(indices[data_axes.index(axis)])
-#                    else:
-#                        dice.append(slice(None))
-                # --- End: for
-
-                # Generally we do not apply an auxiliary mask to the
-                # metadata items, but for DSGs we do.
-                if auxiliary_mask and new.DSG:
-                    item_mask = []
-                    for mask in auxiliary_mask[1]:
-                        iaxes = [data_axes.index(axis) for axis in
-                                 construct_axes if axis in data_axes]
-                        for i, (axis, size) in enumerate(zip(
-                                data_axes, mask.shape)):
-                            if axis not in construct_axes:
-                                if size > 1:
-                                    iaxes = None
-                                    break
-
-                                mask = mask.squeeze(i)
-                        # --- End: for
-
-                        if iaxes is None:
-                            item_mask = None
-                            break
-                        else:
-                            mask1 = mask.transpose(iaxes)
-                            for i, axis in enumerate(construct_axes):
-                                if axis not in data_axes:
-                                    mask1.inset_dimension(i)
-                            # --- End: for
-
-                            item_mask.append(mask1)
-                    # --- End: for
-
-                    if item_mask:
-#                        needs_slicing = True
-                        dice = [auxiliary_mask[0], item_mask] + dice
-                # --- End: if
-
-                logger.debug(
-                    '    dice = {}'.format(dice))  # pragma: no cover
-
-                # Replace existing construct with its subspace
- #               if needs_slicing:
-                new.set_construct(construct[tuple(dice)], key=key,
-                                  axes=construct_axes, copy=False)
-        # --- End: for
-
-#        new.set_data(new_data, axes=data_axes, copy=False)
-
-        return new
-
-    def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-    x.__repr__() <==> repr(x)
-
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
 
     # ----------------------------------------------------------------
     # Private methods
@@ -238,29 +99,137 @@ class Domain(mixin.FieldDomainMixin,
 
         return out
 
-#    # ----------------------------------------------------------------
-#    # Attributes
-#    # ----------------------------------------------------------------
-#    def size(self):
-#        '''TODO
-#
-#        '''
-#        size = 1
-#        for domain_axis in self.constructs.filter_by_type('domain_axis'):
-#            n = domain_axis.get_size(None)
-#            if n is None:
-#                raise ValueError(
-#                    "Can't get domain size when domain axis "
-#                    "has no size: {!r}".format(domain_axis)
-#                )
-#
-#            size *= n
-#
-#        return size
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+#    @_inplace_enabled(default=False)
+#    def anchor(self, axis, value, inplace=False, dry_run=False):
+#        '''Roll a cyclic axis so that the given value lies in the first
+#    coordinate cell.
+#
+#    A unique axis is selected with the *axes* and *kwargs* parameters.
+#
+#    .. versionadded:: 1.0
+#
+#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `period`, `roll`
+#
+#    :Parameters:
+#
+#        axis:
+#            The cyclic axis to be rolled, defined by that which would
+#            be selected by passing the given axis description to a
+#            call of the field construct's `domain_axis` method. For
+#            example, for a value of ``'X'``, the domain axis construct
+#            returned by ``f.domain_axis('X')`` is selected.
+#
+#        value:
+#            Anchor the dimension coordinate values for the selected
+#            cyclic axis to the *value*. May be any numeric scalar
+#            object that can be converted to a `Data` object (which
+#            includes `numpy` and `Data` objects). If *value* has units
+#            then they must be compatible with those of the dimension
+#            coordinates, otherwise it is assumed to have the same
+#            units as the dimension coordinates. The coordinate values
+#            are transformed so that *value* is "equal to or just
+#            before" the new first coordinate value. More specifically:
+#
+#              * Increasing dimension coordinates with positive period,
+#                P, are transformed so that *value* lies in the
+#                half-open range (L-P, F], where F and L are the
+#                transformed first and last coordinate values,
+#                respectively.
+#
+#        ..
+#
+#              * Decreasing dimension coordinates with positive period,
+#                P, are transformed so that *value* lies in the
+#                half-open range (L+P, F], where F and L are the
+#                transformed first and last coordinate values,
+#                respectively.
+#
+#            *Parameter example:*
+#              If the original dimension coordinates are ``0, 5, ...,
+#              355`` (evenly spaced) and the period is ``360`` then
+#              ``value=0`` implies transformed coordinates of ``0, 5,
+#              ..., 355``; ``value=-12`` implies transformed
+#              coordinates of ``-10, -5, ..., 345``; ``value=380``
+#              implies transformed coordinates of ``380, 385, ...,
+#              715``.
+#
+#            *Parameter example:*
+#              If the original dimension coordinates are ``355, 350,
+#              ..., 0`` (evenly spaced) and the period is ``360`` then
+#              ``value=355`` implies transformed coordinates of ``355,
+#              350, ..., 0``; ``value=0`` implies transformed
+#              coordinates of ``0, -5, ..., -355``; ``value=392``
+#              implies transformed coordinates of ``390, 385, ...,
+#              30``.
+#
+#        {{inplace: `bool`, optional}}
+#
+#        dry_run: `bool`, optional
+#            Return a dictionary of parameters which describe the
+#            anchoring process. The field is not changed, even if *i*
+#            is True.
+#
+#    :Returns:
+#
+#        `{{class}}` or `None` or `dict`
+#
+#    **Examples:**
+#
+#    >>> f.iscyclic('X')
+#    True
+#    >>> f.dimension_coordinate('X').data
+#    <CF Data(8): [0, ..., 315] degrees_east> TODO
+#    >>> print(f.dimension_coordinate('X').array)
+#    [  0  45  90 135 180 225 270 315]
+#    >>> g = f.anchor('X', 230)
+#    >>> print(g.dimension_coordinate('X').array)
+#    [270 315   0  45  90 135 180 225]
+#    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
+#    >>> print(g.dimension_coordinate('X').array)
+#    [630 675 360 405 450 495 540 585]
+#    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
+#    >>> print(g.dimension_coordinate('X').array)
+#    [-450 -405 -720 -675 -630 -585 -540 -495]
+#
+#    >>> f.iscyclic('X')
+#    True
+#    >>> f.dimension_coordinate('X').data
+#    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
+#    >>> f.anchor('X', 10000).dimension_coordinate('X').data
+#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+#    >>> d = f.anchor('X', 10000, dry_run=True)
+#    >>> d
+#    {'axis': 'domainaxis2',
+#     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
+#     'roll': 28}
+#    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
+#    ...     d['axis']) + d['nperiod']).data
+#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+#
+#        '''
+#        axis = self.domain_axis(
+#            axis, key=True,
+#            default=ValueError(
+#                "Can't roll: Bad axis specification: {!r}".format(axis)
+#            )
+#        )
+#        
+#        if dry_run:
+#            inplace=True
+#        
+#        f = _inplace_enabled_define_and_cleanup(self)
+#
+#        # Anchor the metadata constructs in-place
+#        out = f.constructs._anchor(axis, value, dry_run=dry_run)
+#        
+#        if dry_run:
+#            return out
+#        
+#        return f
+
     def close(self):
         '''Close all files referenced by the domain construct.
 
@@ -283,7 +252,7 @@ class Domain(mixin.FieldDomainMixin,
 
     .. versionadded:: 3.TODO.0
 
-    .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`, `period`
+    .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
 
     :Parameters:
 
@@ -459,7 +428,164 @@ class Domain(mixin.FieldDomainMixin,
 
         return domain_axes.value()
 
-    def _indices(self, mode, axes, **kwargs):
+    def get_data_axes(self, identity, default=ValueError()):
+        '''Return the keys of the domain axis constructs spanned by the data
+    of a metadata construct.
+
+    .. versionadded:: 3.TODO.0
+
+    .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
+
+    :Parameters:
+
+        identity:
+           Select the construct for which to return the domain axis
+           constructs spanned by its data. By default the field
+           construct is selected. May be:
+
+              * The identity or key of a metadata construct.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
+
+    :Returns:
+
+        `tuple`
+            The keys of the domain axis constructs spanned by the data.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        key = self.construct(identity, key=True, default=None)
+        if key is None:
+            return self.construct_key(identity, default=default)
+        
+        return super().get_data_axes(key=key, default=default)
+
+#def period(self, *value):
+#    '''Return or set the period of the data. TODO
+#
+#This is distinct from the cyclicity of individual axes.
+#
+#.. versionadded:: 3.TODO.0
+#
+#.. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
+#
+#:Parameters:
+#
+#    value: optional
+#        The period. The absolute value is used.  May be set to any
+#        numeric scalar object, including `numpy` and `Data`
+#        objects. The units of the radius are assumed to be the
+#        same as the data, unless specified by a `Data` object.
+#
+#        If *value* is `None` then any existing period is removed
+#        from the construct.
+#
+#:Returns:
+#
+#    `Data` or `None`
+#        The period prior to the change, or the current period if
+#        no *value* was specified. `None` is always returned if the
+#        period had not been set previously.
+#
+#**Examples:**
+#
+#>>> print(c.period())
+#None
+#>>> c.Units
+#<Units: degrees_east>
+#>>> print(c.period(360))
+#None
+#>>> c.period()
+#<CF Data(): 360.0 'degrees_east'>
+#>>> import math
+#>>> c.period(cf.Data(2*math.pi, 'radians'))
+#<CF Data(): 360.0 degrees_east>
+#>>> c.period()
+#<CF Data(): 6.28318530718 radians>
+#>>> c.period(None)
+#<CF Data:() 6.28318530718 radians>
+#>>> print(c.period())
+#None
+#>>> print(c.period(-360))
+#None
+#>>> c.period()
+#<CF Data(): 360.0 degrees_east>
+#
+#    '''
+#    old = self._custom.get('period')
+#    if old is not None:
+#        old = old.copy()
+#
+#    if not value:
+#        return old
+#
+#    value = value[0]
+#
+#    if value is not None:
+#        value = Data.asdata(value)
+#        units = value.Units
+#        if not units:
+#            value = value.override_units(self.Units)
+#        elif units != self.Units:
+#            if units.equivalent(self.Units):
+#                value.Units = self.Units
+#            else:
+#                raise ValueError(
+#                    "Period units {!r} are not equivalent to data "
+#                    "units {!r}".format(units, self.Units)
+#                )
+#        # --- End: if
+#
+#        value = abs(value)
+#        value.dtype = float
+#
+#         array = self.array
+#         r = abs(array[-1] - array[0])
+#
+#         if r >= value.datum(0):
+#             raise ValueError(
+#                 "The data range of {!r} is not less than the "
+#                 "period of {!r}".format(r, value)
+#             )
+#    # --- End: if
+#
+#    self._custom['period'] = value
+#
+#    return old
+
+    def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the field construct.
 
     The subspace is defined by identifying indices based on the
@@ -632,498 +758,157 @@ class Domain(mixin.FieldDomainMixin,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
 
         '''
-        envelope = (mode == 'envelope')
-        full = (mode == 'full')
-        compress = (mode == 'compress')
-
-        logger.debug(
-            "indices:\n"
-            "    envelope, full, compress = {} {} {}\n"
-            "    axes = {}".format(
-                envelope, full, compress, axes
-            )
-        )  # pragma: no cover
-
-        domain_axes = self.constructs.filter_by_type('domain_axis')
-        constructs = self.constructs.filter_by_data()
-
-        domain_rank = self.rank
-        
-        ordered_axes = self._parse_axes(axes)
-        if ordered_axes is None or len(ordered_axes) != domain_rank:
-            raise ValueError(
-                "Must provide an ordered sequence of all domain axes "
-                "as the last positional argument. Got {!r}".format(axes)
-            )
-        
-        domain_shape = tuple(
-            [domain_axes[axis].get_size(None) for axis in ordered_axes]
-        )
-        if None in domain_shape:
-            raise ValueError(
-                "Can't find indices when a domain axis has no size"
-            )
-
-        # Initialize indices
-        indices = [slice(None)] * domain_rank
-
-        parsed = {}
-        unique_axes = set()
-        n_axes = 0
-        for identity, value in kwargs.items():
-            if identity in domain_axes:
-                axes = (identity,)
-                key = None
-                construct = None
-            else:
-                c = constructs.filter_by_identity(identity)
-                if len(c) != 1:
-                    raise ValueError(
-                        "Can't find indices: Ambiguous axis or axes: "
-                        "{!r}".format(identity)
-                    )
-
-                key, construct = dict(c).popitem()
-
-                axes = self.get_data_axes(key)
-
-            sorted_axes = tuple(sorted(axes))
-            if sorted_axes not in parsed:
-                n_axes += len(sorted_axes)
-
-            parsed.setdefault(sorted_axes, []).append(
-                (axes, key, construct, value))
-
-            unique_axes.update(sorted_axes)
-        # --- End: for
-
-        if len(unique_axes) < n_axes:
-            raise ValueError(
-                "Can't find indices: Multiple constructs with incompatible "
-                "domain axes"
-            )
-
-        auxiliary_mask = []
-
-        for sorted_axes, axes_key_construct_value in parsed.items():
-            axes, keys, constructs, points = list(
-                zip(*axes_key_construct_value)
-            )
-            n_items = len(constructs)
-            n_axes = len(sorted_axes)
-
-            if n_items > n_axes:
-                if n_axes == 1:
-                    a = 'axis'
-                else:
-                    a = 'axes'
-
-                raise ValueError(
-                    "Error: Can't specify {} conditions for {} {}: {}".format(
-                        n_items, n_axes, a, points
-                    )
-                )
-
-            create_mask = False
-
-            item_axes = axes[0]
-
-            logger.debug(
-                "    item_axes = {!r}\n"
-                "    keys      = {!r}".format(item_axes, keys)
+        if 'exact' in mode:
+            _DEPRECATION_ERROR_ARG(
+                self, 'indices', 'exact',
+                "Keywords are now never interpreted as regular expressions."
             )  # pragma: no cover
 
-            if n_axes == 1:
-                # ----------------------------------------------------
-                # 1-d construct
-                # ----------------------------------------------------
-                ind = None
+        domain_indices = self._indices(mode, None, **kwargs)
 
-                axis = item_axes[0]
-                item = constructs[0]
-                value = points[0]
+        return domain_indices['indices']
 
-                logger.debug(
-                    "    {} 1-d constructs: {!r}\n"
-                    "    axis      = {!r}\n"
-                    "    value     = {!r}".format(
-                        n_items, constructs, axis, value
-                    )
-                )  # pragma: no cover
+    @_inplace_enabled(default=False)
+    def roll(self, axis, shift, inplace=False):
+        '''Roll the field along a cyclic axis.
 
-                if isinstance(value, (list, slice, tuple, numpy_ndarray)):
-                    # ------------------------------------------------
-                    # 1-dimensional CASE 1: Value is already an index,
-                    #                       e.g. [0], (0,3),
-                    #                       slice(0,4,2),
-                    #                       numpy.array([2,4,7]),
-                    #                       [True, False, True]
-                    # -------------------------------------------------
-                    logger.debug('    1-d CASE 1: ')  # pragma: no cover
+    A unique axis is selected with the axes and kwargs parameters.
 
-                    index = value
+    .. versionadded:: 1.0
 
-                    if envelope or full:
-                        size = self.constructs[axis].get_size()
-                        d = Data(list(range(size)))
-                        ind = (d[value].array,)
-                        index = slice(None)
-
-                elif (item is not None
-                      and isinstance(value, Query)
-                      and value.operator in ('wi', 'wo')
-                      and item.construct_type == 'dimension_coordinate'
-                      and self.iscyclic(axis)):
-                    # self.iscyclic(sorted_axes)):
-                    # ------------------------------------------------
-                    # 1-dimensional CASE 2: Axis is cyclic and
-                    #                       subspace criterion is a
-                    #                       'within' or 'without'
-                    #                       Query instance
-                    # -------------------------------------------------
-                    logger.debug('    1-d CASE 2: ')  # pragma: no cover
-
-                    if item.increasing:
-                        anchor0 = value.value[0]
-                        anchor1 = value.value[1]
-                    else:
-                        anchor0 = value.value[1]
-                        anchor1 = value.value[0]
-
-                    a = self.anchor(axis, anchor0, dry_run=True)['roll']
-                    b = self.flip(axis).anchor(
-                            axis, anchor1, dry_run=True)['roll']
-
-                    size = item.size
-                    if abs(anchor1 - anchor0) >= item.period():
-                        if value.operator == 'wo':
-                            set_start_stop = 0
-                        else:
-                            set_start_stop = -a
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    elif a + b == size:
-                        b = self.anchor(axis, anchor1, dry_run=True)['roll']
-                        if (b == a and value.operator == 'wo') or not (
-                                b == a or value.operator == 'wo'):
-                            set_start_stop = -a
-                        else:
-                            set_start_stop = 0
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    else:
-                        if value.operator == 'wo':
-                            start = b - size
-                            stop = -a + size
-                        else:
-                            start = -a
-                            stop = b - size
-
-                    index = slice(start, stop, 1)
-
-                    if full:
-                        # index = slice(start, start+size, 1)
-                        d = Data(list(range(size)))
-                        d.cyclic(0)
-                        ind = (d[index].array,)
-
-                        index = slice(None)
-
-                elif item is not None:
-                    # -------------------------------------------------
-                    # 1-dimensional CASE 3: All other 1-d cases
-                    # -------------------------------------------------
-                    logger.debug('    1-d CASE 3:')  # pragma: no cover
-
-                    item_match = (value == item)
-
-                    if not item_match.any():
-                        raise ValueError(
-                            "No {!r} axis indices found from: {}".format(
-                                identity, value)
-                        )
-
-                    index = numpy_asanyarray(item_match)
-
-                    if envelope or full:
-                        if numpy_ma_isMA(index):
-                            ind = numpy_ma_where(index)
-                        else:
-                            ind = numpy_where(index)
-
-                        index = slice(None)
-
-                else:
-                    raise ValueError(
-                        "Must specify a domain axis construct or a construct "
-                        "with data for which to create indices"
-                    )
-
-                logger.debug(
-                    '    index = {}'.format(index))  # pragma: no cover
-
-                # Put the index into the correct place in the list of
-                # indices.
-                #
-                # Note that we might overwrite it later if there's an
-                # auxiliary mask for this axis.
-                if axis in ordered_axes:
-                    indices[ordered_axes.index(axis)] = index
-
-            else:
-                # -----------------------------------------------------
-                # N-dimensional constructs
-                # -----------------------------------------------------
-                logger.debug(
-                    "    {} N-d constructs: {!r}\n"
-                    "    {} points        : {!r}\n"
-                    "    shape          : {}".format(
-                        n_items, constructs, len(points), points, domain_shape
-                    )
-                )  # pragma: no cover
-
-                # Make sure that each N-d item has the same relative
-                # axis order as the field's data array.
-                #
-                # For example, if the data array of the field is
-                # ordered T Z Y X and the item is ordered Y T then the
-                # item is transposed so that it is ordered T Y. For
-                # example, if the field's data array is ordered Z Y X
-                # and the item is ordered X Y T (T is size 1) then
-                # transpose the item so that it is ordered Y X T.
-                g = self.transpose(ordered_axes, constructs=True)
-
-                item_axes = g.get_data_axes(keys[0])
-
-                constructs = [g.constructs[key] for key in keys]
-                logger.debug(
-                    "    transposed N-d constructs: {!r}".format(constructs)
-                )  # pragma: no cover
-
-                item_matches = [(value == construct).data for
-                                value, construct in zip(points, constructs)]
-
-                item_match = item_matches.pop()
-
-                for m in item_matches:
-                    item_match &= m
-
-                item_match = item_match.array  # LAMA alert
-
-                if numpy_ma_isMA:
-                    ind = numpy_ma_where(item_match)
-                else:
-                    ind = numpy_where(item_match)
-                
-                logger.debug(
-                    "    item_match  = {}\n"
-                    "    ind         = {}".format(item_match, ind)
-                )  # pragma: no cover
-
-                bounds = [item.bounds.array[ind] for item in constructs
-                          if item.has_bounds()]
-
-                contains = False
-                if bounds:
-                    points2 = []
-                    for v, construct in zip(points, constructs):
-                        if isinstance(v, Query):
-                            if v.operator == 'contains':
-                                contains = True
-                                v = v.value
-                            elif v.operator == 'eq':
-                                v = v.value
-                            else:
-                                contains = False
-                                break
-                        # --- End: if
-
-                        v = Data.asdata(v)
-                        if v.Units:
-                            v.Units = construct.Units
-
-                        points2.append(v.datum())
-                # --- End: if
-
-                if contains:
-                    # The coordinates have bounds and the condition is
-                    # a 'contains' Query object. Check each
-                    # potentially matching cell for actually including
-                    # the point.
-                    try:
-                        Path
-                    except NameError:
-                        raise ImportError(
-                            "Must install matplotlib to create indices based "
-                            "on {}-d constructs and a 'contains' Query "
-                            "object".format(constructs[0].ndim)
-                        )
-
-                    if n_items != 2:
-                        raise ValueError(
-                            "Can't index for cell from {}-d coordinate "
-                            "objects".format(n_axes)
-                        )
-
-                    if 0 < len(bounds) < n_items:
-                        raise ValueError("bounds alskdaskds TODO")
-
-                    # Remove grid cells if, upon closer inspection,
-                    # they do actually contain the point.
-                    delete = [n for n, vertices in
-                              enumerate(zip(*zip(*bounds))) if not
-                              Path(zip(*vertices)).contains_point(points2)]
-
-                    if delete:
-                        ind = [numpy_delete(ind_1d, delete) for ind_1d in ind]
-                # --- End: if
-            # --- End: if
-
-            if ind is not None:
-                mask_shape = [None] * domain_rank
-                masked_subspace_size = 1
-                ind = numpy_array(ind)
-                logger.debug('    ind = {}'.format(ind))  # pragma: no cover
-
-                for i, (axis, start, stop) in enumerate(zip(
-                        item_axes, ind.min(axis=1), ind.max(axis=1))):
-                    if axis not in ordered_axes:
-                        continue
-
-                    position = ordered_axes.index(axis)
-
-                    if indices[position] == slice(None):
-                        if compress:
-                            # Create a compressed index for this axis
-                            size = stop - start + 1
-                            index = sorted(set(ind[i]))
-                        elif envelope:
-                            # Create an envelope index for this axis
-                            stop += 1
-                            size = stop - start
-                            index = slice(start, stop)
-                        elif full:
-                            # Create a full index for this axis
-                            start = 0
-#                            stop = self.axis_size(axis)
-                            stop = self.domain_axes[axis].get_size()
-                            size = stop - start
-                            index = slice(start, stop)
-                        else:
-                            raise ValueError(
-                                "Must have full, envelope or compress"
-                            )  # pragma: no cover
-
-                        indices[position] = index
-
-                    mask_shape[position] = size
-                    masked_subspace_size *= size
-                    ind[i] -= start
-                # --- End: for
-
-                create_mask = ind.shape[1] < masked_subspace_size
-            else:
-                create_mask = False
-
-            # --------------------------------------------------------
-            # Create an auxiliary mask for these axes
-            # --------------------------------------------------------
-            logger.debug(
-                "    create_mask = {}".format(create_mask)
-            )  # pragma: no cover
-
-            if create_mask:
-                logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
-                )  # pragma: no cover
-
-                mask = self.data._create_auxiliary_mask_component(
-                    mask_shape, ind, compress)
-                auxiliary_mask.append(mask)
-                logger.debug(
-                    "    mask_shape  = {}\n"
-                    "    mask.shape  = {}".format(mask_shape, mask.shape)
-                )  # pragma: no cover
-        # --- End: for
-
-        indices = tuple(parse_indices(domain_shape, tuple(indices)))
-
-        # Convert indices to a dictionary
-        indices = {axis: index
-                   for axis, index in zip(ordered_axes, indices)}
-        
-        if auxiliary_mask:
-#            indices = ('mask', auxiliary_mask) + indices
-            indices['axuiliary_mask'] = auxiliary_mask
-
-        # Return the indices and the auxiliary mask
-        return indices
-    
-    def get_data_axes(self, identity, default=ValueError()):
-        '''Return the keys of the domain axis constructs spanned by the data
-    of a metadata construct.
-
-    .. versionadded:: 3.TODO.0
-
-    .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
+    .. seealso:: `anchor`, `axis`, `cyclic`, `iscyclic`, `period`
 
     :Parameters:
 
-        identity:
-           Select the construct for which to return the domain axis
-           constructs spanned by its data. By default the field
-           construct is selected. May be:
+        axis:
+            The cyclic axis to be rolled, defined by that which would
+            be selected by passing the given axis description to a
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X')`` is selected.
 
-              * The identity or key of a metadata construct.
+        shift: `int`
+            The number of places by which the selected cyclic axis is
+            to be rolled.
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); or a compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``) that selects the
-            relevant constructs whose identities match via
-            `re.search`.
-
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
-
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
-
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
-
-            {{default Exception}}
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-        `tuple`
-            The keys of the domain axis constructs spanned by the data.
+        `Field`
+            The rolled field.
 
     **Examples:**
 
-    TODO
+    Roll the data of the "X" axis one elements to the right:
+
+    >>> f.roll('X', 1)
+
+    Roll the data of the "X" axis three elements to the left:
+
+    >>> f.roll('X', -3)
 
         '''
-        key = self.construct(identity, key=True, default=None)
-        if key is None:
-            return self.construct_key(identity, default=default)
+        axis = self.domain_axis(
+            axis, key=True,
+            default=ValueError(
+                "Can't roll: Bad axis specification: {!r}".format(axis)
+            )
+        )
         
-        return super().get_data_axes(key=key, default=default)
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if d.domain_axes[axis].get_size() <= 1:
+            return d
+
+        # Roll the metadata constructs in-place
+        d._roll_constructs(axis, shift)
+
+        return d
+
+    def subspace(self, **kwargs):
+        '''TODO
+
+        '''
+        logger.debug(
+            "{}.subspace\n"
+            "    input indices  = {}".format(
+                self.__class__.__name__, kwargs
+            )
+        )  # pragma: no cover
+                
+        domain_axes = self.domain_axes
+            
+        axes = []
+        indices = []
+        shape = []
+        for a, b in kwargs.items():
+            axes.append(a)
+            shape.append(domain_axes[a].get_size())
+            indices.append(b)
+
+        indices, roll = parse_indices(tuple(shape), tuple(indices),
+                                      cyclic=True)
+
+        logger.debug(
+            "    parsed indices = {}\n"
+            "    roll           = {}".format(
+                indices, roll
+            )
+        )  # pragma: no cover
+        
+        if roll:
+            new = self
+            cyclic_axes = self.cyclic()
+            for iaxis, shift in roll.items():                
+                axis = axes[iaxis]
+                if axis not in cyclic_axes:
+                    raise IndexError(
+                        "Can't take a cyclic slice from non-cyclic {!r} "
+                        "axis".format(
+                            self.constructs.domain_axis_identity(axis))
+                    )
+
+                new = new.roll(axis, shift)
+        else:
+            new = self.copy()
+
+        # ------------------------------------------------------------
+        # Set sizes of domain axes
+        # ------------------------------------------------------------
+        domain_axes = new.domain_axes
+        for axis, index in zip(axes, indices):
+            if isinstance(index, slice):
+                size = abs((index.stop - index.start) / index.step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+            else:
+                size = numpy_size(index)
+                
+            domain_axes[axis].set_size(size)
+
+        # ------------------------------------------------------------
+        # Subspace constructs with data
+        # ------------------------------------------------------------
+        construct_data_axes = new.constructs.data_axes()
+        
+        for key, construct in new.constructs.filter_by_data().items():
+            construct_axes = construct_data_axes[key]
+            
+            dice = [indices[i] for i, axis in enumerate(axes) 
+                    if axis in construct_data_axes[key]]
+
+            logger.debug(
+                '    dice = {}'.format(dice))  # pragma: no cover
+            
+            # Replace existing construct with its subspace
+            new.set_construct(construct[tuple(dice)], key=key,
+                              axes=construct_axes, copy=False)
+
+        return new
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
