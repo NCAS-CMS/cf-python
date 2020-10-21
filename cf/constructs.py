@@ -775,6 +775,24 @@ class Constructs(mixin.ConstructsMixin,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def close(self):
+        '''Close all files referenced by the metadata constructs.
+
+    Note that a closed file will be automatically reopened if its
+    contents are subsequently required.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> c.close()
+
+        '''
+        for construct in self.constructs.filter_by_data().values():
+            construct.close()
+
     def filter_by_identity(self, *identities):
         '''Select metadata constructs by identity.
 

@@ -11,7 +11,8 @@ from .decorators import (_inplace_enabled,
                          _manage_log_level_via_verbosity)
 
 
-class Domain(mixin.ConstructsMixin,
+class Domain(mixin.FieldDomainMixin,
+             mixin.ConstructsMixin,
              mixin.Properties,
              cfdm.Domain):
     '''A domain construct of the CF data model.
@@ -36,7 +37,7 @@ class Domain(mixin.ConstructsMixin,
         '''Storage for axis cyclicity
 
         '''
-        return self._custom['_cyclic']
+        return self._custom.get('_cyclic', set())
 
     @_cyclic.setter
     def _cyclic(self, value): self._custom['_cyclic'] = value
@@ -260,6 +261,23 @@ class Domain(mixin.ConstructsMixin,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def close(self):
+        '''Close all files referenced by the domain construct.
+
+    Note that a closed file will be automatically reopened if its
+    contents are subsequently required.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> d.close()
+
+        '''
+        self.constructs.close()
+
     def cyclic(self, identity=None, iscyclic=True, period=None):
         '''Set the cyclicity of an axis.
 
@@ -337,6 +355,109 @@ class Domain(mixin.ConstructsMixin,
         self._cyclic = cyclic.union((axis,))
 
         return old
+
+    def domain_axis(self, identity, key=False, default=ValueError()):
+        '''Return a domain axis construct, or its key.
+
+    .. versionadded:: 3.TODO.0
+
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axes`, `field_ancillary`
+
+    :Parameters:
+
+        identity:
+           Select the domain axis construct by one of:
+
+              * An identity or key of a 1-d coordinate construct that
+                whose data spans the domain axis construct.
+
+              * A domain axis construct identity or key.
+
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            A position of a domain axis construct in the field
+            construct's data is specified by an integer index.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+            *Parameter example:*
+              ``identity='long_name=Latitude'``
+
+            *Parameter example:*
+              ``identity='dimensioncoordinate1'``
+
+            *Parameter example:*
+              ``identity='domainaxis2'``
+
+            *Parameter example:*
+              ``identity='key%domainaxis2'``
+
+            *Parameter example:*
+              ``identity='ncdim%y'``
+
+        key: `bool`, optional
+            If True then return the selected construct key. By
+            default the construct itself is returned.
+
+        default: optional
+            Return the value of the *default* parameter if a construct
+            can not be found. If set to an `Exception` instance then
+            it will be raised instead.
+
+    :Returns:
+
+        `DomainAxis` or `str`
+            The selected domain axis construct, or its key.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        domain_axes = self.domain_axes(identity)
+        if len(domain_axes) == 1:
+            # identity is a unique domain axis construct identity
+            da_key = domain_axes.key()
+        else:
+            # identity is not a unique domain axis construct identity
+            da_key = self.domain_axis_key(identity, default=None)
+
+        if da_key is None:
+            return self._default(
+                default,
+                "No unique domain axis construct is identifable from "
+                "{!r}".format(identity)
+            )
+
+        if key:
+            return da_key
+
+        return domain_axes.value()
 
     def _indices(self, mode, axes, **kwargs):
         '''Create indices that define a subspace of the field construct.
@@ -939,59 +1060,70 @@ class Domain(mixin.ConstructsMixin,
 
         # Return the indices and the auxiliary mask
         return indices
-
-    def iscyclic(self, identity):
-        '''Returns True if the given axis is cyclic.
+    
+    def get_data_axes(self, identity, default=ValueError()):
+        '''Return the keys of the domain axis constructs spanned by the data
+    of a metadata construct.
 
     .. versionadded:: 3.TODO.0
 
-    .. seealso:: `axis`, `cyclic`, `period`
+    .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
     :Parameters:
 
         identity:
-           Select the domain axis construct by one of:
+           Select the construct for which to return the domain axis
+           constructs spanned by its data. By default the field
+           construct is selected. May be:
 
-              * An identity or key of a 1-d coordinate construct that
-                whose data spans the domain axis construct.
+              * The identity or key of a metadata construct.
 
-              * A domain axis construct identity or key.
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
 
-              * The position of the domain axis construct in the field
-                construct's data.
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
 
-            The *identity* parameter selects the domain axis as
-            returned by this call of the field construct's
-            `domain_axis` method: ``f.domain_axis(identity)``.
+               >>> x.identities()
+               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
-        `bool`
-            True if the selected axis is cyclic, otherwise False.
+        `tuple`
+            The keys of the domain axis constructs spanned by the data.
 
     **Examples:**
 
-    >>> f.iscyclic('X')
-    True
-    >>> f.iscyclic('latitude')
-    False
-
-    >>> x = f.iscyclic('long_name=Latitude')
-    >>> x = f.iscyclic('dimensioncoordinate1')
-    >>> x = f.iscyclic('domainaxis2')
-    >>> x = f.iscyclic('key%domainaxis2')
-    >>> x = f.iscyclic('ncdim%y')
-    >>> x = f.iscyclic(2)
+    TODO
 
         '''
-        axis = self.domain_axis(identity, key=True, default=None)
-        if axis is None:
-            raise ValueError(
-                "Can't identify unique axis from identity "
-                "{!r}".format(identity)
-            )
-candidate fo another mixin?
-        return axis in self.cyclic()
+        key = self.construct(identity, key=True, default=None)
+        if key is None:
+            return self.construct_key(identity, default=default)
+        
+        return super().get_data_axes(key=key, default=default)
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
