@@ -167,6 +167,16 @@ class aggregateTest(unittest.TestCase):
 
         cf.chunksize(self.original_chunksize)
 
+    def test_aggregate_domain(self):
+
+        f = cf.example_field(0)
+        g = f[0:3].domain
+        h = f[3:].domain
+
+        x = cf.aggregate([g, h])
+
+        self.assertEqual(len(x), 1, x)
+        
 # --- End: class
 
 

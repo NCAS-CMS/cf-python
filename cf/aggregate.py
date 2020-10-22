@@ -244,9 +244,9 @@ class _Meta:
                 self.message = ("no identity; consider setting "
                                 "relaxed_identities")
                 return
-        elif not self.has_data:
-            self.message = "no data array"
-            return
+#        elif not self.has_data:
+#            self.message = "{} has no data".format(f.__class__.__name__)
+#            return
 
         constructs = f.constructs
         construct = f.construct
@@ -496,7 +496,8 @@ class _Meta:
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-        for key, field_anc in f.field_ancillaries.items():
+        field_ancillaries = f.constructs.filter_by_type('field_ancillary')
+        for key, field_anc in field_ancillaries.items():
 
             # Find this field ancillary's identity
             identity = self.field_ancillary_has_identity_and_data(field_anc)
@@ -770,7 +771,9 @@ class _Meta:
             var_units = variable.Units
         elif variable.has_bounds():
             var_units = variable.bounds.Units
-
+        else:
+            return _no_units
+            
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
@@ -811,8 +814,10 @@ class _Meta:
         '''
         _canonical_cell_methods = self._canonical_cell_methods
 
-        cell_methods = self.field.cell_methods.ordered()
-#        cms = getattr(self.field, 'CellMethods', None) # TODO
+#        cell_methods = self.field.cell_methods.ordered()
+        cell_methods = self.field.constructs.filter_by_type('cell_method')
+        cell_methods = cell_methods.ordered()
+
         if not cell_methods:
             return None
 
@@ -1055,19 +1060,24 @@ class _Meta:
 
     :Parameters:
 
-        m: `_Meta`
-
     :Returns:
 
         `None`
 
     '''
         if signature:
-            logger.detail('STRUCTURAL SIGNATURE:\n' +
-                          self.string_structural_signature())
+            logger.detail(
+                "STRUCTURAL SIGNATURE:\n{}".format(
+                    self.string_structural_signature()
+                )
+            )
+                          
         if self.cell_values:
-            logger.detail('CANONICAL COORDINATES:\n' +
-                          self.coordinate_values())
+            logger.detail(
+                "CANONICAL COORDINATES:\n{}".format(
+                    self.coordinate_values()
+                )
+            )
 
         logger.debug('COMPLETE AGGREGATION METADATA:\n{}'.format(self))
 
@@ -1595,7 +1605,7 @@ def aggregate(fields,
     # first and last values and first and last cell bounds
     hfl_cache = _HFLCache()
 
-    output_fields = FieldList()
+    output_fields = [] # FieldList()
 
     output_fields_append = output_fields.append
 
@@ -1702,7 +1712,7 @@ def aggregate(fields,
             if not exclude:
                 # This field does not have a structural signature, so
                 # it can't be aggregated. Put it straight into the
-                # output list and move on to the next input field.
+                # output list and move on to the next input construct.
                 if not copy:
                     output_fields_append(f)
                 else:
@@ -1810,6 +1820,7 @@ def aggregate(fields,
         # Print useful information
         for m in meta:
             m.print_info(signature=False)
+
         logger.detail('')
 
         # Take a shallow copy in case we abandon and want to output
@@ -1945,9 +1956,9 @@ def aggregate(fields,
     aggregate.status = status
 
     if status:
-        logger.info('')
+        logger.info('')    
 
-    return output_fields
+    return FieldList(output_fields)
 
 
 # --------------------------------------------------------------------

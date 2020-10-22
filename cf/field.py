@@ -11400,98 +11400,98 @@ class Field(mixin.FieldDomainMixin,
         logger.info('    Modified cell methods = {}'.format(
             self.cell_methods.ordered()))  # pragma: no cover
 
-    @_deprecated_kwarg_check('axes')
-    def direction(self, identity, axes=None, **kwargs):
-        '''Whether or not a domain axis is increasing.
-
-    An domain axis is considered to be increasing if its dimension
-    coordinate values are increasing in index space or if it has no
-    dimension coordinate.
-
-    .. seealso:: `directions`
-
-    :Parameters:
-
-        identity:
-           Select the domain axis construct by one of:
-
-              * An identity or key of a 1-d coordinate construct that
-                whose data spans the domain axis construct.
-
-              * A domain axis construct identity or key.
-
-              * The position of the domain axis construct in the field
-                construct's data.
-
-            The *identity* parameter selects the domain axis as
-            returned by this call of the field construct's
-            `domain_axis` method: ``f.domain_axis(identity)``.
-
-        axes: deprecated at version 3.0.0
-            Use the *identity* parmeter instead.
-
-        size:  deprecated at version 3.0.0
-
-        kwargs: deprecated at version 3.0.0
-
-    :Returns:
-
-        `bool`
-            Whether or not the domein axis is increasing.
-
-    **Examples:**
-
-    >>> print(f.dimension_coordinate('X').array)
-    array([  0  30  60])
-    >>> f.direction('X')
-    True
-    >>> g = f.flip('X')
-    >>> g.direction('X')
-    False
-
-        '''
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'direction', kwargs)  # pragma: no cover
-
-        axis = self.domain_axis(identity, key=True, default=None)
-        if axis is None:
-            return True
-
-        for key, coord in self.dimension_coordinates.items():
-            if axis == self.get_data_axes(key)[0]:
-                return coord.direction()
-        # --- End: for
-
-        return True
-
-    def directions(self):
-        '''Return a dictionary mapping all domain axes to their directions.
-
-    .. seealso:: `direction`
-
-    :Returns:
-
-        `dict`
-            A dictionary whose key/value pairs are domain axis keys
-            and their directions.
-
-    **Examples:**
-
-    >>> d.directions()
-    {'dim1': True, 'dim0': False}
-
-        '''
-        out = {key: True for key in self.domain_axes.keys()}
-
-        for key, dc in self.dimension_coordinates.items():
-            direction = dc.direction()
-            if not direction:
-                axis = self.get_data_axes(key)[0]
-                out[axis] = dc.direction()
-        # --- End: for
-
-        return out
+#    @_deprecated_kwarg_check('axes')
+#    def direction(self, identity, axes=None, **kwargs):
+#        '''Whether or not a domain axis is increasing.
+#
+#    An domain axis is considered to be increasing if its dimension
+#    coordinate values are increasing in index space or if it has no
+#    dimension coordinate.
+#
+#    .. seealso:: `directions`
+#
+#    :Parameters:
+#
+#        identity:
+#           Select the domain axis construct by one of:
+#
+#              * An identity or key of a 1-d coordinate construct that
+#                whose data spans the domain axis construct.
+#
+#              * A domain axis construct identity or key.
+#
+#              * The position of the domain axis construct in the field
+#                construct's data.
+#
+#            The *identity* parameter selects the domain axis as
+#            returned by this call of the field construct's
+#            `domain_axis` method: ``f.domain_axis(identity)``.
+#
+#        axes: deprecated at version 3.0.0
+#            Use the *identity* parmeter instead.
+#
+#        size:  deprecated at version 3.0.0
+#
+#        kwargs: deprecated at version 3.0.0
+#
+#    :Returns:
+#
+#        `bool`
+#            Whether or not the domein axis is increasing.
+#
+#    **Examples:**
+#
+#    >>> print(f.dimension_coordinate('X').array)
+#    array([  0  30  60])
+#    >>> f.direction('X')
+#    True
+#    >>> g = f.flip('X')
+#    >>> g.direction('X')
+#    False
+#
+#        '''
+#        if kwargs:
+#            _DEPRECATION_ERROR_KWARGS(
+#                self, 'direction', kwargs)  # pragma: no cover
+#
+#        axis = self.domain_axis(identity, key=True, default=None)
+#        if axis is None:
+#            return True
+#
+#        for key, coord in self.dimension_coordinates.items():
+#            if axis == self.get_data_axes(key)[0]:
+#                return coord.direction()
+#        # --- End: for
+#
+#        return True
+#
+#    def directions(self):
+#        '''Return a dictionary mapping all domain axes to their directions.
+#
+#    .. seealso:: `direction`
+#
+#    :Returns:
+#
+#        `dict`
+#            A dictionary whose key/value pairs are domain axis keys
+#            and their directions.
+#
+#    **Examples:**
+#
+#    >>> d.directions()
+#    {'dim1': True, 'dim0': False}
+#
+#        '''
+#        out = {key: True for key in self.domain_axes.keys()}
+#
+#        for key, dc in self.dimension_coordinates.items():
+#            direction = dc.direction()
+#            if not direction:
+#                axis = self.get_data_axes(key)[0]
+#                out[axis] = dc.direction()
+#        # --- End: for
+#
+#        return out
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
