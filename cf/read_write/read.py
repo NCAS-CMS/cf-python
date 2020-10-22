@@ -906,7 +906,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             raise ValueError(
                 "Can't set domain=True when reading UM or PP datasets"
             )
-        
+
         out = UM.read(filename, um_version=umversion, verbose=verbose,
                       set_standard_name=False,
                       height_at_top_of_model=height_at_top_of_model,
@@ -933,7 +933,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # ----------------------------------------------------------------
     if domain:
         return out
-    
+
     return FieldList(out)
 
 

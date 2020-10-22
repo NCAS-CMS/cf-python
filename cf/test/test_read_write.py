@@ -54,7 +54,7 @@ class read_writeTest(unittest.TestCase):
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_write_filename']
+#    test_only = ['test_read_write_domain']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_write_datatype']
 #    test_only = ['test_read_directory']
@@ -470,6 +470,65 @@ class read_writeTest(unittest.TestCase):
 
         f = cf.read(self.broken_bounds, verbose=0)
         self.assertEqual(len(f), 2)
+
+    def test_write_coordinates(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+
+        cf.write(f, tmpfile, coordinates=True)
+        g = cf.read(tmpfile)
+
+        self.assertEqual(len(g), 1)
+        self.assertTrue(g[0].equals(f))
+
+    def test_read_write_domain(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.filename)[0]
+        d = f.domain
+
+        # 1 domain
+        cf.write(d, tmpfile)
+        e = cf.read(tmpfile)
+        self.assertTrue(len(e), 10)
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cf.Domain)
+        self.assertTrue(e.equals(e.copy(), verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
+
+        # 1 field and 1 domain
+        cf.write([f, d], tmpfile)
+        g = cf.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cf.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cf.Domain)
+
+        # 1 field and 2 domains
+        cf.write([f, d, d], tmpfile)
+        g = cf.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cf.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 2)
+        self.assertIsInstance(e[0], cf.Domain)
+        self.assertIsInstance(e[1], cf.Domain)
+        self.assertTrue(e[0].equals(e[1]))
 
 # --- End: class
 

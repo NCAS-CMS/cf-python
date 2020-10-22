@@ -6,6 +6,7 @@ import cfdm
 
 from . import mixin
 
+from .constructs import Constructs
 from .data import Data
 
 from .functions import parse_indices
@@ -35,10 +36,12 @@ class Domain(mixin.FieldDomainMixin,
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''
+        '''TODO
+
         '''
         instance = super().__new__(cls)
         instance._Data = Data
+        instance._Constructs = Constructs
         return instance
 
     def __repr__(self):
@@ -94,7 +97,7 @@ class Domain(mixin.FieldDomainMixin,
         for axis in axes:
             if axis not in domain_axes_keys:
                 raise ValueError("Invalid axis: {!r}".format(axis))
-            
+
             out.append(axis)
 
         return out
@@ -102,134 +105,6 @@ class Domain(mixin.FieldDomainMixin,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-#    @_inplace_enabled(default=False)
-#    def anchor(self, axis, value, inplace=False, dry_run=False):
-#        '''Roll a cyclic axis so that the given value lies in the first
-#    coordinate cell.
-#
-#    A unique axis is selected with the *axes* and *kwargs* parameters.
-#
-#    .. versionadded:: 1.0
-#
-#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `period`, `roll`
-#
-#    :Parameters:
-#
-#        axis:
-#            The cyclic axis to be rolled, defined by that which would
-#            be selected by passing the given axis description to a
-#            call of the field construct's `domain_axis` method. For
-#            example, for a value of ``'X'``, the domain axis construct
-#            returned by ``f.domain_axis('X')`` is selected.
-#
-#        value:
-#            Anchor the dimension coordinate values for the selected
-#            cyclic axis to the *value*. May be any numeric scalar
-#            object that can be converted to a `Data` object (which
-#            includes `numpy` and `Data` objects). If *value* has units
-#            then they must be compatible with those of the dimension
-#            coordinates, otherwise it is assumed to have the same
-#            units as the dimension coordinates. The coordinate values
-#            are transformed so that *value* is "equal to or just
-#            before" the new first coordinate value. More specifically:
-#
-#              * Increasing dimension coordinates with positive period,
-#                P, are transformed so that *value* lies in the
-#                half-open range (L-P, F], where F and L are the
-#                transformed first and last coordinate values,
-#                respectively.
-#
-#        ..
-#
-#              * Decreasing dimension coordinates with positive period,
-#                P, are transformed so that *value* lies in the
-#                half-open range (L+P, F], where F and L are the
-#                transformed first and last coordinate values,
-#                respectively.
-#
-#            *Parameter example:*
-#              If the original dimension coordinates are ``0, 5, ...,
-#              355`` (evenly spaced) and the period is ``360`` then
-#              ``value=0`` implies transformed coordinates of ``0, 5,
-#              ..., 355``; ``value=-12`` implies transformed
-#              coordinates of ``-10, -5, ..., 345``; ``value=380``
-#              implies transformed coordinates of ``380, 385, ...,
-#              715``.
-#
-#            *Parameter example:*
-#              If the original dimension coordinates are ``355, 350,
-#              ..., 0`` (evenly spaced) and the period is ``360`` then
-#              ``value=355`` implies transformed coordinates of ``355,
-#              350, ..., 0``; ``value=0`` implies transformed
-#              coordinates of ``0, -5, ..., -355``; ``value=392``
-#              implies transformed coordinates of ``390, 385, ...,
-#              30``.
-#
-#        {{inplace: `bool`, optional}}
-#
-#        dry_run: `bool`, optional
-#            Return a dictionary of parameters which describe the
-#            anchoring process. The field is not changed, even if *i*
-#            is True.
-#
-#    :Returns:
-#
-#        `{{class}}` or `None` or `dict`
-#
-#    **Examples:**
-#
-#    >>> f.iscyclic('X')
-#    True
-#    >>> f.dimension_coordinate('X').data
-#    <CF Data(8): [0, ..., 315] degrees_east> TODO
-#    >>> print(f.dimension_coordinate('X').array)
-#    [  0  45  90 135 180 225 270 315]
-#    >>> g = f.anchor('X', 230)
-#    >>> print(g.dimension_coordinate('X').array)
-#    [270 315   0  45  90 135 180 225]
-#    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
-#    >>> print(g.dimension_coordinate('X').array)
-#    [630 675 360 405 450 495 540 585]
-#    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
-#    >>> print(g.dimension_coordinate('X').array)
-#    [-450 -405 -720 -675 -630 -585 -540 -495]
-#
-#    >>> f.iscyclic('X')
-#    True
-#    >>> f.dimension_coordinate('X').data
-#    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
-#    >>> f.anchor('X', 10000).dimension_coordinate('X').data
-#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-#    >>> d = f.anchor('X', 10000, dry_run=True)
-#    >>> d
-#    {'axis': 'domainaxis2',
-#     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
-#     'roll': 28}
-#    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
-#    ...     d['axis']) + d['nperiod']).data
-#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-#
-#        '''
-#        axis = self.domain_axis(
-#            axis, key=True,
-#            default=ValueError(
-#                "Can't roll: Bad axis specification: {!r}".format(axis)
-#            )
-#        )
-#        
-#        if dry_run:
-#            inplace=True
-#        
-#        f = _inplace_enabled_define_and_cleanup(self)
-#
-#        # Anchor the metadata constructs in-place
-#        out = f.constructs._anchor(axis, value, dry_run=dry_run)
-#        
-#        if dry_run:
-#            return out
-#        
-#        return f
-
     def close(self):
         '''Close all files referenced by the domain construct.
 
@@ -409,24 +284,31 @@ class Domain(mixin.FieldDomainMixin,
 
         '''
         domain_axes = self.domain_axes(identity)
-        if len(domain_axes) == 1:
+            
+        n_domain_axes = len(domain_axes)        
+        if n_domain_axes == 1:
             # identity is a unique domain axis construct identity
-            da_key = domain_axes.key()
-        else:
-            # identity is not a unique domain axis construct identity
-            da_key = self.domain_axis_key(identity, default=None)
+            if key:
+                return domain_axes.key()
 
-        if da_key is None:
+            return domain_axes.value()
+
+        if n_domain_axes > 1:
             return self._default(
                 default,
-                "No unique domain axis construct is identifable from "
+                "No unique domain axis construct is identifiable from "
                 "{!r}".format(identity)
             )
-
+                
+        # identity is not a unique domain axis construct identity
+        da_key = self.domain_axis_key(identity, default=None)
+        if da_key is None:
+            return self._default(default, message="TODO")
+            
         if key:
             return da_key
-
-        return domain_axes.value()
+        
+        return self.constructs[da_key]
 
     def get_data_axes(self, identity, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data
@@ -489,101 +371,167 @@ class Domain(mixin.FieldDomainMixin,
         key = self.construct(identity, key=True, default=None)
         if key is None:
             return self.construct_key(identity, default=default)
-        
+
         return super().get_data_axes(key=key, default=default)
 
-#def period(self, *value):
-#    '''Return or set the period of the data. TODO
-#
-#This is distinct from the cyclicity of individual axes.
-#
-#.. versionadded:: 3.TODO.0
-#
-#.. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
-#
-#:Parameters:
-#
-#    value: optional
-#        The period. The absolute value is used.  May be set to any
-#        numeric scalar object, including `numpy` and `Data`
-#        objects. The units of the radius are assumed to be the
-#        same as the data, unless specified by a `Data` object.
-#
-#        If *value* is `None` then any existing period is removed
-#        from the construct.
-#
-#:Returns:
-#
-#    `Data` or `None`
-#        The period prior to the change, or the current period if
-#        no *value* was specified. `None` is always returned if the
-#        period had not been set previously.
-#
-#**Examples:**
-#
-#>>> print(c.period())
-#None
-#>>> c.Units
-#<Units: degrees_east>
-#>>> print(c.period(360))
-#None
-#>>> c.period()
-#<CF Data(): 360.0 'degrees_east'>
-#>>> import math
-#>>> c.period(cf.Data(2*math.pi, 'radians'))
-#<CF Data(): 360.0 degrees_east>
-#>>> c.period()
-#<CF Data(): 6.28318530718 radians>
-#>>> c.period(None)
-#<CF Data:() 6.28318530718 radians>
-#>>> print(c.period())
-#None
-#>>> print(c.period(-360))
-#None
-#>>> c.period()
-#<CF Data(): 360.0 degrees_east>
-#
-#    '''
-#    old = self._custom.get('period')
-#    if old is not None:
-#        old = old.copy()
-#
-#    if not value:
-#        return old
-#
-#    value = value[0]
-#
-#    if value is not None:
-#        value = Data.asdata(value)
-#        units = value.Units
-#        if not units:
-#            value = value.override_units(self.Units)
-#        elif units != self.Units:
-#            if units.equivalent(self.Units):
-#                value.Units = self.Units
-#            else:
-#                raise ValueError(
-#                    "Period units {!r} are not equivalent to data "
-#                    "units {!r}".format(units, self.Units)
-#                )
-#        # --- End: if
-#
-#        value = abs(value)
-#        value.dtype = float
-#
-#         array = self.array
-#         r = abs(array[-1] - array[0])
-#
-#         if r >= value.datum(0):
-#             raise ValueError(
-#                 "The data range of {!r} is not less than the "
-#                 "period of {!r}".format(r, value)
-#             )
-#    # --- End: if
-#
-#    self._custom['period'] = value
-#
-#    return old
+    def identity(self, default='', strict=False, relaxed=False,
+                 nc_only=False):
+        '''Return the canonical identity.
+
+    By default the identity is the first found of the following:
+
+    * The "id" attribute, preceded by ``'id%'``.
+    * The "cf_role" property, preceded by ``'cf_role='``.
+    * The "long_name" property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
+    * The value of the *default* parameter.
+
+    .. versionadded:: 3.TODO.
+
+    .. seealso:: `id`, `identities`
+
+    :Parameters:
+
+        default: optional
+            If no identity can be found then return the value of the
+            default parameter.
+
+        strict: `bool`, optional
+            If True then the identity is the first found of only the
+            "standard_name" property or the "id" attribute.
+
+        relaxed: `bool`, optional
+            If True then the identity is the first found of only the
+            "standard_name" property, the "id" attribute, the
+            "long_name" property or the netCDF variable name.
+
+        nc_only: `bool`, optional
+            If True then only take the identity from the netCDF
+            variable name.
+
+    :Returns:
+
+            The identity.
+
+    **Examples:**
+
+TODO
+    >>> f.properties()
+    {'foo': 'bar',
+     'long_name': 'Air Temperature',
+     'standard_name': 'air_temperature'}
+    >>> f.nc_get_variable()
+    'tas'
+    >>> f.identity()
+    'air_temperature'
+    >>> f.del_property('standard_name')
+    'air_temperature'
+    >>> f.identity(default='no identity')
+    'air_temperature'
+    >>> f.identity()
+    'long_name=Air Temperature'
+    >>> f.del_property('long_name')
+    >>> f.identity()
+    'ncvar%tas'
+    >>> f.nc_del_variable()
+    'tas'
+    >>> f.identity()
+    'ncvar%tas'
+    >>> f.identity()
+    ''
+    >>> f.identity(default='no identity')
+    'no identity'
+
+        '''
+        if nc_only:
+            if strict:
+                raise ValueError(
+                    "'strict' and 'nc_only' parameters cannot both be True")
+
+            if relaxed:
+                raise ValueError(
+                    "'relaxed' and 'nc_only' parameters cannot both be True")
+
+            n = self.nc_get_variable(None)
+            if n is not None:
+                return 'ncvar%{0}'.format(n)
+
+            return default
+
+        n = getattr(self, 'id', None)
+        if n is not None:
+            return 'id%{0}'.format(n)
+
+        if relaxed:
+            n = self.get_property('long_name', None)
+            if n is not None:
+                return 'long_name={0}'.format(n)
+
+            n = self.nc_get_variable(None)
+            if n is not None:
+                return 'ncvar%{0}'.format(n)
+
+            return default
+
+        if strict:
+            return default
+
+        for prop in ('cf_role', 'long_name'):
+            n = self.get_property(prop, None)
+            if n is not None:
+                return '{0}={1}'.format(prop, n)
+        # --- End: for
+
+        n = self.nc_get_variable(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
+
+        return default
+
+    def identities(self):
+        '''Return all possible identities.
+
+    The identities comprise:
+
+    * The "id" attribute, preceded by ``'id%'``.
+    * The ``cf_role`` property, preceeded by ``'cf_role='``.
+    * The ``long_name`` property, preceeded by ``'long_name='``.
+    * All other properties, preceeded by the property name and a
+      equals e.g. ``'foo=bar'``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `identity`
+
+    :Returns:
+
+        `list`
+            The identities.
+
+    **Examples:**
+
+    >>> d = {{package}}.Domain()
+    >>> d.set_properties({'foo': 'bar',
+    ...                   'long_name': 'Domain for model'})
+    >>> d.nc_set_variable('dom1')
+    >>> d.identities()
+    ['long_name=Domain for model', 'foo=bar', 'ncvar%dom1']
+
+        '''
+        out = super().identities()
+
+        i = getattr(self, 'id', None)
+        if i is not None:
+            # Insert id attribute
+            i = 'id%{0}'.format(i)
+            if not out:
+                out = [i]
+            else:
+                out.insert(0, i)
+        # --- End: if
+
+        return out
 
     def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the field construct.
@@ -815,7 +763,7 @@ class Domain(mixin.FieldDomainMixin,
                 "Can't roll: Bad axis specification: {!r}".format(axis)
             )
         )
-        
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.domain_axes[axis].get_size() <= 1:
@@ -836,9 +784,9 @@ class Domain(mixin.FieldDomainMixin,
                 self.__class__.__name__, kwargs
             )
         )  # pragma: no cover
-                
+
         domain_axes = self.domain_axes
-            
+
         axes = []
         indices = []
         shape = []
@@ -856,11 +804,11 @@ class Domain(mixin.FieldDomainMixin,
                 indices, roll
             )
         )  # pragma: no cover
-        
+
         if roll:
             new = self
             cyclic_axes = self.cyclic()
-            for iaxis, shift in roll.items():                
+            for iaxis, shift in roll.items():
                 axis = axes[iaxis]
                 if axis not in cyclic_axes:
                     raise IndexError(
@@ -887,23 +835,23 @@ class Domain(mixin.FieldDomainMixin,
                     size = int_size
             else:
                 size = numpy_size(index)
-                
+
             domain_axes[axis].set_size(size)
 
         # ------------------------------------------------------------
         # Subspace constructs with data
         # ------------------------------------------------------------
         construct_data_axes = new.constructs.data_axes()
-        
+
         for key, construct in new.constructs.filter_by_data().items():
             construct_axes = construct_data_axes[key]
-            
-            dice = [indices[i] for i, axis in enumerate(axes) 
+
+            dice = [indices[i] for i, axis in enumerate(axes)
                     if axis in construct_data_axes[key]]
 
             logger.debug(
                 '    dice = {}'.format(dice))  # pragma: no cover
-            
+
             # Replace existing construct with its subspace
             new.set_construct(construct[tuple(dice)], key=key,
                               axes=construct_axes, copy=False)
@@ -919,7 +867,7 @@ TODO    By default the order of the axes is reversed, but any ordering may
     order.
 
     .. versionadded:: 3.TODO.0
-        
+
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `squeeze`, `unsqueeze`
 
@@ -971,15 +919,15 @@ TODO    By default the order of the axes is reversed, but any ordering may
                 "Can't transpose domain: Must provide order for "
                 "all domain axes. Got: {}".format(axes)
             )
-        
+
         for key, construct in f.constructs.filter_by_data().items():
             construct_axes = f.get_data_axes(key)
-           
+
             iaxes = [
                 construct_axes.index(axis) for axis in axes
                 if axis in construct_axes
             ]
-            
+
             # Transpose the construct
             construct.transpose(iaxes, inplace=True)
 

@@ -222,6 +222,7 @@ class _Meta:
         # ------------------------------------------------------------
         self.field = f
         self.has_data = f.has_data()
+
         self.identity = f.identity(strict=strict_identities,
                                    relaxed=relaxed_identities,
                                    nc_only=ncvar_identities)
