@@ -34,4 +34,9 @@ _docstring_substitution_definitions = {
     '{{i: deprecated at version 3.0.0}}':
     """i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.""",
+
+    '{{List comparison}}':
+    '''Each construct in the list is compared with its `!equals` method,
+    rather than the ``==`` operator.''',
+
 }

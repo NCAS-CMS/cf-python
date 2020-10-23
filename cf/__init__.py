@@ -234,6 +234,7 @@ from .timeduration import TimeDuration, Y, M, D, h, m, s
 from .units        import Units
 
 from .fieldlist import FieldList
+from .domainlist import DomainList
 
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate

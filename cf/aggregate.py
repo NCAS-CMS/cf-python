@@ -117,7 +117,8 @@ class _Meta:
 
     #
     _structural_signature = namedtuple('signature',
-                                       ('Identity',
+                                       ('Type',
+                                        'Identity',
                                         'Units',
                                         'Cell_methods',
                                         'Data',
@@ -157,7 +158,7 @@ class _Meta:
 
     :Parameters:
 
-        f: `cf.Field`
+        f: `Field` or `Domain`
 
         verbose: `int` or `str` or `None`, optional
             See the `aggregate` function for details.
@@ -218,7 +219,7 @@ class _Meta:
         self.axis_to_id = {}
 
         # ------------------------------------------------------------
-        # Field
+        # Parent field or domain
         # ------------------------------------------------------------
         self.field = f
         self.has_data = f.has_data()
@@ -1108,38 +1109,25 @@ class _Meta:
 
         # Initialize the structual signature with:
         #
+        # * the construct type (field or domain)
         # * the identity
         # * the canonical units
         # * the canonical cell methods
         # * whether or not there is a data array
-#        signature = [('Identity'    , self.identity),
-#                     ('Units'       , self.units.formatted(definition=True)),
-#                     ('Cell methods', self.cell_methods),
-#                     ('Data'        , self.has_data)]
+        Type = f.construct_type
         Identity = self.identity
         Units = self.units.formatted(definition=True)
         Cell_methods = self.cell_methods
         Data = self.has_data
-#        signature_append = signature.append
 
         # Properties
-#        signature_append(('Properties', self.properties))
         Properties = self.properties
 
         # standard_error_multiplier
-#        signature_append(('standard_error_multiplier',
-#                          f.get_property('standard_error_multiplier', None)))
         standard_error_multiplier = f.get_property(
             'standard_error_multiplier', None)
 
         # valid_min, valid_max, valid_range
-#        if self.respect_valid:
-#            signature.extend((f.get_property('valid_min'  , None),
-#                              f.get_property('valid_max'  , None),
-#                              f.get_property('valid_range', None)))
-#        else:
-#            signature.extend((None, None, None))
-
         if self.respect_valid:
             valid_min = f.get_property('valid_min', None)
             valid_max = f.get_property('valid_max', None)
@@ -1150,16 +1138,9 @@ class _Meta:
             valid_range = None
 
         # Flags
-#        signature_append(getattr(f, 'Flags', None))
         Flags = getattr(f, 'Flags', None)
 
         # Coordinate references
-#        coordref_signatures = self.coordref_signatures
-#        if not coordref_signatures:
-#            coordref_signatures = [None]
-#
-#        signature_append(
-#            tuple(['Coordinate references'] + coordref_signatures))
         Coordinate_references = tuple(self.coordref_signatures)
 
         # 1-d coordinates for each axis. Note that self.axis_ids has
@@ -1176,13 +1157,13 @@ class _Meta:
               ('coordrefs', axis[identity]['coordrefs']),
               ('size', axis[identity]['size']))
              for identity in self.axis_ids]
-#        signature_append(tuple(['Axes'] + x))
+
         Axes = tuple(x)
 
         # Whether or not each axis has a dimension coordinate
         x = [False if axis[identity]['dim_coord_index'] is None else True
              for identity in self.axis_ids]
-#        signature_append(tuple(x))
+
         dim_coord_index = tuple(x)
 
         # N-d auxiliary coordinates
@@ -1194,10 +1175,7 @@ class _Meta:
               ('hasbounds', nd_aux[identity]['hasbounds']),
               ('coordrefs', nd_aux[identity]['coordrefs']))
              for identity in sorted(nd_aux)]
-#        if not x:
-#            x = [None]#
-#
-#        signature_append(tuple(['N-d coordinates'] + x))
+
         Nd_coordinates = tuple(x)
 
         # Cell measures
@@ -1205,10 +1183,7 @@ class _Meta:
         x = [(('units', units.formatted(definition=True)),
               ('axes', msr[units]['axes']))
              for units in sorted(msr)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Cell measures'] + x))
+
         Cell_measures = tuple(x)
 
         # Domain ancillaries
@@ -1218,10 +1193,7 @@ class _Meta:
                   definition=True)),
               ('axes', domain_anc[identity]['axes']))
              for identity in sorted(domain_anc)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Domain ancillaries'] + x))
+
         Domain_ancillaries = tuple(x)
 
         # Field ancillaries
@@ -1231,13 +1203,11 @@ class _Meta:
                   definition=True)),
               ('axes', field_anc[identity]['axes']))
              for identity in sorted(field_anc)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Field ancillaries'] + x))
+
         Field_ancillaries = tuple(x)
 
         self.signature = self._structural_signature(
+            Type=Type,
             Identity=Identity,
             Units=Units,
             Cell_methods=Cell_methods,
@@ -1290,8 +1260,8 @@ class _Meta:
 
         return tuple(sorted(names))
 
-
 # --- End: class
+
 
 @_manage_log_level_via_verbosity
 def aggregate(fields,
@@ -1319,6 +1289,7 @@ def aggregate(fields,
               no_overlap=False,
               shared_nc_domain=False,
               field_identity=None,
+              domain=False, ## ??? TODO
               info=False,
               ):
     '''Aggregate field constructs into as few field constructs as
@@ -1605,9 +1576,9 @@ def aggregate(fields,
     # first and last values and first and last cell bounds
     hfl_cache = _HFLCache()
 
-    output_fields = [] # FieldList()
+    output_constructs = []
 
-    output_fields_append = output_fields.append
+    output_constructs_append = output_constructs.append
 
     if exclude:
         exclude = ' NOT'
@@ -1714,9 +1685,9 @@ def aggregate(fields,
                 # it can't be aggregated. Put it straight into the
                 # output list and move on to the next input construct.
                 if not copy:
-                    output_fields_append(f)
+                    output_constructs_append(f)
                 else:
-                    output_fields_append(f.copy())
+                    output_constructs_append(f.copy())
             # --- End: if
 
             continue
@@ -1767,9 +1738,9 @@ def aggregate(fields,
             # next signature.
             # --------------------------------------------------------
             if not copy:
-                output_fields_append(meta[0].field)
+                output_constructs_append(meta[0].field)
             else:
-                output_fields_append(meta[0].field.copy())
+                output_constructs_append(meta[0].field.copy())
 
             continue
 
@@ -1904,12 +1875,14 @@ def aggregate(fields,
                 m0 = m[0].copy()
 
                 for m1 in m[1:]:
-                    m0 = _aggregate_2_fields(m0, m1,
-                                             rtol=rtol, atol=atol,
-                                             verbose=verbose,
-                                             concatenate=concatenate,
-                                             copy=(copy or not exclude),
-                                             )
+                    m0 = _aggregate_2_fields_or_domains(
+                        m0, m1,
+                        rtol=rtol,
+                        atol=atol,
+                        verbose=verbose,
+                        concatenate=concatenate,
+                        copy=(copy or not exclude),
+                    )
 
                     if not m0:
                         # Couldn't aggregate these two fields, so
@@ -1946,11 +1919,11 @@ def aggregate(fields,
             status = 1
             if not exclude:
                 if copy:
-                    output_fields.extend((m.field.copy() for m in meta0))
+                    output_constructs.extend((m.field.copy() for m in meta0))
                 else:
-                    output_fields.extend((m.field for m in meta0))
+                    output_constructs.extend((m.field for m in meta0))
         else:
-            output_fields.extend((m.field for m in meta))
+            output_constructs.extend((m.field for m in meta))
     # --- End: for
 
     aggregate.status = status
@@ -1958,7 +1931,20 @@ def aggregate(fields,
     if status:
         logger.info('')    
 
-    return FieldList(output_fields)
+    Type = 'field'
+    if output_constructs:
+        Type = output_constructs[0].construct_type
+        for x in output_constructs[1:]:
+            if x.construct_type != Type:
+                raise ValueError(
+                    "Can't aggregate a mixture of field and domain constructs"
+                )
+    # -- End: for
+
+    if Type == 'field':
+        output_constructs = FieldList(output_constructs)
+        
+    return output_constructs
 
 
 # --------------------------------------------------------------------
@@ -2546,7 +2532,7 @@ def _group_fields(meta, axis):
             m0.a_identity = a_identity
             m1.a_identity = a_identity
 
-            # Append field1 to this group of potentially aggregatable
+            # Append parent1 to this group of potentially aggregatable
             # fields
             groups_of_fields[-1].append(m1)
 
@@ -2563,7 +2549,7 @@ def _group_fields(meta, axis):
             # --------------------------------------------------------
             # Two or more axes have different 1-d coordinate values,
             # so create a new sub-group of potentially aggregatable
-            # fields which contains field1.
+            # fields which contains parent1.
             # --------------------------------------------------------
             groups_of_fields.append([m1])
     # --- End: for
@@ -2666,8 +2652,8 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     if (m1.first_bounds[axis][0] < m0.last_bounds[axis][1]):
                         # Do not aggregate anything in this group
                         # because overlapping has been disallowed and
-                        # the first cell from field1 overlaps with the
-                        # last cell from field0.
+                        # the first cell from parent1 overlaps with the
+                        # last cell from parent0.
                         meta[0].message = (
                             "overlap={0} and {1!r} dimension coordinate "
                             "bounds values overlap ({2} < {3})".format(
@@ -2688,9 +2674,9 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 #                        m1_first_bounds[1] <= m0_last_bounds[1]):
 #                        # Do not aggregate anything in this group
 #                        # because, even though overlapping has been
-#                        # allowed, the first cell from field1 overlaps
+#                        # allowed, the first cell from parent1 overlaps
 #                        # in an unreasonable way with the last cell
-#                        # from field0.
+#                        # from parent0.
 #                        meta[0].message = (
 #                            "{0!r} dimension coordinate bounds values "
 #                            "overlap by too much ({1} <= {2})".format(
@@ -2706,9 +2692,9 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     if (m0.last_bounds[axis][1] < m1.first_bounds[axis][0]):
                         # Do not aggregate anything in this group
                         # because contiguous coordinates have been
-                        # specified and the first cell from field1 is
+                        # specified and the first cell from parent1 is
                         # not contiguous with the last cell from
-                        # field0.
+                        # parent0.
                         meta[0].message = (
                             "contiguous={0} and {1!r} dimension "
                             "coordinate cells are not contiguous "
@@ -2755,11 +2741,9 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
 
 @_manage_log_level_via_verbosity
-def _aggregate_2_fields(m0, m1,
-                        rtol=None, atol=None,
-                        verbose=None,
-                        concatenate=True,
-                        copy=True):
+def _aggregate_2_fields_or_domains(m0, m1, rtol=None, atol=None,
+                                   verbose=None, concatenate=True,
+                                   copy=True):
     '''TODO
 
     :Parameters:
@@ -2784,13 +2768,13 @@ def _aggregate_2_fields(m0, m1,
     '''
     a_identity = m0.a_identity
 
-    field0 = m0.field
-    field1 = m1.field
+    parent0 = m0.field
+    parent1 = m1.field
     if copy:
-        field1 = field1.copy()
+        parent1 = parent1.copy()
 
     # ----------------------------------------------------------------
-    # Map the axes of field1 to those of field0
+    # Map the axes of parent1 to those of parent0
     # ----------------------------------------------------------------
     dim1_name_map = {}
     for identity in m0.axis_ids:
@@ -2807,12 +2791,12 @@ def _aggregate_2_fields(m0, m1,
     adim1 = m1.id_to_axis[a_identity]
 
     # ----------------------------------------------------------------
-    # Make sure that, along the aggregating axis, field1 runs in the
-    # same direction as field0
+    # Make sure that, along the aggregating axis, parent1 runs in the
+    # same direction as parent0
     # ----------------------------------------------------------------
-    direction0 = field0.direction(adim0)
-    if field1.direction(adim1) != direction0:
-        field1.flip(adim1, inplace=True)
+    direction0 = parent0.direction(adim0)
+    if parent1.direction(adim1) != direction0:
+        parent1.flip(adim1, inplace=True)
 
     # ----------------------------------------------------------------
     # Find matching pairs of coordinates and cell measures which span
@@ -2820,7 +2804,7 @@ def _aggregate_2_fields(m0, m1,
     # ----------------------------------------------------------------
     # 1-d coordinates
     spanning_variables = [
-        (key0, key1, field0.constructs[key0], field1.constructs[key1])
+        (key0, key1, parent0.constructs[key0], parent1.constructs[key1])
         for key0, key1 in zip(
             m0.axis[a_identity]['keys'],
             m1.axis[a_identity]['keys']
@@ -2845,15 +2829,11 @@ def _aggregate_2_fields(m0, m1,
             key0 = aux0['key']
             key1 = aux1['key']
             spanning_variables.append((key0, key1,
-                                       field0.constructs[key0],
-                                       field1.constructs[key1]))
+                                       parent0.constructs[key0],
+                                       parent1.constructs[key1]))
 
             hash_value0 = aux0['hash_value']
             hash_value1 = aux1['hash_value']
-
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
             aux0['hash_value'] = hash_value0 + hash_value1
     # --- End: for
 
@@ -2868,12 +2848,8 @@ def _aggregate_2_fields(m0, m1,
         )):
             if a_identity in axes:
                 spanning_variables.append((key0, key1,
-                                           field0.constructs[key0],
-                                           field1.constructs[key1]))
-
-#                try:
-#                    hash_values0[i].append(hash_values1[i])
-#                except AttributeError:
+                                           parent0.constructs[key0],
+                                           parent1.constructs[key1]))
                 hash_values0[i] = hash_values0[i] + hash_values1[i]
     # --- End: for
 
@@ -2885,14 +2861,11 @@ def _aggregate_2_fields(m0, m1,
             key0 = anc0['key']
             key1 = anc1['key']
             spanning_variables.append((key0, key1,
-                                       field0.constructs[key0],
-                                       field1.constructs[key1]))
+                                       parent0.constructs[key0],
+                                       parent1.constructs[key1]))
 
             hash_value0 = anc0['hash_value']
             hash_value1 = anc1['hash_value']
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
             anc0['hash_value'] = hash_value0 + hash_value1
     # --- End: for
 
@@ -2905,26 +2878,23 @@ def _aggregate_2_fields(m0, m1,
             key1 = anc1['key']
             spanning_variables.append((
                 key0, key1,
-                field0.constructs[key0],
-                field1.constructs[key1]
+                parent0.constructs[key0],
+                parent1.constructs[key1]
             ))
 
             hash_value0 = anc0['hash_value']
             hash_value1 = anc1['hash_value']
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
             anc0['hash_value'] = hash_value0 + hash_value1
     # --- End: for
 
     # ----------------------------------------------------------------
     # For each matching pair of coordinates, cell measures, field and
     # domain ancillaries which span the aggregating axis, insert the
-    # one from field1 into the one from field0
+    # one from parent1 into the one from parent0
     # ----------------------------------------------------------------
     for key0, key1, construct0, construct1 in spanning_variables:
-        construct_axes0 = field0.get_data_axes(key0)
-        construct_axes1 = field1.get_data_axes(key1)
+        construct_axes0 = parent0.get_data_axes(key0)
+        construct_axes1 = parent1.get_data_axes(key1)
 
         # Ensure that the axis orders are the same in both constructs
         iaxes = [construct_axes1.index(dim0_name_map[axis0]) for axis0 in
@@ -2969,88 +2939,95 @@ def _aggregate_2_fields(m0, m1,
     # --- End: for
 
     # ----------------------------------------------------------------
-    # Insert the data array from field1 into the data array of field0
+    # Update the size of the aggregating axis in the output parent
+    # construct
     # ----------------------------------------------------------------
     if m0.has_data:
-        data_axes0 = list(field0.get_data_axes())
-        data_axes1 = list(field1.get_data_axes())
+        # ----------------------------------------------------------------
+        # Insert the data array from parent1 into the data array of
+        # parent0
+        # ----------------------------------------------------------------
+        data_axes0 = list(parent0.get_data_axes())
+        data_axes1 = list(parent1.get_data_axes())
 
         # Ensure that both data arrays span the same axes, including
         # the aggregating axis.
         for axis1 in data_axes1:
             axis0 = dim1_name_map[axis1]
             if axis0 not in data_axes0:
-                field0.insert_dimension(axis0, position=0, inplace=True)
+                parent0.insert_dimension(axis0, position=0, inplace=True)
                 data_axes0.insert(0, axis0)
         # --- End: for
 
         for axis0 in data_axes0:
             axis1 = dim0_name_map[axis0]
             if axis1 not in data_axes1:
-                field1.insert_dimension(axis1, position=0, inplace=True)
+                parent1.insert_dimension(axis1, position=0, inplace=True)
         # --- End: for
 
         # Find the position of the concatenating axis
         if adim0 not in data_axes0:
             # Insert the aggregating axis at position 0 because is not
             # already spanned by either data arrays
-            field0.insert_dimension(adim0, position=0, inplace=True)
-            field1.insert_dimension(adim1, position=0, inplace=True)
+            parent0.insert_dimension(adim0, position=0, inplace=True)
+            parent1.insert_dimension(adim1, position=0, inplace=True)
             axis = 0
         else:
             axis = data_axes0.index(adim0)
 
         # Get the data axes again, in case we've inserted new dimensions
-        data_axes0 = field0.get_data_axes()
-        data_axes1 = field1.get_data_axes()
+        data_axes0 = parent0.get_data_axes()
+        data_axes1 = parent1.get_data_axes()
 
         # Ensure that the axis orders are the same in both fields
         transpose_axes1 = [dim0_name_map[axis0] for axis0 in data_axes0]
         if transpose_axes1 != data_axes1:
-            field1.transpose(transpose_axes1, inplace=True)
+            parent1.transpose(transpose_axes1, inplace=True)
 
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (field0.get_data(), field1.get_data()),
+                (parent0.get_data(), parent1.get_data()),
                 axis,
                 _preserve=False
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (field1.get_data(), field0.get_data()),
+                (parent1.get_data(), parent0.get_data()),
                 axis,
                 _preserve=False
             )
 
-        # Update the size of the aggregating axis in field0
-        domain_axis = field0.constructs[adim0]
-        domain_axis += field1.constructs[adim1].get_size()
+        # Update the size of the aggregating axis in parent0
+        domain_axis = parent0.constructs[adim0]
+        domain_axis += parent1.constructs[adim1].get_size()
 
         # Insert the concatentated data into the field
-        field0.set_data(data, set_axes=False, copy=False)
-    # --- End: if
+        parent0.set_data(data, set_axes=False, copy=False)
+    else:
+        domain_axis = parent0.constructs[adim0]
+        domain_axis += parent1.constructs[adim1].get_size()
 
-    # Make sure that field0 has a standard_name, if possible.
-    if getattr(field0, 'id', None) is not None:
-        standard_name = field1.get_property('standard_name', None)
+    # Make sure that parent0 has a standard_name, if possible.
+    if getattr(parent0, 'id', None) is not None:
+        standard_name = parent1.get_property('standard_name', None)
         if standard_name is not None:
-            field0.set_property('standard_name', standard_name)
-            del field0.id
+            parent0.set_property('standard_name', standard_name)
+            del parent0.id
     # --- End: if
 
     # -----------------------------------------------------------------
-    # Update the properties in field0
+    # Update the properties in parent0
     # -----------------------------------------------------------------
     for prop in set(
-            field0.properties()).difference(field0._special_properties):
-        value0 = field0.get_property(prop, None)
-        value1 = field1.get_property(prop, None)
+            parent0.properties()).difference(parent0._special_properties):
+        value0 = parent0.get_property(prop, None)
+        value1 = parent1.get_property(prop, None)
 
         if prop in ('valid_min', 'valid_max', 'valid_range'):
             if not m0.respect_valid:
-                field0.del_property(prop, None)
+                parent0.del_property(prop, None)
 
             continue
 
@@ -3058,51 +3035,28 @@ def _aggregate_2_fields(m0, m1,
             continue
 
         # Still here?
-        if field0._equals(value0, value1):
+        if parent0._equals(value0, value1):
             continue
 
         if concatenate:
             if value1 is not None:
                 if value0 is not None:
-                    field0.set_property(
+                    parent0.set_property(
                         prop, '%s :AGGREGATED: %s' % (value0, value1))
                 else:
-                    field0.set_property(prop, ' :AGGREGATED: %s' % value1)
+                    parent0.set_property(prop, ' :AGGREGATED: %s' % value1)
         else:
             if value0 is not None:
-                field0.del_property(prop)
+                parent0.del_property(prop)
     # --- End: for
 
-#    # ----------------------------------------------------------------
-#    # Update the attributes in field0
-#    # ----------------------------------------------------------------
-#    for attr in m0.attributes | m1.attributes: ppp
-#        value0 = getattr(field0, attr, None)
-#        value1 = getattr(field1, attr, None)
-#        if equals(value0, value1):
-#            continue
-#
-#        if concatenate:
-#            if value1 is not None:
-#                if value0 is not None:
-#                    setattr(
-#                        field0, attr,
-#                        '%s :AGGREGATED: %s' % (value0, value1)
-#                    )
-#                else:
-#                    setattr(field0, attr, ' :AGGREGATED: %s' % value1)
-#        else:
-#            m0.attributes.discard(attr)
-#            if value0 is not None:
-#                delattr(field0, attr)
-#    # --- End: for
-
-    # Note that the field in this _Meta object has already been
-    # aggregated
+    # Make a note that the parent construct in this _Meta object has
+    # already been aggregated
     m0.aggregated_field = True
 
     # ----------------------------------------------------------------
-    # Return the _Meta object containing the aggregated field
+    # Return the _Meta object containing the aggregated parent
+    # construct
     # ----------------------------------------------------------------
     return m0
 
