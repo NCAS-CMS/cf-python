@@ -240,7 +240,7 @@ _xxx = namedtuple(
 )
 
 
-class Field(mixin.FieldDomainMixin,
+class Field(mixin.FieldDomain,
             mixin.PropertiesData,
             cfdm.Field):
     '''A field construct of the CF data model.
@@ -12326,63 +12326,6 @@ class Field(mixin.FieldDomainMixin,
             return bool(n)
 
         return True
-
-    def match_by_rank(self, *ranks):
-        '''Whether or not the number of domain axis constructs satisfies
-    conditions.
-
-    .. versionadded:: 3.0.0
-
-    .. seealso:: `match`, `match_by_property`, `match_by_identity`,
-                 `match_by_ncvar`, `match_by_units`,
-                 `match_by_construct`
-
-    :Parameters:
-
-        ranks: optional
-            Define conditions on the number of domain axis constructs.
-
-            A condition is one of:
-
-              * `int`
-              * a `Query` object
-
-            The condition is satisfied if the number of domain axis
-            constructs equals the condition value.
-
-            *Parameter example:*
-              To see if the field construct has 4 domain axis
-              constructs: ``4``
-
-            *Parameter example:*
-              To see if the field construct has at least 3 domain axis
-              constructs: ``cf.ge(3)``
-
-    :Returns:
-
-        `bool`
-            Whether or not at least one of the conditions are met.
-
-    **Examples:**
-
-    >>> f.match_by_rank(3, 4)
-
-    >>> f.match_by_rank(cf.wi(2, 4))
-
-    >>> f.match_by_rank(1, cf.gt(3))
-
-        '''
-        if not ranks:
-            return True
-
-        n_domain_axes = len(self.domain_axes)
-        for rank in ranks:
-            ok = (rank == n_domain_axes)
-            if ok:
-                return True
-        # --- End: for
-
-        return False
 
     @_inplace_enabled(default=False)
     def moving_window(self, method, window_size=None, axis=None,

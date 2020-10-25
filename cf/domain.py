@@ -18,7 +18,7 @@ from .decorators import (_inplace_enabled,
 logger = logging.getLogger(__name__)
 
 
-class Domain(mixin.FieldDomainMixin,
+class Domain(mixin.FieldDomain,
              mixin.Properties,
              cfdm.Domain):
     '''A domain construct of the CF data model.
@@ -716,6 +716,171 @@ TODO
 
         return domain_indices['indices']
 
+    def match_by_construct(self, *identities, OR=False,
+                           **conditions):
+        '''Whether or not there are particular metadata constructs.
+
+    .. note:: The API changed at version 3.1.0
+
+    .. versionadded:: 3.0.0
+
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`
+
+    :Parameters:
+
+        identities: optional
+            Identify the metadata constructs that have any of the
+            given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+            If a cell method construct identity is given (such as
+            ``'method:mean'``) then it will only be compared with the
+            most recently applied cell method operation.
+
+            Alternatively, one or more cell method constucts may be
+            identified in a single string with a CF-netCDF cell
+            methods-like syntax for describing both the collapse
+            dimensions, the collapse method, and any cell method
+            construct qualifiers. If N cell methods are described in
+            this way then they will collectively identify the N most
+            recently applied cell method operations. For example,
+            ``'T: maximum within years T: mean over years'`` will be
+            compared with the most two most recently applied cell
+            method operations.
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``'latitude'``
+
+            *Parameter example:*
+              ``'long_name=Longitude'``
+
+            *Parameter example:*
+              ``'domainancillary2', 'ncvar%areacello'``
+
+        conditions: optional
+            Identify the metadata constructs that have any of the
+            given identities or construct keys, and whose data satisfy
+            conditions.
+
+            A construct identity or construct key (as defined by the
+            *identities* parameter) is given as a keyword name and a
+            condition on its data is given as the keyword value.
+
+            The condition is satisfied if any of its data values
+            equals the value provided.
+
+            *Parameter example:*
+              ``longitude=180.0``
+
+            *Parameter example:*
+              ``time=cf.dt('1959-12-16')``
+
+            *Parameter example:*
+              ``latitude=cf.ge(0)``
+
+            *Parameter example:*
+              ``latitude=cf.ge(0), air_pressure=500``
+
+            *Parameter example:*
+              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the criteria given by
+            the *identities* or *conditions* arguments. By default
+            `True` is only returned if the field constructs matches
+            each of the given criteria.
+
+    :Returns:
+
+        `bool`
+            Whether or not the domain construct contains the specfied
+            metadata constructs.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if identities:
+            if identities[0] == 'or':
+                _DEPRECATION_ERROR_ARG(
+                    self, 'match_by_construct', 'or',
+                    message="Use 'OR=True' instead.", version='3.1.0'
+                )  # pragma: no cover
+
+            if identities[0] == 'and':
+                _DEPRECATION_ERROR_ARG(
+                    self, 'match_by_construct', 'and',
+                    message="Use 'OR=False' instead.", version='3.1.0'
+                )  # pragma: no cover
+        # --- End: if
+
+        if not identities and not conditions:
+            return True
+
+        constructs = self.constructs
+
+        if not constructs:
+            return False
+
+        n = 0
+
+        for identity in identities:
+            filtered = constructs(identity)
+            if filtered:
+                n += 1
+            elif not OR:
+                return False
+        # --- End: for
+
+        if conditions:
+            for identity, value in conditions.items():
+                if self.subspace('test', **{identity: value}):
+                    n += 1
+                elif not OR:
+                    return False
+        # --- End: if
+
+        if OR:
+            return bool(n)
+
+        return True
+
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False):
         '''Roll the field along a cyclic axis.
@@ -774,10 +939,144 @@ TODO
 
         return d
 
-    def subspace(self, **kwargs):
-        '''TODO
+    def subspace(self, *mode, **kwargs):
+        '''Create a subspace of a field construct.
+
+    Creation of a new field construct which spans a subspace of the
+    domain of an existing field construct is achieved by identifying
+    indices based on the metadata constructs.
+
+    The subspacing operation also subspaces any metadata constructs of
+    the field construct (e.g. coordinate metadata constructs) which
+    span any of the domain axis constructs that are affected. The new
+    field construct is created with the same properties as the
+    original field construct.
+
+    Metadata constructs and the conditions on their data are defined
+    by keyword parameters.
+
+    The subspace is defined by identifying indices based on the
+    metadata constructs.
+
+    * Any domain axes that have not been identified remain unchanged.
+
+    * Multiple domain axes may be subspaced simultaneously, and it
+      doesn't matter which order they are specified in.
+
+    * Subspace criteria may be provided for size 1 domain axes that
+      are not spanned by the field construct's data.
+
+    * Explicit indices may also be assigned to a domain axis
+      identified by a metadata construct, with either a Python `slice`
+      object, or a sequence of integers or booleans.
+
+    * For a dimension that is cyclic, a subspace defined by a slice or
+      by a `Query` instance is assumed to "wrap" around the edges of
+      the data.
+
+    * Conditions may also be applied to multi-dimensional metadata
+      constructs. The "compress" mode is still the default mode (see
+      the *mode* parameter). Depending on the distribution of metadata
+      construct values and the subspace criteria, unselected cells may
+      still occur in the new domain.
+
+    .. seealso:: `indices`
+
+    :Parameters:
+
+        mode: *optional*
+            There are three modes of operation, each of which provides
+            a different type of subspace, plus a testing mode:
+
+            ==============  ==========================================
+            *argument*      Description
+            ==============  ==========================================
+            ``'compress'``  This is the default mode. Unselected
+                            locations are removed to create the
+                            returned subspace. Note that if a
+                            multi-dimensional metadata construct is
+                            being used to define the indices then some
+                            unsleceted cells still occur in the new
+                            domain.
+
+            ``'envelope'``  The returned subspace is the smallest that
+                            contains all of the selected
+                            indices. Missing data is inserted at
+                            unselected locations within the envelope.
+
+TODO            ``'full'``      The returned subspace has the same domain
+                            as the original field construct. Missing
+                            data is inserted at unselected locations.
+
+            ``'test'``      May be used on its own or in addition to
+                            one of the other positional arguments. Do
+                            not create a subspace, but return `True`
+                            or `False` depending on whether or not it
+                            is possible to create the specified
+                            subspace.
+            ==============  ==========================================
+
+        Keyword parameters: *optional*
+            A keyword name is an identity of a metadata construct, and
+            the keyword value provides a condition for inferring
+            indices that apply to the dimension (or dimensions)
+            spanned by the metadata construct's data. Indices are
+            created that select every location for which the metadata
+            construct's data satisfies the condition.
+
+    :Returns:
+
+        `Domain` or `bool`
+            An independent domain construct containing the subspace of
+            the original domain. If the ``'test'`` positional argument
+            has been set then return `True` or `False` depending on
+            whether or not it is possible to create specified
+            subspace.
+
+    **Examples:**
+
+    There are further worked examples
+    :ref:`in the tutorial <Subspacing-by-metadata>`.
+
+    >>> g = f.subspace(X=112.5)
+    >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))
+    >>> g = f.subspace(latitude=cf.eq(-45) | cf.ge(20))
+    >>> g = f.subspace(X=[1, 2, 4], Y=slice(None, None, -1))
+    >>> g = f.subspace(X=cf.wi(-100, 200))
+    >>> g = f.subspace(X=slice(-2, 4))
+    >>> g = f.subspace(Y=[True, False, True, True, False])
+    >>> g = f.subspace(T=410.5)
+    >>> g = f.subspace(T=cf.dt('1960-04-16'))
+    >>> g = f.subspace(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30')))
+    >>> g = f.subspace('compress', X=[1, 2, 4, 6])
+    >>> g = f.subspace('envelope', X=[1, 2, 4, 6])
+    >>> g = f.subspace('full', X=[1, 2, 4, 6])
+    >>> g = f.subspace(latitude=cf.wi(51, 53))
 
         '''
+        test = False
+        if 'test' in mode:
+            mode = list(mode)
+            mode.remove('test')
+            test = True
+
+        if not mode and not kwargs:
+            if test:
+                return True
+
+            return self.copy()
+
+        try:
+            indices = self.indices(*mode, **kwargs)
+        except ValueError as error:
+            if test:
+                return False
+
+            raise ValueError(error)
+        else:
+            if test:
+                return True
+
         logger.debug(
             "{}.subspace\n"
             "    input indices  = {}".format(
@@ -788,14 +1087,14 @@ TODO
         domain_axes = self.domain_axes
 
         axes = []
-        indices = []
+        indice2 = []
         shape = []
-        for a, b in kwargs.items():
+        for a, b in indices.items():
             axes.append(a)
             shape.append(domain_axes[a].get_size())
-            indices.append(b)
+            indices2.append(b)
 
-        indices, roll = parse_indices(tuple(shape), tuple(indices),
+        indices, roll = parse_indices(tuple(shape), tuple(indices2),
                                       cyclic=True)
 
         logger.debug(
@@ -844,10 +1143,7 @@ TODO
         construct_data_axes = new.constructs.data_axes()
 
         for key, construct in new.constructs.filter_by_data().items():
-            construct_axes = construct_data_axes[key]
-
-            dice = [indices[i] for i, axis in enumerate(axes)
-                    if axis in construct_data_axes[key]]
+            dice = [indices.index(axis) for axis in construct_data_axes[key]]
 
             logger.debug(
                 '    dice = {}'.format(dice))  # pragma: no cover
