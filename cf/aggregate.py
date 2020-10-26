@@ -1019,7 +1019,7 @@ class _Meta:
 
         anc: cf.DomainAncillary
 
-        identity: *optional*
+        identity: optional
 
     :Returns:
 

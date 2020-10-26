@@ -35,8 +35,33 @@ _docstring_substitution_definitions = {
     """i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.""",
 
+    # List comparison
     '{{List comparison}}':
     '''Each construct in the list is compared with its `!equals` method,
     rather than the ``==`` operator.''',
+
+    # construct selection identity
+    '{{construct selection identity}}':
+    '''A construct has a number of string-valued identities
+              (defined by its `!identities` method) and is selected if
+              any of them match the *identity* parameter. *identity*
+              may be a string or a `Query` object that equals one of a
+              construct's identities; or a `re.Pattern` object that
+              matches one of a construct's identities via `re.search`.
+
+              Note that in the output of a `print` call or `!dump`
+              method, a construct is always described by one of its
+              identities, and so this description may always be used
+              as an *identity* argument.''',
+
+    # domain axis selection identity
+    '{{domain axis selection identity}}':
+    '''A domain axis construct has a number of string-valued
+              identities (defined by its `!identities` method) and is
+              selected if any of them match the *identity* parameter.
+              *identity* may be a string or a `Query` object that
+              equals one of a construct's identities; or a
+              `re.Pattern` object that matches one of a construct's
+              identities via `re.search`.''',
 
 }

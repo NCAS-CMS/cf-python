@@ -714,29 +714,37 @@ class Properties(Container):
     :Parameters:
 
         identities: optional
-            Define one or more conditions on the identities.
+            Define conditions on the construct identities by one or
+            more of
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time', ``'ncvar%lat'``,
-            etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
-            a compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``) that is compared with
-            the construct's identities via `re.search`.
+            * A construct identity.
 
-            A construct has a number of identities, and the condition
-            is satisfied if any of the construct's identities, as
-            returned by the `identities` method, equals the condition
-            value. A construct's identities are those returned by its
-            `!identities` method. In the following example, the
-            construct ``x`` has six identities:
+              {{construct selection identity}}
 
-               >>> x.identities()
-               ['time',
-                'long_name=Time',
-                'foo=bar',
-                'standard_name=time',
-                'ncvar%t',
-                'T']
+            *Parameter example:*
+              ``'latitude'``
+
+            *Parameter example:*
+              ``'T'
+
+            *Parameter example:*
+              ``'long_name=Cell Area'``
+
+            *Parameter example:*
+              ``'cellmeasure1'``
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``cf.eq('time')'``
+
+            *Parameter example:*
+              ``re.compile('^lat')``
+
+            *Parameter example:*
+              To matche identities of "T", or any that start with
+              "lat": ``'T', re.compile('^lat')``
 
     :Returns:
 

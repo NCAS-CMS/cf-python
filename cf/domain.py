@@ -131,17 +131,32 @@ class Domain(mixin.FieldDomain,
 
     :Parameters:
 
-        identity:
-           Select the domain axis construct by one of:
+        identity: optional
+            Select the domain axis construct by one of:
 
-              * An identity or key of a 1-d coordinate construct that
-                whose data spans the domain axis construct.
+            * An identity or key of a 1-d dimension or auxiliary
+              coordinate construct that whose data spans the domain
+              axis construct.
 
-              * A domain axis construct identity or key.
+              {{construct selection identity}}
+       
+            * A domain axis construct identity.
 
-            The *identity* parameter selects the domain axis as
-            returned by this call of the `domain_axis` method:
-            ``d.domain_axis(identity)``.
+              {{domain axis selection identity}}
+        
+            * The key of a domain axis construct.
+
+            * `None`. This is the default, which selects the domain
+              axis construct when there is only one of them.
+
+            *Parameter example:*
+              ``identity='time'``
+
+            *Parameter example:*
+              ``identity='domainaxis2'``
+
+            *Parameter example:*
+              ``identity='ncdim%y'``
 
         iscyclic: `bool`, optional
             If False then the axis is set to be non-cyclic. By
@@ -200,7 +215,8 @@ class Domain(mixin.FieldDomain,
 
         return old
 
-    def domain_axis(self, identity, key=False, default=ValueError()):
+    def domain_axis(self, identity=None, key=False,
+                    default=ValueError()):
         '''Return a domain axis construct, or its key.
 
     .. versionadded:: 3.TODO.0
@@ -212,54 +228,29 @@ class Domain(mixin.FieldDomain,
 
     :Parameters:
 
-        identity:
-           Select the domain axis construct by one of:
+        identity: optional
+            Select the domain axis construct by one of:
 
-              * An identity or key of a 1-d coordinate construct that
-                whose data spans the domain axis construct.
+            * An identity or key of a 1-d dimension or auxiliary
+              coordinate construct that whose data spans the domain
+              axis construct.
 
-              * A domain axis construct identity or key.
+              {{construct selection identity}}
+       
+            * A domain axis construct identity.
 
+              {{domain axis selection identity}}
+        
+            * The key of a domain axis construct.
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); or a compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``) that selects the
-            relevant constructs whose identities match via
-            `re.search`.
-
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
-
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-            A position of a domain axis construct in the field
-            construct's data is specified by an integer index.
-
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            * `None`. This is the default, which selects the domain
+              axis construct when there is only one of them.
 
             *Parameter example:*
-              ``identity='long_name=Latitude'``
-
-            *Parameter example:*
-              ``identity='dimensioncoordinate1'``
+              ``identity='time'``
 
             *Parameter example:*
               ``identity='domainaxis2'``
-
-            *Parameter example:*
-              ``identity='key%domainaxis2'``
 
             *Parameter example:*
               ``identity='ncdim%y'``
@@ -270,8 +261,9 @@ class Domain(mixin.FieldDomain,
 
         default: optional
             Return the value of the *default* parameter if a construct
-            can not be found. If set to an `Exception` instance then
-            it will be raised instead.
+            can not be found.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -320,37 +312,38 @@ class Domain(mixin.FieldDomain,
 
     :Parameters:
 
-        identity:
-           Select the construct for which to return the domain axis
-           constructs spanned by its data. By default the field
-           construct is selected. May be:
+        identity: optional
+            Select the construct by one of
 
-              * The identity or key of a metadata construct.
+            * A metadata construct identity.
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); or a compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``) that selects the
-            relevant constructs whose identities match via
-            `re.search`.
+              {{construct selection identity}}
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
+            * The key of a metadata construct
 
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+            * `None`. This is the default, which selects the metadata
+              construct when there is only one of them.
 
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+            *Parameter example:*
+              ``identity='latitude'``
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            *Parameter example:*
+              ``identity='T'
+
+            *Parameter example:*
+              ``identity='long_name=Cell Area'``
+
+            *Parameter example:*
+              ``identity='cellmeasure1'``
+
+            *Parameter example:*
+              ``identity='measure:area'``
+
+            *Parameter example:*
+              ``identity=cf.eq('time')'``
+
+            *Parameter example:*
+              ``identity=re.compile('^lat')``
 
         default: optional
             Return the value of the *default* parameter if the data
@@ -720,49 +713,21 @@ TODO
                            **conditions):
         '''Whether or not there are particular metadata constructs.
 
-    .. note:: The API changed at version 3.1.0
-
-    .. versionadded:: 3.0.0
+    .. versionadded:: 3.TODO.0
 
     .. seealso:: `match`, `match_by_property`, `match_by_rank`,
-                 `match_by_identity`, `match_by_ncvar`,
-                 `match_by_units`
+                 `match_by_identity`, `match_by_ncvar`,                 
 
     :Parameters:
 
         identities: optional
-            Identify the metadata constructs that have any of the
-            given identities or construct keys.
+            Identify the metadata constructs by one or more of
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); or a compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``) that selects the
-            relevant constructs whose identities match via
-            `re.search`.
+            * A metadata construct identity.
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
+              {{construct selection identity}}
 
-               >>> x.identities()
-               ['time',
-                'long_name=Time',
-                'foo=bar',
-                'standard_name=time',
-                'ncvar%t',
-                'T']
-
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            * The key of a metadata construct
 
             If a cell method construct identity is given (such as
             ``'method:mean'``) then it will only be compared with the
@@ -780,16 +745,37 @@ TODO
             method operations.
 
             *Parameter example:*
-              ``'measure:area'``
+              ``identity='latitude'``
+
+            *Parameter example:*
+              ``'T'
 
             *Parameter example:*
               ``'latitude'``
 
             *Parameter example:*
-              ``'long_name=Longitude'``
+              ``'long_name=Cell Area'``
 
             *Parameter example:*
-              ``'domainancillary2', 'ncvar%areacello'``
+              ``'cellmeasure1'``
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``cf.eq('time')'``
+
+            *Parameter example:*
+              ``re.compile('^lat')``
+
+            *Parameter example:*
+              ``'domainancillary2', 'longitude'``
+
+            *Parameter example:*
+              ``'area: mean T: maximum'``
+
+            *Parameter example:*
+              ``'grid_latitude', 'area: mean T: maximum'``
 
         conditions: optional
             Identify the metadata constructs that have any of the

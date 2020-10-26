@@ -368,6 +368,49 @@ class ConstructList(list,
     :Returns:
 
         `None`
+# sort egs
+#>>> fl
+#    [<CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
+#     <CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>,
+#     <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
+#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>]
+#    >>> fl.sort()
+#    >>> fl
+#    [<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
+#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
+#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
+#     <CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>]
+#    >>> fl.sort(reverse=True)
+#    >>> fl
+#    [<CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>,
+#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
+#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
+#     <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+#
+#    >>> [f.datum(0) for f in fl]
+#    [masked,
+#     -0.12850454449653625,
+#     -0.12850454449653625,
+#     236.51275634765625]
+#    >>> fl.sort(key=lambda f: f.datum(0), reverse=True)
+#    >>> [f.datum(0) for f in fl]
+#    [masked,
+#     236.51275634765625,
+#     -0.12850454449653625,
+#     -0.12850454449653625]
+#
+#    >>> from operator import attrgetter
+#    >>> [f.long_name for f in fl]
+#    ['Meridional Overturning Streamfunction',
+#     'U COMPNT OF WIND ON PRESSURE LEVELS',
+#     'U COMPNT OF WIND ON PRESSURE LEVELS',
+#     'air_temperature']
+#    >>> fl.sort(key=attrgetter('long_name'))
+#    >>> [f.long_name for f in fl]
+#    ['air_temperature',
+#     'Meridional Overturning Streamfunction',
+#     'U COMPNT OF WIND ON PRESSURE LEVELS',
+#     'U COMPNT OF WIND ON PRESSURE LEVELS']
 
         '''
         if key is None:
@@ -613,7 +656,7 @@ class ConstructList(list,
         '''Select list elements by identity.
 
     To find the inverse of the selection, use a list comprehension
-    with the `!match_by_identity` method of the constucts. For
+    with the `!match_by_identity` method of the constuct elements. For
     example, to select all constructs whose identity is *not*
     ``'air_temperature'``:
 
@@ -633,31 +676,21 @@ class ConstructList(list,
             Select constructs from the list. By default all constructs
             are selected. May be one or more of:
 
-              * The identity of a construct.
+            * A construct identity.
 
-            A construct identity is specified by a string (e.g.
-            ``'air_temperature'``, ``'long_name=Air Temperature',
-            ``'ncvar%tas'``, etc.); or a compiled regular expression
-            (e.g. ``re.compile('^air_')``) that selects the relevant
-            constructs whose identities match via `re.search`.
+              {{construct selection identity}}
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            five identities:
+            If no identities are provided then all list elements are
+            selected.
 
-               >>> x.identities()
-               ['air_temperature',
-                'long_name=Air Temperature',
-                'foo=bar',
-                'standard_name=air_temperature',
-                'ncvar%tas']
+            *Parameter example:*
+              ``'latitude'``
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identities* argument.
+            *Parameter example:*
+              ``'long_name=Air Temperature'``
+
+            *Parameter example:*
+              ``'air_pressure', 'longitude'``
 
     :Returns:
 
@@ -671,147 +704,6 @@ class ConstructList(list,
         '''
         return type(self)(f for f in self if f.match_by_identity(*identities))
 
-    def select_by_ncvar(self, *ncvars):
-        '''Select list elements by netCDF variable name.
-
-    To find the inverse of the selection, use a list comprehension
-    with the `!match_by_ncvar` method of the constucts. For example,
-    to select all constructs which do *not* have a netCDF name of
-    'tas':
-
-       >>> gl = cf.{{class}}(
-       ...     f for f in fl if not f.match_by_ncvar('tas')
-       ... )
-
-    .. versionadded:: 3.0.0
-
-    .. seealso:: `select`, `select_by_identity`, `select_by_property`,
-
-    :Parameters:
-
-        ncvars: optional
-            Select constructs from the list. May be one or more:
-
-              * The netCDF name of a construct.
-
-            A construct is selected if it matches any of the given
-            names.
-
-            A netCDF variable name is specified by a string (e.g.
-            ``'tas'``, etc.); a `Query` object
-            (e.g. ``cf.eq('tas')``); or a compiled regular expression
-            (e.g. ``re.compile('^air_')``) that selects the constructs
-            whose netCDF variable names match via `re.search`.
-
-            If no netCDF variable names are provided then all are
-            selected.
-
-    :Returns:
-
-        `{{class}}`
-            The matching constructs.
-
-    **Examples:**
-
-    >>> fl = cf.{{class}}([cf.example_field(0), cf.example_field(1)])
-    >>> fl
-    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
-     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
-    >>> f[0].nc_get_variable()
-    'humidity'
-    >>> f[1].nc_get_variable()
-    'temp'
-
-    >>> fl.select_by_ncvar('humidity')
-    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]
-    >>> fl.select_by_ncvar('humidity', 'temp')
-    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
-     <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
-    >>> fl.select_by_ncvar()
-    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>,
-     <CF Field: air_temperature(cf_role=timeseries_id(4), ncdim%timeseries(9)) Celsius>]
-
-    >>> import re
-    >>> fl.select_by_ncvar(re.compile('^hum'))
-    [<CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))>]
-
-        '''
-        return type(self)(f for f in self if f.match_by_ncvar(*ncvars))
-
-    def select_by_property(self, *mode, **properties):
-        '''Select list elements by property.
-
-    To find the inverse of the selection, use a list comprehension
-    with the `!match_by_property` method of the constucts. For
-    example, to select all constructs which do *not* have a long_name
-    property of "Air Pressure":
-
-       >>> gl = cf.{{class}}(
-       ...     f for f in fl if not f.match_by_property(long_name='Air Pressure')
-       ... )
-
-    .. versionadded:: 3.0.0
-
-    .. seealso:: `select`, `select_by_identity`, `select_by_ncvar`
-
-    :Parameters:
-
-        mode: optional
-            Define the behaviour when multiple properties are
-            provided.
-
-            By default (or if the *mode* parameter is ``'and'``) a
-            construct is selected if it matches all of the given
-            properties, but if the *mode* parameter is ``'or'`` then a
-            construct will be selected when at least one of its
-            properties matches.
-
-        properties: optional
-            Select the constructs with the given property values.
-
-            By default a construct is selected if it matches all of
-            the given properties, but it may alternatively be selected
-            when at least one of its properties matches (see the
-            *mode* positional parameter).
-
-            A property is identified by the name of a keyword
-            parameter whose value defines the property value to
-            required for construct selection.
-
-            A parameter value is a condition that is satisfied if it
-            equals a construct's property value. It may be a string
-            (e.g. ``'latitude'``); a `Query` object
-            (e.g. ``cf.eq('longitude')``); a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``) that is
-            compared with the property value via `re.search`; or
-            `None`, which is a special condition that is satified if
-            the construct property exists, regardless of its value.
-
-            *Parameter example:*
-              Select constructs with a long_name' property of 'time':
-              ``long_name='time'``.
-
-            *Parameter example:*
-              Select constructs with a 'valid_min' property that is
-              less than -999: ``valid_min=cf.lt(-999)``.
-
-            *Parameter example:*
-              Select constructs with a 'long_name' property that
-              starts with "air_": ``long_name=re.compile('^air_')``.
-
-            *Parameter example:*
-              Select constructs that have a long_name property,
-              regardless of its value: ``long_name=None``.
-
-    :Returns:
-
-        `{{class}}`
-            The matching constructs.'''
-        # Subclasses should add examples to the docstring
-
-        return type(self)(
-            f for f in self if f.match_by_property(*mode, **properties))
-
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
@@ -819,7 +711,7 @@ class ConstructList(list,
         '''Alias of `cf.{{class}}.select_by_identity`.
 
     To find the inverse of the selection, use a list comprehension
-    with the `!match_by_identity` method of the constucts. For
+    with the `!match_by_identity` method of the constuct elements. For
     example, to select all constructs whose identity is *not*
     ``'air_temperature'``:
 

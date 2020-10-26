@@ -981,41 +981,37 @@ class Constructs(cfdm.Constructs):
     :Parameters:
 
         identities: optional
-            Select constructs that have any of the given identities or
-            construct keys.
+            Identify the metadata constructs by one or more of
 
-            An identity is specified by a string (e.g. ``'latitude'``,
-            ``'long_name=time'``, etc.); or a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``), for which
-            all constructs whose identities match (via `re.search`)
-            are selected.
+            * A metadata construct identity.
 
-            If no identities are provided then all constructs are selected.
+              {{construct selection identity}}
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            five identities:
+            * The key of a metadata construct
 
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'T', 'ncvar%t']
+            *Parameter example:*
+              ``identity='latitude'``
 
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+            *Parameter example:*
+              ``'T'
 
-            Note that the identifiers of a metadata construct in the
-            output of a `print` or `!dump` call are always one of its
-            identities, and so may always be used as an *identities*
-            argument.
+            *Parameter example:*
+              ``'latitude'``
 
-            Domain axis constructs may also be identified by their
-            position in the field construct's data array. Positions
-            are specified by either integers.
+            *Parameter example:*
+              ``'long_name=Cell Area'``
 
-            .. note:: This is an extension to the functionality of
-                      `cfdm.Constucts.filter_by_identity`.
+            *Parameter example:*
+              ``'cellmeasure1'``
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``cf.eq('time')'``
+
+            *Parameter example:*
+              ``re.compile('^lat')``
 
     :Returns:
 
