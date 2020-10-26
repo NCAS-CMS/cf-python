@@ -20,8 +20,10 @@ from ..decorators import (
 logger = logging.getLogger(__name__)
 
 
-class FieldDomainMixin:
-    '''TODO
+class FieldDomain:
+    '''Mixin class for methods common to both field and domain constructs
+
+    .. versionadded:: 3.TODO.0
 
     '''
     # ----------------------------------------------------------------
