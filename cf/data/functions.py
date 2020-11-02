@@ -127,7 +127,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
     try:
         f = File(path=filename, byte_ordering=byte_ordering,
-                 word_size=word_size, format=fmt)
+                 word_size=word_size, fmt=fmt)
     except Exception as error:
         try:
             f.close_fd()

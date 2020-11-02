@@ -18,10 +18,10 @@ class File:
 
     '''
     def __init__(self, path, byte_ordering=None, word_size=None,
-                 format=None, parse=True):
+                 fmt=None, parse=True):
         '''Open andparse a UM file.
 
-    The optional *byte_ordering*, *word_size* and *format* arguments
+    The optional *byte_ordering*, *word_size* and *fmt* arguments
     specify the file type. If all three are set, then this forces the
     file type; otherwise, the file type is autodetected and any of
     them that are set are ignored.
@@ -37,7 +37,7 @@ class File:
         word_size: `int`, optional
             4 or 8
 
-        format: `str`, optional
+        fmt: `str`, optional
             'FF' or 'PP'
 
         parse: `bool`, optional
@@ -60,8 +60,8 @@ class File:
         self.fd = None
         self.open_fd()
 
-        if byte_ordering and word_size and format:
-            self.format = format
+        if byte_ordering and word_size and fmt:
+            self.fmt = fmt
             self.byte_ordering = byte_ordering
             self.word_size = word_size
         else:
@@ -69,11 +69,20 @@ class File:
 
         self.path = path
         file_type_obj = c.create_file_type(
-            self.format, self.byte_ordering, self.word_size
+            self.fmt, self.byte_ordering, self.word_size
         )
+
+        # Set the word size used to interpret file pointers
         c.set_word_size(file_type_obj)
 
         if parse:
+            # --------------------------------------------------------
+            # Work out information from the file and store it in the
+            # `vars` attribute.
+            #
+            # Note that the word size used to interpret file pointers
+            # needs to have been previously set.
+            # --------------------------------------------------------
             info = c.parse_file(self.fd, file_type_obj)
             self.vars = info["vars"]
             self._add_back_refs()
@@ -121,7 +130,7 @@ class File:
             raise IOError("File {} has unsupported format".format(self.path))
 
         d = c.file_type_obj_to_dict(file_type_obj)
-        self.format = d["format"]
+        self.fmt = d['fmt']
         self.byte_ordering = d["byte_ordering"]
         self.word_size = d["word_size"]
 
@@ -387,7 +396,7 @@ if __name__ == '__main__':
 
     path = sys.argv[1]
     f = File(path)
-    print(f.format, f.byte_ordering, f.word_size)
+    print(f.fmt, f.byte_ordering, f.word_size)
     print("num variables: %s" % len(f.vars))
     for varno, var in enumerate(f.vars):
         print()
@@ -417,7 +426,7 @@ if __name__ == '__main__':
     # also read a record using saved metadata
     if f.vars:
 
-        format = f.format
+        fmt = f.fmt
         byte_ordering = f.byte_ordering
         word_size = f.word_size
         myrec = f.vars[0].recs[0]
@@ -429,7 +438,7 @@ if __name__ == '__main__':
 
         fnew = File(
             path,
-            format=format,
+            fmt=fmt,
             byte_ordering=byte_ordering,
             word_size=word_size,
             parse=False

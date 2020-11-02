@@ -14,7 +14,7 @@ _len_int_hdr = 45
 
 class File_type(CT.Structure):
     _fields_ = [
-        ("format", CT.c_int),
+        ("fmt", CT.c_int),
         ("byte_ordering", CT.c_int),
         ("word_size", CT.c_int),
     ]
@@ -130,6 +130,14 @@ class CInterface:
 
     '''
     def __init__(self, lib_name='umfile.so'):
+        '''**Initialisation**
+
+    :Parameters:
+
+        lib_name: `str`
+            The name of the C library binary.
+
+        '''
         lib_dir = os.path.join(
             os.path.dirname(__file__) or '.', 'c-lib'
         )
@@ -137,6 +145,13 @@ class CInterface:
         self.lib = CT.CDLL(lib_path)
 
     def _is_null_pointer(self, ptr):
+        '''TODO
+
+    :Returns:
+
+        `bool`
+
+        '''
         try:
             ptr.contents
             return False
@@ -145,6 +160,11 @@ class CInterface:
 
     def detect_file_type(self, fd):
         '''Auto-detect file type.
+
+    :Parameters:
+
+        fd: `int`
+            The file descriptor of the open file.
 
     :Returns:
 
@@ -165,7 +185,7 @@ class CInterface:
         '''Converts a `File_type` object returned by `detect_file_type` into a
     dictionary that include meaningful string values in place of the
     integers that derive from the C enum statments, specifically:
-    'format': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
+    'fmt': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
     'big_endian' and also 'word_size': 4 or 8
 
     :Returns:
@@ -173,21 +193,21 @@ class CInterface:
         `dict`
 
         '''
-        format = enum_file_format.as_name(file_type.format)
+        fmt = enum_file_format.as_name(file_type.fmt)
         byte_ordering = enum_byte_ordering.as_name(file_type.byte_ordering)
         word_size = file_type.word_size
         return {
-            'format': format,
+            'fmt': fmt,
             'byte_ordering': byte_ordering,
             'word_size': word_size
             }
 
-    def create_file_type(self, format, byte_ordering, word_size):
+    def create_file_type(self, fmt, byte_ordering, word_size):
         '''TODO
 
     :Parameters:
 
-        format: `str`
+        fmt: `str`
             'PP' or 'FF'
 
         byte_ordering: `str`
@@ -204,7 +224,7 @@ class CInterface:
 
         '''
         return File_type(
-            format=enum_file_format.as_index(format),
+            fmt=enum_file_format.as_index(fmt),
             byte_ordering=enum_byte_ordering.as_index(byte_ordering),
             word_size=word_size
         )
@@ -271,10 +291,7 @@ class CInterface:
         return numpy.empty(size, dtype=self.file_data_int_type)
 
     def parse_file(self, fh, file_type):
-        '''Given an open file handle, work out information from the file, and
-    return this in a dictionary, of which currently the only key
-    actually implemented is ``'vars'``, containing a list of
-    variables, as that is all that the caller requires.
+        '''Given an open file handle, work out information from the file.
 
     :Parameters:
 
@@ -285,15 +302,18 @@ class CInterface:
             `File_type` object as returned by `detect_file_type` or
             `create_file_type`.
 
-
     :Returns:
 
         `dict`
+            The information from the file. Currently the only key
+            actually implemented is ``'vars'``, containing a list of
+            variables, as that is all that the caller requires.
 
         '''
         func = self.lib.file_parse
         file_p_type = CT.POINTER(self.file_class)
         func.restype = file_p_type
+
         file_p = func(fh, file_type)
         if self._is_null_pointer(file_p):
             raise umfile.UMFileException("File parsing failed")
@@ -487,7 +507,6 @@ class CInterface:
            word_size - 4 or 8
 
         returns: extra data as string
-
         '''
         extra_data = b"\0" * extra_data_length
 

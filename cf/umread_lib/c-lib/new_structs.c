@@ -78,7 +78,7 @@ File *new_file()
   file->nvars = 0;
   file->vars = NULL;
   file->fd = -1;
-  file->file_type.format = -1;
+  file->file_type.fmt = -1;
   file->file_type.byte_ordering = -1;
   file->file_type.word_size = -1;
   file->internp->nrec = 0;

@@ -142,25 +142,25 @@ int detect_file_type_(int fd, File_type *file_type)
 
   if (valid_um_word2(data4[1]))
     {
-      file_type->format = fields_file;
+      file_type->fmt = fields_file;
       file_type->byte_ordering = NATIVE_ORDERING;
       file_type->word_size = 4;
     }
   else if (valid_um_word2(data8[1]))
     {
-      file_type->format = fields_file;
+      file_type->fmt = fields_file;
       file_type->byte_ordering = NATIVE_ORDERING;
       file_type->word_size = 8;
     }
   else if (valid_um_word2(data4s[1]))
     {
-      file_type->format = fields_file;
+      file_type->fmt = fields_file;
       file_type->byte_ordering = REVERSE_ORDERING;
       file_type->word_size = 4;
     }
   else if (valid_um_word2(data8s[1]))
     {
-      file_type->format = fields_file;
+      file_type->fmt = fields_file;
       file_type->byte_ordering = REVERSE_ORDERING;
       file_type->word_size = 8;
     }
@@ -169,25 +169,25 @@ int detect_file_type_(int fd, File_type *file_type)
 
   else if (valid_pp_word1(data8[0], 8) && is_alternating_zeros(data4, N_PAIRS))
     {
-      file_type->format = plain_pp;
+      file_type->fmt = plain_pp;
       file_type->byte_ordering = NATIVE_ORDERING;
       file_type->word_size = 8;
     }
   else if (valid_pp_word1(data8s[0], 8) && is_alternating_zeros(data4, N_PAIRS))
     {
-      file_type->format = plain_pp;
+      file_type->fmt = plain_pp;
       file_type->byte_ordering = REVERSE_ORDERING;
       file_type->word_size = 8;
     }
   else if (valid_pp_word1(data4[0], 4))
     {
-      file_type->format = plain_pp;
+      file_type->fmt = plain_pp;
       file_type->byte_ordering = NATIVE_ORDERING;
       file_type->word_size = 4;
     }
   else if (valid_pp_word1(data4s[0], 4))
     {
-      file_type->format = plain_pp;
+      file_type->fmt = plain_pp;
       file_type->byte_ordering = REVERSE_ORDERING;
       file_type->word_size = 4;
     }
