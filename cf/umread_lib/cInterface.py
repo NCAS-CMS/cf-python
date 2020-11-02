@@ -455,8 +455,7 @@ class CInterface:
         data_type,
         nwords
     ):
-        """
-        reads record data from open file
+        '''reads record data from open file
 
         inputs:
            fd - integer low-level file descriptor
@@ -470,7 +469,8 @@ class CInterface:
            nwords - number of words to read
               type and nwords should have been returned by
               get_type_and_num_words()
-        """
+
+        '''
         if data_type == 'integer':
             data = self._get_empty_int_array(nwords)
             ctypes_data = self._get_ctypes_int_array()
