@@ -13,13 +13,13 @@ class UMFileException(Exception):
 
 
 class File:
-    '''A class for a UM data file that gives a view of the file including
-    sets of PP records combined into variables.
+    '''A class for a UM file that gives a view of the file including sets
+    of PP records combined into variables.
 
     '''
     def __init__(self, path, byte_ordering=None, word_size=None,
                  format=None, parse=True):
-        '''Open and parse a UM file.
+        '''Open andparse a UM file.
 
     The optional *byte_ordering*, *word_size* and *format* arguments
     specify the file type. If all three are set, then this forces the
@@ -55,9 +55,11 @@ class File:
         '''
         c = cInterface.CInterface()
         self._c_interface = c
+
         self.path = path
         self.fd = None
         self.open_fd()
+
         if byte_ordering and word_size and format:
             self.format = format
             self.byte_ordering = byte_ordering
@@ -70,6 +72,7 @@ class File:
             self.format, self.byte_ordering, self.word_size
         )
         c.set_word_size(file_type_obj)
+
         if parse:
             info = c.parse_file(self.fd, file_type_obj)
             self.vars = info["vars"]
@@ -115,7 +118,7 @@ class File:
             file_type_obj = c.detect_file_type(self.fd)
         except Exception:
             self.close_fd()
-            raise IOError("File {0} has unsupported format".format(self.path))
+            raise IOError("File {} has unsupported format".format(self.path))
 
         d = c.file_type_obj_to_dict(file_type_obj)
         self.format = d["format"]
@@ -123,7 +126,7 @@ class File:
         self.word_size = d["word_size"]
 
     def _add_back_refs(self):
-        '''Add file attribute to `Var` objects, and both file and var
+        '''Add file attribute to `Var` objects, and both `!file` and `!var`
     attributes to `Rec` objects.
 
     The important one is the file attribute in the `Rec` object, as

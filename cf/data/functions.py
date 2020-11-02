@@ -5,11 +5,8 @@ from netCDF4 import Dataset as netCDF4_Dataset
 from ..constants import _file_to_fh
 from ..functions import open_files_threshold_exceeded, close_one_file
 
-# from ..read_write.umread_lib.umfile import File #, UMFileException
-from ..umread_lib.umfile import File  # , UMFileException
+from ..umread_lib.umfile import File
 
-# if 'netCDF' not in _file_to_fh:
-#     _file_to_fh['netCDF'] = {}
 
 _file_to_UM = _file_to_fh.setdefault('UM', {})
 _file_to_Dataset = _file_to_fh.setdefault('netCDF', {})
@@ -58,6 +55,7 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
             nc.close()
         elif filename in _file_to_Dataset:
             _close_netcdf_file(filename)
+    # --- End: if
 
     try:
         nc = netCDF4_Dataset(filename, mode, format=fmt)
@@ -72,7 +70,7 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
 
 
 def _close_netcdf_file(filename):
-    '''Close a netCDF file
+    '''Close a netCDF file.
 
     Does nothing if the file is already closed.
 
@@ -109,11 +107,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
         `umfile.File`
             The opened file with an open file descriptor.
 
-    **Examples:**
-
     '''
-#    filename = abspath(filename)
-
     f = _file_to_UM.get(filename)
 
     if f is not None:
@@ -132,13 +126,14 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
         close_one_file()
 
     try:
-        f = File(filename, byte_ordering=byte_ordering,
+        f = File(path=filename, byte_ordering=byte_ordering,
                  word_size=word_size, format=fmt)
     except Exception as error:
         try:
             f.close_fd()
         except Exception:
             pass
+
         raise Exception(error)
 
     # Add a close method to the file object
@@ -162,9 +157,7 @@ def _close_um_file(filename):
 
     :Returns:
 
-        None
-
-    **Examples:**
+        `None`
 
     '''
     f = _file_to_UM.pop(filename, None)

@@ -358,7 +358,6 @@ class UMField:
     '''TODO
 
     '''
-
     def __init__(self, var, fmt, byte_ordering, word_size, um_version,
                  set_standard_name, height_at_top_of_model, verbose=None,
                  implementation=None, **kwargs):
@@ -2892,10 +2891,10 @@ class UMRead(cfdm.read_write.IORead):
 
     '''
     @_manage_log_level_via_verbosity
-    def read(self, filename, um_version=405,
-             aggregate=True, endian=None, word_size=None,
-             set_standard_name=True, height_at_top_of_model=None,
-             fmt=None, chunk=True, verbose=None):
+    def read(self, filename, um_version=405, aggregate=True,
+             endian=None, word_size=None, set_standard_name=True,
+             height_at_top_of_model=None, fmt=None, chunk=True,
+             verbose=None):
         '''Read fields from a PP file or UM fields file.
 
     The file may be big or little endian, 32 or 64 bit
@@ -2964,10 +2963,10 @@ class UMRead(cfdm.read_write.IORead):
             'filename': filename,
             'byte_ordering': byte_ordering,
             'word_size': word_size,
-            'fmt': fmt
+            'fmt': fmt,
         }
 
-        history = 'Converted from UM/PP by cf-python v{}'.format(__version__)
+        history = "Converted from UM/PP by cf-python v{}".format(__version__)
 
         if endian:
             byte_ordering = endian+'_endian'
@@ -2986,10 +2985,10 @@ class UMRead(cfdm.read_write.IORead):
         return [field for x in um for field in x.fields if field]
 
     def is_um_file(self, filename):
-        '''Return True if a file is a PP file or UM fields file.
+        '''Whether or not a file is a PP file or UM fields file.
 
     Note that the file type is determined by inspecting the file's
-    contents and any file suffix is not not considered.
+    content and any file suffix is not not considered.
 
     :Parameters:
 
@@ -3052,8 +3051,8 @@ class UMRead(cfdm.read_write.IORead):
                              word_size=g['word_size'],
                              fmt=g['fmt'])
 
-
 # --- End: class
+
 
 '''
 Problems:
