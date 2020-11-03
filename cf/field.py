@@ -239,6 +239,29 @@ _xxx = namedtuple(
     ['size', 'axis', 'key', 'coord', 'coord_type', 'scalar']
 )
 
+_formula_term_units = {
+    'atmosphere_ln_pressure_coordinate': (
+        'atmosphere_ln_pressure_coordinate',),
+    'atmosphere_sigma_coordinate': ('atmosphere_sigma_coordinate',),
+    'atmosphere_hybrid_sigma_pressure_coordinate': (
+        'atmosphere_hybrid_sigma_pressure_coordinate',),
+    'atmosphere_hybrid_height_coordinate': (
+        'atmosphere_hybrid_height_coordinate',),
+    'atmosphere_sleve_coordinate': ('atmosphere_sleve_coordinate',),
+    'ocean_sigma_coordinate': ('ocean_sigma_coordinate',),
+    'ocean_s_coordinate': {
+        's': '1',
+        'eta': 'm',
+        'depth': 'm',
+        'a': '1',
+        'b': '1',
+        'depth_c': 'm',
+    },
+    'ocean_sigma_z_coordinate': ('ocean_sigma_z_coordinate',),
+    'ocean_double_sigma_coordinate': (
+        'ocean_double_sigma_coordinate',),
+}
+
 
 class Field(mixin.PropertiesData,
             cfdm.Field):
@@ -13028,6 +13051,200 @@ class Field(mixin.PropertiesData,
 
         return mask
 
+    def xxx(self, default_to_zero=True):
+        '''TODO
+
+    :Returns:
+
+        `None`
+
+    **Examples**
+
+        TODO
+
+        '''
+        def _domain_ancillary_term(self, standard_name,
+                                   computed_standard_name,
+                                   coordinate_conversion, term,
+                                   default_to_zero=True):
+            '''TODO
+
+            '''
+            var = None
+        
+            key = coordinate_conversion.domain_ancillaries(term, None)
+            if key is not None:
+                var = self.domain_ancillary(key, None)
+                
+            if var is not None:    
+                var = p0.get_data()
+            elif default_to_zero:
+                var = self._Data(
+                    0.0,
+                    units=_formula_term_units[standard_name][term]
+                )
+            else:
+                raise ValueError(
+                    "Can't calculate {!r} coordinates when there are no "
+                    "{!r} values and default_to_zero={}".format(
+                        computed_standard_name, term, default_to_zero
+                    )
+                )
+
+            return var, key
+        # --- End: def
+        
+        def _coordinate_term(self, standard_name,
+                             computed_standard_name,
+                             coordinate_reference, term):
+            '''TODO
+
+            '''
+            var = None
+            for key in coordinate_reference.coordinates():
+                var = self.coordinate(key, None)
+                if var is None:
+                    continue
+                
+                if var.get_property('standard_name', None) == standard_name:
+                    break                        
+            # --- End: for
+
+            if var is None:
+                raise ValueError(
+                    "Can't calculate {!r} coordinates when there are no "
+                    "{!r} coordinates".format(
+                        computed_standard_name, term
+                    )
+                )
+
+            return var, key
+        # --- End: def
+                
+        for cr in self.coordinate_references.values():
+            computed_standard_name = None
+            
+            coordinate_conversion = c.coordinate_conversion
+            standard_name = coordinate_conversion.get_parameter(
+                'standard_name', None
+            )
+            if standard_name is None:                
+                continue
+            
+            if standard_name == 'atmosphere_ln_pressure_coordinate':
+                computed_standard_name = 'air_pressure'
+                
+                p0, _ = _domain_ancillary_term(self, standard_name,
+                                               computed_standard_name,
+                                               coordinate_conversion,
+                                               'p0', default_to_zero)
+                
+                lev, lev_key = _coordinate_term(self, standard_name
+                                                computed_standard_name,
+                                                coordinate_conversion,
+                                                'lev')
+
+                # Get the axes of the non-parametric coordinates
+                axes = self.get_data_axes(lev_key)
+
+                # Compute the non-parametric coordinates
+                data = p0 * (-lev.exp())
+
+            elif standard_name == 'atmosphere_sigma_coordinate':
+                computed_standard_name = 'air_pressure'
+                
+                ptop, _ = _domain_ancillary_term(self, standard_name,
+                                                 computed_standard_name,
+                                                 coordinate_conversion,
+                                                 'ptop',
+                                                 default_to_zero)
+                
+                ps, ps_key = _domain_ancillary_term(self,
+                                                    standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'ps',
+                                                    default_to_zero)
+                
+                sigma, sigma_key = _coordinate_term(self,
+                                                    standard_name
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'sigma')
+                
+                # Get the axes of the non-parametric coordinates
+                axes = (
+                    self.get_data_axes(ps_key) + self.get_data_axes(sigma_key)
+                )
+                
+                # Expand ps to allow broadcasting over the k dimension
+                ps = ps.insert_dimension(-1)
+                
+                # Compute the non-parametric coordinates
+                data = ptop + sigma * (ps - ptop)
+                
+            elif (
+                    standard_name
+                    == 'atmosphere_hybrid_sigma_pressure_coordinate'
+            ):
+                computed_standard_name = 'air_pressure'
+                
+                ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
+                
+                if ap_term: 
+                    ap, _ = _domain_ancillary_term(self,
+                                                   standard_name,
+                                                   computed_standard_name,
+                                                   coordinate_conversion,
+                                                   'ap',
+                                                   default_to_zero)
+                else:
+                    a, _ = _domain_ancillary_term(self, standard_name,
+                                                  computed_standard_name,
+                                                  coordinate_conversion,
+                                                  'a', default_to_zero)
+                   
+                    p0, _ = _domain_ancillary_term(self,
+                                                   standard_name,
+                                                   computed_standard_name,
+                                                   coordinate_conversion,
+                                                   'p0',
+                                                   default_to_zero)
+
+                b, _ = _domain_ancillary_term(self, standard_name,
+                                              computed_standard_name,
+                                              coordinate_conversion,
+                                              'b', default_to_zero)
+                
+                ps, ps_key = _domain_ancillary_term(self,
+                                                    standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'ps',
+                                                    default_to_zero)
+               
+                # Get the axes of the non-parametric coordinates
+                axes = (
+                    self.get_data_axes(ps_key) + self.get_data_axes(sigma_key)
+                )
+                
+                # Expand ps to allow broadcasting over the k dimension
+                ps = ps.insert_dimension(-1)
+                
+                # Compute the non-parametric coordinates
+                if ap_term:
+                    data = ap + b * ps
+                else:
+                    data = a * p0 + b * ps
+            # --- End: if
+            
+            if computed_standard_name is not None:
+                c = self._AuxiliaryCoordinate()
+                c.standard_name = computed_standard_name
+                c.set_data(data)
+                
+                self.set_construct(c, axes=axes, copy=False)
+                
     def match_by_construct(self, *identities, OR=False,
                            **conditions):
         '''Whether or not there are particular metadata constructs.
