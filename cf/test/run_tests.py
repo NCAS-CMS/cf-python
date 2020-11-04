@@ -25,7 +25,7 @@ test_dir = os.path.dirname(os.path.realpath(__file__))
 test_loader = unittest.TestLoader
 # Randomise the order to run the test methods within each test case (module),
 # i.e. within each test_<TestCase>, e.g. for all in test_AuxiliaryCoordinate:
-test_loader.sortTestMethodsUsing = randomise_test_order
+# ## test_loader.sortTestMethodsUsing = randomise_test_order  ## temporary
 
 testsuite_setup_0 = unittest.TestSuite()
 testsuite_setup_0.addTests(
@@ -43,7 +43,7 @@ all_test_cases = test_loader().discover(test_dir, pattern='test_*.py')
 # Randomise the order to run the test cases (modules, i.e. test_<TestCase>)
 # TODO: change to a in-built unittest way to specify the above (can't find one
 # after much searching, but want to avoid mutating weakly-private attribute).
-shuffle(all_test_cases._tests)
+# ## shuffle(all_test_cases._tests)  ## temporary
 testsuite.addTests(all_test_cases)
 
 
