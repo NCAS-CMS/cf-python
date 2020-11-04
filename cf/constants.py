@@ -493,65 +493,46 @@ formula_term_max_dimensions = {
     },   
 }
 
+_D1_depth_mapping = {
+    'sea_floor_depth_below_geoid': 'altitude',
+    'sea_floor_depth_below_geopotential_datum': 'height_above_geopotential_ datum',
+    'sea_floor_depth_below_reference_ellipsoid': 'height_above_reference_ ellipsoid'
+    'sea_floor_depth_below_mean_sea_level': 'height_above_mean_sea_ level',
+}
+
 computed_standard_names = {
-    'atmosphere_ln_pressure_coordinate': (
-        'air_pressure',
-    ),
-    'atmosphere_sigma_coordinate':  (
-        'air_pressure',
-    ),
-    'atmosphere_hybrid_sigma_pressure_coordinate': (
-        'air_pressure',
-    ),
-    'atmosphere_hybrid_height_coordinate': (
-        'altitude',
-        'height_above_geopotential_datum',
-    ),
-    'atmosphere_sleve_coordinate': (
-        'altitude',
-        'height_above_geopotential_datum',
-    ),
+    'atmosphere_ln_pressure_coordinate': 'air_pressure',
+    'atmosphere_sigma_coordinate': 'air_pressure',
+    'atmosphere_hybrid_sigma_pressure_coordinate': 'air_pressure',
+    'atmosphere_hybrid_height_coordinate': {
+        'orog': {
+            'surface_altitude': 'altitude',
+            'surface_height_above_geopotential_datum': 'height_above_geopotential_datum',
+        },
+    },
+    'atmosphere_sleve_coordinate': {
+        'ztop': {
+            'altitude_at_top_of_atmosphere_model': 'altitude',
+            'height_above_geopotential_datum_at_top_of_atmosphere_model': 'height_above_geopotential_datum',
+        },
+    },
     'ocean_sigma_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'sigma': ('ocean_sigma_coordinate',),
+        'eta': _D1_depth_mapping,
     },
     'ocean_s_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'a': (None,),
-        'b': (None,),
-        'depth_c': (None,),
+        'eta': _D1_depth_mapping,
     },
     'ocean_s_coordinate_g1': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
-        's': (None,),
-        'C': (None,),
-        'depth_c': (None,),
+        'eta': _D1_depth_mapping,
     },
     'ocean_s_coordinate_g2': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
-        's': (None,),
-        'depth_c': (None,),
+        'eta': _D1_depth_mapping,
     },
     'ocean_sigma_z_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'zlev': _D1_zlev,
-        'sigma': ('ocean_sigma_z_coordinate',),
-        'nsigma': (None,),
-        'depth_c': (None,),
+        'eta': _D1_depth_mapping,
     },
     'ocean_double_sigma_coordinate': {
-        'depth': _D1_depth,
-        'sigma': ('ocean_double_sigma_coordinate',),
-        'a': (None,),
-        'href': (None,),
-        'k_c': (None,),
-        'z1': (None,),
-        'z2': (None,),
+        'depth': _D1_depth_mapping,
     },   
 }
 
