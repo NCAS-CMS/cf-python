@@ -13,9 +13,10 @@ import cfdm
 
 from . import mpi_on
 from . import mpi_size
+
+
 if mpi_on:
     from . import mpi_comm
-# --- End: if
 
 
 # platform = sys.platform
@@ -393,19 +394,21 @@ formula_term_standard_names = {
         'a': (None,),
         'b': (None,),
         'depth_c': (None,),
+        'C': (None,),
         's': ('ocean_s_coordinate',),
     },
     'ocean_s_coordinate_g1': {
         'eta': (None,), ## TODO
         'depth': (None,), ## TODO
-        'C': (None,),
         'depth_c': (None,),
+        'C': (None,),
         's': ('ocean_s_coordinate_g1',),
     },
     'ocean_s_coordinate_g2': {
         'eta': (None,), ## TODO
         'depth': (None,), ## TODO
         'depth_c': (None,),
+        'C': (None,),
         's': ('ocean_s_coordinate_g2',),
     },
     'ocean_sigma_z_coordinate': {
@@ -473,6 +476,7 @@ formula_term_max_dimensions = {
         'a': 0,
         'b': 0,
         'depth_c': 0,
+        'C': 1,  # (k)
         's': 1,  # (k)
     },
     'ocean_s_coordinate_g1': {
@@ -480,14 +484,16 @@ formula_term_max_dimensions = {
         'depth': 2,  # (j,i)
         'C': 1,  # (k)
         'depth_c': 0,
+        'C': 1,  # (k)
         's': 1,  # (k)
     },
     'ocean_s_coordinate_g2': {
         'eta': 3,  # (n,j,i)
         'depth': 2,  # (j,i)
         'depth_c': 0,
+        'C': 1,  # (k)
         's': 1,  # (k)
-    },
+   },
     'ocean_sigma_z_coordinate': {
         'eta':  3,  # (n,j,i)
         'depth': 2,  # (j,i)
@@ -569,10 +575,10 @@ computed_standard_names = {
 formula_term_units = {
     'atmosphere_ln_pressure_coordinate': {
         'p0': 'Pa',
-        'lev': '1',
+        'lev': '',
     },
     'atmosphere_sigma_coordinate': {
-        'sigma': '1',
+        'sigma': '',
         'ptop': 'Pa',
         'ps': 'Pa',
     },
@@ -580,64 +586,66 @@ formula_term_units = {
         'p0': 'Pa',
         'ps': 'Pa',
         'ap': 'Pa',
-        'a': '1',
-        'b': '1',
+        'a': '',
+        'b': '',
     },
     'atmosphere_hybrid_height_coordinate': {
         'a': 'm',
-        'b': '1',
+        'b': '',
         'orog': 'm',
     },
     'atmosphere_sleve_coordinate': {
         'ztop': 'm',
-        'a': '1',
-        'b1': '1',
-        'b2': '1',
+        'a': '',
+        'b1': '',
+        'b2': '',
         'zsurf1': 'm',
         'zsurf2': 'm',
     },
     'ocean_sigma_coordinate': {
         'eta': 'm',
         'depth': 'm',
-        'sigma': '1',
+        'sigma': '',
     },
     'ocean_s_coordinate': {
         'eta': 'm',
         'depth': 'm',
-        'a': '1',
-        'b': '1',
+        'a': '',
+        'b': '',
         'depth_c': 'm',
-        's': '1',
+        'C': '',
+        's': '',
     },
     'ocean_s_coordinate_g1': {
         'eta': 'm',
         'depth': 'm',
-        'C': '1',
         'depth_c': 'm',
+        'C': '',
         's': 's',
     },
     'ocean_s_coordinate_g2': {
         'eta': 'm',
         'depth': 'm',
         'depth_c': 'm',
-        's': '1',
+        'C': '',
+        's': '',
     },
     'ocean_sigma_z_coordinate': {
         'eta': 'm',
         'depth': 'm',
         'zlev': 'm',
-        'nsigma': '1',
+        'nsigma': '',
         'depth_c': 'm',
-        'sigma': '1',
+        'sigma': '',
     },
     'ocean_double_sigma_coordinate': {
         'depth': 'm',
         'href': 'm',
-        'k_c': '1',
+        'k_c': '',
         'a': 'm',  # TODO: Check
         'z1': 'm',
         'z2': 'm',
-        'sigma': '1',
+        'sigma': '',
     },   
 }
 

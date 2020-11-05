@@ -1,10 +1,15 @@
+'''.. note:: This class is not in the cf.mixin package because it
+             needs to be imported by cf.Data, and some of the other
+             mixin classes in cf.mixin themsleves import cf.Data,
+             which would lead to a circular import situation.
+
+'''
+
+import logging
+
 from .docstring import _docstring_substitution_definitions
 
-
-# Note: This class is not in the cf.mixin package because it needs to
-#       be imported by cf.Data, and some of the other mixin classes in
-#       cf.mixin themsleves import cf.Data, which would lead to a
-#       circular import situation.
+logger = logging.getLogger(__name__)
 
 
 class Container:
@@ -42,4 +47,35 @@ class Container:
         '''
         return 0
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _log_call(self, method, kwargs, log_level='info'):
+        '''TODO
+
+    .. versionadded:: 1.8.9.0
+
+    :Parameters:
+        
+        method: str
+        
+        kwargs: dict
+
+        log_level: str, optional
+
+    :Returns:
+
+        None
+
+        '''
+        kwargs = ["{}={!r}".format(k, v) for k, v in kwargs.items()]
+
+        f = "{}.{}(".format(
+            self.__class__.__name__, method
+        )
+
+        getattr(logger, log_level)("{}{})".format(
+            f, (',\n' + ' ' * len(f)).join(kwargs))
+        )
+    
 # --- End: class
