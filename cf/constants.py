@@ -318,6 +318,13 @@ cr_default_values = {
     'ztop': 0.0,
 }
 
+# --------------------------------------------------------------------
+# Define the standard names that are allowed for each formula term. A
+# domain ancillary or coordinate construct may have any of the
+# specified names. A value of None means that the domain ancillary or
+# coordinate construct may have any standard name or no standard at
+# all.
+# --------------------------------------------------------------------
 _D1_computed_standard_name = (
     'altitude',
     'height_above_geopotential_datum',
@@ -369,6 +376,7 @@ formula_term_standard_names = {
     'atmosphere_sleve_coordinate': {
         'ztop': ('altitude_at_top_of_atmosphere_model',
                  'height_above_geopotential_datum_at_top_of_atmosphere_model'),
+        'a': (None,),
         'b1': (None,),
         'b2': (None,),
         'zsurf1': (None,),
@@ -385,118 +393,137 @@ formula_term_standard_names = {
         'a': (None,),
         'b': (None,),
         'depth_c': (None,),
+        's': ('ocean_s_coordinate',),
     },
     'ocean_s_coordinate_g1': {
         'eta': (None,), ## TODO
         'depth': (None,), ## TODO
-        's': (None,),
         'C': (None,),
         'depth_c': (None,),
+        's': ('ocean_s_coordinate_g1',),
     },
     'ocean_s_coordinate_g2': {
         'eta': (None,), ## TODO
         'depth': (None,), ## TODO
-        's': (None,),
         'depth_c': (None,),
+        's': ('ocean_s_coordinate_g2',),
     },
     'ocean_sigma_z_coordinate': {
         'eta': _D1_eta,
         'depth': _D1_depth,
         'zlev': _D1_zlev,
-        'sigma': ('ocean_sigma_z_coordinate',),
         'nsigma': (None,),
         'depth_c': (None,),
+        'sigma': ('ocean_sigma_z_coordinate',),
     },
     'ocean_double_sigma_coordinate': {
         'depth': _D1_depth,
-        'sigma': ('ocean_double_sigma_coordinate',),
         'a': (None,),
         'href': (None,),
         'k_c': (None,),
         'z1': (None,),
         'z2': (None,),
+        'sigma': ('ocean_double_sigma_coordinate',),
     },   
 }
 
+# --------------------------------------------------------------------
+# Set the maximum nunber of dimensions allowed for each formula
+# term. A given domain ancillary construct may have this number of
+# dimensions or fewer.
+# --------------------------------------------------------------------
 formula_term_max_dimensions = {
     'atmosphere_ln_pressure_coordinate': {
-        'p0': ('reference_air_pressure_for_atmosphere_vertical_coordinate',),
-        'lev': ('atmosphere_ln_pressure_coordinate',),
+        'p0': 0,
+        'lev': 1  # (k)
     },
     'atmosphere_sigma_coordinate': {
-        'sigma': ('atmosphere_sigma_coordinate',),
-        'ptop': ('air_pressure_at_top_of_atmosphere_model',),
-        'ps': ('surface_air_pressure',),
+        'sigma': 1,  # (k)
+        'ptop': 0,
+        'ps': 3,  # (n,j,i)
     },
     'atmosphere_hybrid_sigma_pressure_coordinate': {
-        'p0': ('reference_air_pressure_for_atmosphere_vertical_coordinate',),
-        'ps': ('surface_air_pressure',),
-        'a': (None,),
-        'ap': (None,),
-        'b': (None,),
+        'p0': 0,
+        'ps': 3,  # (n,j,i)
+        'a': 1,  # (k)
+        'ap': 1,  # (k)
+        'b': 1,  # (k)
     },
     'atmosphere_hybrid_height_coordinate': {
-        'a': ('atmosphere_hybrid_height_coordinate',),
-        'b': (None,),
-        'orog': ('surface_altitude',
-                 'surface_height_above_geopotential_datum'),
+        'a': 1,  # (k)
+        'b': 1,  # (k)
+        'orog': 3,  # (n,j,i)
     },
     'atmosphere_sleve_coordinate': {
-        'ztop': ('altitude_at_top_of_atmosphere_model',
-                 'height_above_geopotential_datum_at_top_of_atmosphere_model'),
-        'b1': (None,),
-        'b2': (None,),
-        'zsurf1': (None,),
-        'zsurf2': (None,),
+        'ztop': 0,
+        'a': 1,  # (k)
+        'b1': 1,  # (k)
+        'b2': 1,  # (k)
+        'zsurf1': 3,  # (n,j,i)
+        'zsurf2': 3,  # (n,j,i)
     },
     'ocean_sigma_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'sigma': ('ocean_sigma_coordinate',),
+        'eta': 3,  # (n,j,i)
+        'depth': 2,  # (j,i)
+        'sigma': 1,  # (k)
     },
     'ocean_s_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'a': (None,),
-        'b': (None,),
-        'depth_c': (None,),
+        'eta': 3,  # (n,j,i)
+        'depth': 2,  # (j,i)
+        'a': 0,
+        'b': 0,
+        'depth_c': 0,
+        's': 1,  # (k)
     },
     'ocean_s_coordinate_g1': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
-        's': (None,),
-        'C': (None,),
-        'depth_c': (None,),
+        'eta': 3,  # (n,j,i)
+        'depth': 2,  # (j,i)
+        'C': 1,  # (k)
+        'depth_c': 0,
+        's': 1,  # (k)
     },
     'ocean_s_coordinate_g2': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
-        's': (None,),
-        'depth_c': (None,),
+        'eta': 3,  # (n,j,i)
+        'depth': 2,  # (j,i)
+        'depth_c': 0,
+        's': 1,  # (k)
     },
     'ocean_sigma_z_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'zlev': _D1_zlev,
-        'sigma': ('ocean_sigma_z_coordinate',),
-        'nsigma': (None,),
-        'depth_c': (None,),
+        'eta':  3,  # (n,j,i)
+        'depth': 2,  # (j,i)
+        'zlev': 1,  # (k)
+        'nsigma': 0,
+        'depth_c': 0,
+        'sigma': 1,  # (k)
     },
     'ocean_double_sigma_coordinate': {
-        'depth': _D1_depth,
-        'sigma': ('ocean_double_sigma_coordinate',),
-        'a': (None,),
-        'href': (None,),
-        'k_c': (None,),
-        'z1': (None,),
-        'z2': (None,),
+        'depth': 2,  # (j,i)
+        'a': 0,
+        'href': 0,
+        'k_c': 0,
+        'z1': 0,
+        'z2': 0,
+        'sigma': 1,  # (k)
     },   
 }
 
+# --------------------------------------------------------------------
+# Define the computed standard name of the computed vertical
+# coordinate values computed according to each parametric coordinate
+# type.
+#
+# A string value means that there can only be one computed standard
+# name.
+#
+# A dictionary value means that the computed standard name depends on
+# the standdard name of the given term. For example, the computed
+# standard name of 'atmosphere_sleve_coordinate' depends on the
+# standard name of the 'ztop' term.
+# --------------------------------------------------------------------
 _D1_depth_mapping = {
     'sea_floor_depth_below_geoid': 'altitude',
     'sea_floor_depth_below_geopotential_datum': 'height_above_geopotential_ datum',
-    'sea_floor_depth_below_reference_ellipsoid': 'height_above_reference_ ellipsoid'
+    'sea_floor_depth_below_reference_ellipsoid': 'height_above_reference_ ellipsoid',
     'sea_floor_depth_below_mean_sea_level': 'height_above_mean_sea_ level',
 }
 
@@ -517,22 +544,100 @@ computed_standard_names = {
         },
     },
     'ocean_sigma_coordinate': {
-        'eta': _D1_depth_mapping,
+        'depth': _D1_depth_mapping,
     },
     'ocean_s_coordinate': {
-        'eta': _D1_depth_mapping,
+        'depth': _D1_depth_mapping,
     },
     'ocean_s_coordinate_g1': {
-        'eta': _D1_depth_mapping,
+        'depth': _D1_depth_mapping,
     },
     'ocean_s_coordinate_g2': {
-        'eta': _D1_depth_mapping,
+        'depth': _D1_depth_mapping,
     },
     'ocean_sigma_z_coordinate': {
-        'eta': _D1_depth_mapping,
+        'depth': _D1_depth_mapping,
     },
     'ocean_double_sigma_coordinate': {
         'depth': _D1_depth_mapping,
+    },   
+}
+
+# --------------------------------------------------------------------
+# Define the canonical units of formula terms
+# --------------------------------------------------------------------
+formula_term_units = {
+    'atmosphere_ln_pressure_coordinate': {
+        'p0': 'Pa',
+        'lev': '1',
+    },
+    'atmosphere_sigma_coordinate': {
+        'sigma': '1',
+        'ptop': 'Pa',
+        'ps': 'Pa',
+    },
+    'atmosphere_hybrid_sigma_pressure_coordinate': {
+        'p0': 'Pa',
+        'ps': 'Pa',
+        'ap': 'Pa',
+        'a': '1',
+        'b': '1',
+    },
+    'atmosphere_hybrid_height_coordinate': {
+        'a': 'm',
+        'b': '1',
+        'orog': 'm',
+    },
+    'atmosphere_sleve_coordinate': {
+        'ztop': 'm',
+        'a': '1',
+        'b1': '1',
+        'b2': '1',
+        'zsurf1': 'm',
+        'zsurf2': 'm',
+    },
+    'ocean_sigma_coordinate': {
+        'eta': 'm',
+        'depth': 'm',
+        'sigma': '1',
+    },
+    'ocean_s_coordinate': {
+        'eta': 'm',
+        'depth': 'm',
+        'a': '1',
+        'b': '1',
+        'depth_c': 'm',
+        's': '1',
+    },
+    'ocean_s_coordinate_g1': {
+        'eta': 'm',
+        'depth': 'm',
+        'C': '1',
+        'depth_c': 'm',
+        's': 's',
+    },
+    'ocean_s_coordinate_g2': {
+        'eta': 'm',
+        'depth': 'm',
+        'depth_c': 'm',
+        's': '1',
+    },
+    'ocean_sigma_z_coordinate': {
+        'eta': 'm',
+        'depth': 'm',
+        'zlev': 'm',
+        'nsigma': '1',
+        'depth_c': 'm',
+        'sigma': '1',
+    },
+    'ocean_double_sigma_coordinate': {
+        'depth': 'm',
+        'href': 'm',
+        'k_c': '1',
+        'a': 'm',  # TODO: Check
+        'z1': 'm',
+        'z2': 'm',
+        'sigma': '1',
     },   
 }
 

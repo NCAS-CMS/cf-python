@@ -63,7 +63,12 @@ from . import Index
 from . import List
 
 from .constants import masked as cf_masked
-from .constants import formula_term_standard_names, computed_standard_names
+from .constants import (
+    formula_term_standard_names,
+    formula_term_max_dimensions,
+    formula_term_units,
+    computed_standard_names,
+)
 
 from .functions import (parse_indices, chunksize, equals, _section)
 from .functions import relaxed_identities as cf_relaxed_identities
@@ -239,29 +244,6 @@ _xxx = namedtuple(
     'data_dimension',
     ['size', 'axis', 'key', 'coord', 'coord_type', 'scalar']
 )
-
-_formula_term_units = {
-    'atmosphere_ln_pressure_coordinate': (
-        'atmosphere_ln_pressure_coordinate',),
-    'atmosphere_sigma_coordinate': ('atmosphere_sigma_coordinate',),
-    'atmosphere_hybrid_sigma_pressure_coordinate': (
-        'atmosphere_hybrid_sigma_pressure_coordinate',),
-    'atmosphere_hybrid_height_coordinate': (
-        'atmosphere_hybrid_height_coordinate',),
-    'atmosphere_sleve_coordinate': ('atmosphere_sleve_coordinate',),
-    'ocean_sigma_coordinate': ('ocean_sigma_coordinate',),
-    'ocean_s_coordinate': {
-        's': '1',
-        'eta': 'm',
-        'depth': 'm',
-        'a': '1',
-        'b': '1',
-        'depth_c': 'm',
-    },
-    'ocean_sigma_z_coordinate': ('ocean_sigma_z_coordinate',),
-    'ocean_double_sigma_coordinate': (
-        'ocean_double_sigma_coordinate',),
-}
 
 
 class Field(mixin.PropertiesData,
@@ -13054,12 +13036,29 @@ class Field(mixin.PropertiesData,
         return mask
 
     @_inplace_enabled(default=False)
-    def xxx(self, default_to_zero=True, inplace=False):
+    @_manage_log_level_via_verbosity
+    def xxx(self, default_to_zero=True, inplace=False, verbose=None):
         '''TODO
+
+    .. versionadded:: 3.TODO.0
+
+    .. seealso:: `coordinate_references`
+
+    :Parameters:
+
+        default_to_zero: `bool`, optional
+            If False then do not assume that missing terms have a
+            value of zero. By default a missing term is assumed to be
+            zero, as described in Appendix D (Parametric Vertical
+            Coordinates) of the CF conventions.
+
+        {{inplace: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
-        `None`
+        `Field` or `None`
 
     **Examples**
 
@@ -13069,8 +13068,10 @@ class Field(mixin.PropertiesData,
         def _domain_ancillary_term(f, standard_name,
                                    computed_standard_name,
                                    coordinate_conversion, term,
-                                   max_ndim, default_to_zero):
+                                   default_to_zero):
             '''TODO
+
+        .. versionadded:: 3.TODO.0
 
         :Parameters:
 
@@ -13094,34 +13095,51 @@ class Field(mixin.PropertiesData,
                 *Parameter example:*
                   ``term='orog'``
 
-            max_ndim: `int`
-                The maximum number of dimensions allowed for the
-                domain ancillary construct, if it exists. See Appendix
-                D of the CF conventions.
-
-                *Parameter example:*
-                  ``max_ndim=0``
-
-                *Parameter example:*
-                  ``max_ndim=3``
-
-            default_to_zero: `bool`
-                Whether or not to allow missing domain ancillary
-                constructs to default to 0. See Appendix D of the CF
-                conventions.
+            default_to_zero: `bool`, optional
+                If False then do not assume that missing terms have a
+                value of zero. If True the a missing term is assumed
+                to be zero, as described in Appendix D (Parametric
+                Vertical Coordinates) of the CF conventions.
 
         :Returns:
 
-            `Data`, `str`
+            `DomainAncillary`, `str`
 
             '''
-            var = None
-            key = coordinate_conversion.get_domain_ancillary(term, None)
-                    
-            if key is not None:
-                var = f.domain_ancillary(key, None)
+            units = formula_term_units[standard_name].get(term, None)
+            if units is None:
+                raise ValueError(
+                    "Can't calculate {!r} coordinates: "
+                    "{!r} is not a valid term".format(
+                        computed_standard_name, term
+                    )
+                )
+
+            units = Units(units)
                 
-            if var is not None:
+            key = coordinate_conversion.get_domain_ancillary(term, None)
+            var = f.domain_ancillary(key, None)
+
+            if var is None:
+                if not default_to_zero:
+                    raise ValueError(
+                        "Can't calculate {!r} coordinates: "
+                        "No {!r} term domain ancillary construct and "
+                        "default_to_zero=False".format(
+                            computed_standard_name, term
+                        )
+                    )
+                
+                data = f._Data(0.0, units)
+# bounds
+ppp
+                var = f._DomainAncillary()
+                var.set_data(data)
+            else:
+                logger.debug(
+                    "  Domain ancillary {!r}: {!r}".format(term, var)
+                )  # pragma: no cover
+                
                 vsn = var.get_property('standard_name', None)
                 if (
                         vsn is not None
@@ -13134,8 +13152,8 @@ class Field(mixin.PropertiesData,
                             computed_standard_name, term, var, vsn
                         )
                     )
-                        
-                if var.ndim > max_ndim:
+
+                if var.ndim > formula_term_max_dimensions[standard_name][term]:
                     raise ValueError(
                         "Can't calculate {!r} coordinates: "
                         "{!r} term {!r} has incorrect "
@@ -13144,21 +13162,15 @@ class Field(mixin.PropertiesData,
                         )
                     )
 
-                var = var.get_data()
-                
-            elif default_to_zero:
-                var = f._Data(
-                    0.0,
-                    units=_formula_term_units[standard_name][term]
-                )
-            else:
-                raise ValueError(
-                    "Can't calculate {!r} coordinates: "
-                    "No {!r} term domain ancillary construct and "
-                    "default_to_zero=False".format(
-                        computed_standard_name, term
+                if not var.Units.equivalent(units):
+                    raise ValueError(
+                        "Can't calculate {!r} coordinates: "
+                        "{!r} term {!r} has incorrect units: {!r} "
+                        "Expected units equivalent to {!r}".format(
+                            computed_standard_name, term, var,
+                            var.Units, units
+                        )
                     )
-                )
 
             return var, key
         # --- End: def
@@ -13167,6 +13179,8 @@ class Field(mixin.PropertiesData,
                              computed_standard_name,
                              coordinate_reference, term):
             '''TODO
+
+        .. versionadded:: 3.TODO.0
 
         :Parameters:
 
@@ -13192,7 +13206,7 @@ class Field(mixin.PropertiesData,
 
         :Returns:
 
-            `Data`, `str`
+            `Coordinate`, `str`
 
             '''
             var = None
@@ -13202,7 +13216,10 @@ class Field(mixin.PropertiesData,
                     continue
                 
                 if var.get_property('standard_name', None) == standard_name:
-                    var = var.get_data()
+                    logger.debug(
+                        "  Parametric coordinates: {!r}".format(var)
+                    )  # pragma: no cover
+
                     break
 
                 var = None
@@ -13222,6 +13239,8 @@ class Field(mixin.PropertiesData,
         def _computed_standard_name(f, standard_name,
                                     coordinate_conversion):
             '''TODO
+
+        .. versionadded:: 3.TODO.0
 
         :Parameters:
 
@@ -13278,9 +13297,96 @@ class Field(mixin.PropertiesData,
                     "TODO can't calc when orog has wrong name"
                 )
 
+            logger.debug(
+                "  computed_standard_name: {!r}".format(
+                    computed_standard_name
+                )
+            )  # pragma: no cover
+
             return computed_standard_name
         # --- End: def
-        
+
+        def _vertical_axis(f, *keys):
+            '''TODO
+
+        .. versionadded:: 3.TODO.0
+
+            '''
+            axis = ()
+            for key in keys:
+                if key is None:
+                    continue
+                
+                axis = f.get_data_axes(key)
+                break
+
+            logger.debug(
+                "  Vertical axis: {!r}".format(axis)
+            )  # pragma: no cover
+
+            return axis
+        # --- End: def
+
+        def _conform_eta(f, computed_standard_name, eta, eta_key,
+                         depth, depth_key):
+            '''TODO
+
+        .. versionadded:: 3.TODO.0
+
+        :Parameters:
+
+            f: `Field`
+                The parent field construct.
+
+            computed_standard_name: `str`
+                The standard_name of the computed vertical coordinate
+                values. See Appendix D of the CF conventions.
+
+        :Returns:
+
+            `Data`, `tuple`
+
+            '''
+            eta_axes = f.get_data_axes(eta_key, default=None)
+            depth_axes = f.get_data_axes(depth_key, default=None)
+            
+            if eta_axes is not None and depth_axes is not None:
+                if not set(eta_axes).issuperset(depth_axes):
+                    raise ValueError(
+                        "Can't calculate {!r} coordinates: "
+                        "'depth' term {!r} axes must be a subset of "
+                        "'eta' term {!r} axes.".format(
+                            computed_standard_name, depth, eta
+                        )
+                )
+
+                eta_axes2 = depth_axes
+                if len(eta_axes) > len(depth_axes):
+                    diff = [axis for axis in eta_axes
+                            if axis not in depth_axes]
+                    eta_axes2 = tuple(diff) + depth_axes
+                
+                iaxes = [eta_axes.index(axis) for axis in eta_axes2]
+                eta = eta.transpose(iaxes)
+                
+                eta_axes = eta_axes2
+
+            logger.debug(
+                "  Transposed domain ancillary 'eta': {!r}\n"
+                "  Transposed domain ancillary 'eta' axes: {!r}".format(
+                    eta, eta_axes
+                )
+            )  # pragma: no cover
+
+            return eta, eta_axes
+        # --- End: def
+
+        logger.debug(
+            "{}.xxx(default_to_zero={!r})".format(
+                self.__class__.__name__, default_to_zero
+            )
+        )  # pragma: no cover
+
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
  
@@ -13294,6 +13400,10 @@ class Field(mixin.PropertiesData,
             if standard_name is None:                
                 continue
             
+            logger.debug(
+                "  standard_name: {!r}".format(standard_name)
+            )  # pragma: no cover
+
             if standard_name == 'atmosphere_ln_pressure_coordinate':
                 computed_standard_name = _computed_standard_name(
                     f,
@@ -13303,8 +13413,7 @@ class Field(mixin.PropertiesData,
                 p0, _ = _domain_ancillary_term(f, standard_name,
                                                computed_standard_name,
                                                coordinate_conversion,
-                                               'p0', 0,
-                                               default_to_zero)
+                                               'p0', default_to_zero)
                 
                 lev, lev_key = _coordinate_term(f, standard_name,
                                                 computed_standard_name,
@@ -13313,10 +13422,11 @@ class Field(mixin.PropertiesData,
 
                 # Get the axes of the non-parametric coordinates,
                 # putting the vertical axis in postition 0.
-                axes = f.get_data_axes(lev_key)
+                k_axis = _vertical_axis(f, lev_key)
+                axes = k_axis + f.get_data_axes(lev_key)
 
                 # Compute the non-parametric coordinates
-                data = p0 * (-lev).exp()
+                computed = p0 * (-lev).exp()
 
             elif standard_name == 'atmosphere_sigma_coordinate':
                 computed_standard_name = _computed_standard_name(
@@ -13327,14 +13437,13 @@ class Field(mixin.PropertiesData,
                 ptop, _ = _domain_ancillary_term(f, standard_name,
                                                  computed_standard_name,
                                                  coordinate_conversion,
-                                                 'ptop', 0,
+                                                 'ptop',
                                                  default_to_zero)
                 
                 ps, ps_key = _domain_ancillary_term(f, standard_name,
                                                     computed_standard_name,
                                                     coordinate_conversion,
-                                                    'ps', 3,
-                                                    default_to_zero)
+                                                    'ps', False)
                 
                 sigma, sigma_key = _coordinate_term(f, standard_name,
                                                     computed_standard_name,
@@ -13343,16 +13452,16 @@ class Field(mixin.PropertiesData,
                 
                 # Get the axes of the non-parametric coordinates,
                 # putting the vertical axis in postition 0.
-                axes = (
-                    f.get_data_axes(sigma_key) + f.get_data_axes(ps_key)
-                )
+                k_axis = _vertical_axis(f, sigma_key)
+                axes = k_axis + f.get_data_axes(ps_key)
                 
                 # Insert a size one dimension to allow broadcasting
                 # over the vertical axis
-                ps = ps.insert_dimension(-1)
+                if k_axis:
+                    ps = ps.insert_dimension(-1)
                 
                 # Compute the non-parametric coordinates
-                data = ptop + (sigma * (ps - ptop))
+                computed = ptop + (sigma * (ps - ptop))
                 
             elif (
                     standard_name
@@ -13366,87 +13475,92 @@ class Field(mixin.PropertiesData,
                 ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
                 
                 if ap_term: 
-                    ap, _ = _domain_ancillary_term(f, standard_name,
-                                                   computed_standard_name,
-                                                   coordinate_conversion,
-                                                   'ap', 1,
-                                                   default_to_zero)
+                    ap, ap_key = _domain_ancillary_term(f,
+                                                        standard_name,
+                                                        computed_standard_name,
+                                                        coordinate_conversion,
+                                                        'ap',
+                                                        default_to_zero)
+
+                    a_key = None
                 else:
-                    a, _ = _domain_ancillary_term(f, standard_name,
-                                                  computed_standard_name,
-                                                  coordinate_conversion,
-                                                  'a', 1,
-                                                  default_to_zero)
+                    a, a_key = _domain_ancillary_term(f,
+                                                      standard_name,
+                                                      computed_standard_name,
+                                                      coordinate_conversion,
+                                                      'a',
+                                                      default_to_zero)
                    
                     p0, _ = _domain_ancillary_term(f, standard_name,
                                                    computed_standard_name,
                                                    coordinate_conversion,
-                                                   'p0',0,
+                                                   'p0',
                                                    default_to_zero)
+
+                    ap_key = None
 
                 b, b_key = _domain_ancillary_term(f, standard_name,
                                                   computed_standard_name,
                                                   coordinate_conversion,
-                                                  'b', 1,
+                                                  'b',
                                                   default_to_zero)
                 
                 ps, ps_key = _domain_ancillary_term(f, standard_name,
                                                     computed_standard_name,
                                                     coordinate_conversion,
-                                                    'ps', 3,
-                                                    default_to_zero)
+                                                    'ps', False)
                
                 # Get the axes of the non-parametric coordinates,
                 # putting the vertical axis in postition 0.
-                axes = (
-                    f.get_data_axes(b_key) + f.get_data_axes(ps_key)
-                )
+                k_axis = _vertical_axis(f, ap_key, a_key, b_key)
+                axes = k_axis + f.get_data_axes(ps_key)
 
                 # Insert a size one dimension to allow broadcasting
                 # over the vertical axis
-                ps = ps.insert_dimension(-1)
+                if k_axis:
+                    ps = ps.insert_dimension(-1)
                 
                 # Compute the non-parametric coordinates
                 if ap_term:
-                    data = ap + (b * ps)
+                    computed = ap + (b * ps)
                 else:
-                    data = (a * p0) + (b * ps)
+                    computed = (a * p0) + (b * ps)
 
             elif standard_name == 'atmosphere_hybrid_height_coordinate':
                 computed_standard_name = _computed_standard_name(
                     f,
                     standard_name, coordinate_conversion)
                 
-                a, _ = _domain_ancillary_term(f, standard_name,
-                                              computed_standard_name,
-                                              coordinate_conversion,
-                                              'a', 1, default_to_zero)
+                a, a_key = _domain_ancillary_term(f, standard_name,
+                                                  computed_standard_name,
+                                                  coordinate_conversion,
+                                                  'a',
+                                                  default_to_zero)
                    
                 b, b_key = _domain_ancillary_term(f, standard_name,
                                                   computed_standard_name,
                                                   coordinate_conversion,
-                                                  'b', 1,
+                                                  'b',
                                                   default_to_zero)
                 
                 orog, orog_key = _domain_ancillary_term(f,
                                                         standard_name,
                                                         computed_standard_name,
                                                         coordinate_conversion,
-                                                        'orog', 3,
-                                                        default_to_zero)
+                                                        'orog', False)
 
                 # Get the axes of the non-parametric coordinates,
                 # putting the vertical axis in postition 0.
-                axes = (
-                    f.get_data_axes(b_key) +  f.get_data_axes(orog_key)
-                )
+                k_axis = _vertical_axis(f, a_key, b_key)
+                axes = k_axis + f.get_data_axes(orog_key)
                 
                 # Insert a size one dimension to allow broadcasting
                 # over the vertical axis
-                orog = orog.insert_dimension(-1)
+                if k_axis:
+                    orog = orog.insert_dimension(-1)
                 
                 # Compute the non-parametric coordinates
-                data = a  + (b * orog)
+                computed = a  + (b * orog)
                 
             elif standard_name  == 'atmosphere_sleve_coordinate':
                 computed_standard_name = _computed_standard_name(
@@ -13455,52 +13569,56 @@ class Field(mixin.PropertiesData,
                 a, a_key = _domain_ancillary_term(f, standard_name,
                                                   computed_standard_name,
                                                   coordinate_conversion,
-                                                  'a', 1,
+                                                  'a',
                                                   default_to_zero)
                    
-                b1, _ = _domain_ancillary_term(f, standard_name,
-                                               computed_standard_name,
-                                               coordinate_conversion,
-                                               'b1', 1,
-                                               default_to_zero)
+                b1, b1_key = _domain_ancillary_term(f, standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'b1',
+                                                    default_to_zero)
+                
+                b2, b2_key = _domain_ancillary_term(f, standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'b2',
+                                                    default_to_zero)
                 
                 ztop, _ = _domain_ancillary_term(f, standard_name,
                                                  computed_standard_name,
                                                  coordinate_conversion,
-                                                 'ztop', 0,
+                                                 'ztop',
                                                  default_to_zero)
                 
                 zsurf1, zsurf1_key = _domain_ancillary_term(
                     f,
                     standard_name, computed_standard_name,
-                    coordinate_conversion, 'zsurf1', 3,
-                    default_to_zero)
+                    coordinate_conversion, 'zsurf1', False
+                )
                 
                 zsurf2, zsurf2_key = _domain_ancillary_term(
                     f,
                     standard_name, computed_standard_name,
-                    coordinate_conversion, 'zsurf2', 3,
-                    default_to_zero)
-                
-                # Get the axes of the non-parametric coordinates
-                axes = (
-                     f.get_data_axes(b_key) + f.get_data_axes(orog_key)
+                    coordinate_conversion, 'zsurf2', False
                 )
-
+                
                 # Make sure that zsurf1 and zsurf2 have the same
                 # number of axes and the same axis order
                 zsurf1_axes = f.get_data_axes(zsurf1_key, default=None)
                 zsurf2_axes = f.get_data_axes(zsurf2_key, default=None)
 
                 if zsurf1_axes is not None and zsurf2_axes is not None:
-                    if len(zsurf1_axes) != len(zsurf2_axes):
-                        raise ValueError("")
-                
-                    iaxes = [
-                        zsurf2_axes.index(axis)
-                        for axis in zsurf1_axes
-                        if axis in zsurf2_axes
-                    ]
+                    if set(zsurf1_axes) != set(zsurf2_axes):
+                        raise ValueError(
+                            "Can't calculate {!r} coordinates: "
+                            "'zsurf1' and 'zsurf2' term "
+                            "domain ancillaries span "
+                            "different domain axes".format(
+                                computed_standard_name
+                            )
+                        )
+                    
+                    iaxes = [zsurf2_axes.index(axis) for axis in zsurf1_axes]
                     zsurf2 = zsurf2.transpose(iaxes)
 
                     zsurf_axes = zsurf1_axes
@@ -13513,17 +13631,129 @@ class Field(mixin.PropertiesData,
                     
                 # Get the axes of the non-parametric coordinates,
                 # putting the vertical axis in postition 0.
-                axes = (
-                    f.get_data_axes(a_key) + zsurf_axes
+                k_axis = _vertical_axis(f, a_key, b1_key, b2_key)
+                axes = k_axis + zsurf_axes
+
+                # Insert a size one dimension to allow broadcasting
+                # over the vertical axis
+                if k_axis:
+                    zsurf1 = zsurf1.insert_dimension(-1)
+                    zsurf2 = zsurf2.insert_dimension(-1)
+                
+                # Compute the non-parametric coordinates
+                computed = (a * ztop) + (b1 * zsurf1) + (b2 * zsurf2)
+                  
+            elif standard_name  == 'ocean_sigma_coordinate':
+                computed_standard_name = _computed_standard_name(
+                    f, standard_name, coordinate_conversion)
+                
+                eta, eta_key = _domain_ancillary_term(f,
+                                                      standard_name,
+                                                      computed_standard_name,
+                                                      coordinate_conversion,
+                                                      'eta', False)
+                   
+                depth, depth_key = _domain_ancillary_term(
+                    f,
+                    standard_name, computed_standard_name,
+                    coordinate_conversion, 'depth',
+                    default_to_zero
                 )
+                
+                sigma, sigma_key = _coordinate_term(f, standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'sigma')
+                
+                # Make sure that eta and depth are consistent, which
+                # may require eta to be transposed.
+                eta, eta_axes = _conform_eta(f,
+                                             computed_standard_name, eta,
+                                             eta_key, depth, depth_key)
+                    
+                # Get the axes of the non-parametric coordinates,
+                # putting the vertical axis in postition 0.
+                k_axis = _vertical_axis(f, sigma_key)
+                axes = k_axis + eta_axes
+
+                # Insert a size one dimension to allow broadcasting
+                # over the vertical axis
+                if k_axis:
+                    eta = eta.insert_dimension(-1)
+                    depth = depth.insert_dimension(-1)
+                
+                # Compute the non-parametric coordinates
+                computed = eta + (sigma * (eta + depth))
+              
+            elif standard_name  == 'ocean_s_coordinate':
+                computed_standard_name = _computed_standard_name(
+                    f, standard_name, coordinate_conversion)
+                
+                eta, eta_key = _domain_ancillary_term(f,
+                                                      standard_name,
+                                                      computed_standard_name,
+                                                      coordinate_conversion,
+                                                      'eta', False)
+                
+                depth, depth_key = _domain_ancillary_term(
+                    f,
+                    standard_name, computed_standard_name,
+                    coordinate_conversion, 'depth',
+                    default_to_zero
+                )
+                
+                a, _ = _domain_ancillary_term(f, standard_name,
+                                              computed_standard_name,
+                                              coordinate_conversion,
+                                              'a', default_to_zero )
+                
+                b, _ = _domain_ancillary_term(f, standard_name,
+                                              computed_standard_name,
+                                              coordinate_conversion,
+                                              'b', default_to_zero)
+               
+                depth_c, _ = _domain_ancillary_term(f, standard_name,
+                                                    computed_standard_name,
+                                                    coordinate_conversion,
+                                                    'depth_c',
+                                                    default_to_zero )
+                
+                s, s_key = _coordinate_term(f, standard_name,
+                                            computed_standard_name,
+                                            coordinate_conversion,
+                                            's')
+                
+                # Make sure that eta and depth are consistent, which
+                # may require eta to be transposed.
+                eta, eta_axes = _conform_eta(f,
+                                             computed_standard_name, eta,
+                                             eta_key, depth, depth_key)
+                    
+                # Get the axes of the non-parametric coordinates,
+                # putting the vertical axis in postition 0.
+                k_axis = _vertical_axis(f, s_key)
+                axes = k_axis + eta_axes
                 
                 # Insert a size one dimension to allow broadcasting
                 # over the vertical axis
-                zsurf1 = zsurf1.insert_dimension(-1)
-                zsurf2 = zsurf2.insert_dimension(-1)
-                
+                if k_axis:
+                    eta = eta.insert_dimension(-1)
+                    depth = depth.insert_dimension(-1)
+                    
                 # Compute the non-parametric coordinates
-                data = (a * ztop) + (b1 * zsurf1) + (b2 * zsurf2)
+                C = (
+                    (1 - b) * (a * s).sinh() / a.sinh()
+                    + b * (
+                        (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh())
+                        - 0.5
+                    )
+                ) 
+                
+                computed = (
+                    eta * (s + 1)
+                    + s * depth_c
+                    + (depth - depth_c) * C
+                )
             # --- End: if
             
             if computed_standard_name is not None:
@@ -13531,19 +13761,43 @@ class Field(mixin.PropertiesData,
                 # Create the non-parametric auxliary coordinate
                 # construct and insert it into the field construct
                 # ----------------------------------------------------
-                c = f._AuxiliaryCoordinate()
+                ndim = computed.ndim
+                if ndim >= 2:
+                    # Move the vertical axis from its current position at
+                    # the last (rightmost) dimension
+                    iaxes = list(range(ndim - 1))
+                    
+                    time = f.domain_axis('T', key=True, default=None)
+                    if time in axes:
+                        # Move it to the immediate right of the time
+                        # axis
+                        iaxes.insert(axes.index(time) + 1, -1)
+                    else:
+                        # Move to to position 0, as there is no time
+                        # axis.
+                        iaxes.insert(0, -1)
+                                                           
+                    computed.transpose(iaxes, inplace=True)
+
+                c = f._AuxiliaryCoordinate(source=computed)
+                c.clear_properties()
                 c.standard_name = computed_standard_name
-
-                # Move the vertical axis to position 0
-                if data.ndim >= 2:
-                    data.transpose((-1,) + tuple(range(data.ndim - 1)),
-                                   inplace=True)
-
-                c.set_data(data)
+                c.long_name = (
+                    "Calculated from parametric {!r}"
+                    "vertical coordinates".format(standard_name)
+                )
+                
+                logger.debug(
+                    "  Non-parametric coordinate axes: {!r}\n"
+                    "  Non-parametric coordinates:\n{}".format(
+                        axes, c.dump(display=False, _level=1)
+                    )
+                )  # pragma: no cover
 
                 key = f.set_construct(c, axes=axes, copy=False)
 
-                # Set the coordinate on the coordinate reference
+                # Reference the new coordinates from the coordinate
+                # reference
                 cr.set_coordinate(key)
         # --- End: for
 
