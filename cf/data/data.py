@@ -1703,7 +1703,6 @@ place.
         # ------------------------------------------------------------
         # parse the indices
         # ------------------------------------------------------------
-#        indices, roll, flip_axes = _parse_indices(self, indices)
         indices_in = indices
         indices, roll, flip_axes, mask = parse_indices(
             self._shape, indices_in, cyclic=True, reverse=True, mask=True)

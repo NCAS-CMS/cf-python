@@ -40,7 +40,6 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -72,10 +71,8 @@ class PropertiesDataBounds(PropertiesData):
         else:
             new = self.copy()  # data=False)
 
-#       data = self.data
-
         if auxiliary_mask:
-            findices = tuple(auxiliary_mask) + tuple(indices)
+            findices = tuple(auxiliary_gmask) + tuple(indices)
         else:
             findices = tuple(indices)
 
@@ -108,7 +105,6 @@ class PropertiesDataBounds(PropertiesData):
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
-#                if data.ndim <= 1 and not self.has_geometry():
                 if bounds.ndim <= 2:
                     index = indices[0]
                     if isinstance(index, slice):
@@ -142,6 +138,23 @@ class PropertiesDataBounds(PropertiesData):
         # Return the new bounded variable
         return new
 
+    def __setitem__(self, indices, value):
+        '''Called to implement assignment to x[indices]
+
+    x.__setitem__(indices, value) <==> x[indices]
+
+        '''
+        super().__setitem__(indices, value)
+
+        # Set the bounds, if present (added at v3.TODO.0).
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            try:
+                bounds[indices] = value.get_bounds(None)
+            except AttributeError:
+                pass
+        # --- End: if
+        
     def __eq__(self, y):
         '''The rich comparison operator ``==``
 
@@ -339,6 +352,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
+        `{{class}}`
             A new construct, or the same construct if the operation
             was in-place.
 
@@ -379,8 +393,10 @@ class PropertiesDataBounds(PropertiesData):
             new.del_bounds()
 
         if inplace:
+            self._custom['direction'] = None
             return self
         else:
+            new._custom['direction'] = None                    
             return new
 
     @_manage_log_level_via_verbosity

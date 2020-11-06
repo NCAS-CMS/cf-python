@@ -1,6 +1,10 @@
-import logging
+'''Functions for calculating non-parametric vertical coordinates from
+coordinate reference constructs.
 
-from enum import Enum
+.. versionaddedd:: 3.TODO.0
+
+'''
+import logging
 
 from .units import Units
 
@@ -114,17 +118,21 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
                     computed_standard_name, term
                 )
             )
-        
+
+        logger.detail(
+            "  Domain ancillary {!r}: {} (default)".format(term, 0.0)
+        )  # pragma: no cover
+
         # ----------------------------------------------------
         # Create a default zero-valued domain ancillary
         # ----------------------------------------------------
         data = f._Data(0.0, units)
-        bounds = f._Data((0.0, 0.0), units)
+        bounds = f._Bounds(data=f._Data((0.0, 0.0), units))
 
         var = f._DomainAncillary()
         var.set_data(data)
         var.set_bounds(bounds)
-
+        
     return var, key
 
 
@@ -221,27 +229,26 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
     key = coordinate_conversion.get_domain_ancillary(term, None)
     if key is None:
         raise ValueError(
-            "Can't calculate {!r} coordinates: "
+            "Can't calculate non-parametric coordinates for {!r}: "
             "No {!r} term domain ancillary construct".format(
-                computed_standard_name, term
-            )
+                standard_name, term)
         )
     
     var = f.domain_ancillary(key, None)
     if var is None:
         raise ValueError(
-            "Can't calculate {!r} coordinates: "
+            "Can't calculate non-parametric coordinates for {!r}: "
             "No {!r} term domain ancillary construct".format(
-                computed_standard_name, term
+                standard_name, term
             )
         )
             
     term_standard_name = var.get_property('standard_name', None)
     if term_standard_name is None:                    
-            raise ValueError(
-            "Can't calculate non-parametric coordinates: "
+        raise ValueError(
+            "Can't calculate non-parametric coordinates for {!r}: "
             "{!r} term {!r} has no standard name: {!r} ".format(
-                term, var
+                standard_name, term, var
             )
         )
 
@@ -254,10 +261,10 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
     
     if computed_standard_name is None:
         raise ValueError(
-            "Can't calculate non-parametric coordinates: "
+            "Can't calculate non-parametric coordinates for {!r}: "
             "{!r} term {!r} has "
             "invalid standard name: {!r} ".format(
-                term, var, term_standard_name 
+                standard_name, term, var, term_standard_name 
             )
         )
 
@@ -1383,18 +1390,13 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     #       for k>nsigma and then overwrite them.
     #
     # ----------------------------------------------------------------
-    computed = (eta
-                + (cf_minimum(depth, depth_c) + eta) * sigma)
+    computed = (
+        eta
+        + (depth.where(depth > depth_c, depth_c) + eta) * sigma
+    )
 
     nsigma = int(nsigma.item())
     computed[..., nsigma:] = zlev[nsigma:]
-
-#    if computed.has_bounds() and zlev.has_bounds():
-#        indices = (
-#            (slice(None),) * (computed.ndim - 1)
-#            + (slice(nsigma, None),)
-#        )
-#        computed.bounds[indices, ...] = zlev.bounds[nsigma:, ...]
 
     return standard_name, computed_standard_name, computed, computed_axes
 
@@ -1523,25 +1525,24 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     return standard_name, computed_standard_name, computed, computed_axes
 
 
-class FormulaTerms(Enum):
-    '''An enumeration binding each function for computing non-parametric
-    coordinates to its corresponding parametric coordinates standard
-    name.
-
-    .. versionadded:: 3.TODO.0
-
-    '''
-    atmosphere_ln_pressure_coordinate = atmosphere_ln_pressure_coordinate
-    atmosphere_sigma_coordinate = atmosphere_sigma_coordinate
-    atmosphere_hybrid_sigma_pressure_coordinate = atmosphere_hybrid_sigma_pressure_coordinate
-    atmosphere_hybrid_height_coordinate = atmosphere_hybrid_height_coordinate
-    atmosphere_sleve_coordinate = atmosphere_sleve_coordinate
-    ocean_sigma_coordinate = ocean_sigma_coordinate
-    ocean_s_coordinate = ocean_s_coordinate
-    ocean_s_coordinate_g1 = ocean_s_coordinate_g1
-    ocean_s_coordinate_g2 = ocean_s_coordinate_g2
-    ocean_sigma_z_coordinate = ocean_sigma_z_coordinate
-    ocean_double_sigma_coordinate = ocean_double_sigma_coordinate
+# --------------------------------------------------------------------
+# A mapping of parametric coordinate standard names to the functions
+# for computing their correspoonding non-parametric vertical
+# coordinates.
+# --------------------------------------------------------------------
+_formula_functions = {
+    'atmosphere_ln_pressure_coordinate': atmosphere_ln_pressure_coordinate,
+    'atmosphere_sigma_coordinate': atmosphere_sigma_coordinate,
+    'atmosphere_hybrid_sigma_pressure_coordinate': atmosphere_hybrid_sigma_pressure_coordinate,
+    'atmosphere_hybrid_height_coordinate': atmosphere_hybrid_height_coordinate,
+    'atmosphere_sleve_coordinate': atmosphere_sleve_coordinate,
+    'ocean_sigma_coordinate': ocean_sigma_coordinate,
+    'ocean_s_coordinate': ocean_s_coordinate,
+    'ocean_s_coordinate_g1': ocean_s_coordinate_g1,
+    'ocean_s_coordinate_g2': ocean_s_coordinate_g2,
+    'ocean_sigma_z_coordinate': ocean_sigma_z_coordinate,
+    'ocean_double_sigma_coordinate': ocean_double_sigma_coordinate,
+}
 
 
 def formula(f, coordinate_reference, default_to_zero=True):
@@ -1588,27 +1589,25 @@ def formula(f, coordinate_reference, default_to_zero=True):
     standard_name = coordinate_reference.coordinate_conversion.get_parameter(
         'standard_name', None
     )
-
+    
     if standard_name is not None:
         logger.detail(
             "  standard_name: {!r}".format(standard_name)
         )  # pragma: no cover
-
-        try:
+        
+        if standard_name in _formula_functions:
             (standard_name,
              computed_standard_name,
              computed,
-             computed_axes) = (                 
-                 getattr(FormulaTerms, standard_name)(f,
-                                                      coordinate_reference,
-                                                      default_to_zero)
-             )            
-        except AttributeError:
-            pass
-        else:
+             computed_axes) = (
+                 _formula_functions[standard_name](f,
+                                                   coordinate_reference,
+                                                   default_to_zero)
+             )
+
             computed, computed_axes = _conform_computed(f, computed,
                                                         computed_axes)
-
+            
             return (standard_name,
                     computed_standard_name,
                     computed,

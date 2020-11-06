@@ -53,29 +53,29 @@ class Container:
     def _log_call(self, method, kwargs, log_level='info'):
         '''TODO
 
-    .. versionadded:: 1.8.9.0
+    .. versionadded:: TODO
 
     :Parameters:
         
-        method: str
-        
-        kwargs: dict
+        method: `str`
+        TODO
+        kwargs: `dict`
+        TODO
 
-        log_level: str, optional
+        log_level: `str`, optional
+        TODO
 
     :Returns:
 
-        None
+        `None`
 
         '''
         kwargs = ["{}={!r}".format(k, v) for k, v in kwargs.items()]
 
-        f = "{}.{}(".format(
-            self.__class__.__name__, method
+        f = "{}.{}(\n  ".format(self.__class__.__name__, method)
+
+        getattr(logger, log_level)(
+            "{}{}\n)".format(f, ',\n  '.join(kwargs))
         )
 
-        getattr(logger, log_level)("{}{})".format(
-            f, (',\n' + ' ' * len(f)).join(kwargs))
-        )
-    
 # --- End: class

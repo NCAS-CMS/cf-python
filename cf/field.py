@@ -344,8 +344,10 @@ class Field(mixin.PropertiesData,
         '''
         instance = super().__new__(cls)
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._Bounds = Bounds
         instance._Constructs = Constructs
         instance._Domain = Domain
+        instance._DomainAncillary = DomainAncillary
         instance._DomainAxis = DomainAxis
 #        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
@@ -3846,8 +3848,9 @@ class Field(mixin.PropertiesData,
                                 src_axis_keys, dst_axis_sizes):
                             self.domain_axes[k_s].set_size(new_size)
 
-                        self.set_construct(DomainAncillary(source=value),
-                                           key=key, axes=d_axes, copy=False)
+                        self.set_construct(self._DomainAncillary(source=value),
+                                           key=key, axes=d_axes,
+                                           copy=False)
                 # --- End: if
             # --- End: for
         # --- End: for
@@ -7869,7 +7872,7 @@ class Field(mixin.PropertiesData,
 
             bounds_data = Data(
                 numpy_reshape(bin_bounds, (bin_count, 2)), units=units)
-            dim.set_bounds(Bounds(data=bounds_data))
+            dim.set_bounds(self._Bounds(data=bounds_data))
 
             logger.info('                    bins     : {} {!r}'.format(
                 dim.identity(), bounds_data))  # pragma: no cover
@@ -10658,7 +10661,7 @@ class Field(mixin.PropertiesData,
                         "coordinate={!r}".format(coordinate)
                     )
 
-                bounds = Bounds(data=Data([bounds_data], units=units))
+                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
@@ -13059,8 +13062,20 @@ class Field(mixin.PropertiesData,
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
-    def xxx(self, default_to_zero=True, inplace=False, verbose=None):
-        '''TODO
+    def compute_vertical_coordinates(self, default_to_zero=True,
+                                     inplace=False, verbose=None):
+        '''Compute non-parametric vertical coordinates.
+
+    Compute dimensional vertical auxiliary coordinate values from
+    parametric vertical coordinate values (usually dimensionless) and
+    associated domain ancillary constructs, as defined by the formula
+    stored in a coordinate reference construct.
+
+    See the "Parametric Vertical Coordinate" sections of the CF
+    conventions for more details.
+
+    If there are no appropriate cooridnate reference constructs then
+    the field construct is unchanged.
 
     .. versionadded:: 3.TODO.0
 
@@ -13069,10 +13084,11 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         default_to_zero: `bool`, optional
-            If False then do not assume that missing terms have a
-            value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            If False then do not assume that missing domain ancillary
+            terms have a value of zero. By default a missing domain
+            ancillary term is assumed to be zero, as described in
+            Appendix D (Parametric Vertical Coordinates) of the CF
+            conventions.
 
         {{inplace: `bool`, optional}}
 
@@ -13106,7 +13122,7 @@ class Field(mixin.PropertiesData,
     Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-    >>> g = f.xxx()
+    >>> g = f.compute_vertical_coordinates()
     >>> print(g.auxiliary_coordinates)
     Constructs:
     {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -13124,7 +13140,7 @@ class Field(mixin.PropertiesData,
         Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
 
         '''
-        self._log_call('xxx', locals())
+        self._log_call('compute_vertical_coordinates', locals())
 
         f = _inplace_enabled_define_and_cleanup(self)
  
@@ -14159,7 +14175,9 @@ class Field(mixin.PropertiesData,
                     new_bounds[length - lower_offset:length, 1] = old_bounds[
                         length - 1, 1]
 
-                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
+                coord.set_bounds(
+                    self._Bounds(data=Data(new_bounds, units=coord.Units))
+                )
         # --- End: if
 
         return f
@@ -14780,7 +14798,9 @@ class Field(mixin.PropertiesData,
                 for x in indices.ndindex():
                     bounds[x] = c_bounds_data[indices[x]]
 
-                aux.set_bounds(Bounds(data=bounds, copy=False), copy=False)
+                aux.set_bounds(
+                    self._Bounds(data=bounds, copy=False), copy=False
+                )
 
             out.set_construct(aux, axes=out.get_data_axes(), copy=False)
 
@@ -17426,7 +17446,7 @@ class Field(mixin.PropertiesData,
                     c.set_data(data, copy=False)
 
                     bounds.insert_dimension(inplace=True)
-                    c.set_bounds(Bounds(data=bounds), copy=False)
+                    c.set_bounds(self._Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
         # --- End: if

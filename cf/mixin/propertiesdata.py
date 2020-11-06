@@ -104,8 +104,13 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't set elements when there is no data")
 
-        if isinstance(value, self.__class__):
-            value = value.data
+
+        try:
+            value = value.get_data()
+        except AttributeError:
+            pass
+#        if isinstance(value, self.__class__):
+#            value = value.data
 
         data[indices] = value
 
@@ -842,7 +847,7 @@ class PropertiesData(Properties):
 
     def __query_wo__(self, value):
         '''TODO
-1
+
         '''
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
