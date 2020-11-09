@@ -146,15 +146,19 @@ class PropertiesDataBounds(PropertiesData):
         '''
         super().__setitem__(indices, value)
 
-        # Set the bounds, if present (added at v3.TODO.0).
+        # Set the bounds, if present (added at v3.8.0).
         bounds = self.get_bounds(None)
         if bounds is not None:
+            value_bounds = None
             try:
-                bounds[indices] = value.get_bounds(None)
+                value_bounds = value.get_bounds(None)
             except AttributeError:
                 pass
+
+            if value_bounds is not None:
+                bounds[indices] = value_bounds
         # --- End: if
-        
+
     def __eq__(self, y):
         '''The rich comparison operator ``==``
 
@@ -366,17 +370,16 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        if has_bounds:
-            # try:
-            #     other_has_bounds = other.has_bounds()
-            # except AttributeError:
-            #     other_has_bounds = False
+        if bounds and has_bounds:
+            other_bounds = None
+            try:
+                other_bounds = other.get_bounds(None)
+            except AttributeError:
+                pass
 
-            # if other_has_bounds:
-            #     new_bounds = self.bounds._binary_operation(
-            #         other.bounds, method)
-            # else:
-            if numpy_size(other) > 1:
+            if other_bounds is not None:
+                other = other_bounds
+            elif numpy_size(other) > 1:
                 try:
                     other = other.insert_dimension(-1)
                 except AttributeError:
@@ -392,13 +395,9 @@ class PropertiesDataBounds(PropertiesData):
         if not bounds and new.has_bounds():
             new.del_bounds()
 
-        if inplace:
-            self._custom['direction'] = None
-            return self
-        else:
-            new._custom['direction'] = None                    
-            return new
-
+        self._custom['direction'] = None
+        return new
+        
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
                          verbose=None):
