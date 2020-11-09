@@ -402,12 +402,8 @@ class PropertiesDataBounds(PropertiesData):
         if not bounds and new.has_bounds():
             new.del_bounds()
 
-        if inplace:
-            self._custom['direction'] = None
-            return self
-        else:
-            new._custom['direction'] = None
-            return new
+        self._custom['direction'] = None
+        return new
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
