@@ -252,6 +252,28 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
+    def test_DimensionCoordinate_unary_operation(self):
+        d = self.dim
+
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d = abs(d)
+        self.assertGreaterEqual(d.minimum(), 0, d.array)
+        self.assertGreaterEqual(d.bounds.minimum(), 0, d.bounds.array)
+
+        d = -d
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d = +d
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d.dtype = int
+        d.bounds.dtype = int
+        d = ~d
+
     def test_DimensionCoordinate_binary_operation(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()

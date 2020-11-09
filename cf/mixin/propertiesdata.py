@@ -860,7 +860,9 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            TODO
+        `{{class}}`
+            A new construct, or the same construct if the operation
+            was in-place.
 
     **Examples:**
 
@@ -885,7 +887,7 @@ class PropertiesData(Properties):
             raise ValueError("Can't apply {} to a {} with no data".format(
                 method, self.__class__.__name__))
 
-        new = self.copy()
+        new = self.copy(data=False)
 
         new_data = data._unary_operation(method)
         new.set_data(new_data, copy=False)
