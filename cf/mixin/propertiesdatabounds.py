@@ -4,11 +4,12 @@ from numpy import size as numpy_size
 
 from . import PropertiesData
 
-from ..functions    import parse_indices
-from ..functions    import equivalent as cf_equivalent
-from ..functions    import inspect    as cf_inspect
-from ..functions    import (_DEPRECATION_ERROR_METHOD,
-                            _DEPRECATION_ERROR_ATTRIBUTE)
+from ..functions import (xxx,
+                         parse_indices,
+                         _DEPRECATION_ERROR_METHOD,
+                         _DEPRECATION_ERROR_ATTRIBUTE)
+from ..functions import equivalent as cf_equivalent
+from ..functions import inspect    as cf_inspect
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
@@ -40,6 +41,7 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
+
         if indices is Ellipsis:
             return self.copy()
 
@@ -71,8 +73,10 @@ class PropertiesDataBounds(PropertiesData):
         else:
             new = self.copy()  # data=False)
 
+#       data = self.data
+
         if auxiliary_mask:
-            findices = tuple(auxiliary_gmask) + tuple(indices)
+            findices = tuple(auxiliary_mask) + tuple(indices)
         else:
             findices = tuple(indices)
 
@@ -105,6 +109,7 @@ class PropertiesDataBounds(PropertiesData):
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
+#                if data.ndim <= 1 and not self.has_geometry():
                 if bounds.ndim <= 2:
                     index = indices[0]
                     if isinstance(index, slice):
@@ -352,7 +357,10 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds: `bool`, optional
             If False then ignore the bounds and remove them from the
-            result. By default the bounds are operated on as well.
+            result. By default the bounds are operated on as well: if
+            *self* and *other* has both have bounds then those bounds
+            are combined; if *self* has bounds but *other* does not
+            then the bounds are combined with *other*.
 
     :Returns:
 
@@ -361,43 +369,115 @@ class PropertiesDataBounds(PropertiesData):
             was in-place.
 
         '''
-        inplace = method[2] == 'i'
+        inplace = (method[2] == 'i')
 
-        has_bounds = bounds and self.has_bounds()
+        has_bounds = self.has_bounds()
 
-        if has_bounds and inplace and other is self:
+        if bounds and has_bounds and inplace and other is self:
             other = other.copy()
 
         new = super()._binary_operation(other, method)
 
-        if bounds and has_bounds:
-            other_bounds = None
+#        if bounds and has_bounds:
+#            other_bounds = None
+#            try:
+#                other_bounds = other.get_bounds(None)
+#            except AttributeError:
+#                pass
+#
+#            if other_bounds is not None:
+#                other = other_bounds
+#            elif numpy_size(other) > 1:
+#                try:
+#                    other = other.insert_dimension(-1)
+#                except AttributeError:
+#                    other = numpy_expand_dims(other, -1)
+#            # --- End: if
+#
+#            new_bounds = self.bounds._binary_operation(other, method)
+#
+#            if not inplace:
+#                new.set_bounds(new_bounds, copy=False)
+#        # --- End: if
+
+#        print ('\nARGS:', repr(self), repr(other), repr(new))
+        if not bounds:
+            # Remove the bounds from the result
+            new.del_bounds(None)
+            
+        else:
             try:
                 other_bounds = other.get_bounds(None)
             except AttributeError:
-                pass
+                other_bounds = None
+                
+            if not xxx():
+                # ----------------------------------------------------
+                # Default:
+                # ----------------------------------------------------
+#                print ('HERERE')
+                if has_bounds:
+                    if other_bounds is not None:
+                        # Other does have bounds, so combine them with the
+                        # bounds of self.
+                        new_bounds = self.bounds._binary_operation(
+                            other_bounds,
+                            method)
 
-            if other_bounds is not None:
-                other = other_bounds
-            elif numpy_size(other) > 1:
-                try:
-                    other = other.insert_dimension(-1)
-                except AttributeError:
-                    other = numpy_expand_dims(other, -1)
-            # --- End: if
+                        if not inplace:
+                            new.set_bounds(new_bounds, copy=False)
+                    else:
+                        # Other has no bounds, so remove the bounds from the
+                        # result construct
+                        new.del_bounds()
 
-            new_bounds = self.bounds._binary_operation(other, method)
+            elif has_bounds:
+                if other_bounds is not None:
+                    # self and other both have bounds
+#                    print ('# self and other both have bounds')
+                    new_bounds = new.bounds._binary_operation(other_bounds,
+                                                              method)
+                    
+                    if not inplace:
+#                        print (repr(new), repr(new_bounds), repr(other))
+                        new.set_bounds(new_bounds, copy=False)
 
-            if not inplace:
+                else:
+                    # self has bounds but other does not
+#                    print ('# self has bounds but other does not')
+                    if numpy_size(other) > 1:
+                        for i in range(self.bounds.ndim - self.ndim):
+                            try:
+                                other = other.insert_dimension(-1)
+                            except AttributeError:
+                                other = numpy_expand_dims(other, -1)
+                    else:
+                        other = other_bounds
+                        
+                    new_bounds = self.bounds._binary_operation(other,
+                                                               method)
+
+                    if not inplace:
+#                        print (repr(new), repr(new_bounds), repr(other))
+                        new.set_bounds(new_bounds, copy=False)
+
+            elif other_bounds is not None:
+                # self does not have bounds but other does
+#                print ('# self does not have bounds but other does')
+                new_bounds = new.copy()
+                for i in range(other_bounds.ndim - other.ndim):
+                    new_bounds = new_bounds.insert_dimension(-1)
+
+                if not inplace:
+                    method.replace('__', '__i', 1)
+                    
+                new_bounds._binary_operation(other_bounds, method)
                 new.set_bounds(new_bounds, copy=False)
-        # --- End: if
-
-        if not bounds and new.has_bounds():
-            new.del_bounds()
+        # --- End: if           
 
         self._custom['direction'] = None
         return new
-        
+
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
                          verbose=None):

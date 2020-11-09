@@ -70,6 +70,7 @@ class FieldTest(unittest.TestCase):
     rtol = cf.rtol()
 
     test_only = []
+#    test_only = ['test_Field_compute_vertical_cooridnates']
 
     def setUp(self):
         self.f = cf.read(self.filename)[0]
@@ -2508,6 +2509,133 @@ class FieldTest(unittest.TestCase):
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
 
+    def test_Field_compute_vertical_cooridnates(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(1)
+        self.assertIsNone(f.auxiliary_coordinate('altitude', default=None))
+        
+        g = f.compute_vertical_coordinates(verbose=None)
+
+        altitude = g.auxiliary_coordinate('altitude')
+        orog = f.domain_ancillary('surface_altitude')
+        a = f.domain_ancillary('ncvar%a')
+        b = f.domain_ancillary('ncvar%b')
+        
+        self.assertTrue(altitude)
+        self.assertTrue(altitude.has_bounds())
+        self.assertEqual(altitude.shape, (1,) + orog.shape)
+        self.assertEqual(altitude.bounds.shape, altitude.shape + (2,))
+
+        # Check array values
+        orog = orog.data.insert_dimension(-1)
+        x = a.data + b.data * orog
+        x.transpose([2, 0, 1], inplace=True)
+        self.assertTrue(x.equals(altitude.data, verbose=3))
+
+        # Check array bounds values
+        orog = orog.insert_dimension(-1)
+        bounds = a.bounds.data + b.bounds.data * orog
+        bounds.transpose([2, 0, 1, 3], inplace=True)
+        self.assertTrue(bounds.equals(altitude.bounds.data, verbose=3))
+
+        # ------------------------------------------------------------
+        # Missing a bounds
+        # ------------------------------------------------------------
+        a.del_bounds()
+        g = f.compute_vertical_coordinates(verbose=None)
+
+        altitude = g.auxiliary_coordinate('altitude')
+        orog = f.domain_ancillary('surface_altitude')
+        self.assertTrue(altitude)
+        self.assertEqual(altitude.shape, (1,) + orog.shape)
+        self.assertFalse(altitude.has_bounds())
+
+        # Check array values
+        orog = orog.data.insert_dimension(-1)
+        x = a.data + b.data * orog
+        x.transpose([2, 0, 1], inplace=True)
+        self.assertTrue(x.equals(altitude.data, verbose=3))
+
+        # ------------------------------------------------------------
+        # Missing a
+        # ------------------------------------------------------------
+        f.del_construct('ncvar%a')
+        g = f.compute_vertical_coordinates(verbose=None)
+
+        altitude = g.auxiliary_coordinate('altitude')
+        orog = f.domain_ancillary('surface_altitude')
+
+        self.assertTrue(altitude)
+        self.assertTrue(altitude.has_bounds())
+        self.assertEqual(altitude.shape, (1,) + orog.shape)
+        self.assertEqual(altitude.bounds.shape, altitude.shape + (2,))
+
+        # Check array values
+        orog = orog.data.insert_dimension(-1)
+        x = b.data * orog
+        x.transpose([2, 0, 1], inplace=True)
+        self.assertTrue(x.equals(altitude.data, verbose=3))
+
+        # Check array bounds values
+        orog = orog.insert_dimension(-1)
+        bounds = b.bounds.data * orog
+        bounds.transpose([2, 0, 1, 3], inplace=True)
+        self.assertTrue(bounds.equals(altitude.bounds.data, verbose=3))
+
+        # ------------------------------------------------------------
+        # Missing a and no b bounds
+        # ------------------------------------------------------------
+        b.del_bounds()
+        g = f.compute_vertical_coordinates(verbose=None)
+
+        altitude = g.auxiliary_coordinate('altitude')
+        orog = f.domain_ancillary('surface_altitude')
+
+        self.assertTrue(altitude)
+        self.assertFalse(altitude.has_bounds())
+        self.assertEqual(altitude.shape, (1,) + orog.shape)
+
+        # Check array values
+        orog = orog.data.insert_dimension(-1)
+        x = b.data * orog
+        x.transpose([2, 0, 1], inplace=True)
+        self.assertTrue(x.equals(altitude.data, verbose=3))
+
+        # ------------------------------------------------------------
+        # Missing a and missing b
+        # ------------------------------------------------------------
+        f.del_construct('ncvar%b')
+
+        g = f.compute_vertical_coordinates(verbose=None)
+
+        altitude = g.auxiliary_coordinate('altitude')
+        orog = f.domain_ancillary('surface_altitude')
+
+        self.assertTrue(altitude)
+        self.assertTrue(altitude.has_bounds())
+        self.assertEqual(altitude.shape, orog.shape)
+        self.assertEqual(altitude.bounds.shape, altitude.shape + (2,))
+
+        # Check array values
+        x = 0 * orog.data
+        self.assertTrue(x.equals(altitude.data), repr(x))
+
+        # Check array bounds values
+        orog = orog.insert_dimension(-1)
+        bounds = cf.Data([0, 0]) * orog.data
+        self.assertTrue(bounds.equals(altitude.bounds.data), repr(x))
+
+        # ------------------------------------------------------------
+        # Check in place
+        # ------------------------------------------------------------
+        self.assertIsNone(f.compute_vertical_coordinates(inplace=True))
+        
+        f.del_construct('surface_altitude')
+        with self.assertRaises(ValueError):
+            g = f.compute_vertical_coordinates()
+        
 # --- End: class
 
 

@@ -63,12 +63,6 @@ from . import Index
 from . import List
 
 from .constants import masked as cf_masked
-#from .constants import (
-#    formula_term_standard_names,
-#    formula_term_max_dimensions,
-#    formula_term_units,
-#    computed_standard_names,
-#)
 
 from .functions import (parse_indices, chunksize, equals, _section)
 from .functions import relaxed_identities as cf_relaxed_identities
@@ -95,27 +89,7 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_SEQUENCE,
                         _DEPRECATION_ERROR_KWARG_VALUE,)
 
-from .functions import (_DEPRECATION_ERROR,
-                        _DEPRECATION_ERROR_ARG,
-                        _DEPRECATION_ERROR_KWARGS,
-                        _DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_ATTRIBUTE,
-                        _DEPRECATION_ERROR_DICT,
-                        _DEPRECATION_ERROR_SEQUENCE,
-                        _DEPRECATION_ERROR_KWARG_VALUE,)
-
 from .formula_terms import formula
-#                            atmosphere_ln_pressure_coordinate,
-#                            atmosphere_sigma_coordinate,
-#                            atmosphere_hybrid_sigma_pressure_coordinate,
-#                            atmosphere_hybrid_height_coordinate,
-#                            atmosphere_sleve_coordinate,
-#                            ocean_sigma_coordinate,
-#                            ocean_s_coordinate,
-#                            ocean_s_coordinate_g1,
-#                            ocean_s_coordinate_g2,
-#                            ocean_sigma_z_coordinate,
-#                            ocean_double_sigma_coordinate,)
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
@@ -13077,7 +13051,7 @@ class Field(mixin.PropertiesData,
     If there are no appropriate cooridnate reference constructs then
     the field construct is unchanged.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
 
     .. seealso:: `coordinate_references`
 
@@ -13148,7 +13122,8 @@ class Field(mixin.PropertiesData,
             (standard_name,
              computed_standard_name,
              computed,
-             computed_axes) = formula(f, cr, default_to_zero)
+             computed_axes,
+             k_axis) = formula(f, cr, default_to_zero)
             
             if computed_standard_name is None:
                 continue

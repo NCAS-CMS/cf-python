@@ -115,6 +115,7 @@ CONSTANTS = {
     'RELAXED_IDENTITIES': False,
     # 'IGNORE_IDENTITIES': False,  # no longer used
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
+    'xxx': False,
 }
 
 CONSTANTS['FM_THRESHOLD'] = (

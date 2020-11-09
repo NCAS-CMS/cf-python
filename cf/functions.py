@@ -178,16 +178,17 @@ else:
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    tempdir=None,
-    of_fraction=None,
-    chunksize=None,
-    collapse_parallel_mode=None,
-    free_memory_factor=None,
-    log_level=None,
-    regrid_logging=None,
-    relaxed_identities=None,
+        atol=None,
+        rtol=None,
+        tempdir=None,
+        of_fraction=None,
+        chunksize=None,
+        collapse_parallel_mode=None,
+        free_memory_factor=None,
+        log_level=None,
+        regrid_logging=None,
+        relaxed_identities=None,
+        xxx=None,
 ):
     '''View or set any number of constants in the project-wide configuration.
 
@@ -360,6 +361,7 @@ def configuration(
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
+        xxx=xxx,
     )
 
 
@@ -402,9 +404,18 @@ def _configuration(**kwargs):
         'new_log_level': log_level,
         'new_regrid_logging': regrid_logging,
         'new_relaxed_identities': relaxed_identities,
+        'xxx': xxx,
     }
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    return old
+
+
+def xxx(*arg):
+    old = CONSTANTS['xxx']
+    if arg:
+        CONSTANTS['xxx'] = bool(arg[0])
 
     return old
 

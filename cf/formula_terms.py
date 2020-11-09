@@ -1,12 +1,16 @@
 '''Functions for calculating non-parametric vertical coordinates from
 coordinate reference constructs.
 
-.. versionaddedd:: 3.TODO.0
+See Appendix D: Parametric Vertical Coordinates of the CF conventions.
+
+.. versionaddedd:: 3.8.0
 
 '''
 import logging
 
 from .units import Units
+
+from .functions import xxx
 
 from .constants import (
     formula_term_standard_names,
@@ -20,10 +24,10 @@ logger = logging.getLogger(__name__)
 
 def _domain_ancillary_term(f, standard_name, computed_standard_name,
                            coordinate_conversion, term,
-                           default_to_zero):
+                           default_to_zero, bounds):
     '''TODO
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -52,10 +56,14 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
             zero, as described in Appendix D (Parametric Vertical
             Coordinates) of the CF conventions.
     
+        bounds: `bool`, optional
+            If False then do not create bounds of zero for a default
+            domain ancillary construct.
+
     :Returns:
     
         `DomainAncillary`, `str`
-            The domain ancillary construct for the formula term, and
+            The domain ancillary construct for the formula term and
             its construct key.
 
     '''
@@ -69,15 +77,20 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
         )
 
     units = Units(units)
-        
-    key = coordinate_conversion.get_domain_ancillary(term, None)
-    var = f.domain_ancillary(key, None)
 
-    if var is not None:
+    key = coordinate_conversion.get_domain_ancillary(term, None)
+    if key is not None:
+        var = f.domain_ancillary(key, default=None)
+    else:
+        var = None
+
+    if var is not None:        
         logger.detail(
-            "  Domain ancillary {!r}: {!r}".format(term, var)
+            "  Formula term {!r}:\n{}".format(
+                term, var.dump(display=False, _level=1)
+            )
         )  # pragma: no cover
-        
+
         vsn = var.get_property('standard_name', None)
         if (
                 vsn is not None
@@ -118,21 +131,24 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
                     computed_standard_name, term
                 )
             )
-
-        logger.detail(
-            "  Domain ancillary {!r}: {} (default)".format(term, 0.0)
-        )  # pragma: no cover
-
         # ----------------------------------------------------
         # Create a default zero-valued domain ancillary
         # ----------------------------------------------------
-        data = f._Data(0.0, units)
-        bounds = f._Bounds(data=f._Data((0.0, 0.0), units))
-
         var = f._DomainAncillary()
+
+        data = f._Data(0.0, units)
         var.set_data(data)
-        var.set_bounds(bounds)
-        
+
+        if bounds:
+            bounds = f._Bounds(data=f._Data((0.0, 0.0), units))
+            var.set_bounds(bounds)
+
+        logger.detail(
+            "  Formula term {!r} (default):\n{}".format(
+                term, var.dump(display=False, _level=1)
+            )
+        )  # pragma: no cover
+
     return var, key
 
 
@@ -140,7 +156,7 @@ def _coordinate_term(f, standard_name, computed_standard_name,
                      coordinate_reference, term):
     '''TODO
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -173,7 +189,7 @@ def _coordinate_term(f, standard_name, computed_standard_name,
     '''
     var = None
     for key in coordinate_reference.coordinates():
-        var = f.coordinate(key, None)
+        var = f.coordinate(key, default=None)
         if var is None:
             continue
         
@@ -194,13 +210,19 @@ def _coordinate_term(f, standard_name, computed_standard_name,
             )
         )
 
+    logger.detail(
+        "  Formula term {!r} (default):\n{}".format(
+            term, var.dump(display=False, _level=1)
+        )
+    )  # pragma: no cover
+
     return var, key
 
 
 def _computed_standard_name(f, standard_name, coordinate_conversion):
     '''TODO
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -280,7 +302,7 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
 def _vertical_axis(f, *keys):
     '''TODO
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -323,7 +345,7 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
     This entails making dure that the trailing dimensions of 'eta' are
     the same as the all of dimensions of 'depth'.
     
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -389,15 +411,16 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
 
     return eta, eta_axes
 
-def _conform_computed(f, computed, computed_axes):
+def _conform_computed(f, computed, computed_axes, k_axis):
     '''Move the vertical axis of the computed non-parametric coordinates
-    from its current position as the last (rightmost) dimension.
+    from its current position as the last (rightmost) dimension, if
+    applicable.
 
-    .. note:: It is assumed that the vertical axis is the last
-              (rightmost) dimension of the input computed
+    .. note:: It is assumed that the vertical axis, if it exsits, is
+              the last (rightmost) dimension of the input computed
               non-parametric vertical coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
     
@@ -410,6 +433,12 @@ def _conform_computed(f, computed, computed_axes):
         computed_axes: `tuple`
             TODO
 
+        k_axis: `tuple`
+            The construct key of the vertical domain axis. If the
+            vertical axis does not appear in the computed
+            non-parametric coodinates then this should be an empty
+            tuple.
+
     :Returns:
     
         `DomainAncillary`, `tuple`
@@ -419,7 +448,7 @@ def _conform_computed(f, computed, computed_axes):
 
     '''
     ndim = computed.ndim
-    if ndim >= 2:
+    if k_axis and ndim >= 2:
         iaxes = list(range(ndim - 1))
         
         time = f.domain_axis('T', key=True, default=None)
@@ -452,7 +481,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -471,7 +500,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -483,6 +512,11 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'atmosphere_ln_pressure_coordinate'
 
@@ -491,24 +525,35 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
                 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     p0, _ = _domain_ancillary_term(g, standard_name,
                                    computed_standard_name,
                                    coordinate_conversion, 'p0',
-                                   default_to_zero)
+                                   default_to_zero, True)
     
     lev, lev_key = _coordinate_term(g, standard_name,
                                     computed_standard_name,
-                                    coordinate_conversion, 'lev')
+                                    coordinate_conversion,
+                                    'lev')
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
     k_axis = _vertical_axis(g, lev_key)
     computed_axes = g.get_data_axes(lev_key) + k_axis
 
+    # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
+    # ----------------------------------------------------------------
+    old = xxx(lev.has_bounds())
+       
     computed = p0 * (-lev).exp()
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def atmosphere_sigma_coordinate(g, coordinate_reference,
@@ -520,7 +565,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -539,7 +584,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -551,21 +596,29 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'atmosphere_sigma_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     ptop, _ = _domain_ancillary_term(g, standard_name,
                                      computed_standard_name,
                                      coordinate_conversion, 'ptop',
-                                     default_to_zero)
+                                     default_to_zero, True)
 
     ps, ps_key = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion, 'ps',
-                                        False)
+                                        default_to_zero, True)
 
     sigma, sigma_key = _coordinate_term(g, standard_name,
                                         computed_standard_name,
@@ -582,11 +635,18 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     if k_axis:
         ps = ps.insert_dimension(-1)
 
+    # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
+    # ----------------------------------------------------------------
+    old = xxx(sigma.has_bounds())
+    
     computed = (ptop
                 + (ps - ptop) * sigma)
+    
+    xxx(old)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def atmosphere_hybrid_sigma_pressure_coordinate(g,
@@ -600,7 +660,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -619,7 +679,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -631,43 +691,53 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
-    standard_name = 'atmosphere_hybrid_sigma_pressure_coordinate'
+    standard_name = 'atmosphere_hybrid_sigma_pressure_coordingate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
 
     if ap_term: 
         ap, ap_key = _domain_ancillary_term(g, standard_name,
                                             computed_standard_name,
                                             coordinate_conversion,
-                                            'ap', default_to_zero)
+                                            'ap', default_to_zero,
+                                            True)
 
         a_key = None
     else:
         a, a_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion, 'a',
-                                          default_to_zero)
+                                          default_to_zero, True)
 
         p0, _ = _domain_ancillary_term(g, standard_name,
                                        computed_standard_name,
                                        coordinate_conversion, 'p0',
-                                       default_to_zero)
+                                       default_to_zero, False)
 
-    ap_key = None
+        ap_key = None
 
     b, b_key = _domain_ancillary_term(g, standard_name,
                                       computed_standard_name,
                                       coordinate_conversion, 'b',
-                                      default_to_zero)
+                                      default_to_zero, True)
 
     ps, ps_key = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion, 'ps',
-                                        False)
+                                        default_to_zero, False)
+
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -679,15 +749,24 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     if k_axis:
         ps = ps.insert_dimension(-1)
 
+    # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
+    # ----------------------------------------------------------------    
     if ap_term:
+        old = xxx(ap.has_bounds() & b.has_bounds())
+        
         computed = (ap
                     + b * ps)
     else:
+        old = xxx(a.has_bounds() & b.has_bounds())
+        
         computed = (a * p0
                     + b * ps)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+    
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
@@ -699,7 +778,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -718,7 +797,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -730,6 +809,11 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'atmosphere_hybrid_height_coordinate'
 
@@ -738,20 +822,24 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       computed_standard_name,
                                       coordinate_conversion, 'a',
-                                      default_to_zero)
+                                      default_to_zero, True)
 
     b, b_key = _domain_ancillary_term(g, standard_name,
                                       computed_standard_name,
                                       coordinate_conversion, 'b',
-                                      default_to_zero)
+                                      default_to_zero, True)
 
     orog, orog_key = _domain_ancillary_term(g, standard_name,
                                             computed_standard_name,
                                             coordinate_conversion,
-                                            'orog', False)
+                                            'orog', default_to_zero,
+                                            False)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -763,11 +851,18 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     if k_axis:
         orog = orog.insert_dimension(-1)
 
+    # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
+    # ----------------------------------------------------------------
+    old = xxx(a.has_bounds() & b.has_bounds())
+
     computed = (a
                 + b * orog)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def atmosphere_sleve_coordinate(g, coordinate_reference,
@@ -779,7 +874,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -798,7 +893,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -810,41 +905,49 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'atmosphere_sleve_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       computed_standard_name,
                                       coordinate_conversion, 'a',
-                                      default_to_zero)
+                                      default_to_zero, True)
 
     b1, b1_key = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion, 'b1',
-                                        default_to_zero)
+                                        default_to_zero, True)
 
     b2, b2_key = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion, 'b2',
-                                        default_to_zero)
+                                        default_to_zero, True)
 
     ztop, _ = _domain_ancillary_term(g, standard_name,
                                      computed_standard_name,
                                      coordinate_conversion, 'ztop',
-                                     default_to_zero)
+                                     default_to_zero, False)
 
     zsurf1, zsurf1_key = _domain_ancillary_term(g, standard_name,
                                                 computed_standard_name,
                                                 coordinate_conversion,
-                                                'zsurf1', False )
+                                                'zsurf1', False)
 
     zsurf2, zsurf2_key = _domain_ancillary_term(g, standard_name,
                                                 computed_standard_name,
                                                 coordinate_conversion,
-                                                'zsurf2', False )
+                                                'zsurf2', False)
 
     # Make sure that zsurf1 and zsurf2 have the same number of axes
     # and the same axis order
@@ -884,12 +987,19 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
         zsurf1 = zsurf1.insert_dimension(-1)
         zsurf2 = zsurf2.insert_dimension(-1)
 
+    # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
+    # ----------------------------------------------------------------
+    old = xxx(a.has_bounds() & b1.has_bounds() & b2.has_bounds())
+    
     computed = (a * ztop
                 + b1 * zsurf1
                 + b2 * zsurf2)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
@@ -900,7 +1010,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -919,7 +1029,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -931,12 +1041,20 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name  = 'ocean_sigma_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion,
@@ -946,7 +1064,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
+                                              default_to_zero, False)
 
     sigma, sigma_key = _coordinate_term(g, standard_name,
                                         computed_standard_name,
@@ -972,10 +1090,15 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
+    old = xxx(sigma.has_bounds())
+    
     computed = (eta
                 + (eta + depth) * sigma)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
@@ -986,7 +1109,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -1005,7 +1128,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1017,42 +1140,52 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'ocean_s_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion,
-                                          'eta', False)
+                                          'eta', default_to_zero,
+                                          False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
+                                              default_to_zero, False)
 
     C, C_key = _domain_ancillary_term(g, standard_name,
                                       computed_standard_name,
                                       coordinate_conversion, 'C',
-                                      default_to_zero)
+                                      default_to_zero, True)
 
     a, _ = _domain_ancillary_term(g, standard_name,
                                   computed_standard_name,
                                   coordinate_conversion, 'a',
-                                  default_to_zero)
+                                  default_to_zero, True)
 
     b, _ = _domain_ancillary_term(g, standard_name,
                                   computed_standard_name,
                                   coordinate_conversion, 'b',
-                                  default_to_zero)
+                                  default_to_zero, True)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion,
-                                        'depth_c', default_to_zero)
+                                        'depth_c', default_to_zero,
+                                        False)
 
     s, s_key = _coordinate_term(g, standard_name,
                                 computed_standard_name,
@@ -1077,6 +1210,8 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
+    old = xxx(s.has_bounds())
+    
     C = (
         (1 - b) * (a * s).sinh() / a.sinh()
         + b * (
@@ -1088,7 +1223,10 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
                 + depth_c * s
                 + (depth - depth_c) * C)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
@@ -1099,7 +1237,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -1118,7 +1256,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1130,12 +1268,20 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'ocean_s_coordinate_g1'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion,
@@ -1145,17 +1291,18 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
-
-    C, C_key = _domain_ancillary_term(g, standard_name,
-                                      computed_standard_name,
-                                      coordinate_conversion, 'C',
-                                      default_to_zero)
+                                              default_to_zero, False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion,
-                                        'depth_c', default_to_zero)
+                                        'depth_c', default_to_zero,
+                                        False)
+
+    C, C_key = _domain_ancillary_term(g, standard_name,
+                                      computed_standard_name,
+                                      coordinate_conversion, 'C',
+                                      default_to_zero, True)
 
     s, s_key = _coordinate_term(g, standard_name,
                                 computed_standard_name,
@@ -1180,13 +1327,18 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
+    old = xxx(s.has_bounds() and C.has_bounds())
+    
     S = (depth_c * s
          + (depth - depth_c) * C)
 
     computed = (S
                 + eta * (1 + S / depth))
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
@@ -1197,7 +1349,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -1216,7 +1368,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1228,12 +1380,20 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name= 'ocean_s_coordinate_g2'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion,
@@ -1243,17 +1403,18 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
-
-    C, C_key = _domain_ancillary_term(g, standard_name,
-                                      computed_standard_name,
-                                      coordinate_conversion, 'C',
-                                      default_to_zero)
+                                              default_to_zero, False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion,
-                                        'depth_c', default_to_zero)
+                                        'depth_c', default_to_zero,
+                                        False)
+
+    C, C_key = _domain_ancillary_term(g, standard_name,
+                                      computed_standard_name,
+                                      coordinate_conversion, 'C',
+                                      default_to_zero, True)
 
     s, s_key = _coordinate_term(g, standard_name,
                                 computed_standard_name,
@@ -1278,6 +1439,8 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
+    old = xxx(s.has_bounds() and C.has_bounds())
+    
     S = (
         (depth_c * s
          + depth * C)
@@ -1287,7 +1450,10 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     computed = (eta
                 + (eta + depth) * S)
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
@@ -1298,7 +1464,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -1317,7 +1483,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1329,12 +1495,20 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name= 'ocean_sigma_z_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           computed_standard_name,
                                           coordinate_conversion,
@@ -1344,23 +1518,25 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
+                                              default_to_zero, False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         computed_standard_name,
                                         coordinate_conversion,
-                                        'depth_c',
-                                        default_to_zero)
+                                        'depth_c', default_to_zero,
+                                        False)
 
     nsigma, _ = _domain_ancillary_term(g, standard_name,
                                        computed_standard_name,
                                        coordinate_conversion,
-                                       'nsigma', default_to_zero)
+                                       'nsigma', default_to_zero,
+                                       False)
 
     zlev, zlev_key = _domain_ancillary_term(g, standard_name,
                                             computed_standard_name,
                                             coordinate_conversion,
-                                            'zlev', default_to_zero)
+                                            'zlev', default_to_zero,
+                                            True)
 
     sigma, sigma_key = _coordinate_term(g, standard_name,
                                         computed_standard_name,
@@ -1390,6 +1566,8 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     #       for k>nsigma and then overwrite them.
     #
     # ----------------------------------------------------------------
+    old = xxx(zlev.has_bounds() & sigma.has_bounds())
+
     computed = (
         eta
         + (depth.where(depth > depth_c, depth_c) + eta) * sigma
@@ -1398,7 +1576,10 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     nsigma = int(nsigma.item())
     computed[..., nsigma:] = zlev[nsigma:]
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 def ocean_double_sigma_coordinate(g, coordinate_reference,
@@ -1410,7 +1591,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
               the returned computed non-parametric vertical
               coordinates.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:    
 
@@ -1429,7 +1610,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`
+        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1441,49 +1622,55 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
 
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
+
     '''
     standard_name = 'ocean_double_sigma_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
 
+    # ----------------------------------------------------------------
+    # Get the formula terms and their contruct keys
+    # ----------------------------------------------------------------
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               computed_standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero)
+                                              default_to_zero, False)
 
     a, _ = _domain_ancillary_term(g, standard_name,
                                   computed_standard_name,
-                                  coordinate_conversion,
-                                  'a', default_to_zero)
+                                  coordinate_conversion, 'a',
+                                  default_to_zero, True)
 
     z2, _ = _domain_ancillary_term(g, standard_name,
                                    computed_standard_name,
-                                   coordinate_conversion,
-                                   'z2', default_to_zero)
+                                   coordinate_conversion, 'z2',
+                                   default_to_zero, True)
 
     z1, _ = _domain_ancillary_term(g, standard_name,
                                    computed_standard_name,
-                                   coordinate_conversion,
-                                   'z1', default_to_zero)
+                                   coordinate_conversion, 'z1',
+                                   default_to_zero, True)
 
     z2, _ = _domain_ancillary_term(g, standard_name,
                                    computed_standard_name,
-                                   coordinate_conversion,
-                                   'z2', default_to_zero)
+                                   coordinate_conversion, 'z2',
+                                   default_to_zero, True)
 
     k_c, _ = _domain_ancillary_term(g, standard_name,
                                     computed_standard_name,
-                                    coordinate_conversion,
-                                    'k_c',
-                                    default_to_zero)
+                                    coordinate_conversion, 'k_c',
+                                    default_to_zero, True)
 
     href, _ = _domain_ancillary_term(g, standard_name,
                                      computed_standard_name,
-                                     coordinate_conversion,
-                                     'href',
-                                     default_to_zero)
+                                     coordinate_conversion, 'href',
+                                     default_to_zero, True)
 
     sigma, sigma_key = _coordinate_term(g, standard_name,
                                         computed_standard_name,
@@ -1507,6 +1694,8 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     #       for k<=k_c and then overwrite them.
     #
     # ----------------------------------------------------------------
+    old = xxx(sigma.has_bounds())
+    
     f = (
         (z1 + z2) * 0.5
         + (
@@ -1522,13 +1711,16 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     computed[..., k_c:] = (f
                            + (sigma - 1) * (depth - f))
 
-    return standard_name, computed_standard_name, computed, computed_axes
+    xxx(old)
+    
+    return (standard_name, computed_standard_name, computed,
+            computed_axes, k_axis)
 
 
 # --------------------------------------------------------------------
 # A mapping of parametric coordinate standard names to the functions
 # for computing their correspoonding non-parametric vertical
-# coordinates.
+# coordinates
 # --------------------------------------------------------------------
 _formula_functions = {
     'atmosphere_ln_pressure_coordinate': atmosphere_ln_pressure_coordinate,
@@ -1548,7 +1740,7 @@ _formula_functions = {
 def formula(f, coordinate_reference, default_to_zero=True):
     '''TODO
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.8.0
     
     :Parameters:
 
@@ -1568,7 +1760,7 @@ def formula(f, coordinate_reference, default_to_zero=True):
     :Returns:
     
         `tuple`
-            A 4-tuple containing
+            A 5-tuple containing
 
             * The standard name of the parametric coordinates.
 
@@ -1580,6 +1772,11 @@ def formula(f, coordinate_reference, default_to_zero=True):
 
             * A tuple of the domain axis construct keys for the
               dimensions of the computed non-parametric coordinates.
+
+            * A tuple containing the construct key of the vertical
+              domain axis. If the vertical axis does not appear in the
+              computed non-parametric coodinates then this an empty
+              tuple, instead.
 
             If the coordinate reference does not define a conversion
             from parametric coordinates to nonparametric coordinates
@@ -1599,20 +1796,24 @@ def formula(f, coordinate_reference, default_to_zero=True):
             (standard_name,
              computed_standard_name,
              computed,
-             computed_axes) = (
+             computed_axes,
+             k_axis) = (
                  _formula_functions[standard_name](f,
                                                    coordinate_reference,
                                                    default_to_zero)
              )
 
+            # --------------------------------------------------------
+            # Move the vertical axis of the computed non-parametric
+            # coordinates from its current position as the last
+            # (rightmost) dimension, if applicable.
+            # --------------------------------------------------------
             computed, computed_axes = _conform_computed(f, computed,
-                                                        computed_axes)
-            
-            return (standard_name,
-                    computed_standard_name,
-                    computed,
-                    computed_axes)
+                                                        computed_axes, k_axis)
+
+            return (standard_name, computed_standard_name, computed,
+                    computed_axes, k_axis)
     # --- End: if
 
     # Still here?
-    return (None,) * 4
+    return (None,) * 5
