@@ -310,6 +310,38 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__rrshift__', False)
 
+    def __abs__(self):
+        '''The unary arithmetic operation ``abs``
+
+    x.__abs__() <==> abs(x)
+
+        '''
+        return self._unary_operation('__abs__', bounds=True)
+
+    def __neg__(self):
+        '''The unary arithmetic operation ``-``
+
+    x.__neg__() <==> -x
+
+        '''
+        return self._unary_operation('__neg__', bounds=True)
+
+    def __invert__(self):
+        '''The unary bitwise operation ``~``
+
+    x.__invert__() <==> ~x
+
+        '''
+        return self._unary_operation('__invert__', bounds=True)
+
+    def __pos__(self):
+        '''The unary arithmetic operation ``+``
+
+    x.__pos__() <==> +x
+
+        '''
+        return self._unary_operation('__pos__', bounds=True)
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -378,10 +410,7 @@ class PropertiesDataBounds(PropertiesData):
         if not bounds and new.has_bounds():
             new.del_bounds()
 
-        if inplace:
-            return self
-        else:
-            return new
+        return new
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
@@ -535,6 +564,38 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return v
+
+    def _unary_operation(self, method, bounds=True):
+        '''Implement unary arithmetic operations on the data array and bounds.
+
+    :Parameters:
+
+        method: `str`
+            The unary arithmetic method name (such as "__abs__").
+
+        bounds: `bool`, optional
+            If False then ignore the bounds and remove them from the
+            result. By default the bounds are operated on as well.
+
+    :Returns:
+
+        `{{class}}`
+            A new construct, or the same construct if the operation
+            was in-place.
+
+        '''
+        new = super()._unary_operation(method)
+
+        self_bounds = self.get_bounds(None)
+        if self_bounds is not None:
+            if bounds:
+                new_bounds = self_bounds._unary_operation(method)
+                new.set_bounds(new_bounds)
+            else:
+                new.del_bounds()
+        # --- End: if
+
+        return new
 
     # ----------------------------------------------------------------
     # Attributes
