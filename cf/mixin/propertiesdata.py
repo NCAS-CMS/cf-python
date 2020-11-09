@@ -108,8 +108,6 @@ class PropertiesData(Properties):
             value = value.get_data()
         except AttributeError:
             pass
-#        if isinstance(value, self.__class__):
-#            value = value.data
 
         data[indices] = value
 

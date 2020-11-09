@@ -160,7 +160,7 @@ class PropertiesDataBounds(PropertiesData):
                 pass
 
             if value_bounds is not None:
-                bounds[indices] = value.get_bounds(None)
+                bounds[indices] = value_bounds
         # --- End: if
 
     def __eq__(self, y):
