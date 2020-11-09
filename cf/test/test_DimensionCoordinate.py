@@ -220,7 +220,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         y.del_bounds()
 
-        b = y.create_bounds()
+        b = y.create_bounds()        
 
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
@@ -269,7 +269,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         c = x + x
         self.assertTrue((c.array == d + d).all())
-        self.assertTrue((c.bounds.array == b + d2).all())
+        self.assertTrue((c.bounds.array == b * 2).all())
 
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
@@ -286,12 +286,12 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((x.bounds.array == b + 2).all())
 
         x += x
-        self.assertTrue((x.array == (d+2) * 2).all())
-        self.assertTrue((x.bounds.array == b+2 + d2+2).all())
+        self.assertTrue((x.array == (d + 2) * 2).all())
+        self.assertTrue((x.bounds.array == (b + 2) * 2).all())
 
         x += 2
-        self.assertTrue((x.array == (d+2)*2 + 2).all())
-        self.assertTrue((x.bounds.array == b+2 + d2+2 + 2).all())
+        self.assertTrue((x.array == (d + 2) * 2 + 2).all())
+        self.assertTrue((x.bounds.array == (b + 2) * 2 + 2).all())
 
         # --------------------------------------------------------
         # Out-of-place addition (no bounds)
@@ -326,7 +326,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
-
+      
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()
 
@@ -347,6 +347,28 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             y = x.set_data(cf.Data(1))
+
+    def test_DimensionCoordinate__setitem__(self):
+        d = self.dim.copy()
+
+        a = d.array
+        b = d.bounds.array
+
+        d[...] = 999
+        self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
+
+        d = self.dim.copy()
+        e = self.dim.copy()
+        d[...] = e * -1
+        self.assertTrue(d.data.equals(-e.data, verbose=3))
+        self.assertTrue(d.bounds.equals(-e.bounds, verbose=3))
+
+        d = self.dim.copy()
+        e = self.dim.copy()
+        e.del_bounds()
+        d[...] = e * -1
+        self.assertTrue(d.data.equals(-e.data, verbose=3))
+        self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
 
 # --- End: class
 

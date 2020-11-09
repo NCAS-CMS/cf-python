@@ -104,8 +104,12 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't set elements when there is no data")
 
-        if isinstance(value, self.__class__):
-            value = value.data
+        try:
+            value = value.get_data()
+        except AttributeError:
+            pass
+#        if isinstance(value, self.__class__):
+#            value = value.data
 
         data[indices] = value
 

@@ -142,6 +142,27 @@ class PropertiesDataBounds(PropertiesData):
         # Return the new bounded variable
         return new
 
+    def __setitem__(self, indices, value):
+        '''Called to implement assignment to x[indices]
+
+    x.__setitem__(indices, value) <==> x[indices]
+
+        '''
+        super().__setitem__(indices, value)
+
+        # Set the bounds, if present (added at v3.8.0).
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            value_bounds = None
+            try:
+                value_bounds = value.get_bounds(None)
+            except AttributeError:
+                pass
+
+            if value_bounds is not None:
+                bounds[indices] = value.get_bounds(None)
+        # --- End: if
+
     def __eq__(self, y):
         '''The rich comparison operator ``==``
 
@@ -335,15 +356,19 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds: `bool`, optional
             If False then ignore the bounds and remove them from the
-            result. By default the bounds are operated on as well.
+            result. By default the bounds are operated on as well: if
+            *self* and *other* has both have bounds then those bounds
+            are combined; if *self* has bounds but *other* does not
+            then the bounds are combined with *other*.
 
     :Returns:
 
+        `{{class}}`
             A new construct, or the same construct if the operation
             was in-place.
 
         '''
-        inplace = method[2] == 'i'
+        inplace = (method[2] == 'i')
 
         has_bounds = bounds and self.has_bounds()
 
@@ -352,17 +377,16 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        if has_bounds:
-            # try:
-            #     other_has_bounds = other.has_bounds()
-            # except AttributeError:
-            #     other_has_bounds = False
+        if bounds and has_bounds:
+            other_bounds = None
+            try:
+                other_bounds = other.get_bounds(None)
+            except AttributeError:
+                pass
 
-            # if other_has_bounds:
-            #     new_bounds = self.bounds._binary_operation(
-            #         other.bounds, method)
-            # else:
-            if numpy_size(other) > 1:
+            if other_bounds is not None:
+                other = other_bounds
+            elif numpy_size(other) > 1:
                 try:
                     other = other.insert_dimension(-1)
                 except AttributeError:
@@ -379,8 +403,10 @@ class PropertiesDataBounds(PropertiesData):
             new.del_bounds()
 
         if inplace:
+            self._custom['direction'] = None
             return self
         else:
+            new._custom['direction'] = None             
             return new
 
     @_manage_log_level_via_verbosity
