@@ -220,7 +220,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         y.del_bounds()
 
-        b = y.create_bounds()        
+        b = y.create_bounds()
 
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
@@ -326,7 +326,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
-      
+
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()
 

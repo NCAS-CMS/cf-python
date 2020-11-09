@@ -406,7 +406,7 @@ class PropertiesDataBounds(PropertiesData):
             self._custom['direction'] = None
             return self
         else:
-            new._custom['direction'] = None             
+            new._custom['direction'] = None
             return new
 
     @_manage_log_level_via_verbosity
