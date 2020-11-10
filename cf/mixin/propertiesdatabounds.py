@@ -154,11 +154,10 @@ class PropertiesDataBounds(PropertiesData):
         # Set the bounds, if present (added at v3.8.0).
         bounds = self.get_bounds(None)
         if bounds is not None:
-            value_bounds = None
             try:
                 value_bounds = value.get_bounds(None)
             except AttributeError:
-                pass
+                value_bounds = None
 
             if value_bounds is not None:
                 bounds[indices] = value_bounds
@@ -435,11 +434,12 @@ class PropertiesDataBounds(PropertiesData):
             # Only one of self and other has bounds, so remove the
             # bounds from the result.
             # --------------------------------------------------------
-            new.del_bounds()
+            new.del_bounds(None)
         
         elif has_bounds:
             # --------------------------------------------------------
-            # Combine self bounds with other coordinates
+            # other has no bounds: Combine self bounds with other
+            # coordinates
             # --------------------------------------------------------
             if numpy_size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
@@ -448,15 +448,15 @@ class PropertiesDataBounds(PropertiesData):
                     except AttributeError:
                         other = numpy_expand_dims(other, -1)
                     
-                new_bounds = self.bounds._binary_operation(other,
-                                                           method)
+            new_bounds = self.bounds._binary_operation(other, method)
                 
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
         
         elif other_bounds is not None:
             # --------------------------------------------------------
-            # Combine self coordinates with other bounds
+            # self has no bounds: Combine self coordinates with other
+            # bounds
             # --------------------------------------------------------
             new_bounds = new.copy()
             for i in range(other_bounds.ndim - other.ndim):

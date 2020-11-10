@@ -57,17 +57,22 @@ class functionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # This test assumes 'total_memory' remains constant throughout the
-        # test run, which should be true generally in any reasonable context.
+        # This test assumes 'total_memory' remains constant throughout
+        # the test run, which should be true generally in any
+        # reasonable context.
 
-        # Test getting of all config. and store original values to test on:
+        # Test getting of all config. and store original values to
+        # test on:
         org = cf.configuration()
         self.assertIsInstance(org, dict)
 
-        # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 13)  # update expected len if add new key(s)
-        # Floats expected as values for most keys. Store these for later as
-        # floats need assertAlmostEqual rather than assertEqual tests:
+        # Check all keys that should be there are, with correct value
+        # type:
+        self.assertEqual(len(org), 14)  # update expected len if add new key(s)
+        
+        # Floats expected as values for most keys. Store these for
+        # later as floats need assertAlmostEqual rather than
+        # assertEqual tests:
         keys_with_float_values = [
             'atol',
             'rtol',
@@ -80,11 +85,14 @@ class functionTest(unittest.TestCase):
         ]
         for key in keys_with_float_values:
             self.assertIsInstance(org[key], float)
+
         # Other types expected:
         self.assertIsInstance(org['collapse_parallel_mode'], int)
         self.assertIsInstance(org['relaxed_identities'], bool)
+        self.assertIsInstance(org['combine_bounds_with_coordinates'], bool)
         self.assertIsInstance(org['regrid_logging'], bool)
-        # Log level may be input as an int but always given as equiv. string
+        # Log level may be input as an int but always given as
+        # equiv. string
         self.assertIsInstance(org['log_level'], str)
         self.assertIsInstance(org['tempdir'], str)
 
@@ -93,10 +101,13 @@ class functionTest(unittest.TestCase):
             'fm_threshold',
             'min_total_memory',
         )
-        # Store some sensible values to reset items to for testing, ensuring:
-        # 1) they are kept different to the defaults (i.e. org values); and
+        # Store some sensible values to reset items to for testing,
+        # ensuring:
+        # 1) they are kept different to the defaults (i.e. org
+        #    values); and
         # 2) floats differ sufficiently that they will be picked up as
-        #    different by the assertAlmostEqual decimal places (8, see below)
+        #    qdifferent by the assertAlmostEqual decimal places (8, see
+        #    below)
         reset_values = {
             'rtol': 5e-7,
             'atol': 2e-7,
@@ -107,6 +118,7 @@ class functionTest(unittest.TestCase):
             'regrid_logging': True,
             'collapse_parallel_mode': 2,
             'relaxed_identities': True,
+            'combine_bounds_with_coordinates': True,
             'log_level': 'INFO',
             'fm_threshold': 4e9,  # also can't be (re)set
             'min_total_memory': 6e9,  # also can't be (re)set
@@ -116,17 +128,21 @@ class functionTest(unittest.TestCase):
         # Test the setting of each lone item.
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
-            # These are shown in output but can't be set (no such kwarg):
+            # These are shown in output but can't be set (no such
+            # kwarg):
             if setting in constants_that_cannot_be_set:
                 with self.assertRaises(TypeError):  # error from invalid kwarg
                     cf.configuration(**{setting: value})
+
                 continue
+
             cf.configuration(**{setting: value})
             post_set = cf.configuration()
             keys_with_float_values
 
-            # Expect a dict that is identical to the original to start with
-            # but as we set values incrementally they should be reflected:
+            # Expect a dict that is identical to the original to start
+            # with but as we set values incrementally they should be
+            # reflected:
             expected_post_set[setting] = value
             # As a special case, we need to account for the fact that
             # fm_threshold = free_memory_factor * total_memory, so it
@@ -135,16 +151,19 @@ class functionTest(unittest.TestCase):
                 expected_post_set['fm_threshold'] = (
                     value * expected_post_set['total_memory'])
 
-            # Can't trivially do a direct test that the actual and expected
-            # return dicts are the same as there are float values which have
-            # limited float precision so need assertAlmostEqual testing:
+            # Can't trivially do a direct test that the actual and
+            # expected return dicts are the same as there are float
+            # values which have limited float precision so need
+            # assertAlmostEqual testing:
             for name, val in expected_post_set.items():
                 if isinstance(val, float):
                     self.assertAlmostEqual(post_set[name], val, places=8)
                 else:
                     self.assertEqual(post_set[name], val)
+        # --- End: for
 
-        # Test the setting of more than one, but not all, items simultaneously:
+        # Test the setting of more than one, but not all, items
+        # simultaneously:
         new_values = {
             'regrid_logging': True,
             'tempdir': '/bin/bag',
@@ -158,7 +177,8 @@ class functionTest(unittest.TestCase):
         self.assertEqual(post_set['log_level'], 'INFO')
         self.assertAlmostEqual(post_set['rtol'], 5e-7)
 
-        # Test setting all possible items simultaneously (back to originals):
+        # Test setting all possible items simultaneously (back to
+        # originals):
         for constant_name in constants_that_cannot_be_set:
             org.pop(constant_name)  # as these can't be set, are just shown
         cf.configuration(**org)
@@ -168,6 +188,7 @@ class functionTest(unittest.TestCase):
                 self.assertAlmostEqual(post_set[name], val, places=8)
             else:
                 self.assertEqual(post_set[name], val)
+        # --- End: for
 
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
@@ -204,6 +225,7 @@ class functionTest(unittest.TestCase):
         # 3. Gracefully error with invalid inputs:
         with self.assertRaises(ValueError):
             cf.configuration(of_fraction='bad')
+
         with self.assertRaises(ValueError):
             cf.configuration(log_level=7)
 
@@ -211,11 +233,12 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cf.configuration(bad_kwarg=1e-15)
 
-        # Reset so later test fixtures don't spam with output messages:
+        # Reset so later test fixtures don't spam with output
+        # messages:
         cf.log_level('DISABLE')
 
-
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

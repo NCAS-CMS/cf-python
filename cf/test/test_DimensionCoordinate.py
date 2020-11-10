@@ -253,6 +253,8 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DimensionCoordinate_binary_operation(self):
+        old = cf.combine_bounds_with_coordinates()
+
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
 
@@ -263,6 +265,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # --------------------------------------------------------
         # Out-of-place addition
         # --------------------------------------------------------
+        cf.combine_bounds_with_coordinates(True)
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
         self.assertTrue((c.bounds.array == b + 2).all())
@@ -327,6 +330,9 @@ class DimensionCoordinateTest(unittest.TestCase):
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
 
+        # Reset
+        cf.combine_bounds_with_coordinates(old)
+        
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()
 
