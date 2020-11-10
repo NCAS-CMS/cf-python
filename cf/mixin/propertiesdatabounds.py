@@ -507,6 +507,8 @@ class PropertiesDataBounds(PropertiesData):
                 # non-broadcastable output operand with shape (3,1)
                 # doesn't match the broadcast shape (3,2)")
                 methodo = method.replace('__i', '__', 1)
+            else:
+                methodo = method
 
             new_bounds = new_bounds._binary_operation(other_bounds, methodo)
             new.set_bounds(new_bounds, copy=False)
