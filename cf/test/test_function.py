@@ -69,7 +69,7 @@ class functionTest(unittest.TestCase):
         # Check all keys that should be there are, with correct value
         # type:
         self.assertEqual(len(org), 14)  # update expected len if add new key(s)
-        
+
         # Floats expected as values for most keys. Store these for
         # later as floats need assertAlmostEqual rather than
         # assertEqual tests:

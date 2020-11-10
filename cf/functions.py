@@ -426,12 +426,12 @@ def combine_bounds_with_coordinates(*arg):
     ======  ======  ==========  =====================
     x has   y has   z = x + y   Notes
     bounds  bounds  has bounds
-    ======  ======  ==========  =====================   
+    ======  ======  ==========  =====================
     Yes     Yes     Yes         `z.bounds` is
-                                `x.bounds + y.bounds`  
-    Yes     No      No          
-    No      Yes     No          
-    No      No      No          
+                                `x.bounds + y.bounds`
+    Yes     No      No
+    No      Yes     No
+    No      No      No
     ======  ======  ==========  =====================
 
     If it is True then:
@@ -439,14 +439,14 @@ def combine_bounds_with_coordinates(*arg):
     ======  ======  ==========  =====================
     x has   y has   z = x + y   Notes
     bounds  bounds  has bounds
-    ======  ======  ==========  =====================   
+    ======  ======  ==========  =====================
     Yes     Yes     Yes         `z.bounds` is
                                 `x.bounds + y.bounds`
     Yes     No      Yes         `z.bounds` is
                                 `x.bounds + y`
     No      Yes     Yes         `z.bounds` is
                                 `x + y.bounds`
-    No      No      No                    
+    No      No      No
     ======  ======  ==========  =====================
 
     :Parameters:

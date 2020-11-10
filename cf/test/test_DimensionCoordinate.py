@@ -276,11 +276,11 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate_binary_operation(self):
         dim = self.dim
-        
+
         c = dim.array
         b = dim.bounds.array
         c2 = numpy.expand_dims(c, -1)
-        
+
         x = dim.copy()
         y = dim.copy()
 
@@ -299,15 +299,15 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((z.array == c + 2).all())
         self.assertFalse(z.has_bounds())
 
-        for value in (True, False): 
+        for value in (True, False):
             cf.combine_bounds_with_coordinates(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertTrue((z.bounds.array == b + b).all())
 
         x.del_bounds()
-            
-        for value in (True, False): 
+
+        for value in (True, False):
             cf.combine_bounds_with_coordinates(value)
             z = x + 2
             self.assertTrue((z.array == c + 2).all())
@@ -338,7 +338,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((x.array == c + 2).all())
         self.assertFalse(x.has_bounds())
 
-        for value in (True, False): 
+        for value in (True, False):
             cf.combine_bounds_with_coordinates(value)
             x = dim.copy()
             x += y
@@ -346,8 +346,8 @@ class DimensionCoordinateTest(unittest.TestCase):
             self.assertTrue((x.bounds.array == b + b).all())
 
         x.del_bounds()
-            
-        for value in (True, False): 
+
+        for value in (True, False):
             cf.combine_bounds_with_coordinates(value)
             x = dim.copy()
             x.del_bounds()
@@ -374,7 +374,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # Reset constant
         # ------------------------------------------------------------
         cf.combine_bounds_with_coordinates(old)
-        
+
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()
 

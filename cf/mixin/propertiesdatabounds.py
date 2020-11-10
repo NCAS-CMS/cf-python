@@ -383,23 +383,23 @@ class PropertiesDataBounds(PropertiesData):
     How to operate on bounds is determined as follows, where "Flag" is
     the boolean value returned by
     ``cf.combine_bounds_with_coordinates()``
-    
+
     =====  ======  ======  ==========  =====================
     Flag   x has   y has   z = x + y   Notes
            bounds  bounds  has bounds
-    =====  ======  ======  ==========  =====================   
+    =====  ======  ======  ==========  =====================
     False  Yes     Yes     Yes         `z.bounds` is
-                                       `x.bounds + y.bounds`  
-    False  Yes     No      No          
-    False  No      Yes     No          
-    False  No      No      No          
+                                       `x.bounds + y.bounds`
+    False  Yes     No      No
+    False  No      Yes     No
+    False  No      No      No
     True   Yes     Yes     Yes         `z.bounds` is
                                        `x.bounds + y.bounds`
     True   Yes     No      Yes         `z.bounds` is
                                        `x.bounds + y`
     True   No      Yes     Yes         `z.bounds` is
                                        `x + y.bounds`
-    True   No      No      No                    
+    True   No      No      No
     =====  ======  ======  ==========  =====================
 
     If the *bounds* parameter is False then the result will have no
@@ -430,7 +430,7 @@ class PropertiesDataBounds(PropertiesData):
         inplace = (method[2] == 'i')
 
         combine_bounds = bounds and combine_bounds_with_coordinates()
-        
+
         has_bounds = self.has_bounds()
 
         if has_bounds and inplace and other is self:
@@ -450,8 +450,6 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        new._custom['direction'] = None
-
         if not bounds:
             # --------------------------------------------------------
             # Remove any bounds from the result
@@ -465,7 +463,7 @@ class PropertiesDataBounds(PropertiesData):
             new_bounds = self.bounds._binary_operation(
                 other_bounds,
                 method)
-            
+
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
 
@@ -475,7 +473,7 @@ class PropertiesDataBounds(PropertiesData):
             # bounds from the result.
             # --------------------------------------------------------
             new.del_bounds(None)
-        
+
         elif has_bounds:
             # --------------------------------------------------------
             # other has no bounds: Combine self bounds with other
@@ -487,18 +485,19 @@ class PropertiesDataBounds(PropertiesData):
                         other = other.insert_dimension(-1)
                     except AttributeError:
                         other = numpy_expand_dims(other, -1)
-                    
+            # --- End: if
+
             new_bounds = self.bounds._binary_operation(other, method)
-                
+
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
-        
+
         elif other_bounds is not None:
             # --------------------------------------------------------
             # self has no bounds: Combine self coordinates with other
             # bounds
             # --------------------------------------------------------
-            new_bounds = self._Bounds(data=original_self.data, copy=False)
+            new_bounds = self._Bounds(data=original_self.data, copy=True)
             for i in range(other_bounds.ndim - other.ndim):
                 new_bounds = new_bounds.insert_dimension(-1)
 
@@ -512,6 +511,7 @@ class PropertiesDataBounds(PropertiesData):
             new_bounds = new_bounds._binary_operation(other_bounds, method)
             new.set_bounds(new_bounds, copy=False)
 
+        new._custom['direction'] = None
         return new
 
     @_manage_log_level_via_verbosity
