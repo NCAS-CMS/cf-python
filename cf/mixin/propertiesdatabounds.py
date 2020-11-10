@@ -506,9 +506,9 @@ class PropertiesDataBounds(PropertiesData):
                 # fowl of the broadcasting rules (e.g. "ValueError:
                 # non-broadcastable output operand with shape (3,1)
                 # doesn't match the broadcast shape (3,2)")
-                method = method.replace('__i', '__', 1)
+                methodo = method.replace('__i', '__', 1)
 
-            new_bounds = new_bounds._binary_operation(other_bounds, method)
+            new_bounds = new_bounds._binary_operation(other_bounds, methodo)
             new.set_bounds(new_bounds, copy=False)
 
         new._custom['direction'] = None
