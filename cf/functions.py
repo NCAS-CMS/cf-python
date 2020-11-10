@@ -178,21 +178,23 @@ else:
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    tempdir=None,
-    of_fraction=None,
-    chunksize=None,
-    collapse_parallel_mode=None,
-    free_memory_factor=None,
-    log_level=None,
-    regrid_logging=None,
-    relaxed_identities=None,
+        atol=None,
+        rtol=None,
+        tempdir=None,
+        of_fraction=None,
+        chunksize=None,
+        collapse_parallel_mode=None,
+        free_memory_factor=None,
+        log_level=None,
+        regrid_logging=None,
+        relaxed_identities=None,
+        combine_bounds_with_coordinates=None,
 ):
-    '''View or set any number of constants in the project-wide configuration.
+    '''View or set any number of constants in the project-wide
+    configuration.
 
-    The full list of global constants that can be set in any combination
-    are:
+    The full list of global constants that can be set in any
+    combination are:
 
     * `atol`
     * `rtol`
@@ -217,20 +219,22 @@ def configuration(
     specific functions only if overriden by the corresponding keyword
     argument to that function.
 
-    The value of `None`, either taken by default or supplied as a value,
-    will result in the constant in question not being changed from the
-    current value. That is, it will have no effect.
+    The value of `None`, either taken by default or supplied as a
+    value, will result in the constant in question not being changed
+    from the current value. That is, it will have no effect.
 
-    Note that setting a constant using this function is equivalent to setting
-    it by means of a specific function of the same name, e.g. via `cf.atol`,
-    but in this case multiple constants can be set at once.
+    Note that setting a constant using this function is equivalent to
+    setting it by means of a specific function of the same name,
+    e.g. via `cf.atol`, but in this case multiple constants can be set
+    at once.
 
     .. versionadded:: 3.6.0
 
-    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`, `chunksize`,
-                 `collapse_parallel_mode`, `total_memory`,
-                 `free_memory_factor`, `fm_threshold`, `min_total_memory`,
-                 `log_level`, `regrid_logging`, `relaxed_identities`
+    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`,
+                 `chunksize`, `collapse_parallel_mode`,
+                 `total_memory`, `free_memory_factor`, `fm_threshold`,
+                 `min_total_memory`, `log_level`, `regrid_logging`,
+                 `relaxed_identities`
 
     :Parameters:
 
@@ -286,16 +290,16 @@ def configuration(
             behaviour.
 
         `relaxed_identities`: `bool`, optional
-            The new value; if `True`, use 'relaxed' mode when getting a
-            construct identity. The default is to not change the current
-            value.
+            The new value; if `True`, use 'relaxed' mode when getting
+            a construct identity. The default is to not change the
+            current value.
 
     :Returns:
 
         `dict`
-            The names and values of the project-wide constants prior to the
-            change, or the current names and values if no new values are
-            specified.
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
 
     **Examples:**
 
@@ -360,6 +364,7 @@ def configuration(
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
+        combine_bounds_with_coordinates=combine_bounds_with_coordinates,
     )
 
 
@@ -402,9 +407,76 @@ def _configuration(**kwargs):
         'new_log_level': log_level,
         'new_regrid_logging': regrid_logging,
         'new_relaxed_identities': relaxed_identities,
+        'combine_bounds_with_coordinates': combine_bounds_with_coordinates,
     }
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    return old
+
+
+def combine_bounds_with_coordinates(*arg):
+    '''Determine how to deal with cell bounds in binary operations.
+
+    The value returned by ``cf.combine_bounds_with_coordinates()`` is
+    used by any binary operation, suh as ``+``, ``-=``, ``<<``, etc.
+
+    If it is False then:
+
+    ======  ======  ==========  =====================
+    x has   y has   z = x + y   Notes
+    bounds  bounds  has bounds
+    ======  ======  ==========  =====================   
+    Yes     Yes     Yes         `z.bounds` is
+                                `x.bounds + y.bounds`  
+    Yes     No      No          
+    No      Yes     No          
+    No      No      No          
+    ======  ======  ==========  =====================
+
+    If it is True then:
+
+    ======  ======  ==========  =====================
+    x has   y has   z = x + y   Notes
+    bounds  bounds  has bounds
+    ======  ======  ==========  =====================   
+    Yes     Yes     Yes         `z.bounds` is
+                                `x.bounds + y.bounds`
+    Yes     No      Yes         `z.bounds` is
+                                `x.bounds + y`
+    No      Yes     Yes         `z.bounds` is
+                                `x + y.bounds`
+    No      No      No                    
+    ======  ======  ==========  =====================
+
+    :Parameters:
+
+        arg: `bool`, optional
+
+    :Returns:
+
+        `bool`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> old = cf.combine_bounds_with_coordinates()
+    >>> old
+    False
+    >>> cf.combine_bounds_with_coordinates(True)
+    False
+    >>> cf.combine_bounds_with_coordinates()
+    True
+    >>> cf.combine_bounds_with_coordinates(old)
+    True
+    >>> cf.combine_bounds_with_coordinates()
+    False
+
+    '''
+    old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
+    if arg:
+        CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = bool(arg[0])
 
     return old
 
@@ -1030,14 +1102,14 @@ def relaxed_identities(*arg):
 
     **Examples:**
 
-    >>> org = cf.relaxed_identities()
-    >>> org
+    >>> old = cf.relaxed_identities()
+    >>> old
     False
     >>> cf.relaxed_identities(True)
     False
     >>> cf.relaxed_identities()
     True
-    >>> cf.relaxed_identities(org)
+    >>> cf.relaxed_identities(old)
     True
     >>> cf.relaxed_identities()
     False
