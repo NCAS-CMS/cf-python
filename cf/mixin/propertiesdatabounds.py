@@ -429,10 +429,24 @@ class PropertiesDataBounds(PropertiesData):
         '''
         inplace = (method[2] == 'i')
 
+        combine_bounds = bounds and combine_bounds_with_coordinates()
+        
         has_bounds = self.has_bounds()
 
         if has_bounds and inplace and other is self:
             other = other.copy()
+
+        try:
+            other_bounds = other.get_bounds(None)
+        except AttributeError:
+            other_bounds = None
+
+        if combine_bounds and not has_bounds and other_bounds is not None:
+            # --------------------------------------------------------
+            # If self has no bounds but other does, then copy self for
+            # use in constructing new bounds.
+            # --------------------------------------------------------
+            original_self = self.copy()
 
         new = super()._binary_operation(other, method)
 
@@ -440,17 +454,11 @@ class PropertiesDataBounds(PropertiesData):
 
         if not bounds:
             # --------------------------------------------------------
-            # Remove any bounds from the result and return
+            # Remove any bounds from the result
             # --------------------------------------------------------
             new.del_bounds(None)
-            return new
 
-        try:
-            other_bounds = other.get_bounds(None)
-        except AttributeError:
-            other_bounds = None
-            
-        if has_bounds and other_bounds is not None:
+        elif has_bounds and other_bounds is not None:
             # --------------------------------------------------------
             # Combine bounds that exist on both self and other
             # --------------------------------------------------------
@@ -461,7 +469,7 @@ class PropertiesDataBounds(PropertiesData):
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
 
-        elif not combine_bounds_with_coordinates():
+        elif not combine_bounds:
             # --------------------------------------------------------
             # Only one of self and other has bounds, so remove the
             # bounds from the result.
@@ -490,14 +498,18 @@ class PropertiesDataBounds(PropertiesData):
             # self has no bounds: Combine self coordinates with other
             # bounds
             # --------------------------------------------------------
-            new_bounds = new.copy()
+            new_bounds = self._Bounds(data=original_self.data, copy=False)
             for i in range(other_bounds.ndim - other.ndim):
                 new_bounds = new_bounds.insert_dimension(-1)
-                
-            if not inplace:
-                method.replace('__', '__i', 1)
-                
-            new_bounds._binary_operation(other_bounds, method)
+
+            if inplace:
+                # Can't do the operation in-place because we'll run
+                # fowl of the broadcasting rules (e.g. "ValueError:
+                # non-broadcastable output operand with shape (3,1)
+                # doesn't match the broadcast shape (3,2)")
+                method = method.replace('__i', '__', 1)
+
+            new_bounds = new_bounds._binary_operation(other_bounds, method)
             new.set_bounds(new_bounds, copy=False)
 
         return new
