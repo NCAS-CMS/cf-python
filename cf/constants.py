@@ -643,7 +643,7 @@ formula_term_units = {
         'depth': 'm',
         'href': 'm',
         'k_c': '',
-        'a': 'm',  # TODO: Check
+        'a': 'm',
         'z1': 'm',
         'z2': 'm',
         'sigma': '',

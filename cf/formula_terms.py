@@ -1,5 +1,5 @@
-'''Functions for calculating non-parametric vertical coordinates from
-coordinate reference constructs.
+'''Functions for computing non-parametric vertical coordinates from
+the formula defined by a coordinate reference construct.
 
 See Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
@@ -412,13 +412,22 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
     return eta, eta_axes
 
 def _conform_computed(f, computed, computed_axes, k_axis):
-    '''Move the vertical axis of the computed non-parametric coordinates
-    from its current position as the last (rightmost) dimension, if
-    applicable.
+    '''Move the vertical axis of the computed non-parametric vertical
+    coordinates from its current position as the last (rightmost)
+    dimension, if applicable.
 
-    .. note:: It is assumed that the vertical axis, if it exsits, is
-              the last (rightmost) dimension of the input computed
-              non-parametric vertical coordinates.
+    **Note:**
+
+    * If the input computed coordinates do not span the vertical axis
+      then they are returned unchanged.
+
+    * If the input computed coordinates do span the vertical axis then
+      it assumed to be the last (rightmost) dimension.
+
+    * If the input computed coordinates span a unique time axis then
+      the vertical axis is moved to position immediately to the right
+      of it. Otherwise the vertical axis is moved to the first
+      (leftmost) position.
 
     .. versionadded:: 3.8.0
     
@@ -428,15 +437,16 @@ def _conform_computed(f, computed, computed_axes, k_axis):
             The parent field construct.
     
         computed: `DomainAncillary`
-                        TODO
+            The computed non-parametric vertical coordinates.
     
-        computed_axes: `tuple`
-            TODO
+        computed_axes: `tuple`    
+            The construct keys of the domain axes spanned by the
+            computed coordinates.
 
         k_axis: `tuple`
             The construct key of the vertical domain axis. If the
             vertical axis does not appear in the computed
-            non-parametric coodinates then this should be an empty
+            non-parametric coodinates then this must be an empty
             tuple.
 
     :Returns:
@@ -471,7 +481,54 @@ def _conform_computed(f, computed, computed_axes, k_axis):
             
     return computed, computed_axes
 
+def _conform_units(term, var, ref_term2, ref_units):
+    '''TODO
 
+    .. versionadded:: 3.8.0
+    
+    :Parameters:
+    
+        term: `str`
+            A term of the formula.
+    
+            *Parameter example:*
+              ``term='z2'``
+        
+        var: `DomainAncillary` or `Coordinate`
+            TODO
+
+        ref_term: `str`
+            A term of the formula.
+    
+            *Parameter example:*
+              ``term='href'``
+
+        ref_units: `Units`
+            TODO
+
+    :Returns:
+    
+        `DomainAncillary` or `Coordinate`
+            The input *var* construct with conformed units.
+
+    '''
+    units = var.Units
+    
+    if units != ref_units:
+        if not units.equivalent(ref_units):
+            raise ValueError(
+                "Terms {!r} and {!r} have incompatible units: "
+                "{!r}, {!r} ".format(
+                    ref_term, term, ref_units, units
+                )
+            )
+        
+        var = var.copy()
+        var.Units = ref_units
+
+    return var
+    
+   
 def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
                                       default_to_zero):
     '''Compute non-parametric vertical coordinates from
@@ -479,7 +536,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -563,7 +620,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -658,7 +715,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -776,7 +833,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -872,7 +929,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1008,7 +1065,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1107,7 +1164,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1212,6 +1269,9 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     old = xxx(s.has_bounds())
     
+    # Ensure that a has the same units as s
+    a = _conform_units('a', a, 's', s.Units)
+
     C = (
         (1 - b) * (a * s).sinh() / a.sinh()
         + b * (
@@ -1235,7 +1295,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1347,7 +1407,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1462,7 +1522,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1589,7 +1649,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
-              coordinates.
+              coordinates, if applicable.
 
     .. versionadded:: 3.8.0
     
@@ -1695,6 +1755,12 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     #
     # ----------------------------------------------------------------
     old = xxx(sigma.has_bounds())
+
+    # Ensure that a, z1, z2, and href all have the same units as depth
+    a = _conform_units('a', a, 'depth', depth.Units)
+    z1 = _conform_units('z1', z1, 'depth', depth.Units)
+    z2 = _conform_units('z2', z2, 'depth', depth.Units)
+    href = _conform_units('href', href, 'depth', depth.Units)
     
     f = (
         (z1 + z2) * 0.5

@@ -2541,7 +2541,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(bounds.equals(altitude.bounds.data, verbose=3))
 
         # ------------------------------------------------------------
-        # Missing a bounds
+        # Missing 'a' bounds
         # ------------------------------------------------------------
         a.del_bounds()
         g = f.compute_vertical_coordinates(verbose=None)
@@ -2559,7 +2559,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(x.equals(altitude.data, verbose=3))
 
         # ------------------------------------------------------------
-        # Missing a
+        # Missing 'a'
         # ------------------------------------------------------------
         f.del_construct('ncvar%a')
         g = f.compute_vertical_coordinates(verbose=None)
@@ -2585,7 +2585,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(bounds.equals(altitude.bounds.data, verbose=3))
 
         # ------------------------------------------------------------
-        # Missing a and no b bounds
+        # Missing 'a' and no 'b' bounds
         # ------------------------------------------------------------
         b.del_bounds()
         g = f.compute_vertical_coordinates(verbose=None)
@@ -2604,7 +2604,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(x.equals(altitude.data, verbose=3))
 
         # ------------------------------------------------------------
-        # Missing a and missing b
+        # Missing 'a' and missing 'b'
         # ------------------------------------------------------------
         f.del_construct('ncvar%b')
 

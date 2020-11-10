@@ -13040,7 +13040,7 @@ class Field(mixin.PropertiesData,
                                      inplace=False, verbose=None):
         '''Compute non-parametric vertical coordinates.
 
-    Compute dimensional vertical auxiliary coordinate values from
+    Dimensional vertical auxiliary coordinate values are computed from
     parametric vertical coordinate values (usually dimensionless) and
     associated domain ancillary constructs, as defined by the formula
     stored in a coordinate reference construct.
@@ -13048,12 +13048,12 @@ class Field(mixin.PropertiesData,
     See the "Parametric Vertical Coordinate" sections of the CF
     conventions for more details.
 
-    If there are no appropriate cooridnate reference constructs then
+    If there are no appropriate coordinate reference constructs then
     the field construct is unchanged.
 
     .. versionadded:: 3.8.0
 
-    .. seealso:: `coordinate_references`
+    .. seealso:: `CoordinateReference`
 
     :Parameters:
 
@@ -13119,6 +13119,10 @@ class Field(mixin.PropertiesData,
         f = _inplace_enabled_define_and_cleanup(self)
  
         for cr in f.coordinate_references.values():
+            # --------------------------------------------------------
+            # Compute the non-parametric vertical coordinates, if
+            # possible.
+            # --------------------------------------------------------
             (standard_name,
              computed_standard_name,
              computed,
@@ -13128,6 +13132,11 @@ class Field(mixin.PropertiesData,
             if computed_standard_name is None:
                 continue
 
+            # --------------------------------------------------------
+            # Convert the computed domain ancillary construct to an
+            # auxiliary coordinate construct, and insert it into the
+            # field construct.
+            # --------------------------------------------------------
             c = f._AuxiliaryCoordinate(source=computed, copy=False)
             c.clear_properties()
             c.standard_name = computed_standard_name
