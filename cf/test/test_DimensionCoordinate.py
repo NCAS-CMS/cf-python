@@ -252,80 +252,128 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
+    def test_DimensionCoordinate_unary_operation(self):
+        d = self.dim
+
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d = abs(d)
+        self.assertGreaterEqual(d.minimum(), 0, d.array)
+        self.assertGreaterEqual(d.bounds.minimum(), 0, d.bounds.array)
+
+        d = -d
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d = +d
+        self.assertLess(d.minimum(), 0)
+        self.assertLess(d.bounds.minimum(), 0)
+
+        d.dtype = int
+        d.bounds.dtype = int
+        d = ~d
+
     def test_DimensionCoordinate_binary_operation(self):
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates('X').value()
+        dim = self.dim
 
-        d = x.array
-        b = x.bounds.array
-        d2 = numpy.expand_dims(d, -1)
+        c = dim.array
+        b = dim.bounds.array
+        c2 = numpy.expand_dims(c, -1)
 
-        # --------------------------------------------------------
+        x = dim.copy()
+        y = dim.copy()
+
+        old = cf.combine_bounds_with_coordinates()
+
+        # ------------------------------------------------------------
         # Out-of-place addition
-        # --------------------------------------------------------
-        c = x + 2
-        self.assertTrue((c.array == d + 2).all())
-        self.assertTrue((c.bounds.array == b + 2).all())
+        # ------------------------------------------------------------
+        cf.combine_bounds_with_coordinates(True)
+        z = x + 2
+        self.assertTrue((z.array == c + 2).all())
+        self.assertTrue((z.bounds.array == b + 2).all())
 
-        c = x + x
-        self.assertTrue((c.array == d + d).all())
-        self.assertTrue((c.bounds.array == b + d2).all())
+        cf.combine_bounds_with_coordinates(False)
+        z = x + 2
+        self.assertTrue((z.array == c + 2).all())
+        self.assertFalse(z.has_bounds())
 
-        c = x + 2
-        self.assertTrue((c.array == d + 2).all())
-        self.assertTrue((c.bounds.array == b + 2).all())
+        for value in (True, False):
+            cf.combine_bounds_with_coordinates(value)
+            z = x + y
+            self.assertTrue((z.array == c + c).all())
+            self.assertTrue((z.bounds.array == b + b).all())
 
-        self.assertTrue((x.array == d).all())
-        self.assertTrue((x.bounds.array == b).all())
-
-        # --------------------------------------------------------
-        # In-place addition
-        # --------------------------------------------------------
-        x += 2
-        self.assertTrue((x.array == d + 2).all())
-        self.assertTrue((x.bounds.array == b + 2).all())
-
-        x += x
-        self.assertTrue((x.array == (d+2) * 2).all())
-        self.assertTrue((x.bounds.array == b+2 + d2+2).all())
-
-        x += 2
-        self.assertTrue((x.array == (d+2)*2 + 2).all())
-        self.assertTrue((x.bounds.array == b+2 + d2+2 + 2).all())
-
-        # --------------------------------------------------------
-        # Out-of-place addition (no bounds)
-        # --------------------------------------------------------
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates('X').value()
         x.del_bounds()
 
+        for value in (True, False):
+            cf.combine_bounds_with_coordinates(value)
+            z = x + 2
+            self.assertTrue((z.array == c + 2).all())
+            self.assertFalse(z.has_bounds())
+
+        cf.combine_bounds_with_coordinates(True)
+        z = x + y
+        self.assertTrue((z.array == c + c).all())
+        self.assertTrue((z.bounds.array == b + c2).all())
+
+        cf.combine_bounds_with_coordinates(False)
+        z = x + y
+        self.assertTrue((z.array == c + c).all())
+        self.assertFalse(z.has_bounds())
+
+        # ------------------------------------------------------------
+        # In-place addition
+        # ------------------------------------------------------------
+        cf.combine_bounds_with_coordinates(True)
+        x = dim.copy()
+        x += 2
+        self.assertTrue((x.array == c + 2).all())
+        self.assertTrue((x.bounds.array == b + 2).all())
+
+        cf.combine_bounds_with_coordinates(False)
+        x = dim.copy()
+        x += 2
+        self.assertTrue((x.array == c + 2).all())
         self.assertFalse(x.has_bounds())
 
-        d = x.array
+        for value in (True, False):
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x += y
+            self.assertTrue((x.array == c + c).all())
+            self.assertTrue((x.bounds.array == b + b).all())
 
-        c = x + 2
-        self.assertTrue((c.array == d + 2).all())
+        x.del_bounds()
 
-        c = x + x
-        self.assertTrue((c.array == d + d).all())
+        for value in (True, False):
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x.del_bounds()
+            x += 2
+            self.assertTrue((x.array == c + 2).all())
+            self.assertFalse(x.has_bounds())
 
-        c = x + 2
-        self.assertTrue((c.array == d + 2).all())
+        cf.combine_bounds_with_coordinates(True)
+        x = dim.copy()
+        x.del_bounds()
+        x += y
 
-        self.assertTrue((x.array == d).all())
+        self.assertTrue((x.array == c + c).all())
+        self.assertTrue((x.bounds.array == b + c2).all())
 
-        # --------------------------------------------------------
-        # In-place addition (no bounds)
-        # --------------------------------------------------------
-        x += 2
-        self.assertTrue((x.array == d + 2).all())
+        cf.combine_bounds_with_coordinates(False)
+        x = dim.copy()
+        x.del_bounds()
+        x += y
+        self.assertTrue((x.array == c + c).all())
+        self.assertFalse(x.has_bounds())
 
-        x += x
-        self.assertTrue((x.array == (d+2) * 2).all())
-
-        x += 2
-        self.assertTrue((x.array == (d+2)*2 + 2).all())
+        # ------------------------------------------------------------
+        # Reset constant
+        # ------------------------------------------------------------
+        cf.combine_bounds_with_coordinates(old)
 
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()
@@ -347,6 +395,28 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             y = x.set_data(cf.Data(1))
+
+    def test_DimensionCoordinate__setitem__(self):
+        d = self.dim.copy()
+
+        a = d.array
+        b = d.bounds.array
+
+        d[...] = 999
+        self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
+
+        d = self.dim.copy()
+        e = self.dim.copy()
+        d[...] = -e
+        self.assertTrue(d.data.equals(-e.data, verbose=3))
+        self.assertTrue(d.bounds.equals(-e.bounds, verbose=3))
+
+        d = self.dim.copy()
+        e = self.dim.copy()
+        e.del_bounds()
+        d[...] = -e
+        self.assertTrue(d.data.equals(-e.data, verbose=3))
+        self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
 
 # --- End: class
 

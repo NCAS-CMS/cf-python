@@ -2515,14 +2515,14 @@ class FieldTest(unittest.TestCase):
 
         f = cf.example_field(1)
         self.assertIsNone(f.auxiliary_coordinate('altitude', default=None))
-        
+
         g = f.compute_vertical_coordinates(verbose=None)
 
         altitude = g.auxiliary_coordinate('altitude')
         orog = f.domain_ancillary('surface_altitude')
         a = f.domain_ancillary('ncvar%a')
         b = f.domain_ancillary('ncvar%b')
-        
+
         self.assertTrue(altitude)
         self.assertTrue(altitude.has_bounds())
         self.assertEqual(altitude.shape, (1,) + orog.shape)
@@ -2631,11 +2631,11 @@ class FieldTest(unittest.TestCase):
         # Check in place
         # ------------------------------------------------------------
         self.assertIsNone(f.compute_vertical_coordinates(inplace=True))
-        
+
         f.del_construct('surface_altitude')
         with self.assertRaises(ValueError):
             g = f.compute_vertical_coordinates()
-        
+
 # --- End: class
 
 

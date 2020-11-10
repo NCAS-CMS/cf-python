@@ -56,7 +56,7 @@ class Container:
     .. versionadded:: TODO
 
     :Parameters:
-        
+
         method: `str`
         TODO
         kwargs: `dict`

@@ -10,7 +10,7 @@ import logging
 
 from .units import Units
 
-from .functions import xxx
+from .functions import combine_bounds_with_coordinates
 
 from .constants import (
     formula_term_standard_names,
@@ -28,40 +28,40 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
     '''TODO
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         standard_name: `str`
             The standard name of the parametric vertical coordinate.
-    
+
         computed_standard_name: `str`
             The standard name of the computed vertical coordinate
             values. See Appendix D of the CF conventions.
-    
-        coordinate_conversion: `CoordinateConversion` 
+
+        coordinate_conversion: `CoordinateConversion`
             The definition of the formula
-    
+
         term: `str`
             A term of the formula.
-    
+
             *Parameter example:*
               ``term='orog'``
-    
+
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. If True the a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
-    
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
+
         bounds: `bool`, optional
             If False then do not create bounds of zero for a default
             domain ancillary construct.
 
     :Returns:
-    
+
         `DomainAncillary`, `str`
             The domain ancillary construct for the formula term and
             its construct key.
@@ -84,7 +84,7 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
     else:
         var = None
 
-    if var is not None:        
+    if var is not None:
         logger.detail(
             "  Formula term {!r}:\n{}".format(
                 term, var.dump(display=False, _level=1)
@@ -157,31 +157,31 @@ def _coordinate_term(f, standard_name, computed_standard_name,
     '''TODO
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         standard_name: `str`
             The standard name of the parametric vertical coordinate.
-    
+
         computed_standard_name: `str`
             The standard name of the computed vertical coordinate
             values. See Appendix D of the CF conventions.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             A coordinate reference construct of the parent field
             construct.
 
         term: `str`
             A term of the formula.
-    
+
             *Parameter example:*
               ``term='sigma'``
-    
+
     :Returns:
-    
+
         `Coordinate`, `str`
             The coordinate construct for the formula term, and its
             construct key.
@@ -192,7 +192,7 @@ def _coordinate_term(f, standard_name, computed_standard_name,
         var = f.coordinate(key, default=None)
         if var is None:
             continue
-        
+
         if var.get_property('standard_name', None) == standard_name:
             logger.detail(
                 "  Parametric coordinates: {!r}".format(var)
@@ -220,23 +220,24 @@ def _coordinate_term(f, standard_name, computed_standard_name,
 
 
 def _computed_standard_name(f, standard_name, coordinate_conversion):
-    '''TODO
+    '''Find the standard name of the computed non-parametric vertical
+    coordinates.
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         standard_name: `str`
             The standard name of the parametric vertical coordinate.
-    
-        coordinate_conversion: `CoordinateConversion` 
+
+        coordinate_conversion: `CoordinateConversion`
             The definition of the formula
-    
+
     :Returns:
-    
+
         `str`
             The standard name of the computed vertical coordinate
             values. See Appendix D of the CF conventions.
@@ -247,7 +248,7 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
         return computed_standard_name
 
     term, mapping = tuple(computed_standard_name.items())[0]
-    
+
     key = coordinate_conversion.get_domain_ancillary(term, None)
     if key is None:
         raise ValueError(
@@ -255,7 +256,7 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
             "No {!r} term domain ancillary construct".format(
                 standard_name, term)
         )
-    
+
     var = f.domain_ancillary(key, None)
     if var is None:
         raise ValueError(
@@ -264,9 +265,9 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
                 standard_name, term
             )
         )
-            
+
     term_standard_name = var.get_property('standard_name', None)
-    if term_standard_name is None:                    
+    if term_standard_name is None:
         raise ValueError(
             "Can't calculate non-parametric coordinates for {!r}: "
             "{!r} term {!r} has no standard name: {!r} ".format(
@@ -280,13 +281,13 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
             computed_standard_name = y
             break
     # --- End: for
-    
+
     if computed_standard_name is None:
         raise ValueError(
             "Can't calculate non-parametric coordinates for {!r}: "
             "{!r} term {!r} has "
             "invalid standard name: {!r} ".format(
-                standard_name, term, var, term_standard_name 
+                standard_name, term, var, term_standard_name
             )
         )
 
@@ -300,22 +301,23 @@ def _computed_standard_name(f, standard_name, coordinate_conversion):
 
 
 def _vertical_axis(f, *keys):
-    '''TODO
+    '''Find the vertical axis corresponding to the parametric vertical
+    coordinates.
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         keys: one or more of `str` or `None`
             Construct keys of 1-d domain ancillary or coordinate
             construicts that span the vertical axis. If a key is
             `None` then that key is ignored.
-    
+
     :Returns:
-    
+
         `tuple`
             Either a 1-tuple containing the domain axis consrtuct key
             of the vertical axis, or an empty tuple if no such axis
@@ -326,7 +328,7 @@ def _vertical_axis(f, *keys):
     for key in keys:
         if key is None:
             continue
-        
+
         axis = f.get_data_axes(key)
         break
 
@@ -341,36 +343,36 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
                  depth_key):
     '''Trasnform the 'eta' term so that brodcasting will work with the
     'depth' term.
-    
+
     This entails making dure that the trailing dimensions of 'eta' are
     the same as the all of dimensions of 'depth'.
-    
+
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         computed_standard_name: `str`
             The standard name of the computed vertical coordinate
             values. See Appendix D of the CF conventions.
-    
+
         eta: `DomainAncillary`
             The 'eta' domain ancillary construct.
-    
+
         eta_key: `str`
             The construct key of the 'eta' domain ancillary construct.
-    
+
         depth: `DomainAncillary`
             The 'depth' domain ancillary construct.
-    
-        depth_key: `str` 
+
+        depth_key: `str`
             The construct key of the 'depth' domain ancillary
             construct.
-    
+
     :Returns:
-    
+
         `DomainAncillary`, `tuple`
             The conformed 'eta' domain ancillary construct for the
             formula term, and the domain axis construct keys of its
@@ -379,7 +381,7 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
     '''
     eta_axes = f.get_data_axes(eta_key, default=None)
     depth_axes = f.get_data_axes(depth_key, default=None)
-    
+
     if eta_axes is not None and depth_axes is not None:
         if not set(eta_axes).issuperset(depth_axes):
             raise ValueError(
@@ -388,17 +390,17 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
                 "'eta' term {!r} axes.".format(
                     computed_standard_name, depth, eta
                 )
-        )
+            )
 
         eta_axes2 = depth_axes
         if len(eta_axes) > len(depth_axes):
             diff = [axis for axis in eta_axes
                     if axis not in depth_axes]
             eta_axes2 = tuple(diff) + depth_axes
-        
+
         iaxes = [eta_axes.index(axis) for axis in eta_axes2]
         eta = eta.transpose(iaxes)
-        
+
         eta_axes = eta_axes2
 
     logger.debug(
@@ -410,6 +412,7 @@ def _conform_eta(f, computed_standard_name, eta, eta_key, depth,
     )  # pragma: no cover
 
     return eta, eta_axes
+
 
 def _conform_computed(f, computed, computed_axes, k_axis):
     '''Move the vertical axis of the computed non-parametric vertical
@@ -430,16 +433,16 @@ def _conform_computed(f, computed, computed_axes, k_axis):
       (leftmost) position.
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         f: `Field`
             The parent field construct.
-    
+
         computed: `DomainAncillary`
             The computed non-parametric vertical coordinates.
-    
-        computed_axes: `tuple`    
+
+        computed_axes: `tuple`
             The construct keys of the domain axes spanned by the
             computed coordinates.
 
@@ -450,7 +453,7 @@ def _conform_computed(f, computed, computed_axes, k_axis):
             tuple.
 
     :Returns:
-    
+
         `DomainAncillary`, `tuple`
             The conformed computed non-parametric vertical coordinates
             construct and the domain axis construct keys of its
@@ -460,7 +463,7 @@ def _conform_computed(f, computed, computed_axes, k_axis):
     ndim = computed.ndim
     if k_axis and ndim >= 2:
         iaxes = list(range(ndim - 1))
-        
+
         time = f.domain_axis('T', key=True, default=None)
         if time in computed_axes:
             # Move it to the immediate right of the time
@@ -470,7 +473,7 @@ def _conform_computed(f, computed, computed_axes, k_axis):
             # Move to to position 0, as there is no time
             # axis.
             iaxes.insert(0, -1)
-            
+
         computed.transpose(iaxes, inplace=True)
 
         computed_axes = tuple([computed_axes[i] for i in iaxes])
@@ -478,42 +481,49 @@ def _conform_computed(f, computed, computed_axes, k_axis):
     logger.detail(
         "  Non-parametric coordinate axes: {!r}".format(computed_axes)
     )  # pragma: no cover
-            
+
     return computed, computed_axes
 
+
 def _conform_units(term, var, ref_term2, ref_units):
-    '''TODO
+    '''Make sure that the units of a variable of the formula are the same
+    as the units of another formula term.
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
-    
+
         term: `str`
-            A term of the formula.
-    
+            A term of the formula for which the units are to
+            conformed.
+
             *Parameter example:*
               ``term='z2'``
-        
+
         var: `DomainAncillary` or `Coordinate`
-            TODO
+            The variable for the *term* term whose units are to
+            conformed to *ref_units*.
 
         ref_term: `str`
-            A term of the formula.
-    
+            A term of the formula which defines the reference units.
+
             *Parameter example:*
               ``term='href'``
 
         ref_units: `Units`
-            TODO
+            The units of the *ref_term* term.
+
+            *Parameter example:*
+              ``ref_units=cf.Units('1')`
 
     :Returns:
-    
+
         `DomainAncillary` or `Coordinate`
             The input *var* construct with conformed units.
 
     '''
     units = var.Units
-    
+
     if units != ref_units:
         if not units.equivalent(ref_units):
             raise ValueError(
@@ -522,13 +532,13 @@ def _conform_units(term, var, ref_term2, ref_units):
                     ref_term, term, ref_units, units
                 )
             )
-        
+
         var = var.copy()
         var.Units = ref_units
 
     return var
-    
-   
+
+
 def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
                                       default_to_zero):
     '''Compute non-parametric vertical coordinates from
@@ -539,13 +549,13 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -578,10 +588,10 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     standard_name = 'atmosphere_ln_pressure_coordinate'
 
     coordinate_conversion = coordinate_reference.coordinate_conversion
-    
+
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
-                
+
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
@@ -589,7 +599,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
                                    computed_standard_name,
                                    coordinate_conversion, 'p0',
                                    default_to_zero, True)
-    
+
     lev, lev_key = _coordinate_term(g, standard_name,
                                     computed_standard_name,
                                     coordinate_conversion,
@@ -603,11 +613,11 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(lev.has_bounds())
-       
+    old = combine_bounds_with_coordinates(lev.has_bounds())
+
     computed = p0 * (-lev).exp()
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -623,13 +633,13 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -695,12 +705,12 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(sigma.has_bounds())
-    
+    old = combine_bounds_with_coordinates(sigma.has_bounds())
+
     computed = (ptop
                 + (ps - ptop) * sigma)
-    
-    xxx(old)
+
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -718,13 +728,13 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -754,7 +764,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
               tuple, instead.
 
     '''
-    standard_name = 'atmosphere_hybrid_sigma_pressure_coordingate'
+    standard_name = 'atmosphere_hybrid_sigma_pressure_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
@@ -764,7 +774,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     # ----------------------------------------------------------------
     ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
 
-    if ap_term: 
+    if ap_term:
         ap, ap_key = _domain_ancillary_term(g, standard_name,
                                             computed_standard_name,
                                             coordinate_conversion,
@@ -795,7 +805,6 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
                                         coordinate_conversion, 'ps',
                                         default_to_zero, False)
 
-
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
     k_axis = _vertical_axis(g, ap_key, a_key, b_key)
@@ -808,20 +817,22 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
-    # ----------------------------------------------------------------    
+    # ----------------------------------------------------------------
     if ap_term:
-        old = xxx(ap.has_bounds() & b.has_bounds())
-        
+        old = combine_bounds_with_coordinates(ap.has_bounds()
+                                              and b.has_bounds())
+
         computed = (ap
                     + b * ps)
     else:
-        old = xxx(a.has_bounds() & b.has_bounds())
-        
+        old = combine_bounds_with_coordinates(a.has_bounds()
+                                              and b.has_bounds())
+
         computed = (a * p0
                     + b * ps)
 
-    xxx(old)
-    
+    combine_bounds_with_coordinates(old)
+
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -836,13 +847,13 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -911,12 +922,13 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(a.has_bounds() & b.has_bounds())
+    old = combine_bounds_with_coordinates(a.has_bounds()
+                                          and b.has_bounds())
 
     computed = (a
                 + b * orog)
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -932,13 +944,13 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1047,13 +1059,15 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(a.has_bounds() & b1.has_bounds() & b2.has_bounds())
-    
+    old = combine_bounds_with_coordinates(a.has_bounds()
+                                          and b1.has_bounds()
+                                          and b2.has_bounds())
+
     computed = (a * ztop
                 + b1 * zsurf1
                 + b2 * zsurf2)
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1068,13 +1082,13 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1104,7 +1118,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
               tuple, instead.
 
     '''
-    standard_name  = 'ocean_sigma_coordinate'
+    standard_name = 'ocean_sigma_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
@@ -1147,12 +1161,12 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(sigma.has_bounds())
-    
+    old = combine_bounds_with_coordinates(sigma.has_bounds())
+
     computed = (eta
                 + (eta + depth) * sigma)
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1167,13 +1181,13 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1267,8 +1281,8 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(s.has_bounds())
-    
+    old = combine_bounds_with_coordinates(s.has_bounds())
+
     # Ensure that a has the same units as s
     a = _conform_units('a', a, 's', s.Units)
 
@@ -1283,7 +1297,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
                 + depth_c * s
                 + (depth - depth_c) * C)
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1298,13 +1312,13 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1387,15 +1401,16 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(s.has_bounds() and C.has_bounds())
-    
+    old = combine_bounds_with_coordinates(s.has_bounds()
+                                          and C.has_bounds())
+
     S = (depth_c * s
          + (depth - depth_c) * C)
 
     computed = (S
                 + eta * (1 + S / depth))
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1410,13 +1425,13 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1446,7 +1461,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
               tuple, instead.
 
     '''
-    standard_name= 'ocean_s_coordinate_g2'
+    standard_name = 'ocean_s_coordinate_g2'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
@@ -1499,8 +1514,9 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = xxx(s.has_bounds() and C.has_bounds())
-    
+    old = combine_bounds_with_coordinates(s.has_bounds()
+                                          and C.has_bounds())
+
     S = (
         (depth_c * s
          + depth * C)
@@ -1510,7 +1526,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     computed = (eta
                 + (eta + depth) * S)
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1525,13 +1541,13 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1561,7 +1577,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
               tuple, instead.
 
     '''
-    standard_name= 'ocean_sigma_z_coordinate'
+    standard_name = 'ocean_sigma_z_coordinate'
 
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_conversion)
@@ -1626,7 +1642,8 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     #       for k>nsigma and then overwrite them.
     #
     # ----------------------------------------------------------------
-    old = xxx(zlev.has_bounds() & sigma.has_bounds())
+    old = combine_bounds_with_coordinates(zlev.has_bounds()
+                                          and sigma.has_bounds())
 
     computed = (
         eta
@@ -1636,7 +1653,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     nsigma = int(nsigma.item())
     computed[..., nsigma:] = zlev[nsigma:]
 
-    xxx(old)
+    combine_bounds_with_coordinates(old)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1652,13 +1669,13 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
               coordinates, if applicable.
 
     .. versionadded:: 3.8.0
-    
-    :Parameters:    
+
+    :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             The coordinate reference construct of the parent field
             construct that defines the conversion formula.
 
@@ -1754,14 +1771,14 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     #       for k<=k_c and then overwrite them.
     #
     # ----------------------------------------------------------------
-    old = xxx(sigma.has_bounds())
+    old = combine_bounds_with_coordinates(sigma.has_bounds())
 
     # Ensure that a, z1, z2, and href all have the same units as depth
     a = _conform_units('a', a, 'depth', depth.Units)
     z1 = _conform_units('z1', z1, 'depth', depth.Units)
     z2 = _conform_units('z2', z2, 'depth', depth.Units)
     href = _conform_units('href', href, 'depth', depth.Units)
-    
+
     f = (
         (z1 + z2) * 0.5
         + (
@@ -1773,12 +1790,12 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     computed = f * sigma
 
-    k_c = int(k_c.item())                
+    k_c = int(k_c.item())
     computed[..., k_c:] = (f
                            + (sigma - 1) * (depth - f))
 
-    xxx(old)
-    
+    combine_bounds_with_coordinates(old)
+
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -1804,16 +1821,24 @@ _formula_functions = {
 
 
 def formula(f, coordinate_reference, default_to_zero=True):
-    '''TODO
+    '''Compute non-parametric vertical coordinates.
+
+    Dimensional vertical auxiliary coordinate values are computed from
+    parametric vertical coordinate values (usually dimensionless) and
+    associated domain ancillary constructs, as defined by the formula
+    stored in a coordinate reference construct.
+
+    See the "Parametric Vertical Coordinate" sections of the CF
+    conventions for more details.
 
     .. versionadded:: 3.8.0
-    
+
     :Parameters:
 
         f: `Field`
             The parent field construct.
-    
-        coordinate_reference: `CoordinateReference` 
+
+        coordinate_reference: `CoordinateReference`
             A coordinate reference construct of the parent field
             construct.
 
@@ -1824,7 +1849,7 @@ def formula(f, coordinate_reference, default_to_zero=True):
             Coordinates) of the CF conventions.
 
     :Returns:
-    
+
         `tuple`
             A 5-tuple containing
 
@@ -1852,13 +1877,16 @@ def formula(f, coordinate_reference, default_to_zero=True):
     standard_name = coordinate_reference.coordinate_conversion.get_parameter(
         'standard_name', None
     )
-    
+
     if standard_name is not None:
         logger.detail(
             "  standard_name: {!r}".format(standard_name)
         )  # pragma: no cover
-        
+
         if standard_name in _formula_functions:
+            # --------------------------------------------------------
+            # Compute the non-parametric vertical coordinates
+            # --------------------------------------------------------
             (standard_name,
              computed_standard_name,
              computed,

@@ -115,7 +115,7 @@ CONSTANTS = {
     'RELAXED_IDENTITIES': False,
     # 'IGNORE_IDENTITIES': False,  # no longer used
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
-    'xxx': False,
+    'COMBINE_BOUNDS_WITH_COORDINATES': False,
 }
 
 CONSTANTS['FM_THRESHOLD'] = (
@@ -333,7 +333,7 @@ _D1_computed_standard_name = (
     'height_above_reference_ellipsoid',
     'height_above_mean_sea_level',
 )
-_D1_eta= (
+_D1_eta = (
     'sea_surface_height_above_geoid',
     'sea_surface_height_above_geopotential_datum',
     'sea_surface_height_above_reference_ellipsoid',
@@ -399,15 +399,15 @@ formula_term_standard_names = {
         's': ('ocean_s_coordinate',),
     },
     'ocean_s_coordinate_g1': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
+        'eta': _D1_eta,
+        'depth': _D1_depth,
         'depth_c': (None,),
         'C': (None,),
         's': ('ocean_s_coordinate_g1',),
     },
     'ocean_s_coordinate_g2': {
-        'eta': (None,), ## TODO
-        'depth': (None,), ## TODO
+        'eta': _D1_eta,
+        'depth': _D1_depth,
         'depth_c': (None,),
         'C': (None,),
         's': ('ocean_s_coordinate_g2',),
@@ -428,7 +428,7 @@ formula_term_standard_names = {
         'z1': (None,),
         'z2': (None,),
         'sigma': ('ocean_double_sigma_coordinate',),
-    },   
+    },
 }
 
 # --------------------------------------------------------------------
@@ -494,7 +494,7 @@ formula_term_max_dimensions = {
         'depth_c': 0,
         'C': 1,  # (k)
         's': 1,  # (k)
-   },
+    },
     'ocean_sigma_z_coordinate': {
         'eta':  3,  # (n,j,i)
         'depth': 2,  # (j,i)
@@ -511,7 +511,7 @@ formula_term_max_dimensions = {
         'z1': 0,
         'z2': 0,
         'sigma': 1,  # (k)
-    },   
+    },
 }
 
 # --------------------------------------------------------------------
@@ -567,7 +567,7 @@ computed_standard_names = {
     },
     'ocean_double_sigma_coordinate': {
         'depth': _D1_depth_mapping,
-    },   
+    },
 }
 
 # --------------------------------------------------------------------
@@ -647,13 +647,15 @@ formula_term_units = {
         'z1': 'm',
         'z2': 'm',
         'sigma': '',
-    },   
+    },
 }
+
 
 # --------------------------------------------------------------------
 # Logging level setup
 # --------------------------------------------------------------------
-# For explicitness, define here rather than importing identical Enum from cfdm
+# For explicitness, define here rather than importing identical Enum
+# from cfdm
 class ValidLogLevels(Enum):
     DISABLE = 0
     WARNING = 1

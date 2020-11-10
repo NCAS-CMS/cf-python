@@ -4,12 +4,12 @@ from numpy import size as numpy_size
 
 from . import PropertiesData
 
-from ..functions import (xxx,
+from ..functions import (combine_bounds_with_coordinates,
                          parse_indices,
                          _DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
 from ..functions import equivalent as cf_equivalent
-from ..functions import inspect    as cf_inspect
+from ..functions import inspect as cf_inspect
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
@@ -154,11 +154,10 @@ class PropertiesDataBounds(PropertiesData):
         # Set the bounds, if present (added at v3.8.0).
         bounds = self.get_bounds(None)
         if bounds is not None:
-            value_bounds = None
             try:
                 value_bounds = value.get_bounds(None)
             except AttributeError:
-                pass
+                value_bounds = None
 
             if value_bounds is not None:
                 bounds[indices] = value_bounds
@@ -332,6 +331,38 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__rrshift__', False)
 
+    def __abs__(self):
+        '''The unary arithmetic operation ``abs``
+
+    x.__abs__() <==> abs(x)
+
+        '''
+        return self._unary_operation('__abs__', bounds=True)
+
+    def __neg__(self):
+        '''The unary arithmetic operation ``-``
+
+    x.__neg__() <==> -x
+
+        '''
+        return self._unary_operation('__neg__', bounds=True)
+
+    def __invert__(self):
+        '''The unary bitwise operation ``~``
+
+    x.__invert__() <==> ~x
+
+        '''
+        return self._unary_operation('__invert__', bounds=True)
+
+    def __pos__(self):
+        '''The unary arithmetic operation ``+``
+
+    x.__pos__() <==> +x
+
+        '''
+        return self._unary_operation('__pos__', bounds=True)
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -347,6 +378,35 @@ class PropertiesDataBounds(PropertiesData):
     It is intended to be called by the binary arithmetic and comparison
     methods, such as `!__sub__` and `!__lt__`.
 
+    **Bounds**
+
+    How to operate on bounds is determined as follows, where "Flag" is
+    the boolean value returned by
+    ``cf.combine_bounds_with_coordinates()``
+
+    =====  ======  ======  ==========  =====================
+    Flag   x has   y has   z = x + y   Notes
+           bounds  bounds  has bounds
+    =====  ======  ======  ==========  =====================
+    False  Yes     Yes     Yes         `z.bounds` is
+                                       `x.bounds + y.bounds`
+    False  Yes     No      No
+    False  No      Yes     No
+    False  No      No      No
+    True   Yes     Yes     Yes         `z.bounds` is
+                                       `x.bounds + y.bounds`
+    True   Yes     No      Yes         `z.bounds` is
+                                       `x.bounds + y`
+    True   No      Yes     Yes         `z.bounds` is
+                                       `x + y.bounds`
+    True   No      No      No
+    =====  ======  ======  ==========  =====================
+
+    If the *bounds* parameter is False then the result will have no
+    bounds regardless of the value of
+    ``cf.combine_bounds_with_coordinates()``, nor whether or not the
+    operands have bounds.
+
     :Parameters:
 
         other:
@@ -357,10 +417,8 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds: `bool`, optional
             If False then ignore the bounds and remove them from the
-            result. By default the bounds are operated on as well: if
-            *self* and *other* has both have bounds then those bounds
-            are combined; if *self* has bounds but *other* does not
-            then the bounds are combined with *other*.
+            result. By default the bounds are operated on as described
+            above.
 
     :Returns:
 
@@ -371,111 +429,91 @@ class PropertiesDataBounds(PropertiesData):
         '''
         inplace = (method[2] == 'i')
 
+        combine_bounds = bounds and combine_bounds_with_coordinates()
+
         has_bounds = self.has_bounds()
 
         if bounds and has_bounds and inplace and other is self:
             other = other.copy()
 
+        try:
+            other_bounds = other.get_bounds(None)
+        except AttributeError:
+            other_bounds = None
+
+        if combine_bounds and not has_bounds and other_bounds is not None:
+            # --------------------------------------------------------
+            # If self has no bounds but other does, then copy self for
+            # use in constructing new bounds.
+            # --------------------------------------------------------
+            original_self = self.copy()
+
         new = super()._binary_operation(other, method)
 
-#        if bounds and has_bounds:
-#            other_bounds = None
-#            try:
-#                other_bounds = other.get_bounds(None)
-#            except AttributeError:
-#                pass
-#
-#            if other_bounds is not None:
-#                other = other_bounds
-#            elif numpy_size(other) > 1:
-#                try:
-#                    other = other.insert_dimension(-1)
-#                except AttributeError:
-#                    other = numpy_expand_dims(other, -1)
-#            # --- End: if
-#
-#            new_bounds = self.bounds._binary_operation(other, method)
-#
-#            if not inplace:
-#                new.set_bounds(new_bounds, copy=False)
-#        # --- End: if
-
-#        print ('\nARGS:', repr(self), repr(other), repr(new))
         if not bounds:
-            # Remove the bounds from the result
+            # --------------------------------------------------------
+            # Remove any bounds from the result
+            # --------------------------------------------------------
             new.del_bounds(None)
-            
-        else:
-            try:
-                other_bounds = other.get_bounds(None)
-            except AttributeError:
-                other_bounds = None
-                
-            if not xxx():
-                # ----------------------------------------------------
-                # Default:
-                # ----------------------------------------------------
-#                print ('HERERE')
-                if has_bounds:
-                    if other_bounds is not None:
-                        # Other does have bounds, so combine them with the
-                        # bounds of self.
-                        new_bounds = self.bounds._binary_operation(
-                            other_bounds,
-                            method)
 
-                        if not inplace:
-                            new.set_bounds(new_bounds, copy=False)
-                    else:
-                        # Other has no bounds, so remove the bounds from the
-                        # result construct
-                        new.del_bounds()
+        elif has_bounds and other_bounds is not None:
+            # --------------------------------------------------------
+            # Combine bounds that exist on both self and other
+            # --------------------------------------------------------
+            new_bounds = self.bounds._binary_operation(
+                other_bounds,
+                method)
 
-            elif has_bounds:
-                if other_bounds is not None:
-                    # self and other both have bounds
-#                    print ('# self and other both have bounds')
-                    new_bounds = new.bounds._binary_operation(other_bounds,
-                                                              method)
-                    
-                    if not inplace:
-#                        print (repr(new), repr(new_bounds), repr(other))
-                        new.set_bounds(new_bounds, copy=False)
-
-                else:
-                    # self has bounds but other does not
-#                    print ('# self has bounds but other does not')
-                    if numpy_size(other) > 1:
-                        for i in range(self.bounds.ndim - self.ndim):
-                            try:
-                                other = other.insert_dimension(-1)
-                            except AttributeError:
-                                other = numpy_expand_dims(other, -1)
-                    else:
-                        other = other_bounds
-                        
-                    new_bounds = self.bounds._binary_operation(other,
-                                                               method)
-
-                    if not inplace:
-#                        print (repr(new), repr(new_bounds), repr(other))
-                        new.set_bounds(new_bounds, copy=False)
-
-            elif other_bounds is not None:
-                # self does not have bounds but other does
-#                print ('# self does not have bounds but other does')
-                new_bounds = new.copy()
-                for i in range(other_bounds.ndim - other.ndim):
-                    new_bounds = new_bounds.insert_dimension(-1)
-
-                if not inplace:
-                    method.replace('__', '__i', 1)
-                    
-                new_bounds._binary_operation(other_bounds, method)
+            if not inplace:
                 new.set_bounds(new_bounds, copy=False)
-        # --- End: if           
 
-        self._custom['direction'] = None
+        elif not combine_bounds:
+            # --------------------------------------------------------
+            # Only one of self and other has bounds, so remove the
+            # bounds from the result.
+            # --------------------------------------------------------
+            new.del_bounds(None)
+
+        elif has_bounds:
+            # --------------------------------------------------------
+            # other has no bounds: Combine self bounds with other
+            # coordinates
+            # --------------------------------------------------------
+            if numpy_size(other) > 1:
+                for i in range(self.bounds.ndim - self.ndim):
+                    try:
+                        other = other.insert_dimension(-1)
+                    except AttributeError:
+                        other = numpy_expand_dims(other, -1)
+            # --- End: if
+
+            new_bounds = self.bounds._binary_operation(other, method)
+
+            if not inplace:
+                new.set_bounds(new_bounds, copy=False)
+
+        elif other_bounds is not None:
+            # --------------------------------------------------------
+            # self has no bounds: Combine self coordinates with other
+            # bounds
+            # --------------------------------------------------------
+            new_bounds = self._Bounds(data=original_self.data, copy=True)
+            for i in range(other_bounds.ndim - other.ndim):
+                new_bounds = new_bounds.insert_dimension(-1)
+
+            if inplace:
+                # Can't do the operation in-place because we'll run
+                # fowl of the broadcasting rules (e.g. "ValueError:
+                # non-broadcastable output operand with shape (3,1)
+                # doesn't match the broadcast shape (3,2)")
+                methodo = method.replace('__i', '__', 1)
+            else:
+                methodo = method
+
+            new_bounds = new_bounds._binary_operation(other_bounds, methodo)
+            new.set_bounds(new_bounds, copy=False)
+
+        new._custom['direction'] = None
         return new
 
     @_manage_log_level_via_verbosity
@@ -630,6 +668,38 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return v
+
+    def _unary_operation(self, method, bounds=True):
+        '''Implement unary arithmetic operations on the data array and bounds.
+
+    :Parameters:
+
+        method: `str`
+            The unary arithmetic method name (such as "__abs__").
+
+        bounds: `bool`, optional
+            If False then ignore the bounds and remove them from the
+            result. By default the bounds are operated on as well.
+
+    :Returns:
+
+        `{{class}}`
+            A new construct, or the same construct if the operation
+            was in-place.
+
+        '''
+        new = super()._unary_operation(method)
+
+        self_bounds = self.get_bounds(None)
+        if self_bounds is not None:
+            if bounds:
+                new_bounds = self_bounds._unary_operation(method)
+                new.set_bounds(new_bounds)
+            else:
+                new.del_bounds()
+        # --- End: if
+
+        return new
 
     # ----------------------------------------------------------------
     # Attributes

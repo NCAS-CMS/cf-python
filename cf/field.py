@@ -13117,7 +13117,7 @@ class Field(mixin.PropertiesData,
         self._log_call('compute_vertical_coordinates', locals())
 
         f = _inplace_enabled_define_and_cleanup(self)
- 
+
         for cr in f.coordinate_references.values():
             # --------------------------------------------------------
             # Compute the non-parametric vertical coordinates, if
@@ -13128,7 +13128,7 @@ class Field(mixin.PropertiesData,
              computed,
              computed_axes,
              k_axis) = formula(f, cr, default_to_zero)
-            
+
             if computed_standard_name is None:
                 continue
 
@@ -13144,15 +13144,15 @@ class Field(mixin.PropertiesData,
                 "Computed from parametric {} "
                 "vertical coordinates".format(standard_name)
             )
-            
+
             logger.detail(
                 "  Non-parametric coordinates:\n{}".format(
                     c.dump(display=False, _level=1)
                 )
             )  # pragma: no cover
-            
+
             key = f.set_construct(c, axes=computed_axes, copy=False)
-            
+
             # Reference the new coordinates from the coordinate
             # reference construct
             cr.set_coordinate(key)
@@ -13166,7 +13166,7 @@ class Field(mixin.PropertiesData,
             )  # pragma: no cover
 
         return f
-                
+
     def match_by_construct(self, *identities, OR=False,
                            **conditions):
         '''Whether or not there are particular metadata constructs.
