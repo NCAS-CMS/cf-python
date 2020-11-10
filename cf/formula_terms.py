@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 def _domain_ancillary_term(f, standard_name, computed_standard_name,
                            coordinate_conversion, term,
                            default_to_zero, bounds):
-    '''TODO
+    '''Find a domain ancillary construct cooresponding to a formula term.
 
     .. versionadded:: 3.8.0
 
@@ -154,7 +154,7 @@ def _domain_ancillary_term(f, standard_name, computed_standard_name,
 
 def _coordinate_term(f, standard_name, computed_standard_name,
                      coordinate_reference, term):
-    '''TODO
+    '''Find a coordinate construct cooresponding to a formula term.
 
     .. versionadded:: 3.8.0
 
@@ -562,8 +562,8 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -646,8 +646,8 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -741,8 +741,8 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -860,8 +860,8 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -957,8 +957,8 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1095,8 +1095,8 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1194,8 +1194,8 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1325,8 +1325,8 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1438,8 +1438,8 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1554,8 +1554,8 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1682,8 +1682,8 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 
@@ -1845,8 +1845,8 @@ def formula(f, coordinate_reference, default_to_zero=True):
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D (Parametric Vertical
-            Coordinates) of the CF conventions.
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
 
     :Returns:
 

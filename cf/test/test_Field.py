@@ -2628,13 +2628,20 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(bounds.equals(altitude.bounds.data), repr(x))
 
         # ------------------------------------------------------------
-        # Check in place
+        # Check in-place
         # ------------------------------------------------------------
         self.assertIsNone(f.compute_vertical_coordinates(inplace=True))
 
         f.del_construct('surface_altitude')
         with self.assertRaises(ValueError):
             g = f.compute_vertical_coordinates()
+
+        # ------------------------------------------------------------
+        # Check with no vertical coordinates
+        # ------------------------------------------------------------
+        f = cf.example_field(0)
+        g = f.compute_vertical_coordinates()
+        self.assertTrue(g.equals(f))
 
 # --- End: class
 

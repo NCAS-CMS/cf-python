@@ -51,19 +51,28 @@ class Container:
     # Private methods
     # ----------------------------------------------------------------
     def _log_call(self, method, kwargs, log_level='info'):
-        '''TODO
+        '''Log the call to a method.
 
-    .. versionadded:: TODO
+    .. versionadded:: 3.8.0
+
+    (This should be moved to `cfdm` at v1.8.8.0)
 
     :Parameters:
 
         method: `str`
-        TODO
+            The namne of the method
+
         kwargs: `dict`
-        TODO
+            All of the arguments, including an initial *self* or *cls*
+            argument.
+        
+            :Parameter example:
+               ``kwargs=locals()``
 
         log_level: `str`, optional
-        TODO
+            The log level desired. One of ``'info'``, ``''warning``,
+            ``'disable'``, ``'detail'``, ``'debug'``. Default value is
+            ``''info``.
 
     :Returns:
 

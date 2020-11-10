@@ -13061,7 +13061,7 @@ class Field(mixin.PropertiesData,
             If False then do not assume that missing domain ancillary
             terms have a value of zero. By default a missing domain
             ancillary term is assumed to be zero, as described in
-            Appendix D (Parametric Vertical Coordinates) of the CF
+            Appendix D: Parametric Vertical Coordinates of the CF
             conventions.
 
         {{inplace: `bool`, optional}}
