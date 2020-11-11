@@ -13040,13 +13040,22 @@ class Field(mixin.PropertiesData,
                                      inplace=False, verbose=None):
         '''Compute non-parametric vertical coordinates.
 
-    Dimensional vertical auxiliary coordinate values are computed from
-    parametric vertical coordinate values (usually dimensionless) and
-    associated domain ancillary constructs, as defined by the formula
-    stored in a coordinate reference construct.
+    When vertical coordinates are a function of horizontal location as
+    well as parameters which depend on vertical location, they cannot
+    be stored in a vertical dimension coordinate construct. In such
+    cases a parametric vertical dimension coordinate construct is
+    stored and a coordinate reference construct contains the formula
+    for computing the required non-parametric vertical
+    coordinates. For example, multi-dimensional non-parametric
+    parametric ocean altitude coordinates can be computed from
+    one-dimensional parametric ocean sigma coordinates. See the
+    "Parametric Vertical Coordinate" sections of the CF conventions
+    for more details.
 
-    See the "Parametric Vertical Coordinate" sections of the CF
-    conventions for more details.
+    Coordinate reference systems based on parametric vertical
+    coordinates are identified and, if possible, the corresponding
+    non-parametric vertical coordinates are computed and stored in a
+    new auxiliary coordinate construct.
 
     If there are no appropriate coordinate reference constructs then
     the field construct is unchanged.
@@ -13096,7 +13105,8 @@ class Field(mixin.PropertiesData,
     Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-    >>> g = f.compute_vertical_coordinates()
+    >>> print(f.auxiliary_coordinate('altitude', default=None))
+    None
     >>> print(g.auxiliary_coordinates)
     Constructs:
     {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
