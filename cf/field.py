@@ -13129,7 +13129,9 @@ class Field(mixin.PropertiesData,
              computed_axes,
              k_axis) = formula(f, cr, default_to_zero)
 
-            if computed_standard_name is None:
+            if computed is None:
+                # No non-paramettric vertical coordinates were
+                # computed
                 continue
 
             # --------------------------------------------------------
@@ -13139,11 +13141,12 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             c = f._AuxiliaryCoordinate(source=computed, copy=False)
             c.clear_properties()
-            c.standard_name = computed_standard_name
             c.long_name = (
                 "Computed from parametric {} "
                 "vertical coordinates".format(standard_name)
             )
+            if computed_standard_name:
+                c.standard_name = computed_standard_name
 
             logger.detail(
                 "  Non-parametric coordinates:\n{}".format(

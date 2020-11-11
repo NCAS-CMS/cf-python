@@ -65,7 +65,7 @@ class Container:
         kwargs: `dict`
             All of the arguments, including an initial *self* or *cls*
             argument.
-        
+
             :Parameter example:
                ``kwargs=locals()``
 

@@ -70,7 +70,7 @@ class FieldTest(unittest.TestCase):
     rtol = cf.rtol()
 
     test_only = []
-#    test_only = ['test_Field_compute_vertical_cooridnates']
+    test_only = ['test_Field_compute_vertical_cooridnates']
 
     def setUp(self):
         self.f = cf.read(self.filename)[0]
