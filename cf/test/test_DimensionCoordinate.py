@@ -289,86 +289,96 @@ class DimensionCoordinateTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Out-of-place addition
         # ------------------------------------------------------------
-        cf.combine_bounds_with_coordinates(True)
-        z = x + 2
-        self.assertTrue((z.array == c + 2).all())
-        self.assertTrue((z.bounds.array == b + 2).all())
+        for value in ('AND', False):            
+            cf.combine_bounds_with_coordinates(value)
+            z = x + 2
+            self.assertTrue((z.array == c + 2).all())
+            self.assertFalse(z.has_bounds())
+            
+        for value in ('OR', 'XOR'):            
+            cf.combine_bounds_with_coordinates(value)
+            z = x + 2
+            self.assertTrue((z.array == c + 2).all())
+            self.assertTrue((z.bounds.array == b + 2).all())
 
-        cf.combine_bounds_with_coordinates(False)
-        z = x + 2
-        self.assertTrue((z.array == c + 2).all())
-        self.assertFalse(z.has_bounds())
-
-        for value in (True, False):
+        for value in ('AND', 'OR'): 
             cf.combine_bounds_with_coordinates(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertTrue((z.bounds.array == b + b).all())
 
+        for value in ('XOR', False): 
+            cf.combine_bounds_with_coordinates(value)
+            z = x + y
+            self.assertTrue((z.array == c + c).all())
+            self.assertFalse(z.has_bounds())
+
         x.del_bounds()
 
-        for value in (True, False):
+        for value in ('AND', 'XOR', 'OR', False):
             cf.combine_bounds_with_coordinates(value)
             z = x + 2
             self.assertTrue((z.array == c + 2).all())
             self.assertFalse(z.has_bounds())
 
-        cf.combine_bounds_with_coordinates(True)
-        z = x + y
-        self.assertTrue((z.array == c + c).all())
-        self.assertTrue((z.bounds.array == b + c2).all())
+        for value in ('AND', False):
+            cf.combine_bounds_with_coordinates(value)
+            z = x + y
+            self.assertTrue((z.array == c + c).all())
+            self.assertFalse(z.has_bounds())
 
-        cf.combine_bounds_with_coordinates(False)
-        z = x + y
-        self.assertTrue((z.array == c + c).all())
-        self.assertFalse(z.has_bounds())
+        for value in ('OR', 'XOR'): 
+            cf.combine_bounds_with_coordinates(value)
+            z = x + y
+            self.assertTrue((z.array == c + c).all())
+            self.assertTrue((z.bounds.array == c2 + b).all())
 
         # ------------------------------------------------------------
         # In-place addition
         # ------------------------------------------------------------
-        cf.combine_bounds_with_coordinates(True)
-        x = dim.copy()
-        x += 2
-        self.assertTrue((x.array == c + 2).all())
-        self.assertTrue((x.bounds.array == b + 2).all())
-
-        cf.combine_bounds_with_coordinates(False)
-        x = dim.copy()
-        x += 2
-        self.assertTrue((x.array == c + 2).all())
-        self.assertFalse(x.has_bounds())
-
-        for value in (True, False):
+        for value in ('AND', False):            
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x += 2
+            self.assertTrue((x.array == c + 2).all())
+            self.assertFalse(x.has_bounds())
+            
+        for value in ('OR', 'XOR'):            
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x += 2
+            self.assertTrue((x.array == c + 2).all())
+            self.assertTrue((x.bounds.array == b + 2).all())
+            
+        for value in ('AND', 'OR'): 
             cf.combine_bounds_with_coordinates(value)
             x = dim.copy()
             x += y
             self.assertTrue((x.array == c + c).all())
             self.assertTrue((x.bounds.array == b + b).all())
 
-        x.del_bounds()
+        for value in ('XOR', False): 
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x += y
+            self.assertTrue((x.array == c + c).all())
+            self.assertFalse(x.has_bounds())
 
-        for value in (True, False):
+        for value in ('XOR', 'OR'):
             cf.combine_bounds_with_coordinates(value)
             x = dim.copy()
             x.del_bounds()
-            x += 2
-            self.assertTrue((x.array == c + 2).all())
+            x += y
+            self.assertTrue((x.array == c + c).all())
+            self.assertTrue((x.bounds.array == c2 + b).all())
+
+        for value in ('AND', False):
+            cf.combine_bounds_with_coordinates(value)
+            x = dim.copy()
+            x.del_bounds()
+            x += y
+            self.assertTrue((x.array == c + c).all())
             self.assertFalse(x.has_bounds())
-
-        cf.combine_bounds_with_coordinates(True)
-        x = dim.copy()
-        x.del_bounds()
-        x += y
-
-        self.assertTrue((x.array == c + c).all())
-        self.assertTrue((x.bounds.array == b + c2).all())
-
-        cf.combine_bounds_with_coordinates(False)
-        x = dim.copy()
-        x.del_bounds()
-        x += y
-        self.assertTrue((x.array == c + c).all())
-        self.assertFalse(x.has_bounds())
 
         # ------------------------------------------------------------
         # Reset constant

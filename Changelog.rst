@@ -4,6 +4,8 @@ version 3.8.0
 
 **202?-??-??**
 
+* Changed the behaviour of binary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues146)
 * Changed the behaviour of unary operations for constructs that have
   bounds (https://github.com/NCAS-CMS/cf-python/issues/147)
 * Changed the behaviour of binary operations involving constructs that
