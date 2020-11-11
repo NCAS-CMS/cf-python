@@ -39,8 +39,8 @@ _TOTAL_MEMORY = float(virtual_memory().total)
 #             _MemTotal = float(field_size[1]) * 1024
 #             break
 #     # --- End: for
+#
 #     _meminfo_file.close()
-# # --- End: if
 
 
 """
@@ -127,7 +127,6 @@ if mpi_on:
         mpi_comm.allgather(CONSTANTS['TOTAL_MEMORY']))
 else:
     CONSTANTS['MIN_TOTAL_MEMORY'] = CONSTANTS['TOTAL_MEMORY']
-# --- End: if
 
 CONSTANTS['CHUNKSIZE'] = (
     (CONSTANTS['FREE_MEMORY_FACTOR'] * CONSTANTS['MIN_TOTAL_MEMORY']) /
@@ -320,39 +319,52 @@ cr_default_values = {
     'ztop': 0.0,
 }
 
-# --------------------------------------------------------------------
-# Define the standard names that are allowed for each formula term. A
-# domain ancillary or coordinate construct may have any of the
-# specified names. A value of None means that the domain ancillary or
-# coordinate construct may have any standard name or no standard at
-# all.
-# --------------------------------------------------------------------
-_D1_computed_standard_name = (
-    'altitude',
-    'height_above_geopotential_datum',
-    'height_above_reference_ellipsoid',
-    'height_above_mean_sea_level',
-)
-_D1_eta = (
-    'sea_surface_height_above_geoid',
-    'sea_surface_height_above_geopotential_datum',
-    'sea_surface_height_above_reference_ellipsoid',
-    'sea_surface_height_above_mean_sea_level',
-)
-_D1_depth = (
-    'sea_floor_depth_below_geoid',
-    'sea_floor_depth_below_geopotential_datum',
-    'sea_floor_depth_below_reference_ellipsoid',
-    'sea_floor_depth_below_mean_sea_level',
-)
-_D1_zlev = (
-    'altitude',
-    'height_above_geopotential_datum',
-    'height_above_reference_ellipsoid',
-    'height_above_mean_sea_level',
-)
 
-formula_term_standard_names = {
+# --------------------------------------------------------------------
+# Define the sets of standard names described by Table D.1 of the CF
+# conventions.
+#
+# The element order of these tuple values is important. The standard
+# names at each index location form a consistent set, as described
+# Appendix D: Parametric Vertical Coordinates of the CF conventions.
+# --------------------------------------------------------------------
+formula_terms_D1 = {
+    'computed_standard_name': (
+        'altitude',
+        'height_above_geopotential_datum',
+        'height_above_reference_ellipsoid',
+        'height_above_mean_sea_level',
+    ),
+    'eta': (
+        'sea_surface_height_above_geoid',
+        'sea_surface_height_above_geopotential_datum',
+        'sea_surface_height_above_reference_ellipsoid',
+        'sea_surface_height_above_mean_sea_level',
+    ),
+    'depth': (
+        'sea_floor_depth_below_geoid',
+        'sea_floor_depth_below_geopotential_datum',
+        'sea_floor_depth_below_reference_ellipsoid',
+        'sea_floor_depth_below_mean_sea_level',
+    ),
+    'zlev': (
+        'altitude',
+        'height_above_geopotential_datum',
+        'height_above_reference_ellipsoid',
+        'height_above_mean_sea_level',
+    ),
+}
+
+# --------------------------------------------------------------------
+# Define the standard names that are allowed for each formula term, as
+# described in Appendix D: Parametric Vertical Coordinates of the CF
+# conventions.
+#
+# A domain ancillary or coordinate construct may have any of the
+# specified names. A value of None means that no standard name has
+# been defined for that term.
+# --------------------------------------------------------------------
+formula_terms_standard_names = {
     'atmosphere_ln_pressure_coordinate': {
         'p0': ('reference_air_pressure_for_atmosphere_vertical_coordinate',),
         'lev': ('atmosphere_ln_pressure_coordinate',),
@@ -376,8 +388,9 @@ formula_term_standard_names = {
                  'surface_height_above_geopotential_datum'),
     },
     'atmosphere_sleve_coordinate': {
-        'ztop': ('altitude_at_top_of_atmosphere_model',
-                 'height_above_geopotential_datum_at_top_of_atmosphere_model'),
+        'ztop': (
+            'altitude_at_top_of_atmosphere_model',
+            'height_above_geopotential_datum_at_top_of_atmosphere_model'),
         'a': (None,),
         'b1': (None,),
         'b2': (None,),
@@ -385,13 +398,13 @@ formula_term_standard_names = {
         'zsurf2': (None,),
     },
     'ocean_sigma_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
+        'eta': formula_terms_D1['eta'],
+        'depth': formula_terms_D1['depth'],
         'sigma': ('ocean_sigma_coordinate',),
     },
     'ocean_s_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
+        'eta': formula_terms_D1['eta'],
+        'depth': formula_terms_D1['depth'],
         'a': (None,),
         'b': (None,),
         'depth_c': (None,),
@@ -399,29 +412,29 @@ formula_term_standard_names = {
         's': ('ocean_s_coordinate',),
     },
     'ocean_s_coordinate_g1': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
+        'eta': formula_terms_D1['eta'],
+        'depth': formula_terms_D1['depth'],
         'depth_c': (None,),
         'C': (None,),
         's': ('ocean_s_coordinate_g1',),
     },
     'ocean_s_coordinate_g2': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
+        'eta': formula_terms_D1['eta'],
+        'depth': formula_terms_D1['depth'],
         'depth_c': (None,),
         'C': (None,),
         's': ('ocean_s_coordinate_g2',),
     },
     'ocean_sigma_z_coordinate': {
-        'eta': _D1_eta,
-        'depth': _D1_depth,
-        'zlev': _D1_zlev,
+        'eta': formula_terms_D1['eta'],
+        'depth': formula_terms_D1['depth'],
+        'zlev': formula_terms_D1['zlev'],
         'nsigma': (None,),
         'depth_c': (None,),
         'sigma': ('ocean_sigma_z_coordinate',),
     },
     'ocean_double_sigma_coordinate': {
-        'depth': _D1_depth,
+        'depth': formula_terms_D1['depth'],
         'a': (None,),
         'href': (None,),
         'k_c': (None,),
@@ -432,11 +445,14 @@ formula_term_standard_names = {
 }
 
 # --------------------------------------------------------------------
-# Set the maximum nunber of dimensions allowed for each formula
-# term. A given domain ancillary construct may have this number of
+# Set the maximum number of dimensions allowed for each formula term,
+# as described in Appendix D: Parametric Vertical Coordinates of the
+# CF conventions.
+#
+# A given domain ancillary construct may have this number of
 # dimensions or fewer.
 # --------------------------------------------------------------------
-formula_term_max_dimensions = {
+formula_terms_max_dimensions = {
     'atmosphere_ln_pressure_coordinate': {
         'p0': 0,
         'lev': 1  # (k)
@@ -516,15 +532,15 @@ formula_term_max_dimensions = {
 
 # --------------------------------------------------------------------
 # Define the computed standard name of the computed vertical
-# coordinate values computed according to each parametric coordinate
-# type.
+# coordinate values, as described in Appendix D: Parametric Vertical
+# Coordinates of the CF conventions.
 #
 # A string value means that there can only be one computed standard
 # name.
 #
 # A dictionary value means that the computed standard name depends on
-# the standdard name of the given term. For example, the computed
-# standard name of 'atmosphere_sleve_coordinate' depends on the
+# the standard name of the given term. For example, the computed
+# standard name for 'atmosphere_sleve_coordinate' depends on the
 # standard name of the 'ztop' term.
 # --------------------------------------------------------------------
 _D1_depth_mapping = {
@@ -534,7 +550,7 @@ _D1_depth_mapping = {
     'sea_floor_depth_below_mean_sea_level': 'height_above_mean_sea_ level',
 }
 
-computed_standard_names = {
+formula_terms_computed_standard_names = {
     'atmosphere_ln_pressure_coordinate': 'air_pressure',
     'atmosphere_sigma_coordinate': 'air_pressure',
     'atmosphere_hybrid_sigma_pressure_coordinate': 'air_pressure',
@@ -571,9 +587,10 @@ computed_standard_names = {
 }
 
 # --------------------------------------------------------------------
-# Define the canonical units of formula terms
+# Define the canonical units of formula terms, as described in
+# Appendix D: Parametric Vertical Coordinates of the CF conventions.
 # --------------------------------------------------------------------
-formula_term_units = {
+formula_terms_units = {
     'atmosphere_ln_pressure_coordinate': {
         'p0': 'Pa',
         'lev': '',
