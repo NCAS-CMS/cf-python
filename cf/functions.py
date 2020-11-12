@@ -423,110 +423,82 @@ def combine_bounds_with_coordinates(*arg):
     '''Determine how to deal with cell bounds in binary operations.
 
     The flag returned by ``cf.combine_bounds_with_coordinates()`` is
-    used by any binary operation "op(x, y)", such as ``x + y``, ``x -=
-    y``, ``x << y``, etc., where at least one operand is a construct
-    that _may_ contain bounds.
+    used to influence whether or not the result of a binary operation
+    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
+    contain bounds, and if so how those bounds are calculated.
 
-    The value of the flag will influence whether or the result of the
-    operation has bounds, and how those bounds are calculated.
-    
-    The behaviour may be illustrated with the addition operator:
+    The result of op(x, y) may contain bounds if and only if
 
-    If the flag is ``'AND'`` (the default) then
+    * ``x`` is a construct that may contain bounds, or
 
-    ======  ======  ============  ======================
-    x has   y has   z = op(x, y)  z.bounds
-    bounds  bounds  has bounds
-    ======  ======  ============  ======================
-    Yes     Yes     **Yes**       op(x.bounds, y.bounds)
-    Yes     No      _No_
-    No      Yes     _No_
-    No      No      _No_
-    ======  ======  ============  ======================
+    * ``x`` does not support the operation and ``y`` is a construct
+      that may contain bounds, e.g. ``2 + y``.
 
-    ======  ======  ============  ======================
-    x has   y has   z = op(x, y)
-    bounds  bounds  has bounds
-    ======  ======  ============  ======================
-    Yes     Yes     **Yes**       op(x.bounds, y.bounds)
-    Yes     No      **Yes**       op(x.bounds, y)
-    No      Yes     **Yes**       op(x, y.bounds)
-    No      No      _No_
-    ======  ======  ============  ======================
+    and so the flag only has an effect in these specific cases. Only
+    dimension coordinate, auxiliary coordinate and domain ancillary
+    constructs support bounds.
 
-    ======  ======  ============  ======================
-    x has   y has   z = op(x, y)  z.bounds
-    bounds  bounds  has bounds
-    ======  ======  ============  ======================
-    Yes     Yes     _No_
-    Yes     No      **Yes**       op(x.bounds, y)
-    No      Yes     **Yes**       op(x, y.bounds)
-    No      No      _No_
-    ======  ======  ============  ======================
+    The behaviour for the different flag values is described by the
+    following truth tables, for which it assumed that it is possible
+    for the result of the operation to contain bounds:
 
-    ======  ======  ============  ======================
-    x has   y has   x = op(x, y)
-    bounds  bounds  has bounds
-    ======  ======  ============  ======================
-    Yes     Yes     _No_
-    Yes     No      _No_
-    No      Yes     _No_
-    No      No      _No_
-    ======  ======  ============  ======================
+    * If the flag is ``'AND'`` (the default) then
 
-    ======  ======  ==========  =======================================
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  =======================================
-    Yes     Yes     Yes         ``z.bounds`` is ``x.bounds + y.bounds``
-    Yes     No      No
-    No      Yes     No
-    No      No      No
-    ======  ======  ==========  =======================================
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
 
-    If the flag is ``'OR'`` then
+    * If the flag is ``'OR'`` then
 
-    ======  ======  ==========  =======================================
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  =======================================
-    Yes     Yes     Yes         ``z.bounds`` is ``x.bounds + y.bounds``
-    Yes     No      Yes         ``z.bounds` is ``x.bounds + y``
-    No      Yes     Yes         ``z.bounds` is ``x + y.bounds``
-    No      No      No
-    ======  ======  ==========  =======================================
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
 
-    If the flag is ``'XOR'`` then
+    * If the flag is ``'XOR'`` then
 
-    ======  ======  ==========  ===============================
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  ===============================
-    Yes     Yes     No
-    Yes     No      Yes         ``z.bounds` is ``x.bounds + y``
-    No      Yes     Yes         ``z.bounds` is ``x + y.bounds``
-    No      No      No
-    ======  ======  ==========  ===============================
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
 
-    If the flag is ``'NONE'`` then
+    * If the flag is ``'NONE'`` then
 
-    ======  ======  ==========  =====
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  =====
-    Yes     Yes     No
-    Yes     No      No
-    No      Yes     No
-    No      No      No
-    ======  ======  ==========  =====
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
 
     :Parameters:
 
         arg: `bool`, optional
+            Provide a new flag value that will apply to all subsequent
+            binary operations.
 
     :Returns:
 
-        `bool`
+        `str`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -548,15 +520,18 @@ def combine_bounds_with_coordinates(*arg):
     old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
     if arg:
         arg = arg[0]
-        if (
-                not isinstance(arg, str)
-                or not hasattr(OperandBoundsCombination, arg)
-        ):
+
+        try:
+            valid = hasattr(OperandBoundsCombination, arg)
+        except (AttributeError, TypeError):
+            valid = False
+
+        if not valid:
             raise ValueError(
                 "{!r} is not one of the valid values: {}".format(
                     arg,
                     ', '.join([repr(val.name)
-                                for val in OperandBoundsCombination]),
+                               for val in OperandBoundsCombination]),
                 )
             )
 

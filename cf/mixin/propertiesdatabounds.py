@@ -146,7 +146,14 @@ class PropertiesDataBounds(PropertiesData):
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]
 
-    x.__setitem__(indices, value) <==> x[indices]
+    x.__setitem__(indices, y) <==> x[indices] = y
+
+    **Bounds**
+
+    When assigning an object that has bounds to an object that also
+    has bounds, then the bounds are also assigned. This is the only
+    circumstance that allows bounds to be updated during assignment by
+    index.
 
         '''
         super().__setitem__(indices, value)
@@ -380,42 +387,22 @@ class PropertiesDataBounds(PropertiesData):
 
     **Bounds**
 
-    How to operate on bounds is determined as follows, where "Flag" is
-    the current value returned by
-    ``cf.combine_bounds_with_coordinates()``
+    The flag returned by ``cf.combine_bounds_with_coordinates()`` is
+    used to influence whether or not the result of a binary operation
+    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
+    contain bounds, and if so how those bounds are calculated.
 
-    =======  ======  ======  ==========  =====================
-    Flag     x has   y has   z = x + y   Notes
-             bounds  bounds  has bounds
-    =======  ======  ======  ==========  =====================
-    `'AND'`  Yes     Yes     Yes         `z.bounds` is
-    `'AND'`                              `x.bounds + y.bounds`
-    `'AND'`  Yes     No      No
-    `'AND'`  No      Yes     No
-    `'AND'`  No      No      No
-    `'OR'`   Yes     Yes     Yes         `z.bounds` is
-                                         `x.bounds + y.bounds`
-    `'OR'`   Yes     No      Yes         `z.bounds` is
-                                         `x.bounds + y`
-    `'OR'`   No      Yes     Yes         `z.bounds` is
-                                         `x + y.bounds`
-    `'OR'`   No      No      No
-    `'XOR'`  Yes     Yes     No
-    `'XOR'`  Yes     No      Yes         `z.bounds` is
-                                         `x.bounds + y`
-    `'XOR'`  No      Yes     Yes         `z.bounds` is
-                                         `x + y.bounds`
-    `'XOR'`  No      No      No
-    `False`  Yes     Yes     No
-    `False`  Yes     No      No
-    `False`  No      Yes     No
-    `False`  No      No      No
-    =======  ======  ======  ==========  =====================
+    The result of op(x, y) may contain bounds if and only if
 
-    If the *bounds* parameter is False then the result will have no
-    bounds regardless of the value of
-    ``cf.combine_bounds_with_coordinates()``, nor whether or not the
-    operands have bounds.
+    * ``x`` is a construct that may contain bounds, or
+
+    * ``x`` does not support the operation and ``y`` is a construct
+      that may contain bounds, e.g. ``2 + y``.
+
+    and so the flag only has an effect in these specific cases.
+
+    The behaviour for the different flag values is described in the
+    docstring of `cf.combine_bounds_with_coordinates`.
 
     :Parameters:
 
@@ -438,10 +425,12 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         inplace = (method[2] == 'i')
-        
-        bounds_OR = (bounds and combine_bounds_with_coordinates() == 'OR')
+
         bounds_AND = (bounds and combine_bounds_with_coordinates() == 'AND')
-        bounds_XOR = (bounds and combine_bounds_with_coordinates() == 'XOR')
+        bounds_OR = (bounds and not bounds_AND
+                     and combine_bounds_with_coordinates() == 'OR')
+        bounds_XOR = (bounds and not bounds_OR
+                      and combine_bounds_with_coordinates() == 'XOR')
 
         has_bounds = self.has_bounds()
 
@@ -465,21 +454,21 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        if not (bounds_OR or bounds_AND or bounds_XOR):
+        if not (bounds_AND or bounds_OR or bounds_XOR):
             # --------------------------------------------------------
             # Remove any bounds from the result
             # --------------------------------------------------------
             new.del_bounds(None)
 
         elif has_bounds and other_bounds is not None:
-            if bounds_OR or bounds_AND:
+            if bounds_AND or bounds_OR:
                 # ----------------------------------------------------
-                # Combine bounds that exist on both self and other
+                # Both self and other have bounds, so combine them for
+                # the result.
                 # ----------------------------------------------------
-                new_bounds = self.bounds._binary_operation(
-                    other_bounds,
-                    method)
-                
+                new_bounds = self.bounds._binary_operation(other_bounds,
+                                                           method)
+
                 if not inplace:
                     new.set_bounds(new_bounds, copy=False)
 
@@ -499,8 +488,8 @@ class PropertiesDataBounds(PropertiesData):
 
         elif has_bounds:
             # --------------------------------------------------------
-            # other has no bounds, combine self bounds with other
-            # coordinates
+            # Only self has bounds, so combine the self bounds with
+            # the other values.
             # --------------------------------------------------------
             if numpy_size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
@@ -517,7 +506,7 @@ class PropertiesDataBounds(PropertiesData):
 
         elif other_bounds is not None:
             # --------------------------------------------------------
-            # self has no bounds, so combine self coordinates with
+            # Only other has bounds, so combine self values with the
             # other bounds
             # --------------------------------------------------------
             new_bounds = self._Bounds(data=original_self.data, copy=True)
@@ -527,8 +516,8 @@ class PropertiesDataBounds(PropertiesData):
             if inplace:
                 # Can't do the operation in-place because we'll run
                 # fowl of the broadcasting rules (e.g. "ValueError:
-                # non-broadcastable output operand with shape (3,1)
-                # doesn't match the broadcast shape (3,2)")
+                # non-broadcastable output operand with shape (12,1)
+                # doesn't match the broadcast shape (12,2)")
                 method2 = method.replace('__i', '__', 1)
             else:
                 method2 = method
