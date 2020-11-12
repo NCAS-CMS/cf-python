@@ -21,7 +21,6 @@ class aggregateTest(unittest.TestCase):
     chunk_sizes = (100000, 300, 34)
     original_chunksize = cf.chunksize()
 
-    """
     def test_basic_aggregate(self):
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
@@ -171,7 +170,6 @@ class aggregateTest(unittest.TestCase):
                 cf.aggregate(f, exist_all=True, equal_all=True)
 
         cf.chunksize(self.original_chunksize)
-    """
 
     def test_aggregate_verbosity(self):
         for chunksize in self.chunk_sizes:
