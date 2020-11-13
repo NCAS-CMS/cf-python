@@ -1049,6 +1049,7 @@ class _Meta:
 
         return anc_identity
 
+    @_manage_log_level_via_verbose_attr
     def print_info(self, signature=True):
         '''TODO
 
