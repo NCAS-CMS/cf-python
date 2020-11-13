@@ -79,29 +79,23 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
-
-        for rd in (False, True):
-            for indent in (0, 4):
-                for s in (False, True):
-                    for ns in ('cf', ''):
-                        _ = f.creation_commands(representative_data=rd,
-                                                indent=indent,
-                                                namespace=ns,
-                                                string=s)
-        # --- End: for
-
         for i in range(7):
             f = cf.example_field(i)
-            for rd in (False, True):
-                for indent in (0, 4):
-                    for s in (False, True):
-                        for ns in ('cf', ''):
-                            _ = f.creation_commands(representative_data=rd,
-                                                    indent=indent,
-                                                    namespace=ns,
-                                                    string=s)
-        # --- End: for
+            _ = f.creation_commands()
+
+        f = cf.example_field(1)
+
+        for rd in (False, True):
+            _ = f.creation_commands(representative_data=rd)
+
+        for indent in (0, 4):
+            _ = f.creation_commands(indent=indent)
+
+        for s in (False, True):
+            _ = f.creation_commands(string=s)
+
+        for ns in ('cf', ''):
+            _ = f.creation_commands(namespace=ns)
 
     def test_Field_get_filenames(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

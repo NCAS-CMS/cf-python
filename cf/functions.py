@@ -53,8 +53,12 @@ import urllib.parse
 import cfdm
 import cfunits
 
-from .          import __version__, __file__
-from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
+from . import __version__, __file__
+
+from .constants import (CONSTANTS,
+                        _file_to_fh,
+                        _stash2standard_name,
+                        OperandBoundsCombination)
 
 from . import mpi_on
 from . import mpi_size
@@ -418,44 +422,83 @@ def _configuration(**kwargs):
 def combine_bounds_with_coordinates(*arg):
     '''Determine how to deal with cell bounds in binary operations.
 
-    The value returned by ``cf.combine_bounds_with_coordinates()`` is
-    used by any binary operation, suh as ``+``, ``-=``, ``<<``, etc.
+    The flag returned by ``cf.combine_bounds_with_coordinates()`` is
+    used to influence whether or not the result of a binary operation
+    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
+    contain bounds, and if so how those bounds are calculated.
 
-    If it is False then:
+    The result of op(x, y) may contain bounds if and only if
 
-    ======  ======  ==========  =====================
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  =====================
-    Yes     Yes     Yes         `z.bounds` is
-                                `x.bounds + y.bounds`
-    Yes     No      No
-    No      Yes     No
-    No      No      No
-    ======  ======  ==========  =====================
+    * ``x`` is a construct that may contain bounds, or
 
-    If it is True then:
+    * ``x`` does not support the operation and ``y`` is a construct
+      that may contain bounds, e.g. ``2 + y``.
 
-    ======  ======  ==========  =====================
-    x has   y has   z = x + y   Notes
-    bounds  bounds  has bounds
-    ======  ======  ==========  =====================
-    Yes     Yes     Yes         `z.bounds` is
-                                `x.bounds + y.bounds`
-    Yes     No      Yes         `z.bounds` is
-                                `x.bounds + y`
-    No      Yes     Yes         `z.bounds` is
-                                `x + y.bounds`
-    No      No      No
-    ======  ======  ==========  =====================
+    and so the flag only has an effect in these specific cases. Only
+    dimension coordinate, auxiliary coordinate and domain ancillary
+    constructs support bounds.
+
+    The behaviour for the different flag values is described by the
+    following truth tables, for which it assumed that it is possible
+    for the result of the operation to contain bounds:
+
+    * If the flag is ``'AND'`` (the default) then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'OR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'XOR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'NONE'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
 
     :Parameters:
 
         arg: `bool`, optional
+            Provide a new flag value that will apply to all subsequent
+            binary operations.
 
     :Returns:
 
-        `bool`
+        `str`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -463,20 +506,36 @@ def combine_bounds_with_coordinates(*arg):
 
     >>> old = cf.combine_bounds_with_coordinates()
     >>> old
-    False
-    >>> cf.combine_bounds_with_coordinates(True)
-    False
+    'AND'
+    >>> cf.combine_bounds_with_coordinates('OR')
+    'AND'
     >>> cf.combine_bounds_with_coordinates()
-    True
+    'OR'
     >>> cf.combine_bounds_with_coordinates(old)
-    True
+    'OR'
     >>> cf.combine_bounds_with_coordinates()
-    False
+    'AND'
 
     '''
     old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
     if arg:
-        CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = bool(arg[0])
+        arg = arg[0]
+
+        try:
+            valid = hasattr(OperandBoundsCombination, arg)
+        except (AttributeError, TypeError):
+            valid = False
+
+        if not valid:
+            raise ValueError(
+                "{!r} is not one of the valid values: {}".format(
+                    arg,
+                    ', '.join([repr(val.name)
+                               for val in OperandBoundsCombination]),
+                )
+            )
+
+        CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = arg
 
     return old
 
