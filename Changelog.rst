@@ -1,3 +1,12 @@
+version 3.?.?
+-------------
+----
+
+**2020-??-??**
+
+* Fixed bug that prevented the verbosity from changing to any value specified
+  as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+
 version 3.7.0
 -------------
 ----
