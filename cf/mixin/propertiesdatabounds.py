@@ -167,7 +167,9 @@ class PropertiesDataBounds(PropertiesData):
                 value_bounds = None
 
             if value_bounds is not None:
-                bounds[indices] = value_bounds
+                indices = parse_indices(self.shape, indices)
+                indices.append(Ellipsis)
+                bounds[tuple(indices)] = value_bounds
         # --- End: if
 
     def __eq__(self, y):

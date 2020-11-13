@@ -108,7 +108,7 @@ class PropertiesData(Properties):
             value = value.get_data()
         except AttributeError:
             pass
-
+        
         data[indices] = value
 
     def __add__(self, y):
