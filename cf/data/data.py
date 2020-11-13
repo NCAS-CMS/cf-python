@@ -3378,7 +3378,7 @@ place.
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -14344,7 +14344,7 @@ False
                 mode='dictionary'):
         '''Return a dictionary of Data objects, which are the m dimensional
     sections of this n dimensional Data object, where m <= n. The keys
-    of the dictionary are the indicies of the sections in the original
+    of the dictionary are the indices of the sections in the original
     Data object. The m dimensions that are not sliced are marked with
     None as a placeholder making it possible to reconstruct the
     original data object. The corresponding values are the resulting

@@ -3407,7 +3407,7 @@ class PropertiesData(Properties):
         exact: `bool`, optional
             If False then a match occurs if the construct's units are
             equivalent to any of those given by *units*. For example,
-            metres and are equivelent to kilometres. By default, a
+            metres and are equivalent to kilometres. By default, a
             match only occurs if the construct's units are exactly one
             of those given by *units*. Note that the format of the
             units is not important, i.e. 'm' is exactly the same as

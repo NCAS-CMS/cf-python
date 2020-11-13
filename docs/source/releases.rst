@@ -113,7 +113,7 @@ This indicates which version of the CF conventions are represented by
 this release of the cf package, and therefore the version can not be
 changed.
 
-The version identifier of the cf package is indpependent of the CF
+The version identifier of the cf package is independent of the CF
 version , and is found in the ususal manner:
 
 .. code-block:: python

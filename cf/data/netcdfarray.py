@@ -32,7 +32,7 @@ class NetCDFArray(cfdm.NetCDFArray,
             Specify the netCDF4 group to which the netCDF variable
             belongs. By default, or if *group* is `None` or an empty
             sequence, it assumed to be in the root group. The last
-            element in the sequence isw the name of the group in which
+            element in the sequence is the name of the group in which
             the variable lies, with other elements naming any parent
             groups (excluding the root group).
 

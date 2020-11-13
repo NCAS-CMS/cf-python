@@ -2088,7 +2088,7 @@ class PropertiesDataBounds(PropertiesData):
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    Corresponding axes exapnded in the bounds, if present.
+    Corresponding axes expanded in the bounds, if present.
 
     **Cyclic axes**
 

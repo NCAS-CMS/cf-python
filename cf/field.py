@@ -8185,7 +8185,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8468,7 +8468,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8575,8 +8575,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='coordinatereference1'``
@@ -12252,7 +12252,7 @@ class Field(mixin.PropertiesData,
     >>> indices = q.indices(X=112.5)
     >>> print(indices)
     (slice(0, 5, 1), slice(2, 3, 1))
-    >>> q[indicies]
+    >>> q[indices]
     <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
     >>> q.indices(X=112.5, latitude=cf.gt(-60))
     (slice(1, 5, 1), slice(2, 3, 1))
@@ -13496,7 +13496,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               For a window size of 5, if ``origin=0`` then the window
               is centred on each point. If ``origin=-2`` then the
-              window is shifted to inclued the previous four
+              window is shifted to include the previous four
               points. If ``origin=1`` then the window is shifted to
               include the previous point and the and the next three
               points.
@@ -13830,7 +13830,7 @@ class Field(mixin.PropertiesData,
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -15842,7 +15842,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -16515,7 +16515,7 @@ class Field(mixin.PropertiesData,
     spanned by the data are either inferred, or specified with the
     *axes* parameter.
 
-    For a dimension coordinate construct, an exisiting dimension
+    For a dimension coordinate construct, an existing dimension
     coordinate construct is discarded if it spans the same domain axis
     construct (since only one dimension coordinate construct can be
     associated with a given domain axis construct).
@@ -16534,8 +16534,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``
@@ -18414,7 +18414,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -18555,7 +18555,7 @@ class Field(mixin.PropertiesData,
     especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
-    boundaries are not known nor inferrable. Higher order patch
+    boundaries are not known nor inferable. Higher order patch
     recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
@@ -19222,7 +19222,7 @@ class Field(mixin.PropertiesData,
     coarser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
-    known nor inferrable. Higher order patch recovery is available as
+    known nor inferable. Higher order patch recovery is available as
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than

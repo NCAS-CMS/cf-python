@@ -1160,7 +1160,7 @@ class FieldList(list,
         exact: `bool`, optional
             If `False` then select field constructs whose units are
             equivalent to any of those given by *units*. For example,
-            metres and are equivelent to kilometres. By default, field
+            metres and are equivalent to kilometres. By default, field
             constructs whose units are exactly one of those given by
             *units* are selected. Note that the format of the units is
             not important, i.e. 'm' is exactly the same as 'metres'

@@ -1423,7 +1423,7 @@ def aggregate(fields,
             Specify a property with which to identify field constructs
             instead of any other technique. How metadata constructs
             are identified is not affected by this parameter. See the
-            *relaxed_identites* and *ncvar_identities* parameters.
+            *relaxed_identities* and *ncvar_identities* parameters.
 
             *Parameter example:*
               Force field constructs to be identified by the values of

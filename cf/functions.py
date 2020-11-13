@@ -2622,7 +2622,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
     dimensions, where m <= n.
 
     In the case of a `Data` object, the keys of the dictionary are the
-    indicies of the sections in the original Data object. The m
+    indices of the sections in the original Data object. The m
     dimensions that are not sliced are marked with `None` as a
     placeholder making it possible to reconstruct the original data
     object. The corresponding values are the resulting sections of
