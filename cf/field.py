@@ -6702,6 +6702,18 @@ class Field(mixin.PropertiesData,
                 else:
                     axes.append(weights)
             else:
+                # In rare edge cases, e.g. if a user sets:
+                #     weights=f[0].cell_area
+                # when they mean weights=f[0].cell_area(), we reach this
+                # code but weights is not iterable. So check it is first:
+                try:
+                    weights = iter(weights)
+                except TypeError:
+                    raise TypeError(
+                        "Invalid type of 'weights' parameter: {}".format(
+                            weights)
+                    )
+
                 for w in tuple(weights):
                     if isinstance(w, self.__class__):
                         fields.append(w)
