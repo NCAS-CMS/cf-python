@@ -98,13 +98,20 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
             ):
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has no standard name".format(term, var)
+                    "{!r} term {!r} has no standard name. "
+                    "Expected one of {}".format(
+                        term, var,
+                        ', '.join(repr(x) for x in valid_standard_names)
+                    )
                 )
         elif vsn not in valid_standard_names:
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
                 "{!r} term {!r} has invalid "
-                "standard name: {!r}".format(term, var, vsn)
+                "standard name: {!r}. Expected one of {}".format(
+                    term, var, vsn,
+                    ', '.join(repr(x) for x in valid_standard_names)
+                )
             )
 
         if var.ndim > formula_terms_max_dimensions[standard_name][term]:
@@ -210,7 +217,7 @@ def _coordinate_term(f, standard_name, coordinate_reference,
             )
 
         logger.detail(
-            "  Formula term {!r} (default):\n{}".format(
+            "  Formula term {!r}:\n{}".format(
                 term, var.dump(display=False, _level=1)
             )
         )  # pragma: no cover
@@ -220,7 +227,8 @@ def _coordinate_term(f, standard_name, coordinate_reference,
 
 def _computed_standard_name(f, standard_name, coordinate_reference):
     '''Find the standard name of the computed non-parametric vertical
-    coordinates.
+    coordinates. See Appendix D: Parametric Vertical Coordinates of
+    the CF conventions.
 
     .. versionadded:: 3.8.0
 
@@ -238,9 +246,9 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
 
     :Returns:
 
-        `str`
-            The standard name of the computed vertical coordinate
-            values. See Appendix D of the CF conventions.
+        `str` or `None`
+            The standard name of the computed vertical coordinates, or
+            `None` if one could not be found.
 
     '''
     computed_standard_name = (
@@ -607,7 +615,7 @@ def _check_standard_name_consistency(zlev=(None, None),
             )
         )
 
-    if len(set) > 1:
+    if len(indices) > 1:
         raise ValueError(
             "Terms {} have incompatible standard names. "
             "See Appendix D: Parametric Vertical Coordinates "
@@ -617,10 +625,43 @@ def _check_standard_name_consistency(zlev=(None, None),
         )
 
 
+def _check_index_term(term, var):
+    '''Check that an index term contains a single integer.
+    
+    .. versionadded:: 3.8.0
+
+    :Parameters:
+
+        term: `str`
+            A term of the formula.
+
+            *Parameter example:*
+              ``term='nsigma'``
+
+        eta: `DomainAncillary`
+            The corresponding domain ancillary construct.
+
+    :Returns:
+
+        `None`
+
+    '''
+    if var.size != 1 or var.dtype.kind != 'i':
+        raise ValueError(
+            "Can't calculate non-parametric vertical coordinates: "
+            "{!r} term {!r} doen't contain exactly one "
+            "integer value".format(term, var)
+        )
+
+
 def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
                                       default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    atmosphere_ln_pressure_coordinate parametric coordinates.
+    atmosphere_ln_pressure_coordinate parametric coordinates as
+    described in Appendix D: Parametric Vertical Coordinates of the CF
+    conventions.
+
+    https://cfconventions.org/cf-conventions/cf-conventions.html#atmosphere-natural-log-pressure-coordinate
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -665,32 +706,33 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     '''
     standard_name = 'atmosphere_ln_pressure_coordinate'
 
-    coordinate_conversion = coordinate_reference.coordinate_conversion
-
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_reference)
 
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    lev, lev_key = _coordinate_term(g, standard_name,
+                                    coordinate_reference,
+                                    'lev')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+    
     p0, _ = _domain_ancillary_term(g, standard_name,
                                    coordinate_conversion, 'p0',
                                    default_to_zero, True)
 
-    lev, lev_key = _coordinate_term(g, standard_name,
-                                    coordinate_conversion,
-                                    'lev')
-
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
     k_axis = _vertical_axis(g, lev_key)
-    computed_axes = g.get_data_axes(lev_key) + k_axis
+    computed_axes = k_axis
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(lev.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if lev.has_bounds() else 'AND'
+    )
 
     computed = p0 * (-lev).exp()
 
@@ -703,7 +745,8 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 def atmosphere_sigma_coordinate(g, coordinate_reference,
                                 default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    atmosphere_sigma_coordinate parametric coordinates.
+    atmosphere_sigma_coordinate parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -754,6 +797,12 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    sigma, sigma_key = _coordinate_term(g, standard_name,
+                                        coordinate_reference,
+                                        'sigma')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+
     ptop, _ = _domain_ancillary_term(g, standard_name,
                                      coordinate_conversion, 'ptop',
                                      default_to_zero, True)
@@ -761,10 +810,6 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     ps, ps_key = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion, 'ps',
                                         default_to_zero, True)
-
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_conversion,
-                                        'sigma')
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -780,7 +825,9 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(sigma.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if sigma.has_bounds() else 'AND'
+    )
 
     computed = (ptop
                 + (ps - ptop) * sigma)
@@ -795,8 +842,9 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
                                                 coordinate_reference,
                                                 default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    atmosphere_hybrid_sigma_pressure_coordinate parametric
-    coordinates.
+    atmosphere_hybrid_sigma_pressure_coordinate parametric coordinates
+    as described in Appendix D: Parametric Vertical Coordinates of the
+    CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -847,6 +895,8 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+
     ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
 
     if ap_term:
@@ -890,14 +940,16 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
     if ap_term:
-        old = combine_bounds_with_coordinates(ap.has_bounds()
-                                              and b.has_bounds())
+        old = combine_bounds_with_coordinates(
+            'OR' if ap.has_bounds() and b.has_bounds() else 'AND'
+        )
 
         computed = (ap
                     + b * ps)
     else:
-        old = combine_bounds_with_coordinates(a.has_bounds()
-                                              and b.has_bounds())
+        old = combine_bounds_with_coordinates(
+            'OR' if a.has_bounds() and b.has_bounds() else 'AND'
+        )
 
         computed = (a * p0
                     + b * ps)
@@ -911,7 +963,9 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
                                         default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    atmosphere_hybrid_height_coordinate parametric coordinates.
+    atmosphere_hybrid_height_coordinate parametric coordinates as
+    described in Appendix D: Parametric Vertical Coordinates of the CF
+    conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -956,14 +1010,14 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     '''
     standard_name = 'atmosphere_hybrid_height_coordinate'
 
-    coordinate_conversion = coordinate_reference.coordinate_conversion
-
     computed_standard_name = _computed_standard_name(g, standard_name,
                                                      coordinate_reference)
 
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'a',
                                       default_to_zero, True)
@@ -991,8 +1045,9 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(a.has_bounds()
-                                          and b.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if a.has_bounds() and b.has_bounds() else 'AND'
+    )
 
     computed = (a
                 + b * orog)
@@ -1006,7 +1061,8 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 def atmosphere_sleve_coordinate(g, coordinate_reference,
                                 default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    atmosphere_sleve_coordinate parametric coordinates.
+    atmosphere_sleve_coordinate parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1057,6 +1113,8 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'a',
                                       default_to_zero, True)
@@ -1075,11 +1133,15 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     zsurf1, zsurf1_key = _domain_ancillary_term(g, standard_name,
                                                 coordinate_conversion,
-                                                'zsurf1', False)
+                                                'zsurf1',
+                                                default_to_zero,
+                                                False)
 
     zsurf2, zsurf2_key = _domain_ancillary_term(g, standard_name,
                                                 coordinate_conversion,
-                                                'zsurf2', False)
+                                                'zsurf2',
+                                                default_to_zero,
+                                                False)
 
     # Make sure that zsurf1 and zsurf2 have the same number of axes
     # and the same axis order
@@ -1120,9 +1182,10 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(a.has_bounds()
-                                          and b1.has_bounds()
-                                          and b2.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
+        else 'AND'
+    )
 
     computed = (a * ztop
                 + b1 * zsurf1
@@ -1136,7 +1199,8 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
 def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    ocean_sigma_coordinate parametric coordinates.
+    ocean_sigma_coordinate parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1155,9 +1219,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
 
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
-            value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D: Parametric Vertical
-            Coordinates of the CF conventions.
+            value of zero.
 
     :Returns:
 
@@ -1187,18 +1249,21 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
+    sigma, sigma_key = _coordinate_term(g, standard_name,
+                                        coordinate_reference,
+                                        'sigma')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
+
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
-                                          'eta', False)
+                                          'eta', default_to_zero,
+                                          False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
                                               default_to_zero, False)
-
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_conversion,
-                                        'sigma')
 
     _check_standard_name_consistency(eta=(eta, eta_key),
                                      depth=(depth, depth_key))
@@ -1222,7 +1287,9 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(sigma.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if sigma.has_bounds() else 'AND'
+    )
 
     computed = (eta
                 + (eta + depth) * sigma)
@@ -1235,7 +1302,8 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
 
 def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     '''Compute non-parametric vertical coordinates from ocean_s_coordinate
-    parametric coordinates.
+    parametric coordinates as described in Appendix D: Parametric
+    Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1254,9 +1322,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
 
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
-            value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D: Parametric Vertical
-            Coordinates of the CF conventions.
+            value of zero.
 
     :Returns:
 
@@ -1287,7 +1353,9 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
     s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_conversion, 's')
+                                coordinate_reference, 's')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
@@ -1321,7 +1389,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, s_key, C_key)
+    k_axis = _vertical_axis(g, s_key)
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1334,7 +1402,9 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(s.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if s.has_bounds() else 'AND'
+    )
 
     # Ensure that a has the same units as s
     a = _conform_units('a', a, 's', s.Units)
@@ -1358,7 +1428,8 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
 
 def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    ocean_s_coordinate_g1 parametric coordinates.
+    ocean_s_coordinate_g1 parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1410,7 +1481,9 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
     s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_conversion, 's')
+                                coordinate_reference, 's')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
 
     C, C_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'C',
@@ -1418,7 +1491,8 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
-                                          'eta', False)
+                                          'eta', default_to_zero,
+                                          False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
@@ -1452,8 +1526,9 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(s.has_bounds()
-                                          and C.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if s.has_bounds() and C.has_bounds() else 'AND'
+    )
 
     S = (depth_c * s
          + (depth - depth_c) * C)
@@ -1469,7 +1544,8 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
 
 def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    ocean_s_coordinate_g2 parametric coordinates.
+    ocean_s_coordinate_g2 parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1521,11 +1597,14 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
     s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_conversion, 's')
+                                coordinate_reference, 's')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
-                                          'eta', False)
+                                          'eta', default_to_zero,
+                                          False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
@@ -1563,8 +1642,9 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(s.has_bounds()
-                                          and C.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if s.has_bounds() and C.has_bounds() else 'AND'
+    )
 
     S = (
         (depth_c * s
@@ -1583,7 +1663,8 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
 
 def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    ocean_sigma_z_coordinate parametric coordinates.
+    ocean_sigma_z_coordinate parametric coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1635,12 +1716,15 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
     sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_conversion,
+                                        coordinate_reference,
                                         'sigma')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
-                                          'eta', False)
+                                          'eta', default_to_zero,
+                                          False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
@@ -1672,7 +1756,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, s_key, zlev_key)
+    k_axis = _vertical_axis(g, sigma_key, zlev_key)
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1681,6 +1765,8 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
         eta = eta.insert_dimension(-1)
         depth = depth.insert_dimension(-1)
 
+    _check_index_term('nsigma', nsigma)
+                
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
@@ -1688,15 +1774,16 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     # Note: This isn't overly efficient, because we do calculations
     #       for k>nsigma and then overwrite them.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(zlev.has_bounds()
-                                          and sigma.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if zlev.has_bounds() and sigma.has_bounds() else 'AND'
+    )
 
     computed = (
         eta
         + (depth.where(depth > depth_c, depth_c) + eta) * sigma
     )
 
-    nsigma = int(nsigma.item())
+    nsigma = int(nsigma.data)
     computed[..., nsigma:] = zlev[nsigma:]
 
     combine_bounds_with_coordinates(old)
@@ -1708,7 +1795,9 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
 def ocean_double_sigma_coordinate(g, coordinate_reference,
                                   default_to_zero):
     '''Compute non-parametric vertical coordinates from
-    ocean_double_sigma_coordinate parametric coordinates.
+    ocean_double_sigma_coordinate parametric coordinates as described
+    in Appendix D: Parametric Vertical Coordinates of the CF
+    conventions.
 
     .. note:: The vertical axis is the last (rightmost) dimension of
               the returned computed non-parametric vertical
@@ -1760,8 +1849,10 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
     sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_conversion,
+                                        coordinate_reference,
                                         'sigma')
+
+    coordinate_conversion = coordinate_reference.coordinate_conversion
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
@@ -1798,6 +1889,8 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     if k_axis:
         depth = depth.insert_dimension(-1)
 
+    _check_index_term('k_c', k_c)
+        
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
@@ -1805,7 +1898,9 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     # Note: This isn't overly efficient, because we do calculations
     #       for k<=k_c and then overwrite them.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(sigma.has_bounds())
+    old = combine_bounds_with_coordinates(
+        'OR' if sigma.has_bounds() else 'AND'
+    )
 
     # Ensure that a, z1, z2, and href all have the same units as depth
     a = _conform_units('a', a, 'depth', depth.Units)
@@ -1824,9 +1919,10 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     computed = f * sigma
 
-    k_c = int(k_c.item())
-    computed[..., k_c:] = (f
-                           + (sigma - 1) * (depth - f))
+    k_c1 = int(k_c.data) + 1
+    
+    computed[..., k_c1:] = (f
+                           + (depth - f) * (sigma[k_c1:] - 1))
 
     combine_bounds_with_coordinates(old)
 
@@ -1855,15 +1951,15 @@ _formula_functions = {
 
 
 def formula(f, coordinate_reference, default_to_zero=True):
-    '''Compute non-parametric vertical coordinates.
+    '''Compute non-parametric vertical coordinates as described in
+    Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
     Dimensional vertical auxiliary coordinate values are computed from
     parametric vertical coordinate values (usually dimensionless) and
     associated domain ancillary constructs, as defined by the formula
     stored in a coordinate reference construct.
 
-    See the "Parametric Vertical Coordinate" sections of the CF
-    conventions for more details.
+    https://cfconventions.org/cf-conventions/cf-conventions.html#parametric-v-coord
 
     .. versionadded:: 3.8.0
 
@@ -1938,7 +2034,8 @@ def formula(f, coordinate_reference, default_to_zero=True):
             # (rightmost) dimension, if applicable.
             # --------------------------------------------------------
             computed, computed_axes = _conform_computed(f, computed,
-                                                        computed_axes, k_axis)
+                                                        computed_axes,
+                                                        k_axis)
 
             return (standard_name, computed_standard_name, computed,
                     computed_axes, k_axis)

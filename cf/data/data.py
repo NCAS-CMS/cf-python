@@ -13290,14 +13290,24 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         if base is None:
-            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
         elif base == 10:
-            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+            d.func(numpy_log10, units=_units_1, inplace=True)
         elif base == 2:
-            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+            d.func(numpy_log2, units=_units_1, inplace=True)
         else:
-            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
             d /= numpy_log(base)
+
+#        if base is None:
+#            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+#        elif base == 10:
+#            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+#        elif base == 2:
+#            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+#        else:
+#            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+#            d /= numpy_log(base)
 
         return d
 
