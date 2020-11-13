@@ -9305,7 +9305,7 @@ False
         '''Collapse axes with their mean.
 
     The mean is unweighted by default, but may be weighted (see the
-    *weights* parmaeter).
+    *weights* parameter).
 
     Missing data array elements and their corresponding weights
     are omitted from the calculation.
@@ -11689,7 +11689,7 @@ False
                 * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.
 
               If *index* is ``0`` or ``-1`` then the first or last data
-              array element respecitively will be returned, even if the
+              array element respectively will be returned, even if the
               data array is a scalar array.
 
             * Two or more integers. These arguments are interpreted as a

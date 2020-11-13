@@ -2796,7 +2796,7 @@ class PropertiesData(Properties):
                     * ``f.datum(16)`` is equivalent to ``f.datum(0, 2, 4)``.
 
                 If *index* is ``0`` or ``-1`` then the first or last
-                data array element respecitively will be returned,
+                data array element respectively will be returned,
                 even if the data array is a scalar array or has two or
                 more dimensions.  ..
 

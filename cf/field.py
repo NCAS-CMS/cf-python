@@ -8593,7 +8593,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `str`
-            The construct identifier for the coordinate refernece
+            The construct identifier for the coordinate reference
             construct.
 
         '''
@@ -9366,7 +9366,7 @@ class Field(mixin.PropertiesData,
                              the first axis element (or its coordinate
                              if there are no bounds) and spans the
                              defined group size. Each susbsequent
-                             group immediately follows the preceeeding
+                             group immediately follows the preceding
                              one. By default each group contains the
                              consective run of elements whose
                              coordinate values lie within the group
@@ -9390,7 +9390,7 @@ class Field(mixin.PropertiesData,
                              coordinate if there are no bounds) and
                              spans the defined group size. Each
                              susbsequent group immediately follows the
-                             preceeeding one. By default each group
+                             preceding one. By default each group
                              contains the consective run of elements
                              whose coordinate values lie within the
                              group limits (see the *group_by*
@@ -9441,7 +9441,7 @@ class Field(mixin.PropertiesData,
                              starts with the first axis element and
                              spans the defined number of consecutive
                              elements. Each susbsequent group
-                             immediately follows the preceeeding one.
+                             immediately follows the preceding one.
 
                              * By default each group has the defined
                                number of elements, apart from the last
@@ -9727,7 +9727,7 @@ class Field(mixin.PropertiesData,
                             coordinate if there are no bounds) and
                             spans the defined group size. Each
                             susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -9814,7 +9814,7 @@ class Field(mixin.PropertiesData,
                             (or its coordinate if there are no bounds)
                             and spans the defined group size. Each
                             susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -12001,7 +12001,7 @@ class Field(mixin.PropertiesData,
             `domain_axis` method: ``f.domain_axis(identity)``.
 
         axes: deprecated at version 3.0.0
-            Use the *identity* parmeter instead.
+            Use the *identity* parameter instead.
 
         size:  deprecated at version 3.0.0
 
@@ -14930,7 +14930,7 @@ class Field(mixin.PropertiesData,
     order.
 
     By default metadata constructs are not transposed, but they may be
-    if the *constructs* parmeter is set.
+    if the *constructs* parameter is set.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `squeeze`, `unsqueeze`
@@ -17072,7 +17072,7 @@ class Field(mixin.PropertiesData,
     percentile rank.
 
     The output field construct has a new dimension coordinate
-    construct that records the precentile ranks represented by its
+    construct that records the percentile ranks represented by its
     data.
 
     .. versionadded:: 3.0.4
