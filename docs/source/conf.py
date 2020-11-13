@@ -102,8 +102,14 @@ extensions = [
     # 'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
     'sphinx_copybutton',
     'sphinx_toggleprompt',
+    'sphinxcontrib.spelling',
 ]
 
+
+# Spelling extension configuration: set British English and false positives
+spelling_lang='en_GB'
+tokenizer_lang='en_GB'
+spelling_word_list_filename='spelling_false_positives.txt'
 
 # Boolean indicating whether to scan all found documents for
 # autosummary directives, and to generate stub pages for each
