@@ -563,7 +563,7 @@ def log_level(*log_level):
 
     For example, when set to ``'WARNING'`` (or equivalently ``1``),
     all messages categorised as ``'DEBUG'`` or ``'INFO'`` will be
-    supressed, and only warnings will emerge.
+    suppressed, and only warnings will emerge.
 
     See https://ncas-cms.github.io/cf-python/tutorial.html#logging for
     a detailed breakdown on the levels and configuration possibilities.

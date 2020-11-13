@@ -14229,7 +14229,7 @@ False
             corresponding data-like value of weights for those
             axes. In this case, the implied weights array is the outer
             product of the dictionary's values it may be used in
-            conjunction wih any value of *axes*, because the axes to
+            conjunction with any value of *axes*, because the axes to
             which the weights apply are given explicitly.
 
             *Parameter example:*
@@ -14352,7 +14352,7 @@ False
 
     :Parameters:
 
-        axes: (seqeunce of) `int`
+        axes: (sequence of) `int`
             This is should be one or more integers of the m indices of
             the m axes that define the sections of the `Data`
             object. If axes is `None` (the default) or an empty

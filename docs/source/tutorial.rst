@@ -5463,7 +5463,7 @@ setting the *group* keyword to `cf.write` to `False`.
    >>> cf.write(g, 'flat.nc', group=False)
 
 NetCDF variables in the flattened output file will inherit any netCDF
-group attributes, providing that they are not superceded by variable
+group attributes, providing that they are not superseded by variable
 attributes. The output netCDF variable and dimension names will be
 taken as the basenames of any that have been pre-defined. This is the
 case in file ``flat.nc``, for which the netCDF variable ``q`` has

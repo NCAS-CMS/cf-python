@@ -494,7 +494,7 @@ class FieldList(list,
     possible with another field list, or a subclass of one. See the
     *ignore_type* parameter.
 
-    Equality is between teo field constructs is strict by
+    Equality is between two field constructs is strict by
     default. This means that for two field constructs to be considered
     equal they must have corresponding metadata constructs and for
     each pair of constructs:

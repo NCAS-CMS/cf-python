@@ -9365,7 +9365,7 @@ class Field(mixin.PropertiesData,
                              starts at the first coordinate bound of
                              the first axis element (or its coordinate
                              if there are no bounds) and spans the
-                             defined group size. Each susbsequent
+                             defined group size. Each subsequent
                              group immediately follows the preceding
                              one. By default each group contains the
                              consective run of elements whose
@@ -9389,7 +9389,7 @@ class Field(mixin.PropertiesData,
                              bound of the first axis element (or its
                              coordinate if there are no bounds) and
                              spans the defined group size. Each
-                             susbsequent group immediately follows the
+                             subsequent group immediately follows the
                              preceding one. By default each group
                              contains the consective run of elements
                              whose coordinate values lie within the
@@ -9440,7 +9440,7 @@ class Field(mixin.PropertiesData,
                              number of elements. The first group
                              starts with the first axis element and
                              spans the defined number of consecutive
-                             elements. Each susbsequent group
+                             elements. Each subsequent group
                              immediately follows the preceding one.
 
                              * By default each group has the defined
@@ -9726,7 +9726,7 @@ class Field(mixin.PropertiesData,
                             bound of the first axis element (or its
                             coordinate if there are no bounds) and
                             spans the defined group size. Each
-                            susbsequent group immediately follows the
+                            subsequent group immediately follows the
                             preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
@@ -9813,7 +9813,7 @@ class Field(mixin.PropertiesData,
                             coordinate bound of the first axis element
                             (or its coordinate if there are no bounds)
                             and spans the defined group size. Each
-                            susbsequent group immediately follows the
+                            subsequent group immediately follows the
                             preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
@@ -9956,7 +9956,7 @@ class Field(mixin.PropertiesData,
               `cf.D` and `cf.h`).
 
             *Parameter example:*
-              To define groups that each spann 3 calendar months,
+              To define groups that each span 3 calendar months,
               starting and ending at 06:00 in the first day of each
               month: ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
 
@@ -13157,7 +13157,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the field construct contains the specfied
+            Whether or not the field construct contains the specified
             metadata constructs.
 
     **Examples:**
@@ -13759,7 +13759,7 @@ class Field(mixin.PropertiesData,
               with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
             Note that the `scipy.signal.windows` package has suite of
-            window functions for creating wondow weights for filtering
+            window functions for creating window weights for filtering
             (see the examples for details).
 
             .. versionadded:: 3.3.0 (replaces the old weights
@@ -16738,7 +16738,7 @@ class Field(mixin.PropertiesData,
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    The metadata constructs are similary extended where appropriate.
+    The metadata constructs are similarly extended where appropriate.
 
     **Cyclic axes**
 
@@ -18455,7 +18455,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `set`
-            The identifiers of the domain axis constructs that san
+            The identifiers of the domain axis constructs that span
             the data of all coordinate and domain ancillary constructs
             used by the selected coordinate reference construct.
 
