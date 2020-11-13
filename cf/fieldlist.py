@@ -46,7 +46,7 @@ class FieldList(list,
 
     These methods provide functionality similar to that of a
     :ref:`built-in list <python:tut-morelists>`. The main difference
-    is that when a field element needs to be assesed for equality its
+    is that when a field element needs to be assessed for equality its
     `~cf.Field.equals` method is used, rather than the ``==``
     operator.
 

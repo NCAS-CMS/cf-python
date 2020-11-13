@@ -2790,7 +2790,7 @@ class PropertiesData(Properties):
                 and return.
 
                 *Parameter example:*
-                  If the data aray shape is ``(2, 3, 6)`` then:
+                  If the data array shape is ``(2, 3, 6)`` then:
                     * ``f.datum(0)``  is equivalent to ``f.datum(0, 0, 0)``.
                     * ``f.datum(-1)`` is equivalent to ``f.datum(1, 2, 5)``.
                     * ``f.datum(16)`` is equivalent to ``f.datum(0, 2, 4)``.
@@ -2939,7 +2939,7 @@ class PropertiesData(Properties):
             If True then any compression applied to the underlying
             arrays is ignored and only the uncompressed arrays are
             tested for equality. By default the compression type and,
-            if appliciable, the underlying compressed arrays must be
+            if applicable, the underlying compressed arrays must be
             the same, as well as the arrays in their uncompressed
             forms.
 

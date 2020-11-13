@@ -7001,7 +7001,7 @@ dimensions.
     # ----------------------------------------------------------------
     @property
     def Units(self):
-        '''The `cf.Units` object aining the units of the data array.
+        '''The `cf.Units` object containing the units of the data array.
 
     Deleting this attribute is equivalent to setting it to an
     undefined units object, so this attribute is guaranteed to always
@@ -11683,7 +11683,7 @@ False
               return.
 
               *Parameter example:*
-                If the data aray shape is ``(2, 3, 6)`` then:
+                If the data array shape is ``(2, 3, 6)`` then:
                 * ``d.datum(0)`` is equivalent to ``d.datum(0, 0, 0)``.
                 * ``d.datum(-1)`` is equivalent to ``d.datum(1, 2, 5)``.
                 * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.

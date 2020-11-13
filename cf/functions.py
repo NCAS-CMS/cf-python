@@ -719,7 +719,7 @@ def set_performance(chunksize=None, free_memory_factor=None):
     memory factor is changed first and then the chunksize is set
     provided it is consistent with the new free memory value. If any
     of the arguments is invalid then an error is raised and no
-    parameters are changed. When called with no aruments the existing
+    parameters are changed. When called with no arguments the existing
     values of the parameters are returned in a tuple.
 
     :Parameters:
@@ -2246,7 +2246,7 @@ def abspath(filename):
 
         `str`
 
-            The normalized absolutized version of *filename*, or
+            The normalized absolutised version of *filename*, or
             `None`.
 
     **Examples:**

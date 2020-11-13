@@ -6461,7 +6461,7 @@ class Field(mixin.PropertiesData,
             identify each dimension of the given weights. If the
             weights do not broadcast to the field construct's data
             then setting the *axes* parameter is required so that the
-            braodcasting can be inferred, otherwise setting the *axes*
+            broadcasting can be inferred, otherwise setting the *axes*
             is not required.
 
             *Parameter example:*
@@ -18350,7 +18350,7 @@ class Field(mixin.PropertiesData,
 
         `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field. If the ``'test'`` positional argumnt
+            the original field. If the ``'test'`` positional argument
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
