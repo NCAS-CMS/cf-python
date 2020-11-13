@@ -59,7 +59,7 @@ class Bounds(mixin.Coordinate,
     variables with bounds to be contiguous, but size 1 variables with
     any number of dimensions are always contiguous.
 
-    An exception is raised if the variable is multdimensional and has
+    An exception is raised if the variable is multidimensional and has
     more than one element.
 
     .. versionadded:: 2.0

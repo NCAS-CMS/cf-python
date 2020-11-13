@@ -214,7 +214,7 @@ def configuration(
     * `min_total_memory`
 
     These are all constants that apply throughout `cf`, except for in
-    specific functions only if overriden by the corresponding keyword
+    specific functions only if overridden by the corresponding keyword
     argument to that function.
 
     The value of `None`, either taken by default or supplied as a value,

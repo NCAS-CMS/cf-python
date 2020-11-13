@@ -1450,7 +1450,7 @@ class PropertiesDataBounds(PropertiesData):
     construct with bounds to be contiguous. A size 1 construct with
     any number of dimensions is always contiguous.
 
-    An exception occurs if the construct is multdimensional and has
+    An exception occurs if the construct is multidimensional and has
     more than one element.
 
     .. versionadded:: 2.0
@@ -2981,7 +2981,7 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         base: number, optional
-            The base of the logiarthm. By default a natural logiarithm
+            The base of the logarithm. By default a natural logarithm
             is taken.
 
         bounds: `bool`, optional

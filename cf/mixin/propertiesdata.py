@@ -3479,7 +3479,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `bool`
-            Whether ot not all data elements evaluate to True.
+            Whether to not all data elements evaluate to True.
 
     **Examples:**
 
@@ -3574,7 +3574,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `bool`
-            Whether ot not any data elements evaluate to `True`.
+            Whether to not any data elements evaluate to `True`.
 
     **Examples:**
 
@@ -4405,7 +4405,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         base: number, optional
-            The base of the logiarthm. By default a natural logiarithm
+            The base of the logarithm. By default a natural logarithm
             is taken.
 
         {{inplace: `bool`, optional}}

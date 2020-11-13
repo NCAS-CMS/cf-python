@@ -3344,7 +3344,7 @@ class Field(mixin.PropertiesData,
             A sequence of axis keys.
 
         coord_keys: sequence
-            A sequence of keys for each ot the N-D auxiliary
+            A sequence of keys for each to the N-D auxiliary
             coordinates.
 
     :Returns:
@@ -6245,7 +6245,7 @@ class Field(mixin.PropertiesData,
     (such as coordinate cell sizes) or provided explicitly in the form
     of other `Field` constructs. In any case, the outer product of
     these weights components is returned in a field which is
-    broadcastable to the orginal field (see the *components* parameter
+    broadcastable to the original field (see the *components* parameter
     for returning the components individually).
 
     By default null, equal weights are returned.
@@ -6306,7 +6306,7 @@ class Field(mixin.PropertiesData,
 
                           and the outer product of these weights
                           components is returned in a field constructs
-                          which is broadcastable to the orginal field
+                          which is broadcastable to the original field
                           construct (see the *components* parameter).
               ==========  ============================================
 
@@ -6401,7 +6401,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -7525,7 +7525,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -8067,7 +8067,7 @@ class Field(mixin.PropertiesData,
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data, nor the field
+    be spanned by any metadata construct data, nor the field
     construct's data; nor be referenced by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is
@@ -8708,7 +8708,7 @@ class Field(mixin.PropertiesData,
 
     ``'minimum'``                 The minimum of the values.
 
-    ``'maximum_absolute_value'``  The maximi  of the absolute
+    ``'maximum_absolute_value'``  The maximum of the absolute
                                   values.
 
     ``'minimum_absolute_value'``  The minimum of the absolute
@@ -8856,7 +8856,7 @@ class Field(mixin.PropertiesData,
     element. For example, creating 12 annual means from a timeseries
     of 120 months would be a grouped collapse.
 
-    Selected statistics for overalapping groups can be calculated with
+    Selected statistics for overlapping groups can be calculated with
     the `moving_window` method.
 
     The *group* keyword defines the size of the groups. Groups can be
@@ -9230,7 +9230,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -9343,7 +9343,7 @@ class Field(mixin.PropertiesData,
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
-            is partitioned into non-overalpping groups and each group
+            is partitioned into non-overlapping groups and each group
             is collapsed to size 1, independently of the other
             groups. The results of the collapses are concatenated so
             that the output axis has a size equal to the number of
@@ -9625,7 +9625,7 @@ class Field(mixin.PropertiesData,
 
             `False`         Collapse all groups, regardless of their
                             size. This is the default if the groups
-                            are defined by one ot more `Query`
+                            are defined by one to more `Query`
                             objects.
 
             `Data`          Ignore groups whose span is not equal to
