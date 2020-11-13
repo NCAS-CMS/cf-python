@@ -536,7 +536,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         strict: `bool`, optional
             If True then coordinate or domain ancillary identifiers
-            not set in the *identity_map* dictiontary are set to
+            not set in the *identity_map* dictionary are set to
             `None`. By default they are left unchanged.
 
         i: `bool`, optional

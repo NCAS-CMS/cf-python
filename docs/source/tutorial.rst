@@ -3625,7 +3625,7 @@ Constructor    Description
 `cf.son`       A `cf.Query` object for a "month of year in September, October, November" condition
 `cf.djf`       A `cf.Query` object for a "month of year in December, January, February" condition
 `cf.mam`       A `cf.Query` object for a "month of year in March, April, May" condition
-`cf.seasons`   A customizable list of `cf.Query` objects for "seasons in a year" conditions
+`cf.seasons`   A customisable list of `cf.Query` objects for "seasons in a year" conditions
 =============  ===================================================================================
 
 |

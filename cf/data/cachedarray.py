@@ -21,7 +21,7 @@ class CachedArray(abstract.FileArray):
     '''A indexable N-dimensional array supporting masked values.
 
     The array is stored on disk in a temporary file until it is
-    accessed. The directory containing the temporary file may be found
+    accessed. The directoty containing the temporary file may be found
     and set with the `cf.tempdir` function.
 
     '''

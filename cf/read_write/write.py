@@ -120,7 +120,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             parameter expansions are applied to the string.
 
             *Parameter example:*
-              The file file.nc in the user’s home directory could be
+              The file file.nc in the user’s home directoty could be
               described by any of the following: '``$HOME/file.nc'``,
               ``'${HOME}/file.nc'``, ``'~/file.nc'``,
               ``'~/tmp/../file.nc'``.
@@ -321,12 +321,12 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
                         * If set to an empty string then file names
                           within CFA-netCDF files are given relative to
-                          the directory or URL base containing the
+                          the directoty or URL base containing the
                           output CFA-netCDF file.
 
                         * If set to a string then file names within
                           CFA-netCDF files are given relative to the
-                          directory or URL base described by the
+                          directoty or URL base described by the
                           value. For example: ``'../archive'``.
             ==========  ===============================================
 

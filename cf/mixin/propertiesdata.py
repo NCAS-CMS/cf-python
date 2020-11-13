@@ -2449,7 +2449,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `{{class}}` or `None`
-            The construct with ceilinged of data. If the operation was
+            The construct with the ceiling of the data. If the operation was
             in-place then `None` is returned.
 
     **Examples:**
@@ -4972,7 +4972,7 @@ class PropertiesData(Properties):
         else:
             if not v.Units.isreftime:
                 raise ValueError(
-                    "Can't override the calender of non-reference-time "
+                    "Can't override the calendar of non-reference-time "
                     "units: {0!r}".format(self.Units)
                 )
 

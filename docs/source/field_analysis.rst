@@ -1256,7 +1256,7 @@ Second-order conservative    Second-order conservative
 			     
                              As with first order (see above),
                              preserves the area integral of the field
-                             between source and destinatio using a
+                             between source and destination using a
                              weighted sum, with weights based on the
                              proportionate area of intersection.
                        	     

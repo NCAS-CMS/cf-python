@@ -1040,7 +1040,7 @@ class PropertiesDataBounds(PropertiesData):
     :Returns:
 
         `{{class}}` or `None`
-            The construct with ceilinged of data. If the operation was
+            The construct with the ceiling of the data. If the operation was
             in-place then `None` is returned.
 
     **Examples:**

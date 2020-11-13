@@ -1843,7 +1843,7 @@ def mam():
 
 
 def seasons(n=4, start=12):
-    '''A customizable list of `Query` objects for "seasons in a year"
+    '''A customisable list of `Query` objects for "seasons in a year"
     conditions.
 
     Note that any date-time that lies within a particular season will

@@ -142,7 +142,7 @@ def read(files, external=None, verbose=None, warnings=False,
 
         files: (arbitrarily nested sequence of) `str`
             A string or arbitrarily nested sequence of strings giving
-            the file names, directory names, or OPenDAP URLs from
+            the file names, directoty names, or OPenDAP URLs from
             which to read field constructs. Various type of expansion
             are applied to the names:
 
@@ -170,12 +170,12 @@ def read(files, external=None, verbose=None, warnings=False,
             table.
 
             *Parameter example:*
-              The file ``file.nc`` in the user's home directory could
+              The file ``file.nc`` in the user's home directoty could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
               ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
 
-            When a directory is specified, all files in that directory
+            When a directoty is specified, all files in that directory
             are read. Sub-directories are not read unless the
             *recursive* parameter is True. If any directories contain
             files that are not valid datasets then an exception will
@@ -338,7 +338,7 @@ def read(files, external=None, verbose=None, warnings=False,
 
             Note that setting ``recursive=True, followlinks=True`` can
             lead to infinite recursion if a symbolic link points to a
-            parent directory of itself.
+            parent directoty of itself.
 
             This parameter replaces the deprecated *follow_symlinks*
             parameter.

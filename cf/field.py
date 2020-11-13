@@ -12010,7 +12010,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the domein axis is increasing.
+            Whether or not the domain axis is increasing.
 
     **Examples:**
 
@@ -16338,7 +16338,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `int`
-            The position in the field construct's dat of the selected
+            The position in the field construct's data of the selected
             domain axis construct.
 
     **Examples:**
@@ -18706,7 +18706,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -19336,7 +19336,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.

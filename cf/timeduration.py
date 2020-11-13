@@ -51,7 +51,7 @@ class TimeDuration:
     '''A duration of time.
 
     The duration of time is a number of either calendar years,
-    calender months, days, hours, minutes or seconds.
+    calendar months, days, hours, minutes or seconds.
 
     A calendar year (or month) is an arbitrary year (or month) in an
     arbitrary calendar. A calendar is as part of the time duration,

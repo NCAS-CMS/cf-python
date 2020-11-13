@@ -2154,7 +2154,7 @@ place.
         axis: int, optional
             The axis along which the difference is taken. By default
             the last axis is used. The *axis* argument is an integer
-            that selects the axis coresponding to the given position
+            that selects the axis corresponding to the given position
             in the list of axes of the data array.
 
         n: int, optional
@@ -11521,7 +11521,7 @@ False
 
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't override the calender of non-reference-time "
+                "Can't override the calendar of non-reference-time "
                 "units: {0!r}".format(self.Units)
             )
 

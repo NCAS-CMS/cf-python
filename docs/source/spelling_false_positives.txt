@@ -127,6 +127,7 @@ dt
 dtarray
 dtvarray
 dtype
+dumpd
 durations
 El
 endian
