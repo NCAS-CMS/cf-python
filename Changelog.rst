@@ -12,7 +12,9 @@ version 3.8.0
   have bounds (https://github.com/NCAS-CMS/cf-python/issues/148)
 * New method: `cf.Field.compute_vertical_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/142)
-
+* Fixed bug that prevented the verbosity from changing to any value
+  specified as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+  
 version 3.7.0
 -------------
 ----
