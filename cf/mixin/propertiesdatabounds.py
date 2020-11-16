@@ -158,6 +158,31 @@ class PropertiesDataBounds(PropertiesData):
         '''
         super().__setitem__(indices, value)
 
+        bounds = self.get_bounds(None)
+
+        # Set the interior ring, if present (added at v3.8.0).        
+        interior_ring = self.get_interior_ring(None)
+        try:
+            value_interior_ring = value.get_interior_ring(None)
+        except AttributeError:
+            value_interior_ring = None
+
+        if interior_ring is not None and value_interior_ring is not None:
+            interior_ring.chunk(chunksize)
+            indices = parse_indices(self.shape, indices)
+            indices.append(slice(None))
+            interior_ring[tuple(indices)] = value_interior_ring
+        elif interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} without an interior ring array to "
+                "{!r} with an interior ring array".format(value, self)
+            )
+        elif value_interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} with an interior ring array to "
+                "{!r} without an interior ring array".format(value, self)
+            )
+
         # Set the bounds, if present (added at v3.8.0).
         bounds = self.get_bounds(None)
         if bounds is not None:
@@ -170,21 +195,6 @@ class PropertiesDataBounds(PropertiesData):
                 indices = parse_indices(self.shape, indices)
                 indices.append(Ellipsis)
                 bounds[tuple(indices)] = value_bounds
-        # --- End: if
-
-        # Set the interior ring, if it present (added at v3.8.0).
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            try:
-                value_interior_ring = value.get_interior_ring(None)
-            except AttributeError:
-                value_interior_ring = None
-
-            if value_interior_ring is not None:
-                interior_ring.chunk(chunksize)
-                indices = parse_indices(self.shape, indices)
-                indices.append(slice(None))
-                interior_ring[tuple(indices)] = value_interior_ring
         # --- End: if
 
     def __eq__(self, y):
