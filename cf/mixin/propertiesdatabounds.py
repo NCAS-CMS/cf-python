@@ -158,8 +158,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         super().__setitem__(indices, value)
 
-        bounds = self.get_bounds(None)
-
         # Set the interior ring, if present (added at v3.8.0).        
         interior_ring = self.get_interior_ring(None)
         try:
