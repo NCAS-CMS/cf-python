@@ -37,6 +37,9 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
 clean:
+ifndef BUILDDIR
+	$(error BUILDDIR to clean must be defined)
+endif
 	-rm -rf $(BUILDDIR)/*
 
 html:
