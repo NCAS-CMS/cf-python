@@ -42,7 +42,11 @@ def axes_combinations(f):
             for axes in itertools.permutations(range(f.ndim), n)]
 
 
-def _formula_terms2(standard_name):
+def _formula_terms(standard_name):
+    '''Return a field with a vertical CRS, its computed non-parametric
+    coordinates, and the computed standard name.
+
+    '''
     # field: air_temperature
     field = cf.Field()
     field.set_properties({'Conventions': 'CF-1.8',
@@ -3141,7 +3145,9 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        # ------------------------------------------------------------
         # atmosphere_hybrid_height_coordinate
+        # ------------------------------------------------------------
         f = cf.example_field(1)
         self.assertIsNone(f.auxiliary_coordinate('altitude', default=None))
 
@@ -3287,7 +3293,7 @@ class FieldTest(unittest.TestCase):
                 'ocean_sigma_z_coordinate',
                 'ocean_double_sigma_coordinate',
         ):
-            f, a, csn = _formula_terms2(standard_name)
+            f, a, csn = _formula_terms(standard_name)
 
             g = f.compute_vertical_coordinates(verbose=None)
 
