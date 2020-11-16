@@ -96,8 +96,8 @@ def _formula_terms(standard_name):
         p0.set_data(data)
         p0_key = field.set_construct(p0, axes=(), copy=False)
 
-        # dimension_coordinate: Z
-        lev = cf.DimensionCoordinate()
+        # domain_ancillary: Z
+        lev = cf.DomainAncillary()
         lev.standard_name = standard_name
         data = -(aux.data/p0.data).log()
         lev.set_data(data)
@@ -107,10 +107,14 @@ def _formula_terms(standard_name):
         lev.set_bounds(bounds)
         lev_key = field.set_construct(lev, axes=axisZ, copy=False)
 
+        # dimension_coordinate: Z
+        levc = cf.DimensionCoordinate(source=lev)
+        levc_key = field.set_construct(levc, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({lev_key})
+        coordref.set_coordinates({levc_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
-            {'p0': p0_key}
+            {'p0': p0_key, 'lev': lev_key}
         )
         field.set_construct(coordref)
 
@@ -140,10 +144,10 @@ def _formula_terms(standard_name):
         ptop.set_data(data)
         ptop_key = field.set_construct(ptop, axes=(), copy=False)
 
-        # dimension_coordinate: sigma
-        sigma = cf.DimensionCoordinate()
+        # domain_ancillary: sigma
+        sigma = cf.DomainAncillary()
         sigma.standard_name = standard_name
-        data = cf.Data([0.6969697 , 0.49494949, 0.29292929])
+        data = cf.Data([0.6969697, 0.49494949, 0.29292929])
         sigma.set_data(data)
         b = cf.Bounds()
         data = cf.Data([[0.7979798, 0.5959596],
@@ -153,10 +157,14 @@ def _formula_terms(standard_name):
         sigma.set_bounds(b)
         sigma_key = field.set_construct(sigma, axes=axisZ, copy=False)
 
+        # dimension_coordinate: sigma
+        sigmac = cf.DimensionCoordinate(source=sigma)
+        sigmac_key = field.set_construct(sigmac, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({sigma_key})
+        coordref.set_coordinates({sigmac_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
-            {'ptop': ptop_key, 'ps': ps_key}
+            {'ptop': ptop_key, 'ps': ps_key, 'sigma': sigma_key}
         )
         field.set_construct(coordref)
 
@@ -208,7 +216,7 @@ def _formula_terms(standard_name):
         # dimension_coordinate: sigma
         sigma = cf.DimensionCoordinate()
         sigma.standard_name = standard_name
-        data = cf.Data([0.6969697 , 0.49494949, 0.29292929])
+        data = cf.Data([0.6969697, 0.49494949, 0.29292929])
         sigma.set_data(data)
         bounds = cf.Bounds()
         data = cf.Data([[0.7979798, 0.5959596],
@@ -261,7 +269,7 @@ def _formula_terms(standard_name):
         data = cf.Data([0.05, 0.04, 0.03], dtype='f8')
         b1.set_data(data)
         bounds = cf.Bounds()
-        data = cf.Data([[0.055,0.045] ,[0.045, 0.035], [0.035, 0.025]])
+        data = cf.Data([[0.055, 0.045], [0.045, 0.035], [0.035, 0.025]])
         bounds.set_data(data)
         b1.set_bounds(bounds)
         b1_key = field.set_construct(b1, axes=axisZ, copy=False)
@@ -271,7 +279,7 @@ def _formula_terms(standard_name):
         data = cf.Data([0.5, 0.4, 0.3])
         b2.set_data(data)
         bounds = cf.Bounds()
-        data = cf.Data([[0.55,0.45] ,[0.45, 0.35], [0.35, 0.25]])
+        data = cf.Data([[0.55, 0.45], [0.45, 0.35], [0.35, 0.25]])
         bounds.set_data(data)
         b2.set_bounds(bounds)
         b2_key = field.set_construct(b2, axes=axisZ, copy=False)
@@ -321,8 +329,8 @@ def _formula_terms(standard_name):
         eta.set_data(data)
         eta_key = field.set_construct(eta, axes=(), copy=False)
 
-        # dimension_coordinate: sigma
-        sigma = cf.DimensionCoordinate()
+        # domain_ancillary: sigma
+        sigma = cf.DomainAncillary()
         sigma.standard_name = standard_name
         data = cf.Data([0.1, 0.08888888888888889, 0.07777777777777778])
         sigma.set_data(data)
@@ -334,10 +342,14 @@ def _formula_terms(standard_name):
         sigma.set_bounds(bounds)
         sigma_key = field.set_construct(sigma, axes=axisZ, copy=False)
 
+        # dimension_coordinate: sigma
+        sigmac = cf.DimensionCoordinate(source=sigma)
+        sigmac_key = field.set_construct(sigmac, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({sigma_key})
+        coordref.set_coordinates({sigmac_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
-            {'depth': depth_key, 'eta': eta_key}
+            {'depth': depth_key, 'eta': eta_key, 'sigma': sigma_key}
         )
         field.set_construct(coordref)
 
@@ -387,8 +399,8 @@ def _formula_terms(standard_name):
         b.set_data(data)
         b_key = field.set_construct(b, axes=(), copy=False)
 
-        # dimension_coordinate: s
-        s = cf.DimensionCoordinate()
+        # domain_ancillary: s
+        s = cf.DomainAncillary()
         s.standard_name = standard_name
         data = cf.Data([0.1, 0.08, 0.07])
         s.set_data(data)
@@ -398,11 +410,16 @@ def _formula_terms(standard_name):
         s.set_bounds(bounds)
         s_key = field.set_construct(s, axes=axisZ, copy=False)
 
+        # dimension_coordinate: s
+        sc = cf.DimensionCoordinate(source=s)
+        sc_key = field.set_construct(sc, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({s_key})
+        coordref.set_coordinates({sc_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
             {'depth': depth_key, 'eta': eta_key,
-             'depth_c': depth_c_key, 'a': a_key, 'b': b_key}
+             'depth_c': depth_c_key, 'a': a_key, 'b': b_key,
+             's': s_key}
         )
         field.set_construct(coordref)
 
@@ -411,7 +428,7 @@ def _formula_terms(standard_name):
 
         # Computed vertical corodinates
         aux.standard_name = computed_standard_name
-        data = cf.Data([555.4 , 464.32, 373.33], units='m')
+        data = cf.Data([555.4, 464.32, 373.33], units='m')
         aux.set_data(data)
         bounds = cf.Bounds()
         data = cf.Data([[600.85, 509.86],
@@ -450,8 +467,8 @@ def _formula_terms(standard_name):
         C.set_bounds(bounds)
         C_key = field.set_construct(C, axes=axisZ, copy=False)
 
-        # dimension_coordinate: s
-        s = cf.DimensionCoordinate()
+        # domain_ancillary: s
+        s = cf.DomainAncillary()
         s.standard_name = standard_name
         data = cf.Data([0.1, 0.08, 0.07])
         s.set_data(data)
@@ -461,11 +478,15 @@ def _formula_terms(standard_name):
         s.set_bounds(bounds)
         s_key = field.set_construct(s, axes=axisZ, copy=False)
 
+        # dimension_coordinate: s
+        sc = cf.DimensionCoordinate(source=s)
+        sc_key = field.set_construct(sc, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({s_key})
+        coordref.set_coordinates({sc_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
             {'depth': depth_key, 'eta': eta_key,
-             'depth_c': depth_c_key, 'C': C_key}
+             'depth_c': depth_c_key, 'C': C_key, 's': s_key}
         )
         field.set_construct(coordref)
 
@@ -515,8 +536,8 @@ def _formula_terms(standard_name):
         C.set_bounds(bounds)
         C_key = field.set_construct(C, axes=axisZ, copy=False)
 
-        # dimension_coordinate: s
-        s = cf.DimensionCoordinate()
+        # domain_ancillary: s
+        s = cf.DomainAncillary()
         s.standard_name = standard_name
         data = cf.Data([0.1, 0.08, 0.07])
         s.set_data(data)
@@ -526,11 +547,16 @@ def _formula_terms(standard_name):
         s.set_bounds(bounds)
         s_key = field.set_construct(s, axes=axisZ, copy=False)
 
+        # dimension_coordinate: s
+        sc = cf.DimensionCoordinate(source=s)
+        sc_key = field.set_construct(sc, axes=axisZ, copy=False)
+
+        # coordinat
         # coordinate_reference:
-        coordref.set_coordinates({s_key})
+        coordref.set_coordinates({sc_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
             {'depth': depth_key, 'eta': eta_key,
-             'depth_c': depth_c_key, 'C': C_key}
+             'depth_c': depth_c_key, 'C': C_key, 's': s_key}
         )
         field.set_construct(coordref)
 
@@ -585,8 +611,8 @@ def _formula_terms(standard_name):
         zlev.set_bounds(bounds)
         zlev_key = field.set_construct(zlev, axes=axisZ, copy=False)
 
-        # dimension_coordinate: sigma
-        sigma = cf.DimensionCoordinate()
+        # domain_ancillary: sigma
+        sigma = cf.DomainAncillary()
         sigma.standard_name = standard_name
         data = cf.Data([0.1, 0.08, 0.07])
         sigma.set_data(data)
@@ -596,11 +622,16 @@ def _formula_terms(standard_name):
         sigma.set_bounds(bounds)
         sigma_key = field.set_construct(sigma, axes=axisZ, copy=False)
 
+        # dimension_coordinate: sigma
+        sigmac = cf.DimensionCoordinate(source=sigma)
+        sigmac_key = field.set_construct(sigmac, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({sigma_key})
+        coordref.set_coordinates({sigmac_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
             {'depth': depth_key, 'eta': eta_key, 'depth_c': depth_c_key,
-             'nsigma': nsigma_key, 'zlev': zlev_key}
+             'nsigma': nsigma_key, 'zlev': zlev_key,
+             'sigma': sigma_key}
         )
         field.set_construct(coordref)
 
@@ -658,7 +689,7 @@ def _formula_terms(standard_name):
         k_c_key = field.set_construct(k_c, axes=(), copy=False)
 
         # dimension_coordinate: sigma
-        sigma = cf.DimensionCoordinate()
+        sigma = cf.DomainAncillary()
         sigma.standard_name = standard_name
         data = cf.Data([0.1, 0.08, 0.07])
         sigma.set_data(data)
@@ -668,11 +699,16 @@ def _formula_terms(standard_name):
         sigma.set_bounds(bounds)
         sigma_key = field.set_construct(sigma, axes=axisZ, copy=False)
 
+        # dimension_coordinate: sigma
+        sigmac = cf.DimensionCoordinate(source=sigma)
+        sigmac_key = field.set_construct(sigmac, axes=axisZ, copy=False)
+
         # coordinate_reference:
-        coordref.set_coordinates({sigma_key})
+        coordref.set_coordinates({sigmac_key})
         coordref.coordinate_conversion.set_domain_ancillaries(
             {'depth': depth_key, 'a': a_key,
-             'k_c': k_c_key, 'z1': z1_key, 'z2': z2_key}
+             'k_c': k_c_key, 'z1': z1_key, 'z2': z2_key,
+             'sigma': sigma_key}
         )
         field.set_construct(coordref)
 
@@ -3298,7 +3334,7 @@ class FieldTest(unittest.TestCase):
             g = f.compute_vertical_coordinates(verbose=None)
 
             x = g.auxiliary_coordinate(csn)
-            
+
             self.assertTrue(
                 x.equals(a, atol=1e-5, rtol=1e-05, verbose=-1),
                 "{}, {}, {}\n{}\n{}".format(

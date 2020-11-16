@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def _domain_ancillary_term(f, standard_name, coordinate_conversion,
-                           term, default_to_zero, bounds):
+                           term, default_to_zero, strict, bounds):
     '''Find a domain ancillary construct cooresponding to a formula term.
 
     .. versionadded:: 3.8.0
@@ -51,6 +51,17 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
             value of zero. If True the a missing term is assumed to be
             zero, as described in Appendix D: Parametric Vertical
             Coordinates of the CF conventions.
+
+        strict: `bool`
+            If False then allow the computation to occur when
+
+            * A term with a defined standard name (or names) has no
+              standard name.
+
+            * When the computed standard name can not be found by
+              inference from the standard names of the domain
+              ancillary constructs; or from the
+              ``computed_standard_name`` property.
 
         bounds: `bool`, optional
             If False then do not create bounds of zero for a default
@@ -93,7 +104,8 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
 
         if vsn is None:
             if (
-                vsn not in valid_standard_names
+                strict
+                and vsn not in valid_standard_names
                 and len(valid_standard_names) > 1
             ):
                 raise ValueError(
@@ -159,71 +171,71 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
     return var, key
 
 
-def _coordinate_term(f, standard_name, coordinate_reference,
-                     term=None):
-    '''Find a coordinate construct cooresponding to a formula term.
-
-    .. versionadded:: 3.8.0
-
-    :Parameters:
-
-        f: `Field`
-            The parent field construct.
-
-        standard_name: `str`
-            The standard name of the parametric vertical coordinate.
-
-        coordinate_reference: `CoordinateReference`
-            A coordinate reference construct of the parent field
-            construct.
-
-        term: `str`
-            A term of the formula.
-
-            *Parameter example:*
-              ``term='sigma'``
-
-    :Returns:
-
-        `Coordinate`, `str`
-            The coordinate construct for the formula term, and its
-            construct key. If the *term* is `None` and the coordinate
-            construct does not exisit then `None`, `None` is returned
-            instead.
-
-    '''
-    var = None
-    key = None
-
-    for key in coordinate_reference.coordinates():
-        var = f.coordinate(key, default=None)
-        if var is None:
-            continue
-
-        if var.get_property('standard_name', None) == standard_name:
-            logger.detail(
-                "  Parametric coordinates: {!r}".format(var)
-            )  # pragma: no cover
-
-            break
-
-        var = None
-
-    if term is not None:
-        if var is None:
-            raise ValueError(
-                "Can't calculate non-parametric vertical coordinates: "
-                "No {!r} term coordinate construct".format(term)
-            )
-
-        logger.detail(
-            "  Formula term {!r}:\n{}".format(
-                term, var.dump(display=False, _level=1)
-            )
-        )  # pragma: no cover
-
-    return var, key
-
+# def _coordinate_term(f, standard_name, coordinate_reference,
+#                     term=None):
+#    '''Find a coordinate construct cooresponding to a formula term.
+#
+#    .. versionadded:: 3.8.0
+#
+#    :Parameters:
+#
+#        f: `Field`
+#            The parent field construct.
+#
+#        standard_name: `str`
+#            The standard name of the parametric vertical coordinate.
+#
+#        coordinate_reference: `CoordinateReference`
+#            A coordinate reference construct of the parent field
+#            construct.
+#
+#        term: `str`
+#            A term of the formula.
+#
+#            *Parameter example:*
+#              ``term='sigma'``
+#
+#    :Returns:
+#
+#        `Coordinate`, `str`
+#            The coordinate construct for the formula term, and its
+#            construct key. If the *term* is `None` and the coordinate
+#            construct does not exisit then `None`, `None` is returned
+#            instead.
+#
+#    '''
+#    var = None
+#    key = None
+#
+#    for key in coordinate_reference.coordinates():
+#        var = f.coordinate(key, default=None)
+#        if var is None:
+#            continue
+#
+#        if var.get_property('standard_name', None) == standard_name:
+#            logger.detail(
+#                "  Parametric coordinates: {!r}".format(var)
+#            )  # pragma: no cover
+#
+#            break
+#
+#        var = None
+#
+#    if term is not None:
+#        if var is None:
+#            raise ValueError(
+#                "Can't calculate non-parametric vertical coordinates: "
+#                "No {!r} term coordinate construct".format(term)
+#            )
+#
+#        logger.detail(
+#            "  Formula term {!r}:\n{}".format(
+#                term, var.dump(display=False, _level=1)
+#            )
+#        )  # pragma: no cover
+#
+#    return var, key
+#
 
 def _computed_standard_name(f, standard_name, coordinate_reference):
     '''Find the standard name of the computed non-parametric vertical
@@ -266,8 +278,8 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
         return computed_standard_name
 
     # ----------------------------------------------------------------
-    # Still here? Then the computed standard name depends on the
-    # standdard name of one of the formula terms.
+    # Still here? Then see if the computed standard name depends on
+    # the standard name of one of the formula terms.
     # ----------------------------------------------------------------
     term, mapping = tuple(computed_standard_name.items())[0]
 
@@ -289,14 +301,33 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
 
     if computed_standard_name is None:
         # ------------------------------------------------------------
+        # See if the computed standard anme is a set as a coordinate
+        # conversion parameter
+        # ------------------------------------------------------------
+        computed_standard_name = coordinate_conversion.get_parameter(
+            'computed_standard_name', None
+        )
+
+    if computed_standard_name is None:
+        # ------------------------------------------------------------
         # As a last resort use the computed_standard_name property of
         # the parametric vertical coordinate construct
         # ------------------------------------------------------------
-        var, _ = _coordinate_term(f, standard_name, coordinate_reference)
-        if var is not None:
+        var = None
+        key = None
+
+        for key in coordinate_reference.coordinates():
+            var = f.coordinate(key, default=None)
+            if var is None:
+                continue
+
+            if var.get_property('standard_name', None) != standard_name:
+                continue
+
             computed_standard_name = var.get_property(
                 'computed_standard_name', None
             )
+            break
     # --- End: if
 
     logger.detail(
@@ -543,7 +574,8 @@ def _conform_units(term, var, ref_term2, ref_units):
     return var
 
 
-def _check_standard_name_consistency(zlev=(None, None),
+def _check_standard_name_consistency(strict,
+                                     zlev=(None, None),
                                      eta=(None, None),
                                      depth=(None, None)):
     '''Check that there are consistent sets of values for the
@@ -575,6 +607,13 @@ def _check_standard_name_consistency(zlev=(None, None),
             created from default values then the construct key will be
             `None`.
 
+        strict: `bool`
+            If False then allow the computation to occur all of the
+            given the 'zlev', 'eta', and 'depth' domain ancillary
+            constructs have no standard name. By default if any of
+            these constructs is missing a standard anme then an
+            exception will be raised.
+
     :Returns:
 
         `None`
@@ -583,6 +622,7 @@ def _check_standard_name_consistency(zlev=(None, None),
 
     '''
     kwargs = locals()
+    kwargs.pop('strict')
 
     indices = set()
 
@@ -600,13 +640,14 @@ def _check_standard_name_consistency(zlev=(None, None),
         except ValueError:
             # Note that the existence of a standard name has already
             # been ensured by `_domain_ancillary_term`
-            raise ValueError(
-                "{!r} term {!r} has invalid standard name: {!r}".format(
-                    term, var, standard_name)
-            )
+            if strict:
+                raise ValueError(
+                    "{!r} term {!r} has invalid standard name: {!r}".format(
+                        term, var, standard_name)
+                )
     # --- End: for
 
-    if not indices:
+    if strict and not indices:
         raise ValueError(
             "Terms {} have no standard names. "
             "See Appendix D: Parametric Vertical Coordinates "
@@ -627,7 +668,7 @@ def _check_standard_name_consistency(zlev=(None, None),
 
 def _check_index_term(term, var):
     '''Check that an index term contains a single integer.
-    
+
     .. versionadded:: 3.8.0
 
     :Parameters:
@@ -655,7 +696,7 @@ def _check_index_term(term, var):
 
 
 def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
-                                      default_to_zero):
+                                      default_to_zero, strict):
     '''Compute non-parametric vertical coordinates from
     atmosphere_ln_pressure_coordinate parametric coordinates as
     described in Appendix D: Parametric Vertical Coordinates of the CF
@@ -712,15 +753,20 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    lev, lev_key = _coordinate_term(g, standard_name,
-                                    coordinate_reference,
-                                    'lev')
-
+#    lev, lev_key = _coordinate_term(g, standard_name,
+#                                    coordinate_reference,
+#                                    'lev')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
-    
+
+    lev, lev_key = _domain_ancillary_term(g, standard_name,
+                                          coordinate_conversion,
+                                          'lev', default_to_zero,
+                                          strict, True)
+
     p0, _ = _domain_ancillary_term(g, standard_name,
                                    coordinate_conversion, 'p0',
-                                   default_to_zero, True)
+                                   default_to_zero, strict, True)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -743,7 +789,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 
 
 def atmosphere_sigma_coordinate(g, coordinate_reference,
-                                default_to_zero):
+                                default_to_zero, strict):
     '''Compute non-parametric vertical coordinates from
     atmosphere_sigma_coordinate parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -797,19 +843,25 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_reference,
-                                        'sigma')
+#    sigma, sigma_key = _coordinate_term(g, standard_name,
+#                                        coordinate_reference,
+#                                        'sigma')#
 
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
+    sigma, sigma_key = _domain_ancillary_term(g, standard_name,
+                                              coordinate_conversion,
+                                              'sigma',
+                                              default_to_zero, strict,
+                                              True)
+
     ptop, _ = _domain_ancillary_term(g, standard_name,
                                      coordinate_conversion, 'ptop',
-                                     default_to_zero, True)
+                                     default_to_zero, strict, True)
 
     ps, ps_key = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion, 'ps',
-                                        default_to_zero, True)
+                                        default_to_zero, strict, True)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -840,7 +892,8 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
 
 def atmosphere_hybrid_sigma_pressure_coordinate(g,
                                                 coordinate_reference,
-                                                default_to_zero):
+                                                default_to_zero,
+                                                strict):
     '''Compute non-parametric vertical coordinates from
     atmosphere_hybrid_sigma_pressure_coordinate parametric coordinates
     as described in Appendix D: Parametric Vertical Coordinates of the
@@ -903,27 +956,29 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
         ap, ap_key = _domain_ancillary_term(g, standard_name,
                                             coordinate_conversion,
                                             'ap', default_to_zero,
-                                            True)
+                                            strict, True)
 
         a_key = None
     else:
         a, a_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion, 'a',
-                                          default_to_zero, True)
+                                          default_to_zero, strict,
+                                          True)
 
         p0, _ = _domain_ancillary_term(g, standard_name,
                                        coordinate_conversion, 'p0',
-                                       default_to_zero, False)
+                                       default_to_zero, strict, False)
 
         ap_key = None
 
     b, b_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'b',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
     ps, ps_key = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion, 'ps',
-                                        default_to_zero, False)
+                                        default_to_zero, strict,
+                                        False)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -961,7 +1016,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
 
 def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
-                                        default_to_zero):
+                                        default_to_zero, strict):
     '''Compute non-parametric vertical coordinates from
     atmosphere_hybrid_height_coordinate parametric coordinates as
     described in Appendix D: Parametric Vertical Coordinates of the CF
@@ -1020,16 +1075,16 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'a',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
     b, b_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'b',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
     orog, orog_key = _domain_ancillary_term(g, standard_name,
                                             coordinate_conversion,
                                             'orog', default_to_zero,
-                                            False)
+                                            strict, False)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -1059,7 +1114,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
 
 def atmosphere_sleve_coordinate(g, coordinate_reference,
-                                default_to_zero):
+                                default_to_zero, strict):
     '''Compute non-parametric vertical coordinates from
     atmosphere_sleve_coordinate parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -1117,31 +1172,31 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     a, a_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'a',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
     b1, b1_key = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion, 'b1',
-                                        default_to_zero, True)
+                                        default_to_zero, strict, True)
 
     b2, b2_key = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion, 'b2',
-                                        default_to_zero, True)
+                                        default_to_zero, strict, True)
 
     ztop, _ = _domain_ancillary_term(g, standard_name,
                                      coordinate_conversion, 'ztop',
-                                     default_to_zero, False)
+                                     default_to_zero, strict, False)
 
     zsurf1, zsurf1_key = _domain_ancillary_term(g, standard_name,
                                                 coordinate_conversion,
                                                 'zsurf1',
                                                 default_to_zero,
-                                                False)
+                                                strict, False)
 
     zsurf2, zsurf2_key = _domain_ancillary_term(g, standard_name,
                                                 coordinate_conversion,
                                                 'zsurf2',
                                                 default_to_zero,
-                                                False)
+                                                strict, False)
 
     # Make sure that zsurf1 and zsurf2 have the same number of axes
     # and the same axis order
@@ -1197,7 +1252,8 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
             computed_axes, k_axis)
 
 
-def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
+def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
+                           strict):
     '''Compute non-parametric vertical coordinates from
     ocean_sigma_coordinate parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -1249,23 +1305,31 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_reference,
-                                        'sigma')
-
+#    sigma, sigma_key = _coordinate_term(g, standard_name,
+#                                        coordinate_reference,
+#                                        'sigma')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    sigma, sigma_key = _domain_ancillary_term(g, standard_name,
+                                              coordinate_conversion,
+                                              'sigma',
+                                              default_to_zero, strict,
+                                              True)
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
                                           'eta', default_to_zero,
-                                          False)
+                                          strict, False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
-    _check_standard_name_consistency(eta=(eta, eta_key),
+    _check_standard_name_consistency(strict,
+                                     eta=(eta, eta_key),
                                      depth=(depth, depth_key))
 
     # Make sure that eta and depth are consistent, which may require
@@ -1300,7 +1364,8 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero):
             computed_axes, k_axis)
 
 
-def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
+def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
+                       strict):
     '''Compute non-parametric vertical coordinates from ocean_s_coordinate
     parametric coordinates as described in Appendix D: Parametric
     Vertical Coordinates of the CF conventions.
@@ -1352,35 +1417,41 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_reference, 's')
-
+#    s, s_key = _coordinate_term(g, standard_name,
+#                                coordinate_reference, 's')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    s, s_key = _domain_ancillary_term(g, standard_name,
+                                      coordinate_conversion, 's',
+                                      default_to_zero, strict, True)
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
                                           'eta', default_to_zero,
-                                          False)
+                                          strict, False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
     a, _ = _domain_ancillary_term(g, standard_name,
                                   coordinate_conversion, 'a',
-                                  default_to_zero, True)
+                                  default_to_zero, strict, True)
 
     b, _ = _domain_ancillary_term(g, standard_name,
                                   coordinate_conversion, 'b',
-                                  default_to_zero, True)
+                                  default_to_zero, strict, True)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion,
                                         'depth_c', default_to_zero,
-                                        False)
+                                        strict, False)
 
-    _check_standard_name_consistency(eta=(eta, eta_key),
+    _check_standard_name_consistency(strict,
+                                     eta=(eta, eta_key),
                                      depth=(depth, depth_key))
 
     # Make sure that eta and depth are consistent, which may require
@@ -1426,7 +1497,8 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero):
             computed_axes, k_axis)
 
 
-def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
+def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
+                          strict):
     '''Compute non-parametric vertical coordinates from
     ocean_s_coordinate_g1 parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -1480,31 +1552,37 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_reference, 's')
-
+#    s, s_key = _coordinate_term(g, standard_name,
+#                                coordinate_reference, 's')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    s, s_key = _domain_ancillary_term(g, standard_name,
+                                      coordinate_conversion, 's',
+                                      default_to_zero, strict, True)
 
     C, C_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'C',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
                                           'eta', default_to_zero,
-                                          False)
+                                          strict, False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion,
                                         'depth_c', default_to_zero,
-                                        False)
+                                        strict, False)
 
-    _check_standard_name_consistency(eta=(eta, eta_key),
+    _check_standard_name_consistency(strict,
+                                     eta=(eta, eta_key),
                                      depth=(depth, depth_key))
 
     # Make sure that eta and depth are consistent, which may require
@@ -1542,7 +1620,8 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero):
             computed_axes, k_axis)
 
 
-def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
+def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
+                          strict):
     '''Compute non-parametric vertical coordinates from
     ocean_s_coordinate_g2 parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -1596,31 +1675,37 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    s, s_key = _coordinate_term(g, standard_name,
-                                coordinate_reference, 's')
-
+#    s, s_key = _coordinate_term(g, standard_name,
+#                                coordinate_reference, 's')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    s, s_key = _domain_ancillary_term(g, standard_name,
+                                      coordinate_conversion, 's',
+                                      default_to_zero, strict, True)
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
                                           'eta', default_to_zero,
-                                          False)
+                                          strict, False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion,
                                         'depth_c', default_to_zero,
-                                        False)
+                                        strict, False)
 
     C, C_key = _domain_ancillary_term(g, standard_name,
                                       coordinate_conversion, 'C',
-                                      default_to_zero, True)
+                                      default_to_zero, strict, True)
 
-    _check_standard_name_consistency(eta=(eta, eta_key),
+    _check_standard_name_consistency(strict,
+                                     eta=(eta, eta_key),
                                      depth=(depth, depth_key))
 
     # Make sure that eta and depth are consistent, which may require
@@ -1661,7 +1746,8 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero):
             computed_axes, k_axis)
 
 
-def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
+def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
+                             strict):
     '''Compute non-parametric vertical coordinates from
     ocean_sigma_z_coordinate parametric coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
@@ -1715,38 +1801,46 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_reference,
-                                        'sigma')
-
+#    sigma, sigma_key = _coordinate_term(g, standard_name,
+#                                        coordinate_reference,
+#                                        'sigma')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    sigma, sigma_key = _domain_ancillary_term(g, standard_name,
+                                              coordinate_conversion,
+                                              'sigma',
+                                              default_to_zero, strict,
+                                              True)
 
     eta, eta_key = _domain_ancillary_term(g, standard_name,
                                           coordinate_conversion,
                                           'eta', default_to_zero,
-                                          False)
+                                          strict, False)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
     depth_c, _ = _domain_ancillary_term(g, standard_name,
                                         coordinate_conversion,
                                         'depth_c', default_to_zero,
-                                        False)
+                                        strict, False)
 
     nsigma, _ = _domain_ancillary_term(g, standard_name,
                                        coordinate_conversion,
                                        'nsigma', default_to_zero,
-                                       False)
+                                       strict, False)
 
     zlev, zlev_key = _domain_ancillary_term(g, standard_name,
                                             coordinate_conversion,
                                             'zlev', default_to_zero,
-                                            True)
+                                            strict, True)
 
-    _check_standard_name_consistency(zlev=(zlev, zlev_key),
+    _check_standard_name_consistency(strict,
+                                     zlev=(zlev, zlev_key),
                                      eta=(eta, eta_key),
                                      depth=(depth, depth_key))
 
@@ -1766,7 +1860,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
         depth = depth.insert_dimension(-1)
 
     _check_index_term('nsigma', nsigma)
-                
+
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
@@ -1793,7 +1887,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero):
 
 
 def ocean_double_sigma_coordinate(g, coordinate_reference,
-                                  default_to_zero):
+                                  default_to_zero, strict):
     '''Compute non-parametric vertical coordinates from
     ocean_double_sigma_coordinate parametric coordinates as described
     in Appendix D: Parametric Vertical Coordinates of the CF
@@ -1848,36 +1942,43 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-    sigma, sigma_key = _coordinate_term(g, standard_name,
-                                        coordinate_reference,
-                                        'sigma')
-
+#    sigma, sigma_key = _coordinate_term(g, standard_name,
+#                                        coordinate_reference,
+#                                        'sigma')
+#
     coordinate_conversion = coordinate_reference.coordinate_conversion
+
+    sigma, sigma_key = _domain_ancillary_term(g, standard_name,
+                                              coordinate_conversion,
+                                              'sigma',
+                                              default_to_zero, strict,
+                                              True)
 
     depth, depth_key = _domain_ancillary_term(g, standard_name,
                                               coordinate_conversion,
                                               'depth',
-                                              default_to_zero, False)
+                                              default_to_zero, strict,
+                                              False)
 
     z1, _ = _domain_ancillary_term(g, standard_name,
                                    coordinate_conversion, 'z1',
-                                   default_to_zero, True)
+                                   default_to_zero, strict, True)
 
     z2, _ = _domain_ancillary_term(g, standard_name,
                                    coordinate_conversion, 'z2',
-                                   default_to_zero, True)
+                                   default_to_zero, strict, True)
 
     a, _ = _domain_ancillary_term(g, standard_name,
                                   coordinate_conversion, 'a',
-                                  default_to_zero, True)
+                                  default_to_zero, strict, True)
 
     href, _ = _domain_ancillary_term(g, standard_name,
                                      coordinate_conversion, 'href',
-                                     default_to_zero, True)
+                                     default_to_zero, strict, True)
 
     k_c, _ = _domain_ancillary_term(g, standard_name,
                                     coordinate_conversion, 'k_c',
-                                    default_to_zero, True)
+                                    default_to_zero, strict, True)
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
@@ -1890,7 +1991,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
         depth = depth.insert_dimension(-1)
 
     _check_index_term('k_c', k_c)
-        
+
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
@@ -1920,9 +2021,9 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     computed = f * sigma
 
     k_c1 = int(k_c.data) + 1
-    
+
     computed[..., k_c1:] = (f
-                           + (depth - f) * (sigma[k_c1:] - 1))
+                            + (depth - f) * (sigma[k_c1:] - 1))
 
     combine_bounds_with_coordinates(old)
 
@@ -1950,7 +2051,8 @@ _formula_functions = {
 }
 
 
-def formula(f, coordinate_reference, default_to_zero=True):
+def formula(f, coordinate_reference, default_to_zero=True,
+            strict=True):
     '''Compute non-parametric vertical coordinates as described in
     Appendix D: Parametric Vertical Coordinates of the CF conventions.
 
@@ -1977,6 +2079,19 @@ def formula(f, coordinate_reference, default_to_zero=True):
             value of zero. By default a missing term is assumed to be
             zero, as described in Appendix D: Parametric Vertical
             Coordinates of the CF conventions.
+
+        strict: `bool`
+            If False then allow the computation to occur when
+
+            * A term with a defined standard name (or names) has no
+              standard name.
+
+            * When the computed standard name can not be found by
+              inference from the standard names of the domain
+              ancillary constructs; or from the
+              ``computed_standard_name`` property.
+
+            By default an exception is raised in these cases.
 
     :Returns:
 
@@ -2025,7 +2140,8 @@ def formula(f, coordinate_reference, default_to_zero=True):
              k_axis) = (
                  _formula_functions[standard_name](f,
                                                    coordinate_reference,
-                                                   default_to_zero)
+                                                   default_to_zero,
+                                                   strict)
              )
 
             # --------------------------------------------------------

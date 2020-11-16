@@ -499,7 +499,6 @@ formula_terms_max_dimensions = {
     'ocean_s_coordinate_g1': {
         'eta': 3,  # (n,j,i)
         'depth': 2,  # (j,i)
-        'C': 1,  # (k)
         'depth_c': 0,
         'C': 1,  # (k)
         's': 1,  # (k)
@@ -639,7 +638,7 @@ formula_terms_units = {
         'depth': 'm',
         'depth_c': 'm',
         'C': '',
-        's': 's',
+        's': '',
     },
     'ocean_s_coordinate_g2': {
         'eta': 'm',

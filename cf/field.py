@@ -13049,7 +13049,8 @@ class Field(mixin.PropertiesData,
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(self, default_to_zero=True,
-                                     inplace=False, verbose=None):
+                                     strict=True, inplace=False,
+                                     verbose=None):
         '''Compute non-parametric vertical coordinates.
 
     When vertical coordinates are a function of horizontal location as
@@ -13079,11 +13080,23 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         default_to_zero: `bool`, optional
-            If False then do not assume that missing domain ancillary
-            terms have a value of zero. By default a missing domain
-            ancillary term is assumed to be zero, as described in
-            Appendix D: Parametric Vertical Coordinates of the CF
-            conventions.
+            If False then do not assume that missing terms have a
+            value of zero. By default a missing term is assumed to be
+            zero, as described in Appendix D: Parametric Vertical
+            Coordinates of the CF conventions.
+
+        strict: `bool`
+            If False then allow the computation to occur when
+
+            * A term with a defined standard name (or names) has no
+              standard name.
+
+            * When the computed standard name can not be found by
+              inference from the standard names of the domain
+              ancillary constructs, or from the
+              ``computed_standard_name`` property.
+
+            By default an exception is raised in these cases.
 
         {{inplace: `bool`, optional}}
 
@@ -13149,7 +13162,7 @@ class Field(mixin.PropertiesData,
              computed_standard_name,
              computed,
              computed_axes,
-             k_axis) = formula(f, cr, default_to_zero)
+             k_axis) = formula(f, cr, default_to_zero, strict)
 
             if computed is None:
                 # No non-paramettric vertical coordinates were
