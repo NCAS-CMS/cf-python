@@ -15396,10 +15396,27 @@ class Field(mixin.PropertiesData,
                         'exact', da_key)
         # --- End: if
 
-        if key:
-            return c.key(default=default)
+#        if key:
+#            return c.key(default=default)
 
-        return c.value(default=default)
+        if key:
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No {!r} auxiliary coordinate construct".format(identity)
+                )
+
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No {!r} auxiliary coordinate construct".format(identity)
+            )
+
+        return out
 
     def construct(self, identity=None, default=ValueError(), key=False):
         '''Select a metadata construct by its identity.
@@ -15520,11 +15537,25 @@ class Field(mixin.PropertiesData,
 
         if identity is not None:
             c = c(identity)
-
+           
         if key:
-            return c.key(default=default)
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No {!r} construct".format(identity)
+                )
 
-        return c.value(default=default)
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No {!r} construct".format(identity)
+            )
+
+        return out
 
     def domain_ancillary(self, identity=None, default=ValueError(),
                          key=False):

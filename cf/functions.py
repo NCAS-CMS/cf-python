@@ -419,6 +419,57 @@ def _configuration(**kwargs):
     return old
 
 
+class Constant:
+    '''A context manager for a global constant.
+
+    >>> print('Original constant:', constant.func())
+    Original constant: OLD
+    >>> with constant.func('NEW') as c:
+    ...     print('Executing code with constant:', c.func())
+    ...
+    Executing code with constant: NEW
+    >>> print('Preserved original constant:', constant.func())
+    Preserved original constant: OLD
+
+    '''
+    __slots__ = ('func',  'value', 'old_value')
+    
+    def __init__(self, func, value):
+        '''**Initialization**
+
+    :Parameters:
+
+        func: function
+            The function that gets and sets the constant. This
+            function always returns the constant as it was prior to
+            the function being called, and takes either a `Constant`
+            instance or its `!value` attribute as its unique optional
+            argument.
+
+        value:
+            The current value of the constant.
+
+        '''
+        self.func = func
+        self.value = value
+
+    def __enter__(self):
+        self.old_value = self.value
+        self.value = self.func()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.func(self.old_value)
+
+    def __repr__(self):
+        return "<Constant: {}={!r}>".format(
+            self.func.__name__, self.value
+        )
+
+    def __str__(self):
+        return str(self.value)
+
+
 def combine_bounds_with_coordinates(*arg):
     '''Determine how to deal with cell bounds in binary operations.
 
@@ -492,13 +543,15 @@ def combine_bounds_with_coordinates(*arg):
 
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `str` or `Constant`, optional
             Provide a new flag value that will apply to all subsequent
-            binary operations.
+            binary operations. If a `Constant` instance is provided
+            then it should be one that was returned by a previous call
+            to this function.
 
     :Returns:
 
-        `str`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -515,11 +568,22 @@ def combine_bounds_with_coordinates(*arg):
     'OR'
     >>> cf.combine_bounds_with_coordinates()
     'AND'
+    >>> with cf.combine_bounds_with_coordinates('XOR'):
+    ...     print(cf.combine_bounds_with_coordinates())
+    ...
+    XOR
+    >>> print(cf.combine_bounds_with_coordinates())
+    AND
+    >>> cf.combine_bounds_with_coordinates().value
+    'AND'
 
     '''
     old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
     if arg:
         arg = arg[0]
+
+        if isinstance(arg, Constant):
+            arg = arg.value
 
         try:
             valid = hasattr(OperandBoundsCombination, arg)
@@ -537,7 +601,7 @@ def combine_bounds_with_coordinates(*arg):
 
         CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = arg
 
-    return old
+    return Constant(combine_bounds_with_coordinates, old)
 
 
 def free_memory():

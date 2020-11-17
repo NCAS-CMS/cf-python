@@ -13,7 +13,6 @@ from scipy.ndimage import convolve1d
 
 import cf
 
-
 n_tmpfiles = 1
 tmpfiles = [tempfile.mkstemp('_test_Field.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
@@ -43,8 +42,9 @@ def axes_combinations(f):
 
 
 def _formula_terms(standard_name):
-    '''Return a field with a vertical CRS, its computed non-parametric
-    coordinates, and the computed standard name.
+    '''Return a field with a vertical CRS defined by *standard_name*, its
+    computed non-parametric coordinates, and the computed standard
+    name.
 
     '''
     # field: air_temperature
@@ -78,7 +78,7 @@ def _formula_terms(standard_name):
     if standard_name == 'atmosphere_ln_pressure_coordinate':
         computed_standard_name = 'air_pressure'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], 'hPa', dtype='f8')
         aux.set_data(data)
@@ -121,7 +121,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'atmosphere_sigma_coordinate':
         computed_standard_name = 'air_pressure'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], 'hPa', dtype='f8')
         aux.set_data(data)
@@ -168,10 +168,73 @@ def _formula_terms(standard_name):
         )
         field.set_construct(coordref)
 
+    elif standard_name == 'atmosphere_hybrid_height_coordinate':
+        computed_standard_name = 'altitude'
+
+        # Computed vertical coordinates
+        aux.standard_name = computed_standard_name
+        data = cf.Data([2010.0, 3020.0, 4030.0], units='m')
+        aux.set_data(data)
+        bounds = cf.Bounds()
+        data = cf.Data([[1505.0, 2515.0],
+                        [2515.0, 3525.0],
+                        [3525.0, 4535.0]], units='m')
+        bounds.set_data(data)
+        aux.set_bounds(bounds)
+
+        # domain_ancillary: orog
+        orog = cf.DomainAncillary()
+        orog.standard_name = 'surface_altitude'
+        data = cf.Data(100, units='m', dtype='f8')
+        orog.set_data(data)
+        orog_key = field.set_construct(orog, axes=(), copy=False)
+
+        # domain_ancillary: a
+        a = cf.DomainAncillary()
+        data = cf.Data([10, 20, 30], units='m', dtype='f8')
+        a.set_data(data)
+        bounds = cf.Bounds()
+        data = cf.Data([[5, 15], [15, 25], [25, 35]], units='m', dtype='f8')
+        bounds.set_data(data)
+        a.set_bounds(bounds)
+        a_key = field.set_construct(a, axes=axisZ, copy=False)
+
+        # domain_ancillary: b
+        b = cf.DomainAncillary()
+        data = cf.Data([20, 30, 40], dtype='f8')
+        b.set_data(data)
+        bounds = cf.Bounds()
+        data = cf.Data([[15, 25], [25, 35], [35, 45]], dtype='f8')
+        bounds.set_data(data)
+        b.set_bounds(bounds)
+        b_key = field.set_construct(b, axes=axisZ, copy=False)
+
+#        cf.combine_bounds_with_coordinates('OR')
+#        print ((a + b * orog).array)
+#        print ((a + b * orog).bounds.array)
+        
+        # dimension_coordinate: atmosphere_hybrid_hieght__coordinate
+        x = cf.DimensionCoordinate()
+        x.standard_name = standard_name
+        data = cf.Data([1.5, 2.5, 3.5])
+        x.set_data(data)
+        bounds = cf.Bounds()
+        data = cf.Data([[1, 2], [2, 3], [3, 4]], dtype='f8')
+        bounds.set_data(data)
+        x.set_bounds(bounds)
+        x_key = field.set_construct(x, axes=axisZ, copy=False)
+        
+        # coordinate_reference:
+        coordref.set_coordinates({x_key})
+        coordref.coordinate_conversion.set_domain_ancillaries(
+            {'a': a_key, 'b': b_key, 'orog': orog_key}
+        )
+        field.set_construct(coordref)
+
     elif standard_name == 'atmosphere_hybrid_sigma_pressure_coordinate':
         computed_standard_name = 'air_pressure'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], 'hPa', dtype='f8')
         aux.set_data(data)
@@ -236,7 +299,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'atmosphere_sleve_coordinate':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([100, 200, 300], 'm', dtype='f8')
         aux.set_data(data)
@@ -306,7 +369,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_sigma_coordinate':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([10, 20, 30], 'm', dtype='f8')
         aux.set_data(data)
@@ -356,7 +419,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_s_coordinate':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([15.01701191, 31.86034296, 40.31150319], units='m')
         aux.set_data(data)
@@ -426,7 +489,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_s_coordinate_g1':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([555.4, 464.32, 373.33], units='m')
         aux.set_data(data)
@@ -493,7 +556,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_s_coordinate_g2':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([555.45454545, 464.36363636, 373.36363636],
                        units='m')
@@ -563,7 +626,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_sigma_z_coordinate':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([10.0, 30.0, 40.0], 'm', dtype='f8')
         aux.set_data(data)
@@ -638,7 +701,7 @@ def _formula_terms(standard_name):
     elif standard_name == 'ocean_double_sigma_coordinate':
         computed_standard_name = 'altitude'
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([0.15000000000000002, 0.12, 932.895],
                        units='m', dtype='f8')
@@ -3315,12 +3378,13 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.equals(f))
 
         # ------------------------------------------------------------
-        # Check other types
+        # Check all types
         # ------------------------------------------------------------
         for standard_name in (
                 'atmosphere_ln_pressure_coordinate',
                 'atmosphere_sigma_coordinate',
                 'atmosphere_hybrid_sigma_pressure_coordinate',
+                'atmosphere_hybrid_height_coordinate',
                 'atmosphere_sleve_coordinate',
                 'ocean_sigma_coordinate',
                 'ocean_s_coordinate',
