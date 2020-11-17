@@ -17,8 +17,8 @@ def randomise_test_order(*_args):
     return choice([1, -1])
 
 
-# Set the tests to run from the cf/test/ directoty even if this script is run
-# from another directoty (even one outside the repo root). This makes it easier
+# Set the tests to run from the cf/test/ directory even if this script is run
+# from another directory (even one outside the repo root). This makes it easier
 # to set up the individual tests without errors due to e.g. bad relative dirs:
 test_dir = os.path.dirname(os.path.realpath(__file__))
 # Build the test suite from the tests found in the test files:

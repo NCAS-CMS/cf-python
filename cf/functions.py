@@ -101,7 +101,7 @@ if _linux:
     # Opening /proc/meminfo once per PE here rather than in
     # _free_memory each time it is called works with MPI on
     # Debian-based systems, which otherwise throw an error that there
-    # is no such file or directoty when run on multiple PEs.
+    # is no such file or directory when run on multiple PEs.
     # ----------------------------------------------------------------
     _meminfo_fields = set(('SReclaimable:', 'Cached:', 'Buffers:', 'MemFree:'))
     _meminfo_file = open('/proc/meminfo', 'r', 1)
@@ -243,12 +243,12 @@ def configuration(
             change the current value.
 
         tempdir: `str`, optional
-            The new directoty for temporary files. Tilde expansion (an
+            The new directory for temporary files. Tilde expansion (an
             initial component of ``~`` or ``~user`` is replaced by
             that *user*'s home directory) and environment variable
             expansion (substrings of the form ``$name`` or ``${name}``
             are replaced by the value of environment variable *name*)
-            are applied to the new directoty name.
+            are applied to the new directory name.
 
             The default is to not change the directory.
 
@@ -786,7 +786,7 @@ def TOTAL_MEMORY(*new_total_memory):
 
 
 def tempdir(*arg):
-    '''The directoty for internally generated temporary files.
+    '''The directory for internally generated temporary files.
 
     When setting the directory, it is created if the specified path
     does not exist.
@@ -794,20 +794,20 @@ def tempdir(*arg):
     :Parameters:
 
         arg: `str`, optional
-            The new directoty for temporary files. Tilde expansion (an
+            The new directory for temporary files. Tilde expansion (an
             initial component of ``~`` or ``~user`` is replaced by
             that *user*'s home directory) and environment variable
             expansion (substrings of the form ``$name`` or ``${name}``
             are replaced by the value of environment variable *name*)
-            are applied to the new directoty name.
+            are applied to the new directory name.
 
             The default is to not change the directory.
 
     :Returns:
 
         `str`
-            The directoty prior to the change, or the current
-            directoty if no new value was specified.
+            The directory prior to the change, or the current
+            directory if no new value was specified.
 
     **Examples:**
 
@@ -824,7 +824,7 @@ def tempdir(*arg):
     if arg:
         tempdir = _os_path_expanduser(_os_path_expandvars(arg[0]))
 
-        # Create the directoty if it does not exist.
+        # Create the directory if it does not exist.
         try:
             mkdir(tempdir)
         except OSError:
@@ -2275,7 +2275,7 @@ def abspath(filename):
 def relpath(filename, start=None):
     '''Return a relative filepath to a file.
 
-    The filepath is relative either from the current directoty or from
+    The filepath is relative either from the current directory or from
     an optional start point.
 
     If a string containing URL is provided then it is returned unchanged.
@@ -2289,7 +2289,7 @@ def relpath(filename, start=None):
 
         start: `str`, optional
             The start point for the relative path. By default the
-            current directoty is used.
+            current directory is used.
 
     :Returns:
 
@@ -2317,7 +2317,7 @@ def relpath(filename, start=None):
 
 
 def dirname(filename):
-    '''Return the directoty name of a file.
+    '''Return the directory name of a file.
 
     If a string containing URL is provided then everything up to, but
     not including, the last slash (/) is returned.
@@ -2332,7 +2332,7 @@ def dirname(filename):
     :Returns:
 
         `str`
-            The directoty name.
+            The directory name.
 
     **Examples:**
 

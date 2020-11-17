@@ -11,7 +11,7 @@ the build process.  This also includes renaming of external symbols where the
 functions called are provided by other source files also in the type-dep
 directory.
 
-Files in this (the parent) directoty will be built without either -DSINGLE or
+Files in this (the parent) directory will be built without either -DSINGLE or
 -DDOUBLE, and no renaming of objects will take place, and the symbol names are
 unmodified.  They should be protyped in bits/type_indep_protos.h.
 

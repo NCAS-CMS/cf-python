@@ -52,7 +52,7 @@ _dtype_object = numpy_dtype(object)
 
 # --------------------------------------------------------------------
 # Dictionary of partitions' temporary files containing the full path
-# of the directoty containing tuples of the temporary file and its
+# of the directory containing tuples of the temporary file and its
 # lock files, the full path of the lock file on this PE and a set of
 # the full path of the lock files on other PEs.
 #

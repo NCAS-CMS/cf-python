@@ -80,7 +80,7 @@ them here in cf.
 
     TEMPDIR : str
       The location to store temporary files. By default it is
-      the default directoty used by the :mod:`tempfile` module.
+      the default directory used by the :mod:`tempfile` module.
 
     REGRID_LOGGING : bool
       Whether or not to enable ESMPy logging. If it is logging
