@@ -1,41 +1,35 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-cf.Flags
+﻿cf.Flags
 ========
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.Flags
-   :no-members:
-   :no-inherited-members:
+.. autoclass:: Flags
 
-Inspection
-----------
-
-.. rubric:: Attributes
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   .. automethod:: __init__
 
-   ~cf.Flags.flag_masks
-   ~cf.Flags.flag_meanings
-   ~cf.Flags.flag_values
-   ~cf.Flags.inspect
-
-Miscellaneous
--------------
-
-.. rubric:: Methods
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
+   .. rubric:: Methods
 
-   ~cf.Flags.copy
-   ~cf.Flags.dump
-   ~cf.Flags.equals
-   ~cf.Flags.sort
+   .. autosummary::
+   
+      ~Flags.__init__
+      ~Flags.copy
+      ~Flags.dump
+      ~Flags.equals
+      ~Flags.inspect
+      ~Flags.sort
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Flags.flag_masks
+      ~Flags.flag_meanings
+      ~Flags.flag_values
+   
+   

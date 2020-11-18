@@ -1,42 +1,38 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-
-cf.TimeDuration
+﻿cf.TimeDuration
 ===============
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.TimeDuration
-   :no-members:
-   :no-inherited-members:
+.. autoclass:: TimeDuration
 
-Attributes
-----------
-
-.. autosummary::
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.TimeDuration.Units
-   ~cf.TimeDuration.isint
-   ~cf.TimeDuration.iso
-     
    
-Methods
--------
+   .. automethod:: __init__
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
+   
+   .. rubric:: Methods
 
-   ~cf.TimeDuration.bounds
-   ~cf.TimeDuration.copy
-   ~cf.TimeDuration.days_in_month
-   ~cf.TimeDuration.equals
-   ~cf.TimeDuration.equivalent
-   ~cf.TimeDuration.inspect
-   ~cf.TimeDuration.interval
-   ~cf.TimeDuration.is_day_factor
+   .. autosummary::
+   
+      ~TimeDuration.__init__
+      ~TimeDuration.bounds
+      ~TimeDuration.copy
+      ~TimeDuration.days_in_month
+      ~TimeDuration.equals
+      ~TimeDuration.equivalent
+      ~TimeDuration.inspect
+      ~TimeDuration.interval
+      ~TimeDuration.is_day_factor
+   
+   
 
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TimeDuration.Units
+      ~TimeDuration.isint
+      ~TimeDuration.iso
+   
+   

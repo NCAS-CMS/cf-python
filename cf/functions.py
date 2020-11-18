@@ -54,7 +54,9 @@ import cfdm
 import cfunits
 
 from .          import __version__, __file__
-from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
+from .constants import (CONSTANTS,
+                        _file_to_fh,
+                        _stash2standard_name)
 
 from . import mpi_on
 from . import mpi_size
@@ -69,6 +71,16 @@ def _close_proc_meminfo():
 
 
 atexit.register(_close_proc_meminfo)
+
+
+# --------------------------------------------------------------------
+# Inherit classes from cfdm
+# --------------------------------------------------------------------
+Constant = cfdm.Constant
+Configuration = cfdm.Configuration
+
+Constant.__doc__ = Constant.__doc__.replace('cfdm.', 'cf.')
+Configuration.__doc__ = Configuration.__doc__.replace('cfdm.', 'cf.')
 
 
 class DeprecationError(Exception):
@@ -234,15 +246,15 @@ def configuration(
 
     :Parameters:
 
-        atol: `float`, optional
+        atol: `float` or `Constant`, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
 
-        rtol: `float`, optional
+        rtol: `float` or `Constant`, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
-        tempdir: `str`, optional
+        tempdir: `str` or `Constant`, optional
             The new directory for temporary files. Tilde expansion (an
             initial component of ``~`` or ``~user`` is replaced by
             that *user*'s home directory) and environment variable
@@ -252,27 +264,27 @@ def configuration(
 
             The default is to not change the directory.
 
-        of_fraction: `float`, optional
+        of_fraction: `float` or `Constant`, optional
             The new fraction (between 0.0 and 1.0). The default is to
             not change the current behaviour.
 
-        chunksize: `float`, optional
+        chunksize: `float` or `Constant`, optional
             The new chunksize in bytes. The default is to not change
             the current behaviour.
 
-        collapse_parallel_mode: `int`, optional
+        collapse_parallel_mode: `int` or `Constant`, optional
             The new value (0, 1 or 2).
 
-        free_memory_factor: `float`
+        free_memory_factor: `float` or `Constant`, optional
             The new value of the fraction of memory kept free as a
             temporary workspace. The default is to not change the
             current behaviour.
 
-        log_level: `str` or `int`, optional
+        log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
-            the named set of log levels or identifier 'DISABLE', or an
-            integer code corresponding to each of these, namely:
+            the named set of log levels or identifier ``'DISABLE'``,
+            or an integer code corresponding to each of these, namely:
 
             * ``'DISABLE'`` (``0``);
             * ``'WARNING'`` (``1``);
@@ -280,22 +292,22 @@ def configuration(
             * ``'DETAIL'`` (``3``);
             * ``'DEBUG'`` (``-1``).
 
-        regrid_logging: `bool`, optional
+        regrid_logging: `bool` or `Constant`, optional
             The new value (either `True` to enable logging or `False`
             to disable it). The default is to not change the current
             behaviour.
 
-        `relaxed_identities`: `bool`, optional
-            The new value; if `True`, use 'relaxed' mode when getting a
-            construct identity. The default is to not change the current
-            value.
+        `relaxed_identities`: `bool` or `Constant`, optional
+            The new value; if `True`, use 'relaxed' mode when getting
+            a construct identity. The default is to not change the
+            current value.
 
     :Returns:
 
-        `dict`
-            The names and values of the project-wide constants prior to the
-            change, or the current names and values if no new values are
-            specified.
+        `Configuration`
+            The dictionary-like object containing the names and values
+            of the project-wide constants prior to the change, or the
+            current names and values if no new values are specified.
 
     **Examples:**
 
@@ -406,7 +418,7 @@ def _configuration(**kwargs):
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
-    return old
+    return Configuration(**old)
 
 
 def free_memory():
@@ -465,7 +477,7 @@ def _WORKSPACE_FACTOR_2():
     return CONSTANTS['WORKSPACE_FACTOR_2']
 
 
-def free_memory_factor(*args):
+def free_memory_factor(*arg):
     '''Set the fraction of memory kept free as a temporary
     workspace. Users should set the free memory factor through
     cf.set_performance so that the upper limit to the chunksize is
@@ -475,33 +487,47 @@ def free_memory_factor(*args):
 
     :Parameters:
 
-        free_memory_factor: `float`
+        arg: `float` or `Constant`, optional
             The fraction of memory kept free as a temporary workspace.
 
     :Returns:
 
-        `float`
-             The previous value of the free memory factor.
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
 
     '''
     old = CONSTANTS['FREE_MEMORY_FACTOR']
-    if args:
+    if arg:
+        arg = arg[0]
         try:
-            free_memory_factor = float(args[0])
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
+
+        try:
+            arg = float(arg)
         except (ValueError, TypeError):
-            raise ValueError('Free memory factor must be a float')
-        if free_memory_factor <= 0.0 or free_memory_factor >= 1.0:
             raise ValueError(
-                'Free memory factor must be between 0.0 and 1.0 not inclusive')
+                "Free memory factor must be a float. Got {!r}".format(arg)
+            )
 
-        CONSTANTS['FREE_MEMORY_FACTOR'] = free_memory_factor
-        CONSTANTS['FM_THRESHOLD'] = free_memory_factor * total_memory()
+        if arg <= 0.0 or arg >= 1.0:
+            raise ValueError(
+                "Free memory factor must be between 0.0 and 1.0 "
+                "not inclusive"
+            )
 
-    return old
+        CONSTANTS['FREE_MEMORY_FACTOR'] = arg
+        CONSTANTS['FM_THRESHOLD'] = arg * total_memory()
+
+    return Constant(old, _func=free_memory_factor)
 
 
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
     '''Alias for `cf.free_memory_factor`.
+
     '''
     return free_memory_factor(*new_free_memory_factor)
 
@@ -524,21 +550,29 @@ def _cf_free_memory_factor(*new_free_memory_factor):
 atol = cfdm.atol
 rtol = cfdm.rtol
 CF = cfdm.CF
+
+# Update docstrings
+CF.__doc__ = CF.__doc__.replace('cfdm.', 'cf.')
+atol.__doc__ = atol.__doc__.replace('cfdm.', 'cf.')
+rtol.__doc__ = rtol.__doc__.replace('cfdm.', 'cf.')
+
 # Module-level alias to avoid name clashes with function keyword arguments
 # (corresponding to 'import atol as cf_atol' etc. in other modules)
-cf_atol = cfdm.atol
-cf_rtol = cfdm.rtol
+_cf_atol = atol
+_cf_rtol = rtol
 
 
 # Aliases (for back-compatibility etc.):
 def ATOL(*new_atol):
     '''Alias for `cf.atol`.
+
     '''
     return atol(*new_atol)
 
 
 def RTOL(*new_rtol):
     '''Alias for `cf.rtol`.
+
     '''
     return rtol(*new_rtol)
 
@@ -558,7 +592,7 @@ def log_level(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
-    generated by ``cf`` at runtime, such that any messages marked as
+    generated by cf at runtime, such that any messages marked as
     having a severity below the level set will not be reported.
 
     For example, when set to ``'WARNING'`` (or equivalently ``1``),
@@ -574,11 +608,11 @@ def log_level(*log_level):
 
     :Parameters:
 
-        log_level: `str` or `int`, optional
+        log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
-            the named set of log levels or identifier 'DISABLE', or an
-            integer code corresponding to each of these, namely:
+            the named set of log levels or identifier ``'DISABLE'``,
+            or an integer code corresponding to each of these, namely:
 
             * ``'DISABLE'`` (``0``);
             * ``'WARNING'`` (``1``);
@@ -588,7 +622,7 @@ def log_level(*log_level):
 
     :Returns:
 
-        `str`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified (or if one was specified but was
             not valid). Note the string name, rather than the
@@ -596,16 +630,31 @@ def log_level(*log_level):
 
     **Examples:**
 
-    >>> log_level()  # get the current value
+    >>> cf.log_level()
+    <Constant: 'WARNING'>
+    >>> print(cf.log_level())
+    WARNING
+    >>> str(cf.log_level())
     'WARNING'
-    >>> log_level('INFO')  # change the value to 'INFO'
-    'WARNING'
-    >>> log_level()
-    'INFO'
-    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
-    'INFO'
-    >>> log_level()
-    'DISABLE'
+
+    >>> old = log_level('INFO')
+    >>> cf.log_level()
+    <Constant: 'WARNING'>
+    >>> cf.log_level(old)
+    <Constant: 'INFO'>
+    >>> cf.log_level()
+    <Constant: 'WARNING'>
+
+    Use as a context manager:
+
+    >>> print(cf.log_level())
+    WARNING
+    >>> with cf.log_level('DETAIL'):
+    ...     print(cf.log_level(), cf.log_level(-1), cf.log_level())
+    ...
+    DETAIL DETAIL DEBUG
+    >>> print(cf.log_level())
+    WARNING
 
     '''
     return _log_level(CONSTANTS, log_level)
@@ -617,7 +666,7 @@ def LOG_LEVEL(*new_log_level):
     return log_level(*new_log_level)
 
 
-def chunksize(*args):
+def chunksize(*arg):
     '''Set the chunksize used by LAMA for partitioning the data
     array. This must be smaller than an upper limit determined by the
     free memory factor, which is the fraction of memory kept free as a
@@ -636,36 +685,48 @@ def chunksize(*args):
 
     :Parameters:
 
-        chunksize: `float`, optional
+        arg: `float` or `Constant`, optional
             The chunksize in bytes.
 
     :Returns:
 
-        `float`
-            The previous value of the chunksize in bytes.
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
 
     '''
     old = CONSTANTS['CHUNKSIZE']
-    if args:
+
+    if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
+
         upper_chunksize = ((free_memory_factor() * min_total_memory())
                            / ((mpi_size * _WORKSPACE_FACTOR_1()) +
                               _WORKSPACE_FACTOR_2()))
-        if args[0] is None:
+
+        if arg is None:
             CONSTANTS['CHUNKSIZE'] = upper_chunksize
         else:
-            chunksize = float(args[0])
-            if chunksize > upper_chunksize and mpi_size > 1:
+            arg = float(arg)
+            if arg > upper_chunksize and mpi_size > 1:
                 raise ValueError(
-                    'Specified chunk size is too large for given free memory '
-                    'factor'
+                    "Specified chunk size ({}) is too large for the given "
+                    "free memory factor ({})".format(arg, upper_chunksize)
+                    )
+            elif arg <= 0:
+                raise ValueError(
+                    "Chunk size ({}) must be positive".format(arg)
                 )
-            elif chunksize <= 0:
-                raise ValueError('Chunk size must be positive')
 
-            CONSTANTS['CHUNKSIZE'] = chunksize
+            CONSTANTS['CHUNKSIZE'] = arg
     # --- End: if
 
-    return old
+    return Constant(old, _func=chunksize)
 
 
 def CHUNKSIZE(*new_chunksize):
@@ -822,7 +883,14 @@ def tempdir(*arg):
     '''
     old = CONSTANTS['TEMPDIR']
     if arg:
-        tempdir = _os_path_expanduser(_os_path_expandvars(arg[0]))
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
+
+        tempdir = _os_path_expanduser(_os_path_expandvars(arg))
 
         # Create the directory if it does not exist.
         try:
@@ -841,7 +909,7 @@ def TEMPDIR(*new_tempdir):
     return tempdir(*new_tempdir)
 
 
-def of_fraction(*args):
+def of_fraction(*arg):
     '''The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
 
@@ -856,13 +924,13 @@ def of_fraction(*args):
 
     :Parameters:
 
-        arg: `float`, optional
+        arg: `float` or `Constant`, optional
             The new fraction (between 0.0 and 1.0). The default is to
             not change the current behaviour.
 
     :Returns:
 
-        `float`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -888,18 +956,30 @@ def of_fraction(*args):
 
     '''
     old = CONSTANTS['OF_FRACTION']
-    if args:
+    if arg:
+        arg = arg[0]
         try:
-            fraction = float(args[0])
-        except (ValueError, TypeError):
-            raise ValueError('Fraction must be a float')
-        fraction = float(args[0])
-        if fraction <= 0.0 or fraction >= 1.0:
-            raise ValueError(
-                'Fraction must be between 0.0 and 1.0 not inclusive')
-        CONSTANTS['OF_FRACTION'] = fraction
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-    return old
+        try:
+            arg = float(arg)
+        except (ValueError, TypeError):
+            raise ValueError(
+                "Fraction must be a float. Got {!r}".format(arg)
+            )
+
+        if arg <= 0.0 or arg >= 1.0:
+            raise ValueError(
+                "Fraction must be between 0.0 and 1.0 not inclusive. "
+                "Got {!r}".format(arg)
+            )
+
+        CONSTANTS['OF_FRACTION'] = arg
+
+    return Constant(old, _func=of_fraction)
 
 
 def OF_FRACTION(*new_of_fraction):
@@ -915,14 +995,14 @@ def regrid_logging(*arg):
 
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `bool` or `Constant`, optional
             The new value (either `True` to enable logging or `False`
             to disable it). The default is to not change the current
             behaviour.
 
     :Returns:
 
-        `bool`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -938,9 +1018,16 @@ def regrid_logging(*arg):
     '''
     old = CONSTANTS['REGRID_LOGGING']
     if arg:
-        CONSTANTS['REGRID_LOGGING'] = bool(arg[0])
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-    return old
+        CONSTANTS['REGRID_LOGGING'] = bool(arg)
+
+    return Constant(old, _func=regrid_logging)
 
 
 def REGRID_LOGGING(*new_regrid_logging):
@@ -970,12 +1057,12 @@ def collapse_parallel_mode(*arg):
 
     :Parameters:
 
-        arg: `int`, optional
+        arg: `int` or `Constant`, optional
             The new value (0, 1 or 2).
 
     :Returns:
 
-        `int`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -991,20 +1078,28 @@ def collapse_parallel_mode(*arg):
     '''
     old = CONSTANTS['COLLAPSE_PARALLEL_MODE']
     if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
+
         allowed_values = (0, 1, 2)
-        if arg[0] not in allowed_values:
+        if arg not in allowed_values:
             raise ValueError(
-                'Invalid collapse parallel mode. Valid values are '
-                '{}'.format(allowed_values)
+                "Invalid collapse parallel mode. Valid values are "
+                "{}".format(allowed_values)
             )
 
-        CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg[0]
+        CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg
 
-    return old
+    return Constant(old, _func=collapse_parallel_mode)
 
 
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     '''Alias for `cf.collapse_parallel_mode`.
+
     '''
     return collapse_parallel_mode(*new_collapse_parallel_mode)
 
@@ -1020,11 +1115,11 @@ def relaxed_identities(*arg):
 
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `bool` or `Constant`, optional
 
     :Returns:
 
-        `bool`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -1045,13 +1140,21 @@ def relaxed_identities(*arg):
     '''
     old = CONSTANTS['RELAXED_IDENTITIES']
     if arg:
-        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-    return old
+        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg)
+
+    return Constant(old, _func=relaxed_identities)
 
 
 def RELAXED_IDENTITIES(*new_relaxed_identities):
     '''Alias for `cf.relaxed_identities`.
+
     '''
     return relaxed_identities(*new_relaxed_identities)
 
@@ -1576,8 +1679,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     len_parsed_indices = len(parsed_indices)
 
     if ndim and len_parsed_indices > ndim:
-        raise IndexError("Invalid indices {} for array with shape {}".format(
-            parsed_indices, shape))
+        raise IndexError(
+            "Invalid indices {} for array with shape {}".format(
+                parsed_indices, shape)
+        )
 
     if len_parsed_indices < ndim:
         parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
@@ -1594,7 +1699,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         #     parsed_indices = []
         # else:
         raise IndexError(
-            "Scalar array can only be indexed with () or Ellipsis")
+            "Scalar array can only be indexed with () or Ellipsis"
+        )
 
     # --- End: if
 
@@ -1682,7 +1788,9 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                         (start > stop and step > 0)):
                     raise IndexError(
                         "Invalid indices dimension with size {}: {}".format(
-                            size, index))
+                            size, index)
+                    )
+
                 if step < 0 and stop < 0:
                     stop = None
                 index = slice(start, stop, step)
@@ -1926,9 +2034,10 @@ def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
     '''
     '''
     if rtol is None:
-        rtol = cf_rtol()
+        rtol = _cf_rtol().value
+
     if atol is None:
-        atol = cf_atol()
+        atol = _cf_atol().value
 
     return _equals(x, y, rtol=rtol, atol=atol,
                    ignore_data_type=ignore_data_type,
@@ -1992,9 +2101,10 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     '''
 
     if rtol is None:
-        rtol = cf_rtol()
+        rtol = _cf_rtol().value
+
     if atol is None:
-        atol = cf_atol()
+        atol = _cf_atol().value
 
     eq = getattr(x, 'equivalent', None)
     if callable(eq):
@@ -2597,9 +2707,10 @@ def allclose(x, y, rtol=None, atol=None):
 
     '''
     if rtol is None:
-        rtol = cf_rtol()
+        rtol = _cf_rtol().value
+
     if atol is None:
-        atol = cf_atol()
+        atol = _cf_atol().value
 
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):

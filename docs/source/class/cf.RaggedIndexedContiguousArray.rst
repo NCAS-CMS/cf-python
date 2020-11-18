@@ -1,60 +1,42 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-cf.RaggedIndexedContiguousArray
+﻿cf.RaggedIndexedContiguousArray
 ===============================
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.RaggedIndexedContiguousArray
-   :no-members:
-   :no-inherited-members:
-
-
-Inspection
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cf.RaggedIndexedContiguousArray.get_compressed_axes
-   ~cf.RaggedIndexedContiguousArray.get_compressed_dimension
-   ~cf.RaggedIndexedContiguousArray.get_compression_type
-   ~cf.RaggedIndexedContiguousArray.get_count
-   ~cf.RaggedIndexedContiguousArray.get_index
-   ~cf.RaggedIndexedContiguousArray.get_subspace
-   ~cf.RaggedIndexedContiguousArray.source
-   
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/	    
-   :template: attribute.rst
-   
-   ~cf.RaggedIndexedContiguousArray.array
-   ~cf.RaggedIndexedContiguousArray.compressed_array
-   ~cf.RaggedIndexedContiguousArray.dtype
-   ~cf.RaggedIndexedContiguousArray.ndim
-   ~cf.RaggedIndexedContiguousArray.shape
-   ~cf.RaggedIndexedContiguousArray.size
+.. autoclass:: RaggedIndexedContiguousArray
 
    
-Miscellaneous
--------------
+   .. automethod:: __init__
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
    
-   ~cf.RaggedIndexedContiguousArray.copy
-   ~cf.RaggedIndexedContiguousArray.get_subspace
-   ~cf.RaggedIndexedContiguousArray.to_memory
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RaggedIndexedContiguousArray.__init__
+      ~RaggedIndexedContiguousArray.copy
+      ~RaggedIndexedContiguousArray.get_compressed_axes
+      ~RaggedIndexedContiguousArray.get_compressed_dimension
+      ~RaggedIndexedContiguousArray.get_compression_type
+      ~RaggedIndexedContiguousArray.get_count
+      ~RaggedIndexedContiguousArray.get_index
+      ~RaggedIndexedContiguousArray.get_subspace
+      ~RaggedIndexedContiguousArray.source
+      ~RaggedIndexedContiguousArray.to_memory
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RaggedIndexedContiguousArray.array
+      ~RaggedIndexedContiguousArray.compressed_array
+      ~RaggedIndexedContiguousArray.dtype
+      ~RaggedIndexedContiguousArray.ndim
+      ~RaggedIndexedContiguousArray.shape
+      ~RaggedIndexedContiguousArray.size
+   
    

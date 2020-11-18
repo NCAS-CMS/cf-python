@@ -15,7 +15,6 @@ from . import mpi_on
 from . import mpi_size
 if mpi_on:
     from . import mpi_comm
-# --- End: if
 
 
 # platform = sys.platform

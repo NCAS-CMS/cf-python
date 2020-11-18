@@ -1002,14 +1002,14 @@ place.
         '''Return the current value of the `atol` function.
 
         '''
-        return cf_atol()
+        return cf_atol().value
 
     @property
     def _rtol(self):
         '''Return the current value of the `rtol` function.
 
         '''
-        return cf_rtol()
+        return cf_rtol().value
 
     def _is_abstract_Array_subclass(self, array):
         '''Whether or not an array is a type of abstract Array.
@@ -10491,6 +10491,7 @@ False
         # Set default tolerances
         if rtol is None:
             rtol = self._rtol
+
         if atol is None:
             atol = self._atol
 
@@ -12131,6 +12132,7 @@ False
         '''
         if atol is None:
             atol = self._atol
+
         if rtol is None:
             rtol = self._rtol
 
@@ -12149,7 +12151,7 @@ False
             x = self
 
         try:
-            return abs(x - y) <= atol + rtol*abs(y)
+            return abs(x - y) <= float(atol) + float(rtol)*abs(y)
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 

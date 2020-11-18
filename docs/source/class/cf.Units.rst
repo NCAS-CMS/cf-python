@@ -1,21 +1,23 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-cf.Units
+﻿cf.Units
 ========
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.Units
-   :no-members:
-   :no-inherited-members:
+.. autoclass:: Units
 
-Attributes
-----------
+   
+   .. automethod:: __init__
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   
+   .. rubric:: Methods
 
-   ~cf.Units.conform
+   .. autosummary::
+   
+      ~Units.__init__
+      ~Units.conform
+   
+   
+
+   
+   
+   

@@ -1,747 +1,225 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. _cf-DimensionCoordinate:
-
-cf.DimensionCoordinate
+﻿cf.DimensionCoordinate
 ======================
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.DimensionCoordinate
-   :no-members:
-   :no-inherited-members:
+.. autoclass:: DimensionCoordinate
 
-Inspection
-----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.dump
-   ~cf.DimensionCoordinate.identity  
-   ~cf.DimensionCoordinate.identities
-   ~cf.DimensionCoordinate.direction
-   ~cf.DimensionCoordinate.inspect
    
-.. rubric:: Attributes
+   .. automethod:: __init__
+
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   .. rubric:: Methods
 
-   ~cf.DimensionCoordinate.construct_type
-   ~cf.DimensionCoordinate.id
-   ~cf.DimensionCoordinate.ctype
-   ~cf.DimensionCoordinate.T
-   ~cf.DimensionCoordinate.X
-   ~cf.DimensionCoordinate.Y
-   ~cf.DimensionCoordinate.Z
-   ~cf.DimensionCoordinate.decreasing
-   ~cf.DimensionCoordinate.increasing
-
-Bounds
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.del_bounds
-   ~cf.DimensionCoordinate.get_bounds
-   ~cf.DimensionCoordinate.has_bounds
-   ~cf.DimensionCoordinate.set_bounds  
-   ~cf.DimensionCoordinate.get_bounds_data
-   ~cf.DimensionCoordinate.create_bounds
-   ~cf.DimensionCoordinate.contiguous
-      
-.. rubric:: Attributes
+   .. autosummary::
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.bounds
-   ~cf.DimensionCoordinate.cellsize
-   ~cf.DimensionCoordinate.lower_bounds  
-   ~cf.DimensionCoordinate.upper_bounds
-
-Geometries
-^^^^^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.del_geometry
-   ~cf.DimensionCoordinate.get_geometry
-   ~cf.DimensionCoordinate.has_geometry
-   ~cf.DimensionCoordinate.set_geometry
-   ~cf.DimensionCoordinate.del_interior_ring
-   ~cf.DimensionCoordinate.get_interior_ring
-   ~cf.DimensionCoordinate.has_interior_ring
-   ~cf.DimensionCoordinate.set_interior_ring
-   ~cf.DimensionCoordinate.del_node_count
-   ~cf.DimensionCoordinate.get_node_count
-   ~cf.DimensionCoordinate.has_node_count
-   ~cf.DimensionCoordinate.set_node_count
-   ~cf.DimensionCoordinate.del_part_node_count
-   ~cf.DimensionCoordinate.get_part_node_count
-   ~cf.DimensionCoordinate.has_part_node_count
-   ~cf.DimensionCoordinate.set_part_node_count
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.interior_ring
-
-Selection
----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.match_by_identity
-   ~cf.DimensionCoordinate.match_by_naxes
-   ~cf.DimensionCoordinate.match_by_ncvar
-   ~cf.DimensionCoordinate.match_by_property
-   ~cf.DimensionCoordinate.match_by_units
- 
-Properties
-----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.del_property
-   ~cf.DimensionCoordinate.get_property
-   ~cf.DimensionCoordinate.has_property
-   ~cf.DimensionCoordinate.set_property
-   ~cf.DimensionCoordinate.properties
-   ~cf.DimensionCoordinate.clear_properties
-   ~cf.DimensionCoordinate.set_properties
-
-.. rubric:: Attributes
-	    
-.. autosummary::
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.add_offset
-   ~cf.DimensionCoordinate.axis
-   ~cf.DimensionCoordinate.calendar
-   ~cf.DimensionCoordinate.comment
-   ~cf.DimensionCoordinate._FillValue
-   ~cf.DimensionCoordinate.history
-   ~cf.DimensionCoordinate.leap_month
-   ~cf.DimensionCoordinate.leap_year
-   ~cf.DimensionCoordinate.long_name
-   ~cf.DimensionCoordinate.missing_value
-   ~cf.DimensionCoordinate.month_lengths
-   ~cf.DimensionCoordinate.positive
-   ~cf.DimensionCoordinate.scale_factor
-   ~cf.DimensionCoordinate.standard_name
-   ~cf.DimensionCoordinate.units
-   ~cf.DimensionCoordinate.valid_max
-   ~cf.DimensionCoordinate.valid_min
-   ~cf.DimensionCoordinate.valid_range
-
-Units
------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.override_units
-   ~cf.DimensionCoordinate.override_calendar
-
-.. rubric:: Attributes
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.Units
-
-
-Data
-----
-
-.. rubric:: Attributes
+      ~DimensionCoordinate.__init__
+      ~DimensionCoordinate.all
+      ~DimensionCoordinate.allclose
+      ~DimensionCoordinate.any
+      ~DimensionCoordinate.apply_masking
+      ~DimensionCoordinate.arccos
+      ~DimensionCoordinate.arccosh
+      ~DimensionCoordinate.arcsin
+      ~DimensionCoordinate.arcsinh
+      ~DimensionCoordinate.arctan
+      ~DimensionCoordinate.arctanh
+      ~DimensionCoordinate.asdatetime
+      ~DimensionCoordinate.asreftime
+      ~DimensionCoordinate.autoperiod
+      ~DimensionCoordinate.ceil
+      ~DimensionCoordinate.chunk
+      ~DimensionCoordinate.clear_properties
+      ~DimensionCoordinate.clip
+      ~DimensionCoordinate.close
+      ~DimensionCoordinate.concatenate
+      ~DimensionCoordinate.contiguous
+      ~DimensionCoordinate.convert_reference_time
+      ~DimensionCoordinate.copy
+      ~DimensionCoordinate.cos
+      ~DimensionCoordinate.cosh
+      ~DimensionCoordinate.count
+      ~DimensionCoordinate.count_masked
+      ~DimensionCoordinate.create_bounds
+      ~DimensionCoordinate.creation_commands
+      ~DimensionCoordinate.cyclic
+      ~DimensionCoordinate.datum
+      ~DimensionCoordinate.del_bounds
+      ~DimensionCoordinate.del_data
+      ~DimensionCoordinate.del_geometry
+      ~DimensionCoordinate.del_interior_ring
+      ~DimensionCoordinate.del_node_count
+      ~DimensionCoordinate.del_part_node_count
+      ~DimensionCoordinate.del_property
+      ~DimensionCoordinate.delprop
+      ~DimensionCoordinate.direction
+      ~DimensionCoordinate.dump
+      ~DimensionCoordinate.equals
+      ~DimensionCoordinate.equivalent
+      ~DimensionCoordinate.exp
+      ~DimensionCoordinate.expand_dims
+      ~DimensionCoordinate.files
+      ~DimensionCoordinate.fill_value
+      ~DimensionCoordinate.flatten
+      ~DimensionCoordinate.flip
+      ~DimensionCoordinate.floor
+      ~DimensionCoordinate.get_bounds
+      ~DimensionCoordinate.get_bounds_data
+      ~DimensionCoordinate.get_data
+      ~DimensionCoordinate.get_filenames
+      ~DimensionCoordinate.get_geometry
+      ~DimensionCoordinate.get_interior_ring
+      ~DimensionCoordinate.get_node_count
+      ~DimensionCoordinate.get_part_node_count
+      ~DimensionCoordinate.get_property
+      ~DimensionCoordinate.getprop
+      ~DimensionCoordinate.halo
+      ~DimensionCoordinate.has_bounds
+      ~DimensionCoordinate.has_data
+      ~DimensionCoordinate.has_geometry
+      ~DimensionCoordinate.has_interior_ring
+      ~DimensionCoordinate.has_node_count
+      ~DimensionCoordinate.has_part_node_count
+      ~DimensionCoordinate.has_property
+      ~DimensionCoordinate.hasprop
+      ~DimensionCoordinate.identities
+      ~DimensionCoordinate.identity
+      ~DimensionCoordinate.insert_data
+      ~DimensionCoordinate.insert_dimension
+      ~DimensionCoordinate.inspect
+      ~DimensionCoordinate.iscyclic
+      ~DimensionCoordinate.log
+      ~DimensionCoordinate.mask_invalid
+      ~DimensionCoordinate.match
+      ~DimensionCoordinate.match_by_identity
+      ~DimensionCoordinate.match_by_naxes
+      ~DimensionCoordinate.match_by_ncvar
+      ~DimensionCoordinate.match_by_property
+      ~DimensionCoordinate.match_by_units
+      ~DimensionCoordinate.max
+      ~DimensionCoordinate.maximum
+      ~DimensionCoordinate.mean
+      ~DimensionCoordinate.mid_range
+      ~DimensionCoordinate.min
+      ~DimensionCoordinate.minimum
+      ~DimensionCoordinate.name
+      ~DimensionCoordinate.nc_clear_variable_groups
+      ~DimensionCoordinate.nc_del_variable
+      ~DimensionCoordinate.nc_get_variable
+      ~DimensionCoordinate.nc_has_variable
+      ~DimensionCoordinate.nc_set_variable
+      ~DimensionCoordinate.nc_set_variable_groups
+      ~DimensionCoordinate.nc_variable_groups
+      ~DimensionCoordinate.override_calendar
+      ~DimensionCoordinate.override_units
+      ~DimensionCoordinate.period
+      ~DimensionCoordinate.properties
+      ~DimensionCoordinate.range
+      ~DimensionCoordinate.remove_data
+      ~DimensionCoordinate.rint
+      ~DimensionCoordinate.roll
+      ~DimensionCoordinate.round
+      ~DimensionCoordinate.sample_size
+      ~DimensionCoordinate.sd
+      ~DimensionCoordinate.select
+      ~DimensionCoordinate.set_bounds
+      ~DimensionCoordinate.set_data
+      ~DimensionCoordinate.set_geometry
+      ~DimensionCoordinate.set_interior_ring
+      ~DimensionCoordinate.set_node_count
+      ~DimensionCoordinate.set_part_node_count
+      ~DimensionCoordinate.set_properties
+      ~DimensionCoordinate.set_property
+      ~DimensionCoordinate.setprop
+      ~DimensionCoordinate.sin
+      ~DimensionCoordinate.sinh
+      ~DimensionCoordinate.squeeze
+      ~DimensionCoordinate.standard_deviation
+      ~DimensionCoordinate.sum
+      ~DimensionCoordinate.swapaxes
+      ~DimensionCoordinate.tan
+      ~DimensionCoordinate.tanh
+      ~DimensionCoordinate.transpose
+      ~DimensionCoordinate.trunc
+      ~DimensionCoordinate.uncompress
+      ~DimensionCoordinate.unique
+      ~DimensionCoordinate.var
+      ~DimensionCoordinate.variance
+      ~DimensionCoordinate.where
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.array
-   ~cf.DimensionCoordinate.Data
-   ~cf.DimensionCoordinate.data
-   ~cf.DimensionCoordinate.datetime_array
-   ~cf.DimensionCoordinate.datum
-   ~cf.DimensionCoordinate.dtype
-   ~cf.DimensionCoordinate.isscalar
-   ~cf.DimensionCoordinate.ndim
-   ~cf.DimensionCoordinate.shape
-   ~cf.DimensionCoordinate.size
-   ~cf.DimensionCoordinate.varray
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__getitem__
-   ~cf.DimensionCoordinate.del_data
-   ~cf.DimensionCoordinate.get_data
-   ~cf.DimensionCoordinate.has_data
-   ~cf.DimensionCoordinate.set_data
- 
-.. rubric:: *Rearranging elements*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.flatten
-   ~cf.DimensionCoordinate.flip
-   ~cf.DimensionCoordinate.insert_dimension
-   ~cf.DimensionCoordinate.roll
-   ~cf.DimensionCoordinate.squeeze
-   ~cf.DimensionCoordinate.swapaxes
-   ~cf.DimensionCoordinate.transpose
-      
-.. rubric:: *Expanding the data*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.halo
-
-.. rubric:: *Data array mask*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.apply_masking
-   ~cf.DimensionCoordinate.count
-   ~cf.DimensionCoordinate.count_masked
-   ~cf.DimensionCoordinate.fill_value
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.binary_mask
-   ~cf.DimensionCoordinate.hardmask
-   ~cf.DimensionCoordinate.mask
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-.. rubric:: *Changing data values*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__setitem__
-   ~cf.DimensionCoordinate.halo
-   ~cf.DimensionCoordinate.mask_invalid
-   ~cf.DimensionCoordinate.subspace
-   ~cf.DimensionCoordinate.where
-
-Cyclicity
----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.DimensionCoordinate.autoperiod
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-	      
-   ~cf.DimensionCoordinate.iscyclic
-   ~cf.DimensionCoordinate.isperiodic
-
-.. rubric:: *Miscellaneous*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-
-   ~cf.DimensionCoordinate.chunk
-   ~cf.DimensionCoordinate.close
-   ~cf.DimensionCoordinate.convert_reference_time
-   ~cf.DimensionCoordinate.cyclic
-   ~cf.DimensionCoordinate.period
-   ~cf.DimensionCoordinate.get_filenames
-
-Miscellaneous
--------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.concatenate
-   ~cf.DimensionCoordinate.copy
-   ~cf.DimensionCoordinate.creation_commands
-   ~cf.DimensionCoordinate.equals
-   ~cf.DimensionCoordinate.inspect
-   ~cf.DimensionCoordinate.uncompress
    
-Mathematical operations
------------------------
 
-.. http://docs.scipy.org/doc/numpy/reference/routines.math.html
-
-.. rubric:: Methods
-
-.. rubric:: *Trigonometrical and hyperbolic functions*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.arccos
-   ~cf.DimensionCoordinate.arccosh
-   ~cf.DimensionCoordinate.arcsin
-   ~cf.DimensionCoordinate.arcsinh
-   ~cf.DimensionCoordinate.arctan
-   .. ~cf.DimensionCoordinate.arctan2  [AT2]
-   ~cf.DimensionCoordinate.arctanh
-   ~cf.DimensionCoordinate.cos
-   ~cf.DimensionCoordinate.cosh
-   ~cf.DimensionCoordinate.sin
-   ~cf.DimensionCoordinate.sinh
-   ~cf.DimensionCoordinate.tan
-   ~cf.DimensionCoordinate.tanh
-
-.. rubric:: *Rounding and truncation*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.ceil  
-   ~cf.DimensionCoordinate.clip
-   ~cf.DimensionCoordinate.floor
-   ~cf.DimensionCoordinate.rint
-   ~cf.DimensionCoordinate.round
-   ~cf.DimensionCoordinate.trunc
-
-.. rubric:: *Statistical collapses*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-
-   ~cf.DimensionCoordinate.maximum
-   ~cf.DimensionCoordinate.mean
-   ~cf.DimensionCoordinate.mid_range
-   ~cf.DimensionCoordinate.minimum
-   ~cf.DimensionCoordinate.range
-   ~cf.DimensionCoordinate.sample_size
-   ~cf.DimensionCoordinate.sum  
-   ~cf.DimensionCoordinate.standard_deviation
-   ~cf.DimensionCoordinate.variance
-
-.. rubric:: *Exponential and logarithmic functions*
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.exp
-   ~cf.DimensionCoordinate.log
-
-Date-time operations
---------------------
-
-.. rubric:: Attributes
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.day
-   ~cf.DimensionCoordinate.datetime_array
-   ~cf.DimensionCoordinate.hour
-   ~cf.DimensionCoordinate.minute
-   ~cf.DimensionCoordinate.month
-   ~cf.DimensionCoordinate.reference_datetime   
-   ~cf.DimensionCoordinate.second
-   ~cf.DimensionCoordinate.year
-
-Logic functions
----------------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.logic.html#truth-value-testing
-
-.. rubric:: Truth value testing
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.all
-   ~cf.DimensionCoordinate.any
- 
-.. rubric:: Comparison
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.allclose
-   ~cf.DimensionCoordinate.equivalent
-
-.. rubric:: Set operations
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.unique
    
-NetCDF
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.nc_del_variable
-   ~cf.DimensionCoordinate.nc_get_variable
-   ~cf.DimensionCoordinate.nc_has_variable
-   ~cf.DimensionCoordinate.nc_set_variable 
    
-Groups
-^^^^^^
+   .. rubric:: Attributes
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.DimensionCoordinate.nc_variable_groups
-   ~cf.DimensionCoordinate.nc_set_variable_groups
-   ~cf.DimensionCoordinate.nc_clear_variable_groups
-  
-Aliases
--------
-
-.. rubric:: Methods
+   .. autosummary::
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst  
-
-   ~cf.DimensionCoordinate.match
-   ~cf.DimensionCoordinate.max
-   ~cf.DimensionCoordinate.min
-   ~cf.DimensionCoordinate.sd
-   ~cf.DimensionCoordinate.var
-	      
-.. rubric:: Attributes
+      ~DimensionCoordinate.Data
+      ~DimensionCoordinate.T
+      ~DimensionCoordinate.Units
+      ~DimensionCoordinate.X
+      ~DimensionCoordinate.Y
+      ~DimensionCoordinate.Z
+      ~DimensionCoordinate.add_offset
+      ~DimensionCoordinate.array
+      ~DimensionCoordinate.attributes
+      ~DimensionCoordinate.axis
+      ~DimensionCoordinate.binary_mask
+      ~DimensionCoordinate.bounds
+      ~DimensionCoordinate.calendar
+      ~DimensionCoordinate.cellsize
+      ~DimensionCoordinate.comment
+      ~DimensionCoordinate.construct_type
+      ~DimensionCoordinate.ctype
+      ~DimensionCoordinate.data
+      ~DimensionCoordinate.datetime_array
+      ~DimensionCoordinate.day
+      ~DimensionCoordinate.decreasing
+      ~DimensionCoordinate.dtarray
+      ~DimensionCoordinate.dtvarray
+      ~DimensionCoordinate.dtype
+      ~DimensionCoordinate.hardmask
+      ~DimensionCoordinate.hasbounds
+      ~DimensionCoordinate.hasdata
+      ~DimensionCoordinate.history
+      ~DimensionCoordinate.hour
+      ~DimensionCoordinate.id
+      ~DimensionCoordinate.increasing
+      ~DimensionCoordinate.interior_ring
+      ~DimensionCoordinate.isauxiliary
+      ~DimensionCoordinate.isdimension
+      ~DimensionCoordinate.isdomainancillary
+      ~DimensionCoordinate.isfieldancillary
+      ~DimensionCoordinate.ismeasure
+      ~DimensionCoordinate.isperiodic
+      ~DimensionCoordinate.isscalar
+      ~DimensionCoordinate.leap_month
+      ~DimensionCoordinate.leap_year
+      ~DimensionCoordinate.long_name
+      ~DimensionCoordinate.lower_bounds
+      ~DimensionCoordinate.mask
+      ~DimensionCoordinate.minute
+      ~DimensionCoordinate.missing_value
+      ~DimensionCoordinate.month
+      ~DimensionCoordinate.month_lengths
+      ~DimensionCoordinate.ndim
+      ~DimensionCoordinate.positive
+      ~DimensionCoordinate.reference_datetime
+      ~DimensionCoordinate.role
+      ~DimensionCoordinate.scale_factor
+      ~DimensionCoordinate.second
+      ~DimensionCoordinate.shape
+      ~DimensionCoordinate.size
+      ~DimensionCoordinate.standard_name
+      ~DimensionCoordinate.subspace
+      ~DimensionCoordinate.units
+      ~DimensionCoordinate.unsafe_array
+      ~DimensionCoordinate.upper_bounds
+      ~DimensionCoordinate.valid_max
+      ~DimensionCoordinate.valid_min
+      ~DimensionCoordinate.valid_range
+      ~DimensionCoordinate.varray
+      ~DimensionCoordinate.year
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.dtarray
    
-Arithmetic and comparison operations
-------------------------------------
-
-Arithmetic, bitwise and comparison operations are defined as
-element-wise operations on the data, which yield a new construct or,
-for augmented assignments, modify the construct's data in-place.
-
-.. rubric:: Comparison operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__lt__
-   ~cf.DimensionCoordinate.__le__
-   ~cf.DimensionCoordinate.__eq__
-   ~cf.DimensionCoordinate.__ne__
-   ~cf.DimensionCoordinate.__gt__
-   ~cf.DimensionCoordinate.__ge__
-
-.. rubric:: Binary arithmetic operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__add__     
-   ~cf.DimensionCoordinate.__sub__     
-   ~cf.DimensionCoordinate.__mul__     
-   ~cf.DimensionCoordinate.__div__     
-   ~cf.DimensionCoordinate.__truediv__ 
-   ~cf.DimensionCoordinate.__floordiv__
-   ~cf.DimensionCoordinate.__pow__     
-   ~cf.DimensionCoordinate.__mod__     
-
-.. rubric:: Binary arithmetic operators with reflected (swapped) operands
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__radd__     
-   ~cf.DimensionCoordinate.__rsub__     
-   ~cf.DimensionCoordinate.__rmul__     
-   ~cf.DimensionCoordinate.__rdiv__     
-   ~cf.DimensionCoordinate.__rtruediv__ 
-   ~cf.DimensionCoordinate.__rfloordiv__
-   ~cf.DimensionCoordinate.__rpow__   
-   ~cf.DimensionCoordinate.__rmod__   
-
-.. rubric:: Augmented arithmetic assignments
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__iadd__ 
-   ~cf.DimensionCoordinate.__isub__ 
-   ~cf.DimensionCoordinate.__imul__ 
-   ~cf.DimensionCoordinate.__idiv__ 
-   ~cf.DimensionCoordinate.__itruediv__
-   ~cf.DimensionCoordinate.__ifloordiv__
-   ~cf.DimensionCoordinate.__ipow__ 
-   ~cf.DimensionCoordinate.__imod__ 
-
-.. rubric:: Unary arithmetic operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__neg__    
-   ~cf.DimensionCoordinate.__pos__    
-   ~cf.DimensionCoordinate.__abs__    
-
-.. rubric:: Binary bitwise operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__and__     
-   ~cf.DimensionCoordinate.__or__
-   ~cf.DimensionCoordinate.__xor__     
-   ~cf.DimensionCoordinate.__lshift__
-   ~cf.DimensionCoordinate.__rshift__     
-
-.. rubric:: Binary bitwise operators with reflected (swapped) operands
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__rand__     
-   ~cf.DimensionCoordinate.__ror__
-   ~cf.DimensionCoordinate.__rxor__     
-   ~cf.DimensionCoordinate.__rlshift__
-   ~cf.DimensionCoordinate.__rrshift__     
-
-.. rubric:: Augmented bitwise assignments
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__iand__     
-   ~cf.DimensionCoordinate.__ior__
-   ~cf.DimensionCoordinate.__ixor__     
-   ~cf.DimensionCoordinate.__ilshift__
-   ~cf.DimensionCoordinate.__irshift__     
-
-.. rubric:: Unary bitwise operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__invert__ 
-
-Special
--------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.__contains__
-   ~cf.DimensionCoordinate.__deepcopy__
-   ~cf.DimensionCoordinate.__getitem__
-   ~cf.DimensionCoordinate.__repr__
-   ~cf.DimensionCoordinate.__setitem__
-   ~cf.DimensionCoordinate.__str__
-   ~cf.DimensionCoordinate.__array__
-   ~cf.DimensionCoordinate.__data__
-   ~cf.DimensionCoordinate.__query_set__
-   ~cf.DimensionCoordinate.__query_wi__
-   ~cf.DimensionCoordinate.__query_wo__
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.asdatetime
-   ~cf.DimensionCoordinate.asreftime
-   ~cf.DimensionCoordinate.delprop
-   ~cf.DimensionCoordinate.expand_dims
-   ~cf.DimensionCoordinate.files
-   ~cf.DimensionCoordinate.getprop
-   ~cf.DimensionCoordinate.hasprop
-   ~cf.DimensionCoordinate.insert_data
-   ~cf.DimensionCoordinate.name
-   ~cf.DimensionCoordinate.remove_data
-   ~cf.DimensionCoordinate.select
-   ~cf.DimensionCoordinate.setprop
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.DimensionCoordinate.attributes
-   ~cf.DimensionCoordinate.Data
-   ~cf.DimensionCoordinate.dtvarray
-   ~cf.DimensionCoordinate.hasbounds
-   ~cf.DimensionCoordinate.hasdata
-   ~cf.DimensionCoordinate.isauxiliary
-   ~cf.DimensionCoordinate.isdimension
-   ~cf.DimensionCoordinate.isdomainancillary
-   ~cf.DimensionCoordinate.isfieldancillary
-   ~cf.DimensionCoordinate.ismeasure
-   ~cf.DimensionCoordinate.role
-   ~cf.DimensionCoordinate.unsafe_array
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.asdatetime
-   ~cf.DimensionCoordinate.asreftime
-   ~cf.DimensionCoordinate.attributes
-   ~cf.DimensionCoordinate.delprop
-   ~cf.DimensionCoordinate.dtvarray
-   ~cf.DimensionCoordinate.expand_dims
-   ~cf.DimensionCoordinate.getprop
-   ~cf.DimensionCoordinate.hasbounds
-   ~cf.DimensionCoordinate.hasdata
-   ~cf.DimensionCoordinate.hasprop
-   ~cf.DimensionCoordinate.insert_data
-   ~cf.DimensionCoordinate.isauxiliary
-   ~cf.DimensionCoordinate.isdimension
-   ~cf.DimensionCoordinate.isdomainancillary
-   ~cf.DimensionCoordinate.isfieldancillary
-   ~cf.DimensionCoordinate.ismeasure
-   ~cf.DimensionCoordinate.name
-   ~cf.DimensionCoordinate.remove_data
-   ~cf.DimensionCoordinate.select
-   ~cf.DimensionCoordinate.setprop
-   ~cf.DimensionCoordinate.unsafe_array

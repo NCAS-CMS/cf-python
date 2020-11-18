@@ -1,992 +1,349 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. _cf-Field:
-   
-cf.Field
+﻿cf.Field
 ========
 
-----
+.. currentmodule:: cf
 
+.. autoclass:: Field
 
-.. autoclass:: cf.Field
-   :no-members:
-   :no-inherited-members:
-
-.. _Field-Inspection:
-
-Inspection
-----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.dump
-   ~cf.Field.identity  
-   ~cf.Field.identities
-   ~cf.Field.inspect
-
-.. rubric:: Attributes
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   .. automethod:: __init__
 
-   ~cf.Field.construct_type
-   ~cf.Field.id
-
-Selection
----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.match_by_identity
-   ~cf.Field.match_by_naxes
-   ~cf.Field.match_by_ncvar
-   ~cf.Field.match_by_property
-   ~cf.Field.match_by_rank
-   ~cf.Field.match_by_units
-   ~cf.Field.match_by_construct
- 
-.. _Field-Properties:
-
-Properties
-----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.del_property
-   ~cf.Field.get_property
-   ~cf.Field.has_property
-   ~cf.Field.set_property
-   ~cf.Field.properties
-   ~cf.Field.clear_properties
-   ~cf.Field.set_properties
-
-.. rubric:: Attributes
-	    
-.. autosummary::
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.add_offset
-   ~cf.Field.calendar
-   ~cf.Field.cell_methods
-   ~cf.Field.comment
-   ~cf.Field.Conventions
-   ~cf.Field.DSG
-   ~cf.Field._FillValue
-   ~cf.Field.featureType
-   ~cf.Field.flag_masks
-   ~cf.Field.flag_meanings
-   ~cf.Field.flag_values
-   ~cf.Field.history
-   ~cf.Field.institution
-   ~cf.Field.leap_month
-   ~cf.Field.leap_year
-   ~cf.Field.long_name
-   ~cf.Field.missing_value
-   ~cf.Field.month_lengths
-   ~cf.Field.references
-   ~cf.Field.scale_factor
-   ~cf.Field.source
-   ~cf.Field.standard_error_multiplier
-   ~cf.Field.standard_name
-   ~cf.Field.title
-   ~cf.Field.units
-   ~cf.Field.valid_max
-   ~cf.Field.valid_min
-   ~cf.Field.valid_range
-
-Units
------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.override_units
-   ~cf.Field.override_calendar
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.Units
-
-.. _Field-Data:
-
-Data
-----
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.del_data
-   ~cf.Field.get_data
-   ~cf.Field.has_data
-   ~cf.Field.set_data
-   ~cf.Field.del_data_axes
-   ~cf.Field.get_data_axes
-   ~cf.Field.has_data_axes
-   ~cf.Field.set_data_axes
- 
-.. rubric:: Attributes
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   .. rubric:: Methods
 
-   ~cf.Field.array
-   ~cf.Field.data
-   ~cf.Field.datetime_array
-   ~cf.Field.datum
-   ~cf.Field.dtype
-   ~cf.Field.ndim
-   ~cf.Field.shape
-   ~cf.Field.size
-   ~cf.Field.varray
-
-.. rubric:: *Rearranging elements*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.anchor
-   ~cf.Field.flatten
-   ~cf.Field.flip
-   ~cf.Field.insert_dimension
-   ~cf.Field.roll
-   ~cf.Field.squeeze
-   ~cf.Field.swapaxes
-   ~cf.Field.transpose
-   ~cf.Field.unsqueeze
-
-.. rubric:: *Expanding the data*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.halo
-
-.. rubric:: *Data array mask*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.apply_masking
-   ~cf.Field.count
-   ~cf.Field.count_masked
-   ~cf.Field.fill_value
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.binary_mask
-   ~cf.Field.hardmask
-   ~cf.Field.mask
-   ~cf.Field.mask_invalid
+   .. autosummary::
    
-.. rubric:: *Changing data values*
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__setitem__
-   ~cf.Field.subspace
-   ~cf.Field.indices
-   ~cf.Field.where
-   ~cf.Field.apply_masking
-   ~cf.Field.mask_invalid
-
-Miscellaneous data operations
------------------------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.Field.cyclic
-   ~cf.Field.period
-   ~cf.Field.get_filenames
-   ~cf.Field.close
-   ~cf.Field.chunk
- 
-Metadata constructs
--------------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.construct
-   ~cf.Field.construct_key
-   ~cf.Field.del_construct
-   ~cf.Field.get_construct
-   ~cf.Field.has_construct
-   ~cf.Field.set_construct
-   ~cf.Field.replace_construct
-   ~cf.Field.del_data_axes
-   ~cf.Field.get_data_axes
-   ~cf.Field.has_data_axes
-   ~cf.Field.set_data_axes
-   ~cf.Field.auxiliary_coordinate
-   ~cf.Field.cell_measure
-   ~cf.Field.cell_method
-   ~cf.Field.coordinate
-   ~cf.Field.coordinate_reference
-   ~cf.Field.coordinate_reference_domain_axes
-   ~cf.Field.get_coordinate_reference
-   ~cf.Field.set_coordinate_reference
-   ~cf.Field.del_coordinate_reference
-   ~cf.Field.dimension_coordinate
-   ~cf.Field.domain_ancillary
-   ~cf.Field.domain_axis
-   ~cf.Field.domain_axis_key
-   ~cf.Field.domain_axis_position
-   ~cf.Field.domain_mask
-   ~cf.Field.del_domain_axis
-   ~cf.Field.field_ancillary
-   ~cf.Field.map_axes
-   ~cf.Field.climatological_time_axes
-
-.. rubric:: Attributes
+      ~Field.CM
+      ~Field.HDF_chunks
+      ~Field.__init__
+      ~Field.all
+      ~Field.allclose
+      ~Field.analyse_items
+      ~Field.anchor
+      ~Field.any
+      ~Field.apply_masking
+      ~Field.arccos
+      ~Field.arccosh
+      ~Field.arcsin
+      ~Field.arcsinh
+      ~Field.arctan
+      ~Field.arctanh
+      ~Field.argmax
+      ~Field.asdatetime
+      ~Field.asreftime
+      ~Field.autocyclic
+      ~Field.aux
+      ~Field.auxiliary_coordinate
+      ~Field.auxs
+      ~Field.axes
+      ~Field.axes_names
+      ~Field.axis
+      ~Field.axis_name
+      ~Field.axis_size
+      ~Field.bin
+      ~Field.ceil
+      ~Field.cell_area
+      ~Field.cell_measure
+      ~Field.cell_method
+      ~Field.chunk
+      ~Field.clear_properties
+      ~Field.climatological_time_axes
+      ~Field.clip
+      ~Field.close
+      ~Field.collapse
+      ~Field.compress
+      ~Field.concatenate
+      ~Field.construct
+      ~Field.construct_key
+      ~Field.convert
+      ~Field.convert_reference_time
+      ~Field.convolution_filter
+      ~Field.coord
+      ~Field.coordinate
+      ~Field.coordinate_reference
+      ~Field.coordinate_reference_domain_axes
+      ~Field.coords
+      ~Field.copy
+      ~Field.cos
+      ~Field.cosh
+      ~Field.count
+      ~Field.count_masked
+      ~Field.creation_commands
+      ~Field.cumsum
+      ~Field.cyclic
+      ~Field.data_axes
+      ~Field.dataset_compliance
+      ~Field.datum
+      ~Field.del_construct
+      ~Field.del_coordinate_reference
+      ~Field.del_data
+      ~Field.del_data_axes
+      ~Field.del_domain_axis
+      ~Field.del_property
+      ~Field.delprop
+      ~Field.derivative
+      ~Field.digitize
+      ~Field.dim
+      ~Field.dimension_coordinate
+      ~Field.dims
+      ~Field.direction
+      ~Field.directions
+      ~Field.domain_anc
+      ~Field.domain_ancillary
+      ~Field.domain_ancs
+      ~Field.domain_axis
+      ~Field.domain_axis_key
+      ~Field.domain_axis_position
+      ~Field.domain_mask
+      ~Field.dump
+      ~Field.equals
+      ~Field.equivalent
+      ~Field.example_field
+      ~Field.exp
+      ~Field.expand_dims
+      ~Field.field
+      ~Field.field_anc
+      ~Field.field_ancillary
+      ~Field.field_ancs
+      ~Field.fill_value
+      ~Field.flatten
+      ~Field.flip
+      ~Field.floor
+      ~Field.get_construct
+      ~Field.get_coordinate_reference
+      ~Field.get_data
+      ~Field.get_data_axes
+      ~Field.get_domain
+      ~Field.get_filenames
+      ~Field.get_property
+      ~Field.getprop
+      ~Field.halo
+      ~Field.has_bounds
+      ~Field.has_construct
+      ~Field.has_data
+      ~Field.has_data_axes
+      ~Field.has_geometry
+      ~Field.has_property
+      ~Field.hasprop
+      ~Field.histogram
+      ~Field.identities
+      ~Field.identity
+      ~Field.indices
+      ~Field.insert_aux
+      ~Field.insert_axis
+      ~Field.insert_cell_methods
+      ~Field.insert_data
+      ~Field.insert_dim
+      ~Field.insert_dimension
+      ~Field.insert_domain_anc
+      ~Field.insert_field_anc
+      ~Field.insert_item
+      ~Field.insert_measure
+      ~Field.insert_ref
+      ~Field.inspect
+      ~Field.iscyclic
+      ~Field.item
+      ~Field.item_axes
+      ~Field.items
+      ~Field.items_axes
+      ~Field.key
+      ~Field.key_item
+      ~Field.log
+      ~Field.map_axes
+      ~Field.mask_invalid
+      ~Field.match
+      ~Field.match_by_construct
+      ~Field.match_by_identity
+      ~Field.match_by_naxes
+      ~Field.match_by_ncvar
+      ~Field.match_by_property
+      ~Field.match_by_rank
+      ~Field.match_by_units
+      ~Field.max
+      ~Field.maximum
+      ~Field.mean
+      ~Field.measure
+      ~Field.measures
+      ~Field.mid_range
+      ~Field.min
+      ~Field.minimum
+      ~Field.moving_window
+      ~Field.name
+      ~Field.nc_clear_component_dimension_groups
+      ~Field.nc_clear_component_sample_dimension_groups
+      ~Field.nc_clear_component_variable_groups
+      ~Field.nc_clear_geometry_variable_groups
+      ~Field.nc_clear_global_attributes
+      ~Field.nc_clear_group_attributes
+      ~Field.nc_clear_variable_groups
+      ~Field.nc_del_component_dimension
+      ~Field.nc_del_component_sample_dimension
+      ~Field.nc_del_component_variable
+      ~Field.nc_del_geometry_variable
+      ~Field.nc_del_variable
+      ~Field.nc_geometry_variable_groups
+      ~Field.nc_get_geometry_variable
+      ~Field.nc_get_variable
+      ~Field.nc_global_attributes
+      ~Field.nc_group_attributes
+      ~Field.nc_has_geometry_variable
+      ~Field.nc_has_variable
+      ~Field.nc_set_component_dimension
+      ~Field.nc_set_component_dimension_groups
+      ~Field.nc_set_component_sample_dimension
+      ~Field.nc_set_component_sample_dimension_groups
+      ~Field.nc_set_component_variable
+      ~Field.nc_set_component_variable_groups
+      ~Field.nc_set_geometry_variable
+      ~Field.nc_set_geometry_variable_groups
+      ~Field.nc_set_global_attribute
+      ~Field.nc_set_global_attributes
+      ~Field.nc_set_group_attribute
+      ~Field.nc_set_group_attributes
+      ~Field.nc_set_variable
+      ~Field.nc_set_variable_groups
+      ~Field.nc_variable_groups
+      ~Field.new_identifier
+      ~Field.override_calendar
+      ~Field.override_units
+      ~Field.percentile
+      ~Field.period
+      ~Field.properties
+      ~Field.radius
+      ~Field.range
+      ~Field.ref
+      ~Field.refs
+      ~Field.regridc
+      ~Field.regrids
+      ~Field.remove_axes
+      ~Field.remove_axis
+      ~Field.remove_data
+      ~Field.remove_item
+      ~Field.remove_items
+      ~Field.replace_construct
+      ~Field.rint
+      ~Field.roll
+      ~Field.round
+      ~Field.sample_size
+      ~Field.sd
+      ~Field.section
+      ~Field.select
+      ~Field.set_construct
+      ~Field.set_coordinate_reference
+      ~Field.set_data
+      ~Field.set_data_axes
+      ~Field.set_properties
+      ~Field.set_property
+      ~Field.setprop
+      ~Field.sin
+      ~Field.sinh
+      ~Field.squeeze
+      ~Field.standard_deviation
+      ~Field.sum
+      ~Field.swapaxes
+      ~Field.tan
+      ~Field.tanh
+      ~Field.transpose
+      ~Field.transpose_item
+      ~Field.trunc
+      ~Field.uncompress
+      ~Field.unique
+      ~Field.unlimited
+      ~Field.unsqueeze
+      ~Field.var
+      ~Field.variance
+      ~Field.weights
+      ~Field.where
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.constructs
-   ~cf.Field.auxiliary_coordinates
-   ~cf.Field.cell_measures
-   ~cf.Field.cell_methods
-   ~cf.Field.coordinates
-   ~cf.Field.coordinate_references
-   ~cf.Field.dimension_coordinates
-   ~cf.Field.domain_ancillaries
-   ~cf.Field.domain_axes
-   ~cf.Field.axes
-   ~cf.Field.field_ancillaries
-   ~cf.Field.reference_datetime
-
-.. _Field-Domain:
-
-Domain
-------
-
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.get_domain
    
-.. rubric:: Attributes
+
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.domain
-
-.. _Field-Miscellaneous:
-
-Miscellaneous
--------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.copy
-   ~cf.Field.dataset_compliance
-   ~cf.Field.equals
-   ~cf.Field.compress
-   ~cf.Field.convert
-   ~cf.Field.creation_commands
-   ~cf.Field.radius
-   ~cf.Field.uncompress
-   ~cf.Field.concatenate
-   ~cf.Field.section
-
-.. rubric:: Attributes
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.Flags
-   ~cf.Field.has_bounds
-   ~cf.Field.has_geometry
-   ~cf.Field.rank
-   ~cf.Field.T
-   ~cf.Field.X
-   ~cf.Field.Y
-   ~cf.Field.Z
-
-.. _Field-NetCDF:
-
-NetCDF
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.nc_del_variable
-   ~cf.Field.nc_get_variable
-   ~cf.Field.nc_has_variable
-   ~cf.Field.nc_set_variable 
-   ~cf.Field.nc_global_attributes
-   ~cf.Field.nc_clear_global_attributes
-   ~cf.Field.nc_set_global_attribute
-   ~cf.Field.nc_set_global_attributes
-   ~cf.Field.ncdimensions
-
-Groups
-^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.Field.nc_variable_groups
-   ~cf.Field.nc_set_variable_groups
-   ~cf.Field.nc_clear_variable_groups
-   ~cf.Field.nc_group_attributes
-   ~cf.Field.nc_clear_group_attributes
-   ~cf.Field.nc_set_group_attribute
-   ~cf.Field.nc_set_group_attributes
-  
-Geometries
-^^^^^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.Field.nc_del_geometry_variable
-   ~cf.Field.nc_get_geometry_variable
-   ~cf.Field.nc_has_geometry_variable
-   ~cf.Field.nc_set_geometry_variable 
-   ~cf.Field.nc_geometry_variable_groups
-   ~cf.Field.nc_set_geometry_variable_groups
-   ~cf.Field.nc_clear_geometry_variable_groups
-
-Components
-^^^^^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cf.Field.nc_del_component_variable
-   ~cf.Field.nc_set_component_variable
-   ~cf.Field.nc_set_component_variable_groups
-   ~cf.Field.nc_clear_component_variable_groups      
-   ~cf.Field.nc_del_component_dimension
-   ~cf.Field.nc_set_component_dimension
-   ~cf.Field.nc_set_component_dimension_groups
-   ~cf.Field.nc_clear_component_dimension_groups
-   ~cf.Field.nc_del_component_sample_dimension
-   ~cf.Field.nc_set_component_sample_dimension   
-   ~cf.Field.nc_set_component_sample_dimension_groups
-   ~cf.Field.nc_clear_component_sample_dimension_groups
-
-.. _field_methods:
-
-Domain axes
------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.analyse_items
-   ~cf.Field.autocyclic
-   ~cf.Field.axes
-   ~cf.Field.axes_names
-   ~cf.Field.axes_sizes
-   ~cf.Field.axis
-   ~cf.Field.axis_name
-   ~cf.Field.axis_size
-   ~cf.Field.cyclic
-   ~cf.Field.data_axes
-   ~cf.Field.direction
-   ~cf.Field.directions
-   ~cf.Field.iscyclic
-   ~cf.Field.isperiodic
-   ~cf.Field.item_axes
-   ~cf.Field.items_axes
-
-Subspacing
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.__getitem__
-   ~cf.Field.subspace
-   ~cf.Field.indices
-
-Mathematical operations
------------------------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.math.html
-
-.. rubric:: Trigonometrical and hyperbolic functions
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.arccos
-   ~cf.Field.arccosh
-   ~cf.Field.arcsin
-   ~cf.Field.arcsinh
-   ~cf.Field.arctan
-   .. ~cf.Field.arctan2  [AT2]
-   ~cf.Field.arctanh
-   ~cf.Field.cos
-   ~cf.Field.cosh
-   ~cf.Field.sin
-   ~cf.Field.sinh
-   ~cf.Field.tan
-   ~cf.Field.tanh
-
-.. rubric:: Rounding and truncation
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.ceil  
-   ~cf.Field.clip
-   ~cf.Field.floor
-   ~cf.Field.rint
-   ~cf.Field.round
-   ~cf.Field.trunc
-
-.. rubric:: Statistical collapses
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.collapse
-   ~cf.Field.moving_window
-   ~cf.Field.cell_area
-   ~cf.Field.max
-   ~cf.Field.mean
-   ~cf.Field.mid_range
-   ~cf.Field.min
-   ~cf.Field.range
-   ~cf.Field.sample_size
-   ~cf.Field.sum  
-   ~cf.Field.sd
-   ~cf.Field.var
-   ~cf.Field.weights
-   ~cf.Field.standard_deviation
-   ~cf.Field.variance
-   ~cf.Field.maximum
-   ~cf.Field.minimum
-
-.. rubric:: Exponential and logarithmic functions
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.exp
-   ~cf.Field.log
-
-.. rubric:: Derivatives
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.derivative
-
-.. rubric:: Convolution filters
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.convolution_filter
-   ~cf.Field.moving_window
-
-.. rubric:: Cumulative sums
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.cumsum
-
-.. rubric:: Binning operations
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.bin
-   ~cf.Field.digitize
-   ~cf.Field.histogram
-   ~cf.Field.percentile
-
-Data array operations
----------------------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.array-manipulation.html
-
-.. _field_data_array_access:
-
-
-
-.. rubric:: Adding and removing elements
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.unique
-
-.. rubric:: Miscellaneous data array operations
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.argmax
-   ~cf.Field.chunk
-   ~cf.Field.isscalar
-
-Regridding operations
----------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.regridc
-   ~cf.Field.regrids
-
-Date-time operations
---------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.day
-   ~cf.Field.datetime_array
-   ~cf.Field.hour
-   ~cf.Field.minute
-   ~cf.Field.month
-   ~cf.Field.second
-   ~cf.Field.year
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.convert_reference_time
-
-Logic functions
----------------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.logic.html#truth-value-testing
-
-.. rubric:: Truth value testing
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.all
-   ~cf.Field.any
- 
-.. rubric:: Comparison
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.allclose
-   ~cf.Field.equals
-   ~cf.Field.equivalent
-   ~cf.Field.equivalent_data
-   ~cf.Field.equivalent_domain
-
-.. rubric:: Set operations
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.unique
-
-Aliases
--------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst  
-
-   ~cf.Field.aux
-   ~cf.Field.auxs
-   ~cf.Field.axis
-   ~cf.Field.coord
-   ~cf.Field.coords
-   ~cf.Field.dim
-   ~cf.Field.dims
-   ~cf.Field.domain_anc
-   ~cf.Field.domain_ancs
-   ~cf.Field.field_anc
-   ~cf.Field.field_ancs
-   ~cf.Field.item
-   ~cf.Field.items
-   ~cf.Field.key
-   ~cf.Field.match
-   ~cf.Field.measure
-   ~cf.Field.measures
-   ~cf.Field.ref
-   ~cf.Field.refs
-
-.. rubric:: Attributes
    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
+   .. rubric:: Attributes
 
-   ~cf.Field.dtarray
-
-.. _Field-arithmetic:
-
-Arithmetic and comparison operations
-------------------------------------
-
-Arithmetic, bitwise and comparison operations are defined on a field
-construct as element-wise operations on its data which yield a new
-field construct or, for augmented assignments, modify the field
-construct's data in-place.
-
-
-.. _Field-comparison:
-
-.. rubric:: Relational operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__lt__
-   ~cf.Field.__le__
-   ~cf.Field.__eq__
-   ~cf.Field.__ne__
-   ~cf.Field.__gt__
-   ~cf.Field.__ge__
-
-.. _Field-binary-arithmetic:
-
-.. rubric:: Binary arithmetic operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__add__     
-   ~cf.Field.__sub__     
-   ~cf.Field.__mul__     
-   ~cf.Field.__div__     
-   ~cf.Field.__truediv__ 
-   ~cf.Field.__floordiv__
-   ~cf.Field.__pow__     
-   ~cf.Field.__mod__     
-
-.. rubric:: Binary arithmetic operators with reflected (swapped) operands
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__radd__     
-   ~cf.Field.__rsub__     
-   ~cf.Field.__rmul__     
-   ~cf.Field.__rdiv__     
-   ~cf.Field.__rtruediv__ 
-   ~cf.Field.__rfloordiv__
-   ~cf.Field.__rpow__   
-   ~cf.Field.__rmod__   
-
-.. rubric:: Augmented arithmetic assignments
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__iadd__ 
-   ~cf.Field.__isub__ 
-   ~cf.Field.__imul__ 
-   ~cf.Field.__idiv__ 
-   ~cf.Field.__itruediv__
-   ~cf.Field.__ifloordiv__
-   ~cf.Field.__ipow__ 
-   ~cf.Field.__imod__ 
-
-.. _Field-unary-arithmetic:
+   .. autosummary::
    
-.. rubric:: Unary arithmetic operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__neg__    
-   ~cf.Field.__pos__    
-   ~cf.Field.__abs__    
-
-.. _Field-bitwise:
-
-.. rubric:: Binary bitwise operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__and__     
-   ~cf.Field.__or__
-   ~cf.Field.__xor__     
-   ~cf.Field.__lshift__
-   ~cf.Field.__rshift__     
-
-.. rubric:: Binary bitwise operators with reflected (swapped) operands
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__rand__     
-   ~cf.Field.__ror__
-   ~cf.Field.__rxor__     
-   ~cf.Field.__rlshift__
-   ~cf.Field.__rrshift__     
-
-.. rubric:: Augmented bitwise assignments
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__iand__     
-   ~cf.Field.__ior__
-   ~cf.Field.__ixor__     
-   ~cf.Field.__ilshift__
-   ~cf.Field.__irshift__     
-
-.. rubric:: Unary bitwise operators
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__invert__ 
-
-Groups
-^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.nc_variable_groups
-   ~cf.Field.nc_set_variable_groups
-   ~cf.Field.nc_clear_variable_groups
-   ~cf.Field.nc_group_attributes
-   ~cf.Field.nc_set_group_attribute
-   ~cf.Field.nc_set_group_attributes
-   ~cf.Field.nc_clear_group_attributes
-   ~cf.Field.nc_geometry_variable_groups
-   ~cf.Field.nc_set_geometry_variable_groups
-   ~cf.Field.nc_clear_geometry_variable_groups
-
-.. _Field-Special:
-
-Special
--------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__deepcopy__
-   ~cf.Field.__getitem__
-   ~cf.Field.__repr__
-   ~cf.Field.__str__
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.asdatetime
-   ~cf.Field.asreftime
-   ~cf.Field.axis_name
-   ~cf.Field.data_axes
-   ~cf.Field.delprop
-   ~cf.Field.equivalent
-   ~cf.Field.example_field
-   ~cf.Field.expand_dims
-   ~cf.Field.field
-   ~cf.Field.getprop
-   ~cf.Field.HDF_chunks
-   ~cf.Field.hasprop
-   ~cf.Field.insert_aux
-   ~cf.Field.insert_axis
-   ~cf.Field.insert_cell_methods
-   ~cf.Field.insert_data
-   ~cf.Field.insert_domain_anc
-   ~cf.Field.insert_field_anc
-   ~cf.Field.insert_item
-   ~cf.Field.insert_measure
-   ~cf.Field.insert_ref
-   ~cf.Field.isauxiliary
-   ~cf.Field.isdimension
-   ~cf.Field.isdomainancillary
-   ~cf.Field.isfieldancillary
-   ~cf.Field.ismeasure
-   ~cf.Field.item_axes
-   ~cf.Field.key_item
-   ~cf.Field.name
-   ~cf.Field.new_identifier
-   ~cf.Field.remove_axes
-   ~cf.Field.remove_axis
-   ~cf.Field.remove_data
-   ~cf.Field.remove_item
-   ~cf.Field.remove_items
-   ~cf.Field.select
-   ~cf.Field.setprop
-   ~cf.Field.transpose_item
-   ~cf.Field.unlimited
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.attributes
-   ~cf.Field._Axes
-   ~cf.Field.CellMethods
-   ~cf.Field.CM
-   ~cf.Field.Data
-   ~cf.Field.dtvarray
-   ~cf.Field.hasbounds
-   ~cf.Field.hasdata
-   ~cf.Field.Items
-   ~cf.Field.unsafe_array
+      ~Field.CellMethods
+      ~Field.Conventions
+      ~Field.DSG
+      ~Field.Data
+      ~Field.Flags
+      ~Field.Items
+      ~Field.T
+      ~Field.Units
+      ~Field.X
+      ~Field.Y
+      ~Field.Z
+      ~Field.add_offset
+      ~Field.array
+      ~Field.attributes
+      ~Field.auxiliary_coordinates
+      ~Field.binary_mask
+      ~Field.calendar
+      ~Field.cell_measures
+      ~Field.cell_methods
+      ~Field.comment
+      ~Field.construct_type
+      ~Field.constructs
+      ~Field.coordinate_references
+      ~Field.coordinates
+      ~Field.data
+      ~Field.datetime_array
+      ~Field.day
+      ~Field.dimension_coordinates
+      ~Field.domain
+      ~Field.domain_ancillaries
+      ~Field.domain_axes
+      ~Field.dtarray
+      ~Field.dtvarray
+      ~Field.dtype
+      ~Field.featureType
+      ~Field.field_ancillaries
+      ~Field.flag_masks
+      ~Field.flag_meanings
+      ~Field.flag_values
+      ~Field.hardmask
+      ~Field.hasbounds
+      ~Field.hasdata
+      ~Field.history
+      ~Field.hour
+      ~Field.id
+      ~Field.institution
+      ~Field.isauxiliary
+      ~Field.isdimension
+      ~Field.isdomainancillary
+      ~Field.isfieldancillary
+      ~Field.ismeasure
+      ~Field.isperiodic
+      ~Field.isscalar
+      ~Field.leap_month
+      ~Field.leap_year
+      ~Field.long_name
+      ~Field.mask
+      ~Field.minute
+      ~Field.missing_value
+      ~Field.month
+      ~Field.month_lengths
+      ~Field.ncdimensions
+      ~Field.ndim
+      ~Field.rank
+      ~Field.reference_datetime
+      ~Field.references
+      ~Field.scale_factor
+      ~Field.second
+      ~Field.shape
+      ~Field.size
+      ~Field.source
+      ~Field.standard_error_multiplier
+      ~Field.standard_name
+      ~Field.subspace
+      ~Field.title
+      ~Field.units
+      ~Field.unsafe_array
+      ~Field.valid_max
+      ~Field.valid_min
+      ~Field.valid_range
+      ~Field.varray
+      ~Field.year
+   
+   

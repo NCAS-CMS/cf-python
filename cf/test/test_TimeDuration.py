@@ -359,11 +359,17 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.dt(2000, 1, 1) + cf.M() == cf.dt(2000, 2, 1))
         self.assertTrue(cf.dt(2000, 1, 1) - cf.M() == cf.dt(1999, 12, 1))
         self.assertTrue(
-            cf.M() + datetime.datetime(2000, 1, 1) == cf.dt(2000, 2, 1))
+            cf.M() + datetime.datetime(2000, 1, 1)
+            == cf.dt(2000, 2, 1, calendar='gregorian')
+        )
         self.assertTrue(
-            datetime.datetime(2000, 1, 1) + cf.M() == cf.dt(2000, 2, 1))
+            datetime.datetime(2000, 1, 1) + cf.M()
+            == cf.dt(2000, 2, 1, calendar='gregorian')
+            )
         self.assertTrue(
-            datetime.datetime(2000, 1, 1) - cf.M() == cf.dt(1999, 12, 1))
+            datetime.datetime(2000, 1, 1) - cf.M()
+            == cf.dt(1999, 12, 1, calendar='gregorian')
+        )
 
         d = cf.dt(2000, 1, 1)
         d += cf.M()
@@ -373,9 +379,9 @@ class TimeDurationTest(unittest.TestCase):
 
         d = datetime.datetime(2000, 1, 1)
         d += cf.M()
-        self.assertTrue(d == cf.dt(2000, 2, 1))
+        self.assertTrue(d == cf.dt(2000, 2, 1, calendar='gregorian'))
         d -= cf.M()
-        self.assertTrue(d == cf.dt(2000, 1, 1))
+        self.assertTrue(d == cf.dt(2000, 1, 1, calendar='gregorian'))
 
         self.assertTrue(cf.M() * 8 == cf.M(8))
         self.assertTrue(cf.M() * 8.5 == cf.M(8.5))

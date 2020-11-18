@@ -1,59 +1,41 @@
-.. currentmodule:: cf
-.. default-role:: obj
-
-cf.GatheredArray
+﻿cf.GatheredArray
 ================
 
-----
+.. currentmodule:: cf
 
-.. autoclass:: cf.GatheredArray
-   :no-members:
-   :no-inherited-members:
-
-
-Inspection
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cf.GatheredArray.get_compressed_axes
-   ~cf.GatheredArray.get_compressed_dimension
-   ~cf.GatheredArray.get_compression_type
-   ~cf.GatheredArray.get_list
-   ~cf.GatheredArray.get_subspace
-   ~cf.GatheredArray.source
-   
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/	    
-   :template: attribute.rst
-   
-   ~cf.GatheredArray.array
-   ~cf.GatheredArray.compressed_array
-   ~cf.GatheredArray.dtype
-   ~cf.GatheredArray.ndim
-   ~cf.GatheredArray.shape
-   ~cf.GatheredArray.size
+.. autoclass:: GatheredArray
 
    
-Miscellaneous
--------------
+   .. automethod:: __init__
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
    
-   ~cf.GatheredArray.copy
-   ~cf.GatheredArray.get_subspace
-   ~cf.GatheredArray.to_memory
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GatheredArray.__init__
+      ~GatheredArray.copy
+      ~GatheredArray.get_compressed_axes
+      ~GatheredArray.get_compressed_dimension
+      ~GatheredArray.get_compression_type
+      ~GatheredArray.get_list
+      ~GatheredArray.get_subspace
+      ~GatheredArray.source
+      ~GatheredArray.to_memory
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GatheredArray.array
+      ~GatheredArray.compressed_array
+      ~GatheredArray.dtype
+      ~GatheredArray.ndim
+      ~GatheredArray.shape
+      ~GatheredArray.size
+   
    
