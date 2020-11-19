@@ -151,9 +151,13 @@ class PropertiesDataBounds(PropertiesData):
     **Bounds**
 
     When assigning an object that has bounds to an object that also
-    has bounds, then the bounds are also assigned. This is the only
-    circumstance that allows bounds to be updated during assignment by
-    index.
+    has bounds, then the bounds are also assigned, if possible. This
+    is the only circumstance that allows bounds to be updated during
+    assignment by index.
+
+    Interior ring assignment can only occur if both ``x`` and ``y``
+    have interior ring arrays. An exception will be raised only one of
+    ``x`` and ``y`` has an interior ring array.
 
         '''
         super().__setitem__(indices, value)
@@ -166,7 +170,6 @@ class PropertiesDataBounds(PropertiesData):
             value_interior_ring = None
 
         if interior_ring is not None and value_interior_ring is not None:
-            interior_ring.chunk(chunksize)
             indices = parse_indices(self.shape, indices)
             indices.append(slice(None))
             interior_ring[tuple(indices)] = value_interior_ring
@@ -417,15 +420,6 @@ class PropertiesDataBounds(PropertiesData):
     "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
     contain bounds, and if so how those bounds are calculated.
 
-    The result of op(x, y) may contain bounds if and only if
-
-    * ``x`` is a construct that may contain bounds, or
-
-    * ``x`` does not support the operation and ``y`` is a construct
-      that may contain bounds, e.g. ``2 + y``.
-
-    and so the flag only has an effect in these specific cases.
-
     The behaviour for the different flag values is described in the
     docstring of `cf.combine_bounds_with_coordinates`.
 
@@ -451,12 +445,40 @@ class PropertiesDataBounds(PropertiesData):
         '''
         inplace = (method[2] == 'i')
 
-        bounds_AND = (bounds and combine_bounds_with_coordinates() == 'AND')
+        bounds_AND = (bounds
+                      and combine_bounds_with_coordinates() == 'AND')
         bounds_OR = (bounds and not bounds_AND
                      and combine_bounds_with_coordinates() == 'OR')
-        bounds_XOR = (bounds and not bounds_OR
+        bounds_XOR = (bounds and not bounds_AND and not bounds_OR
                       and combine_bounds_with_coordinates() == 'XOR')
+        bounds_NONE = (not bounds
+                       or not (bounds_AND or bounds_OR or bounds_XOR)
+                       or combine_bounds_with_coordinates() == 'NONE')
 
+        if not bounds_NONE:
+            geometry = self.get_geometry(None)
+            try:
+                other_geometry = other.get_geometry(None)
+            except AttributeError:
+                other_geometry = None
+
+            if geometry != other_geometry:
+                raise ValueError(
+                    "Can't combine operands with different geometry types"
+                )
+                
+            interior_ring = self.get_interior_ring(None)
+            try:
+                other_interior_ring = other.get_interior_ring(None)
+            except AttributeError:
+                other_interior_ring = None
+
+            if interior_ring is not None or other_interior_ring is not None:
+                raise ValueError(
+                    "Can't combine operands with interior ring arrays"
+                )
+        # --- End: if
+        
         has_bounds = self.has_bounds()
 
         if has_bounds and inplace and other is self:
@@ -479,7 +501,7 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        if not (bounds_AND or bounds_OR or bounds_XOR):
+        if bounds_NONE:
             # --------------------------------------------------------
             # Remove any bounds from the result
             # --------------------------------------------------------
