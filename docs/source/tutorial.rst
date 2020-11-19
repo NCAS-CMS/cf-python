@@ -4643,16 +4643,16 @@ a float). Their values may be inspected and changed with the
    :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
       
-   >>> cf.atol()
+   >>> print(cf.atol())
    2.220446049250313e-16
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    2.220446049250313e-16
    >>> original = cf.rtol(0.00001)
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    1e-05
-   >>> cf.rtol(original)
+   >>> print(cf.rtol(original))
    1e-05
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    2.220446049250313e-16
 
 Note that the above equation is not symmetric in :math:`x` and

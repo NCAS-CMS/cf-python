@@ -9,6 +9,8 @@ import ctypes.util
 import netCDF4
 import warnings
 
+from functools import partial, wraps, update_wrapper
+
 import psutil
 
 import cftime
@@ -76,11 +78,24 @@ atexit.register(_close_proc_meminfo)
 # --------------------------------------------------------------------
 # Inherit classes from cfdm
 # --------------------------------------------------------------------
-Constant = cfdm.Constant
-Configuration = cfdm.Configuration
+class Constant(cfdm.Constant):
+    pass
 
-Constant.__doc__ = Constant.__doc__.replace('cfdm.', 'cf.')
-Configuration.__doc__ = Configuration.__doc__.replace('cfdm.', 'cf.')
+
+Constant.__doc__ = cfdm.Constant.__doc__.replace('cfdm.', 'cf.')
+
+
+class Configuration(cfdm.Configuration):
+    def __new__(cls, *args, **kwargs):
+        '''Must override this method in subclasses.
+
+        '''
+        instance = super().__new__(cls)
+        instance._func = configuration
+        return instance
+
+
+Configuration.__doc__ = cfdm.Configuration.__doc__.replace('cfdm.', 'cf.')
 
 
 class DeprecationError(Exception):
@@ -190,21 +205,22 @@ else:
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    tempdir=None,
-    of_fraction=None,
-    chunksize=None,
-    collapse_parallel_mode=None,
-    free_memory_factor=None,
-    log_level=None,
-    regrid_logging=None,
-    relaxed_identities=None,
+        atol=None,
+        rtol=None,
+        tempdir=None,
+        of_fraction=None,
+        chunksize=None,
+        collapse_parallel_mode=None,
+        free_memory_factor=None,
+        log_level=None,
+        regrid_logging=None,
+        relaxed_identities=None,
 ):
-    '''View or set any number of constants in the project-wide configuration.
+    '''View or set any number of constants in the project-wide
+    configuration.
 
-    The full list of global constants that can be set in any combination
-    are:
+    The full list of global constants that can be set in any
+    combination are:
 
     * `atol`
     * `rtol`
@@ -217,32 +233,26 @@ def configuration(
     * `regrid_logging`
     * `relaxed_identities`
 
-    The following settings are also included in the dictionary that is
-    returned to view, but they are fixed by external factors so cannot
-    be set, hence there are no corresponding parameters:
-
-    * `total_memory`
-    * `fm_threshold`
-    * `min_total_memory`
-
-    These are all constants that apply throughout `cf`, except for in
+    These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
     argument to that function.
 
-    The value of `None`, either taken by default or supplied as a value,
-    will result in the constant in question not being changed from the
-    current value. That is, it will have no effect.
+    The value of `None`, either taken by default or supplied as a
+    value, will result in the constant in question not being changed
+    from the current value. That is, it will have no effect.
 
-    Note that setting a constant using this function is equivalent to setting
-    it by means of a specific function of the same name, e.g. via `cf.atol`,
-    but in this case multiple constants can be set at once.
+    Note that setting a constant using this function is equivalent to
+    setting it by means of a specific function of the same name,
+    e.g. via `cf.atol`, but in this case multiple constants can be set
+    at once.
 
     .. versionadded:: 3.6.0
 
-    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`, `chunksize`,
-                 `collapse_parallel_mode`, `total_memory`,
-                 `free_memory_factor`, `fm_threshold`, `min_total_memory`,
-                 `log_level`, `regrid_logging`, `relaxed_identities`
+    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`,
+                 `chunksize`, `collapse_parallel_mode`,
+                 `total_memory`, `free_memory_factor`, `fm_threshold`,
+                 `min_total_memory`, `log_level`, `regrid_logging`,
+                 `relaxed_identities`
 
     :Parameters:
 
@@ -293,13 +303,13 @@ def configuration(
             * ``'DEBUG'`` (``-1``).
 
         regrid_logging: `bool` or `Constant`, optional
-            The new value (either `True` to enable logging or `False`
-            to disable it). The default is to not change the current
+            The new value (either True to enable logging or False to
+            disable it). The default is to not change the current
             behaviour.
 
-        `relaxed_identities`: `bool` or `Constant`, optional
-            The new value; if `True`, use 'relaxed' mode when getting
-            a construct identity. The default is to not change the
+        relaxed_identities: `bool` or `Constant`, optional
+            The new value; if True, use "relaxed" mode when getting a
+            construct identity. The default is to not change the
             current value.
 
     :Returns:
@@ -316,14 +326,11 @@ def configuration(
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
      'of_fraction': 0.5,
-     'total_memory': 8287346688.0,
      'free_memory_factor': 0.1,
      'regrid_logging': False,
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
-     'fm_threshold': 828734668.8000001,
-     'min_total_memory': 8287346688.0,
      'chunksize': 82873466.88000001}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
@@ -336,32 +343,27 @@ def configuration(
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
      'of_fraction': 0.5,
-     'total_memory': 8287346688.0,
      'free_memory_factor': 0.1,
      'regrid_logging': False,
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
-     'fm_threshold': 828734668.8000001,
-     'min_total_memory': 8287346688.0,
      'chunksize': 75000000.0}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
      'of_fraction': 0.7,
-     'total_memory': 8287346688.0,
      'free_memory_factor': 0.1,
      'regrid_logging': False,
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
-     'fm_threshold': 828734668.8000001,
-     'min_total_memory': 8287346688.0,
      'chunksize': 75000000.0}
 
     '''
     return _configuration(
+        Configuration,
         new_atol=atol,
         new_rtol=rtol,
         new_tempdir=tempdir,
@@ -375,7 +377,7 @@ def configuration(
     )
 
 
-def _configuration(**kwargs):
+def _configuration(_Configuration, **kwargs):
     '''Internal helper function to provide the logic for `cf.configuration`.
 
     We delegate from the user-facing `cf.configuration` for two main reasons:
@@ -388,14 +390,31 @@ def _configuration(**kwargs):
     explicitly listed, but the very similar logic applied for each keyword
     can be consolidated by iterating over the full dictionary of input kwargs.
 
+    :Parameters:
+
+        _Configuration: class
+            The `Configuration` class to be returned.
+
+    :Returns:
+
+        `Configuration`
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
+
     '''
     # Filter out WORKSPACE_FACTOR_{1,2} constants which are only used
     # externally and not exposed to the user:
     old = {name.lower(): val for name, val in CONSTANTS.items() if
            not name.startswith('WORKSPACE_FACTOR_')}
+
+    old.pop('total_memory', None)
+    old.pop('min_total_memory', None)
+    old.pop('fm_threshold', None)
+
     # Also add rtol and atol from cfdm as they are effective constants in cf:
     for tolerance in ('ATOL', 'RTOL'):
-        old[tolerance.lower()] = cfdm.constants.CONSTANTS[tolerance]
+        old[tolerance.lower()] = CONSTANTS[tolerance]
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -418,7 +437,7 @@ def _configuration(**kwargs):
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
-    return Configuration(**old)
+    return _Configuration(**old)
 
 
 def free_memory():
@@ -546,18 +565,59 @@ def _cf_free_memory_factor(*new_free_memory_factor):
 # --------------------------------------------------------------------
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
-# User-facing names:
-atol = cfdm.atol
-rtol = cfdm.rtol
-CF = cfdm.CF
+def atol(*arg):
+    '''
 
-# Update docstrings
-CF.__doc__ = CF.__doc__.replace('cfdm.', 'cf.')
-atol.__doc__ = atol.__doc__.replace('cfdm.', 'cf.')
-rtol.__doc__ = rtol.__doc__.replace('cfdm.', 'cf.')
+    '''
+    old = CONSTANTS['ATOL']
+    if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-# Module-level alias to avoid name clashes with function keyword arguments
-# (corresponding to 'import atol as cf_atol' etc. in other modules)
+        CONSTANTS['ATOL'] = float(arg)
+
+    return Constant(old, _func=atol)
+
+
+atol.__doc__ = cfdm.atol.__doc__.replace('cfdm.', 'cf.')
+
+
+def rtol(*arg):
+    '''
+
+    '''
+    old = CONSTANTS['RTOL']
+    if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
+
+        CONSTANTS['RTOL'] = float(arg)
+
+    return Constant(old, _func=rtol)
+
+
+rtol.__doc__ = cfdm.rtol.__doc__.replace('cfdm.', 'cf.')
+
+
+def CF():
+    '''
+    '''
+    return cfdm.CF()
+
+
+CF.__doc__ = cfdm.CF.__doc__.replace('cfdm.', 'cf.')
+
+# Module-level alias to avoid name clashes with function keyword
+# arguments (corresponding to 'import atol as cf_atol' etc. in other
+# modules)
 _cf_atol = atol
 _cf_rtol = rtol
 
@@ -578,17 +638,18 @@ def RTOL(*new_rtol):
 
 
 _disable_logging = cfdm._disable_logging
-# We can inherit the generic logic for the cf-python log_level() function
-# as contained in _log_level, but can't inherit the user-facing log_level()
-# from cfdm as it operates on cfdm's CONSTANTS dict. Define cf-python's own.
-# This also means the log_level dostrings are independent which is important
-# for providing module-specific documentation links and directives, etc.
+# We can inherit the generic logic for the cf-python log_level()
+# function as contained in _log_level, but can't inherit the
+# user-facing log_level() from cfdm as it operates on cfdm's CONSTANTS
+# dict. Define cf-python's own.  This also means the log_level
+# dostrings are independent which is important for providing
+# module-specific documentation links and directives, etc.
 _log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
 _is_valid_log_level_int = cfdm._is_valid_log_level_int
 
 
-def log_level(*log_level):
+def log_level(*arg):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -608,7 +669,7 @@ def log_level(*log_level):
 
     :Parameters:
 
-        log_level: `str` or `int` or `Constant`, optional
+        arg: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier ``'DISABLE'``,
@@ -657,7 +718,7 @@ def log_level(*log_level):
     WARNING
 
     '''
-    return _log_level(CONSTANTS, log_level)
+    return _log_level(CONSTANTS, arg, Constant, log_level)
 
 
 def LOG_LEVEL(*new_log_level):
@@ -823,25 +884,28 @@ def SET_PERFORMANCE(*new_set_performance):
 
 def min_total_memory():
     '''The minimum total memory across nodes.
+
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
-# --- End: def
 
 
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
     '''Alias for `cf.min_total_memory`.
+
     '''
     return min_total_memory(*new_min_total_memory)
 
 
 def total_memory():
     '''TODO
+
     '''
     return CONSTANTS['TOTAL_MEMORY']
 
 
 def TOTAL_MEMORY(*new_total_memory):
     '''Alias for `cf.total_memory`.
+
     '''
     return total_memory(*new_total_memory)
 
@@ -984,6 +1048,7 @@ def of_fraction(*arg):
 
 def OF_FRACTION(*new_of_fraction):
     '''Alias for `cf.of_fraction`.
+
     '''
     return of_fraction(*new_of_fraction)
 
@@ -1032,6 +1097,7 @@ def regrid_logging(*arg):
 
 def REGRID_LOGGING(*new_regrid_logging):
     '''Alias for `cf.regrid_logging`.
+
     '''
     return regrid_logging(*new_regrid_logging)
 
