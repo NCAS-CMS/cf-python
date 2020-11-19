@@ -4639,6 +4639,10 @@ between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
 `cf.atol` and `cf.rtol` functions:
 
+Note that the above equation is not symmetric in :math:`x` and
+:math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
+may be different from ``f2.equals(f1)`` in some rare cases.
+   
 .. code-block:: python
    :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
@@ -4655,10 +4659,23 @@ a float). Their values may be inspected and changed with the
    >>> print(cf.rtol())
    2.220446049250313e-16
 
-Note that the above equation is not symmetric in :math:`x` and
-:math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
-may be different from ``f2.equals(f1)`` in some rare cases.
-   
+The :math:`a_{tol}` and :math:`r_{tol}` constants may be set for a
+runtime context established when executing a `with` statement.
+
+.. code-block:: python
+   :caption: *Evaluate equality in a runtime contenxt with a different
+             value of 'atol'.*
+	     
+   >>> t2 = t - 0.00001
+   >>> t.equals(t2)
+   False
+   >>> with cf.atol(1e-5):
+   ...     print(t.equals(t2))
+   ...
+   True
+   >>> t.equals(t2)
+   False
+
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
