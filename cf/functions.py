@@ -546,6 +546,11 @@ def combine_bounds_with_coordinates(*arg):
     old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
     if arg:
         arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
         try:
             valid = hasattr(OperandBoundsCombination, arg)
@@ -563,7 +568,9 @@ def combine_bounds_with_coordinates(*arg):
 
         CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = arg
 
-    return old
+#    return old
+
+    return Constant(old, _func=combine_bounds_with_coordinates)
 
 
 def free_memory():

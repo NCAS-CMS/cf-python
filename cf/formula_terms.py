@@ -776,14 +776,11 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
-        'OR' if lev.has_bounds() else 'AND'
-    )
-
-    computed = p0 * (-lev).exp()
-
-    combine_bounds_with_coordinates(old)
-
+    with combine_bounds_with_coordinates(
+            'OR' if lev.has_bounds() else 'AND'
+    ):        
+        computed = p0 * (-lev).exp()
+        
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -877,14 +874,11 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if sigma.has_bounds() else 'AND'
-    )
-
-    computed = (ptop
-                + (ps - ptop) * sigma)
-
-    combine_bounds_with_coordinates(old)
+    ):
+        computed = (ptop
+                    + (ps - ptop) * sigma)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -995,21 +989,17 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
     if ap_term:
-        old = combine_bounds_with_coordinates(
+        with combine_bounds_with_coordinates(
             'OR' if ap.has_bounds() and b.has_bounds() else 'AND'
-        )
-
-        computed = (ap
-                    + b * ps)
+        ):
+            computed = (ap
+                        + b * ps)
     else:
-        old = combine_bounds_with_coordinates(
-            'OR' if a.has_bounds() and b.has_bounds() else 'AND'
-        )
-
-        computed = (a * p0
-                    + b * ps)
-
-    combine_bounds_with_coordinates(old)
+        with combine_bounds_with_coordinates(
+                'OR' if a.has_bounds() and b.has_bounds() else 'AND'
+        ):            
+            computed = (a * p0
+                        + b * ps)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1100,14 +1090,11 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if a.has_bounds() and b.has_bounds() else 'AND'
-    )
-
-    computed = (a
-                + b * orog)
-
-    combine_bounds_with_coordinates(old)
+    ):
+        computed = (a
+                    + b * orog)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1237,16 +1224,13 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
         else 'AND'
-    )
-
-    computed = (a * ztop
-                + b1 * zsurf1
-                + b2 * zsurf2)
-
-    combine_bounds_with_coordinates(old)
+    ):
+        computed = (a * ztop
+                    + b1 * zsurf1
+                    + b2 * zsurf2)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1351,14 +1335,11 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if sigma.has_bounds() else 'AND'
-    )
-
-    computed = (eta
-                + (eta + depth) * sigma)
-
-    combine_bounds_with_coordinates(old)
+    ):
+        computed = (eta
+                    + (eta + depth) * sigma)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1473,25 +1454,22 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
-        'OR' if s.has_bounds() else 'AND'
-    )
-
     # Ensure that a has the same units as s
     a = _conform_units('a', a, 's', s.Units)
-
-    C = (
-        (1 - b) * (a * s).sinh() / a.sinh()
-        + b * (
-            (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh()) - 0.5
+    
+    with combine_bounds_with_coordinates(
+        'OR' if s.has_bounds() else 'AND'
+    ):    
+        C = (
+            (1 - b) * (a * s).sinh() / a.sinh()
+            + b * (
+                (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh()) - 0.5
+            )
         )
-    )
-
-    computed = (eta * (s + 1)
-                + depth_c * s
-                + (depth - depth_c) * C)
-
-    combine_bounds_with_coordinates(old)
+        
+        computed = (eta * (s + 1)
+                    + depth_c * s
+                    + (depth - depth_c) * C)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1604,17 +1582,14 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
-    )
-
-    S = (depth_c * s
-         + (depth - depth_c) * C)
-
-    computed = (S
-                + eta * (1 + S / depth))
-
-    combine_bounds_with_coordinates(old)
+    ):
+        S = (depth_c * s
+             + (depth - depth_c) * C)
+        
+        computed = (S
+                    + eta * (1 + S / depth))
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1727,20 +1702,17 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
     # Compute the non-parametric coordinates as described in Appendix
     # D: Parametric Vertical Coordinates of the CF conventions.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
-    )
+    ):
+        S = (
+            (depth_c * s
+             + depth * C)
+            / (depth + depth_c)
+        )
 
-    S = (
-        (depth_c * s
-         + depth * C)
-        / (depth + depth_c)
-    )
-
-    computed = (eta
-                + (eta + depth) * S)
-
-    combine_bounds_with_coordinates(old)
+        computed = (eta
+                    + (eta + depth) * S)
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
@@ -1868,20 +1840,17 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
     # Note: This isn't overly efficient, because we do calculations
     #       for k>nsigma and then overwrite them.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
+    with combine_bounds_with_coordinates(
         'OR' if zlev.has_bounds() and sigma.has_bounds() else 'AND'
-    )
+    ):
+        computed = (
+            eta
+            + (depth.where(depth > depth_c, depth_c) + eta) * sigma
+        )
 
-    computed = (
-        eta
-        + (depth.where(depth > depth_c, depth_c) + eta) * sigma
-    )
-
-    nsigma = int(nsigma.data)
-    computed[..., nsigma:] = zlev[nsigma:]
-
-    combine_bounds_with_coordinates(old)
-
+        nsigma = int(nsigma.data)
+        computed[..., nsigma:] = zlev[nsigma:]
+        
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -1999,33 +1968,30 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     # Note: This isn't overly efficient, because we do calculations
     #       for k<=k_c and then overwrite them.
     # ----------------------------------------------------------------
-    old = combine_bounds_with_coordinates(
-        'OR' if sigma.has_bounds() else 'AND'
-    )
-
     # Ensure that a, z1, z2, and href all have the same units as depth
     a = _conform_units('a', a, 'depth', depth.Units)
     z1 = _conform_units('z1', z1, 'depth', depth.Units)
     z2 = _conform_units('z2', z2, 'depth', depth.Units)
     href = _conform_units('href', href, 'depth', depth.Units)
 
-    f = (
-        (z1 + z2) * 0.5
-        + (
-            0.5
-            * (z1 - z2)
-            * (2 * a / (z1 - z2) * (depth - href)).tanh()
+    with combine_bounds_with_coordinates(
+        'OR' if sigma.has_bounds() else 'AND'
+    ):
+        f = (
+            (z1 + z2) * 0.5
+            + (
+                0.5
+                * (z1 - z2)
+                * (2 * a / (z1 - z2) * (depth - href)).tanh()
+            )
         )
-    )
-
-    computed = f * sigma
-
-    k_c1 = int(k_c.data) + 1
-
-    computed[..., k_c1:] = (f
-                            + (depth - f) * (sigma[k_c1:] - 1))
-
-    combine_bounds_with_coordinates(old)
+        
+        computed = f * sigma
+        
+        k_c1 = int(k_c.data) + 1
+        
+        computed[..., k_c1:] = (f
+                                + (depth - f) * (sigma[k_c1:] - 1))
 
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
