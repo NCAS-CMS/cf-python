@@ -1,50 +1,94 @@
-﻿cf.Domain
+.. currentmodule:: cf
+.. default-role:: obj
+
+cf.Domain
 =========
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Domain
+.. autoclass:: cf.Domain
+   :no-members:
+   :no-inherited-members:
+
+Inspection
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.dump
+
+Metadata constructs
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.construct
+   ~cf.Domain.construct_key
+   ~cf.Domain.del_construct
+   ~cf.Domain.get_construct
+   ~cf.Domain.has_construct
+   ~cf.Domain.set_construct
+   ~cf.Domain.del_data_axes
+   ~cf.Domain.get_data_axes
+   ~cf.Domain.has_data_axes
+   ~cf.Domain.set_data_axes
+   ~cf.Domain.domain_axis_key
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Domain.constructs
+   ~cf.Domain.auxiliary_coordinates
+   ~cf.Domain.cell_measures
+   ~cf.Domain.coordinates
+   ~cf.Domain.coordinate_references
+   ~cf.Domain.dimension_coordinates
+   ~cf.Domain.domain_ancillaries
+   ~cf.Domain.domain_axes
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.copy
+   ~cf.Domain.equals
+   ~cf.Domain.fromconstructs
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.__deepcopy__
+   ~cf.Domain.__repr__
+   ~cf.Domain.__str__
+
 
    
-   .. automethod:: __init__
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-   
-      ~Domain.__init__
-      ~Domain.construct
-      ~Domain.construct_key
-      ~Domain.copy
-      ~Domain.del_construct
-      ~Domain.del_data_axes
-      ~Domain.domain_axis_key
-      ~Domain.dump
-      ~Domain.equals
-      ~Domain.fromconstructs
-      ~Domain.get_construct
-      ~Domain.get_data_axes
-      ~Domain.has_construct
-      ~Domain.has_data_axes
-      ~Domain.set_construct
-      ~Domain.set_data_axes
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Domain.auxiliary_coordinates
-      ~Domain.cell_measures
-      ~Domain.constructs
-      ~Domain.coordinate_references
-      ~Domain.coordinates
-      ~Domain.dimension_coordinates
-      ~Domain.domain_ancillaries
-      ~Domain.domain_axes
    
    

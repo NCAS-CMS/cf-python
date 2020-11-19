@@ -1,217 +1,669 @@
-﻿cf.DomainAncillary
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. _cf-DomainAncillary:
+
+cf.DomainAncillary
 ==================
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: DomainAncillary
+.. autoclass:: cf.DomainAncillary
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
-   
-      ~DomainAncillary.__init__
-      ~DomainAncillary.all
-      ~DomainAncillary.allclose
-      ~DomainAncillary.any
-      ~DomainAncillary.apply_masking
-      ~DomainAncillary.arccos
-      ~DomainAncillary.arccosh
-      ~DomainAncillary.arcsin
-      ~DomainAncillary.arcsinh
-      ~DomainAncillary.arctan
-      ~DomainAncillary.arctanh
-      ~DomainAncillary.asdatetime
-      ~DomainAncillary.asreftime
-      ~DomainAncillary.ceil
-      ~DomainAncillary.chunk
-      ~DomainAncillary.clear_properties
-      ~DomainAncillary.clip
-      ~DomainAncillary.close
-      ~DomainAncillary.concatenate
-      ~DomainAncillary.contiguous
-      ~DomainAncillary.convert_reference_time
-      ~DomainAncillary.copy
-      ~DomainAncillary.cos
-      ~DomainAncillary.cosh
-      ~DomainAncillary.count
-      ~DomainAncillary.count_masked
-      ~DomainAncillary.creation_commands
-      ~DomainAncillary.cyclic
-      ~DomainAncillary.datum
-      ~DomainAncillary.del_bounds
-      ~DomainAncillary.del_data
-      ~DomainAncillary.del_geometry
-      ~DomainAncillary.del_interior_ring
-      ~DomainAncillary.del_node_count
-      ~DomainAncillary.del_part_node_count
-      ~DomainAncillary.del_property
-      ~DomainAncillary.delprop
-      ~DomainAncillary.direction
-      ~DomainAncillary.dump
-      ~DomainAncillary.equals
-      ~DomainAncillary.equivalent
-      ~DomainAncillary.exp
-      ~DomainAncillary.expand_dims
-      ~DomainAncillary.files
-      ~DomainAncillary.fill_value
-      ~DomainAncillary.flatten
-      ~DomainAncillary.flip
-      ~DomainAncillary.floor
-      ~DomainAncillary.get_bounds
-      ~DomainAncillary.get_bounds_data
-      ~DomainAncillary.get_data
-      ~DomainAncillary.get_filenames
-      ~DomainAncillary.get_geometry
-      ~DomainAncillary.get_interior_ring
-      ~DomainAncillary.get_node_count
-      ~DomainAncillary.get_part_node_count
-      ~DomainAncillary.get_property
-      ~DomainAncillary.getprop
-      ~DomainAncillary.halo
-      ~DomainAncillary.has_bounds
-      ~DomainAncillary.has_data
-      ~DomainAncillary.has_geometry
-      ~DomainAncillary.has_interior_ring
-      ~DomainAncillary.has_node_count
-      ~DomainAncillary.has_part_node_count
-      ~DomainAncillary.has_property
-      ~DomainAncillary.hasprop
-      ~DomainAncillary.identities
-      ~DomainAncillary.identity
-      ~DomainAncillary.insert_data
-      ~DomainAncillary.insert_dimension
-      ~DomainAncillary.inspect
-      ~DomainAncillary.iscyclic
-      ~DomainAncillary.log
-      ~DomainAncillary.mask_invalid
-      ~DomainAncillary.match
-      ~DomainAncillary.match_by_identity
-      ~DomainAncillary.match_by_naxes
-      ~DomainAncillary.match_by_ncvar
-      ~DomainAncillary.match_by_property
-      ~DomainAncillary.match_by_units
-      ~DomainAncillary.max
-      ~DomainAncillary.maximum
-      ~DomainAncillary.mean
-      ~DomainAncillary.mid_range
-      ~DomainAncillary.min
-      ~DomainAncillary.minimum
-      ~DomainAncillary.name
-      ~DomainAncillary.nc_clear_variable_groups
-      ~DomainAncillary.nc_del_variable
-      ~DomainAncillary.nc_get_variable
-      ~DomainAncillary.nc_has_variable
-      ~DomainAncillary.nc_set_variable
-      ~DomainAncillary.nc_set_variable_groups
-      ~DomainAncillary.nc_variable_groups
-      ~DomainAncillary.override_calendar
-      ~DomainAncillary.override_units
-      ~DomainAncillary.period
-      ~DomainAncillary.properties
-      ~DomainAncillary.range
-      ~DomainAncillary.remove_data
-      ~DomainAncillary.rint
-      ~DomainAncillary.roll
-      ~DomainAncillary.round
-      ~DomainAncillary.sample_size
-      ~DomainAncillary.sd
-      ~DomainAncillary.select
-      ~DomainAncillary.set_bounds
-      ~DomainAncillary.set_data
-      ~DomainAncillary.set_geometry
-      ~DomainAncillary.set_interior_ring
-      ~DomainAncillary.set_node_count
-      ~DomainAncillary.set_part_node_count
-      ~DomainAncillary.set_properties
-      ~DomainAncillary.set_property
-      ~DomainAncillary.setprop
-      ~DomainAncillary.sin
-      ~DomainAncillary.sinh
-      ~DomainAncillary.squeeze
-      ~DomainAncillary.standard_deviation
-      ~DomainAncillary.sum
-      ~DomainAncillary.swapaxes
-      ~DomainAncillary.tan
-      ~DomainAncillary.tanh
-      ~DomainAncillary.transpose
-      ~DomainAncillary.trunc
-      ~DomainAncillary.uncompress
-      ~DomainAncillary.unique
-      ~DomainAncillary.var
-      ~DomainAncillary.variance
-      ~DomainAncillary.where
-   
-   
+   ~cf.DomainAncillary.dump
+   ~cf.DomainAncillary.identity  
+   ~cf.DomainAncillary.identities
+   ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.direction
 
+.. rubric:: Attributes
    
-   
-   .. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   .. autosummary::
+   ~cf.DomainAncillary.construct_type
+   ~cf.DomainAncillary.id
+   ~cf.DomainAncillary.T
+   ~cf.DomainAncillary.X
+   ~cf.DomainAncillary.Y
+   ~cf.DomainAncillary.Z
+
+Bounds
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.del_bounds
+   ~cf.DomainAncillary.get_bounds
+   ~cf.DomainAncillary.has_bounds
+   ~cf.DomainAncillary.set_bounds  
+   ~cf.DomainAncillary.get_bounds_data
+   ~cf.DomainAncillary.contiguous
+      
+.. rubric:: Attributes
    
-      ~DomainAncillary.Data
-      ~DomainAncillary.T
-      ~DomainAncillary.Units
-      ~DomainAncillary.X
-      ~DomainAncillary.Y
-      ~DomainAncillary.Z
-      ~DomainAncillary.add_offset
-      ~DomainAncillary.array
-      ~DomainAncillary.attributes
-      ~DomainAncillary.binary_mask
-      ~DomainAncillary.bounds
-      ~DomainAncillary.calendar
-      ~DomainAncillary.cellsize
-      ~DomainAncillary.comment
-      ~DomainAncillary.construct_type
-      ~DomainAncillary.data
-      ~DomainAncillary.datetime_array
-      ~DomainAncillary.day
-      ~DomainAncillary.dtarray
-      ~DomainAncillary.dtvarray
-      ~DomainAncillary.dtype
-      ~DomainAncillary.hardmask
-      ~DomainAncillary.hasbounds
-      ~DomainAncillary.hasdata
-      ~DomainAncillary.history
-      ~DomainAncillary.hour
-      ~DomainAncillary.id
-      ~DomainAncillary.interior_ring
-      ~DomainAncillary.isauxiliary
-      ~DomainAncillary.isdimension
-      ~DomainAncillary.isdomainancillary
-      ~DomainAncillary.isfieldancillary
-      ~DomainAncillary.ismeasure
-      ~DomainAncillary.isperiodic
-      ~DomainAncillary.isscalar
-      ~DomainAncillary.leap_month
-      ~DomainAncillary.leap_year
-      ~DomainAncillary.long_name
-      ~DomainAncillary.lower_bounds
-      ~DomainAncillary.mask
-      ~DomainAncillary.minute
-      ~DomainAncillary.missing_value
-      ~DomainAncillary.month
-      ~DomainAncillary.month_lengths
-      ~DomainAncillary.ndim
-      ~DomainAncillary.reference_datetime
-      ~DomainAncillary.scale_factor
-      ~DomainAncillary.second
-      ~DomainAncillary.shape
-      ~DomainAncillary.size
-      ~DomainAncillary.standard_name
-      ~DomainAncillary.subspace
-      ~DomainAncillary.units
-      ~DomainAncillary.unsafe_array
-      ~DomainAncillary.upper_bounds
-      ~DomainAncillary.valid_max
-      ~DomainAncillary.valid_min
-      ~DomainAncillary.valid_range
-      ~DomainAncillary.varray
-      ~DomainAncillary.year
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.bounds
+   ~cf.DomainAncillary.cellsize
+   ~cf.DomainAncillary.lower_bounds  
+   ~cf.DomainAncillary.upper_bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.del_geometry
+   ~cf.DomainAncillary.get_geometry
+   ~cf.DomainAncillary.has_geometry
+   ~cf.DomainAncillary.set_geometry
+   ~cf.DomainAncillary.del_interior_ring
+   ~cf.DomainAncillary.get_interior_ring
+   ~cf.DomainAncillary.has_interior_ring
+   ~cf.DomainAncillary.set_interior_ring
+   ~cf.DomainAncillary.del_node_count
+   ~cf.DomainAncillary.get_node_count
+   ~cf.DomainAncillary.has_node_count
+   ~cf.DomainAncillary.set_node_count
+   ~cf.DomainAncillary.del_part_node_count
+   ~cf.DomainAncillary.get_part_node_count
+   ~cf.DomainAncillary.has_part_node_count
+   ~cf.DomainAncillary.set_part_node_count
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.interior_ring
+
+Selection
+---------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.match_by_identity
+   ~cf.DomainAncillary.match_by_naxes
+   ~cf.DomainAncillary.match_by_ncvar
+   ~cf.DomainAncillary.match_by_property
+   ~cf.DomainAncillary.match_by_units
+ 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.del_property
+   ~cf.DomainAncillary.get_property
+   ~cf.DomainAncillary.has_property
+   ~cf.DomainAncillary.set_property
+   ~cf.DomainAncillary.properties
+   ~cf.DomainAncillary.clear_properties
+   ~cf.DomainAncillary.set_properties
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.add_offset
+   ~cf.DomainAncillary.calendar
+   ~cf.DomainAncillary.comment
+   ~cf.DomainAncillary._FillValue
+   ~cf.DomainAncillary.history
+   ~cf.DomainAncillary.leap_month
+   ~cf.DomainAncillary.leap_year
+   ~cf.DomainAncillary.long_name
+   ~cf.DomainAncillary.missing_value
+   ~cf.DomainAncillary.month_lengths
+   ~cf.DomainAncillary.scale_factor
+   ~cf.DomainAncillary.standard_name
+   ~cf.DomainAncillary.units
+   ~cf.DomainAncillary.valid_max
+   ~cf.DomainAncillary.valid_min
+   ~cf.DomainAncillary.valid_range
+
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.override_units
+   ~cf.DomainAncillary.override_calendar
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.Units
+
+
+Data
+----
+
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.array
+   ~cf.DomainAncillary.Data
+   ~cf.DomainAncillary.data
+   ~cf.DomainAncillary.datetime_array
+   ~cf.DomainAncillary.datum
+   ~cf.DomainAncillary.dtype
+   ~cf.DomainAncillary.isscalar
+   ~cf.DomainAncillary.ndim
+   ~cf.DomainAncillary.shape
+   ~cf.DomainAncillary.size
+   ~cf.DomainAncillary.varray
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__getitem__
+   ~cf.DomainAncillary.del_data
+   ~cf.DomainAncillary.get_data
+   ~cf.DomainAncillary.has_data
+   ~cf.DomainAncillary.set_data
+ 
+.. rubric:: *Rearranging elements*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.flatten
+   ~cf.DomainAncillary.flip
+   ~cf.DomainAncillary.insert_dimension
+   ~cf.DomainAncillary.roll
+   ~cf.DomainAncillary.squeeze
+   ~cf.DomainAncillary.swapaxes
+   ~cf.DomainAncillary.transpose
    
+.. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.apply_masking
+   ~cf.DomainAncillary.count
+   ~cf.DomainAncillary.count_masked
+   ~cf.DomainAncillary.fill_value
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.binary_mask
+   ~cf.DomainAncillary.hardmask
+   ~cf.DomainAncillary.mask
+   ~cf.DomainAncillary.mask_invalid
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+.. rubric:: *Changing data values*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__setitem__
+   ~cf.DomainAncillary.halo
+   ~cf.DomainAncillary.mask_invalid
+   ~cf.DomainAncillary.subspace
+   ~cf.DomainAncillary.where
+
+.. rubric:: *Miscellaneous*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.chunk
+   ~cf.DomainAncillary.close
+   ~cf.DomainAncillary.convert_reference_time
+   ~cf.DomainAncillary.cyclic
+   ~cf.DomainAncillary.period
+   ~cf.DomainAncillary.iscyclic
+   ~cf.DomainAncillary.isperiodic
+   ~cf.DomainAncillary.get_filenames
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.concatenate
+   ~cf.DomainAncillary.copy
+   ~cf.DomainAncillary.creation_commands
+   ~cf.DomainAncillary.equals
+   ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.uncompress
+   
+Mathematical operations
+-----------------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.math.html
+
+.. rubric:: Methods
+
+.. rubric:: *Trigonometrical and hyperbolic functions*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.arccos
+   ~cf.DomainAncillary.arccosh
+   ~cf.DomainAncillary.arcsin
+   ~cf.DomainAncillary.arcsinh
+   ~cf.DomainAncillary.arctan
+   .. ~cf.DomainAncillary.arctan2  [AT2]
+   ~cf.DomainAncillary.arctanh
+   ~cf.DomainAncillary.cos
+   ~cf.DomainAncillary.cosh
+   ~cf.DomainAncillary.sin
+   ~cf.DomainAncillary.sinh
+   ~cf.DomainAncillary.tan
+   ~cf.DomainAncillary.tanh
+
+.. rubric:: *Rounding and truncation*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.ceil  
+   ~cf.DomainAncillary.clip
+   ~cf.DomainAncillary.floor
+   ~cf.DomainAncillary.rint
+   ~cf.DomainAncillary.round
+   ~cf.DomainAncillary.trunc
+
+.. rubric:: *Statistical collapses*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.max
+   ~cf.DomainAncillary.mean
+   ~cf.DomainAncillary.mid_range
+   ~cf.DomainAncillary.min
+   ~cf.DomainAncillary.range
+   ~cf.DomainAncillary.sample_size
+   ~cf.DomainAncillary.sum  
+   ~cf.DomainAncillary.sd
+   ~cf.DomainAncillary.var
+   ~cf.DomainAncillary.standard_deviation
+   ~cf.DomainAncillary.variance
+   ~cf.DomainAncillary.maximum
+   ~cf.DomainAncillary.minimum
+
+.. rubric:: *Exponential and logarithmic functions*
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.exp
+   ~cf.DomainAncillary.log
+
+Date-time operations
+--------------------
+
+.. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.day
+   ~cf.DomainAncillary.datetime_array
+   ~cf.DomainAncillary.hour
+   ~cf.DomainAncillary.minute
+   ~cf.DomainAncillary.month
+   ~cf.DomainAncillary.reference_datetime   
+   ~cf.DomainAncillary.second
+   ~cf.DomainAncillary.year
+
+Logic functions
+---------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.logic.html#truth-value-testing
+
+.. rubric:: Truth value testing
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.all
+   ~cf.DomainAncillary.any
+ 
+.. rubric:: Comparison
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.allclose
+   ~cf.DomainAncillary.equivalent
+
+.. rubric:: Set operations
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.unique
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.nc_del_variable
+   ~cf.DomainAncillary.nc_get_variable
+   ~cf.DomainAncillary.nc_has_variable
+   ~cf.DomainAncillary.nc_set_variable 
+   
+Aliases
+-------
+
+.. rubric:: Methods
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst  
+
+   ~cf.DomainAncillary.match
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.dtarray
+   
+Arithmetic and comparison operations
+------------------------------------
+
+Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct's data in-place.
+
+.. rubric:: Comparison operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__lt__
+   ~cf.DomainAncillary.__le__
+   ~cf.DomainAncillary.__eq__
+   ~cf.DomainAncillary.__ne__
+   ~cf.DomainAncillary.__gt__
+   ~cf.DomainAncillary.__ge__
+
+.. rubric:: Binary arithmetic operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__add__     
+   ~cf.DomainAncillary.__sub__     
+   ~cf.DomainAncillary.__mul__     
+   ~cf.DomainAncillary.__div__     
+   ~cf.DomainAncillary.__truediv__ 
+   ~cf.DomainAncillary.__floordiv__
+   ~cf.DomainAncillary.__pow__     
+   ~cf.DomainAncillary.__mod__     
+
+.. rubric:: Binary arithmetic operators with reflected (swapped) operands
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__radd__     
+   ~cf.DomainAncillary.__rsub__     
+   ~cf.DomainAncillary.__rmul__     
+   ~cf.DomainAncillary.__rdiv__     
+   ~cf.DomainAncillary.__rtruediv__ 
+   ~cf.DomainAncillary.__rfloordiv__
+   ~cf.DomainAncillary.__rpow__   
+   ~cf.DomainAncillary.__rmod__   
+
+.. rubric:: Augmented arithmetic assignments
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__iadd__ 
+   ~cf.DomainAncillary.__isub__ 
+   ~cf.DomainAncillary.__imul__ 
+   ~cf.DomainAncillary.__idiv__ 
+   ~cf.DomainAncillary.__itruediv__
+   ~cf.DomainAncillary.__ifloordiv__
+   ~cf.DomainAncillary.__ipow__ 
+   ~cf.DomainAncillary.__imod__ 
+
+.. rubric:: Unary arithmetic operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__neg__    
+   ~cf.DomainAncillary.__pos__    
+   ~cf.DomainAncillary.__abs__    
+
+.. rubric:: Binary bitwise operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__and__     
+   ~cf.DomainAncillary.__or__
+   ~cf.DomainAncillary.__xor__     
+   ~cf.DomainAncillary.__lshift__
+   ~cf.DomainAncillary.__rshift__     
+
+.. rubric:: Binary bitwise operators with reflected (swapped) operands
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__rand__     
+   ~cf.DomainAncillary.__ror__
+   ~cf.DomainAncillary.__rxor__     
+   ~cf.DomainAncillary.__rlshift__
+   ~cf.DomainAncillary.__rrshift__     
+
+.. rubric:: Augmented bitwise assignments
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__iand__     
+   ~cf.DomainAncillary.__ior__
+   ~cf.DomainAncillary.__ixor__     
+   ~cf.DomainAncillary.__ilshift__
+   ~cf.DomainAncillary.__irshift__     
+
+.. rubric:: Unary bitwise operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__invert__ 
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.nc_variable_groups
+   ~cf.DomainAncillary.nc_clear_variable_groups
+   ~cf.DomainAncillary.nc_set_variable_groups
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.__contains__
+   ~cf.DomainAncillary.__deepcopy__
+   ~cf.DomainAncillary.__getitem__
+   ~cf.DomainAncillary.__repr__
+   ~cf.DomainAncillary.__setitem__
+   ~cf.DomainAncillary.__str__
+   ~cf.DomainAncillary.__array__
+   ~cf.DomainAncillary.__data__
+   ~cf.DomainAncillary.__query_set__
+   ~cf.DomainAncillary.__query_wi__
+   ~cf.DomainAncillary.__query_wo__
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.asdatetime
+   ~cf.DomainAncillary.asreftime
+   ~cf.DomainAncillary.attributes
+   ~cf.DomainAncillary.delprop
+   ~cf.DomainAncillary.dtvarray
+   ~cf.DomainAncillary.expand_dims
+   ~cf.DomainAncillary.getprop
+   ~cf.DomainAncillary.hasbounds
+   ~cf.DomainAncillary.hasdata
+   ~cf.DomainAncillary.hasprop
+   ~cf.DomainAncillary.insert_data
+   ~cf.DomainAncillary.isauxiliary
+   ~cf.DomainAncillary.isdimension
+   ~cf.DomainAncillary.isdomainancillary
+   ~cf.DomainAncillary.isfieldancillary
+   ~cf.DomainAncillary.ismeasure
+   ~cf.DomainAncillary.name
+   ~cf.DomainAncillary.remove_data
+   ~cf.DomainAncillary.select
+   ~cf.DomainAncillary.setprop
+   ~cf.DomainAncillary.unsafe_array
+   ~cf.DomainAncillary.files

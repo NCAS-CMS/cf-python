@@ -1,39 +1,41 @@
-﻿cf.Query
+.. currentmodule:: cf
+.. default-role:: obj
+
+cf.Query
 ========
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Query
+.. autoclass:: cf.Query
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Attributes
+----------
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
    
-   .. rubric:: Methods
+   ~cf.Query.attr
+   ~cf.Query.operator
+   ~cf.Query.value
+   ~cf.Query.isquery
+   
+Methods
+-------
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~Query.__init__
-      ~Query.addattr
-      ~Query.copy
-      ~Query.dump
-      ~Query.equals
-      ~Query.equivalent
-      ~Query.evaluate
-      ~Query.inspect
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Query.attr
-      ~Query.exact
-      ~Query.isquery
-      ~Query.operator
-      ~Query.value
-   
-   
+   ~cf.Query.addattr
+   ~cf.Query.copy
+   ~cf.Query.dump
+   ~cf.Query.equals
+   ~cf.Query.equivalent
+   ~cf.Query.evaluate
+   ~cf.Query.exact
+   ~cf.Query.inspect
