@@ -10524,7 +10524,8 @@ False
             array1 = other[partition.indices].varray
             partition.close()
 
-            if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
+            if not _numpy_allclose(array0, array1, rtol=float(rtol),
+                                   atol=float(atol)):
                 logger.info(
                     "{0}: Different array values (atol={1}, "
                     "rtol={2})".format(

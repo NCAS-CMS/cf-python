@@ -2100,10 +2100,10 @@ def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
     '''
     '''
     if rtol is None:
-        rtol = _cf_rtol().value
+        rtol = _cf_rtol()
 
     if atol is None:
-        atol = _cf_atol().value
+        atol = _cf_atol()
 
     return _equals(x, y, rtol=rtol, atol=atol,
                    ignore_data_type=ignore_data_type,
@@ -2167,10 +2167,13 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     '''
 
     if rtol is None:
-        rtol = _cf_rtol().value
+        rtol = _cf_rtol()
 
     if atol is None:
-        atol = _cf_atol().value
+        atol = _cf_atol()
+
+    atol = float(atol)
+    rtol = float(rtol)
 
     eq = getattr(x, 'equivalent', None)
     if callable(eq):
@@ -2238,7 +2241,6 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
         merge = False
         package_path = os.path.dirname(__file__)
         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-    # --- End: if
 
     with open(table, 'r') as open_table:
         lines = csv.reader(open_table, delimiter=delimiter,
@@ -2773,10 +2775,13 @@ def allclose(x, y, rtol=None, atol=None):
 
     '''
     if rtol is None:
-        rtol = _cf_rtol().value
+        rtol = _cf_rtol()
 
     if atol is None:
-        atol = _cf_atol().value
+        atol = _cf_atol()
+
+    atol = float(atol)
+    rtol = float(rtol)
 
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):

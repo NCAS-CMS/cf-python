@@ -6,7 +6,7 @@ from numpy import ndarray as numpy_ndarray
 
 from copy import deepcopy
 
-from .functions import equals
+from .functions import equals as cf_equals
 from .functions import (atol as cf_atol,
                         rtol as cf_rtol)
 from .functions import inspect as cf_inspect
@@ -360,9 +360,10 @@ class Flags:
 
         # Set default tolerances
         if rtol is None:
-            rtol = cf_rtol()
+            rtol = float(cf_rtol())
+
         if atol is None:
-            atol = cf_atol()
+            atol = float(cf_atol())
 
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):
@@ -376,10 +377,13 @@ class Flags:
                 x = getattr(self, attr)
                 y = getattr(other, attr)
 
-                if (x.shape != y.shape or
-                    not equals(x, y, rtol=rtol, atol=atol,
-                               ignore_fill_value=ignore_fill_value,
-                               verbose=verbose)):
+                if (
+                        x.shape != y.shape
+                        or not cf_equals(x, y,
+                                         rtol=rtol, atol=atol,
+                                         ignore_fill_value=ignore_fill_value,
+                                         verbose=verbose)
+                ):
                     print(
                         "%s: Different '%s': %r, %r" %
                         (self.__class__.__name__, attr[1:], x, y)
