@@ -552,9 +552,9 @@ class PropertiesDataBounds(PropertiesData):
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
 
     :Parameters:
 
@@ -1173,7 +1173,7 @@ class PropertiesDataBounds(PropertiesData):
     :Returns:
 
         `{{class}}` or `None`
-            The construct with ceilinged of data. If the operation was
+            The construct with the ceiling of the data. If the operation was
             in-place then `None` is returned.
 
     **Examples:**
@@ -1583,7 +1583,7 @@ class PropertiesDataBounds(PropertiesData):
     construct with bounds to be contiguous. A size 1 construct with
     any number of dimensions is always contiguous.
 
-    An exception occurs if the construct is multdimensional and has
+    An exception occurs if the construct is multidimensional and has
     more than one element.
 
     .. versionadded:: 2.0
@@ -2221,7 +2221,7 @@ class PropertiesDataBounds(PropertiesData):
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    Corresponding axes exapnded in the bounds, if present.
+    Corresponding axes expanded in the bounds, if present.
 
     **Cyclic axes**
 
@@ -3114,7 +3114,7 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         base: number, optional
-            The base of the logiarthm. By default a natural logiarithm
+            The base of the logarithm. By default a natural logarithm
             is taken.
 
         bounds: `bool`, optional

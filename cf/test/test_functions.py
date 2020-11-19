@@ -68,7 +68,7 @@ class functionTest(unittest.TestCase):
 
         # Check all keys that should be there are, with correct value
         # type:
-        self.assertEqual(len(org), 14)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
 
         # Floats expected as values for most keys. Store these for
         # later as floats need assertAlmostEqual rather than
@@ -77,10 +77,7 @@ class functionTest(unittest.TestCase):
             'atol',
             'rtol',
             'of_fraction',
-            'total_memory',
             'free_memory_factor',
-            'fm_threshold',
-            'min_total_memory',
             'chunksize',
         ]
         for key in keys_with_float_values:
@@ -96,15 +93,8 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org['log_level'], str)
         self.assertIsInstance(org['tempdir'], str)
 
-        constants_that_cannot_be_set = (
-            'total_memory',
-            'fm_threshold',
-            'min_total_memory',
-        )
-        # Store some sensible values to reset items to for testing,
-        # ensuring:
-        # 1) they are kept different to the defaults (i.e. org
-        #    values); and
+        # Store some sensible values to reset items to for testing, ensuring:
+        # 1) they are kept different to the defaults (i.e. org values); and
         # 2) floats differ sufficiently that they will be picked up as
         #    qdifferent by the assertAlmostEqual decimal places (8, see
         #    below)
@@ -113,43 +103,25 @@ class functionTest(unittest.TestCase):
             'atol': 2e-7,
             'tempdir': '/my-custom-tmpdir',
             'of_fraction': 0.1,
-            'total_memory': 5e10,  # can't in fact be (re)set: test for error
             'free_memory_factor': 0.25,
             'regrid_logging': True,
             'collapse_parallel_mode': 2,
             'relaxed_identities': True,
             'combine_bounds_with_coordinates': 'XOR',
             'log_level': 'INFO',
-            'fm_threshold': 4e9,  # also can't be (re)set
-            'min_total_memory': 6e9,  # also can't be (re)set
             'chunksize': 8e9,
         }
 
         # Test the setting of each lone item.
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
-            # These are shown in output but can't be set (no such
-            # kwarg):
-            if setting in constants_that_cannot_be_set:
-                with self.assertRaises(TypeError):  # error from invalid kwarg
-                    cf.configuration(**{setting: value})
-
-                continue
-
             cf.configuration(**{setting: value})
             post_set = cf.configuration()
-            keys_with_float_values
 
             # Expect a dict that is identical to the original to start
             # with but as we set values incrementally they should be
             # reflected:
             expected_post_set[setting] = value
-            # As a special case, we need to account for the fact that
-            # fm_threshold = free_memory_factor * total_memory, so it
-            # changes when the former is set (latter can't be set):
-            if setting == 'free_memory_factor':
-                expected_post_set['fm_threshold'] = (
-                    value * expected_post_set['total_memory'])
 
             # Can't trivially do a direct test that the actual and
             # expected return dicts are the same as there are float
@@ -157,7 +129,8 @@ class functionTest(unittest.TestCase):
             # assertAlmostEqual testing:
             for name, val in expected_post_set.items():
                 if isinstance(val, float):
-                    self.assertAlmostEqual(post_set[name], val, places=8)
+                    self.assertAlmostEqual(post_set[name], val, places=8,
+                                           msg=setting)
                 else:
                     self.assertEqual(post_set[name], val)
         # --- End: for
@@ -177,10 +150,7 @@ class functionTest(unittest.TestCase):
         self.assertEqual(post_set['log_level'], 'INFO')
         self.assertAlmostEqual(post_set['rtol'], 5e-7)
 
-        # Test setting all possible items simultaneously (back to
-        # originals):
-        for constant_name in constants_that_cannot_be_set:
-            org.pop(constant_name)  # as these can't be set, are just shown
+        # Test setting all possible items simultaneously (back to originals):
         cf.configuration(**org)
         post_set = cf.configuration()
         for name, val in org.items():
@@ -236,6 +206,85 @@ class functionTest(unittest.TestCase):
         # Reset so later test fixtures don't spam with output
         # messages:
         cf.log_level('DISABLE')
+
+    def test_context_managers(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # rtol, atol, chunksize
+        for func in (
+                cf.atol,
+                cf.rtol,
+                cf.chunksize,
+                cf.free_memory_factor,
+                cf.of_fraction,
+        ):
+            old = func()
+            new = old * 1.001
+            with func(new):
+                self.assertEqual(func(), new)
+                self.assertEqual(func(new * 1.001), new)
+                self.assertEqual(func(), new * 1.001)
+
+            self.assertEqual(func(), old)
+
+        # collapse_parallel_mode
+        func = cf.collapse_parallel_mode
+
+        org = func(0)
+        old = func()
+        new = old + 1
+        with func(new):
+            self.assertEqual(func(), new)
+            self.assertEqual(func(new + 1), new)
+            self.assertEqual(func(), new + 1)
+
+        self.assertEqual(func(), old)
+        func(org)
+
+        # log_level
+        func = cf.log_level
+
+        org = func('DETAIL')
+        old = func()
+        new = 'DEBUG'
+        with func(new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(org)
+
+        del org._func
+        with self.assertRaises(AttributeError):
+            with org:
+                pass
+        # --- End: with
+
+        # Full configuration
+        func = cf.configuration
+
+        org = func(rtol=cf.Constant(10), atol=20, log_level='WARNING')
+        old = func()
+        new = dict(rtol=cf.Constant(20), atol=40, log_level='DISABLE')
+        with func(**new):
+            self.assertEqual(cf.atol(), 40)
+
+        self.assertEqual(func(), old)
+        func(**org)
+
+    def test_Constant(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        c = cf.atol()
+        self.assertIs(c._func, cf.atol)
+
+    def test_Configuration(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        c = cf.Configuration()
+        self.assertIs(c._func, cf.configuration)
 
 # --- End: class
 

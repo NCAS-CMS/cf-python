@@ -3691,7 +3691,7 @@ Constructor    Description
 `cf.son`       A `cf.Query` object for a "month of year in September, October, November" condition
 `cf.djf`       A `cf.Query` object for a "month of year in December, January, February" condition
 `cf.mam`       A `cf.Query` object for a "month of year in March, April, May" condition
-`cf.seasons`   A customizable list of `cf.Query` objects for "seasons in a year" conditions
+`cf.seasons`   A customisable list of `cf.Query` objects for "seasons in a year" conditions
 =============  ===================================================================================
 
 |
@@ -4709,16 +4709,16 @@ a float). Their values may be inspected and changed with the
    :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
       
-   >>> cf.atol()
+   >>> print(cf.atol())
    2.220446049250313e-16
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    2.220446049250313e-16
    >>> original = cf.rtol(0.00001)
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    1e-05
-   >>> cf.rtol(original)
+   >>> print(cf.rtol(original))
    1e-05
-   >>> cf.rtol()
+   >>> print(cf.rtol())
    2.220446049250313e-16
 
 Note that the above equation is not symmetric in :math:`x` and
@@ -5529,7 +5529,7 @@ setting the *group* keyword to `cf.write` to `False`.
    >>> cf.write(g, 'flat.nc', group=False)
 
 NetCDF variables in the flattened output file will inherit any netCDF
-group attributes, providing that they are not superceded by variable
+group attributes, providing that they are not superseded by variable
 attributes. The output netCDF variable and dimension names will be
 taken as the basenames of any that have been pre-defined. This is the
 case in file ``flat.nc``, for which the netCDF variable ``q`` has

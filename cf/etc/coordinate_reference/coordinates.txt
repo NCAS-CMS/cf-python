@@ -68,7 +68,7 @@ _coordinates = {
     'standard_name:ocean_double': ('_sigma_coordinate ocean_double_sigma_coordinate',),
 }
 
-# Col 0: Georeference name Col 1+: Set of coordinate identites to which it applies
+# Col 0: Georeference name Col 1+: Set of coordinate identities to which it applies
 albers_conical_equal_area projection_x_coordinate projection_y_coordinate latitude longitude
 azimuthal_equidistant projection_x_coordinate projection_y_coordinate latitude longitude
 geostationary projection_x_coordinate projection_y_coordinate latitude longitude

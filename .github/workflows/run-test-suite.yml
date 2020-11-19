@@ -56,7 +56,7 @@ jobs:
     # Setup conda, which is the simplest way to access all dependencies,
     # especially as some are C-based so otherwise difficult to setup.
     - name: Setup Miniconda
-      uses: goanpeca/setup-miniconda@v1.1.2
+      uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
         miniconda-version: 'latest'

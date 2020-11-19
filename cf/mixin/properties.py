@@ -45,7 +45,7 @@ class Properties(Container):
     This is used by, for example, the `_equals` method.
 
         '''
-        return cf_atol()
+        return cf_atol().value
 
     @property
     def _rtol(self):
@@ -55,7 +55,7 @@ class Properties(Container):
     This is used by, for example, the `_equals` method.
 
         '''
-        return cf_rtol()
+        return cf_rtol().value
 
     # ----------------------------------------------------------------
     # Private methods

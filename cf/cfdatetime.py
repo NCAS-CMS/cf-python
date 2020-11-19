@@ -93,7 +93,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
             * A `str` specifying an ISO 8601-like date-time string (in
               which non-Gregorian calendar dates are allowed).
 
-            * `datetime.datetime or sublcass `cftime.datetime` (such
+            * `datetime.datetime or subclass `cftime.datetime` (such
               as `Datetime360Day`). A new date-time object is returned
               for the given date-time.
 
@@ -107,7 +107,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
 
     :Returns:
 
-        (sublcass of) `cftime.datetime`
+        (subclass of) `cftime.datetime`
             The new date-time object.
 
     **Examples:**

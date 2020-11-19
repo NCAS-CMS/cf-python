@@ -51,7 +51,7 @@ class TimeDuration:
     '''A duration of time.
 
     The duration of time is a number of either calendar years,
-    calender months, days, hours, minutes or seconds.
+    calendar months, days, hours, minutes or seconds.
 
     A calendar year (or month) is an arbitrary year (or month) in an
     arbitrary calendar. A calendar is as part of the time duration,
@@ -1069,7 +1069,7 @@ class TimeDuration:
 
         leap_month: `int`, optional
             The leap month. By default the leap month is 2, i.e. the
-            seond month of the year.
+            second month of the year.
 
         month_lengths: sequence of `int`, optional
             By default, *month_lengths* is ``[31, 28, 31, 30, 31, 30,
@@ -1305,7 +1305,7 @@ class TimeDuration:
             * A `str` specifying an ISO 8601-like date-time string (in
               which non-Gregorian calendar dates are allowed).
 
-            * `datetime.datetime or sublcass `cftime.datetime` (such
+            * `datetime.datetime or subclass `cftime.datetime` (such
               as `Datetime360Day`).
 
         end: `bool`, optional

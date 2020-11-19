@@ -2,7 +2,21 @@ version 3.8.0
 -------------
 ----
 
+<<<<<<< HEAD
 **202?-??-??**
+=======
+**2020-??-??**
+
+* Global constants can now be controlled by a context manager
+  (https://github.com/NCAS-CMS/cf-python/issues/154)
+* Fixed bug that caused a failure when writing a dataset that contains
+  a scalar domain ancillary construct
+  (https://github.com/NCAS-CMS/cf-python/issues/152)
+* Fixed bug that prevented the verbosity from changing to any value specified
+  as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+* Changed dependency: ``1.8.8.0<=cfdm<1.8.9.0``
+* Changed dependency: ``cftime>=1.3.0``
+>>>>>>> constants
 
 * Changed the behaviour of binary operations for constructs that have
   bounds (https://github.com/NCAS-CMS/cf-python/issues146)

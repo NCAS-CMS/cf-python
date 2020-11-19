@@ -23,7 +23,7 @@ class Constructs(cfdm.Constructs):
 
     The container is like a dictionary in many ways, in that it stores
     key/value pairs where the key is the unique construct key with
-    correspondaing metadata construct value, and provides some of the
+    corresponding metadata construct value, and provides some of the
     usual dictionary methods.
 
     **Calling**

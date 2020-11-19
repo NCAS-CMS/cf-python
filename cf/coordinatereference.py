@@ -338,8 +338,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         # ------------------------------------------------------------
         # Check the domain ancillary terms
         # ------------------------------------------------------------
-#        ancillaries0 = self._conversion['ancillary']
-#        ancillaries1 = other._conversion['ancillary']
         ancillaries0 = self.coordinate_conversion.domain_ancillaries()
         ancillaries1 = other.coordinate_conversion.domain_ancillaries()
         if set(ancillaries0) != set(ancillaries1):
@@ -362,12 +360,11 @@ class CoordinateReference(cfdm.CoordinateReference):
         # Check the parameter terms and their values
         # ------------------------------------------------------------
         if rtol is None:
-            rtol = cf_rtol()
-        if atol is None:
-            atol = cf_atol()
+            rtol = float(cf_rtol())
 
-#        parameters0 = self._conversion['parameter']
-#        parameters1 = other._conversion['parameter']
+        if atol is None:
+            atol = float(cf_atol())
+
         parameters0 = self.coordinate_conversion.parameters()
         parameters1 = other.coordinate_conversion.parameters()
 
@@ -536,7 +533,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         strict: `bool`, optional
             If True then coordinate or domain ancillary identifiers
-            not set in the *identity_map* dictiontary are set to
+            not set in the *identity_map* dictionary are set to
             `None`. By default they are left unchanged.
 
         i: `bool`, optional
@@ -599,6 +596,12 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         `tuple`
         '''
+        if rtol is None:
+            rtol = float(cf_rtol())
+
+        if atol is None:
+            atol = float(cf_atol())
+
         s = [self.identity()]
         append = s.append
 
@@ -638,8 +641,8 @@ class CoordinateReference(cfdm.CoordinateReference):
                     if not ok:
                         _units[str(cu)] = cu
 
-                if allclose(
-                        value, self.default_value(term), rtol=rtol, atol=atol):
+                if allclose(value, self.default_value(term),
+                            rtol=rtol, atol=atol):
                     # Do not add a default value to the structural signature
                     continue
 

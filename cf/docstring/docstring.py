@@ -5,7 +5,7 @@ with the replacement text defined by the corresponding value.
 
 Special docstring subtitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
-replacement text, and will be substituted as ususal.
+replacement text, and will be substituted as usual.
 
 Replacement text may contain other non-special substitutions.
 

@@ -1002,14 +1002,14 @@ place.
         '''Return the current value of the `atol` function.
 
         '''
-        return cf_atol()
+        return cf_atol().value
 
     @property
     def _rtol(self):
         '''Return the current value of the `rtol` function.
 
         '''
-        return cf_rtol()
+        return cf_rtol().value
 
     def _is_abstract_Array_subclass(self, array):
         '''Whether or not an array is a type of abstract Array.
@@ -2153,7 +2153,7 @@ place.
         axis: int, optional
             The axis along which the difference is taken. By default
             the last axis is used. The *axis* argument is an integer
-            that selects the axis coresponding to the given position
+            that selects the axis corresponding to the given position
             in the list of axes of the data array.
 
         n: int, optional
@@ -3377,7 +3377,7 @@ place.
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -7000,7 +7000,7 @@ dimensions.
     # ----------------------------------------------------------------
     @property
     def Units(self):
-        '''The `cf.Units` object aining the units of the data array.
+        '''The `cf.Units` object containing the units of the data array.
 
     Deleting this attribute is equivalent to setting it to an
     undefined units object, so this attribute is guaranteed to always
@@ -9304,7 +9304,7 @@ False
         '''Collapse axes with their mean.
 
     The mean is unweighted by default, but may be weighted (see the
-    *weights* parmaeter).
+    *weights* parameter).
 
     Missing data array elements and their corresponding weights
     are omitted from the calculation.
@@ -10490,6 +10490,7 @@ False
         # Set default tolerances
         if rtol is None:
             rtol = self._rtol
+
         if atol is None:
             atol = self._atol
 
@@ -10522,7 +10523,8 @@ False
             array1 = other[partition.indices].varray
             partition.close()
 
-            if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
+            if not _numpy_allclose(array0, array1, rtol=float(rtol),
+                                   atol=float(atol)):
                 logger.info(
                     "{0}: Different array values (atol={1}, "
                     "rtol={2})".format(
@@ -11520,7 +11522,7 @@ False
 
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't override the calender of non-reference-time "
+                "Can't override the calendar of non-reference-time "
                 "units: {0!r}".format(self.Units)
             )
 
@@ -11682,13 +11684,13 @@ False
               return.
 
               *Parameter example:*
-                If the data aray shape is ``(2, 3, 6)`` then:
+                If the data array shape is ``(2, 3, 6)`` then:
                 * ``d.datum(0)`` is equivalent to ``d.datum(0, 0, 0)``.
                 * ``d.datum(-1)`` is equivalent to ``d.datum(1, 2, 5)``.
                 * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.
 
               If *index* is ``0`` or ``-1`` then the first or last data
-              array element respecitively will be returned, even if the
+              array element respectively will be returned, even if the
               data array is a scalar array.
 
             * Two or more integers. These arguments are interpreted as a
@@ -12130,6 +12132,7 @@ False
         '''
         if atol is None:
             atol = self._atol
+
         if rtol is None:
             rtol = self._rtol
 
@@ -12148,7 +12151,7 @@ False
             x = self
 
         try:
-            return abs(x - y) <= atol + rtol*abs(y)
+            return abs(x - y) <= float(atol) + float(rtol)*abs(y)
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 
@@ -14238,7 +14241,7 @@ False
             corresponding data-like value of weights for those
             axes. In this case, the implied weights array is the outer
             product of the dictionary's values it may be used in
-            conjunction wih any value of *axes*, because the axes to
+            conjunction with any value of *axes*, because the axes to
             which the weights apply are given explicitly.
 
             *Parameter example:*
@@ -14353,7 +14356,7 @@ False
                 mode='dictionary'):
         '''Return a dictionary of Data objects, which are the m dimensional
     sections of this n dimensional Data object, where m <= n. The keys
-    of the dictionary are the indicies of the sections in the original
+    of the dictionary are the indices of the sections in the original
     Data object. The m dimensions that are not sliced are marked with
     None as a placeholder making it possible to reconstruct the
     original data object. The corresponding values are the resulting
@@ -14361,7 +14364,7 @@ False
 
     :Parameters:
 
-        axes: (seqeunce of) `int`
+        axes: (sequence of) `int`
             This is should be one or more integers of the m indices of
             the m axes that define the sections of the `Data`
             object. If axes is `None` (the default) or an empty

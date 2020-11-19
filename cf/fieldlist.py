@@ -46,7 +46,7 @@ class FieldList(list,
 
     These methods provide functionality similar to that of a
     :ref:`built-in list <python:tut-morelists>`. The main difference
-    is that when a field element needs to be assesed for equality its
+    is that when a field element needs to be assessed for equality its
     `~cf.Field.equals` method is used, rather than the ``==``
     operator.
 
@@ -494,7 +494,7 @@ class FieldList(list,
     possible with another field list, or a subclass of one. See the
     *ignore_type* parameter.
 
-    Equality is between teo field constructs is strict by
+    Equality is between two field constructs is strict by
     default. This means that for two field constructs to be considered
     equal they must have corresponding metadata constructs and for
     each pair of constructs:
@@ -1160,7 +1160,7 @@ class FieldList(list,
         exact: `bool`, optional
             If `False` then select field constructs whose units are
             equivalent to any of those given by *units*. For example,
-            metres and are equivelent to kilometres. By default, field
+            metres and are equivalent to kilometres. By default, field
             constructs whose units are exactly one of those given by
             *units* are selected. Note that the format of the units is
             not important, i.e. 'm' is exactly the same as 'metres'

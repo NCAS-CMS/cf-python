@@ -3349,7 +3349,7 @@ class Field(mixin.PropertiesData,
             A sequence of axis keys.
 
         coord_keys: sequence
-            A sequence of keys for each ot the N-D auxiliary
+            A sequence of keys for each to the N-D auxiliary
             coordinates.
 
     :Returns:
@@ -6251,7 +6251,7 @@ class Field(mixin.PropertiesData,
     (such as coordinate cell sizes) or provided explicitly in the form
     of other `Field` constructs. In any case, the outer product of
     these weights components is returned in a field which is
-    broadcastable to the orginal field (see the *components* parameter
+    broadcastable to the original field (see the *components* parameter
     for returning the components individually).
 
     By default null, equal weights are returned.
@@ -6312,7 +6312,7 @@ class Field(mixin.PropertiesData,
 
                           and the outer product of these weights
                           components is returned in a field constructs
-                          which is broadcastable to the orginal field
+                          which is broadcastable to the original field
                           construct (see the *components* parameter).
               ==========  ============================================
 
@@ -6407,7 +6407,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -6467,7 +6467,7 @@ class Field(mixin.PropertiesData,
             identify each dimension of the given weights. If the
             weights do not broadcast to the field construct's data
             then setting the *axes* parameter is required so that the
-            braodcasting can be inferred, otherwise setting the *axes*
+            broadcasting can be inferred, otherwise setting the *axes*
             is not required.
 
             *Parameter example:*
@@ -7531,7 +7531,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -8073,7 +8073,7 @@ class Field(mixin.PropertiesData,
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data, nor the field
+    be spanned by any metadata construct data, nor the field
     construct's data; nor be referenced by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is
@@ -8191,7 +8191,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8474,7 +8474,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8581,8 +8581,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='coordinatereference1'``
@@ -8599,7 +8599,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `str`
-            The construct identifier for the coordinate refernece
+            The construct identifier for the coordinate reference
             construct.
 
         '''
@@ -8714,7 +8714,7 @@ class Field(mixin.PropertiesData,
 
     ``'minimum'``                 The minimum of the values.
 
-    ``'maximum_absolute_value'``  The maximi  of the absolute
+    ``'maximum_absolute_value'``  The maximum of the absolute
                                   values.
 
     ``'minimum_absolute_value'``  The minimum of the absolute
@@ -8862,7 +8862,7 @@ class Field(mixin.PropertiesData,
     element. For example, creating 12 annual means from a timeseries
     of 120 months would be a grouped collapse.
 
-    Selected statistics for overalapping groups can be calculated with
+    Selected statistics for overlapping groups can be calculated with
     the `moving_window` method.
 
     The *group* keyword defines the size of the groups. Groups can be
@@ -9236,7 +9236,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -9349,7 +9349,7 @@ class Field(mixin.PropertiesData,
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
-            is partitioned into non-overalpping groups and each group
+            is partitioned into non-overlapping groups and each group
             is collapsed to size 1, independently of the other
             groups. The results of the collapses are concatenated so
             that the output axis has a size equal to the number of
@@ -9371,8 +9371,8 @@ class Field(mixin.PropertiesData,
                              starts at the first coordinate bound of
                              the first axis element (or its coordinate
                              if there are no bounds) and spans the
-                             defined group size. Each susbsequent
-                             group immediately follows the preceeeding
+                             defined group size. Each subsequent
+                             group immediately follows the preceding
                              one. By default each group contains the
                              consective run of elements whose
                              coordinate values lie within the group
@@ -9395,8 +9395,8 @@ class Field(mixin.PropertiesData,
                              bound of the first axis element (or its
                              coordinate if there are no bounds) and
                              spans the defined group size. Each
-                             susbsequent group immediately follows the
-                             preceeeding one. By default each group
+                             subsequent group immediately follows the
+                             preceding one. By default each group
                              contains the consective run of elements
                              whose coordinate values lie within the
                              group limits (see the *group_by*
@@ -9446,8 +9446,8 @@ class Field(mixin.PropertiesData,
                              number of elements. The first group
                              starts with the first axis element and
                              spans the defined number of consecutive
-                             elements. Each susbsequent group
-                             immediately follows the preceeeding one.
+                             elements. Each subsequent group
+                             immediately follows the preceding one.
 
                              * By default each group has the defined
                                number of elements, apart from the last
@@ -9631,7 +9631,7 @@ class Field(mixin.PropertiesData,
 
             `False`         Collapse all groups, regardless of their
                             size. This is the default if the groups
-                            are defined by one ot more `Query`
+                            are defined by one to more `Query`
                             objects.
 
             `Data`          Ignore groups whose span is not equal to
@@ -9732,8 +9732,8 @@ class Field(mixin.PropertiesData,
                             bound of the first axis element (or its
                             coordinate if there are no bounds) and
                             spans the defined group size. Each
-                            susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            subsequent group immediately follows the
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -9819,8 +9819,8 @@ class Field(mixin.PropertiesData,
                             coordinate bound of the first axis element
                             (or its coordinate if there are no bounds)
                             and spans the defined group size. Each
-                            susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            subsequent group immediately follows the
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -9962,7 +9962,7 @@ class Field(mixin.PropertiesData,
               `cf.D` and `cf.h`).
 
             *Parameter example:*
-              To define groups that each spann 3 calendar months,
+              To define groups that each span 3 calendar months,
               starting and ending at 06:00 in the first day of each
               month: ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
 
@@ -12007,7 +12007,7 @@ class Field(mixin.PropertiesData,
             `domain_axis` method: ``f.domain_axis(identity)``.
 
         axes: deprecated at version 3.0.0
-            Use the *identity* parmeter instead.
+            Use the *identity* parameter instead.
 
         size:  deprecated at version 3.0.0
 
@@ -12016,7 +12016,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the domein axis is increasing.
+            Whether or not the domain axis is increasing.
 
     **Examples:**
 
@@ -12258,7 +12258,7 @@ class Field(mixin.PropertiesData,
     >>> indices = q.indices(X=112.5)
     >>> print(indices)
     (slice(0, 5, 1), slice(2, 3, 1))
-    >>> q[indicies]
+    >>> q[indices]
     <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
     >>> q.indices(X=112.5, latitude=cf.gt(-60))
     (slice(1, 5, 1), slice(2, 3, 1))
@@ -13322,7 +13322,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the field construct contains the specfied
+            Whether or not the field construct contains the specified
             metadata constructs.
 
     **Examples:**
@@ -13661,7 +13661,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               For a window size of 5, if ``origin=0`` then the window
               is centred on each point. If ``origin=-2`` then the
-              window is shifted to inclued the previous four
+              window is shifted to include the previous four
               points. If ``origin=1`` then the window is shifted to
               include the previous point and the and the next three
               points.
@@ -13924,7 +13924,7 @@ class Field(mixin.PropertiesData,
               with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
             Note that the `scipy.signal.windows` package has suite of
-            window functions for creating wondow weights for filtering
+            window functions for creating window weights for filtering
             (see the examples for details).
 
             .. versionadded:: 3.3.0 (replaces the old weights
@@ -13995,7 +13995,7 @@ class Field(mixin.PropertiesData,
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -15099,7 +15099,7 @@ class Field(mixin.PropertiesData,
     order.
 
     By default metadata constructs are not transposed, but they may be
-    if the *constructs* parmeter is set.
+    if the *constructs* parameter is set.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `squeeze`, `unsqueeze`
@@ -16011,7 +16011,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -16507,7 +16507,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `int`
-            The position in the field construct's dat of the selected
+            The position in the field construct's data of the selected
             domain axis construct.
 
     **Examples:**
@@ -16684,7 +16684,7 @@ class Field(mixin.PropertiesData,
     spanned by the data are either inferred, or specified with the
     *axes* parameter.
 
-    For a dimension coordinate construct, an exisiting dimension
+    For a dimension coordinate construct, an existing dimension
     coordinate construct is discarded if it spans the same domain axis
     construct (since only one dimension coordinate construct can be
     associated with a given domain axis construct).
@@ -16703,8 +16703,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``
@@ -16907,7 +16907,7 @@ class Field(mixin.PropertiesData,
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    The metadata constructs are similary extended where appropriate.
+    The metadata constructs are similarly extended where appropriate.
 
     **Cyclic axes**
 
@@ -17241,7 +17241,7 @@ class Field(mixin.PropertiesData,
     percentile rank.
 
     The output field construct has a new dimension coordinate
-    construct that records the precentile ranks represented by its
+    construct that records the percentile ranks represented by its
     data.
 
     .. versionadded:: 3.0.4
@@ -18519,7 +18519,7 @@ class Field(mixin.PropertiesData,
 
         `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field. If the ``'test'`` positional argumnt
+            the original field. If the ``'test'`` positional argument
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
@@ -18583,7 +18583,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -18624,7 +18624,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `set`
-            The identifiers of the domain axis constructs that san
+            The identifiers of the domain axis constructs that span
             the data of all coordinate and domain ancillary constructs
             used by the selected coordinate reference construct.
 
@@ -18724,7 +18724,7 @@ class Field(mixin.PropertiesData,
     especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
-    boundaries are not known nor inferrable. Higher order patch
+    boundaries are not known nor inferable. Higher order patch
     recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
@@ -18875,7 +18875,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -19391,7 +19391,7 @@ class Field(mixin.PropertiesData,
     coarser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
-    known nor inferrable. Higher order patch recovery is available as
+    known nor inferable. Higher order patch recovery is available as
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than
@@ -19505,7 +19505,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.

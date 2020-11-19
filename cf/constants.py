@@ -1,6 +1,5 @@
-from .units import Units
-
 import logging
+import sys
 
 from enum     import Enum, auto
 from psutil   import virtual_memory
@@ -17,6 +16,8 @@ from . import mpi_size
 
 if mpi_on:
     from . import mpi_comm
+
+from .units import Units
 
 
 # platform = sys.platform
@@ -103,7 +104,8 @@ them here in cf.
       See cf.log_level().
 """
 CONSTANTS = {
-    # See cfdm.constants.CONSTANTS for effective 'ATOL' and 'RTOL' values
+    'ATOL': sys.float_info.epsilon,
+    'RTOL': sys.float_info.epsilon,
     'TEMPDIR': gettempdir(),
     'OF_FRACTION': 0.5,
     'TOTAL_MEMORY': _TOTAL_MEMORY,
@@ -113,7 +115,6 @@ CONSTANTS = {
     'REGRID_LOGGING': False,
     'COLLAPSE_PARALLEL_MODE': 0,
     'RELAXED_IDENTITIES': False,
-    # 'IGNORE_IDENTITIES': False,  # no longer used
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
     'COMBINE_BOUNDS_WITH_COORDINATES': 'AND',
 }
