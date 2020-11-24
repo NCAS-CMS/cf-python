@@ -60,6 +60,8 @@ from .constants import (CONSTANTS,
                         _file_to_fh,
                         _stash2standard_name)
 
+from .docstring import _docstring_substitution_definitions
+
 from . import mpi_on
 from . import mpi_size
 
@@ -79,23 +81,17 @@ atexit.register(_close_proc_meminfo)
 # Inherit classes from cfdm
 # --------------------------------------------------------------------
 class Constant(cfdm.Constant):
-    pass
+    def __docstring_substitutions__(self):
+        return _docstring_substitution_definitions
 
+    def __docstring_package_depth__(self):
+        return 0
 
-Constant.__doc__ = cfdm.Constant.__doc__.replace('cfdm.', 'cf.')
-
-
-class Configuration(cfdm.Configuration):
-    def __new__(cls, *args, **kwargs):
-        '''Must override this method in subclasses.
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
 
         '''
-        instance = super().__new__(cls)
-        instance._func = configuration
-        return instance
-
-
-Configuration.__doc__ = cfdm.Configuration.__doc__.replace('cfdm.', 'cf.')
+        return super().__repr__().replace('<', '<CF ', 1)
 
 
 class DeprecationError(Exception):
@@ -412,9 +408,10 @@ def _configuration(_Configuration, **kwargs):
     old.pop('min_total_memory', None)
     old.pop('fm_threshold', None)
 
-    # Also add rtol and atol from cfdm as they are effective constants in cf:
-    for tolerance in ('ATOL', 'RTOL'):
-        old[tolerance.lower()] = CONSTANTS[tolerance]
+    
+#    # Also add rtol and atol from cfdm as they are effective constants in cf:
+#    for tolerance in ('ATOL', 'RTOL'):
+#        old[tolerance.lower()] = CONSTANTS[tolerance]
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -438,6 +435,31 @@ def _configuration(_Configuration, **kwargs):
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
     return _Configuration(**old)
+
+
+# --------------------------------------------------------------------
+# Inherit class from cfdm
+# --------------------------------------------------------------------
+class Configuration(cfdm.Configuration):
+    def __new__(cls, *args, **kwargs):
+        '''Must override this method in subclasses.
+
+        '''
+        instance = super().__new__(cls)
+        instance._func = configuration
+        return instance
+
+    def __docstring_substitutions__(self):
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        return 0
+
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+        '''
+        return super().__repr__().replace('<', '<CF ', 1)
 
 
 def free_memory():
@@ -496,61 +518,6 @@ def _WORKSPACE_FACTOR_2():
     return CONSTANTS['WORKSPACE_FACTOR_2']
 
 
-def free_memory_factor(*arg):
-    '''Set the fraction of memory kept free as a temporary
-    workspace. Users should set the free memory factor through
-    cf.set_performance so that the upper limit to the chunksize is
-    recalculated appropriately. The free memory factor must be a
-    sensible value between zero and one. If no arguments are passed
-    the existing free memory factor is returned.
-
-    :Parameters:
-
-        arg: `float` or `Constant`, optional
-            The fraction of memory kept free as a temporary workspace.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    '''
-    old = CONSTANTS['FREE_MEMORY_FACTOR']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        try:
-            arg = float(arg)
-        except (ValueError, TypeError):
-            raise ValueError(
-                "Free memory factor must be a float. Got {!r}".format(arg)
-            )
-
-        if arg <= 0.0 or arg >= 1.0:
-            raise ValueError(
-                "Free memory factor must be between 0.0 and 1.0 "
-                "not inclusive"
-            )
-
-        CONSTANTS['FREE_MEMORY_FACTOR'] = arg
-        CONSTANTS['FM_THRESHOLD'] = arg * total_memory()
-
-    return Constant(old, _func=free_memory_factor)
-
-
-def FREE_MEMORY_FACTOR(*new_free_memory_factor):
-    '''Alias for `cf.free_memory_factor`.
-
-    '''
-    return free_memory_factor(*new_free_memory_factor)
-
-
 def _cf_free_memory_factor(*new_free_memory_factor):
     '''Internal alias for `cf.free_memory_factor`.
 
@@ -562,81 +529,6 @@ def _cf_free_memory_factor(*new_free_memory_factor):
     return free_memory_factor(*new_free_memory_factor)
 
 
-# --------------------------------------------------------------------
-# Functions inherited from cfdm
-# --------------------------------------------------------------------
-def atol(*arg):
-    '''
-
-    '''
-    old = CONSTANTS['ATOL']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['ATOL'] = float(arg)
-
-    return Constant(old, _func=atol)
-
-
-atol.__doc__ = cfdm.atol.__doc__.replace('cfdm.', 'cf.')
-
-
-def rtol(*arg):
-    '''
-
-    '''
-    old = CONSTANTS['RTOL']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['RTOL'] = float(arg)
-
-    return Constant(old, _func=rtol)
-
-
-rtol.__doc__ = cfdm.rtol.__doc__.replace('cfdm.', 'cf.')
-
-
-def CF():
-    '''
-    '''
-    return cfdm.CF()
-
-
-CF.__doc__ = cfdm.CF.__doc__.replace('cfdm.', 'cf.')
-
-# Module-level alias to avoid name clashes with function keyword
-# arguments (corresponding to 'import atol as cf_atol' etc. in other
-# modules)
-_cf_atol = atol
-_cf_rtol = rtol
-
-
-# Aliases (for back-compatibility etc.):
-def ATOL(*new_atol):
-    '''Alias for `cf.atol`.
-
-    '''
-    return atol(*new_atol)
-
-
-def RTOL(*new_rtol):
-    '''Alias for `cf.rtol`.
-
-    '''
-    return rtol(*new_rtol)
-
-
 _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level()
 # function as contained in _log_level, but can't inherit the
@@ -644,93 +536,225 @@ _disable_logging = cfdm._disable_logging
 # dict. Define cf-python's own.  This also means the log_level
 # dostrings are independent which is important for providing
 # module-specific documentation links and directives, etc.
-_log_level = cfdm._log_level
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
 _is_valid_log_level_int = cfdm._is_valid_log_level_int
 
 
-def log_level(*arg):
-    '''The minimal level of seriousness of log messages which are shown.
+# --------------------------------------------------------------------
+# Functions inherited from cfdm
+# --------------------------------------------------------------------
+class ConstantAccess(cfdm.ConstantAccess):
+    _CONSTANTS = CONSTANTS
+    _Constant = Constant
 
-    This can be adjusted to filter out potentially-useful log messages
-    generated by cf at runtime, such that any messages marked as
-    having a severity below the level set will not be reported.
+    def __docstring_substitutions__(self):
+        return _docstring_substitution_definitions
 
-    For example, when set to ``'WARNING'`` (or equivalently ``1``),
-    all messages categorised as ``'DEBUG'`` or ``'INFO'`` will be
-    suppressed, and only warnings will emerge.
+    def __docstring_package_depth__(self):
+        return 0
 
-    See https://ncas-cms.github.io/cf-python/tutorial.html#logging for
-    a detailed breakdown on the levels and configuration possibilities.
 
-    The default level is ``'WARNING'`` (``1``).
+class atol(ConstantAccess, cfdm.atol):
+    pass
 
-    .. versionadded:: 3.5.0
+
+class rtol(ConstantAccess, cfdm.rtol):
+    pass
+
+
+class log_level(ConstantAccess, cfdm.log_level):
+    _is_valid_log_level_int = _is_valid_log_level_int
+    _reset_log_emergence_level = _reset_log_emergence_level
+
+
+class regrid_logging(ConstantAccess):
+    '''Whether or not to enable ESMPy regridding logging.
+
+    If it is logging is performed after every call to ESMPy.
 
     :Parameters:
 
-        arg: `str` or `int` or `Constant`, optional
-            The new value of the minimal log severity level. This can
-            be specified either as a string equal (ignoring case) to
-            the named set of log levels or identifier ``'DISABLE'``,
-            or an integer code corresponding to each of these, namely:
-
-            * ``'DISABLE'`` (``0``);
-            * ``'WARNING'`` (``1``);
-            * ``'INFO'`` (``2``);
-            * ``'DETAIL'`` (``3``);
-            * ``'DEBUG'`` (``-1``).
+        arg: `bool` or `Constant`, optional
+            The new value (either `True` to enable logging or `False`
+            to disable it). The default is to not change the current
+            behaviour.
 
     :Returns:
 
         `Constant`
             The value prior to the change, or the current value if no
-            new value was specified (or if one was specified but was
-            not valid). Note the string name, rather than the
-            equivalent integer, will always be returned.
+            new value was specified.
 
     **Examples:**
 
-    >>> cf.log_level()
-    <Constant: 'WARNING'>
-    >>> print(cf.log_level())
-    WARNING
-    >>> str(cf.log_level())
-    'WARNING'
-
-    >>> old = log_level('INFO')
-    >>> cf.log_level()
-    <Constant: 'WARNING'>
-    >>> cf.log_level(old)
-    <Constant: 'INFO'>
-    >>> cf.log_level()
-    <Constant: 'WARNING'>
-
-    Use as a context manager:
-
-    >>> print(cf.log_level())
-    WARNING
-    >>> with cf.log_level('DETAIL'):
-    ...     print(cf.log_level(), cf.log_level(-1), cf.log_level())
-    ...
-    DETAIL DETAIL DEBUG
-    >>> print(cf.log_level())
-    WARNING
+    >>> cf.regrid_logging()
+    False
+    >>> cf.regrid_logging(True)
+    False
+    >>> cf.regrid_logging()
+    True
 
     '''
-    return _log_level(CONSTANTS, arg, Constant, log_level)
+    _name = 'REGRID_LOGGING'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        return bool(arg)
 
 
-def LOG_LEVEL(*new_log_level):
-    '''Alias for `cf.log_level`.
+class collapse_parallel_mode(ConstantAccess):
+    '''Which mode to use when collapse is run in parallel. There are three
+    possible modes:
+
+    0.  This attempts to maximise parallelism, possibly at the expense
+        of extra communication. This is the default mode.
+
+    1.  This minimises communication, possibly at the expense of the
+        degree of parallelism. If collapse is running slower than you
+        would expect, you can try changing to mode 1 to see if this
+        improves performance. This is only likely to work if the
+        output of collapse will be a sizeable array, not a single
+        point.
+
+    2.  This is here for debugging purposes, but we would expect this
+        to maximise communication possibly at the expense of
+        parallelism. The use of this mode is, therefore, not
+        recommended.
+
+    :Parameters:
+
+        arg: `int` or `Constant`, optional
+            The new value (0, 1 or 2).
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> cf.collapse_parallel_mode()
+    0
+    >>> cf.collapse_parallel_mode(1)
+    0
+    >>> cf.collapse_parallel_mode()
+    1
+
     '''
-    return log_level(*new_log_level)
+    _name = 'COLLAPSE_PARALLEL_MODE'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        allowed_values = (0, 1, 2)
+        if arg not in allowed_values:
+            raise ValueError(
+                "Invalid collapse parallel mode. Valid values are "
+                "{}".format(allowed_values)
+            )
+
+        return arg
 
 
-def chunksize(*arg):
+class relaxed_identities(ConstantAccess):
+    '''Use 'relaxed' mode when getting a construct identity.
+
+    If set to True, sets ``relaxed=True`` as the default in calls to a
+    construct's `identity` method (e.g. `cf.Field.identity`).
+
+    This is used by construct arithmetic and field construct
+    aggregation.
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> org = cf.relaxed_identities()
+    >>> org
+    False
+    >>> cf.relaxed_identities(True)
+    False
+    >>> cf.relaxed_identities()
+    True
+    >>> cf.relaxed_identities(org)
+    True
+    >>> cf.relaxed_identities()
+    False
+
+    '''
+    _name = 'RELAXED_IDENTITIES'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        return bool(arg)
+
+
+class chunksize(ConstantAccess):
     '''Set the chunksize used by LAMA for partitioning the data
-    array. This must be smaller than an upper limit determined by the
-    free memory factor, which is the fraction of memory kept free as a
+    array.
+
+
+    This must be smaller than an upper limit determined by the free
+    memory factor, which is the fraction of memory kept free as a
     temporary workspace, otherwise an error is raised. If called with
     None as the argument then the chunksize is set to its upper
     limit. If called without any arguments the existing chunksize is
@@ -756,44 +780,269 @@ def chunksize(*arg):
             new value was specified.
 
     '''
-    old = CONSTANTS['CHUNKSIZE']
+    _name = 'CHUNKSIZE'
 
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
+    def _parse(cls, arg):
+        '''Parse a new constant value.
 
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
         upper_chunksize = ((free_memory_factor() * min_total_memory())
                            / ((mpi_size * _WORKSPACE_FACTOR_1()) +
                               _WORKSPACE_FACTOR_2()))
 
-        if arg is None:
-            CONSTANTS['CHUNKSIZE'] = upper_chunksize
-        else:
-            arg = float(arg)
-            if arg > upper_chunksize and mpi_size > 1:
-                raise ValueError(
-                    "Specified chunk size ({}) is too large for the given "
-                    "free memory factor ({})".format(arg, upper_chunksize)
-                    )
-            elif arg <= 0:
-                raise ValueError(
-                    "Chunk size ({}) must be positive".format(arg)
-                )
+        arg = float(arg)
+        if arg > upper_chunksize and mpi_size > 1:
+            raise ValueError(
+                "Specified chunk size ({}) is too large for the given "
+                "free memory factor ({})".format(arg, upper_chunksize)
+            )
+        elif arg <= 0:
+            raise ValueError(
+                "Chunk size ({}) must be positive".format(arg)
+            )
 
-            CONSTANTS['CHUNKSIZE'] = arg
-    # --- End: if
-
-    return Constant(old, _func=chunksize)
+        return arg
 
 
-def CHUNKSIZE(*new_chunksize):
-    '''Alias for `cf.chunksize`.
+class tempdir(ConstantAccess):
+    '''The directory for internally generated temporary files.
+
+    When setting the directory, it is created if the specified path
+    does not exist.
+
+    :Parameters:
+
+        arg: `str`, optional
+            The new directory for temporary files. Tilde expansion (an
+            initial component of ``~`` or ``~user`` is replaced by
+            that *user*'s home directory) and environment variable
+            expansion (substrings of the form ``$name`` or ``${name}``
+            are replaced by the value of environment variable *name*)
+            are applied to the new directory name.
+
+            The default is to not change the directory.
+
+    :Returns:
+
+        `str`
+            The directory prior to the change, or the current
+            directory if no new value was specified.
+
+    **Examples:**
+
+    >>> cf.tempdir()
+    '/tmp'
+    >>> old = cf.tempdir('/home/me/tmp')
+    >>> cf.tempdir(old)
+    '/home/me/tmp'
+    >>> cf.tempdir()
+    '/tmp'
+
     '''
-    return chunksize(*new_chunksize)
+    _name = 'TEMPDIR'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        arg = _os_path_expanduser(_os_path_expandvars(arg))
+
+        # Create the directory if it does not exist.
+        try:
+            mkdir(arg)
+        except OSError:
+            pass
+
+        return arg
+
+
+class of_fraction(ConstantAccess):
+    '''The amount of concurrently open files above which files containing
+    data arrays may be automatically closed.
+
+    The amount is expressed as a fraction of the maximum possible
+    number of concurrently open files.
+
+    Note that closed files will be automatically reopened if
+    subsequently needed by a variable to access its data array.
+
+    .. seealso:: `cf.close_files`, `cf.close_one_file`,
+                 `cf.open_files`, `cf.open_files_threshold_exceeded`
+
+    :Parameters:
+
+        arg: `float` or `Constant`, optional
+            The new fraction (between 0.0 and 1.0). The default is to
+            not change the current behaviour.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> cf.of_fraction()
+    0.5
+    >>> old = cf.of_fraction(0.33)
+    >>> cf.of_fraction(old)
+    0.33
+    >>> cf.of_fraction()
+    0.5
+
+    The fraction may be translated to an actual number of files as
+    follows:
+
+    >>> old = cf.of_fraction(0.75)
+    >>> import resource
+    >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
+    >>> threshold = int(max_open_files * cf.of_fraction())
+    >>> max_open_files, threshold
+    (1024, 768)
+
+    '''
+    _name = 'OF_FRACTION'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        try:
+            arg = float(arg)
+        except (ValueError, TypeError):
+            raise ValueError(
+                "Fraction must be a float. Got {!r}".format(arg)
+            )
+
+        if arg <= 0.0 or arg >= 1.0:
+            raise ValueError(
+                "Fraction must be between 0.0 and 1.0 not inclusive. "
+                "Got {!r}".format(arg)
+            )
+
+        return arg
+
+
+class free_memory_factor(ConstantAccess):
+    '''Set the fraction of memory kept free as a temporary
+    workspace.
+
+    Users should set the free memory factor through cf.set_performance
+    so that the upper limit to the chunksize is recalculated
+    appropriately. The free memory factor must be a sensible value
+    between zero and one. If no arguments are passed the existing free
+    memory factor is returned.
+
+    :Parameters:
+
+        arg: `float` or `Constant`, optional
+            The fraction of memory kept free as a temporary workspace.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    '''
+    _name = 'FREE_MEMORY_FACTOR'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        try:
+            arg = float(arg)
+        except (ValueError, TypeError):
+            raise ValueError(
+                "Free memory factor must be a float. Got {!r}".format(arg)
+            )
+
+        if not (0 < arg < 1):
+            raise ValueError(
+                "Free memory factor must be between 0.0 and 1.0 "
+                "not inclusive"
+            )
+
+        CONSTANTS['FM_THRESHOLD'] = arg * total_memory()
+
+        return arg
+
+
+def CF():
+    '''
+    '''
+    return cfdm.CF()
+
+
+CF.__doc__ = cfdm.CF.__doc__.replace('cfdm.', 'cf.')
+
+# Module-level alias to avoid name clashes with function keyword
+# arguments (corresponding to 'import atol as cf_atol' etc. in other
+# modules)
+_cf_atol = atol
+_cf_rtol = rtol
 
 
 def _cf_chunksize(*new_chunksize):
@@ -821,12 +1070,6 @@ def fm_threshold():
 
     '''
     return CONSTANTS['FM_THRESHOLD']
-
-
-def FM_THRESHOLD(*new_fm_threshold):
-    '''Alias for `cf.fm_threshold`.
-    '''
-    return fm_threshold(*new_fm_threshold)
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
@@ -876,24 +1119,11 @@ def set_performance(chunksize=None, free_memory_factor=None):
     return old
 
 
-def SET_PERFORMANCE(*new_set_performance):
-    '''Alias for `cf.set_performance`.
-    '''
-    return set_performance(*new_set_performance)
-
-
 def min_total_memory():
     '''The minimum total memory across nodes.
 
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
-
-
-def MIN_TOTAL_MEMORY(*new_min_total_memory):
-    '''Alias for `cf.min_total_memory`.
-
-    '''
-    return min_total_memory(*new_min_total_memory)
 
 
 def total_memory():
@@ -903,147 +1133,47 @@ def total_memory():
     return CONSTANTS['TOTAL_MEMORY']
 
 
-def TOTAL_MEMORY(*new_total_memory):
-    '''Alias for `cf.total_memory`.
+# --------------------------------------------------------------------
+# Aliases (for back-compatibility etc.):
+# --------------------------------------------------------------------
+def ATOL(*new_atol):
+    '''Alias for `cf.atol`.
 
     '''
-    return total_memory(*new_total_memory)
+    return atol(*new_atol)
 
 
-def tempdir(*arg):
-    '''The directory for internally generated temporary files.
-
-    When setting the directory, it is created if the specified path
-    does not exist.
-
-    :Parameters:
-
-        arg: `str`, optional
-            The new directory for temporary files. Tilde expansion (an
-            initial component of ``~`` or ``~user`` is replaced by
-            that *user*'s home directory) and environment variable
-            expansion (substrings of the form ``$name`` or ``${name}``
-            are replaced by the value of environment variable *name*)
-            are applied to the new directory name.
-
-            The default is to not change the directory.
-
-    :Returns:
-
-        `str`
-            The directory prior to the change, or the current
-            directory if no new value was specified.
-
-    **Examples:**
-
-    >>> cf.tempdir()
-    '/tmp'
-    >>> old = cf.tempdir('/home/me/tmp')
-    >>> cf.tempdir(old)
-    '/home/me/tmp'
-    >>> cf.tempdir()
-    '/tmp'
+def RTOL(*new_rtol):
+    '''Alias for `cf.rtol`.
 
     '''
-    old = CONSTANTS['TEMPDIR']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        tempdir = _os_path_expanduser(_os_path_expandvars(arg))
-
-        # Create the directory if it does not exist.
-        try:
-            mkdir(tempdir)
-        except OSError:
-            pass
-
-        CONSTANTS['TEMPDIR'] = tempdir
-
-    return old
+    return rtol(*new_rtol)
 
 
-def TEMPDIR(*new_tempdir):
-    '''Alias for `cf.tempdir`.
-    '''
-    return tempdir(*new_tempdir)
-
-
-def of_fraction(*arg):
-    '''The amount of concurrently open files above which files containing
-    data arrays may be automatically closed.
-
-    The amount is expressed as a fraction of the maximum possible
-    number of concurrently open files.
-
-    Note that closed files will be automatically reopened if
-    subsequently needed by a variable to access its data array.
-
-    .. seealso:: `cf.close_files`, `cf.close_one_file`,
-                 `cf.open_files`, `cf.open_files_threshold_exceeded`
-
-    :Parameters:
-
-        arg: `float` or `Constant`, optional
-            The new fraction (between 0.0 and 1.0). The default is to
-            not change the current behaviour.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> cf.of_fraction()
-    0.5
-    >>> old = cf.of_fraction(0.33)
-    >>> cf.of_fraction(old)
-    0.33
-    >>> cf.of_fraction()
-    0.5
-
-    The fraction may be translated to an actual number of files as
-    follows:
-
-    >>> old = cf.of_fraction(0.75)
-    >>> import resource
-    >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
-    >>> threshold = int(max_open_files * cf.of_fraction())
-    >>> max_open_files, threshold
-    (1024, 768)
+def FREE_MEMORY_FACTOR(*new_free_memory_factor):
+    '''Alias for `cf.free_memory_factor`.
 
     '''
-    old = CONSTANTS['OF_FRACTION']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
+    return free_memory_factor(*new_free_memory_factor)
 
-        try:
-            arg = float(arg)
-        except (ValueError, TypeError):
-            raise ValueError(
-                "Fraction must be a float. Got {!r}".format(arg)
-            )
 
-        if arg <= 0.0 or arg >= 1.0:
-            raise ValueError(
-                "Fraction must be between 0.0 and 1.0 not inclusive. "
-                "Got {!r}".format(arg)
-            )
+def LOG_LEVEL(*new_log_level):
+    '''Alias for `cf.log_level`.
+    '''
+    return log_level(*new_log_level)
 
-        CONSTANTS['OF_FRACTION'] = arg
 
-    return Constant(old, _func=of_fraction)
+def CHUNKSIZE(*new_chunksize):
+    '''Alias for `cf.chunksize`.
+    '''
+    return chunksize(*new_chunksize)
+
+
+def SET_PERFORMANCE(*new_set_performance):
+    '''Alias for `cf.set_performance`.
+
+    '''
+    return set_performance(*new_set_performance)
 
 
 def OF_FRACTION(*new_of_fraction):
@@ -1053,114 +1183,11 @@ def OF_FRACTION(*new_of_fraction):
     return of_fraction(*new_of_fraction)
 
 
-def regrid_logging(*arg):
-    '''Whether or not to enable ESMPy logging.
-
-    If it is logging is performed after every call to ESMPy.
-
-    :Parameters:
-
-        arg: `bool` or `Constant`, optional
-            The new value (either `True` to enable logging or `False`
-            to disable it). The default is to not change the current
-            behaviour.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> cf.regrid_logging()
-    False
-    >>> cf.regrid_logging(True)
-    False
-    >>> cf.regrid_logging()
-    True
-
-    '''
-    old = CONSTANTS['REGRID_LOGGING']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['REGRID_LOGGING'] = bool(arg)
-
-    return Constant(old, _func=regrid_logging)
-
-
 def REGRID_LOGGING(*new_regrid_logging):
     '''Alias for `cf.regrid_logging`.
 
     '''
     return regrid_logging(*new_regrid_logging)
-
-
-def collapse_parallel_mode(*arg):
-    '''Which mode to use when collapse is run in parallel. There are three
-    possible modes:
-
-    0.  This attempts to maximise parallelism, possibly at the expense
-        of extra communication. This is the default mode.
-
-    1.  This minimises communication, possibly at the expense of the
-        degree of parallelism. If collapse is running slower than you
-        would expect, you can try changing to mode 1 to see if this
-        improves performance. This is only likely to work if the
-        output of collapse will be a sizeable array, not a single
-        point.
-
-    2.  This is here for debugging purposes, but we would expect this
-        to maximise communication possibly at the expense of
-        parallelism. The use of this mode is, therefore, not
-        recommended.
-
-    :Parameters:
-
-        arg: `int` or `Constant`, optional
-            The new value (0, 1 or 2).
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> cf.collapse_parallel_mode()
-    0
-    >>> cf.collapse_parallel_mode(1)
-    0
-    >>> cf.collapse_parallel_mode()
-    1
-
-    '''
-    old = CONSTANTS['COLLAPSE_PARALLEL_MODE']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        allowed_values = (0, 1, 2)
-        if arg not in allowed_values:
-            raise ValueError(
-                "Invalid collapse parallel mode. Valid values are "
-                "{}".format(allowed_values)
-            )
-
-        CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg
-
-    return Constant(old, _func=collapse_parallel_mode)
 
 
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
@@ -1170,59 +1197,39 @@ def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     return collapse_parallel_mode(*new_collapse_parallel_mode)
 
 
-def relaxed_identities(*arg):
-    '''Use 'relaxed' mode when getting a construct identity.
-
-    If set to True, sets ``relaxed=True`` as the default in calls to a
-    construct's `identity` method (e.g. `cf.Field.identity`).
-
-    This is used by construct arithmetic and field construct
-    aggregation.
-
-    :Parameters:
-
-        arg: `bool` or `Constant`, optional
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> org = cf.relaxed_identities()
-    >>> org
-    False
-    >>> cf.relaxed_identities(True)
-    False
-    >>> cf.relaxed_identities()
-    True
-    >>> cf.relaxed_identities(org)
-    True
-    >>> cf.relaxed_identities()
-    False
-
-    '''
-    old = CONSTANTS['RELAXED_IDENTITIES']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg)
-
-    return Constant(old, _func=relaxed_identities)
-
-
 def RELAXED_IDENTITIES(*new_relaxed_identities):
     '''Alias for `cf.relaxed_identities`.
 
     '''
     return relaxed_identities(*new_relaxed_identities)
+
+
+def MIN_TOTAL_MEMORY(*new_min_total_memory):
+    '''Alias for `cf.min_total_memory`.
+
+    '''
+    return min_total_memory(*new_min_total_memory)
+
+
+def TEMPDIR(*new_tempdir):
+    '''Alias for `cf.tempdir`.
+
+    '''
+    return tempdir(*new_tempdir)
+
+
+def TOTAL_MEMORY(*new_total_memory):
+    '''Alias for `cf.total_memory`.
+
+    '''
+    return total_memory(*new_total_memory)
+
+
+def FM_THRESHOLD(*new_fm_threshold):
+    '''Alias for `cf.fm_threshold`.
+
+    '''
+    return fm_threshold(*new_fm_threshold)
 
 
 # def IGNORE_IDENTITIES(*arg):
@@ -3118,7 +3125,7 @@ def environment(display=True, paths=True, string=True):
     out = '\n'.join(out)
 
     if display:
-        print(out)
+        print(out)  # pragma: no cover
     else:
         return(out)
 

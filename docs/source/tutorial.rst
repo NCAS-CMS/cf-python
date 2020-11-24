@@ -4637,7 +4637,7 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cf.atol` and `cf.rtol` functions:
+`cf.atol` and `cf.rtol` functions.
 
 Note that the above equation is not symmetric in :math:`x` and
 :math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
