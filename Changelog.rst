@@ -7,8 +7,8 @@ version 3.8.0
 =======
 **2020-??-??**
 
-* Global constants can now be controlled by a context manager
-  (https://github.com/NCAS-CMS/cf-python/issues/154)
+* The setting of global constants can now be controlled by a context
+  manager (https://github.com/NCAS-CMS/cf-python/issues/154)
 * Fixed bug that caused a failure when writing a dataset that contains
   a scalar domain ancillary construct
   (https://github.com/NCAS-CMS/cf-python/issues/152)

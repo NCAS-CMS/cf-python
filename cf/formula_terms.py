@@ -778,9 +778,9 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
             'OR' if lev.has_bounds() else 'AND'
-    ):        
+    ):
         computed = p0 * (-lev).exp()
-        
+
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -871,8 +871,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
         ps = ps.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if sigma.has_bounds() else 'AND'
@@ -985,8 +984,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
         ps = ps.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     if ap_term:
         with combine_bounds_with_coordinates(
@@ -997,7 +995,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     else:
         with combine_bounds_with_coordinates(
                 'OR' if a.has_bounds() and b.has_bounds() else 'AND'
-        ):            
+        ):
             computed = (a * p0
                         + b * ps)
 
@@ -1087,8 +1085,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
         orog = orog.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if a.has_bounds() and b.has_bounds() else 'AND'
@@ -1221,8 +1218,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
         zsurf2 = zsurf2.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
@@ -1332,8 +1328,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
         depth = depth.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if sigma.has_bounds() else 'AND'
@@ -1451,22 +1446,21 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
         depth = depth.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates as
     # ----------------------------------------------------------------
     # Ensure that a has the same units as s
     a = _conform_units('a', a, 's', s.Units)
-    
+
     with combine_bounds_with_coordinates(
         'OR' if s.has_bounds() else 'AND'
-    ):    
+    ):
         C = (
             (1 - b) * (a * s).sinh() / a.sinh()
             + b * (
                 (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh()) - 0.5
             )
         )
-        
+
         computed = (eta * (s + 1)
                     + depth_c * s
                     + (depth - depth_c) * C)
@@ -1579,15 +1573,14 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
         depth = depth.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
     ):
         S = (depth_c * s
              + (depth - depth_c) * C)
-        
+
         computed = (S
                     + eta * (1 + S / depth))
 
@@ -1699,8 +1692,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
         depth = depth.insert_dimension(-1)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     with combine_bounds_with_coordinates(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
@@ -1834,8 +1826,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
     _check_index_term('nsigma', nsigma)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     #
     # Note: This isn't overly efficient, because we do calculations
     #       for k>nsigma and then overwrite them.
@@ -1850,7 +1841,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
 
         nsigma = int(nsigma.data)
         computed[..., nsigma:] = zlev[nsigma:]
-        
+
     return (standard_name, computed_standard_name, computed,
             computed_axes, k_axis)
 
@@ -1962,8 +1953,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     _check_index_term('k_c', k_c)
 
     # ----------------------------------------------------------------
-    # Compute the non-parametric coordinates as described in Appendix
-    # D: Parametric Vertical Coordinates of the CF conventions.
+    # Compute the non-parametric coordinates
     #
     # Note: This isn't overly efficient, because we do calculations
     #       for k<=k_c and then overwrite them.
@@ -1985,11 +1975,11 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
                 * (2 * a / (z1 - z2) * (depth - href)).tanh()
             )
         )
-        
+
         computed = f * sigma
-        
+
         k_c1 = int(k_c.data) + 1
-        
+
         computed[..., k_c1:] = (f
                                 + (depth - f) * (sigma[k_c1:] - 1))
 
@@ -2026,8 +2016,6 @@ def formula(f, coordinate_reference, default_to_zero=True,
     parametric vertical coordinate values (usually dimensionless) and
     associated domain ancillary constructs, as defined by the formula
     stored in a coordinate reference construct.
-
-    https://cfconventions.org/cf-conventions/cf-conventions.html#parametric-v-coord
 
     .. versionadded:: 3.8.0
 

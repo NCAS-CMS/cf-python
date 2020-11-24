@@ -271,9 +271,7 @@ class Field(mixin.PropertiesData,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The selection of properties to be written as netCDF global
     attributes may be accessed with the `nc_global_attributes`,
@@ -10569,9 +10567,9 @@ class Field(mixin.PropertiesData,
                 # REMOVE all 2+ dimensional auxiliary coordinates
                 # which span this axis
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
-                for key in c.filter_by_axis('or', axis):
+                for key, value in c.filter_by_axis('or', axis).items():
                     logger.info(
-                        '    Removing {!r}'.format(key)
+                        '    Removing {!r}'.format(value)
                     )  # pragma: no cover
 
                     f.del_construct(key)

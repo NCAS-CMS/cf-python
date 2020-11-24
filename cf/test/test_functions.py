@@ -266,6 +266,7 @@ class functionTest(unittest.TestCase):
         org = func(rtol=cf.Constant(10), atol=20, log_level='WARNING')
         old = func()
         new = dict(rtol=cf.Constant(20), atol=40, log_level='DISABLE')
+
         with func(**new):
             self.assertEqual(cf.atol(), 40)
 
