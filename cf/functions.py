@@ -427,7 +427,7 @@ def combine_bounds_with_coordinates(*arg):
     "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
     contain bounds, and if so how those bounds are calculated.
 
-    The result of op(x, y) may contain bounds if and only if
+    The result of op(x, y) may only contain bounds if
 
     * ``x`` is a construct that may contain bounds, or
 

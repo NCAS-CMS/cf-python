@@ -562,7 +562,7 @@ class PropertiesDataBounds(PropertiesData):
 
             if inplace:
                 # Can't do the operation in-place because we'll run
-                # fowl of the broadcasting rules (e.g. "ValueError:
+                # foul of the broadcasting rules (e.g. "ValueError:
                 # non-broadcastable output operand with shape (12,1)
                 # doesn't match the broadcast shape (12,2)")
                 method2 = method.replace('__i', '__', 1)
