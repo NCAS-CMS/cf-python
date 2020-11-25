@@ -10,7 +10,7 @@ import logging
 
 from .units import Units
 
-from .functions import combine_bounds_with_coordinates
+from .functions import bounds_combination_mode
 
 from .constants import (
     formula_terms_standard_names,
@@ -710,7 +710,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
             'OR' if lev.has_bounds() else 'AND'
     ):
         computed = p0 * (-lev).exp()
@@ -807,7 +807,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if sigma.has_bounds() else 'AND'
     ):
         computed = (ptop
@@ -921,13 +921,13 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
     if ap_term:
-        with combine_bounds_with_coordinates(
+        with bounds_combination_mode(
             'OR' if ap.has_bounds() and b.has_bounds() else 'AND'
         ):
             computed = (ap
                         + b * ps)
     else:
-        with combine_bounds_with_coordinates(
+        with bounds_combination_mode(
                 'OR' if a.has_bounds() and b.has_bounds() else 'AND'
         ):
             computed = (a * p0
@@ -1021,7 +1021,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if a.has_bounds() and b.has_bounds() else 'AND'
     ):
         computed = (a
@@ -1154,7 +1154,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
         else 'AND'
     ):
@@ -1264,7 +1264,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if sigma.has_bounds() else 'AND'
     ):
         computed = (eta
@@ -1385,7 +1385,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
     # Ensure that a has the same units as s
     a = _conform_units('a', a, 's', s.Units)
 
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if s.has_bounds() else 'AND'
     ):
         C = (
@@ -1509,7 +1509,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
     ):
         S = (depth_c * s
@@ -1628,7 +1628,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Compute the non-parametric coordinates
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if s.has_bounds() and C.has_bounds() else 'AND'
     ):
         S = (
@@ -1765,7 +1765,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
     # Note: This isn't overly efficient, because we do calculations
     #       for k>nsigma and then overwrite them.
     # ----------------------------------------------------------------
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if zlev.has_bounds() and sigma.has_bounds() else 'AND'
     ):
         computed = (
@@ -1898,7 +1898,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     z2 = _conform_units('z2', z2, 'depth', depth.Units)
     href = _conform_units('href', href, 'depth', depth.Units)
 
-    with combine_bounds_with_coordinates(
+    with bounds_combination_mode(
         'OR' if sigma.has_bounds() else 'AND'
     ):
         f = (

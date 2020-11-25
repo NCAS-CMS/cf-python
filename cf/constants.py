@@ -116,7 +116,7 @@ CONSTANTS = {
     'COLLAPSE_PARALLEL_MODE': 0,
     'RELAXED_IDENTITIES': False,
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
-    'COMBINE_BOUNDS_WITH_COORDINATES': 'AND',
+    'BOUNDS_COMBINATION_MODE': 'AND',
 }
 
 CONSTANTS['FM_THRESHOLD'] = (

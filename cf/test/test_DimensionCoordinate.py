@@ -284,31 +284,31 @@ class DimensionCoordinateTest(unittest.TestCase):
         x = dim.copy()
         y = dim.copy()
 
-        old = cf.combine_bounds_with_coordinates()
+        old = cf.bounds_combination_mode()
 
         # ------------------------------------------------------------
         # Out-of-place addition
         # ------------------------------------------------------------
         for value in ('AND', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + 2
             self.assertTrue((z.array == c + 2).all())
             self.assertFalse(z.has_bounds())
 
         for value in ('OR', 'XOR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + 2
             self.assertTrue((z.array == c + 2).all())
             self.assertTrue((z.bounds.array == b + 2).all())
 
         for value in ('AND', 'OR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertTrue((z.bounds.array == b + b).all())
 
         for value in ('XOR', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertFalse(z.has_bounds())
@@ -316,19 +316,19 @@ class DimensionCoordinateTest(unittest.TestCase):
         x.del_bounds()
 
         for value in ('AND', 'XOR', 'OR', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + 2
             self.assertTrue((z.array == c + 2).all())
             self.assertFalse(z.has_bounds())
 
         for value in ('AND', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertFalse(z.has_bounds())
 
         for value in ('OR', 'XOR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             z = x + y
             self.assertTrue((z.array == c + c).all())
             self.assertTrue((z.bounds.array == c2 + b).all())
@@ -337,35 +337,35 @@ class DimensionCoordinateTest(unittest.TestCase):
         # In-place addition
         # ------------------------------------------------------------
         for value in ('AND', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x += 2
             self.assertTrue((x.array == c + 2).all())
             self.assertFalse(x.has_bounds())
 
         for value in ('OR', 'XOR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x += 2
             self.assertTrue((x.array == c + 2).all())
             self.assertTrue((x.bounds.array == b + 2).all())
 
         for value in ('AND', 'OR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x += y
             self.assertTrue((x.array == c + c).all())
             self.assertTrue((x.bounds.array == b + b).all())
 
         for value in ('XOR', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x += y
             self.assertTrue((x.array == c + c).all())
             self.assertFalse(x.has_bounds())
 
         for value in ('XOR', 'OR'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x.del_bounds()
             x += y
@@ -373,7 +373,7 @@ class DimensionCoordinateTest(unittest.TestCase):
             self.assertTrue((x.bounds.array == c2 + b).all())
 
         for value in ('AND', 'NONE'):
-            cf.combine_bounds_with_coordinates(value)
+            cf.bounds_combination_mode(value)
             x = dim.copy()
             x.del_bounds()
             x += y
@@ -383,7 +383,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Reset constant
         # ------------------------------------------------------------
-        cf.combine_bounds_with_coordinates(old)
+        cf.bounds_combination_mode(old)
 
     def test_DimensionCoordinate_set_data(self):
         x = cf.DimensionCoordinate()

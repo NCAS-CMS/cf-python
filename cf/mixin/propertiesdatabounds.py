@@ -4,7 +4,7 @@ from numpy import size as numpy_size
 
 from . import PropertiesData
 
-from ..functions import (combine_bounds_with_coordinates,
+from ..functions import (bounds_combination_mode,
                          parse_indices,
                          _DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
@@ -404,7 +404,7 @@ class PropertiesDataBounds(PropertiesData):
 
     **Bounds**
 
-    The flag returned by ``cf.combine_bounds_with_coordinates()`` is
+    The flag returned by ``cf.bounds_combination_mode()`` is
     used to influence whether or not the result of a binary operation
     "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
     contain bounds, and if so how those bounds are calculated.
@@ -419,7 +419,7 @@ class PropertiesDataBounds(PropertiesData):
     and so the flag only has an effect in these specific cases.
 
     The behaviour for the different flag values is described in the
-    docstring of `cf.combine_bounds_with_coordinates`.
+    docstring of `cf.bounds_combination_mode`.
 
     :Parameters:
 
@@ -443,11 +443,11 @@ class PropertiesDataBounds(PropertiesData):
         '''
         inplace = (method[2] == 'i')
 
-        bounds_AND = (bounds and combine_bounds_with_coordinates() == 'AND')
+        bounds_AND = (bounds and bounds_combination_mode() == 'AND')
         bounds_OR = (bounds and not bounds_AND
-                     and combine_bounds_with_coordinates() == 'OR')
+                     and bounds_combination_mode() == 'OR')
         bounds_XOR = (bounds and not bounds_OR
-                      and combine_bounds_with_coordinates() == 'XOR')
+                      and bounds_combination_mode() == 'XOR')
 
         has_bounds = self.has_bounds()
 
