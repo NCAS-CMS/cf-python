@@ -1,12 +1,20 @@
-version 3.?.?
+version 3.8.0
 -------------
 ----
 
-**2020-??-??**
+**202?-??-??**
 
-* Fixed bug that prevented the verbosity from changing to any value specified
-  as a ``verbose`` keyword parameter to `cf.aggregate` (only).
-
+* Changed the behaviour of binary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/146)
+* Changed the behaviour of unary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/147)
+* New function: `cf.bounds_combination_mode`
+  (https://github.com/NCAS-CMS/cf-python/issues/146)
+* New method: `cf.Field.compute_vertical_coordinates`
+  (https://github.com/NCAS-CMS/cf-python/issues/142)
+* Fixed bug that prevented the verbosity from changing to any value
+  specified as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+  
 version 3.7.0
 -------------
 ----

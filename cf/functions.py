@@ -53,8 +53,12 @@ import urllib.parse
 import cfdm
 import cfunits
 
-from .          import __version__, __file__
-from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
+from . import __version__, __file__
+
+from .constants import (CONSTANTS,
+                        _file_to_fh,
+                        _stash2standard_name,
+                        OperandBoundsCombination)
 
 from . import mpi_on
 from . import mpi_size
@@ -178,21 +182,23 @@ else:
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    tempdir=None,
-    of_fraction=None,
-    chunksize=None,
-    collapse_parallel_mode=None,
-    free_memory_factor=None,
-    log_level=None,
-    regrid_logging=None,
-    relaxed_identities=None,
+        atol=None,
+        rtol=None,
+        tempdir=None,
+        of_fraction=None,
+        chunksize=None,
+        collapse_parallel_mode=None,
+        free_memory_factor=None,
+        log_level=None,
+        regrid_logging=None,
+        relaxed_identities=None,
+        bounds_combination_mode=None,
 ):
-    '''View or set any number of constants in the project-wide configuration.
+    '''View or set any number of constants in the project-wide
+    configuration.
 
-    The full list of global constants that can be set in any combination
-    are:
+    The full list of global constants that can be set in any
+    combination are:
 
     * `atol`
     * `rtol`
@@ -217,20 +223,22 @@ def configuration(
     specific functions only if overridden by the corresponding keyword
     argument to that function.
 
-    The value of `None`, either taken by default or supplied as a value,
-    will result in the constant in question not being changed from the
-    current value. That is, it will have no effect.
+    The value of `None`, either taken by default or supplied as a
+    value, will result in the constant in question not being changed
+    from the current value. That is, it will have no effect.
 
-    Note that setting a constant using this function is equivalent to setting
-    it by means of a specific function of the same name, e.g. via `cf.atol`,
-    but in this case multiple constants can be set at once.
+    Note that setting a constant using this function is equivalent to
+    setting it by means of a specific function of the same name,
+    e.g. via `cf.atol`, but in this case multiple constants can be set
+    at once.
 
     .. versionadded:: 3.6.0
 
-    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`, `chunksize`,
-                 `collapse_parallel_mode`, `total_memory`,
-                 `free_memory_factor`, `fm_threshold`, `min_total_memory`,
-                 `log_level`, `regrid_logging`, `relaxed_identities`
+    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`,
+                 `chunksize`, `collapse_parallel_mode`,
+                 `total_memory`, `free_memory_factor`, `fm_threshold`,
+                 `min_total_memory`, `log_level`, `regrid_logging`,
+                 `relaxed_identities`
 
     :Parameters:
 
@@ -286,16 +294,16 @@ def configuration(
             behaviour.
 
         `relaxed_identities`: `bool`, optional
-            The new value; if `True`, use 'relaxed' mode when getting a
-            construct identity. The default is to not change the current
-            value.
+            The new value; if `True`, use 'relaxed' mode when getting
+            a construct identity. The default is to not change the
+            current value.
 
     :Returns:
 
         `dict`
-            The names and values of the project-wide constants prior to the
-            change, or the current names and values if no new values are
-            specified.
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
 
     **Examples:**
 
@@ -360,6 +368,7 @@ def configuration(
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
+        bounds_combination_mode=bounds_combination_mode,
     )
 
 
@@ -402,9 +411,131 @@ def _configuration(**kwargs):
         'new_log_level': log_level,
         'new_regrid_logging': regrid_logging,
         'new_relaxed_identities': relaxed_identities,
+        'bounds_combination_mode': bounds_combination_mode,
     }
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    return old
+
+
+def bounds_combination_mode(*arg):
+    '''Determine how to deal with cell bounds in binary operations.
+
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
+
+    The result of op(x, y) may only contain bounds if
+
+    * ``x`` is a construct that may contain bounds, or
+
+    * ``x`` does not support the operation and ``y`` is a construct
+      that may contain bounds, e.g. ``2 + y``.
+
+    and so the flag only has an effect in these specific cases. Only
+    dimension coordinate, auxiliary coordinate and domain ancillary
+    constructs support bounds.
+
+    The behaviour for the different flag values is described by the
+    following truth tables, for which it assumed that it is possible
+    for the result of the operation to contain bounds:
+
+    * If the flag is ``'AND'`` (the default) then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'OR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'XOR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'NONE'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    :Parameters:
+
+        arg: `bool`, optional
+            Provide a new flag value that will apply to all subsequent
+            binary operations.
+
+    :Returns:
+
+        `str`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> old = cf.bounds_combination_mode()
+    >>> old
+    'AND'
+    >>> cf.bounds_combination_mode('OR')
+    'AND'
+    >>> cf.bounds_combination_mode()
+    'OR'
+    >>> cf.bounds_combination_mode(old)
+    'OR'
+    >>> cf.bounds_combination_mode()
+    'AND'
+
+    '''
+    old = CONSTANTS['BOUNDS_COMBINATION_MODE']
+    if arg:
+        arg = arg[0]
+
+        try:
+            valid = hasattr(OperandBoundsCombination, arg)
+        except (AttributeError, TypeError):
+            valid = False
+
+        if not valid:
+            raise ValueError(
+                "{!r} is not one of the valid values: {}".format(
+                    arg,
+                    ', '.join([repr(val.name)
+                               for val in OperandBoundsCombination]),
+                )
+            )
+
+        CONSTANTS['BOUNDS_COMBINATION_MODE'] = arg
 
     return old
 
@@ -1030,14 +1161,14 @@ def relaxed_identities(*arg):
 
     **Examples:**
 
-    >>> org = cf.relaxed_identities()
-    >>> org
+    >>> old = cf.relaxed_identities()
+    >>> old
     False
     >>> cf.relaxed_identities(True)
     False
     >>> cf.relaxed_identities()
     True
-    >>> cf.relaxed_identities(org)
+    >>> cf.relaxed_identities(old)
     True
     >>> cf.relaxed_identities()
     False

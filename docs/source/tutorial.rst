@@ -1624,6 +1624,16 @@ create the such a mapping, then any manipulation of the dimensions
 must be done manually, and the other field construct's `cf.Data` instance
 (rather than the field construct itself) may be assigned.
 
+.. _Assignment-of-bounds:
+
+Assignment of bounds
+^^^^^^^^^^^^^^^^^^^^
+
+When assigning an object that has bounds to an object that also has
+bounds, then the bounds are also assigned. This is the only
+circumstance that allows bounds to be updated during assignment by
+index.
+
 ----
 
 .. Units:

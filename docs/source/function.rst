@@ -49,7 +49,8 @@ Mathematical operations
    cf.relative_vorticity
    cf.ATOL
    cf.RTOL
-
+   cf.combine_bounds_with_coordinates
+    
 Condition constructors
 ----------------------
 
