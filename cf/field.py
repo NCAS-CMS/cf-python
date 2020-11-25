@@ -15544,7 +15544,7 @@ class Field(mixin.PropertiesData,
 
         if identity is not None:
             c = c(identity)
-           
+
         if key:
             out = c.key(default=None)
             if out is None:

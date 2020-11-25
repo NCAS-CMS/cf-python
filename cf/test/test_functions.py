@@ -51,7 +51,8 @@ class functionTest(unittest.TestCase):
         self.assertEqual(cf.set_performance(), cf.SET_PERFORMANCE())
         self.assertEqual(cf.of_fraction(), cf.OF_FRACTION())
         self.assertEqual(
-            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE())
+            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE()
+        )
 
     def test_configuration(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -248,6 +249,24 @@ class functionTest(unittest.TestCase):
         org = func('DETAIL')
         old = func()
         new = 'DEBUG'
+        with func(new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(org)
+
+        del org._func
+        with self.assertRaises(AttributeError):
+            with org:
+                pass
+        # --- End: with
+
+        # bounds_combination_mode
+        func = cf.bounds_combination_mode
+
+        org = func('XOR')
+        old = func()
+        new = 'AND'
         with func(new):
             self.assertEqual(func(), new)
 

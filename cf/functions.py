@@ -441,145 +441,29 @@ def _configuration(_Configuration, **kwargs):
     return _Configuration(**old)
 
 
-def bounds_combination_mode(*arg):
-    '''Determine how to deal with cell bounds in binary operations.
+# --------------------------------------------------------------------
+# Inherit class from cfdm
+# --------------------------------------------------------------------
+class Configuration(cfdm.Configuration):
+    def __new__(cls, *args, **kwargs):
+        '''Must override this method in subclasses.
 
-    The flag returned by ``cf.bounds_combination_mode()`` is used to
-    influence whether or not the result of a binary operation "op(x,
-    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
-    bounds, and if so how those bounds are calculated.
+        '''
+        instance = super().__new__(cls)
+        instance._func = configuration
+        return instance
 
-    The result of op(x, y) may only contain bounds if
+    def __docstring_substitutions__(self):
+        return _docstring_substitution_definitions
 
-    * ``x`` is a construct that may contain bounds, or
+    def __docstring_package_depth__(self):
+        return 0
 
-    * ``x`` is an object that does not support bounds and ``y`` is a
-      construct that may contain bounds, e.g. ``2 + y``.
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
 
-    and so the flag only has an effect in these specific cases. Only
-    dimension coordinate, auxiliary coordinate and domain ancillary
-    constructs support bounds.
-
-    The behaviour for the different flag values is described by the
-    following truth tables, for which it assumed that it is possible
-    for the result of the operation to contain bounds:
-
-    * If the flag is ``'AND'`` (the default) then
-
-      ==========  ==========  ==========  ======================
-      x           y           op(x, y)    Resulting bounds
-      has bounds  has bounds  has bounds
-      ==========  ==========  ==========  ======================
-      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
-      Yes         No          *No*
-      No          Yes         *No*
-      No          No          *No*
-      ==========  ==========  ==========  ======================
-
-    * If the flag is ``'OR'`` then
-
-      ==========  ==========  ==========  ======================
-      x           y           op(x, y)    Resulting bounds
-      has bounds  has bounds  has bounds
-      ==========  ==========  ==========  ======================
-      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
-      Yes         No          **Yes**     op(x.bounds, y)
-      No          Yes         **Yes**     op(x, y.bounds)
-      No          No          *No*
-      ==========  ==========  ==========  ======================
-
-    * If the flag is ``'XOR'`` then
-
-      ==========  ==========  ==========  ======================
-      x           y           op(x, y)    Resulting bounds
-      has bounds  has bounds  has bounds
-      ==========  ==========  ==========  ======================
-      Yes         Yes         *No*
-      Yes         No          **Yes**     op(x.bounds, y)
-      No          Yes         **Yes**     op(x, y.bounds)
-      No          No          *No*
-      ==========  ==========  ==========  ======================
-
-    * If the flag is ``'NONE'`` then
-
-      ==========  ==========  ==========  ======================
-      x           y           op(x, y)    Resulting bounds
-      has bounds  has bounds  has bounds
-      ==========  ==========  ==========  ======================
-      Yes         Yes         *No*
-      Yes         No          *No*
-      No          Yes         *No*
-      No          No          *No*
-      ==========  ==========  ==========  ======================
-
-    :Parameters:
-
-        arg: `str` or `Constant`, optional
-            Provide a new flag value that will apply to all subsequent
-            binary operations. If a `Constant` instance is provided
-            then it should be one that was returned by a previous call
-            to this function.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> old = cf.bounds_combination_mode()
-    >>> old
-    'AND'
-    >>> cf.bounds_combination_mode('OR')
-    'AND'
-    >>> cf.bounds_combination_mode()
-    'OR'
-    >>> cf.bounds_combination_mode(old)
-    'OR'
-    >>> cf.bounds_combination_mode()
-    'AND'
-    >>> with cf.combine_bounds_with_coordinates('XOR'):
-    ...     print(cf.combine_bounds_with_coordinates())
-    ...
-    XOR
-    >>> print(cf.combine_bounds_with_coordinates())
-    AND
-    >>> cf.combine_bounds_with_coordinates().value
-    'AND'
-
-    '''
-    old = CONSTANTS['BOUNDS_COMBINATION_MODE']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        if isinstance(arg, Constant):
-            arg = arg.value
-
-        try:
-            valid = hasattr(OperandBoundsCombination, arg)
-        except (AttributeError, TypeError):
-            valid = False
-
-        if not valid:
-            raise ValueError(
-                "{!r} is not one of the valid values: {}".format(
-                    arg,
-                    ', '.join([repr(val.name)
-                               for val in OperandBoundsCombination]),
-                )
-            )
-
-        CONSTANTS['BOUNDS_COMBINATION_MODE'] = arg
-
-=======
-    return Constant(combine_bounds_with_coordinates, old)
->>>>>>> 59bbdc2ab6de399e8ab8018470310401bc83a4cb
+        '''
+        return super().__repr__().replace('<', '<CF ', 1)
 
 
 def free_memory():
@@ -1146,6 +1030,142 @@ class free_memory_factor(ConstantAccess):
             )
 
         CONSTANTS['FM_THRESHOLD'] = arg * total_memory()
+
+        return arg
+
+
+class bounds_combination_mode(ConstantAccess):
+    '''Determine how to deal with cell bounds in binary operations.
+
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
+
+    The result of op(x, y) may only contain bounds if
+
+    * ``x`` is a construct that may contain bounds, or
+
+    * ``x`` does not support the operation and ``y`` is a construct
+      that may contain bounds, e.g. ``2 + y``.
+
+    and so the flag only has an effect in these specific cases. Only
+    dimension coordinate, auxiliary coordinate and domain ancillary
+    constructs support bounds.
+
+    The behaviour for the different flag values is described by the
+    following truth tables, for which it assumed that it is possible
+    for the result of the operation to contain bounds:
+
+    * If the flag is ``'AND'`` (the default) then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'OR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         **Yes**     op(x.bounds, y.bounds)
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'XOR'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          **Yes**     op(x.bounds, y)
+      No          Yes         **Yes**     op(x, y.bounds)
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    * If the flag is ``'NONE'`` then
+
+      ==========  ==========  ==========  ======================
+      x           y           op(x, y)    Resulting bounds
+      has bounds  has bounds  has bounds
+      ==========  ==========  ==========  ======================
+      Yes         Yes         *No*
+      Yes         No          *No*
+      No          Yes         *No*
+      No          No          *No*
+      ==========  ==========  ==========  ======================
+
+    :Parameters:
+
+        arg: `bool`, optional
+            Provide a new flag value that will apply to all subsequent
+            binary operations.
+
+    :Returns:
+
+        `str`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> old = cf.bounds_combination_mode()
+    >>> old
+    'AND'
+    >>> cf.bounds_combination_mode('OR')
+    'AND'
+    >>> cf.bounds_combination_mode()
+    'OR'
+    >>> cf.bounds_combination_mode(old)
+    'OR'
+    >>> cf.bounds_combination_mode()
+    'AND'
+
+    '''
+    _name = 'BOUNDS_COMBINATION_MODE'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: 3.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        try:
+            valid = hasattr(OperandBoundsCombination, arg)
+        except (AttributeError, TypeError):
+            valid = False
+
+        if not valid:
+            raise ValueError(
+                "{!r} is not one of the valid values: {}".format(
+                    arg,
+                    ', '.join([repr(val.name)
+                               for val in OperandBoundsCombination]),
+                )
+            )
 
         return arg
 
