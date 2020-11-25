@@ -51,21 +51,24 @@ class functionTest(unittest.TestCase):
         self.assertEqual(cf.set_performance(), cf.SET_PERFORMANCE())
         self.assertEqual(cf.of_fraction(), cf.OF_FRACTION())
         self.assertEqual(
-            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE())
+            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE()
+        )
 
     def test_configuration(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # This test assumes 'total_memory' remains constant throughout the
-        # test run, which should be true generally in any reasonable context.
+        # This test assumes 'total_memory' remains constant throughout
+        # the test run, which should be true generally in any
+        # reasonable context.
 
-        # Test getting of all config. and store original values to test on:
+        # Test getting of all config. and store original values to
+        # test on:
         org = cf.configuration()
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 10)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
         # Floats expected as values for most keys. Store these for later as
         # floats need assertAlmostEqual rather than assertEqual tests:
         keys_with_float_values = [
@@ -77,18 +80,22 @@ class functionTest(unittest.TestCase):
         ]
         for key in keys_with_float_values:
             self.assertIsInstance(org[key], float)
+
         # Other types expected:
         self.assertIsInstance(org['collapse_parallel_mode'], int)
         self.assertIsInstance(org['relaxed_identities'], bool)
+        self.assertIsInstance(org['bounds_combination_mode'], str)
         self.assertIsInstance(org['regrid_logging'], bool)
-        # Log level may be input as an int but always given as equiv. string
+        # Log level may be input as an int but always given as
+        # equiv. string
         self.assertIsInstance(org['log_level'], str)
         self.assertIsInstance(org['tempdir'], str)
 
         # Store some sensible values to reset items to for testing, ensuring:
         # 1) they are kept different to the defaults (i.e. org values); and
         # 2) floats differ sufficiently that they will be picked up as
-        #    different by the assertAlmostEqual decimal places (8, see below)
+        #    qdifferent by the assertAlmostEqual decimal places (8, see
+        #    below)
         reset_values = {
             'rtol': 5e-7,
             'atol': 2e-7,
@@ -98,6 +105,7 @@ class functionTest(unittest.TestCase):
             'regrid_logging': True,
             'collapse_parallel_mode': 2,
             'relaxed_identities': True,
+            'bounds_combination_mode': 'XOR',
             'log_level': 'INFO',
             'chunksize': 8e9,
         }
@@ -108,21 +116,25 @@ class functionTest(unittest.TestCase):
             cf.configuration(**{setting: value})
             post_set = cf.configuration()
 
-            # Expect a dict that is identical to the original to start with
-            # but as we set values incrementally they should be reflected:
+            # Expect a dict that is identical to the original to start
+            # with but as we set values incrementally they should be
+            # reflected:
             expected_post_set[setting] = value
 
-            # Can't trivially do a direct test that the actual and expected
-            # return dicts are the same as there are float values which have
-            # limited float precision so need assertAlmostEqual testing:
+            # Can't trivially do a direct test that the actual and
+            # expected return dicts are the same as there are float
+            # values which have limited float precision so need
+            # assertAlmostEqual testing:
             for name, val in expected_post_set.items():
                 if isinstance(val, float):
                     self.assertAlmostEqual(post_set[name], val, places=8,
                                            msg=setting)
                 else:
                     self.assertEqual(post_set[name], val)
+        # --- End: for
 
-        # Test the setting of more than one, but not all, items simultaneously:
+        # Test the setting of more than one, but not all, items
+        # simultaneously:
         new_values = {
             'regrid_logging': True,
             'tempdir': '/bin/bag',
@@ -144,6 +156,7 @@ class functionTest(unittest.TestCase):
                 self.assertAlmostEqual(post_set[name], val, places=8)
             else:
                 self.assertEqual(post_set[name], val)
+        # --- End: for
 
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
@@ -180,6 +193,7 @@ class functionTest(unittest.TestCase):
         # 3. Gracefully error with invalid inputs:
         with self.assertRaises(ValueError):
             cf.configuration(of_fraction='bad')
+
         with self.assertRaises(ValueError):
             cf.configuration(log_level=7)
 
@@ -187,7 +201,8 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cf.configuration(bad_kwarg=1e-15)
 
-        # Reset so later test fixtures don't spam with output messages:
+        # Reset so later test fixtures don't spam with output
+        # messages:
         cf.log_level('DISABLE')
 
     def test_context_managers(self):
@@ -231,6 +246,24 @@ class functionTest(unittest.TestCase):
         org = func('DETAIL')
         old = func()
         new = 'DEBUG'
+        with func(new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(org)
+
+        del org._func
+        with self.assertRaises(AttributeError):
+            with org:
+                pass
+        # --- End: with
+
+        # bounds_combination_mode
+        func = cf.bounds_combination_mode
+
+        org = func('XOR')
+        old = func()
+        new = 'AND'
         with func(new):
             self.assertEqual(func(), new)
 

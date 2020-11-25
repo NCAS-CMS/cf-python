@@ -1,5 +1,7 @@
 import cfdm
 
+from . import Bounds
+
 from . import mixin
 
 
@@ -27,6 +29,13 @@ class DomainAncillary(mixin.PropertiesDataBounds,
     {{netcdf variable}}
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''
+        '''
+        instance = super().__new__(cls)
+        instance._Bounds = Bounds
+        return instance
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 

@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from enum     import Enum
+from enum     import Enum, auto
 from psutil   import virtual_memory
 from tempfile import gettempdir
 
@@ -114,6 +114,7 @@ CONSTANTS = {
     'COLLAPSE_PARALLEL_MODE': 0,
     'RELAXED_IDENTITIES': False,
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
+    'BOUNDS_COMBINATION_MODE': 'AND',
 }
 
 CONSTANTS['FM_THRESHOLD'] = (
@@ -322,10 +323,21 @@ cr_default_values = {
 # --------------------------------------------------------------------
 # Logging level setup
 # --------------------------------------------------------------------
-# For explicitness, define here rather than importing identical Enum from cfdm
+# For explicitness, define here rather than importing identical Enum
+# from cfdm
 class ValidLogLevels(Enum):
     DISABLE = 0
     WARNING = 1
     INFO = 2
     DETAIL = 3
     DEBUG = -1
+
+
+# --------------------------------------------------------------------
+# Controlled vocabulary for bounds combination options
+# --------------------------------------------------------------------
+class OperandBoundsCombination(Enum):
+    AND = auto()
+    OR = auto()
+    XOR = auto()
+    NONE = auto()
