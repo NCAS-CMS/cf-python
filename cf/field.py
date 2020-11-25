@@ -13057,16 +13057,18 @@ class Field(mixin.PropertiesData,
     cases a parametric vertical dimension coordinate construct is
     stored and a coordinate reference construct contains the formula
     for computing the required non-parametric vertical
-    coordinates. For example, multi-dimensional non-parametric
-    parametric ocean altitude coordinates can be computed from
-    one-dimensional parametric ocean sigma coordinates. See the
-    "Parametric Vertical Coordinate" sections of the CF conventions
-    for more details.
+    coordinates.
+
+    For example, multi-dimensional non-parametric parametric ocean
+    altitude coordinates can be computed from one-dimensional
+    parametric ocean sigma coordinates. See the "Parametric Vertical
+    Coordinate" sections of the CF conventions for more details.
 
     Coordinate reference systems based on parametric vertical
-    coordinates are identified and, if possible, the corresponding
-    non-parametric vertical coordinates are computed and stored in a
-    new auxiliary coordinate construct.
+    coordinates are identified from the coordinate reference
+    constructs and, if possible, the corresponding non-parametric
+    vertical coordinates are computed and stored in a new auxiliary
+    coordinate construct.
 
     If there are no appropriate coordinate reference constructs then
     the field construct is unchanged.
@@ -13086,15 +13088,23 @@ class Field(mixin.PropertiesData,
         strict: `bool`
             If False then allow the computation to occur when
 
-            * A term with a defined standard name (or names) has no
-              standard name.
+            * A domain ancillary construct has no standard name, but
+              the corresponding term has a standard name prescribed by
+              Appendix D: Parametric Vertical Coordinates of the CF
+              conventions.
 
             * When the computed standard name can not be found by
               inference from the standard names of the domain
-              ancillary constructs, or from the
-              ``computed_standard_name`` property.
+              ancillary constructs, nor from the
+              ``computed_standard_name`` parameter of the relevant
+              coordinate reference construct.
 
             By default an exception is raised in these cases.
+
+            If a domain ancillary construct does have a standard name,
+            but one that is inconsistent with the standard names
+            prescribed by Appendix D, then an exception is raised
+            regardless of the value of *strict*.
 
         {{inplace: `bool`, optional}}
 
@@ -13130,6 +13140,7 @@ class Field(mixin.PropertiesData,
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
     >>> print(f.auxiliary_coordinate('altitude', default=None))
     None
+    >>> g = f.compute_vertical_coordinates()
     >>> print(g.auxiliary_coordinates)
     Constructs:
     {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -13147,8 +13158,6 @@ class Field(mixin.PropertiesData,
         Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
 
         '''
-        self._log_call('compute_vertical_coordinates', locals())
-
         f = _inplace_enabled_define_and_cleanup(self)
 
         for cr in f.coordinate_references.values():
@@ -13182,7 +13191,7 @@ class Field(mixin.PropertiesData,
                 c.standard_name = computed_standard_name
 
             logger.detail(
-                "  Non-parametric coordinates:\n{}".format(
+                "Non-parametric coordinates:\n{}".format(
                     c.dump(display=False, _level=1)
                 )
             )  # pragma: no cover
@@ -13194,8 +13203,8 @@ class Field(mixin.PropertiesData,
             cr.set_coordinate(key)
 
             logger.debug(
-                "  Non-parametric coordinates construct key: {!r}\n"
-                "  Updated coordinate reference construct:\n{}".format(
+                "Non-parametric coordinates construct key: {!r}\n"
+                "Updated coordinate reference construct:\n{}".format(
                     key,
                     cr.dump(display=False, _level=1)
                 )

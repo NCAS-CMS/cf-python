@@ -7024,7 +7024,9 @@ dimensions.
         if units and not self._Units.equivalent(value, verbose=1):
             raise ValueError(
                 "Can't set units (currently {!r}) to non-equivalent "
-                "units {!r}".format(units, value)
+                "units {!r}. Consider the override_units method.".format(
+                    units, value
+                )
             )
 
         dtype = self.dtype

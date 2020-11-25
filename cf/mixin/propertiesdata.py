@@ -3664,7 +3664,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            The missing deata value or, if one has not been set, the
+            The missing data value or, if one has not been set, the
             value specified by *default*
 
     **Examples:**

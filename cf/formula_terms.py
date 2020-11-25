@@ -91,7 +91,7 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
 
     if var is not None:
         logger.detail(
-            "  Formula term {!r}:\n{}".format(
+            "Formula term {!r}:\n{}".format(
                 term, var.dump(display=False, _level=1)
             )
         )  # pragma: no cover
@@ -163,79 +163,13 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
             var.set_bounds(bounds)
 
         logger.detail(
-            "  Formula term {!r} (default):\n{}".format(
+            "Formula term {!r} (default):\n{}".format(
                 term, var.dump(display=False, _level=1)
             )
         )  # pragma: no cover
 
     return var, key
 
-
-# def _coordinate_term(f, standard_name, coordinate_reference,
-#                     term=None):
-#    '''Find a coordinate construct cooresponding to a formula term.
-#
-#    .. versionadded:: 3.8.0
-#
-#    :Parameters:
-#
-#        f: `Field`
-#            The parent field construct.
-#
-#        standard_name: `str`
-#            The standard name of the parametric vertical coordinate.
-#
-#        coordinate_reference: `CoordinateReference`
-#            A coordinate reference construct of the parent field
-#            construct.
-#
-#        term: `str`
-#            A term of the formula.
-#
-#            *Parameter example:*
-#              ``term='sigma'``
-#
-#    :Returns:
-#
-#        `Coordinate`, `str`
-#            The coordinate construct for the formula term, and its
-#            construct key. If the *term* is `None` and the coordinate
-#            construct does not exisit then `None`, `None` is returned
-#            instead.
-#
-#    '''
-#    var = None
-#    key = None
-#
-#    for key in coordinate_reference.coordinates():
-#        var = f.coordinate(key, default=None)
-#        if var is None:
-#            continue
-#
-#        if var.get_property('standard_name', None) == standard_name:
-#            logger.detail(
-#                "  Parametric coordinates: {!r}".format(var)
-#            )  # pragma: no cover
-#
-#            break
-#
-#        var = None
-#
-#    if term is not None:
-#        if var is None:
-#            raise ValueError(
-#                "Can't calculate non-parametric vertical coordinates: "
-#                "No {!r} term coordinate construct".format(term)
-#            )
-#
-#        logger.detail(
-#            "  Formula term {!r}:\n{}".format(
-#                term, var.dump(display=False, _level=1)
-#            )
-#        )  # pragma: no cover
-#
-#    return var, key
-#
 
 def _computed_standard_name(f, standard_name, coordinate_reference):
     '''Find the standard name of the computed non-parametric vertical
@@ -272,7 +206,7 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
         # There is a unique computed standard name for this formula
         # ------------------------------------------------------------
         logger.detail(
-            "  computed_standard_name: {!r}".format(computed_standard_name)
+            "computed_standard_name: {!r}".format(computed_standard_name)
         )  # pragma: no cover
 
         return computed_standard_name
@@ -331,7 +265,7 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
     # --- End: if
 
     logger.detail(
-        "  computed_standard_name: {}".format(
+        "computed_standard_name: {}".format(
             repr(computed_standard_name) if computed_standard_name else ''
         )
     )  # pragma: no cover
@@ -372,7 +306,7 @@ def _vertical_axis(f, *keys):
         break
 
     logger.detail(
-        "  Vertical axis: {!r}".format(axis)
+        "Vertical axis: {!r}".format(axis)
     )  # pragma: no cover
 
     return axis
@@ -439,8 +373,8 @@ def _conform_eta(f, eta, eta_key, depth, depth_key):
         eta_axes = eta_axes2
 
     logger.debug(
-        "  Transposed domain ancillary 'eta': {!r}\n"
-        "  Transposed domain ancillary 'eta' axes: {!r}".format(
+        "Transposed domain ancillary 'eta': {!r}\n"
+        "Transposed domain ancillary 'eta' axes: {!r}".format(
             eta,
             eta_axes
         )
@@ -514,7 +448,7 @@ def _conform_computed(f, computed, computed_axes, k_axis):
         computed_axes = tuple([computed_axes[i] for i in iaxes])
 
     logger.detail(
-        "  Non-parametric coordinate axes: {!r}".format(computed_axes)
+        "Non-parametric coordinate axes: {!r}".format(computed_axes)
     )  # pragma: no cover
 
     return computed, computed_axes
@@ -2037,15 +1971,23 @@ def formula(f, coordinate_reference, default_to_zero=True,
         strict: `bool`
             If False then allow the computation to occur when
 
-            * A term with a defined standard name (or names) has no
-              standard name.
+            * A domain ancillary construct has no standard name, but
+              the corresponding term has a standard name prescribed by
+              Appendix D: Parametric Vertical Coordinates of the CF
+              conventions.
 
             * When the computed standard name can not be found by
               inference from the standard names of the domain
-              ancillary constructs; or from the
-              ``computed_standard_name`` property.
+              ancillary constructs, nor from the
+              ``computed_standard_name`` parameter of the relevant
+              coordinate reference construct.
 
             By default an exception is raised in these cases.
+
+            If a domain ancillary construct does have a standard name,
+            but one that is inconsistent with the standard names
+            prescribed by Appendix D, then an exception is raised
+            regardless of the value of *strict*.
 
     :Returns:
 
@@ -2080,7 +2022,7 @@ def formula(f, coordinate_reference, default_to_zero=True,
 
     if standard_name is not None:
         logger.detail(
-            "  standard_name: {!r}".format(standard_name)
+            "standard_name: {!r}".format(standard_name)
         )  # pragma: no cover
 
         if standard_name in _formula_functions:

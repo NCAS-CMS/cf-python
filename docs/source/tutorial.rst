@@ -1255,7 +1255,7 @@ meet the criteria implied by the ``missing_value``, ``_FillValue``,
 usually applied automatically by `cf.read`. NetCDF data elements that
 equal the values of the ``missing_value`` and ``_FillValue``
 properties are masked, as are data elements that exceed the value of
-the ``valid_max`` property, subceed the value of the ``valid_min``
+the ``valid_max`` property, succeed the value of the ``valid_min``
 property, or lie outside of the range defined by the ``valid_range``
 property.
 
@@ -1293,7 +1293,7 @@ be used on any construct, not just those that have been read from
 datasets.
     
 ----
-
+g
 .. _Subspacing-by-index:
 
 **Subspacing by index**
