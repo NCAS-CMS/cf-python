@@ -4793,7 +4793,7 @@ place.
 
             partition._original = None
             partition._write_to_disk = False
-            partition.close()
+            partition.close(units=new_Units)
 
             if not inplace:
                 partition_s.close()
