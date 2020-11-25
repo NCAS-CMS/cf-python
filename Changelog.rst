@@ -6,13 +6,19 @@ version 3.8.0
 
 * The setting of global constants can now be controlled by a context
   manager (https://github.com/NCAS-CMS/cf-python/issues/154)
-* Fixed bug that caused a failure when writing a dataset that contains
-  a scalar domain ancillary construct
   (https://github.com/NCAS-CMS/cf-python/issues/152)
+* Changed the behaviour of binary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/146)
+* Changed the behaviour of unary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/147)
+* New function: `cf.bounds_combination_mode`
+  (https://github.com/NCAS-CMS/cf-python/issues/146)
 * New method: `cf.Field.compute_vertical_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/142)
 * Fixed bug that prevented the verbosity from changing to any value specified
   as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+* Fixed bug that caused a failure when writing a dataset that contains
+  a scalar domain ancillary construct
 * Changed dependency: ``1.8.8.0<=cfdm<1.8.9.0``
 * Changed dependency: ``cfunits>=3.3.1``
 * Changed dependency: ``cftime>=1.3.0``

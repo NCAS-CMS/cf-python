@@ -682,7 +682,7 @@ class ValidLogLevels(Enum):
 
 
 # --------------------------------------------------------------------
-# TODO
+# Controlled vocabulary for bounds combination options
 # --------------------------------------------------------------------
 class OperandBoundsCombination(Enum):
     AND = auto()

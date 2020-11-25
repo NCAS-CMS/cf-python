@@ -4,9 +4,9 @@ name: Run test suite
 # Triggers the workflow on push or PR events for the master branch (only)
 on:
   # For now, at least, do not enable on push to save on limited usage resource
-  push:
-    branches:
-      - master
+  #push:
+  #  branches:
+  #    - master
   pull_request:
     # 'reopened' enables manual retrigger via close & re-open. Disable for all
     # edits to manage limited resource (PRs often change before merge-ready).

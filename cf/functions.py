@@ -444,12 +444,12 @@ def _configuration(_Configuration, **kwargs):
 def bounds_combination_mode(*arg):
     '''Determine how to deal with cell bounds in binary operations.
 
-    The flag returned by ``cf.bounds_combination_mode()`` is
-    used to influence whether or not the result of a binary operation
-    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
-    contain bounds, and if so how those bounds are calculated.
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
 
-    The result of op(x, y) may contain bounds if
+    The result of op(x, y) may only contain bounds if
 
     * ``x`` is a construct that may contain bounds, or
 

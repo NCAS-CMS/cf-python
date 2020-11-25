@@ -41,7 +41,6 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -151,12 +150,38 @@ class PropertiesDataBounds(PropertiesData):
     **Bounds**
 
     When assigning an object that has bounds to an object that also
-    has bounds, then the bounds are also assigned. This is the only
-    circumstance that allows bounds to be updated during assignment by
-    index.
+    has bounds, then the bounds are also assigned, if possible. This
+    is the only circumstance that allows bounds to be updated during
+    assignment by index.
+
+    Interior ring assignment can only occur if both ``x`` and ``y``
+    have interior ring arrays. An exception will be raised only one of
+    ``x`` and ``y`` has an interior ring array.
 
         '''
         super().__setitem__(indices, value)
+
+        # Set the interior ring, if present (added at v3.8.0).
+        interior_ring = self.get_interior_ring(None)
+        try:
+            value_interior_ring = value.get_interior_ring(None)
+        except AttributeError:
+            value_interior_ring = None
+
+        if interior_ring is not None and value_interior_ring is not None:
+            indices = parse_indices(self.shape, indices)
+            indices.append(slice(None))
+            interior_ring[tuple(indices)] = value_interior_ring
+        elif interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} without an interior ring array to "
+                "{!r} with an interior ring array".format(value, self)
+            )
+        elif value_interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} with an interior ring array to "
+                "{!r} without an interior ring array".format(value, self)
+            )
 
         # Set the bounds, if present (added at v3.8.0).
         bounds = self.get_bounds(None)
@@ -170,21 +195,6 @@ class PropertiesDataBounds(PropertiesData):
                 indices = parse_indices(self.shape, indices)
                 indices.append(Ellipsis)
                 bounds[tuple(indices)] = value_bounds
-        # --- End: if
-
-        # Set the interior ring, if it present (added at v3.8.0).
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            try:
-                value_interior_ring = value.get_interior_ring(None)
-            except AttributeError:
-                value_interior_ring = None
-
-            if value_interior_ring is not None:
-                interior_ring.chunk(chunksize)
-                indices = parse_indices(self.shape, indices)
-                indices.append(slice(None))
-                interior_ring[tuple(indices)] = value_interior_ring
         # --- End: if
 
     def __eq__(self, y):
@@ -404,19 +414,10 @@ class PropertiesDataBounds(PropertiesData):
 
     **Bounds**
 
-    The flag returned by ``cf.bounds_combination_mode()`` is
-    used to influence whether or not the result of a binary operation
-    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
-    contain bounds, and if so how those bounds are calculated.
-
-    The result of op(x, y) may contain bounds if and only if
-
-    * ``x`` is a construct that may contain bounds, or
-
-    * ``x`` does not support the operation and ``y`` is a construct
-      that may contain bounds, e.g. ``2 + y``.
-
-    and so the flag only has an effect in these specific cases.
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
 
     The behaviour for the different flag values is described in the
     docstring of `cf.bounds_combination_mode`.
@@ -443,11 +444,39 @@ class PropertiesDataBounds(PropertiesData):
         '''
         inplace = (method[2] == 'i')
 
-        bounds_AND = (bounds and bounds_combination_mode() == 'AND')
+        bounds_AND = (bounds
+                      and bounds_combination_mode() == 'AND')
         bounds_OR = (bounds and not bounds_AND
                      and bounds_combination_mode() == 'OR')
-        bounds_XOR = (bounds and not bounds_OR
+        bounds_XOR = (bounds and not bounds_AND and not bounds_OR
                       and bounds_combination_mode() == 'XOR')
+        bounds_NONE = (not bounds
+                       or not (bounds_AND or bounds_OR or bounds_XOR)
+                       or bounds_combination_mode() == 'NONE')
+
+        if not bounds_NONE:
+            geometry = self.get_geometry(None)
+            try:
+                other_geometry = other.get_geometry(None)
+            except AttributeError:
+                other_geometry = None
+
+            if geometry != other_geometry:
+                raise ValueError(
+                    "Can't combine operands with different geometry types"
+                )
+
+            interior_ring = self.get_interior_ring(None)
+            try:
+                other_interior_ring = other.get_interior_ring(None)
+            except AttributeError:
+                other_interior_ring = None
+
+            if interior_ring is not None or other_interior_ring is not None:
+                raise ValueError(
+                    "Can't combine operands with interior ring arrays"
+                )
+        # --- End: if
 
         has_bounds = self.has_bounds()
 
@@ -471,7 +500,7 @@ class PropertiesDataBounds(PropertiesData):
 
         new = super()._binary_operation(other, method)
 
-        if not (bounds_AND or bounds_OR or bounds_XOR):
+        if bounds_NONE:
             # --------------------------------------------------------
             # Remove any bounds from the result
             # --------------------------------------------------------
@@ -532,7 +561,7 @@ class PropertiesDataBounds(PropertiesData):
 
             if inplace:
                 # Can't do the operation in-place because we'll run
-                # fowl of the broadcasting rules (e.g. "ValueError:
+                # foul of the broadcasting rules (e.g. "ValueError:
                 # non-broadcastable output operand with shape (12,1)
                 # doesn't match the broadcast shape (12,2)")
                 method2 = method.replace('__i', '__', 1)
