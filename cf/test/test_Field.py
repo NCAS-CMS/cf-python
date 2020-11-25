@@ -13,7 +13,6 @@ from scipy.ndimage import convolve1d
 
 import cf
 
-
 n_tmpfiles = 1
 tmpfiles = [tempfile.mkstemp('_test_Field.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]

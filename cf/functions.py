@@ -514,13 +514,15 @@ def bounds_combination_mode(*arg):
 
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `str` or `Constant`, optional
             Provide a new flag value that will apply to all subsequent
-            binary operations.
+            binary operations. If a `Constant` instance is provided
+            then it should be one that was returned by a previous call
+            to this function.
 
     :Returns:
 
-        `str`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
@@ -537,6 +539,14 @@ def bounds_combination_mode(*arg):
     'OR'
     >>> cf.bounds_combination_mode()
     'AND'
+    >>> with cf.combine_bounds_with_coordinates('XOR'):
+    ...     print(cf.combine_bounds_with_coordinates())
+    ...
+    XOR
+    >>> print(cf.combine_bounds_with_coordinates())
+    AND
+    >>> cf.combine_bounds_with_coordinates().value
+    'AND'
 
     '''
     old = CONSTANTS['BOUNDS_COMBINATION_MODE']
@@ -547,6 +557,9 @@ def bounds_combination_mode(*arg):
             arg = arg.value
         except AttributeError:
             pass
+
+        if isinstance(arg, Constant):
+            arg = arg.value
 
         try:
             valid = hasattr(OperandBoundsCombination, arg)
@@ -564,34 +577,9 @@ def bounds_combination_mode(*arg):
 
         CONSTANTS['BOUNDS_COMBINATION_MODE'] = arg
 
-#    return old
-
-    return Constant(old, _func=bounds_combination_mode)
-
-
-# --------------------------------------------------------------------
-# Inherit class from cfdm
-# --------------------------------------------------------------------
-class Configuration(cfdm.Configuration):
-    def __new__(cls, *args, **kwargs):
-        '''Must override this method in subclasses.
-
-        '''
-        instance = super().__new__(cls)
-        instance._func = configuration
-        return instance
-
-    def __docstring_substitutions__(self):
-        return _docstring_substitution_definitions
-
-    def __docstring_package_depth__(self):
-        return 0
-
-    def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+=======
+    return Constant(combine_bounds_with_coordinates, old)
+>>>>>>> 59bbdc2ab6de399e8ab8018470310401bc83a4cb
 
 
 def free_memory():
