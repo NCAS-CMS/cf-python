@@ -89,7 +89,7 @@ class functionTest(unittest.TestCase):
         # Other types expected:
         self.assertIsInstance(org['collapse_parallel_mode'], int)
         self.assertIsInstance(org['relaxed_identities'], bool)
-        self.assertIsInstance(org['combine_bounds_with_coordinates'], str)
+        self.assertIsInstance(org['bounds_combination_mode'], str)
         self.assertIsInstance(org['regrid_logging'], bool)
         # Log level may be input as an int but always given as
         # equiv. string
@@ -118,7 +118,7 @@ class functionTest(unittest.TestCase):
             'regrid_logging': True,
             'collapse_parallel_mode': 2,
             'relaxed_identities': True,
-            'combine_bounds_with_coordinates': 'XOR',
+            'bounds_combination_mode': 'XOR',
             'log_level': 'INFO',
             'fm_threshold': 4e9,  # also can't be (re)set
             'min_total_memory': 6e9,  # also can't be (re)set

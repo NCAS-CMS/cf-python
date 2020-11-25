@@ -192,7 +192,7 @@ def configuration(
         log_level=None,
         regrid_logging=None,
         relaxed_identities=None,
-        combine_bounds_with_coordinates=None,
+        bounds_combination_mode=None,
 ):
     '''View or set any number of constants in the project-wide
     configuration.
@@ -368,7 +368,7 @@ def configuration(
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
-        combine_bounds_with_coordinates=combine_bounds_with_coordinates,
+        bounds_combination_mode=bounds_combination_mode,
     )
 
 
@@ -411,7 +411,7 @@ def _configuration(**kwargs):
         'new_log_level': log_level,
         'new_regrid_logging': regrid_logging,
         'new_relaxed_identities': relaxed_identities,
-        'combine_bounds_with_coordinates': combine_bounds_with_coordinates,
+        'bounds_combination_mode': bounds_combination_mode,
     }
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
@@ -419,13 +419,13 @@ def _configuration(**kwargs):
     return old
 
 
-def combine_bounds_with_coordinates(*arg):
+def bounds_combination_mode(*arg):
     '''Determine how to deal with cell bounds in binary operations.
 
-    The flag returned by ``cf.combine_bounds_with_coordinates()`` is
-    used to influence whether or not the result of a binary operation
-    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
-    contain bounds, and if so how those bounds are calculated.
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
 
     The result of op(x, y) may only contain bounds if
 
@@ -504,20 +504,20 @@ def combine_bounds_with_coordinates(*arg):
 
     **Examples:**
 
-    >>> old = cf.combine_bounds_with_coordinates()
+    >>> old = cf.bounds_combination_mode()
     >>> old
     'AND'
-    >>> cf.combine_bounds_with_coordinates('OR')
+    >>> cf.bounds_combination_mode('OR')
     'AND'
-    >>> cf.combine_bounds_with_coordinates()
+    >>> cf.bounds_combination_mode()
     'OR'
-    >>> cf.combine_bounds_with_coordinates(old)
+    >>> cf.bounds_combination_mode(old)
     'OR'
-    >>> cf.combine_bounds_with_coordinates()
+    >>> cf.bounds_combination_mode()
     'AND'
 
     '''
-    old = CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES']
+    old = CONSTANTS['BOUNDS_COMBINATION_MODE']
     if arg:
         arg = arg[0]
 
@@ -535,7 +535,7 @@ def combine_bounds_with_coordinates(*arg):
                 )
             )
 
-        CONSTANTS['COMBINE_BOUNDS_WITH_COORDINATES'] = arg
+        CONSTANTS['BOUNDS_COMBINATION_MODE'] = arg
 
     return old
 

@@ -4,7 +4,7 @@ from numpy import size as numpy_size
 
 from . import PropertiesData
 
-from ..functions import (combine_bounds_with_coordinates,
+from ..functions import (bounds_combination_mode,
                          parse_indices,
                          _DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
@@ -41,7 +41,6 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -162,7 +161,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         super().__setitem__(indices, value)
 
-        # Set the interior ring, if present (added at v3.8.0).        
+        # Set the interior ring, if present (added at v3.8.0).
         interior_ring = self.get_interior_ring(None)
         try:
             value_interior_ring = value.get_interior_ring(None)
@@ -415,13 +414,13 @@ class PropertiesDataBounds(PropertiesData):
 
     **Bounds**
 
-    The flag returned by ``cf.combine_bounds_with_coordinates()`` is
-    used to influence whether or not the result of a binary operation
-    "op(x, y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will
-    contain bounds, and if so how those bounds are calculated.
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
 
     The behaviour for the different flag values is described in the
-    docstring of `cf.combine_bounds_with_coordinates`.
+    docstring of `cf.bounds_combination_mode`.
 
     :Parameters:
 
@@ -446,14 +445,14 @@ class PropertiesDataBounds(PropertiesData):
         inplace = (method[2] == 'i')
 
         bounds_AND = (bounds
-                      and combine_bounds_with_coordinates() == 'AND')
+                      and bounds_combination_mode() == 'AND')
         bounds_OR = (bounds and not bounds_AND
-                     and combine_bounds_with_coordinates() == 'OR')
+                     and bounds_combination_mode() == 'OR')
         bounds_XOR = (bounds and not bounds_AND and not bounds_OR
-                      and combine_bounds_with_coordinates() == 'XOR')
+                      and bounds_combination_mode() == 'XOR')
         bounds_NONE = (not bounds
                        or not (bounds_AND or bounds_OR or bounds_XOR)
-                       or combine_bounds_with_coordinates() == 'NONE')
+                       or bounds_combination_mode() == 'NONE')
 
         if not bounds_NONE:
             geometry = self.get_geometry(None)
@@ -466,7 +465,7 @@ class PropertiesDataBounds(PropertiesData):
                 raise ValueError(
                     "Can't combine operands with different geometry types"
                 )
-                
+
             interior_ring = self.get_interior_ring(None)
             try:
                 other_interior_ring = other.get_interior_ring(None)
@@ -478,7 +477,7 @@ class PropertiesDataBounds(PropertiesData):
                     "Can't combine operands with interior ring arrays"
                 )
         # --- End: if
-        
+
         has_bounds = self.has_bounds()
 
         if has_bounds and inplace and other is self:
