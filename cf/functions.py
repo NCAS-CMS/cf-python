@@ -411,10 +411,6 @@ def _configuration(_Configuration, **kwargs):
     old.pop('min_total_memory', None)
     old.pop('fm_threshold', None)
 
-#    # Also add rtol and atol from cfdm as they are effective constants in cf:
-#    for tolerance in ('ATOL', 'RTOL'):
-#        old[tolerance.lower()] = CONSTANTS[tolerance]
-
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
     # might be trying to set those, as opposed to None emerging as default.
@@ -434,8 +430,22 @@ def _configuration(_Configuration, **kwargs):
         'new_relaxed_identities': relaxed_identities,
         'bounds_combination_mode': bounds_combination_mode,
     }
-    for setting_alias, new_value in kwargs.items():  # for all input kwargs...
-        reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    old_values = {}
+
+    try:
+        # Run the corresponding func for all input kwargs
+        for setting_alias, new_value in kwargs.items():
+            reset_mapping[setting_alias](new_value)
+            setting = setting_alias.replace('new_', '', 1)
+            old_values[setting_alias] = old[setting]
+    except ValueError:
+        # Reset any constants that were changed prior to the exception
+        for setting_alias, old_value in old_values.items():
+            reset_mapping[setting_alias](old_value)
+
+        # Raise the exception
+        raise
 
     return _Configuration(**old)
 

@@ -201,6 +201,16 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cf.configuration(bad_kwarg=1e-15)
 
+        old = cf.configuration()
+        try:
+            cf.configuration(atol=888, rtol=999, log_level='BAD')
+        except ValueError:
+            self.assertEqual(cf.configuration(), old)
+        else:
+            raise RuntimeError(
+                "A ValueError should have been raised, but wasn't"
+            )
+
         # Reset so later test fixtures don't spam with output
         # messages:
         cf.log_level('DISABLE')
