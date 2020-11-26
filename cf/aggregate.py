@@ -1606,8 +1606,12 @@ def aggregate(fields,
 
     if atol is None:
         atol = cf_atol()
+
     if rtol is None:
         rtol = cf_rtol()
+
+    atol = float(atol)
+    rtol = float(rtol)
 
     if axes is not None and isinstance(axes, str):
         axes = (axes,)

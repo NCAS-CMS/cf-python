@@ -4647,28 +4647,45 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cf.atol` and `cf.rtol` functions:
-
-.. code-block:: python
-   :caption: *The atol and rtol functions allow the numerical equality
-             tolerances to be inspected and changed.*
-      
-   >>> cf.atol()
-   2.220446049250313e-16
-   >>> cf.rtol()
-   2.220446049250313e-16
-   >>> original = cf.rtol(0.00001)
-   >>> cf.rtol()
-   1e-05
-   >>> cf.rtol(original)
-   1e-05
-   >>> cf.rtol()
-   2.220446049250313e-16
+`cf.atol` and `cf.rtol` functions.
 
 Note that the above equation is not symmetric in :math:`x` and
 :math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
 may be different from ``f2.equals(f1)`` in some rare cases.
    
+.. code-block:: python
+   :caption: *The atol and rtol functions allow the numerical equality
+             tolerances to be inspected and changed.*
+      
+   >>> print(cf.atol())
+   2.220446049250313e-16
+   >>> print(cf.rtol())
+   2.220446049250313e-16
+   >>> original = cf.rtol(0.00001)
+   >>> print(cf.rtol())
+   1e-05
+   >>> print(cf.rtol(original))
+   1e-05
+   >>> print(cf.rtol())
+   2.220446049250313e-16
+
+The :math:`a_{tol}` and :math:`r_{tol}` constants may be set for a
+runtime context established when executing a `with` statement.
+
+.. code-block:: python
+   :caption: *Evaluate equality in a runtime contenxt with a different
+             value of 'atol'.*
+	     
+   >>> t2 = t - 0.00001
+   >>> t.equals(t2)
+   False
+   >>> with cf.atol(1e-5):
+   ...     print(t.equals(t2))
+   ...
+   True
+   >>> t.equals(t2)
+   False
+
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.

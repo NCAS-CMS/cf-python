@@ -70,7 +70,7 @@ List-like operations
 These methods provide functionality identical to that of a Python
 `list`, with one exception:
 
-* When a field construct element needs to be assessed for equality, its
+* When a field construct element needs to be assesed for equality, its
   `~cf.Field.equals` method is used, rather than the ``==``
   operator. This affects the `~cf.FieldList.count`,
   `~cf.FieldList.index`, `~cf.FieldList.remove`,

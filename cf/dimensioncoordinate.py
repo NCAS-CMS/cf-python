@@ -52,9 +52,7 @@ class DimensionCoordinate(mixin.Coordinate,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netcdf variable}}
 
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,

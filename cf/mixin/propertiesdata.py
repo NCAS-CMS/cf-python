@@ -691,9 +691,9 @@ class PropertiesData(Properties):
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
 
     :Parameters:
 
@@ -735,11 +735,6 @@ class PropertiesData(Properties):
                     self.__class__.__name__, data0.Units, data1.Units)
             )
             return False
-
-#        if atol is None:
-#            atol = atol()
-#        if rtol is None:
-#            rtol = rtol()
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             logger.info(

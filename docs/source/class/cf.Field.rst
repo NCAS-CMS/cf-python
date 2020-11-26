@@ -345,6 +345,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Field.copy
+   ~cf.Field.compute_vertical_coordinates
    ~cf.Field.dataset_compliance
    ~cf.Field.equals
    ~cf.Field.compress
