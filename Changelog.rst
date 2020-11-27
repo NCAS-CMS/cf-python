@@ -19,6 +19,7 @@ version 3.8.0
   (https://github.com/NCAS-CMS/cf-python/issues/152)
 * Changed dependency: ``1.8.8.0<=cfdm<1.8.9.0``
 * Changed dependency: ``cftime>=1.3.0``
+* Changed dependency: ``cfunits>=3.3.1``
 
 version 3.7.0
 -------------
