@@ -638,7 +638,7 @@ class DataTest(unittest.TestCase):
 
         # Reset
         cf.constants.CONSTANTS['FM_THRESHOLD'] = fmt
-        
+
     def test_Data_AUXILIARY_MASK(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

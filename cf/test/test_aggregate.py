@@ -181,7 +181,7 @@ class aggregateTest(unittest.TestCase):
                 "DEBUG:cf.aggregate:COMPLETE AGGREGATION METADATA:")
 
             # 'DEBUG' (-1) verbosity should output both log message headers...
-            with self.assertLogs(level=cf.log_level().value) as catch:
+            with self.assertLogs(level='NOTSET') as catch:
                 cf.aggregate([f0, f1], verbose=-1)
                 for header in (detail_header, debug_header):
                     self.assertTrue(
@@ -191,7 +191,7 @@ class aggregateTest(unittest.TestCase):
                     )
 
             # ...but with 'DETAIL' (3), should get only the detail-level one.
-            with self.assertLogs(level=cf.log_level().value) as catch:
+            with self.assertLogs(level='NOTSET') as catch:
                 cf.aggregate([f0, f1], verbose=3)
                 self.assertTrue(
                     any(log_item.startswith(detail_header)
@@ -206,7 +206,7 @@ class aggregateTest(unittest.TestCase):
                 )
 
             # and neither should emerge at the 'WARNING' (1) level.
-            with self.assertLogs(level=cf.log_level().value) as catch:
+            with self.assertLogs(level='NOTSET') as catch:
                 logger.warning(
                     "Dummy message to log something at warning level so that "
                     "'assertLog' does not error when no logs messages emerge."
