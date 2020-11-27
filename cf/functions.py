@@ -1,9 +1,11 @@
 import atexit
 import csv
+import importlib
 import os
 import platform
 import re
 import resource
+import sys
 import ctypes.util
 # import cPickle
 import netCDF4
@@ -3132,7 +3134,21 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         return fl
 
 
-def environment(display=True, paths=True, string=True):
+def _get_module_info(module, try_except=False):
+    '''Helper function for processing modules for cf.environment'''
+    if try_except:
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            return ('not available', '')
+
+    return (
+        importlib.import_module(module).__version__,
+        importlib.util.find_spec(module).origin
+    )
+
+
+def environment(display=True, paths=True):
     '''Return the names and versions of the cf package and its
     dependencies.
 
@@ -3193,83 +3209,29 @@ def environment(display=True, paths=True, string=True):
     cf: 3.0.1
 
     '''
-    out = []
-    out.append('Platform: ' + str(platform.platform()))
-    out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
-    out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
-    out.append(
-        'udunits2 library: ' + str(ctypes.util.find_library('udunits2')))
-    out.append('python: ' + str(platform.python_version()))
-    if paths:
-        out[-1] += ' ' + str(_sys_executable)
-
-    out.append('netCDF4: ' + str(netCDF4.__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(netCDF4.__file__))
-
-    out.append('cftime: ' + str(cftime.__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(cftime.__file__))
-
-    out.append('numpy: ' + str(_numpy__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(_numpy__file__))
-
-    out.append('psutil: ' + str(psutil.__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(psutil.__file__))
-
-    try:
-        import scipy
-    except ImportError:
-        out.append('scipy: not available')
-    else:
-        out.append('scipy: ' + str(scipy.__version__))
-        if paths:
-            out[-1] += ' ' + str(_os_path_abspath(scipy.__file__))
-    # --- End: try
-
-    try:
-        import matplotlib
-    except ImportError:
-        out.append('matplotlib: not available')
-    else:
-        out.append('matplotlib: ' + str(matplotlib.__version__))
-        if paths:
-            out[-1] += ' ' + str(_os_path_abspath(matplotlib.__file__))
-    # --- End: try
-
-    try:
-        import ESMF
-    except ImportError:
-        out.append('ESMF: not available')
-    else:
-        out.append('ESMF: ' + str(ESMF.__version__))
-        if paths:
-            out[-1] += ' ' + str(_os_path_abspath(ESMF.__file__))
-    # --- End: try
-
-    out.append('cfdm: ' + str(cfdm.__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(cfdm.__file__))
-
-    out.append('cfunits: ' + str(cfunits.__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(cfunits.__file__))
-
-    try:
-        import cfplot
-    except ImportError:
-        out.append('cfplot: not available')
-    else:
-        out.append('cfplot: ' + str(cfplot.__version__))
-        if paths:
-            out[-1] += ' ' + str(_os_path_abspath(cfplot.__file__))
-    # --- End: try
-
-    out.append('cf: ' + str(__version__))
-    if paths:
-        out[-1] += ' ' + str(_os_path_abspath(__file__))
+    dependency_version_paths_mapping = {
+        'Platform': (platform.platform(), ''),
+        'HDF5 library': (netCDF4.__hdf5libversion__, ''),
+        'netcdf library': (netCDF4.__netcdf4libversion__, ''),
+        'udunits2 library': (ctypes.util.find_library('udunits2'), ''),
+        'Python': (platform.python_version(), sys.executable),
+        'netCDF4': _get_module_info('netCDF4'),
+        'cftime': _get_module_info('cftime'),
+        'numpy': (_numpy__version__, _os_path_abspath(_numpy__file__)),
+        'psutil': _get_module_info('psutil'),
+        'scipy': _get_module_info('scipy', try_except=True),
+        'matplotlib': _get_module_info('matplotlib', try_except=True),
+        'ESMF': _get_module_info('ESMF', try_except=True),
+        'cfdm': _get_module_info('cfdm'),
+        'cfunits': _get_module_info('cfunits'),
+        'cfplot': _get_module_info('cfplot', try_except=True),
+        'cf': (__version__, _os_path_abspath(__file__)),
+    }
+    string = '{0}: {1!s}'
+    if paths:  # include path information, else exclude, when unpacking tuple
+        string += ' {2!s}'
+    out = [string.format(dep, *info)
+           for dep, info in dependency_version_paths_mapping.items()]
 
     out = '\n'.join(out)
 

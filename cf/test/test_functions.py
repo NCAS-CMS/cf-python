@@ -1,5 +1,8 @@
 import atexit
 import datetime
+import os
+import platform
+import sys
 import unittest
 import inspect
 
@@ -312,6 +315,33 @@ class functionTest(unittest.TestCase):
 
         c = cf.Configuration()
         self.assertIs(c._func, cf.configuration)
+
+    def test_environment(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        e = cf.environment(display=False)
+        ep = cf.environment(display=False, paths=False)
+        self.assertIsInstance(e, str)
+        self.assertIsInstance(ep, str)
+
+        components = ['Platform: ', 'udunits2 library: ', 'numpy: ', 'cfdm: ']
+        for component in components:
+            self.assertIn(component, e)
+            self.assertIn(component, ep)
+        for component in [
+            'cf: {} {}'.format(
+                cf.__version__, os.path.abspath(cf.__file__)),
+            'Python: {} {}'.format(
+                platform.python_version(), sys.executable),
+        ]:
+            self.assertIn(component, e)
+            self.assertNotIn(component, ep)  # paths shouldn't be present here
+        for component in [
+            'cf: {}'.format(cf.__version__),
+            'Python: {}'.format(platform.python_version()),
+        ]:
+            self.assertIn(component, ep)
 
 # --- End: class
 
