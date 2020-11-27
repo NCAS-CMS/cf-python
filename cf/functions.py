@@ -1,5 +1,6 @@
 import atexit
 import csv
+import importlib
 import os
 import platform
 import re
@@ -3133,6 +3134,20 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         return fl
 
 
+def _get_module_info(module, try_except=False):
+    '''Helper function for processing modules for cf.environment'''
+    if try_except:
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            return ('not available', '')
+
+    return (
+        importlib.import_module(module).__version__,
+        importlib.util.find_spec(module).origin
+    )
+
+
 def environment(display=True, paths=True):
     '''Return the names and versions of the cf package and its
     dependencies.
@@ -3194,57 +3209,22 @@ def environment(display=True, paths=True):
     cf: 3.0.1
 
     '''
-    unavailable_msg = 'not available'
-    try:
-        import scipy
-    except ImportError:
-        scipy_version = unavailable_msg
-    else:
-        scipy_version = (scipy.__version__, _os_path_abspath(scipy.__file__))
-    # --- End: try
-
-    try:
-        import matplotlib
-    except ImportError:
-        matplotlib_version = unavailable_msg
-    else:
-        matplotlib_version = (
-            matplotlib.__version__, _os_path_abspath(matplotlib.__file__))
-    # --- End: try
-
-    try:
-        import ESMF
-    except ImportError:
-        esmf_version = unavailable_msg
-    else:
-        esmf_version = (ESMF.__version__, _os_path_abspath(ESMF.__file__))
-    # --- End: try
-
-    try:
-        import cfplot
-    except ImportError:
-        cfplot_version = unavailable_msg
-    else:
-        cfplot_version = (
-            cfplot.__version__, _os_path_abspath(cfplot.__file__))
-    # --- End: try
-
     dependency_version_paths_mapping = {
         'Platform': (platform.platform(), ''),
         'HDF5 library': (netCDF4.__hdf5libversion__, ''),
         'netcdf library': (netCDF4.__netcdf4libversion__, ''),
         'udunits2 library': (ctypes.util.find_library('udunits2'), ''),
         'Python': (platform.python_version(), sys.executable),
-        'netCDF4': (netCDF4.__version__, _os_path_abspath(netCDF4.__file__)),
-        'cftime': (cftime.__version__, _os_path_abspath(cftime.__file__)),
+        'netCDF4': _get_module_info('netCDF4'),
+        'cftime': _get_module_info('cftime'),
         'numpy': (_numpy__version__, _os_path_abspath(_numpy__file__)),
-        'psutil': (psutil.__version__, _os_path_abspath(psutil.__file__)),
-        'scipy': scipy_version,
-        'matplotlib': matplotlib_version,
-        'ESMF': esmf_version,
-        'cfdm': (cfdm.__version__, _os_path_abspath(cfdm.__file__)),
-        'cfunits': (cfunits.__version__, _os_path_abspath(cfunits.__file__)),
-        'cfplot': cfplot_version,
+        'psutil': _get_module_info('psutil'),
+        'scipy': _get_module_info('scipy', try_except=True),
+        'matplotlib': _get_module_info('matplotlib', try_except=True),
+        'ESMF': _get_module_info('ESMF', try_except=True),
+        'cfdm': _get_module_info('cfdm'),
+        'cfunits': _get_module_info('cfunits'),
+        'cfplot': _get_module_info('cfplot', try_except=True),
         'cf': (__version__, _os_path_abspath(__file__)),
     }
     string = '{0}: {1!s}'
