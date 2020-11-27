@@ -3132,7 +3132,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         return fl
 
 
-def environment(display=True, paths=True, string=True):
+def environment(display=True, paths=True):
     '''Return the names and versions of the cf package and its
     dependencies.
 
