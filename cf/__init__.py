@@ -298,10 +298,15 @@ def detail(self, message, *args, **kwargs):
 logging.Logger.detail = detail
 
 
-# Also create level below even 'DEBUG'. It will not be advertised to users.
+# Also create special, secret level below even 'DEBUG'. It will not be
+# advertised to users. The user-facing cf.log_level() can set all but this
+# one level; we deliberately have not set up:
+#     cf.log_level('PARTITIONING')
+# to work to change the level to logging.PARTITIONING. Instead, to set this
+# manipulate the cf root logger directly via a built-in method, i.e call:
+#     cf.logging.getLogger().setLevel('PARTITIONING')
 logging.PARTITIONING = 5
 logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
-
 
 def partitioning(self, message, *args, **kwargs):
     if self.isEnabledFor(logging.PARTITIONING):
