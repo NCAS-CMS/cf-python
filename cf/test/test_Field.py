@@ -9,7 +9,13 @@ import unittest
 
 import numpy
 
-from scipy.ndimage import convolve1d
+SCIPY_AVAILABLE = False
+try:
+    from scipy.ndimage import convolve1d
+    SCIPY_AVAILABLE = True
+# not 'except ImportError' as that can hide nested errors, catch anything:
+except Exception:
+    pass  # test with this dependency will then be skipped by unittest
 
 import cf
 
@@ -1771,6 +1777,9 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        if not SCIPY_AVAILABLE:  # needed for 'convolution_filter' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
+
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
 
         f = cf.read(self.filename1)[0]
@@ -1784,6 +1793,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_moving_window(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'moving_window' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
@@ -1918,6 +1930,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_derivative(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'derivative' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         x_min = 0.0
         x_max = 359.0
