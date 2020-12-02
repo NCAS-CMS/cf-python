@@ -139,11 +139,11 @@ class Domain(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * `None`. This is the default, which selects the domain
@@ -195,7 +195,7 @@ class Domain(mixin.FieldDomain,
         '''
         cyclic = self._cyclic
         old = cyclic.copy()
-        
+
         if identity is None:
             return old
 
@@ -236,11 +236,11 @@ class Domain(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * `None`. This is the default, which selects the domain
@@ -276,8 +276,8 @@ class Domain(mixin.FieldDomain,
 
         '''
         domain_axes = self.domain_axes(identity)
-            
-        n_domain_axes = len(domain_axes)        
+
+        n_domain_axes = len(domain_axes)
         if n_domain_axes == 1:
             # identity is a unique domain axis construct identity
             if key:
@@ -291,15 +291,15 @@ class Domain(mixin.FieldDomain,
                 "No unique domain axis construct is identifiable from "
                 "{!r}".format(identity)
             )
-                
+
         # identity is not a unique domain axis construct identity
         da_key = self.domain_axis_key(identity, default=None)
         if da_key is None:
             return self._default(default, message="TODO")
-            
+
         if key:
             return da_key
-        
+
         return self.constructs[da_key]
 
     def get_data_axes(self, identity, default=ValueError()):
@@ -716,7 +716,7 @@ TODO
     .. versionadded:: 3.TODO.0
 
     .. seealso:: `match`, `match_by_property`, `match_by_rank`,
-                 `match_by_identity`, `match_by_ncvar`,                 
+                 `match_by_identity`, `match_by_ncvar`
 
     :Parameters:
 

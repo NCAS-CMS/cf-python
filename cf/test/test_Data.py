@@ -9,7 +9,13 @@ from functools import reduce
 
 import numpy
 
-from scipy.ndimage import convolve1d
+SCIPY_AVAILABLE = False
+try:
+    from scipy.ndimage import convolve1d
+    SCIPY_AVAILABLE = True
+# not 'except ImportError' as that can hide nested errors, catch anything:
+except Exception:
+    pass  # test with this dependency will then be skipped by unittest
 
 import cf
 
@@ -78,9 +84,9 @@ class DataTest(unittest.TestCase):
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_Data_exp']
 #    test_only = [
-#        'test_Data_trigonometric_hyperbolic']
+#        'test_Data_percentile',
+#        'test_Data_trigonometric_hyperbolic'
 #        'test_Data_AUXILIARY_MASK',
 #        'test_Data_datum',
 #        'test_Data_ERROR',
@@ -273,6 +279,10 @@ class DataTest(unittest.TestCase):
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        raise unittest.SkipTest("GSASL has no PLAIN support")
+        if not SCIPY_AVAILABLE:
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         d = cf.Data(self.ma, units='m')
 
@@ -603,6 +613,41 @@ class DataTest(unittest.TestCase):
 
         cf.chunksize(self.original_chunksize)
         cf.free_memory_factor(original_FMF)
+
+    def test_Data_cached_arithmetic_units(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data(self.a, 'm')
+        e = cf.Data(self.a, 's')
+
+        f = d / e
+        self.assertEqual(f.Units, cf.Units('m s-1'))
+
+        d = cf.Data(self.a, 'days since 2000-01-02')
+        e = cf.Data(self.a, 'days since 1999-01-02')
+
+        f = d - e
+        self.assertEqual(f.Units, cf.Units('days'))
+
+        # Repeat with caching partitions to disk
+        fmt = cf.constants.CONSTANTS['FM_THRESHOLD']
+        cf.constants.CONSTANTS['FM_THRESHOLD'] = cf.total_memory()
+
+        d = cf.Data(self.a, 'm')
+        e = cf.Data(self.a, 's')
+
+        f = d / e
+        self.assertEqual(f.Units, cf.Units('m s-1'))
+
+        d = cf.Data(self.a, 'days since 2000-01-02')
+        e = cf.Data(self.a, 'days since 1999-01-02')
+
+        f = d - e
+        self.assertEqual(f.Units, cf.Units('days'))
+
+        # Reset
+        cf.constants.CONSTANTS['FM_THRESHOLD'] = fmt
 
     def test_Data_AUXILIARY_MASK(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2126,6 +2171,33 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.chunksize(self.original_chunksize)
+
+    def test_Data_percentile(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+            d = cf.Data(self.a)
+
+            # Percentiles taken across *all axes*
+            ranks = [[30, 60, 90], [20], 80]  # include valid singular form
+
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but numpy has an
+                # inverse parameter called keepdims which is by default False
+                # also, one must be set to the non-default for equivalents.
+                # So first cases (n1, n1) are both squeezed, (n2, n2) are not:
+                a1 = numpy.percentile(d, rank)  # has keepdims=False default
+                b1 = d.percentile(rank, squeeze=True)
+                self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
+                a2 = numpy.percentile(d, rank, keepdims=True)
+                b2 = d.percentile(rank)  # has squeeze=False default
+                self.assertTrue(b2.shape, a2.shape)
+                self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+
+        # TODO: add loop to check get same shape and close enough data
+        # for every possible axes combo (as with test_Data_median above).
 
     def test_Data_mean_of_upper_decile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

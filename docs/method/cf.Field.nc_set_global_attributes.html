@@ -21,7 +21,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.dataset_compliance" href="cf.Field.dataset_compliance.html" />
+    <link rel="next" title="cf.Field.ncdimensions" href="cf.Field.ncdimensions.html" />
     <link rel="prev" title="cf.Field.nc_set_global_attribute" href="cf.Field.nc_set_global_attribute.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,9 +85,9 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.nc_set_global_attribute.html" title="previous chapter">cf.Field.nc_set_global_attribute</a></li>
-      <li>Next: <a href="cf.Field.dataset_compliance.html" title="next chapter">cf.Field.dataset_compliance</a></li>
+      <li>Next: <a href="cf.Field.ncdimensions.html" title="next chapter">cf.Field.ncdimensions</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.nc_set_global_attributes<a class="headerlink" href="#cf-field-nc-set-global-attributes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.nc_set_global_attributes">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">properties</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/netcdf.py#L1440-L1511"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">properties</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/mixin/netcdf.py#L1440-L1511"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set properties to be written as netCDF global attributes.</p>
 <p>When multiple field constructs are being written to the same file,
 it is only possible to create a netCDF global attribute from a
@@ -120,7 +120,7 @@ field construct.</p>
 written as netCDF global attributes, if possible, so selecting
 them is optional.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.10.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.10</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -130,11 +130,11 @@ them is optional.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Set the properties be written as a netCDF global attribute
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Set the properties be written as a netCDF global attribute
 from the dictionary supplied. The value of a netCDF global
 attribute, which will be created (if possible) in addition
 to the property as written to a netCDF data variable. If a
-value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is used then this acts as an instruction
+value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is used then this acts as an instruction
 to write the property (if possible) to a netCDF global
 attribute instead of to a netCDF data variable.</p>
 <dl class="simple">
@@ -142,14 +142,14 @@ attribute instead of to a netCDF data variable.</p>
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any property values provided by the
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any property values provided by the
 <em>properties</em> parameter are not copied before insertion. By
 default they are deep copied.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -179,7 +179,7 @@ default they are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

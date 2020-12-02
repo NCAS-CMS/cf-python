@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
+  <li><a href="../class/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
       <li>Previous: <a href="cf.DimensionCoordinate.get_bounds_data.html" title="previous chapter">cf.DimensionCoordinate.get_bounds_data</a></li>
       <li>Next: <a href="cf.DimensionCoordinate.contiguous.html" title="next chapter">cf.DimensionCoordinate.contiguous</a></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.DimensionCoordinate.create_bounds<a class="headerlink" href="#cf-dimensioncoordinate-create-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.create_bounds">
-<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">create_bounds</code><span class="sig-paren">(</span><em class="sig-param">bound=None</em>, <em class="sig-param">cellsize=None</em>, <em class="sig-param">flt=0.5</em>, <em class="sig-param">max=None</em>, <em class="sig-param">min=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/dimensioncoordinate.py#L352-L648"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.create_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">create_bounds</code><span class="sig-paren">(</span><em class="sig-param">bound=None</em>, <em class="sig-param">cellsize=None</em>, <em class="sig-param">flt=0.5</em>, <em class="sig-param">max=None</em>, <em class="sig-param">min=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/dimensioncoordinate.py#L341-L637"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.create_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create cell bounds.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -132,7 +132,7 @@ each coordinate within the its cell is controlled by the
 coordinates: <code class="docutils literal notranslate"><span class="pre">cellsize=10</span></code>.</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To specify cellsizes of 1 day: <code class="docutils literal notranslate"><span class="pre">cellsize=cf.Data(1,</span>
-<span class="pre">'day')</span></code> (see <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> for details).</p>
+<span class="pre">'day')</span></code> (see <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>For coordinates <code class="docutils literal notranslate"><span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">10</span></code>, setting <code class="docutils literal notranslate"><span class="pre">cellsize=1</span></code>
 will result in bounds of <code class="docutils literal notranslate"><span class="pre">(0.5,</span> <span class="pre">1.5),</span> <span class="pre">(1.5,</span> <span class="pre">2.5),</span>
@@ -141,7 +141,7 @@ will result in bounds of <code class="docutils literal notranslate"><span class=
 <dt><em>Parameter example:</em></dt><dd><p>For coordinates <code class="docutils literal notranslate"><span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">10</span></code> kilometres, setting
 <code class="docutils literal notranslate"><span class="pre">cellsize=cf.Data(5000,</span> <span class="pre">'m')</span></code> will result in bounds
 of <code class="docutils literal notranslate"><span class="pre">(-1.5,</span> <span class="pre">3.5),</span> <span class="pre">(-0.5,</span> <span class="pre">4.5),</span> <span class="pre">(7.5,</span> <span class="pre">12.5)</span></code> (see
-<a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> for details).</p>
+<a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>For decreasing coordinates <code class="docutils literal notranslate"><span class="pre">2,</span> <span class="pre">0,</span> <span class="pre">-12</span></code> setting,
 <code class="docutils literal notranslate"><span class="pre">cellsize=2</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">1),</span>
@@ -153,9 +153,9 @@ of <code class="docutils literal notranslate"><span class="pre">(-1.5,</span> <s
 </div></blockquote>
 <blockquote>
 <div><ul>
-<li><p>A <a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> defining the cell size. Only
+<li><p>A <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> defining the cell size. Only
 applicable to reference time coordinates. It is possible
-to “anchor” the cell bounds via the <a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a>
+to “anchor” the cell bounds via the <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a>
 parameters. For example, to specify cell size of one
 calendar month, starting and ending on the 15th day:
 <code class="docutils literal notranslate"><span class="pre">cellsize=cf.M(day=15)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details). Note
@@ -211,7 +211,7 @@ coordinates is 1st January 1984.</p>
 </div></blockquote>
 <p>{+data-like-scalar} TODO</p>
 </dd>
-<dt>flt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>When creating cells with sizes specified by the <em>cellsize</em>
+<dt>flt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>When creating cells with sizes specified by the <em>cellsize</em>
 parameter, define the fraction of the each cell which is
 less its coordinate value. By default <em>flt</em> is 0.5, so that
 each cell has its coordinate at it’s centre. Ignored if
@@ -245,7 +245,7 @@ each cell has its coordinate at it’s centre. Ignored if
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned bounds are not independent of
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned bounds are not independent of
 the existing bounds, if any, or those inserted, if
 <em>create</em> and <em>insert</em> are both True. By default the
 returned bounds are independent.</p>
@@ -254,7 +254,7 @@ returned bounds are independent.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
+<dt><a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
 </dd>
 </dl>
 </dd>
@@ -276,7 +276,7 @@ returned bounds are independent.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

@@ -1,75 +1,163 @@
-from copy import copy
-
-import logging
-
-import cfdm
-
-from .mixin_container import Container
-
-from .functions import (_DEPRECATION_ERROR,
-                        _DEPRECATION_ERROR_KWARGS,
-                        _DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_DICT)
-
-from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
-
-
-logger = logging.getLogger(__name__)
-
-
-class ConstructList(list,
-                    cfdm.Container):
-    '''An ordered sequence of constructs
-
-    The elements of the list are construct of the same type.
-
-    The list supports the python list-like operations (such as
-    indexing and methods like `!append`).
-
-    >>> fl = cf.{{class}}()
-    >>> len(fl)
-    0
-    >>> fl = cf.FieldList(f)
-    >>> len(fl)
-    1
-    >>> fl = cf.FieldList([f, g])
-    >>> len(fl)
-    2
-    >>> fl = cf.FieldList(cf.FieldList([f] * 3))
-    >>> len(fl)
-    3
-    >>> len(fl + fl)
-    6
-
-    Such methods provide functionality similar to that of a
-    :ref:`built-in list <python:tut-morelists>`. The main difference
-    is that when an element needs to be assesed for equality its
-    `!equals` method is used, rather than the ``==`` operator.
+class FieldDomainList:
+    '''TODO
 
     '''
-    def __init__(self, constructs=None):
-        '''**Initialization**
+    def select_by_construct(self, *identities, OR=False, **conditions):
+        '''Select field constructs by metadata constructs.
+
+    To find the inverse of the selection, use a list comprehension
+    with the !match_by_construct` method of the constuct elements. For
+    example, to select all constructs that do *not* have a "latitude"
+    metadata construct:
+
+       >>> gl = cf.{{class}}(
+       ...     f for f in fl if not f.match_by_constructs('latitude')
+       ... )
+
+    .. note:: The API changed at version 3.1.0
+
+    .. versionadded:: 3.0.0
+
+    .. seealso: `select`, `__call__`, `select_by_units`,
+                `select_by_naxes`, `select_by_rank`,
+                `select_by_property`, `cf.Field.match_by_construct`
 
     :Parameters:
 
-        constructs: (sequence of) constructs
-             Create a new list with these constructs.
+        identities: optional
+            Identify the metadata constructs by one or more of
+
+            * A metadata construct identity.
+
+              {{construct selection identity}}
+
+            * The key of a metadata construct (although beware that
+              construct keys may differ arbitrarily between list
+              elements).
+
+            If no identities nor conditions (see the *conditions*
+            parameter) are provided then all list elements are
+            selected.
+
+            If a cell method construct identity is given (such as
+            ``'method:mean'``) then it will only be compared with the
+            most recently applied cell method operation.
+
+            Alternatively, one or more cell method constucts may be
+            identified in a single string with a CF-netCDF cell
+            methods-like syntax for describing both the collapse
+            dimensions, the collapse method, and any cell method
+            construct qualifiers. If N cell methods are described in
+            this way then they will collectively identify the N most
+            recently applied cell method operations. For example,
+            ``'T: maximum within years T: mean over years'`` will be
+            compared with the most two most recently applied cell
+            method operations.
+
+            *Parameter example:*
+              `'latitude'``
+
+            *Parameter example:*
+              ``'T'
+
+            *Parameter example:*
+              ``'latitude'``
+
+            *Parameter example:*
+              ``'long_name=Cell Area'``
+
+            *Parameter example:*
+              ``'cellmeasure1'``
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``cf.eq('time')'``
+
+            *Parameter example:*
+              ``re.compile('^lat')``
+
+            *Parameter example:*
+              ``'domainancillary2', 'longitude'``
+
+            *Parameter example:*
+              ``'area: mean T: maximum'``
+
+            *Parameter example:*
+              ``'grid_latitude', 'area: mean T: maximum'``
+
+        conditions: optional
+            Identify the metadata constructs that have any of the
+            given identities or construct keys, and whose data satisfy
+            conditions.
+
+            A construct identity or construct key (as defined by the
+            *identities* parameter) is given as a keyword name and a
+            condition on its data is given as the keyword value.
+
+            The condition is satisfied if any of its data values
+            equals the value provided.
+
+            If no conditions nor identities (see the *identities*
+            parameter) are provided then all list elements are
+            selected.
+
+            *Parameter example:*
+              ``longitude=180.0``
+
+            *Parameter example:*
+              ``time=cf.dt('1959-12-16')``
+
+            *Parameter example:*
+              ``latitude=cf.ge(0)``
+
+            *Parameter example:*
+              ``latitude=cf.ge(0), air_pressure=500``
+
+            *Parameter example:*
+              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the criteria given by
+            the *identities* or *conditions* arguments. By default
+            `True` is only returned if the field constructs matches
+            each of the given criteria.
+
+        mode: deprecated at version 3.1.0
+            Use the *OR* parameter instead.
+
+        constructs: deprecated at version 3.1.0
+
+    :Returns:
+
+        `bool`
+            The matching field constructs.
+
+    **Examples:**
+
+        TODO
 
         '''
-        super(cfdm.Container, self).__init__()
+        if identities:
+            if identities[0] == 'or':
+                _DEPRECATION_ERROR_ARG(
+                    self, 'select_by_construct', 'or',
+                    message="Use 'OR=True' instead.", version='3.1.0'
+                )  # pragma: no cover
 
-        if constructs is not None:
-            if getattr(fields, 'construct_type', None) is not None:
-                self.append(constructs)
-            else:
-                self.extend(constructs)
+            if identities[0] == 'and':
+                _DEPRECATION_ERROR_ARG(
+                    self, 'select_by_construct', 'and',
+                    message="Use 'OR=False' instead.", version='3.1.0'
+                )  # pragma: no cover
+        # --- End: if
 
-
-        if key is None:
-            key = lambda f: f.identity()
-
-        return super().sort(key=key, reverse=reverse)
+        return type(self)(
+            f for f in self
+            if f.match_by_construct(*identities, OR=OR, **conditions)
+        )
 
     def select_by_ncvar(self, *ncvars):
         '''Select list elements by netCDF variable name.
@@ -191,7 +279,7 @@ class ConstructList(list,
 
     **Examples:**
 
-    TODO
+    See `cf.{{class}}.select_by_identity`
 
         '''
         return type(self)(
@@ -239,62 +327,5 @@ class ConstructList(list,
         '''
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
-
-    # ----------------------------------------------------------------
-    # Aliases
-    # ----------------------------------------------------------------
-    def select(self, *identities, **kwargs):
-        '''Alias of `cf.{{class}}.select_by_identity`.
-
-    To find the inverse of the selection, use a list comprehension
-    with the `!match_by_identity` method of the constuct elements. For
-    example, to select all constructs whose identity is *not*
-    ``'air_temperature'``:
-
-       >>> gl = cf.{{class}}(f for f in fl
-       ...                   if not f.match_by_identity('air_temperature'))
-
-    .. seealso:: `select_by_identity`, `__call__`
-
-        '''
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'select', kwargs,
-                "Use methods 'select_by_units', 'select_by_construct', "
-                "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
-                "instead."
-            )  # pragma: no cover
-
-        if identities and isinstance(identities[0], (list, tuple, set)):
-            _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__)
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT(
-                    "Use methods 'select_by_units', 'select_by_construct', "
-                    "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
-                )  # pragma: no cover
-
-            if isinstance(i, str) and ':' in i:
-                error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
-                    )  # pragma: no cover
-        # --- End: for
-
-        return self.select_by_identity(*identities)
 
 # --- End: class

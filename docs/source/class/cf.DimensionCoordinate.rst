@@ -22,11 +22,11 @@ Inspection
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DimensionCoordinate.direction
    ~cf.DimensionCoordinate.dump
    ~cf.DimensionCoordinate.identity  
    ~cf.DimensionCoordinate.identities
    ~cf.DimensionCoordinate.direction
+   ~cf.DimensionCoordinate.inspect
    
 .. rubric:: Attributes
    
@@ -74,6 +74,42 @@ Bounds
    ~cf.DimensionCoordinate.cellsize
    ~cf.DimensionCoordinate.lower_bounds  
    ~cf.DimensionCoordinate.upper_bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.del_geometry
+   ~cf.DimensionCoordinate.get_geometry
+   ~cf.DimensionCoordinate.has_geometry
+   ~cf.DimensionCoordinate.set_geometry
+   ~cf.DimensionCoordinate.del_interior_ring
+   ~cf.DimensionCoordinate.get_interior_ring
+   ~cf.DimensionCoordinate.has_interior_ring
+   ~cf.DimensionCoordinate.set_interior_ring
+   ~cf.DimensionCoordinate.del_node_count
+   ~cf.DimensionCoordinate.get_node_count
+   ~cf.DimensionCoordinate.has_node_count
+   ~cf.DimensionCoordinate.set_node_count
+   ~cf.DimensionCoordinate.del_part_node_count
+   ~cf.DimensionCoordinate.get_part_node_count
+   ~cf.DimensionCoordinate.has_part_node_count
+   ~cf.DimensionCoordinate.set_part_node_count
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DimensionCoordinate.interior_ring
 
 Selection
 ---------
@@ -168,6 +204,7 @@ Data
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.array
+   ~cf.DimensionCoordinate.Data
    ~cf.DimensionCoordinate.data
    ~cf.DimensionCoordinate.datetime_array
    ~cf.DimensionCoordinate.datum
@@ -235,7 +272,6 @@ Data
    ~cf.DimensionCoordinate.binary_mask
    ~cf.DimensionCoordinate.hardmask
    ~cf.DimensionCoordinate.mask
-   ~cf.DimensionCoordinate.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -250,6 +286,7 @@ Data
    :template: method.rst
 
    ~cf.DimensionCoordinate.__setitem__
+   ~cf.DimensionCoordinate.halo
    ~cf.DimensionCoordinate.mask_invalid
    ~cf.DimensionCoordinate.subspace
    ~cf.DimensionCoordinate.where
@@ -275,7 +312,7 @@ Cyclicity
 	      
    ~cf.DimensionCoordinate.iscyclic
    ~cf.DimensionCoordinate.isperiodic
-   
+
 .. rubric:: *Miscellaneous*
 
 .. autosummary::
@@ -675,4 +712,36 @@ Deprecated
    ~cf.DimensionCoordinate.isfieldancillary
    ~cf.DimensionCoordinate.ismeasure
    ~cf.DimensionCoordinate.role
+   ~cf.DimensionCoordinate.unsafe_array
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.asdatetime
+   ~cf.DimensionCoordinate.asreftime
+   ~cf.DimensionCoordinate.attributes
+   ~cf.DimensionCoordinate.delprop
+   ~cf.DimensionCoordinate.dtvarray
+   ~cf.DimensionCoordinate.expand_dims
+   ~cf.DimensionCoordinate.getprop
+   ~cf.DimensionCoordinate.hasbounds
+   ~cf.DimensionCoordinate.hasdata
+   ~cf.DimensionCoordinate.hasprop
+   ~cf.DimensionCoordinate.insert_data
+   ~cf.DimensionCoordinate.isauxiliary
+   ~cf.DimensionCoordinate.isdimension
+   ~cf.DimensionCoordinate.isdomainancillary
+   ~cf.DimensionCoordinate.isfieldancillary
+   ~cf.DimensionCoordinate.ismeasure
+   ~cf.DimensionCoordinate.name
+   ~cf.DimensionCoordinate.remove_data
+   ~cf.DimensionCoordinate.select
+   ~cf.DimensionCoordinate.setprop
    ~cf.DimensionCoordinate.unsafe_array

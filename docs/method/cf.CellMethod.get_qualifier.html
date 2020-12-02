@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.CellMethod.html">cf.CellMethod</a><ul>
+  <li><a href="../class/cf.CellMethod.html">cf.CellMethod</a><ul>
       <li>Previous: <a href="cf.CellMethod.del_qualifier.html" title="previous chapter">cf.CellMethod.del_qualifier</a></li>
       <li>Next: <a href="cf.CellMethod.has_qualifier.html" title="next chapter">cf.CellMethod.has_qualifier</a></li>
   </ul></li>
@@ -106,10 +106,10 @@
 <h1>cf.CellMethod.get_qualifier<a class="headerlink" href="#cf-cellmethod-get-qualifier" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMethod.get_qualifier">
-<code class="sig-prename descclassname">CellMethod.</code><code class="sig-name descname">get_qualifier</code><span class="sig-paren">(</span><em class="sig-param">qualifier</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/core/cellmethod.py#L376-L418"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.get_qualifier" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CellMethod.</code><code class="sig-name descname">get_qualifier</code><span class="sig-paren">(</span><em class="sig-param">qualifier</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/core/cellmethod.py#L369-L413"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.get_qualifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a qualifier of the cell method.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -126,8 +126,9 @@
 </dl>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
-qualifier has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a>
-instance then it will be raised instead.</p>
+qualifier has not been set.</p>
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised
+instead.</p>
 </dd>
 </dl>
 </dd>
@@ -136,7 +137,8 @@ instance then it will be raised instead.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_qualifier</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="s1">&#39;land&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_qualifier</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="s1">&#39;land&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_qualifier</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="s1">&#39;no qualifier&#39;</span><span class="p">)</span>
 <span class="go">&#39;land&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">del_qualifier</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">)</span>
@@ -159,7 +161,7 @@ instance then it will be raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

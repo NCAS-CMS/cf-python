@@ -812,7 +812,7 @@ class Partition:
                         #         we don't want to keep the current
                         #         subarray in memory, and we are happy
                         #         to discard any changes that may have
-                        #         been made to the subaray.
+                        #         been made to the subarray.
                         logger.partitioning('    1.1.1.1 revert')
                         self.revert()
                     elif free_memory() <= cf_fm_threshold():
@@ -966,7 +966,7 @@ class Partition:
     ...    # Get the data array as a numpy array
     ...    array = partition.array
     ...
-    ...    # < Some code to operate on the aray >
+    ...    # < Some code to operate on the array >
     ...
     ...    # Close the partition
     ...    partition.close()

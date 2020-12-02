@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.DimensionCoordinate.creation_commands &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.DimensionCoordinate.equals" href="cf.DimensionCoordinate.equals.html" />
+    <link rel="prev" title="cf.DimensionCoordinate.copy" href="cf.DimensionCoordinate.copy.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
+      <li>Previous: <a href="cf.DimensionCoordinate.copy.html" title="previous chapter">cf.DimensionCoordinate.copy</a></li>
+      <li>Next: <a href="cf.DimensionCoordinate.equals.html" title="next chapter">cf.DimensionCoordinate.equals</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-dimensioncoordinate-creation-commands">
+<h1>cf.DimensionCoordinate.creation_commands<a class="headerlink" href="#cf-dimensioncoordinate-creation-commands" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.DimensionCoordinate.creation_commands">
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">representative_data=False</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em>, <em class="sig-param">name='c'</em>, <em class="sig-param">data_name='data'</em>, <em class="sig-param">bounds_name='b'</em>, <em class="sig-param">interior_ring_name='i'</em>, <em class="sig-param">header=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/mixin/propertiesdatabounds.py#L533-L658"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.creation_commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the commands that would create the construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>,
+<a class="reference internal" href="cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.creation_commands</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>representative_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Return one-line representations of <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances, which
+are not executable code but prevent the data being
+converted in its entirety to a string representation.</p>
+</dd>
+<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name space containing classes of the cf
+package. This is prefixed to the class name in commands
+that instantiate instances of cf objects. By default,
+or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the name space is assumed to be consistent
+with cf being imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span></code>.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If cf was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span> <span class="pre">as</span> <span class="pre">xyz</span></code>
+then set <code class="docutils literal notranslate"><span class="pre">namespace='xyz'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>If cf was imported as <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">cf</span> <span class="pre">import</span> <span class="pre">*</span></code>
+then set <code class="docutils literal notranslate"><span class="pre">namespace=''</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><dl class="simple">
+<dt>Indent each line by this many spaces. By default no</dt><dd><p>indentation is applied. Ignored if <em>string</em> is False.</p>
+</dd>
+</dl>
+</dd>
+<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
+a string, with a new line inserted between each command.</p>
+</dd>
+<dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the <a class="reference internal" href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> instance created by the
+returned commands.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='var1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the construct’s <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance created by the
+returned commands.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='data1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>bounds_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the construct’s <a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> instance created by
+the returned commands.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='bounds1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>interior_ring_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the construct’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code> instance
+created by the returned commands.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='ir1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>header: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not output a comment describing the
+components.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted between
+each command. If <em>string</em> is False then the separate
+commands are returned as each element of a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">set_data</span><span class="p">([</span><span class="mf">22.5</span><span class="p">,</span> <span class="mf">67.5</span><span class="p">,</span> <span class="mf">112.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">set_data</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">45.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">135.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">creation_commands</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">c = cf.DimensionCoordinate()</span>
+<span class="go">c.set_properties({&#39;units&#39;: &#39;degrees_east&#39;, &#39;standard_name&#39;: &#39;longitude&#39;})</span>
+<span class="go">data = cf.Data([22.5, 67.5, 112.5], units=&#39;degrees_east&#39;, dtype=&#39;f8&#39;)</span>
+<span class="go">c.set_data(data)</span>
+<span class="go">b = cf.Bounds()</span>
+<span class="go">data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0]], units=&#39;degrees_east&#39;, dtype=&#39;f8&#39;)</span>
+<span class="go">b.set_data(data)</span>
+<span class="go">c.set_bounds(b)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-10-15.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

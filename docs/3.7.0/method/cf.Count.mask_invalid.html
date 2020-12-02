@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Count.mask_invalid &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Count.subspace" href="cf.Count.subspace.html" />
+    <link rel="prev" title="cf.Count.__setitem__" href="cf.Count.__setitem__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Count.html">cf.Count</a><ul>
+      <li>Previous: <a href="cf.Count.__setitem__.html" title="previous chapter">cf.Count.__setitem__</a></li>
+      <li>Next: <a href="cf.Count.subspace.html" title="next chapter">cf.Count.subspace</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-count-mask-invalid">
+<h1>cf.Count.mask_invalid<a class="headerlink" href="#cf-count-mask-invalid" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Count.mask_invalid">
+<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">mask_invalid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/decorators.py#L39-L63"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.mask_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the array where invalid values occur.</p>
+<p>Note that:</p>
+<ul class="simple">
+<li><p>Invalid values are Nan or inf</p></li>
+<li><p>Invalid values in the results of arithmetic operations only
+occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+suppressed by <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a>.</p></li>
+<li><p>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+allowed then invalid values in the results of arithmetic
+operations it is possible for them to be automatically converted
+to masked values, depending on the setting of
+<a class="reference internal" href="cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>. In this case, such automatic conversion
+might be faster than calling <a class="reference internal" href="#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a>.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>, <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 0.  1.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 1.  2.]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">/</span><span class="n">f</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ inf   2.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">mask_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[--  2.]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">**</span><span class="mi">12345</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 1.  inf]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">mask_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[1.  --]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">mask_fpe</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">g</span><span class="o">/</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ --  2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">g</span><span class="o">**</span><span class="mi">12345</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[1.  -- ]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-10-15.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

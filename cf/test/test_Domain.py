@@ -7,6 +7,8 @@ import cf
 
 
 class DomainTest(unittest.TestCase):
+    d = cf.example_field(1)
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cf.LOG_LEVEL('DISABLE')
@@ -18,20 +20,13 @@ class DomainTest(unittest.TestCase):
         # cf.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cf.log_level('DISABLE')
-
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        f = cf.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
-        self.f = f[0]
-
         self.test_only = []
 
     def test_Domain__repr__str__dump(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = self.f.domain
+        d = self.d
 
         _ = repr(d)
         _ = str(d)
@@ -44,9 +39,7 @@ class DomainTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f
-
-        d = f.domain
+        d = self.d
         e = d.copy()
 
         self.assertTrue(d.equals(d, verbose=3))
@@ -62,7 +55,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.get_property('long_name'), 'qwerty')
         self.assertEqual(d.del_property('long_name'), 'qwerty')
         self.assertIsNone(d.get_property('long_name', None))
-        self.assertIsNone(d.del_property('long_name', None))
+        self.assertIsNonec(d.del_property('long_name', None))
 
         d.set_property('long_name', 'qwerty')
         self.assertEqual(d.clear_properties(), {'long_name': 'qwerty'})

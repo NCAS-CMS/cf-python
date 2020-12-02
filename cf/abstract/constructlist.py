@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class ConstructList(list,
+                    Container,
                     cfdm.Container):
     '''An ordered sequence of constructs
 
@@ -345,7 +346,8 @@ class ConstructList(list,
     def sort(self, key=None, reverse=False):
         '''Sort of the list in place.
 
-    By default the list is sorted by the identities of its constructs.
+    By default the list is sorted by the identities of its constructs,
+    but any sort criteria cna be specified with the *key* parameter.
 
     The sort is stable.
 
@@ -368,49 +370,6 @@ class ConstructList(list,
     :Returns:
 
         `None`
-# sort egs
-#>>> fl
-#    [<CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
-#     <CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>,
-#     <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
-#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>]
-#    >>> fl.sort()
-#    >>> fl
-#    [<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
-#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
-#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
-#     <CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>]
-#    >>> fl.sort(reverse=True)
-#    >>> fl
-#    [<CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1>,
-#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
-#     <CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1>,
-#     <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
-#
-#    >>> [f.datum(0) for f in fl]
-#    [masked,
-#     -0.12850454449653625,
-#     -0.12850454449653625,
-#     236.51275634765625]
-#    >>> fl.sort(key=lambda f: f.datum(0), reverse=True)
-#    >>> [f.datum(0) for f in fl]
-#    [masked,
-#     236.51275634765625,
-#     -0.12850454449653625,
-#     -0.12850454449653625]
-#
-#    >>> from operator import attrgetter
-#    >>> [f.long_name for f in fl]
-#    ['Meridional Overturning Streamfunction',
-#     'U COMPNT OF WIND ON PRESSURE LEVELS',
-#     'U COMPNT OF WIND ON PRESSURE LEVELS',
-#     'air_temperature']
-#    >>> fl.sort(key=attrgetter('long_name'))
-#    >>> [f.long_name for f in fl]
-#    ['air_temperature',
-#     'Meridional Overturning Streamfunction',
-#     'U COMPNT OF WIND ON PRESSURE LEVELS',
-#     'U COMPNT OF WIND ON PRESSURE LEVELS']
 
         '''
         if key is None:

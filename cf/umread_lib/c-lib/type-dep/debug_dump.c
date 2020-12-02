@@ -6,7 +6,7 @@ void debug_dump_all_headers(File *file)
   Rec *rec;
 
   debug("fd = %d", file->fd);
-  debug("format = %d", file->file_type.format);
+  debug("fmt = %d", file->file_type.fmt);
   debug("byte_ordering = %d", file->file_type.byte_ordering);
   debug("word_size = %d", file->file_type.word_size);
   debug("nrec = %d", file->internp->nrec);

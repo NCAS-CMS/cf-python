@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.CoordinateReference.html">cf.CoordinateReference</a><ul>
+  <li><a href="../class/cf.CoordinateReference.html">cf.CoordinateReference</a><ul>
       <li>Previous: <a href="cf.CoordinateReference.canonical_units.html" title="previous chapter">cf.CoordinateReference.canonical_units</a></li>
       <li>Next: <a href="cf.CoordinateReference.close.html" title="next chapter">cf.CoordinateReference.close</a></li>
   </ul></li>
@@ -106,25 +106,26 @@
 <h1>cf.CoordinateReference.change_identifiers<a class="headerlink" href="#cf-coordinatereference-change-identifiers" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CoordinateReference.change_identifiers">
-<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">change_identifiers</code><span class="sig-paren">(</span><em class="sig-param">identity_map</em>, <em class="sig-param">coordinate=True</em>, <em class="sig-param">ancillary=True</em>, <em class="sig-param">strict=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/coordinatereference.py#L521-L593"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.change_identifiers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">change_identifiers</code><span class="sig-paren">(</span><em class="sig-param">identity_map</em>, <em class="sig-param">coordinate=True</em>, <em class="sig-param">ancillary=True</em>, <em class="sig-param">strict=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/coordinatereference.py#L520-L593"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.change_identifiers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the TODO</p>
 <p>If an identifier is not in the provided mapping then it is
-set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> and thus effectively removed from the coordinate
+set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> and thus effectively removed from the coordinate
 reference.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>identity_map: dict</dt><dd><p>For example: <code class="docutils literal notranslate"><span class="pre">{'dim2':</span> <span class="pre">'dim3',</span> <span class="pre">'aux2':</span> <span class="pre">'latitude',</span> <span class="pre">'aux4':</span> <span class="pre">None}</span></code></p>
+<dt>identity_map: dict</dt><dd><p>For example: <code class="docutils literal notranslate"><span class="pre">{'dim2':</span> <span class="pre">'dim3',</span> <span class="pre">'aux2':</span> <span class="pre">'latitude',</span>
+<span class="pre">'aux4':</span> <span class="pre">None}</span></code></p>
 </dd>
-<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then coordinate or domain ancillary identifiers not
-set in the <em>identity_map</em> dictiontary are set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. By
-default they are left unchanged.</p>
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then coordinate or domain ancillary identifiers
+not set in the <em>identity_map</em> dictiontary are set to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. By default they are left unchanged.</p>
 </dd>
 </dl>
-<p>i: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
+<p>i: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -152,7 +153,7 @@ default they are left unchanged.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

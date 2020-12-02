@@ -110,3 +110,14 @@ Special
    ~cf.CellMethod.__repr__
    ~cf.CellMethod.__str__
  
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMethod.remove_axes

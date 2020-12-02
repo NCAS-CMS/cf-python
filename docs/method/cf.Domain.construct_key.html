@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Domain.html">cf.Domain</a><ul>
+  <li><a href="../class/cf.Domain.html">cf.Domain</a><ul>
       <li>Previous: <a href="cf.Domain.construct.html" title="previous chapter">cf.Domain.construct</a></li>
       <li>Next: <a href="cf.Domain.del_construct.html" title="next chapter">cf.Domain.del_construct</a></li>
   </ul></li>
@@ -106,10 +106,10 @@
 <h1>cf.Domain.construct_key<a class="headerlink" href="#cf-domain-construct-key" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.construct_key">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_key</code><span class="sig-paren">(</span><em class="sig-param">identity</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/constructaccess.py#L392-L484"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.construct_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_key</code><span class="sig-paren">(</span><em class="sig-param">identity</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/mixin/constructaccess.py#L393-L486"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.construct_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the key of a metadata construct by its identity.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -126,7 +126,7 @@ an exception is raised.</p>
 (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'long_name=time'</span></code>, etc.); or a
 compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>), for which all
-constructs whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are
+constructs whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are
 selected.</p>
 <p>Each construct has a number of identities, and is selected
 if any of them match any of those provided. A construct’s
@@ -139,20 +139,21 @@ four identities:</p>
 </div>
 <p>In addition, each construct also has an identity based its
 construct key (e.g. <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code>)</p>
-<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
 method, a construct is always described by one of its
 identities, and so this description may always be used as
 an <em>identity</em> argument.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
-property has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a>
-instance then it will be raised instead.</p>
+property has not been set</p>
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised
+instead.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The key of the selected construct.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The key of the selected construct.</p>
 </dd>
 </dl>
 </dd>
@@ -160,7 +161,7 @@ instance then it will be raised instead.</p>
 <p><strong>Examples:</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">)</span>
 <span class="go">Constructs:</span>
-<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;ellMethod: area: mean&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: long_name=time(1) days since 2018-12-01 &gt;,</span>
@@ -201,7 +202,7 @@ the letter ‘l’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

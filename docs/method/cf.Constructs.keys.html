@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Constructs.html">cf.Constructs</a><ul>
+  <li><a href="../class/cf.Constructs.html">cf.Constructs</a><ul>
       <li>Previous: <a href="cf.Constructs.items.html" title="previous chapter">cf.Constructs.items</a></li>
       <li>Next: <a href="cf.Constructs.values.html" title="next chapter">cf.Constructs.values</a></li>
   </ul></li>
@@ -106,14 +106,47 @@
 <h1>cf.Constructs.keys<a class="headerlink" href="#cf-constructs-keys" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.keys">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/core/constructs.py#L759-L767"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.keys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/core/constructs.py#L792-L830"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all of the construct keys, in arbitrary order.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>, <a class="reference internal" href="cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>, <a class="reference internal" href="cf.Constructs.values.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_keys</span></code></dt><dd><p>The construct keys as a Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_keys</span></code> iterator.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c_keys</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">dict_keys([</span>
+<span class="go">     &#39;domainaxis0&#39;,</span>
+<span class="go">     &#39;domainaxis1&#39;,</span>
+<span class="go">     &#39;domainaxis2&#39;,</span>
+<span class="go">     &#39;dimensioncoordinate0&#39;,</span>
+<span class="go">     &#39;dimensioncoordinate1&#39;,</span>
+<span class="go">     &#39;dimensioncoordinate2&#39;,</span>
+<span class="go">     &#39;cellmethod0&#39;</span>
+<span class="go">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict_keys&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">[&#39;domainaxis0&#39;,</span>
+<span class="go"> &#39;domainaxis1&#39;,</span>
+<span class="go"> &#39;domainaxis2&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;,</span>
+<span class="go"> &#39;cellmethod0&#39;]</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -127,7 +160,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

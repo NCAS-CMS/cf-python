@@ -23,6 +23,7 @@ Inspection
    ~cf.List.dump
    ~cf.List.identity  
    ~cf.List.identities
+   ~cf.List.inspect
    
 .. rubric:: Attributes
 	    
@@ -124,6 +125,7 @@ Data
    :template: attribute.rst
 
    ~cf.List.array
+   ~cf.List.Data
    ~cf.List.data
    ~cf.List.datetime_array
    ~cf.List.datum
@@ -176,6 +178,7 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.List.apply_masking
    ~cf.List.binary_mask
    ~cf.List.count
    ~cf.List.count_masked
@@ -196,6 +199,7 @@ Data
    :template: method.rst
 
    ~cf.List.__setitem__
+   ~cf.List.halo
    ~cf.List.mask_invalid
    ~cf.List.subspace
    ~cf.List.where
@@ -213,6 +217,8 @@ Data
    ~cf.List.convert_reference_time
    ~cf.List.cyclic
    ~cf.List.period
+   ~cf.List.iscyclic
+   ~cf.List.isperiodic
    ~cf.List.get_filenames
    ~cf.List.has_bounds
 
@@ -230,6 +236,7 @@ Miscellaneous
    ~cf.List.copy
    ~cf.List.creation_commands
    ~cf.List.equals
+   ~cf.List.uncompress
 
 .. rubric:: Attributes
 	    
@@ -570,4 +577,35 @@ Special
    ~cf.List.__query_set__
    ~cf.List.__query_wi__
    ~cf.List.__query_wo__
-   
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.List.asdatetime
+   ~cf.List.asreftime
+   ~cf.List.attributes
+   ~cf.List.delprop
+   ~cf.List.dtvarray
+   ~cf.List.expand_dims
+   ~cf.List.getprop
+   ~cf.List.hasbounds
+   ~cf.List.hasdata
+   ~cf.List.hasprop
+   ~cf.List.insert_data
+   ~cf.List.isauxiliary
+   ~cf.List.isdimension
+   ~cf.List.isdomainancillary
+   ~cf.List.isfieldancillary
+   ~cf.List.ismeasure
+   ~cf.List.name
+   ~cf.List.remove_data
+   ~cf.List.select
+   ~cf.List.setprop
+   ~cf.List.unsafe_array

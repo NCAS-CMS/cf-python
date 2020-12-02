@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="../attribute/cf.Field.isscalar.html" title="previous chapter">cf.Field.isscalar</a></li>
       <li>Next: <a href="cf.Field.regrids.html" title="next chapter">cf.Field.regrids</a></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.regridc<a class="headerlink" href="#cf-field-regridc" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regridc">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L19421-L20002"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regridc</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">axes</em>, <em class="sig-param">method</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/field.py#L19188-L19767"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field with the specified Cartesian axes regridded
 onto a new grid.</p>
 <p>Between 1 and 3 dimensions may be regridded.</p>
@@ -166,7 +166,7 @@ call. By default logging is disabled.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>dst: <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The field containing the new grid or a dictionary with the
+<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The field containing the new grid or a dictionary with the
 axes specifiers as keys referencing dimension coordinates.
 If dst is a field list the first field in the list is
 used.</p>
@@ -177,7 +177,7 @@ options for selecting specific axes. However, the number
 of axes returned by <a class="reference internal" href="cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a> TODO must be the same as
 the number of specifiers passed in.</p>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Specify the regridding method. The <em>method</em> parameter must
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Specify the regridding method. The <em>method</em> parameter must
 be one of the following:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -286,18 +286,18 @@ point.</p>
 </tbody>
 </table>
 </dd>
-<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For all methods other than ‘nearest_stod’, this must be
+<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For all methods other than ‘nearest_stod’, this must be
 True as it does not make sense to set it to False. For the</p>
 <p>‘nearest_stod’ method if it is True then points in the
 result that are nearest to a masked source point are
 masked. Otherwise, if it is False, then these points are
 interpolated to the nearest unmasked source points.</p>
 </dd>
-<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default the mask of the data on the destination grid is
+<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default the mask of the data on the destination grid is
 not taken into account when performing regridding. If this
 option is set to True then it is.</p>
 </dd>
-<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If the method of regridding is conservative the fraction
+<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If the method of regridding is conservative the fraction
 of each destination grid cell involved in the regridding
 is returned instead of the regridded data if this is
 True. Otherwise this is ignored.</p>
@@ -311,7 +311,7 @@ recalculated every time the mask of a slice changes with
 respect to the previous one, so this option allows the
 user to minimise how frequently the mask changes.</p>
 </dd>
-<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>True by default. Instructs ESMPy to ignore degenerate
+<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>True by default. Instructs ESMPy to ignore degenerate
 cells when checking the grids for errors. Regridding will
 proceed and degenerate cells will be skipped, not
 producing a result, when set to True. Otherwise an error
@@ -321,11 +321,11 @@ set to True. As of ESMF 7.0.0 this only applies to
 conservative regridding.  Other methods always skip
 degenerate cells.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
-<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If this is a dictionary then the field masses of the
+<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If this is a dictionary then the field masses of the
 source and destination fields are computed and returned
 within the dictionary. The keys of the dictionary
 indicates the lat/long slice of the field and the
@@ -339,7 +339,7 @@ purposes.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation
 was in-place.</p>
 </dd>
 </dl>
@@ -383,7 +383,7 @@ contained in field <code class="docutils literal notranslate"><span class="pre">
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

@@ -9,7 +9,13 @@ import unittest
 
 import numpy
 
-from scipy.ndimage import convolve1d
+SCIPY_AVAILABLE = False
+try:
+    from scipy.ndimage import convolve1d
+    SCIPY_AVAILABLE = True
+# not 'except ImportError' as that can hide nested errors, catch anything:
+except Exception:
+    pass  # test with this dependency will then be skipped by unittest
 
 import cf
 
@@ -78,29 +84,23 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
-
-        for rd in (False, True):
-            for indent in (0, 4):
-                for s in (False, True):
-                    for ns in ('cf', ''):
-                        _ = f.creation_commands(representative_data=rd,
-                                                indent=indent,
-                                                namespace=ns,
-                                                string=s)
-        # --- End: for
-
         for i in range(7):
             f = cf.example_field(i)
-            for rd in (False, True):
-                for indent in (0, 4):
-                    for s in (False, True):
-                        for ns in ('cf', ''):
-                            _ = f.creation_commands(representative_data=rd,
-                                                    indent=indent,
-                                                    namespace=ns,
-                                                    string=s)
-        # --- End: for
+            _ = f.creation_commands()
+
+        f = cf.example_field(1)
+
+        for rd in (False, True):
+            _ = f.creation_commands(representative_data=rd)
+
+        for indent in (0, 4):
+            _ = f.creation_commands(indent=indent)
+
+        for s in (False, True):
+            _ = f.creation_commands(string=s)
+
+        for ns in ('cf', ''):
+            _ = f.creation_commands(namespace=ns)
 
     def test_Field_get_filenames(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1081,12 +1081,18 @@ class FieldTest(unittest.TestCase):
                 g = f.anchor('grid_longitude', anchor)
                 x0 = g.coordinate('grid_longitude').datum(-1) - period
                 x1 = g.coordinate('grid_longitude').datum(0)
-                self.assertTrue(
-                    x0 < anchor <= x1,
-                    'INCREASING period=%s, x0=%s, anchor=%s, x1=%s' % (
-                        period, x0, anchor, x1)
+
+                self.assertGreater(
+                    anchor, x0,
+                    "INCREASING period={}, x0={}, anchor={}".format(
+                        period, x0, anchor)
                 )
-            # --- End: for
+
+                self.assertLessEqual(
+                    anchor, x1,
+                    "INCREASING period={}, x1={}, anchor={}".format(
+                        period, x1, anchor)
+                )
 
             # Decreasing dimension coordinate
             flipped_f = f.flip('grid_longitude')
@@ -1094,10 +1100,18 @@ class FieldTest(unittest.TestCase):
                 g = flipped_f.anchor('grid_longitude', anchor)
                 x1 = g.coordinate('grid_longitude').datum(-1) + period
                 x0 = g.coordinate('grid_longitude').datum(0)
-                self.assertTrue(
-                    x1 > anchor >= x0,
-                    "DECREASING period={}, x0={}, anchor={}, x1={}".format(
-                        period, x1, anchor, x0))
+
+                self.assertLess(
+                    anchor, x1,
+                    "INCREASING period={}, x1={}, anchor={}".format(
+                        period, x1, anchor)
+                )
+
+                self.assertGreaterEqual(
+                    anchor, x0,
+                    "INCREASING period={}, x0={}, anchor={}".format(
+                        period, x0, anchor)
+                )
         # --- End: for
 
     def test_Field_cell_area(self):
@@ -1364,6 +1378,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((x == [-80, -40, 0, 40]).all())
 
         indices = f.indices(grid_longitude=cf.wi(310, 450))
+
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 4), g.shape)
         x = g.dimension_coordinate('X').array
@@ -1392,17 +1407,30 @@ class FieldTest(unittest.TestCase):
             f.indices(grid_longitude=cf.wi(90, 100))
 
         indices = f.indices('full', grid_longitude=cf.wi(310, 450))
+        self.assertTrue(indices[0], 'mask')
+        self.assertTrue(
+            (
+                indices[1][0].array == [[[False, False, False,
+                                          True, True, True, True, True,
+                                          False]]]
+            ).all()
+        )
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 9), g.shape)
+
         x = g.dimension_coordinate('X').array
         self.assertEqual(x.shape, (9,), x.shape)
+
         self.assertTrue(
             (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all(), x)
+
         a = array.copy()
-        a[..., [3, 4, 5, 6, 7]] = numpy.ma.masked
+        a[..., 3:8] = numpy.ma.masked
+
         self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
 
         indices = f.indices('full', grid_longitude=cf.wi(70, 200))
+        self.assertTrue(indices[0], 'mask')
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 9), g.shape)
         x = g.dimension_coordinate('X').array
@@ -1417,6 +1445,7 @@ class FieldTest(unittest.TestCase):
         f.flip('X', inplace=True)
 
         indices = f.indices(grid_longitude=cf.wi(50, 130))
+        self.assertTrue(indices[0], 'mask')
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 2), g.shape)
         x = g.dimension_coordinate('X').array
@@ -1562,7 +1591,8 @@ class FieldTest(unittest.TestCase):
             (((lon >= 92) & (lon <= 134)) &
              (((lat >= -26) & (lat <= -20)) | (lat >= 30))),
             f.array,
-            numpy.ma.masked)
+            numpy.ma.masked
+        )
         self.assertTrue(cf.functions._numpy_allclose(array, g.array), g.array)
 
         for mode in ('', 'compress', 'full', 'envelope'):
@@ -1777,6 +1807,9 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        if not SCIPY_AVAILABLE:  # needed for 'convolution_filter' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
+
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
 
         f = cf.read(self.filename1)[0]
@@ -1790,6 +1823,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_moving_window(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'moving_window' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
@@ -1924,6 +1960,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_derivative(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'derivative' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         x_min = 0.0
         x_max = 359.0
@@ -2481,6 +2520,32 @@ class FieldTest(unittest.TestCase):
         g = f[0]
         with self.assertRaises(Exception):
             f.del_domain_axis('T')
+
+    def test_Field_percentile(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(1)
+        for chunksize in self.chunk_sizes:
+            cf.chunksize(chunksize)
+            # Percentiles taken across *all axes*
+            ranks = [[30, 60, 90], [20], 80]  # include valid singular form
+
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but numpy has an
+                # inverse parameter called keepdims which is by default False
+                # also, one must be set to the non-default for equivalents.
+                # So first cases (n1, n1) are both squeezed, (n2, n2) are not:
+                a1 = numpy.percentile(f, rank)  # has keepdims=False default
+                b1 = f.percentile(rank, squeeze=True)
+                self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
+                a2 = numpy.percentile(f, rank, keepdims=True)
+                b2 = f.percentile(rank)  # has squeeze=False default
+                self.assertTrue(b2.shape, a2.shape)
+                self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+
+        # TODO: add loop to check get same shape and close enough data
+        # for every possible axis combo (see also test_Data_percentile).
 
 # --- End: class
 

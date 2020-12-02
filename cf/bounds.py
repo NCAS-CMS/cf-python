@@ -30,9 +30,7 @@ class Bounds(mixin.Coordinate,
 
     **NetCDF interface**
 
-    The netCDF variable name of the bounds may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the trailing netCDF dimension spanned by bounds (which
     does not correspond to a domain axis construct) may be accessed
@@ -59,7 +57,7 @@ class Bounds(mixin.Coordinate,
     variables with bounds to be contiguous, but size 1 variables with
     any number of dimensions are always contiguous.
 
-    An exception is raised if the variable is multdimensional and has
+    An exception is raised if the variable is multidimensional and has
     more than one element.
 
     .. versionadded:: 2.0

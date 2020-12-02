@@ -774,7 +774,7 @@ class _Meta:
             var_units = variable.bounds.Units
         else:
             return _no_units
-            
+
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
@@ -1056,6 +1056,7 @@ class _Meta:
 
         return anc_identity
 
+    @_manage_log_level_via_verbose_attr
     def print_info(self, signature=True):
         '''TODO
 
@@ -1072,7 +1073,7 @@ class _Meta:
                     self.string_structural_signature()
                 )
             )
-                          
+
         if self.cell_values:
             logger.detail(
                 "CANONICAL COORDINATES:\n{}".format(
@@ -1289,7 +1290,7 @@ def aggregate(fields,
               no_overlap=False,
               shared_nc_domain=False,
               field_identity=None,
-              domain=False, ## ??? TODO
+              domain=False,  # ??? TODO
               info=False,
               ):
     '''Aggregate field constructs into as few field constructs as
@@ -1363,7 +1364,7 @@ def aggregate(fields,
                            signature, their canonical first and last
                            coordinate values.
 
-            ``3``/``-1``  * As well as the above, display the field
+            ``3``/``-1``   * As well as the above, display the field
                            construct's complete aggregation metadata.
             =============  =================================================
 
@@ -1404,7 +1405,7 @@ def aggregate(fields,
             Specify a property with which to identify field constructs
             instead of any other technique. How metadata constructs
             are identified is not affected by this parameter. See the
-            *relaxed_identites* and *ncvar_identities* parameters.
+            *relaxed_identities* and *ncvar_identities* parameters.
 
             *Parameter example:*
               Force field constructs to be identified by the values of
@@ -1587,8 +1588,12 @@ def aggregate(fields,
 
     if atol is None:
         atol = cf_atol()
+
     if rtol is None:
         rtol = cf_rtol()
+
+    atol = float(atol)
+    rtol = float(rtol)
 
     if axes is not None and isinstance(axes, str):
         axes = (axes,)
@@ -1929,7 +1934,7 @@ def aggregate(fields,
     aggregate.status = status
 
     if status:
-        logger.info('')    
+        logger.info('')
 
     Type = 'field'
     if output_constructs:
@@ -1943,7 +1948,7 @@ def aggregate(fields,
 
     if Type == 'field':
         output_constructs = FieldList(output_constructs)
-        
+
     return output_constructs
 
 

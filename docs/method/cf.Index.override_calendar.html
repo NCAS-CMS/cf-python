@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Index.html">cf.Index</a><ul>
+  <li><a href="../class/cf.Index.html">cf.Index</a><ul>
       <li>Previous: <a href="cf.Index.override_units.html" title="previous chapter">cf.Index.override_units</a></li>
       <li>Next: <a href="../attribute/cf.Index.Units.html" title="next chapter">cf.Index.Units</a></li>
   </ul></li>
@@ -106,35 +106,38 @@
 <h1>cf.Index.override_calendar<a class="headerlink" href="#cf-index-override-calendar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.override_calendar">
-<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">override_calendar</code><span class="sig-paren">(</span><em class="sig-param">calendar</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/mixin/propertiesdata.py#L5152-L5207"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.override_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">override_calendar</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/decorators.py#L39-L63"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.override_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the calendar of date-time units.</p>
 <p>The new calendar need not be equivalent to the original one, and
 the data array elements will not be changed to reflect the new
 units. Therefore, this method should only be used when it is known
 that the data array values are correct but the calendar has been
 incorrectly encoded.</p>
-<p>Not to be confused with setting the <a class="reference internal" href="../attribute/cf.Index.calendar.html#cf.Index.calendar" title="cf.Index.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>
+<p>Not to be confused with setting the <a class="reference internal" href="../attribute/cf.Index.calendar.html#cf.Index.calendar" title="cf.Index.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a> or <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>
 attributes to a calendar which is equivalent to the original
 calendar</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../attribute/cf.Index.calendar.html#cf.Index.calendar" title="cf.Index.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a>, <a class="reference internal" href="cf.Index.override_units.html#cf.Index.override_units" title="cf.Index.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a>, <a class="reference internal" href="../attribute/cf.Index.units.html#cf.Index.units" title="cf.Index.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p>
+<p><a class="reference internal" href="../attribute/cf.Index.calendar.html#cf.Index.calendar" title="cf.Index.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a>, <a class="reference internal" href="cf.Index.override_units.html#cf.Index.override_units" title="cf.Index.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a>, <a class="reference internal" href="../attribute/cf.Index.units.html#cf.Index.units" title="cf.Index.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new calendar.</p>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new calendar.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
-<dt>i: deprecated at version 3.0.0</dt><dd><p>Use <em>inplace</em> parameter instead.</p>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p></dd>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
+</dd>
 </dl>
-<p>TODO</p>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <p>TODO</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">override_calendar</span><span class="p">(</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span>
@@ -152,7 +155,7 @@ calendar</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

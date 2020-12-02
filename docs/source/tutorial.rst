@@ -1624,6 +1624,16 @@ create the such a mapping, then any manipulation of the dimensions
 must be done manually, and the other field construct's `cf.Data` instance
 (rather than the field construct itself) may be assigned.
 
+.. _Assignment-of-bounds:
+
+Assignment of bounds
+^^^^^^^^^^^^^^^^^^^^
+
+When assigning an object that has bounds to an object that also has
+bounds, then the bounds are also assigned. This is the only
+circumstance that allows bounds to be updated during assignment by
+index.
+
 ----
 
 .. Units:
@@ -3625,7 +3635,7 @@ Constructor    Description
 `cf.son`       A `cf.Query` object for a "month of year in September, October, November" condition
 `cf.djf`       A `cf.Query` object for a "month of year in December, January, February" condition
 `cf.mam`       A `cf.Query` object for a "month of year in March, April, May" condition
-`cf.seasons`   A customizable list of `cf.Query` objects for "seasons in a year" conditions
+`cf.seasons`   A customisable list of `cf.Query` objects for "seasons in a year" conditions
 =============  ===================================================================================
 
 |
@@ -4637,28 +4647,45 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cf.atol` and `cf.rtol` functions:
-
-.. code-block:: python
-   :caption: *The atol and rtol functions allow the numerical equality
-             tolerances to be inspected and changed.*
-      
-   >>> cf.atol()
-   2.220446049250313e-16
-   >>> cf.rtol()
-   2.220446049250313e-16
-   >>> original = cf.rtol(0.00001)
-   >>> cf.rtol()
-   1e-05
-   >>> cf.rtol(original)
-   1e-05
-   >>> cf.rtol()
-   2.220446049250313e-16
+`cf.atol` and `cf.rtol` functions.
 
 Note that the above equation is not symmetric in :math:`x` and
 :math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
 may be different from ``f2.equals(f1)`` in some rare cases.
    
+.. code-block:: python
+   :caption: *The atol and rtol functions allow the numerical equality
+             tolerances to be inspected and changed.*
+      
+   >>> print(cf.atol())
+   2.220446049250313e-16
+   >>> print(cf.rtol())
+   2.220446049250313e-16
+   >>> original = cf.rtol(0.00001)
+   >>> print(cf.rtol())
+   1e-05
+   >>> print(cf.rtol(original))
+   1e-05
+   >>> print(cf.rtol())
+   2.220446049250313e-16
+
+The :math:`a_{tol}` and :math:`r_{tol}` constants may be set for a
+runtime context established when executing a `with` statement.
+
+.. code-block:: python
+   :caption: *Evaluate equality in a runtime contenxt with a different
+             value of 'atol'.*
+	     
+   >>> t2 = t - 0.00001
+   >>> t.equals(t2)
+   False
+   >>> with cf.atol(1e-5):
+   ...     print(t.equals(t2))
+   ...
+   True
+   >>> t.equals(t2)
+   False
+
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
@@ -5463,7 +5490,7 @@ setting the *group* keyword to `cf.write` to `False`.
    >>> cf.write(g, 'flat.nc', group=False)
 
 NetCDF variables in the flattened output file will inherit any netCDF
-group attributes, providing that they are not superceded by variable
+group attributes, providing that they are not superseded by variable
 attributes. The output netCDF variable and dimension names will be
 taken as the basenames of any that have been pre-defined. This is the
 case in file ``flat.nc``, for which the netCDF variable ``q`` has
@@ -6312,7 +6339,7 @@ creates a simple field construct with an underlying gathered array:
    X = P.set_construct(cf.DomainAxis(2))
 
    # Set the data for the field
-   P.set_data(cf.Data(array), axes=[T, Y, X])			      
+   P.set_data(cf.Data(array), axes=[T, Y, X])
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the

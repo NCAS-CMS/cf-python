@@ -2,7 +2,7 @@ from copy import copy
 
 
 from . import mixin
-from . import abstract
+from . import ConstructList
 
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
@@ -11,7 +11,7 @@ from .functions import (_DEPRECATION_ERROR,
 
 
 class FieldList(mixin.FieldDomainList,
-                abstract.ConstructList):
+                ConstructList):
     '''An ordered sequence of fields.
 
     Each element of a field list is a field construct.
@@ -62,163 +62,6 @@ class FieldList(mixin.FieldDomainList,
 
         '''
         return self[0].concatenate(self, axis=axis, _preserve=_preserve)
-
-    def select_by_construct(self, *identities, OR=False, **conditions):
-        '''Select field constructs by metadata constructs.
-
-    To find the inverse of the selection, use a list comprehension
-    with the !match_by_construct` method of the constuct elements. For
-    example, to select all constructs that do *not* have a "latitude"
-    metadata construct:
-
-       >>> gl = cf.{{class}}(
-       ...     f for f in fl if not f.match_by_constructs('latitude')
-       ... )
-
-    .. note:: The API changed at version 3.1.0
-
-    .. versionadded:: 3.0.0
-
-    .. seealso: `select`, `__call__`, `select_by_units`,
-                `select_by_naxes`, `select_by_rank`,
-                `select_by_property`, `cf.Field.match_by_construct`
-
-    :Parameters:
-
-        identities: optional
-            Identify the metadata constructs by one or more of
-
-            * A metadata construct identity.
-
-              {{construct selection identity}}
-
-            * The key of a metadata construct (although beware that
-              construct keys may differ arbitrarily between list
-              elements).
-
-            If no identities nor conditions (see the *conditions*
-            parameter) are provided then all list elements are
-            selected.
-
-            If a cell method construct identity is given (such as
-            ``'method:mean'``) then it will only be compared with the
-            most recently applied cell method operation.
-
-            Alternatively, one or more cell method constucts may be
-            identified in a single string with a CF-netCDF cell
-            methods-like syntax for describing both the collapse
-            dimensions, the collapse method, and any cell method
-            construct qualifiers. If N cell methods are described in
-            this way then they will collectively identify the N most
-            recently applied cell method operations. For example,
-            ``'T: maximum within years T: mean over years'`` will be
-            compared with the most two most recently applied cell
-            method operations.
-
-            *Parameter example:*
-              `'latitude'``
-
-            *Parameter example:*
-              ``'T'
-
-            *Parameter example:*
-              ``'latitude'``
-
-            *Parameter example:*
-              ``'long_name=Cell Area'``
-
-            *Parameter example:*
-              ``'cellmeasure1'``
-
-            *Parameter example:*
-              ``'measure:area'``
-
-            *Parameter example:*
-              ``cf.eq('time')'``
-
-            *Parameter example:*
-              ``re.compile('^lat')``
-
-            *Parameter example:*
-              ``'domainancillary2', 'longitude'``
-
-            *Parameter example:*
-              ``'area: mean T: maximum'``
-
-            *Parameter example:*
-              ``'grid_latitude', 'area: mean T: maximum'``
-
-        conditions: optional
-            Identify the metadata constructs that have any of the
-            given identities or construct keys, and whose data satisfy
-            conditions.
-
-            A construct identity or construct key (as defined by the
-            *identities* parameter) is given as a keyword name and a
-            condition on its data is given as the keyword value.
-
-            The condition is satisfied if any of its data values
-            equals the value provided.
-
-            If no conditions nor identities (see the *identities*
-            parameter) are provided then all list elements are
-            selected.
-
-            *Parameter example:*
-              ``longitude=180.0``
-
-            *Parameter example:*
-              ``time=cf.dt('1959-12-16')``
-
-            *Parameter example:*
-              ``latitude=cf.ge(0)``
-
-            *Parameter example:*
-              ``latitude=cf.ge(0), air_pressure=500``
-
-            *Parameter example:*
-              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
-
-        OR: `bool`, optional
-            If True then return `True` if at least one metadata
-            construct matches at least one of the criteria given by
-            the *identities* or *conditions* arguments. By default
-            `True` is only returned if the field constructs matches
-            each of the given criteria.
-
-        mode: deprecated at version 3.1.0
-            Use the *OR* parameter instead.
-
-        constructs: deprecated at version 3.1.0
-
-    :Returns:
-
-        `bool`
-            The matching field constructs.
-
-    **Examples:**
-
-        TODO
-
-        '''
-        if identities:
-            if identities[0] == 'or':
-                _DEPRECATION_ERROR_ARG(
-                    self, 'select_by_construct', 'or',
-                    message="Use 'OR=True' instead.", version='3.1.0'
-                )  # pragma: no cover
-
-            if identities[0] == 'and':
-                _DEPRECATION_ERROR_ARG(
-                    self, 'select_by_construct', 'and',
-                    message="Use 'OR=False' instead.", version='3.1.0'
-                )  # pragma: no cover
-        # --- End: if
-
-        return type(self)(
-            f for f in self
-            if f.match_by_construct(*identities, OR=OR, **conditions)
-        )
 
     def select_by_naxes(self, *naxes):
         '''Select field constructs by property.
@@ -295,7 +138,7 @@ class FieldList(mixin.FieldDomainList,
         exact: `bool`, optional
             If `False` then select field constructs whose units are
             equivalent to any of those given by *units*. For example,
-            metres and are equivelent to kilometres. By default, field
+            metres and are equivalent to kilometres. By default, field
             constructs whose units are exactly one of those given by
             *units* are selected. Note that the format of the units is
             not important, i.e. 'm' is exactly the same as 'metres'
@@ -372,7 +215,7 @@ class FieldList(mixin.FieldDomainList,
                 default,
                 "No fields found from {}".format(identities)
             )
-        
+
         if len(out) > 1:
             return self._default(
                 default,

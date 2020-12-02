@@ -24,6 +24,7 @@ Inspection
    ~cf.Bounds.dump
    ~cf.Bounds.identity  
    ~cf.Bounds.identities
+   ~cf.Bounds.inspect
 
 .. rubric:: Attributes
 	    
@@ -76,6 +77,7 @@ Properties
    :template: attribute.rst
 
    ~cf.Bounds.add_offset
+   ~cf.Bounds.axis
    ~cf.Bounds.calendar
    ~cf.Bounds.comment
    ~cf.Bounds._FillValue
@@ -85,6 +87,7 @@ Properties
    ~cf.Bounds.long_name
    ~cf.Bounds.missing_value
    ~cf.Bounds.month_lengths
+   ~cf.Bounds.positive
    ~cf.Bounds.scale_factor
    ~cf.Bounds.standard_name
    ~cf.Bounds.units
@@ -126,6 +129,7 @@ Data
    :template: attribute.rst
 
    ~cf.Bounds.array
+   ~cf.Bounds.Data
    ~cf.Bounds.data
    ~cf.Bounds.datetime_array
    ~cf.Bounds.datum
@@ -199,6 +203,7 @@ Data
    :template: method.rst
 
    ~cf.Bounds.__setitem__
+   ~cf.Bounds.halo
    ~cf.Bounds.mask_invalid
    ~cf.Bounds.subspace
    ~cf.Bounds.where
@@ -210,12 +215,14 @@ Data
    :toctree: ../method/
    :template: method.rst
 	      
-
+   ~cf.Bounds.autoperiod
    ~cf.Bounds.chunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
    ~cf.Bounds.cyclic
    ~cf.Bounds.period
+   ~cf.Bounds.iscyclic
+   ~cf.Bounds.isperiodic
    ~cf.Bounds.get_filenames
    ~cf.Bounds.has_bounds
 
@@ -246,6 +253,7 @@ Miscellaneous
    ~cf.Bounds.X
    ~cf.Bounds.Y
    ~cf.Bounds.Z
+   ~cf.Bounds.ctype
    ~cf.Bounds.id
 
 Mathematical operations
@@ -581,3 +589,35 @@ Special
    ~cf.Bounds.__query_set__
    ~cf.Bounds.__query_wi__
    ~cf.Bounds.__query_wo__
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Bounds.asdatetime
+   ~cf.Bounds.asreftime
+   ~cf.Bounds.attributes
+   ~cf.Bounds.delprop
+   ~cf.Bounds.dtvarray
+   ~cf.Bounds.expand_dims
+   ~cf.Bounds.getprop
+   ~cf.Bounds.hasbounds
+   ~cf.Bounds.hasdata
+   ~cf.Bounds.hasprop
+   ~cf.Bounds.insert_data
+   ~cf.Bounds.isdimension
+   ~cf.Bounds.isdomainancillary
+   ~cf.Bounds.isfieldancillary
+   ~cf.Bounds.ismeasure
+   ~cf.Bounds.isauxiliary
+   ~cf.Bounds.name
+   ~cf.Bounds.remove_data
+   ~cf.Bounds.select
+   ~cf.Bounds.setprop
+   ~cf.Bounds.unsafe_array

@@ -23,6 +23,7 @@ Inspection
    ~cf.Count.dump
    ~cf.Count.identity  
    ~cf.Count.identities
+   ~cf.Count.inspect
 
 .. rubric:: Attributes
 	    
@@ -124,6 +125,7 @@ Data
    :template: attribute.rst
 
    ~cf.Count.array
+   ~cf.Count.Data
    ~cf.Count.data
    ~cf.Count.datetime_array
    ~cf.Count.datum
@@ -182,6 +184,7 @@ Data
    ~cf.Count.hardmask
    ~cf.Count.mask
    ~cf.Count.mask_invalid
+   ~cf.Count.apply_masking
 
 .. autosummary::
    :nosignatures:
@@ -213,6 +216,8 @@ Data
    ~cf.Count.convert_reference_time
    ~cf.Count.cyclic
    ~cf.Count.period
+   ~cf.Count.iscyclic
+   ~cf.Count.isperiodic
    ~cf.Count.get_filenames
    ~cf.Count.has_bounds
 
@@ -394,7 +399,6 @@ NetCDF
    ~cf.Count.nc_has_sample_dimension
    ~cf.Count.nc_set_sample_dimension
 
-
 Aliases
 -------
 
@@ -560,6 +564,9 @@ Groups
    ~cf.Count.nc_dimension_groups
    ~cf.Count.nc_clear_dimension_groups
    ~cf.Count.nc_set_dimension_groups
+   ~cf.Count.nc_clear_sample_dimension_groups
+   ~cf.Count.nc_sample_dimension_groups
+   ~cf.Count.nc_set_sample_dimension_groups
 
 Special
 -------
@@ -583,3 +590,35 @@ Special
    ~cf.Count.__query_wi__
    ~cf.Count.__query_wo__
    
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.asdatetime
+   ~cf.Count.asreftime
+   ~cf.Count.attributes
+   ~cf.Count.delprop
+   ~cf.Count.dtvarray
+   ~cf.Count.expand_dims
+   ~cf.Count.getprop
+   ~cf.Count.halo
+   ~cf.Count.hasbounds
+   ~cf.Count.hasdata
+   ~cf.Count.hasprop
+   ~cf.Count.insert_data
+   ~cf.Count.isauxiliary
+   ~cf.Count.isdimension
+   ~cf.Count.isdomainancillary
+   ~cf.Count.isfieldancillary
+   ~cf.Count.ismeasure
+   ~cf.Count.name
+   ~cf.Count.remove_data
+   ~cf.Count.select
+   ~cf.Count.setprop
+   ~cf.Count.unsafe_array

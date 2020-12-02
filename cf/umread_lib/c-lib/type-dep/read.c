@@ -110,7 +110,7 @@ Rec *get_record(File *file, List *heaplist)
 
 int read_all_headers(File *file, List *heaplist)
 {
-  switch (file->file_type.format)
+  switch (file->file_type.fmt)
     {
     case plain_pp:
       return read_all_headers_pp(file, heaplist);

@@ -5,7 +5,7 @@ with the replacement text defined by the corresponding value.
 
 Special docstring subtitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
-replacement text, and will be substituted as ususal.
+replacement text, and will be substituted as usual.
 
 Replacement text may contain other non-special substitutions.
 
@@ -23,7 +23,7 @@ Keys must be `str` or `re.Pattern` objects:
   be a string or a callable, as accepted by the `re.Pattern.sub`
   method.
 
-.. versionaddedd:: 3.7.0
+.. versionadded:: 3.7.0
 
 '''
 _docstring_substitution_definitions = {

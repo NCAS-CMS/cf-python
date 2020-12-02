@@ -104,8 +104,10 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't set elements when there is no data")
 
-        if isinstance(value, self.__class__):
-            value = value.data
+        try:
+            value = value.get_data()
+        except AttributeError:
+            pass
 
         data[indices] = value
 
@@ -689,9 +691,9 @@ class PropertiesData(Properties):
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
 
     :Parameters:
 
@@ -733,11 +735,6 @@ class PropertiesData(Properties):
                     self.__class__.__name__, data0.Units, data1.Units)
             )
             return False
-
-#        if atol is None:
-#            atol = atol()
-#        if rtol is None:
-#            rtol = rtol()
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             logger.info(
@@ -858,7 +855,9 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            TODO
+        `{{class}}`
+            A new construct, or the same construct if the operation
+            was in-place.
 
     **Examples:**
 
@@ -883,7 +882,7 @@ class PropertiesData(Properties):
             raise ValueError("Can't apply {} to a {} with no data".format(
                 method, self.__class__.__name__))
 
-        new = self.copy()
+        new = self.copy(data=False)
 
         new_data = data._unary_operation(method)
         new.set_data(new_data, copy=False)
@@ -1778,7 +1777,7 @@ class PropertiesData(Properties):
 
     This is distinct from the cyclicity of individual axes.
 
-    .. seeslso:: `cyclic`, `iscyclic`, `isperiodic`
+    .. seealso:: `cyclic`, `iscyclic`, `isperiodic`
 
     :Parameters:
 
@@ -2447,7 +2446,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `{{class}}` or `None`
-            The construct with ceilinged of data. If the operation was
+            The construct with the ceiling of the data. If the operation was
             in-place then `None` is returned.
 
     **Examples:**
@@ -2788,13 +2787,13 @@ class PropertiesData(Properties):
                 and return.
 
                 *Parameter example:*
-                  If the data aray shape is ``(2, 3, 6)`` then:
+                  If the data array shape is ``(2, 3, 6)`` then:
                     * ``f.datum(0)``  is equivalent to ``f.datum(0, 0, 0)``.
                     * ``f.datum(-1)`` is equivalent to ``f.datum(1, 2, 5)``.
                     * ``f.datum(16)`` is equivalent to ``f.datum(0, 2, 4)``.
 
                 If *index* is ``0`` or ``-1`` then the first or last
-                data array element respecitively will be returned,
+                data array element respectively will be returned,
                 even if the data array is a scalar array or has two or
                 more dimensions.  ..
 
@@ -2937,7 +2936,7 @@ class PropertiesData(Properties):
             If True then any compression applied to the underlying
             arrays is ignored and only the uncompressed arrays are
             tested for equality. By default the compression type and,
-            if appliciable, the underlying compressed arrays must be
+            if applicable, the underlying compressed arrays must be
             the same, as well as the arrays in their uncompressed
             forms.
 
@@ -3405,7 +3404,7 @@ class PropertiesData(Properties):
         exact: `bool`, optional
             If False then a match occurs if the construct's units are
             equivalent to any of those given by *units*. For example,
-            metres and are equivelent to kilometres. By default, a
+            metres and are equivalent to kilometres. By default, a
             match only occurs if the construct's units are exactly one
             of those given by *units*. Note that the format of the
             units is not important, i.e. 'm' is exactly the same as
@@ -3477,7 +3476,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `bool`
-            Whether ot not all data elements evaluate to True.
+            Whether to not all data elements evaluate to True.
 
     **Examples:**
 
@@ -3572,7 +3571,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `bool`
-            Whether ot not any data elements evaluate to `True`.
+            Whether to not any data elements evaluate to `True`.
 
     **Examples:**
 
@@ -4403,7 +4402,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         base: number, optional
-            The base of the logiarthm. By default a natural logiarithm
+            The base of the logarithm. By default a natural logarithm
             is taken.
 
         {{inplace: `bool`, optional}}
@@ -4970,7 +4969,7 @@ class PropertiesData(Properties):
         else:
             if not v.Units.isreftime:
                 raise ValueError(
-                    "Can't override the calender of non-reference-time "
+                    "Can't override the calendar of non-reference-time "
                     "units: {0!r}".format(self.Units)
                 )
 

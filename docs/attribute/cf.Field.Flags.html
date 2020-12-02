@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.has_bounds" href="cf.Field.has_bounds.html" />
-    <link rel="prev" title="cf.Field.concatenate" href="../method/cf.Field.concatenate.html" />
+    <link rel="prev" title="cf.Field.section" href="../method/cf.Field.section.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,8 +85,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="../method/cf.Field.concatenate.html" title="previous chapter">cf.Field.concatenate</a></li>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="../method/cf.Field.section.html" title="previous chapter">cf.Field.section</a></li>
       <li>Next: <a href="cf.Field.has_bounds.html" title="next chapter">cf.Field.has_bounds</a></li>
   </ul></li>
   </ul></li>
@@ -107,7 +107,7 @@
 <dl class="attribute">
 <dt id="cf.Field.Flags">
 <code class="sig-prename descclassname">Field.</code><code class="sig-name descname">Flags</code><a class="headerlink" href="#cf.Field.Flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <a class="reference internal" href="../classes/cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a> object containing self-describing CF flag values.</p>
+<dd><p>A <a class="reference internal" href="../class/cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a> object containing self-describing CF flag values.</p>
 <p>Stores the <a class="reference internal" href="cf.Field.flag_values.html#cf.Field.flag_values" title="cf.Field.flag_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_values</span></code></a>, <a class="reference internal" href="cf.Field.flag_meanings.html#cf.Field.flag_meanings" title="cf.Field.flag_meanings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_meanings</span></code></a> and <a class="reference internal" href="cf.Field.flag_masks.html#cf.Field.flag_masks" title="cf.Field.flag_masks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_masks</span></code></a> CF
 properties in an internally consistent manner.</p>
 <p><strong>Examples:</strong></p>
@@ -127,7 +127,7 @@ properties in an internally consistent manner.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

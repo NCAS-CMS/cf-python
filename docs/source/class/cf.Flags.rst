@@ -23,6 +23,7 @@ Inspection
    ~cf.Flags.flag_masks
    ~cf.Flags.flag_meanings
    ~cf.Flags.flag_values
+   ~cf.Flags.inspect
 
 Miscellaneous
 -------------
@@ -38,4 +39,3 @@ Miscellaneous
    ~cf.Flags.dump
    ~cf.Flags.equals
    ~cf.Flags.sort
-

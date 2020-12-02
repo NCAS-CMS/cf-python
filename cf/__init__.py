@@ -178,7 +178,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.2.1'
+_minimum_vn = '1.3.0'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
@@ -194,7 +194,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.3.0'
+_minimum_vn = '3.3.1'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -233,6 +233,7 @@ from .flags        import Flags
 from .timeduration import TimeDuration, Y, M, D, h, m, s
 from .units        import Units
 
+from .constructlist import ConstructList
 from .fieldlist import FieldList
 from .domainlist import DomainList
 
@@ -299,7 +300,13 @@ def detail(self, message, *args, **kwargs):
 logging.Logger.detail = detail
 
 
-# Also create level below even 'DEBUG'. It will not be advertised to users.
+# Also create special, secret level below even 'DEBUG'. It will not be
+# advertised to users. The user-facing cf.log_level() can set all but this
+# one level; we deliberately have not set up:
+#     cf.log_level('PARTITIONING')
+# to work to change the level to logging.PARTITIONING. Instead, to set this
+# manipulate the cf root logger directly via a built-in method, i.e call:
+#     cf.logging.getLogger().setLevel('PARTITIONING')
 logging.PARTITIONING = 5
 logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
 

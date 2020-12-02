@@ -56,7 +56,7 @@ class DocstringTest(unittest.TestCase):
             cf.mixin.propertiesdatabounds.PropertiesDataBounds)
 
     def test_docstring(self):
-        # Test that all {{ occurences have been substituted
+        # Test that all {{ occurrences have been substituted
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):

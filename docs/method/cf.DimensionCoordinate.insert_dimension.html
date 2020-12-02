@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
+  <li><a href="../class/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
       <li>Previous: <a href="cf.DimensionCoordinate.flip.html" title="previous chapter">cf.DimensionCoordinate.flip</a></li>
       <li>Next: <a href="cf.DimensionCoordinate.roll.html" title="next chapter">cf.DimensionCoordinate.roll</a></li>
   </ul></li>
@@ -106,12 +106,12 @@
 <h1>cf.DimensionCoordinate.insert_dimension<a class="headerlink" href="#cf-dimensioncoordinate-insert-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.insert_dimension">
-<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">insert_dimension</code><span class="sig-paren">(</span><em class="sig-param">position</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/propertiesdatabounds.py#L1255-L1331"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.insert_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">insert_dimension</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/decorators.py#L42-L67"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.insert_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand the shape of the data array.</p>
 <p>Inserts a new size 1 axis into the data array. A corresponding
 axis is also inserted into the bounds data array, if present.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -120,7 +120,7 @@ axis is also inserted into the bounds data array, if present.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify the position that the new axis will have in the
+<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify the position that the new axis will have in the
 data array. By default the new axis has position 0, the
 slowest varying position. Negative integers counting from
 the last position are allowed.</p>
@@ -131,13 +131,16 @@ the last position are allowed.</p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The new construct with expanded data axes. If the
-operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The new construct with expanded data axes. If the
+operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -166,7 +169,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

@@ -4,11 +4,12 @@ from numpy import size as numpy_size
 
 from . import PropertiesData
 
-from ..functions    import parse_indices
-from ..functions    import equivalent as cf_equivalent
-from ..functions    import inspect    as cf_inspect
-from ..functions    import (_DEPRECATION_ERROR_METHOD,
-                            _DEPRECATION_ERROR_ATTRIBUTE)
+from ..functions import (bounds_combination_mode,
+                         parse_indices,
+                         _DEPRECATION_ERROR_METHOD,
+                         _DEPRECATION_ERROR_ATTRIBUTE)
+from ..functions import equivalent as cf_equivalent
+from ..functions import inspect as cf_inspect
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
@@ -40,7 +41,6 @@ class PropertiesDataBounds(PropertiesData):
     x.__getitem__(indices) <==> x[indices]
 
         '''
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -141,6 +141,61 @@ class PropertiesDataBounds(PropertiesData):
 
         # Return the new bounded variable
         return new
+
+    def __setitem__(self, indices, value):
+        '''Called to implement assignment to x[indices]
+
+    x.__setitem__(indices, y) <==> x[indices] = y
+
+    **Bounds**
+
+    When assigning an object that has bounds to an object that also
+    has bounds, then the bounds are also assigned, if possible. This
+    is the only circumstance that allows bounds to be updated during
+    assignment by index.
+
+    Interior ring assignment can only occur if both ``x`` and ``y``
+    have interior ring arrays. An exception will be raised only one of
+    ``x`` and ``y`` has an interior ring array.
+
+        '''
+        super().__setitem__(indices, value)
+
+        # Set the interior ring, if present (added at v3.8.0).
+        interior_ring = self.get_interior_ring(None)
+        try:
+            value_interior_ring = value.get_interior_ring(None)
+        except AttributeError:
+            value_interior_ring = None
+
+        if interior_ring is not None and value_interior_ring is not None:
+            indices = parse_indices(self.shape, indices)
+            indices.append(slice(None))
+            interior_ring[tuple(indices)] = value_interior_ring
+        elif interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} without an interior ring array to "
+                "{!r} with an interior ring array".format(value, self)
+            )
+        elif value_interior_ring is not None:
+            raise ValueError(
+                "Can't assign {!r} with an interior ring array to "
+                "{!r} without an interior ring array".format(value, self)
+            )
+
+        # Set the bounds, if present (added at v3.8.0).
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            try:
+                value_bounds = value.get_bounds(None)
+            except AttributeError:
+                value_bounds = None
+
+            if value_bounds is not None:
+                indices = parse_indices(self.shape, indices)
+                indices.append(Ellipsis)
+                bounds[tuple(indices)] = value_bounds
+        # --- End: if
 
     def __eq__(self, y):
         '''The rich comparison operator ``==``
@@ -310,6 +365,38 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__rrshift__', False)
 
+    def __abs__(self):
+        '''The unary arithmetic operation ``abs``
+
+    x.__abs__() <==> abs(x)
+
+        '''
+        return self._unary_operation('__abs__', bounds=True)
+
+    def __neg__(self):
+        '''The unary arithmetic operation ``-``
+
+    x.__neg__() <==> -x
+
+        '''
+        return self._unary_operation('__neg__', bounds=True)
+
+    def __invert__(self):
+        '''The unary bitwise operation ``~``
+
+    x.__invert__() <==> ~x
+
+        '''
+        return self._unary_operation('__invert__', bounds=True)
+
+    def __pos__(self):
+        '''The unary arithmetic operation ``+``
+
+    x.__pos__() <==> +x
+
+        '''
+        return self._unary_operation('__pos__', bounds=True)
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -325,6 +412,16 @@ class PropertiesDataBounds(PropertiesData):
     It is intended to be called by the binary arithmetic and comparison
     methods, such as `!__sub__` and `!__lt__`.
 
+    **Bounds**
+
+    The flag returned by ``cf.bounds_combination_mode()`` is used to
+    influence whether or not the result of a binary operation "op(x,
+    y)", such as ``x + y``, ``x -= y``, ``x << y``, etc., will contain
+    bounds, and if so how those bounds are calculated.
+
+    The behaviour for the different flag values is described in the
+    docstring of `cf.bounds_combination_mode`.
+
     :Parameters:
 
         other:
@@ -335,53 +432,147 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds: `bool`, optional
             If False then ignore the bounds and remove them from the
-            result. By default the bounds are operated on as well.
+            result. By default the bounds are operated on as described
+            above.
 
     :Returns:
 
+        `{{class}}`
             A new construct, or the same construct if the operation
             was in-place.
 
         '''
-        inplace = method[2] == 'i'
+        inplace = (method[2] == 'i')
 
-        has_bounds = bounds and self.has_bounds()
+        bounds_AND = (bounds
+                      and bounds_combination_mode() == 'AND')
+        bounds_OR = (bounds and not bounds_AND
+                     and bounds_combination_mode() == 'OR')
+        bounds_XOR = (bounds and not bounds_AND and not bounds_OR
+                      and bounds_combination_mode() == 'XOR')
+        bounds_NONE = (not bounds
+                       or not (bounds_AND or bounds_OR or bounds_XOR)
+                       or bounds_combination_mode() == 'NONE')
+
+        if not bounds_NONE:
+            geometry = self.get_geometry(None)
+            try:
+                other_geometry = other.get_geometry(None)
+            except AttributeError:
+                other_geometry = None
+
+            if geometry != other_geometry:
+                raise ValueError(
+                    "Can't combine operands with different geometry types"
+                )
+
+            interior_ring = self.get_interior_ring(None)
+            try:
+                other_interior_ring = other.get_interior_ring(None)
+            except AttributeError:
+                other_interior_ring = None
+
+            if interior_ring is not None or other_interior_ring is not None:
+                raise ValueError(
+                    "Can't combine operands with interior ring arrays"
+                )
+        # --- End: if
+
+        has_bounds = self.has_bounds()
 
         if has_bounds and inplace and other is self:
             other = other.copy()
 
+        try:
+            other_bounds = other.get_bounds(None)
+        except AttributeError:
+            other_bounds = None
+
+        if (
+                (bounds_OR or bounds_XOR)
+                and not has_bounds and other_bounds is not None
+        ):
+            # --------------------------------------------------------
+            # If self has no bounds but other does, then copy self for
+            # use in constructing new bounds.
+            # --------------------------------------------------------
+            original_self = self.copy()
+
         new = super()._binary_operation(other, method)
 
-        if has_bounds:
-            # try:
-            #     other_has_bounds = other.has_bounds()
-            # except AttributeError:
-            #     other_has_bounds = False
+        if bounds_NONE:
+            # --------------------------------------------------------
+            # Remove any bounds from the result
+            # --------------------------------------------------------
+            new.del_bounds(None)
 
-            # if other_has_bounds:
-            #     new_bounds = self.bounds._binary_operation(
-            #         other.bounds, method)
-            # else:
+        elif has_bounds and other_bounds is not None:
+            if bounds_AND or bounds_OR:
+                # ----------------------------------------------------
+                # Both self and other have bounds, so combine them for
+                # the result.
+                # ----------------------------------------------------
+                new_bounds = self.bounds._binary_operation(other_bounds,
+                                                           method)
+
+                if not inplace:
+                    new.set_bounds(new_bounds, copy=False)
+
+            elif bounds_XOR:
+                # ----------------------------------------------------
+                # Both self and other have bounds, so remove the
+                # bounds from the result
+                # ----------------------------------------------------
+                new.del_bounds(None)
+
+        elif bounds_AND:
+            # --------------------------------------------------------
+            # At most one of self and other has bounds, so remove the
+            # bounds from the result.
+            # --------------------------------------------------------
+            new.del_bounds(None)
+
+        elif has_bounds:
+            # --------------------------------------------------------
+            # Only self has bounds, so combine the self bounds with
+            # the other values.
+            # --------------------------------------------------------
             if numpy_size(other) > 1:
-                try:
-                    other = other.insert_dimension(-1)
-                except AttributeError:
-                    other = numpy_expand_dims(other, -1)
+                for i in range(self.bounds.ndim - self.ndim):
+                    try:
+                        other = other.insert_dimension(-1)
+                    except AttributeError:
+                        other = numpy_expand_dims(other, -1)
             # --- End: if
 
             new_bounds = self.bounds._binary_operation(other, method)
 
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
-        # --- End: if
 
-        if not bounds and new.has_bounds():
-            new.del_bounds()
+        elif other_bounds is not None:
+            # --------------------------------------------------------
+            # Only other has bounds, so combine self values with the
+            # other bounds
+            # --------------------------------------------------------
+            new_bounds = self._Bounds(data=original_self.data, copy=True)
+            for i in range(other_bounds.ndim - other.ndim):
+                new_bounds = new_bounds.insert_dimension(-1)
 
-        if inplace:
-            return self
-        else:
-            return new
+            if inplace:
+                # Can't do the operation in-place because we'll run
+                # foul of the broadcasting rules (e.g. "ValueError:
+                # non-broadcastable output operand with shape (12,1)
+                # doesn't match the broadcast shape (12,2)")
+                method2 = method.replace('__i', '__', 1)
+            else:
+                method2 = method
+
+            new_bounds = new_bounds._binary_operation(other_bounds, method2)
+            new.set_bounds(new_bounds, copy=False)
+
+        new._custom['direction'] = None
+        return new
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None,
@@ -390,9 +581,9 @@ class PropertiesDataBounds(PropertiesData):
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
 
     :Parameters:
 
@@ -535,6 +726,38 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         return v
+
+    def _unary_operation(self, method, bounds=True):
+        '''Implement unary arithmetic operations on the data array and bounds.
+
+    :Parameters:
+
+        method: `str`
+            The unary arithmetic method name (such as "__abs__").
+
+        bounds: `bool`, optional
+            If False then ignore the bounds and remove them from the
+            result. By default the bounds are operated on as well.
+
+    :Returns:
+
+        `{{class}}`
+            A new construct, or the same construct if the operation
+            was in-place.
+
+        '''
+        new = super()._unary_operation(method)
+
+        self_bounds = self.get_bounds(None)
+        if self_bounds is not None:
+            if bounds:
+                new_bounds = self_bounds._unary_operation(method)
+                new.set_bounds(new_bounds)
+            else:
+                new.del_bounds()
+        # --- End: if
+
+        return new
 
     # ----------------------------------------------------------------
     # Attributes
@@ -979,7 +1202,7 @@ class PropertiesDataBounds(PropertiesData):
     :Returns:
 
         `{{class}}` or `None`
-            The construct with ceilinged of data. If the operation was
+            The construct with the ceiling of the data. If the operation was
             in-place then `None` is returned.
 
     **Examples:**
@@ -1389,7 +1612,7 @@ class PropertiesDataBounds(PropertiesData):
     construct with bounds to be contiguous. A size 1 construct with
     any number of dimensions is always contiguous.
 
-    An exception occurs if the construct is multdimensional and has
+    An exception occurs if the construct is multidimensional and has
     more than one element.
 
     .. versionadded:: 2.0
@@ -2027,7 +2250,7 @@ class PropertiesDataBounds(PropertiesData):
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    Corresponding axes exapnded in the bounds, if present.
+    Corresponding axes expanded in the bounds, if present.
 
     **Cyclic axes**
 
@@ -2920,7 +3143,7 @@ class PropertiesDataBounds(PropertiesData):
     :Parameters:
 
         base: number, optional
-            The base of the logiarthm. By default a natural logiarithm
+            The base of the logarithm. By default a natural logarithm
             is taken.
 
         bounds: `bool`, optional
@@ -3246,7 +3469,7 @@ class PropertiesDataBounds(PropertiesData):
     def period(self, *value):
         '''Return or set the period for cyclic values.
 
-    .. seeslso:: `cyclic`
+    .. seealso:: `cyclic`
 
     :Parameters:
 

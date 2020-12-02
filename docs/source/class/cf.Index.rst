@@ -23,6 +23,7 @@ Inspection
    ~cf.Index.dump
    ~cf.Index.identity  
    ~cf.Index.identities
+   ~cf.Index.inspect
 
 .. rubric:: Attributes
 	    
@@ -124,6 +125,7 @@ Data
    :template: attribute.rst
 
    ~cf.Index.array
+   ~cf.Index.Data
    ~cf.Index.data
    ~cf.Index.datetime_array
    ~cf.Index.datum
@@ -177,6 +179,7 @@ Data
    :template: attribute.rst
 
    ~cf.Index.binary_mask
+   ~cf.Index.apply_masking
    ~cf.Index.count
    ~cf.Index.count_masked
    ~cf.Index.hardmask
@@ -196,6 +199,7 @@ Data
    :template: method.rst
 
    ~cf.Index.__setitem__
+   ~cf.Index.halo
    ~cf.Index.mask_invalid
    ~cf.Index.subspace
    ~cf.Index.where
@@ -213,6 +217,8 @@ Data
    ~cf.Index.convert_reference_time
    ~cf.Index.cyclic
    ~cf.Index.period
+   ~cf.Index.iscyclic
+   ~cf.Index.isperiodic
    ~cf.Index.get_filenames
    ~cf.Index.has_bounds
 
@@ -230,6 +236,7 @@ Miscellaneous
    ~cf.Index.copy
    ~cf.Index.creation_commands
    ~cf.Index.equals
+   ~cf.Index.uncompress
 
 .. rubric:: Attributes
 	    
@@ -559,6 +566,9 @@ Groups
    ~cf.Index.nc_dimension_groups
    ~cf.Index.nc_clear_dimension_groups
    ~cf.Index.nc_set_dimension_groups
+   ~cf.Index.nc_clear_sample_dimension_groups
+   ~cf.Index.nc_sample_dimension_groups
+   ~cf.Index.nc_set_sample_dimension_groups
 
 Special
 -------
@@ -581,4 +591,35 @@ Special
    ~cf.Index.__query_set__
    ~cf.Index.__query_wi__
    ~cf.Index.__query_wo__
-   
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Index.asdatetime
+   ~cf.Index.asreftime
+   ~cf.Index.attributes
+   ~cf.Index.delprop
+   ~cf.Index.dtvarray
+   ~cf.Index.expand_dims
+   ~cf.Index.getprop
+   ~cf.Index.hasbounds
+   ~cf.Index.hasdata
+   ~cf.Index.hasprop
+   ~cf.Index.insert_data
+   ~cf.Index.isauxiliary
+   ~cf.Index.isdimension
+   ~cf.Index.isdomainancillary
+   ~cf.Index.isfieldancillary
+   ~cf.Index.ismeasure
+   ~cf.Index.name
+   ~cf.Index.remove_data
+   ~cf.Index.select
+   ~cf.Index.setprop
+   ~cf.Index.unsafe_array

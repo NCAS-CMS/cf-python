@@ -52,15 +52,20 @@ class DimensionCoordinate(mixin.Coordinate,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netcdf variable}}
 
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''
+        '''
+        instance = super().__new__(cls)
+        instance._Bounds = Bounds
+        return instance
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 

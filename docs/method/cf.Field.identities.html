@@ -21,7 +21,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.construct_type" href="../attribute/cf.Field.construct_type.html" />
+    <link rel="next" title="cf.Field.inspect" href="cf.Field.inspect.html" />
     <link rel="prev" title="cf.Field.identity" href="cf.Field.identity.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,9 +85,9 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.identity.html" title="previous chapter">cf.Field.identity</a></li>
-      <li>Next: <a href="../attribute/cf.Field.construct_type.html" title="next chapter">cf.Field.construct_type</a></li>
+      <li>Next: <a href="cf.Field.inspect.html" title="next chapter">cf.Field.inspect</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -106,19 +106,19 @@
 <h1>cf.Field.identities<a class="headerlink" href="#cf-field-identities" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.identities">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">identities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/mixin/propertiesdata.py#L4834-L4897"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.identities" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">identities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/mixin/propertiesdata.py#L4648-L4711"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.identities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all possible identities.</p>
 <p>The identities comprise:</p>
 <ul class="simple">
 <li><p>The “standard_name” property.</p></li>
-<li><p>The “id” attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</p></li>
-<li><p>The “cf_role” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</p></li>
-<li><p>The “axis” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</p></li>
-<li><p>The “long_name” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</p></li>
-<li><p>All other properties (including “standard_name”), preceeded by
+<li><p>The “id” attribute, preceded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</p></li>
+<li><p>The “cf_role” property, preceded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</p></li>
+<li><p>The “axis” property, preceded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</p></li>
+<li><p>The “long_name” property, preceded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</p></li>
+<li><p>All other properties (including “standard_name”), preceded by
 the property name and an <code class="docutils literal notranslate"><span class="pre">'='</span></code>.</p></li>
 <li><p>The coordinate type (<code class="docutils literal notranslate"><span class="pre">'X'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code> or <code class="docutils literal notranslate"><span class="pre">'T'</span></code>).</p></li>
-<li><p>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</p></li>
+<li><p>The netCDF variable name, preceded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</p></li>
 </ul>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.0.</span></p>
@@ -130,7 +130,7 @@ the property name and an <code class="docutils literal notranslate"><span class=
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The identities.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The identities.</p>
 </dd>
 </dl>
 </dd>
@@ -162,7 +162,7 @@ the property name and an <code class="docutils literal notranslate"><span class=
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

@@ -2,13 +2,19 @@ import logging
 
 from numpy import argmax as numpy_argmax
 from numpy import array as numpy_array
+from numpy import asanyarray as numpy_asanyarray
 from numpy import ndarray as numpy_ndarray
 from numpy import ones as numpy_ones
+from numpy import where as numpy_where
+
+from numpy.ma import isMA as numpy_ma_isMA
+from numpy.ma import where as numpy_ma_where
 
 from ..query import Query
 
 from ..functions import parse_indices
-from ..functions import (_DEPRECATION_ERROR_KWARGS,)
+from ..functions import (bounds_combination_mode,
+                         _DEPRECATION_ERROR_KWARGS,)
 
 from ..decorators import (
     _inplace_enabled,
@@ -38,12 +44,13 @@ class FieldDomain:
     :Parameters:
 
         mask_shape: `tuple`
-            The shape of the mask component to be created. This will
-            contain `None` for axes not spanned by the *ind*
-            parameter.
+            The shape of the mask component to be created.
 
               *Parameter example*
-                  ``mask_shape=(3, 11, None)``
+                  ``mask_shape=(3,)``
+
+              *Parameter example*
+                  ``mask_shape=(9, 10)``
 
         ind: `numpy.ndarray`
             As returned by a single argument call of
@@ -58,11 +65,6 @@ class FieldDomain:
         `Data`
 
         '''
-#        # --------------------------------------------------------
-#        # Find the shape spanned by ind
-#        # --------------------------------------------------------
-#        shape = [n for n in mask_shape if n]
-
         # Note that, for now, auxiliary_mask has to be numpy array
         # (rather than a cf.Data object) because we're going to index
         # it with fancy indexing which a cf.Data object might not
@@ -78,18 +80,9 @@ class FieldDomain:
             for iaxis, (index, n) in enumerate(zip(ind, mask_shape)):
                 index = set(index)
                 if len(index) < n:
-                    auxiliary_mask = auxiliary_mask.take(
-                        sorted(index), axis=iaxis
-                    )
+                    auxiliary_mask = auxiliary_mask.take(sorted(index),
+                                                         axis=iaxis)
         # --- End: if
-
-#        # Add missing size 1 axes to the auxiliary mask
-#        if auxiliary_mask.ndim < ndim:
-#            i = [
-#                slice(None) if n else numpy_newaxis
-#                for n in mask_shape
-#            ]
-#            auxiliary_mask = auxiliary_mask[tuple(i)]
 
         return self._Data(auxiliary_mask)
 
@@ -277,35 +270,16 @@ class FieldDomain:
         compress = 'compress' in mode or not (envelope or full)
 
         logger.debug(
-            "indices:\n"
-            "    envelope, full, compress = {} {} {}\n".format(
-                envelope, full, compress
+            "{}._indices:\n"
+            "  envelope, full, compress = {}, {}, {}".format(
+                self.__class__.__name__, envelope, full, compress
             )
         )  # pragma: no cover
 
         domain_axes = self.domain_axes
         constructs = self.constructs.filter_by_data()
 
-#        domain_rank = self.rank
-#
-#        ordered_axes = self._parse_axes(axes)
-#        ordered_axes = sorted(domain_axes)
-#        if ordered_axes is None or len(ordered_axes) != domain_rank:
-#            raise ValueError(
-#                "Must provide an ordered sequence of all domain axes "
-#                "as the last positional argument. Got {!r}".format(axes)
-#            )
-#
-#        domain_shape = tuple(
-#            [domain_axes[axis].get_size(None) for axis in ordered_axes]
-#        )
-#        if None in domain_shape:
-#            raise ValueError(
-#                "Can't find indices when a domain axis has no size"
-#            )
-#
         # Initialize indices
-#        indices = [slice(None)] * domain_rank
         indices = {axis: slice(None) for axis in domain_axes}
 
         parsed = {}
@@ -329,30 +303,34 @@ class FieldDomain:
                 axes = self.get_data_axes(key)
 
             if axes in parsed:
+                # The axes are the same as an exisiting key
                 parsed[axes].append((axes, key, construct, value))
             else:
+                new_key = True
                 y = set(axes)
                 for x in parsed:
                     if set(x) == set(y):
+                        # The axes are the same but in a different
+                        # order, so we don't need a new key.
                         parsed[x].append((axes, key, construct, value))
+                        new_key = False
                         break
 
-                if axes not in parsed:
+                if new_key:
+                    # The axes, taken in any order, are not the same
+                    # as any keys, so create an new key.
                     n_axes += len(axes)
                     parsed[axes] = [(axes, key, construct, value)]
             # --- End: if
 
             unique_axes.update(axes)
-
-#            sorted_axes = tuple(sorted(axes))
-#            if sorted_axes not in parsed:
-#                n_axes += len(sorted_axes)
-#
-#            parsed.setdefault(sorted_axes, []).append(
-#                (axes, key, construct, value))
-#
-#             unique_axes.update(sorted_axes)
         # --- End: for
+
+        logger.debug(
+            "  parsed      = {!r}\n"
+            "  unique_axes = {!r}\n"
+            "  n_axes      = {!r}".format(parsed, unique_axes, n_axes)
+        )  # pragma: no cover
 
         if len(unique_axes) < n_axes:
             raise ValueError(
@@ -363,7 +341,6 @@ class FieldDomain:
         auxiliary_mask = {}
 
         for canonical_axes, axes_key_construct_value in parsed.items():
-
             axes, keys, constructs, points = list(
                 zip(*axes_key_construct_value)
             )
@@ -388,8 +365,8 @@ class FieldDomain:
             item_axes = axes[0]
 
             logger.debug(
-                "    item_axes = {!r}\n"
-                "    keys      = {!r}".format(item_axes, keys)
+                "  item_axes = {!r}\n"
+                "  keys      = {!r}".format(item_axes, keys)
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -403,9 +380,9 @@ class FieldDomain:
                 value = points[0]
 
                 logger.debug(
-                    "    {} 1-d constructs: {!r}\n"
-                    "    axis      = {!r}\n"
-                    "    value     = {!r}".format(
+                    "  {} 1-d constructs: {!r}\n"
+                    "  axis      = {!r}\n"
+                    "  value     = {!r}".format(
                         n_items, constructs, axis, value
                     )
                 )  # pragma: no cover
@@ -529,8 +506,6 @@ class FieldDomain:
                 #
                 # Note that we might overwrite it later if there's an
                 # auxiliary mask for this axis.
-#                if axis in ordered_axes:
-#                    indices[ordered_axes.index(axis)] = index
                 indices[axis] = index
 
             else:
@@ -538,14 +513,15 @@ class FieldDomain:
                 # N-dimensional constructs
                 # ----------------------------------------------------
                 logger.debug(
-                    "    {} N-d constructs: {!r}\n"
-                    "    {} points        : {!r}\n"
-                    "    shape          : {}".format(
+                    "  {} N-d constructs: {!r}\n"
+                    "  {} points        : {!r}\n".format(
                         n_items, constructs, len(points), points,
                     )
                 )  # pragma: no cover
 
                 # Make sure that each N-d item has the same axis order
+                transposed_constructs = []
+
                 for construct, construct_axes in zip(constructs, axes):
                     if construct_axes != canonical_axes:
                         iaxes = [construct_axes.index(axis)
@@ -554,15 +530,8 @@ class FieldDomain:
 
                     transposed_constructs.append(construct)
 
-#                item_axes = sorted_axes
-
-#                g = self.transpose(ordered_axes, constructs=True)
-#
-#                item_axes = g.get_data_axes(keys[0])
-#
-#               constructs = [g.constructs[key] for key in keys]
                 logger.debug(
-                    "    transposed N-d constructs: {!r}".format(
+                    "  transposed N-d constructs: {!r}".format(
                         transposed_constructs
                     )
                 )  # pragma: no cover
@@ -585,8 +554,8 @@ class FieldDomain:
                     ind = numpy_where(item_match)
 
                 logger.debug(
-                    "    item_match  = {}\n"
-                    "    ind         = {}".format(item_match, ind)
+                    "  item_match  = {}\n"
+                    "  ind         = {}".format(item_match, ind)
                 )  # pragma: no cover
 
                 bounds = [
@@ -651,7 +620,7 @@ class FieldDomain:
             # --- End: if
 
             if ind is not None:
-                mask_shape = [] #[None] * domain_rank
+                mask_shape = []  # [None] * domain_rank
                 masked_subspace_size = 1
                 ind = numpy_array(ind)
                 logger.debug('    ind = {}'.format(ind))  # pragma: no cover
@@ -662,9 +631,6 @@ class FieldDomain:
                     if data_axes and axis not in data_axes:
                         continue
 
-#                    position = ordered_axes.index(axis)
-
-#                    if indices[position] == slice(None):
                     if indices[axis] == slice(None):
                         if compress:
                             # Create a compressed index for this axis
@@ -686,10 +652,8 @@ class FieldDomain:
                                 "Must have full, envelope or compress"
                             )  # pragma: no cover
 
-#                        indices[position] = index
                         indices[axis] = index
 
-#                    mask_shape[position] = size
                     mask_shape.append(size)
                     masked_subspace_size *= size
                     ind[i] -= start
@@ -704,21 +668,17 @@ class FieldDomain:
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
             logger.debug(
-                "    create_mask = {}".format(create_mask)
+                "  create_mask = {}".format(create_mask)
             )  # pragma: no cover
 
             if create_mask:
-                logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
-                )  # pragma: no cover
-
                 mask = self._create_auxiliary_mask_component(
                     mask_shape, ind, compress
                 )
                 auxiliary_mask[canonical_axes] = mask
                 logger.debug(
-                    "    mask_shape  = {}\n"
-                    "    mask.shape  = {}".format(mask_shape, mask.shape)
+                    "  mask_shape  = {}\n"
+                    "  mask.shape  = {}".format(mask_shape, mask.shape)
                 )  # pragma: no cover
         # --- End: for
 
@@ -727,13 +687,15 @@ class FieldDomain:
                 (domain_axes[axis].get_size(),), (index,)
             )[0]
 
-#        indices = parse_indices(domain_shape, tuple(indices))
-
         # Include the auxiliary mask
         indices = {
             'indices': indices,
             'auxiliary_mask': auxiliary_mask,
         }
+
+        logger.debug(
+            "  indices    = {!r}".format(indices)
+        )  # pragma: no cover
 
         # Return the indices and the auxiliary mask
         return indices
@@ -778,7 +740,7 @@ class FieldDomain:
         dim = self.dimension_coordinates.filter_by_axis(
             'exact', axis
         ).value(None)
-        
+
         if dim is not None and dim.period() is None:
             raise ValueError(
                 "Can't roll: {!r} axis has non-periodic dimension "
@@ -921,7 +883,7 @@ class FieldDomain:
         else:
             f = _inplace_enabled_define_and_cleanup(self)
 
-        dimension_coordinates = self.dimension_coordinates
+        dimension_coordinates = f.dimension_coordinates
 
         dim = dimension_coordinates.filter_by_axis('and', axis).value(
             default=None
@@ -937,7 +899,7 @@ class FieldDomain:
             raise ValueError(
                 "Cyclic {!r} axis has no period".format(dim.identity()))
 
-        value = self._Data.asdata(value)
+        value = f._Data.asdata(value)
         if not value.Units:
             value = value.override_units(dim.Units)
         elif not value.Units.equivalent(dim.Units):
@@ -984,10 +946,8 @@ class FieldDomain:
 
         if n:
             np = n * period
-            dim += np
-            bounds = dim.get_bounds(None)
-            if bounds is not None:
-                bounds += np
+            with bounds_combination_mode('OR'):
+                dim += np
         # --- End: if
 
         return f
@@ -1324,11 +1284,11 @@ class FieldDomain:
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * `None`. This is the default, which selects the domain
@@ -1703,7 +1663,7 @@ class FieldDomain:
 
         identity: optional
             Select the coordinate construct by one of:
-                            
+
             * The identity of a dimension or auxiliary coordinate
               construct.
 
@@ -2025,20 +1985,20 @@ class FieldDomain:
 
         identity: optional
             Select the domain axis construct by one of:
-            
+
             * An identity or key of a 1-d dimension or auxiliary
               coordinate construct that whose data spans the domain
               axis construct.
-            
+
                {{construct selection identity}}
-            
+
             * A domain axis construct identity
-            
+
               {{construct selection identity}}
-            
+
             * The integer position of the domain axis construct in the
               field construct's data.
-            
+
             * `None`. This is the default, which selects the domain
                construct when there is only one of them.
 
@@ -2375,11 +2335,11 @@ class FieldDomain:
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * `None`. This is the default, which selects the domain
@@ -2851,7 +2811,7 @@ class FieldDomain:
                 "Use 'construct' method or 'construct_key' method instead."
             )  # pragma: no cover
 
-        greturn self.construct_key(identity, default=default)
+        return self.construct_key(identity, default=default)
 
     def measure(self, identity, default=ValueError(), key=False,
                 **kwargs):

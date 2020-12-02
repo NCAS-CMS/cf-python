@@ -61,7 +61,6 @@ class dummyClass:
         logger.info(self.info_message)
         logger.warning(self.warning_message)
 
-
 # --- End: class
 
 
@@ -134,7 +133,7 @@ class DecoratorsTest(unittest.TestCase):
             cf.log_level(level)  # reset to level
 
             # Default verbose(=None) cases: log_level should determine output
-            with self.assertLogs(level=cf.log_level()) as catch:
+            with self.assertLogs(level=cf.log_level().value) as catch:
                 test_class.decorated_logging_func()
 
                 for msg in log_message:
@@ -150,7 +149,7 @@ class DecoratorsTest(unittest.TestCase):
             # all messages should appear, regardless of global log_level:
             for attr in (-1, 'DEBUG', 'debug', 'Debug', 'DeBuG'):
                 test_class.verbose = attr
-                with self.assertLogs(level=cf.log_level()) as catch:
+                with self.assertLogs(level=cf.log_level().value) as catch:
                     test_class.decorated_logging_func()
                     for msg in log_message:
                         self.assertIn(msg, catch.output)
@@ -160,7 +159,7 @@ class DecoratorsTest(unittest.TestCase):
             # regardless of global log_level value set:
             for attr in (1, 'WARNING', 'warning', 'Warning', 'WaRning'):
                 test_class.verbose = attr
-                with self.assertLogs(level=cf.log_level()) as catch:
+                with self.assertLogs(level=cf.log_level().value) as catch:
                     test_class.decorated_logging_func()
                     for msg in log_message:
                         if msg.split(":")[0] == 'WARNING':
@@ -172,7 +171,7 @@ class DecoratorsTest(unittest.TestCase):
 
             # ... verbose=2 should be equivalent to verbose=3 now:
             test_class.verbose = True
-            with self.assertLogs(level=cf.log_level()) as catch:
+            with self.assertLogs(level=cf.log_level().value) as catch:
                 test_class.decorated_logging_func()
                 for msg in log_message:
                     if msg.split(":")[0] == 'DEBUG':
@@ -207,7 +206,6 @@ class DecoratorsTest(unittest.TestCase):
                 test_class.decorated_logging_func()
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
-
 
 # --- End: class
 

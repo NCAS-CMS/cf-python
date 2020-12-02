@@ -20,7 +20,8 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-
+   ~cf.NetCDFArray.get_group
+   ~cf.NetCDFArray.get_mask
    ~cf.NetCDFArray.get_ncvar
    ~cf.NetCDFArray.get_varid
    ~cf.NetCDFArray.get_compression_type
@@ -88,5 +89,3 @@ Special
    :template: method.rst
       
    ~cf.NetCDFArray.__getitem__
-
-   

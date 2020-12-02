@@ -22,7 +22,7 @@ class Container:
 
     See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: 3.7.0
+    .. versionadded:: 3.7.0
 
     .. seealso:: `_docstring_substitutions`
 

@@ -1256,7 +1256,7 @@ Second-order conservative    Second-order conservative
 			     
                              As with first order (see above),
                              preserves the area integral of the field
-                             between source and destinatio using a
+                             between source and destination using a
                              weighted sum, with weights based on the
                              proportionate area of intersection.
                        	     
@@ -1576,10 +1576,10 @@ construct and construct key.
 **Mathematical operations**
 ---------------------------
 
-.. _Arithmetical-operations:
+.. _Binary-arithmetical-operations:
 
-Arithmetical operations
-^^^^^^^^^^^^^^^^^^^^^^^
+Binary arithmetical operations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A field construct may be arithmetically combined with another field
 construct, or any other object that is broadcastable to its data. See
@@ -1689,45 +1689,99 @@ checks on the metadata. See :ref:`Operating-on-the-field-constructs-data`
 for more details. *(This will be made easier in a future release with
 a new function for combining such field constructs.)*
 
+.. _Bounds:
 
-.. warning:: Care must be taken when combining a field construct with a
-          `numpy` array or a `Data` instance, due to the ways in which
-          both of these objects allow themselves to be combined with
-          other types:
+.. rubric:: Bounds
+	    
+For binary operations involving constructs that have bounds, the
+result of binary operation will, by default, only have bounds if both
+operands have bounds; and the bounds of the result will be the result
+of the same binary operation on bounds objects. This behaviour may
+modified by the `cf.combine_bounds_with_coordinates` function.
 
-	  * If the field construct is on the left hand side (LHS) of
-            the operation then, as expected, a field construct is
-            returned whose data is the combination of the original
-            field construct's data and the `numpy` array or `Data`
-            instance on the right hand side (RHS).
+.. code-block:: python
+   :caption: *Demonstrate how bounds are treated in binary
+             operations.*
 
-	  * If, however, the field construct is on the RHS then a
-            `numpy` array or `Data` instance (which ever type is on
-            the LHS) is returned, containing the same data as in the
-            first case.
+   >>> x = q.dimension_coordinate('X')
+   >>> x.dump()
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(longitude(8)) = [22.5, ..., 337.5] degrees_east
+       Bounds:units = 'degrees_east'
+       Bounds:Data(longitude(8), 2) = [[0.0, ..., 360.0]]
+   >>> (x + x).dump()
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(8) = [45.0, ..., 675.0] degrees_east
+       Bounds:units = 'degrees_east'
+       Bounds:Data(8, 2) = [[0.0, ..., 720.0]] degrees_east
+   >>> (x + 50).dump()
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(8) = [72.5, ..., 387.5] degrees_east   
+   >>> old = cf.combine_bounds_with_coordinates('OR')
+   >>> (x + 50).dump()
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(8) = [72.5, ..., 387.5] degrees_east
+       Bounds:units = 'degrees_east'
+       Bounds:Data(8, 2) = [[50.0, ..., 410.0]] degrees_east
+   >>> x2 = x.copy()
+   >>> x2.del_bounds()
+   <CF Bounds: longitude(8, 2) degrees_east>
+   >>> (x2 + x).dump()
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(8) = [45.0, ..., 675.0] degrees_east
+       Bounds:units = 'degrees_east'
+       Bounds:Data(8, 2) = [[22.5, ..., 697.5]] degrees_east
+   >>> cf.combine_bounds_with_coordinates(old)
+   'OR'
+   
+.. warning:: Care must be taken when combining a construct with a
+             `numpy` array or a `Data` instance, due to the ways in
+             which both of these objects allow themselves to be
+             combined with other types:
+
+   	     * If the construct is on the left hand side (LHS) of the
+               operation then, as expected, a construct is returned
+               whose data is the combination of the original
+               construct's data and the `numpy` array or `Data`
+               instance on the right hand side (RHS).
+
+   	     * If, however, the construct is on the RHS then a `numpy`
+               array or `Data` instance (which ever type is on the
+               LHS) is returned, containing the same data as in the
+               first case.
     
-          .. code-block:: python
-             :caption: *A field construct will not be returned if the
-                       left hand operand is a numpy array or a 'Data'
-                       instance.*
-
-	     >>> import numpy
-	     >>> q, t = cf.read('fil.nc')
-             >>> a = numpy.array(1000)
-             >>> type(t * a)
-	     cf.field.Field
-	     >>> type(a + t)
-	     numpy.ndarray
-	     >>> b = numpy.random.randn(t.size).reshape(t.shape)
-	     >>> type(t * b)
-	     cf.field.Field
-	     >>> type(b * t)
-	     numpy.ndarray
-	     >>> type(t - cf.Data(b))
-	     cf.field.Field
-	     >>> type(cf.Data(b) * t)
-	     cf.data.data.Data
-     
+             .. code-block:: python
+                :caption: *A field construct will not be returned if
+                          the left hand operand is a numpy array or a
+                          'Data' instance.*
+   
+   	        >>> import numpy
+   	        >>> t = cf.example_field(0)
+                >>> a = numpy.array(1000)
+                >>> type(t * a)
+   	        cf.field.Field
+   	        >>> type(a + t)
+   	        numpy.ndarray
+   	        >>> b = numpy.random.randn(t.size).reshape(t.shape)
+   	        >>> type(t * b)
+   	        cf.field.Field
+   	        >>> type(b * t)
+   	        numpy.ndarray
+   	        >>> type(t - cf.Data(b))
+   	        cf.field.Field
+   	        >>> type(cf.Data(b) * t)
+   	        cf.data.data.Data
+	     
 .. _Unary-operations:
 
 Unary operations
@@ -1868,14 +1922,15 @@ a new function for combining such field constructs.)*
 Arithmetical and relational operations with insufficient metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When both operands of an :ref:`arithmetical <Arithmetical-operations>`
-or :ref:`relational <Relational-operations>` operation are field
-constructs then the creation of the mapping of physically compatible
-dimensions relies on there being sufficient metadata. By default, the
-mapping relies on their being "strict" identities for the metadata
-constructs with multi-valued data. The strict identity is restricted
-`!standard_name` property (or `!id` attribute), and may be returned by
-the `!identity` method of a construct:
+When both operands of a :ref:`binary arithmetical
+<Binary-arithmetical-operations>` or :ref:`relational
+<Relational-operations>` operation are field constructs then the
+creation of the mapping of physically compatible dimensions relies on
+there being sufficient metadata. By default, the mapping relies on
+their being "strict" identities for the metadata constructs with
+multi-valued data. The strict identity is restricted `!standard_name`
+property (or `!id` attribute), and may be returned by the `!identity`
+method of a construct:
 
 
 .. code-block:: python
@@ -1912,11 +1967,11 @@ the operation to proceed:
 Operating on the field constructs' data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:ref:`Arithmetical <Arithmetical-operations>` and :ref:`relational
-<Relational-operations>` operations between may also be carried out on
-their data instances, thereby bypassing any reference to, or checks
-on, the metadata constructs. This can be useful if there
-:ref:`insufficient metadata
+:ref:`Binary arithmetical <Binary-arithmetical-operations>` and
+:ref:`relational <Relational-operations>` operations between may also
+be carried out on their data instances, thereby bypassing any
+reference to, or checks on, the metadata constructs. This can be
+useful if there :ref:`insufficient metadata
 <Arithmetical-and-relational-operations-with-insufficient-metadata>`
 for determining if the two field constructs are compatible; or if the
 domain metadata constructs of the result can not be
@@ -2304,7 +2359,7 @@ limited area domain, and in Cartesian or spherical polar coordinate
 systems.
 
 The relative vorticity of wind defined on a Cartesian domain (such as
-a `plane projection`_) is defined as
+a `Plane projection`_) is defined as
 
 .. math:: \zeta _{cartesian} = \frac{\delta v}{\delta x} -
           \frac{\delta u}{\delta y}
@@ -2379,4 +2434,3 @@ derivative wraps around by default.
 .. _Latitude-longitude:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_latitude_longitude
 .. _Rotated latitude-longitude:       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_rotated_pole
 .. _Plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings
-.. _plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings

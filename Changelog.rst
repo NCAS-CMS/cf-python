@@ -1,8 +1,31 @@
+version 3.8.0
+-------------
+----
+
+**2020-12-??**
+
+* The setting of global constants can now be controlled by a context
+  manager (https://github.com/NCAS-CMS/cf-python/issues/154)
+* Changed the behaviour of binary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/146)
+* Changed the behaviour of unary operations for constructs that have
+  bounds (https://github.com/NCAS-CMS/cf-python/issues/147)
+* New function: `cf.bounds_combination_mode`
+  (https://github.com/NCAS-CMS/cf-python/issues/146)
+* Fixed bug that prevented the verbosity from changing to any value
+  specified as a ``verbose`` keyword parameter to `cf.aggregate` (only).
+* Fixed bug that caused a failure when writing a dataset that contains
+  a scalar domain ancillary construct
+  (https://github.com/NCAS-CMS/cf-python/issues/152)
+* Changed dependency: ``1.8.8.0<=cfdm<1.8.9.0``
+* Changed dependency: ``cftime>=1.3.0``
+* Changed dependency: ``cfunits>=3.3.1``
+
 version 3.7.0
 -------------
 ----
 
-**2020-10-??**
+**2020-10-15**
 
 * Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cf.Field.del_domain_axis`
@@ -13,10 +36,18 @@ version 3.7.0
 * New keyword parameter to `cf.Field.set_data`: ``inplace``
 * New keyword parameter to `cf.write`: ``coordinates``
   (https://github.com/NCAS-CMS/cf-python/issues/125)
+* New keyword parameter to `cf.aggregate`: ``ignore``
+  (https://github.com/NCAS-CMS/cf-python/issues/115)
 * Fixed bug that caused a failure when reading a dataset with
   incompatible bounds units. Now a warning is given (controllable by
   the logging level) and the offending bounds are returned as a
   separate field construct.
+* Fixed bug in `cf.aggregate` that caused it to error if either the
+  `equal_all` or `exist_all` parameter were set to `True`.
+* Fixed bug in `Data.percentile` that caused it to error for non-singular
+  ranks if the squeeze parameter was set to `True`.
+* ``cfa`` now prints error messages to the stderr stream rather than
+  stdout.
 * Changed dependency: ``1.8.7.0<=cfdm<1.8.8.0``
 * Changed dependency: ``cfunits>=3.3.0``
 
@@ -302,7 +333,7 @@ version 3.0.5
 * Changed dependency: ``cfdm>=1.7.10``. This fixes a bug that didn't
   allow CDL files to start with comments or blank lines
   (https://github.com/NCAS-CMS/cfdm/issues/5).
-* Changed dependency: ``cftime>=1.0.4.2`
+* Changed dependency: ``cftime>=1.0.4.2``
 
 version 3.0.4
 -------------

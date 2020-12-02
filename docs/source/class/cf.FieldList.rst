@@ -132,3 +132,16 @@ Special methods
    ~cf.FieldList.__deepcopy__
    
 .. ?? __hash__
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldList.select1
+   ~cf.FieldList.set_equals

@@ -32,13 +32,13 @@ class NetCDFArray(cfdm.NetCDFArray,
             Specify the netCDF4 group to which the netCDF variable
             belongs. By default, or if *group* is `None` or an empty
             sequence, it assumed to be in the root group. The last
-            element in the sequence isw the name of the group in which
+            element in the sequence is the name of the group in which
             the variable lies, with other elements naming any parent
             groups (excluding the root group).
 
             :Parameter example:
               To specify that a variable is in the root group:
-              ``group=()` or ``group=None`
+              ``group=()`` or ``group=None``
 
             :Parameter example:
               To specify that a variable is in the group '/forecasts':

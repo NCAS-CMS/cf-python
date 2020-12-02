@@ -933,7 +933,7 @@ def _make_interior_ring_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    # Global arttributes
+    # Global attributes
     n.Conventions = 'CF-' + VN
     n.featureType = 'timeSeries'
     n.comment = 'TODO'
@@ -1045,7 +1045,7 @@ def _make_interior_ring_file_2(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    # Global arttributes
+    # Global attributes
     n.Conventions = 'CF-' + VN
     n.featureType = 'timeSeries'
     n.comment = 'TODO'

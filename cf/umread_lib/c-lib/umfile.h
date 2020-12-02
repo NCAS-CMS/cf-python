@@ -40,7 +40,7 @@ struct _Rec;
 
 typedef struct 
 {
-  File_format format;
+  File_format fmt;
   Byte_ordering byte_ordering;
   int word_size;
 }

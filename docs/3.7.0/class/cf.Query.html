@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Query &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Query.attr" href="../attribute/cf.Query.attr.html" />
+    <link rel="prev" title="cf.Flags.sort" href="../method/cf.Flags.sort.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.Flags.sort.html" title="previous chapter">cf.Flags.sort</a></li>
+      <li>Next: <a href="../attribute/cf.Query.attr.html" title="next chapter">cf.Query.attr</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-query">
+<h1>cf.Query<a class="headerlink" href="#cf-query" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.Query">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/query.py#L23-L763"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Encapsulate a condition for subsequent evaluation.</p>
+<p>A condition that may be applied to any object may be stored in a
+<a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object. A <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object encapulates a condition, such as
+“strictly less than 3”. When applied to an object, via its
+<a class="reference internal" href="../method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a> method or the Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">==</span></code> operator, the condition is
+evaulated in the context of that object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: (lt 3)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">!=</span> <span class="mi">2</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">&lt;CF Data(3): [True, True, False]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">array([True, True, False])</span>
+</pre></div>
+</div>
+<p>The following operators are supported when constructing <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
+instances:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'lt'</span></code></p></td>
+<td><p>A “strictly less than” condition</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'le'</span></code></p></td>
+<td><p>A “less than or equal” condition</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'gt'</span></code></p></td>
+<td><p>A “strictly greater than” condition</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'ge'</span></code></p></td>
+<td><p>A “greater than or equal” condition</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'eq'</span></code></p></td>
+<td><p>An “equal” condition</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'ne'</span></code></p></td>
+<td><p>A “not equal” condition</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'wi'</span></code></p></td>
+<td><p>A “within a range” condition</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'wo'</span></code></p></td>
+<td><p>A “without a range” condition</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'set'</span></code></p></td>
+<td><p>A “member of set” condition</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Complex conditions</strong></p>
+<p>Multiple conditions may be combined with the Python bitwise “and”
+(<code class="xref py py-obj docutils literal notranslate"><span class="pre">&amp;</span></code>) and “or” (<code class="xref py py-obj docutils literal notranslate"><span class="pre">|</span></code>) operators to form a new <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ge3</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lt5</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ge3</span> <span class="o">&amp;</span> <span class="n">lt5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: [(ge 3) &amp; (lt 5)]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">!=</span> <span class="mi">2</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ge3</span> <span class="o">|</span> <span class="n">lt5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: [(ge 3) | (lt 5)]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">&amp;=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: [[(ge 3) | (lt 5)] &amp; (set [1, 3, 5])]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>A condition can be applied to an attribute of an object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">upper_bounds_ge_minus4</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;upper_bounds&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&lt;CF DimensionCoordinate: grid_longitude(9) degrees&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-4.92 -4.48]</span>
+<span class="go"> [-4.48 -4.04]</span>
+<span class="go"> [-4.04 -3.6 ]</span>
+<span class="go"> [-3.6  -3.16]</span>
+<span class="go"> [-3.16 -2.72]</span>
+<span class="go"> [-2.72 -2.28]</span>
+<span class="go"> [-2.28 -1.84]</span>
+<span class="go"> [-1.84 -1.4 ]</span>
+<span class="go"> [-1.4  -0.96]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">upper_bounds_ge_minus4</span> <span class="o">==</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[False False  True  True  True  True  True  True  True]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">upper_bounds_ge_minus4</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;upper_bounds&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A condition can also be applied to attributes of attributes of an
+object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF DimensionCoordinate: time(4) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">lower_bounds</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([12,  3,  6,  9])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;lower_bounds.month&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">t</span>
+<span class="go">&lt;CF Data(4): [True, ..., True]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([ True,  False, False, True])</span>
+</pre></div>
+</div>
+<p><strong>The query interface</strong></p>
+<p>In general, the query operator must be permitted between the value
+of the condition and the operand for which it is being
+evaulated. For example, when the value is an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, the query
+works if the operand is also an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, but fails if it is a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="go">TypeError: &#39;&lt;&#39; not supported between instances of &#39;list&#39; and &#39;int&#39;</span>
+</pre></div>
+</div>
+<p>This behaviour is overridden if the operand has an appropriate
+“query interface” method. When such a method exists, it is used
+instead of the equivalent built-in Python operator.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Query interface method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_lt__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'lt'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_le__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'le'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_gt__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'gt'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_ge__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'ge'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_eq__</span></code></p></td>
+<td><p>Called when an <code class="docutils literal notranslate"><span class="pre">'eq'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_ne__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'ne'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'wi'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'wo'</span></code> condition is evaulated</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'set'</span></code> condition is evaulated</p></td>
+</tr>
+</tbody>
+</table>
+<p>In all cases the query value is the only, mandatory argument of
+the method.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList_with_override</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__query_lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="sd">&quot;&quot;&quot;Apply the &lt; operator element-wise&quot;&quot;&quot;</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)([</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">TypeError: &#39;&lt;&#39; not supported between instances of &#39;myList&#39; and &#39;int&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList_with_override</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">[True, False, False]</span>
+</pre></div>
+</div>
+<p>When the condition is on an attribute, or nested attributes, of
+the operand, the query interface method is looked for on the
+attribute object, rather than the parent object.</p>
+<p>If the value has units then the argument passed to query interface
+method is automatically a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object that attaches the units to
+the value.</p>
+<p><strong>Initialization</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>operator: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The query operator.</p>
+</dd>
+<dt>value:</dt><dd><p>The value of the condition.</p>
+</dd>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as the operand
+being tested are assumed, if applicable. If <em>units</em> is
+specified and <em>value</em> already has units (such as those attached
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object), then the pair of units must be equivalent.</p>
+</dd>
+<dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Apply the condition to the attribute, or nested
+attributes, of the operand, rather than the operand
+itself. Nested attributes are specified by separating them
+with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example, the “month” attribute of the
+“bounds” attribute is specified as <code class="docutils literal notranslate"><span class="pre">'bounds.month'</span></code>. See
+also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
+</dd>
+<dt>exact: deprecated at version 3.0.0.</dt><dd><p>Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.attr.html#cf.Query.attr" title="cf.Query.attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.operator.html#cf.Query.operator" title="cf.Query.operator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">operator</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.value.html#cf.Query.value" title="cf.Query.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.isquery.html#cf.Query.isquery" title="cf.Query.isquery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isquery</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a></p></td>
+<td><p>Return a <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object with a new left hand side operand attribute to be used during evaluation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.copy.html#cf.Query.copy" title="cf.Query.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.dump.html#cf.Query.dump" title="cf.Query.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>Return a string containing a full description of the instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.equals.html#cf.Query.equals" title="cf.Query.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.equivalent.html#cf.Query.equivalent" title="cf.Query.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a></p></td>
+<td><p>Evaluate the query operation for a given left hand side operand.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.exact.html#cf.Query.exact" title="cf.Query.exact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exact</span></code></a></p></td>
+<td><p>TODO Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.inspect.html#cf.Query.inspect" title="cf.Query.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the object for debugging.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-10-15.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -21,8 +21,8 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.item_axes" href="cf.Field.item_axes.html" />
-    <link rel="prev" title="cf.Field.data_axes" href="cf.Field.data_axes.html" />
+    <link rel="next" title="cf.Field.isperiodic" href="cf.Field.isperiodic.html" />
+    <link rel="prev" title="cf.Field.directions" href="cf.Field.directions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,9 +85,9 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.data_axes.html" title="previous chapter">cf.Field.data_axes</a></li>
-      <li>Next: <a href="cf.Field.item_axes.html" title="next chapter">cf.Field.item_axes</a></li>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.directions.html" title="previous chapter">cf.Field.directions</a></li>
+      <li>Next: <a href="cf.Field.isperiodic.html" title="next chapter">cf.Field.isperiodic</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.iscyclic<a class="headerlink" href="#cf-field-iscyclic" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.iscyclic">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">iscyclic</code><span class="sig-paren">(</span><em class="sig-param">identity</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.6.0/cf/field.py#L6005-L6062"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.iscyclic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">iscyclic</code><span class="sig-paren">(</span><em class="sig-param">identity</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/field.py#L5984-L6041"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.iscyclic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the given axis is cyclic.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.</span></p>
@@ -139,7 +139,7 @@ returned by this call of the field construct’s
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if the selected axis is cyclic, otherwise False.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if the selected axis is cyclic, otherwise False.</p>
 </dd>
 </dl>
 </dd>
@@ -171,7 +171,7 @@ returned by this call of the field construct’s
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

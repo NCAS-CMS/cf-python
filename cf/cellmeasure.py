@@ -29,9 +29,7 @@ class CellMeasure(mixin.PropertiesData,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     '''
     def __repr__(self):
@@ -87,12 +85,12 @@ class CellMeasure(mixin.PropertiesData,
 
         strict: `bool`, optional
             If True then the identity is the first found of only the
-            "measure" arttribute, "standard_name" property or the "id"
+            "measure" attribute, "standard_name" property or the "id"
             attribute.
 
         relaxed: `bool`, optional
             If True then the identity is the first found of only the
-            "measure" arttribute, the "standard_name" property, the
+            "measure" attribute, the "standard_name" property, the
             "id" attribute, the "long_name" property or the netCDF
             variable name.
 

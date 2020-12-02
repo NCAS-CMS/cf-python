@@ -11,7 +11,7 @@ cf.CoordinateReference
 .. autoclass:: cf.CoordinateReference
    :no-members:
    :no-inherited-members:
-   
+
 Inspection
 ----------
 
@@ -141,6 +141,7 @@ Miscellaneous
    ~cf.CoordinateReference.equals
    ~cf.CoordinateReference.equivalent
    ~cf.CoordinateReference.has_bounds
+   ~cf.CoordinateReference.hasbounds
    ~cf.CoordinateReference.inspect
    ~cf.CoordinateReference.structural_signature
 
@@ -198,6 +199,20 @@ Special
    ~cf.CoordinateReference.__deepcopy__
    ~cf.CoordinateReference.__repr__
    ~cf.CoordinateReference.__str__
-
-.. ppp[
   
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CoordinateReference.all_identifiers
+   ~cf.CoordinateReference.ancillaries
+   ~cf.CoordinateReference.conversion
+   ~cf.CoordinateReference.name
+   ~cf.CoordinateReference.parameters
+   ~cf.CoordinateReference.set_term

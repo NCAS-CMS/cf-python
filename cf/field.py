@@ -15,7 +15,6 @@ from numpy import argmax as numpy_argmax
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
 
-from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
@@ -270,9 +269,7 @@ class Field(mixin.FieldDomain,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The selection of properties to be written as netCDF global
     attributes may be accessed with the `nc_global_attributes`,
@@ -424,16 +421,16 @@ class Field(mixin.FieldDomain,
         '''
         logger.debug(
             "{}.__getitem__\n"
-            "    input indices  = {}".format(
+            "  input indices  = {}".format(
                 self.__class__.__name__, indices
             )
         )  # pragma: no cover
-        
+
         if indices is Ellipsis:
             return self.copy()
 
-        data = self.data
-        shape = data.shape
+#        data = self.data
+        shape = self.shape
 
         # Parse the index
         if not isinstance(indices, tuple):
@@ -448,23 +445,16 @@ class Field(mixin.FieldDomain,
 
         indices, roll = parse_indices(shape, indices2, cyclic=True)
 
-        logger.debug(
-            "    parsed indices = {}\n"
-            "    roll           = {}".format(
-                indices, roll
-            )
-        )  # pragma: no cover
-        
         if roll:
             new = self
 #            axes = data._axes
             axes = self.get_data_axes()
 #            cyclic_axes = data._cyclic
             cyclic_axes = self.cyclic()
-            for iaxis, shift in roll.items():                
+            for iaxis, shift in roll.items():
                 axis = axes[iaxis]
                 if axis not in cyclic_axes:
-#                    x = self.get_data_axes()[iaxis]
+                    #  x = self.get_data_axes()[iaxis]
                     raise IndexError(
                         "Can't take a cyclic slice from non-cyclic {!r} "
                         "axis".format(
@@ -485,11 +475,12 @@ class Field(mixin.FieldDomain,
             findices = indices
 
         logger.debug(
-            "    shape          = {}\n"
-            "    indices        = {}\n"
-            "    indices2       = {}\n"
-            "    findices       = {}".format(
-                shape, indices, indices2, findices
+            "  parsed indices = {!r}\n"
+            "  roll           = {!r}\n"
+            "  shape          = {!r}\n"
+            "  indices2       = {!r}\n"
+            "  findices       = {!r}".format(
+                indices, roll, shape, indices2, findices
             )
         )  # pragma: no cover
 
@@ -561,7 +552,8 @@ class Field(mixin.FieldDomain,
                 # --- End: if
 
                 logger.debug(
-                    '    dice = {}'.format(dice))  # pragma: no cover
+                    "  dice = {}".format(dice)
+                )  # pragma: no cover
 
                 # Replace existing construct with its subspace
                 if needs_slicing:
@@ -843,18 +835,19 @@ class Field(mixin.FieldDomain,
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _domain_axis_identity_from_index(self, index):
+    def _domain_axis_identity_from_index(self, index, default=None):
         '''TODO
 
         '''
         try:
-            return self.get_data_axes(default=None)[identity]
+            return self.get_data_axes(default=None)[index]
         except TypeError:
             return index
         except IndexError:
             return self._default(
                 default,
-                "Index does not exist for field construct data dimensions"
+                "Index {!r} does not exist for "
+                "field construct data dimensions".format(index)
             )
 
     def _is_broadcastable(self, shape):
@@ -3372,7 +3365,7 @@ class Field(mixin.FieldDomain,
             A sequence of axis keys.
 
         coord_keys: sequence
-            A sequence of keys for each ot the N-D auxiliary
+            A sequence of keys for each to the N-D auxiliary
             coordinates.
 
     :Returns:
@@ -6024,16 +6017,16 @@ class Field(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
               field construct's data.
- 
+
             * `None`. This is the default, which selects the domain
               axis construct when there is only one of them.]
 
@@ -6204,16 +6197,16 @@ class Field(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
               field construct's data.
- 
+
             * `None`. This is the default, which selects the domain
               axis construct when there is only one of them.]
 
@@ -6325,7 +6318,7 @@ class Field(mixin.FieldDomain,
     (such as coordinate cell sizes) or provided explicitly in the form
     of other `Field` constructs. In any case, the outer product of
     these weights components is returned in a field which is
-    broadcastable to the orginal field (see the *components* parameter
+    broadcastable to the original field (see the *components* parameter
     for returning the components individually).
 
     By default null, equal weights are returned.
@@ -6386,7 +6379,7 @@ class Field(mixin.FieldDomain,
 
                           and the outer product of these weights
                           components is returned in a field constructs
-                          which is broadcastable to the orginal field
+                          which is broadcastable to the original field
                           construct (see the *components* parameter).
               ==========  ============================================
 
@@ -6481,7 +6474,7 @@ class Field(mixin.FieldDomain,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -6541,7 +6534,7 @@ class Field(mixin.FieldDomain,
             identify each dimension of the given weights. If the
             weights do not broadcast to the field construct's data
             then setting the *axes* parameter is required so that the
-            braodcasting can be inferred, otherwise setting the *axes*
+            broadcasting can be inferred, otherwise setting the *axes*
             is not required.
 
             *Parameter example:*
@@ -6776,6 +6769,18 @@ class Field(mixin.FieldDomain,
                 else:
                     axes.append(weights)
             else:
+                # In rare edge cases, e.g. if a user sets:
+                #     weights=f[0].cell_area
+                # when they mean weights=f[0].cell_area(), we reach this
+                # code but weights is not iterable. So check it is first:
+                try:
+                    weights = iter(weights)
+                except TypeError:
+                    raise TypeError(
+                        "Invalid type of 'weights' parameter: {}".format(
+                            weights)
+                    )
+
                 for w in tuple(weights):
                     if isinstance(w, self.__class__):
                         fields.append(w)
@@ -7593,7 +7598,7 @@ class Field(mixin.FieldDomain,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -11741,7 +11746,7 @@ class Field(mixin.FieldDomain,
         if len(mode) > 1:
             raise ValueError(
                 "Can't provide more than one positional argument.")
-       
+
         data_axes = self.get_data_axes()
 
         domain_indices = self._indices(mode, data_axes, **kwargs)
@@ -11759,18 +11764,18 @@ class Field(mixin.FieldDomain,
                         mask.insert_dimension(0, inplace=True)
                 # --- End: for
 
-                new_order = [data_axes.index(axis) for axis in axes]
+                new_order = [axes.index(axis) for axis in data_axes]
                 mask.transpose(new_order, inplace=True)
                 masks.append(mask)
-                
+
             indices = ['mask', tuple(masks)]
         else:
             indices = []
-            
+
         indices.extend(
             [domain_indices['indices'][axis] for axis in data_axes]
         )
-            
+
         return tuple(indices)
 
     @_inplace_enabled(default=True)
@@ -13422,7 +13427,7 @@ class Field(mixin.FieldDomain,
 #                "Can't roll: Bad axis specification: {!r}".format(axis)
 #            )
 #        )
-#        
+#
 #        f = _inplace_enabled_define_and_cleanup(self)
 #
 #        # Anchor the metadata constructs in-place
@@ -13430,7 +13435,7 @@ class Field(mixin.FieldDomain,
 #
 #        if dry_run:
 #            return out
-#        
+#
 #        try:
 #            iaxis = self.get_data_axes().index(axis)
 #        except ValueError:
@@ -14055,7 +14060,6 @@ class Field(mixin.FieldDomain,
 
         return c.value(default=default)
 
-    
     def domain_axis(self, identity, key=False, default=ValueError()):
         '''Return a domain axis construct, or its key.
 
@@ -14076,7 +14080,7 @@ class Field(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity
 
               A domain axis construct has a number of string-valued
@@ -14086,7 +14090,7 @@ class Field(mixin.FieldDomain,
               equals one of a construct's identities; or a
               `re.Pattern` object that matches one of a construct's
               identities via `re.search`.
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
@@ -14130,8 +14134,9 @@ class Field(mixin.FieldDomain,
     TODO
 
         '''
-        identity = _domain_axis_identity_from_index(identity)
-        
+        identity = self._domain_axis_identity_from_index(identity,
+                                                         default=default)
+
         return self.domain.domain_axis(identity, key=key, default=default)
 
     def domain_axis_position(self, identity=None):
@@ -14151,7 +14156,7 @@ class Field(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity
 
               A domain axis construct has a number of string-valued
@@ -14161,7 +14166,7 @@ class Field(mixin.FieldDomain,
               equals one of a construct's identities; or a
               `re.Pattern` object that matches one of a construct's
               identities via `re.search`.
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
@@ -14262,7 +14267,7 @@ class Field(mixin.FieldDomain,
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity
 
               A domain axis construct has a number of string-valued
@@ -14272,7 +14277,7 @@ class Field(mixin.FieldDomain,
               equals one of a construct's identities; or a
               `re.Pattern` object that matches one of a construct's
               identities via `re.search`.
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
@@ -14351,7 +14356,7 @@ class Field(mixin.FieldDomain,
     spanned by the data are either inferred, or specified with the
     *axes* parameter.
 
-    For a dimension coordinate construct, an exisiting dimension
+    For a dimension coordinate construct, an existing dimension
     coordinate construct is discarded if it spans the same domain axis
     construct (since only one dimension coordinate construct can be
     associated with a given domain axis construct).
@@ -14370,8 +14375,8 @@ class Field(mixin.FieldDomain,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``
@@ -14600,7 +14605,7 @@ TODO
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    The metadata constructs are similary extended where appropriate.
+    The metadata constructs are similarly extended where appropriate.
 
     **Cyclic axes**
 
@@ -14934,7 +14939,7 @@ TODO
     percentile rank.
 
     The output field construct has a new dimension coordinate
-    construct that records the precentile ranks represented by its
+    construct that records the percentile ranks represented by its
     data.
 
     .. versionadded:: 3.0.4
@@ -15156,8 +15161,11 @@ TODO
                         [bounds.min().datum(), bounds.max().datum()],
                         units=c.Units
                     )
-                    data = bounds.mean(squeeze=True)
+
+                    data = bounds.mean()
                     c.set_data(data, copy=False)
+
+                    bounds.insert_dimension(inplace=True)
                     c.set_bounds(Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
@@ -15204,6 +15212,10 @@ TODO
         dim = DimensionCoordinate()
         data = Data(ranks).squeeze()
         data.override_units(Units(), inplace=True)
+
+        if not data.shape:
+            data.insert_dimension(inplace=True)
+
         dim.set_data(data, copy=False)
 
         if out.ndim == self.ndim:
@@ -15539,7 +15551,7 @@ TODO
                 "Can't roll: Bad axis specification: {!r}".format(axis)
             )
         )
-        
+
         f = _inplace_enabled_define_and_cleanup(self)
 
         if f.domain_axes[axis].get_size() <= 1:
@@ -15547,13 +15559,13 @@ TODO
 
         # Roll the metadata constructs in-place
         f._roll_constructs(axis, shift)
-        
+
         try:
             iaxis = self.get_data_axes().index(axis)
         except ValueError:
             return f
 
-        super().roll(iaxis, shift, inplace=True)
+        super(Field, f).roll(iaxis, shift, inplace=True)
 
         return f
 
@@ -15996,7 +16008,7 @@ TODO
 
         `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field. If the ``'test'`` positional argumnt
+            the original field. If the ``'test'`` positional argument
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
@@ -16109,7 +16121,7 @@ TODO
     especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
-    boundaries are not known nor inferrable. Higher order patch
+    boundaries are not known nor inferable. Higher order patch
     recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
@@ -16260,7 +16272,7 @@ TODO
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -16776,7 +16788,7 @@ TODO
     coarser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
-    known nor inferrable. Higher order patch recovery is available as
+    known nor inferable. Higher order patch recovery is available as
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than
@@ -16890,7 +16902,7 @@ TODO
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -17476,16 +17488,16 @@ TODO
               axis construct.
 
               {{construct selection identity}}
-       
+
             * A domain axis construct identity.
 
               {{domain axis selection identity}}
-        
+
             * The key of a domain axis construct.
 
             * The integer position of the domain axis construct in the
               field construct's data.
- 
+
             * `None`. This is the default, which selects the domain
               axis construct when there is only one of them.]
 
@@ -17556,7 +17568,8 @@ TODO
     Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
 
         '''
-        identity = _domain_axis_identity_from_index(identity)
+        identity = self._domain_axis_identity_from_index(identity,
+                                                         default=default)
 
         return super().del_domain_axis(identity=identity,
                                        squeeze=squeeze,
@@ -17792,7 +17805,7 @@ TODO
 
     @property
     def Items(self):
-        '''Deprecated at version 3.0.0. Use attribute `constructs`r instead.
+        '''Deprecated at version 3.0.0. Use attribute `constructs` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(

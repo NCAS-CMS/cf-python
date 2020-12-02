@@ -2304,7 +2304,7 @@ limited area domain, and in Cartesian or spherical polar coordinate
 systems.
 
 The relative vorticity of wind defined on a Cartesian domain (such as
-a `plane projection`_) is defined as
+a `Plane projection`_) is defined as
 
 .. math:: \zeta _{cartesian} = \frac{\delta v}{\delta x} -
           \frac{\delta u}{\delta y}
@@ -2379,4 +2379,3 @@ derivative wraps around by default.
 .. _Latitude-longitude:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_latitude_longitude
 .. _Rotated latitude-longitude:       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_rotated_pole
 .. _Plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings
-.. _plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings

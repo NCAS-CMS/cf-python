@@ -28,6 +28,7 @@ Inspection
    ~cf.Field.dump
    ~cf.Field.identity  
    ~cf.Field.identities
+   ~cf.Field.inspect
 
 .. rubric:: Attributes
    
@@ -88,7 +89,9 @@ Properties
    ~cf.Field.cell_methods
    ~cf.Field.comment
    ~cf.Field.Conventions
+   ~cf.Field.DSG
    ~cf.Field._FillValue
+   ~cf.Field.featureType
    ~cf.Field.flag_masks
    ~cf.Field.flag_meanings
    ~cf.Field.flag_values
@@ -270,15 +273,21 @@ Metadata constructs
    ~cf.Field.cell_method
    ~cf.Field.coordinate
    ~cf.Field.coordinate_reference
+   ~cf.Field.coordinate_reference_domain_axes
+   ~cf.Field.get_coordinate_reference
+   ~cf.Field.set_coordinate_reference
    ~cf.Field.del_coordinate_reference
    ~cf.Field.dimension_coordinate
    ~cf.Field.domain_ancillary
    ~cf.Field.domain_axis
    ~cf.Field.domain_axis_key
    ~cf.Field.domain_axis_position
+   ~cf.Field.domain_mask
    ~cf.Field.del_domain_axis
    ~cf.Field.field_ancillary
-   
+   ~cf.Field.map_axes
+   ~cf.Field.climatological_time_axes
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -297,6 +306,7 @@ Metadata constructs
    ~cf.Field.domain_axes
    ~cf.Field.axes
    ~cf.Field.field_ancillaries
+   ~cf.Field.reference_datetime
 
 .. _Field-Domain:
 
@@ -335,6 +345,8 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Field.copy
+   ~cf.Field.compute_vertical_coordinates
+   ~cf.Field.dataset_compliance
    ~cf.Field.equals
    ~cf.Field.compress
    ~cf.Field.convert
@@ -342,7 +354,8 @@ Miscellaneous
    ~cf.Field.radius
    ~cf.Field.uncompress
    ~cf.Field.concatenate
-   
+   ~cf.Field.section
+
 .. rubric:: Attributes
 	    
 .. autosummary::
@@ -352,6 +365,7 @@ Miscellaneous
 
    ~cf.Field.Flags
    ~cf.Field.has_bounds
+   ~cf.Field.has_geometry
    ~cf.Field.rank
    ~cf.Field.T
    ~cf.Field.X
@@ -378,6 +392,7 @@ NetCDF
    ~cf.Field.nc_clear_global_attributes
    ~cf.Field.nc_set_global_attribute
    ~cf.Field.nc_set_global_attributes
+   ~cf.Field.ncdimensions
 
 Groups
 ^^^^^^
@@ -448,15 +463,20 @@ Domain axes
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.analyse_items
    ~cf.Field.autocyclic
    ~cf.Field.axes
+   ~cf.Field.axes_names
    ~cf.Field.axes_sizes
    ~cf.Field.axis
    ~cf.Field.axis_name
    ~cf.Field.axis_size
    ~cf.Field.cyclic
    ~cf.Field.data_axes
+   ~cf.Field.direction
+   ~cf.Field.directions
    ~cf.Field.iscyclic
+   ~cf.Field.isperiodic
    ~cf.Field.item_axes
    ~cf.Field.items_axes
 
@@ -584,6 +604,7 @@ Mathematical operations
 
    ~cf.Field.bin
    ~cf.Field.digitize
+   ~cf.Field.histogram
    ~cf.Field.percentile
 
 Data array operations
@@ -611,6 +632,7 @@ Data array operations
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Field.argmax
    ~cf.Field.chunk
    ~cf.Field.isscalar
 
@@ -916,11 +938,14 @@ Deprecated
    ~cf.Field.asreftime
    ~cf.Field.axis_name
    ~cf.Field.data_axes
+   ~cf.Field.delprop
    ~cf.Field.equivalent
    ~cf.Field.example_field
    ~cf.Field.expand_dims
    ~cf.Field.field
+   ~cf.Field.getprop
    ~cf.Field.HDF_chunks
+   ~cf.Field.hasprop
    ~cf.Field.insert_aux
    ~cf.Field.insert_axis
    ~cf.Field.insert_cell_methods
@@ -945,6 +970,7 @@ Deprecated
    ~cf.Field.remove_item
    ~cf.Field.remove_items
    ~cf.Field.select
+   ~cf.Field.setprop
    ~cf.Field.transpose_item
    ~cf.Field.unlimited
 

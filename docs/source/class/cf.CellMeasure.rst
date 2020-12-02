@@ -25,6 +25,7 @@ Inspection
    ~cf.CellMeasure.dump
    ~cf.CellMeasure.identity  
    ~cf.CellMeasure.identities
+   ~cf.CellMeasure.inspect
    
 .. rubric:: Attributes
    
@@ -151,6 +152,7 @@ Data
    :template: attribute.rst
 
    ~cf.CellMeasure.array
+   ~cf.CellMeasure.Data
    ~cf.CellMeasure.data
    ~cf.CellMeasure.datetime_array
    ~cf.CellMeasure.datum
@@ -224,6 +226,7 @@ Data
    :template: method.rst
 
    ~cf.CellMeasure.__setitem__
+   ~cf.CellMeasure.halo
    ~cf.CellMeasure.mask_invalid
    ~cf.CellMeasure.subspace
    ~cf.CellMeasure.where
@@ -241,6 +244,8 @@ Data
    ~cf.CellMeasure.convert_reference_time
    ~cf.CellMeasure.cyclic
    ~cf.CellMeasure.period
+   ~cf.CellMeasure.iscyclic
+   ~cf.CellMeasure.isperiodic
    ~cf.CellMeasure.get_filenames
    ~cf.CellMeasure.has_bounds
 
@@ -602,3 +607,34 @@ Special
    ~cf.CellMeasure.__query_wi__
    ~cf.CellMeasure.__query_wo__
    
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.asdatetime
+   ~cf.CellMeasure.asreftime
+   ~cf.CellMeasure.attributes
+   ~cf.CellMeasure.delprop
+   ~cf.CellMeasure.dtvarray
+   ~cf.CellMeasure.expand_dims
+   ~cf.CellMeasure.getprop
+   ~cf.CellMeasure.hasbounds
+   ~cf.CellMeasure.hasdata
+   ~cf.CellMeasure.hasprop
+   ~cf.CellMeasure.insert_data
+   ~cf.CellMeasure.isauxiliary
+   ~cf.CellMeasure.isdimension
+   ~cf.CellMeasure.isdomainancillary
+   ~cf.CellMeasure.isfieldancillary
+   ~cf.CellMeasure.ismeasure
+   ~cf.CellMeasure.name
+   ~cf.CellMeasure.remove_data
+   ~cf.CellMeasure.select
+   ~cf.CellMeasure.setprop
+   ~cf.CellMeasure.unsafe_array

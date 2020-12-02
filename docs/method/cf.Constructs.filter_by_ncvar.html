@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
 
 
 
@@ -70,13 +70,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Constructs.html">cf.Constructs</a><ul>
+  <li><a href="../class/cf.Constructs.html">cf.Constructs</a><ul>
       <li>Previous: <a href="cf.Constructs.filter_by_ncdim.html" title="previous chapter">cf.Constructs.filter_by_ncdim</a></li>
       <li>Next: <a href="cf.Constructs.filters_applied.html" title="next chapter">cf.Constructs.filters_applied</a></li>
   </ul></li>
@@ -106,10 +106,10 @@
 <h1>cf.Constructs.filter_by_ncvar<a class="headerlink" href="#cf-constructs-filter-by-ncvar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.filter_by_ncvar">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_ncvar</code><span class="sig-paren">(</span><em class="sig-param">*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/constructs.py#L1534-L1610"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_ncvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_ncvar</code><span class="sig-paren">(</span><em class="sig-param">*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/constructs.py#L1510-L1586"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_ncvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select domain axis constructs by netCDF variable name.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -128,7 +128,7 @@ variable names.</p>
 <p>A netCDF variable name is specified by a string
 (e.g. <code class="docutils literal notranslate"><span class="pre">'time'</span></code>); or a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^lat')</span></code>), for which all constructs
-whose netCDF variable names match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are
+whose netCDF variable names match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are
 selected.</p>
 <p>If no netCDF variable names are provided then all
 constructs that do or could have a netCDF variable name,
@@ -138,7 +138,7 @@ with any value, are selected.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt><dd><p>The selected constructs and their construct keys.</p>
+<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt><dd><p>The selected constructs and their construct keys.</p>
 </dd>
 </dl>
 </dd>
@@ -164,7 +164,7 @@ with any value, are selected.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>

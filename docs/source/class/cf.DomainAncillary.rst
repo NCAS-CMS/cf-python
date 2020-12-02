@@ -25,7 +25,9 @@ Inspection
    ~cf.DomainAncillary.dump
    ~cf.DomainAncillary.identity  
    ~cf.DomainAncillary.identities
-   
+   ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.direction
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -68,6 +70,42 @@ Bounds
    ~cf.DomainAncillary.cellsize
    ~cf.DomainAncillary.lower_bounds  
    ~cf.DomainAncillary.upper_bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.del_geometry
+   ~cf.DomainAncillary.get_geometry
+   ~cf.DomainAncillary.has_geometry
+   ~cf.DomainAncillary.set_geometry
+   ~cf.DomainAncillary.del_interior_ring
+   ~cf.DomainAncillary.get_interior_ring
+   ~cf.DomainAncillary.has_interior_ring
+   ~cf.DomainAncillary.set_interior_ring
+   ~cf.DomainAncillary.del_node_count
+   ~cf.DomainAncillary.get_node_count
+   ~cf.DomainAncillary.has_node_count
+   ~cf.DomainAncillary.set_node_count
+   ~cf.DomainAncillary.del_part_node_count
+   ~cf.DomainAncillary.get_part_node_count
+   ~cf.DomainAncillary.has_part_node_count
+   ~cf.DomainAncillary.set_part_node_count
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.DomainAncillary.interior_ring
 
 Selection
 ---------
@@ -160,6 +198,7 @@ Data
    :template: attribute.rst
 
    ~cf.DomainAncillary.array
+   ~cf.DomainAncillary.Data
    ~cf.DomainAncillary.data
    ~cf.DomainAncillary.datetime_array
    ~cf.DomainAncillary.datum
@@ -233,6 +272,7 @@ Data
    :template: method.rst
 
    ~cf.DomainAncillary.__setitem__
+   ~cf.DomainAncillary.halo
    ~cf.DomainAncillary.mask_invalid
    ~cf.DomainAncillary.subspace
    ~cf.DomainAncillary.where
@@ -243,13 +283,14 @@ Data
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-	      
 
    ~cf.DomainAncillary.chunk
    ~cf.DomainAncillary.close
    ~cf.DomainAncillary.convert_reference_time
    ~cf.DomainAncillary.cyclic
    ~cf.DomainAncillary.period
+   ~cf.DomainAncillary.iscyclic
+   ~cf.DomainAncillary.isperiodic
    ~cf.DomainAncillary.get_filenames
 
 Miscellaneous
@@ -594,30 +635,35 @@ Special
    ~cf.DomainAncillary.__query_wi__
    ~cf.DomainAncillary.__query_wo__
 
+Deprecated
+----------
 
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-.. todo for CF-1.8  
-      ~DomainAncillary.del_geometry
-      ~DomainAncillary.get_geometry
-      ~DomainAncillary.has_geometry
-      ~DomainAncillary.set_geometry
-      
-      ~DomainAncillary.del_node_count
-      ~DomainAncillary.del_part_node_count
-
-      ~DomainAncillary.get_interior_ring
-      ~DomainAncillary.get_node_count
-      ~DomainAncillary.get_part_node_count
-
-      ~DomainAncillary.has_interior_ring
-      ~DomainAncillary.has_node_count
-      ~DomainAncillary.has_part_node_count
-
-      ~DomainAncillary.set_interior_ring
-      ~DomainAncillary.set_node_count
-      ~DomainAncillary.set_part_node_count
-   
-      ~DomainAncillary.interior_ring
-   
-   
+   ~cf.DomainAncillary.asdatetime
+   ~cf.DomainAncillary.asreftime
+   ~cf.DomainAncillary.attributes
+   ~cf.DomainAncillary.delprop
+   ~cf.DomainAncillary.dtvarray
+   ~cf.DomainAncillary.expand_dims
+   ~cf.DomainAncillary.getprop
+   ~cf.DomainAncillary.hasbounds
+   ~cf.DomainAncillary.hasdata
+   ~cf.DomainAncillary.hasprop
+   ~cf.DomainAncillary.insert_data
+   ~cf.DomainAncillary.isauxiliary
+   ~cf.DomainAncillary.isdimension
+   ~cf.DomainAncillary.isdomainancillary
+   ~cf.DomainAncillary.isfieldancillary
+   ~cf.DomainAncillary.ismeasure
+   ~cf.DomainAncillary.name
+   ~cf.DomainAncillary.remove_data
+   ~cf.DomainAncillary.select
+   ~cf.DomainAncillary.setprop
+   ~cf.DomainAncillary.unsafe_array
+   ~cf.DomainAncillary.files
