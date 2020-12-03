@@ -12,7 +12,8 @@ from .functions import (atol as cf_atol,
 from .functions import inspect as cf_inspect
 
 from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
+                         _manage_log_level_via_verbosity,
+                         _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -263,6 +264,7 @@ class Flags:
         '''
         return deepcopy(self)
 
+    @_display_or_return
     def dump(self, display=True, _level=0):
         '''Return a string containing a full description of the instance.
 
@@ -290,12 +292,7 @@ class Flags:
                 string.append('%s%s = %s' % (indent1, attr[1:], list(value)))
         # --- End: for
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return(string)
+        return '\n'.join(string)
 
     @_deprecated_kwarg_check('traceback')
     @_manage_log_level_via_verbosity

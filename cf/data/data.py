@@ -123,7 +123,8 @@ from ..mixin_container import Container
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+                          _manage_log_level_via_verbosity,
+                          _display_or_return)
 
 from .abstract import Array
 #                       CompressedArray)
@@ -10364,6 +10365,7 @@ False
 
         return type(self)(u, units=self.Units)
 
+    @_display_or_return
     def dump(self, display=True, prefix=None):
         '''Return a string containing a full description of the instance.
 
@@ -10404,12 +10406,7 @@ False
             )
         # --- End: for
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     def ndindex(self):
         '''Return an iterator over the N-dimensional indices of the data

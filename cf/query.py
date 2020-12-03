@@ -14,7 +14,8 @@ from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
                          _DEPRECATION_ERROR_FUNCTION)
 
 from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
+                         _manage_log_level_via_verbosity,
+                         _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -467,6 +468,7 @@ class Query:
         '''
         return self  # TODO
 
+    @_display_or_return
     def dump(self, display=True):
         '''Return a string containing a full description of the instance.
 
@@ -485,12 +487,7 @@ class Query:
             description is returned as a string.
 
         '''
-        string = str(self)
-
-        if display:
-            print(string)
-        else:
-            return(string)
+        return str(self)
 
     @_deprecated_kwarg_check('traceback')
     @_manage_log_level_via_verbosity
