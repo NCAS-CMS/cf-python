@@ -13294,9 +13294,10 @@ class Field(mixin.FieldDomain,
         '''
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'flip', kwargs)  # pragma: no cover
+                self, 'flip', kwargs
+            )  # pragma: no cover
 
-        if axes is None and not kwargs:
+        if axes is None:
             # Flip all the axes
             axes = set(self.get_data_axes(default=()))
             iaxes = list(range(self.ndim))
@@ -13314,15 +13315,8 @@ class Field(mixin.FieldDomain,
         f = _inplace_enabled_define_and_cleanup(self)
         super(Field, f).flip(iaxes, inplace=True)
 
-        # Flip any constructs which span the flipped axes
-        for key, construct in f.constructs.filter_by_data().items():
-            construct_axes = f.get_data_axes(key)
-            construct_flip_axes = axes.intersection(construct_axes)
-            if construct_flip_axes:
-                iaxes = [construct_axes.index(axis) for axis in
-                         construct_flip_axes]
-                construct.flip(iaxes, inplace=True)
-        # --- End: for
+        # Flip the domain and field ancillaries
+        f.constructs._flip(axes)
 
         return f
 

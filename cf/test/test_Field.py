@@ -84,8 +84,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for i in range(7):
-            f = cf.example_field(i)
+        for f in cf.example_fields():
             _ = f.creation_commands()
 
         f = cf.example_field(1)
@@ -1019,7 +1018,8 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        g = f[(slice(None, None, -1),) * f.ndim]
+        kwargs = {axis: slice(None, None, -1) for axis in f.domain_axes}
+        g = f.subspace(**kwargs)
 
         h = f.flip()
         self.assertTrue(h.equals(g, verbose=1))
@@ -1378,7 +1378,6 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((x == [-80, -40, 0, 40]).all())
 
         indices = f.indices(grid_longitude=cf.wi(310, 450))
-
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 4), g.shape)
         x = g.dimension_coordinate('X').array
@@ -1549,7 +1548,7 @@ class FieldTest(unittest.TestCase):
                                f.array,
                                numpy.ma.masked)
 
-        for mode in ('', 'compress', 'full', 'envelope'):
+        for mode in ('compress', 'full', 'envelope'):
             indices = f.indices(mode, longitude=cf.wi(92, 134))
             g = f[indices]
             if mode == 'full':
@@ -1570,12 +1569,12 @@ class FieldTest(unittest.TestCase):
                                f.array,
                                numpy.ma.masked)
 
-        for mode in ('', 'compress', 'full', 'envelope'):
-            indices = f.indices(mode, longitude=cf.wi(72, 83) | cf.gt(118))
+        for mode in ((), ('compress',), ('full',), ('envelope',)):
+            indices = f.indices(*mode, longitude=cf.wi(72, 83) | cf.gt(118))
             g = f[indices]
-            if mode == 'full':
+            if mode == ('full',):
                 shape = (1, 10, 9)
-            elif mode == 'envelope':
+            elif mode == ('envelope',):
                 shape = (1, 10, 8)
             else:
                 shape = (1, 10, 6)
@@ -1595,7 +1594,7 @@ class FieldTest(unittest.TestCase):
         )
         self.assertTrue(cf.functions._numpy_allclose(array, g.array), g.array)
 
-        for mode in ('', 'compress', 'full', 'envelope'):
+        for mode in ('compress', 'full', 'envelope'):
             indices = f.indices(mode, grid_longitude=cf.contains(23.2))
             g = f[indices]
             if mode == 'full':
@@ -1610,7 +1609,7 @@ class FieldTest(unittest.TestCase):
                     g.construct('grid_longitude').array, 40)  # TODO
         # --- End: for
 
-        for mode in ('', 'compress', 'full', 'envelope'):
+        for mode in ('compress', 'full', 'envelope'):
             indices = f.indices(mode, grid_latitude=cf.contains(3))
             g = f[indices]
             if mode == 'full':
@@ -1624,7 +1623,7 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(g.construct('grid_latitude').array, 3)
         # --- End: for
 
-        for mode in ('', 'compress', 'full', 'envelope'):
+        for mode in ('compress', 'full', 'envelope'):
             indices = f.indices(mode, longitude=cf.contains(83))
             g = f[indices]
             if mode == 'full':

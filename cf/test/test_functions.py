@@ -17,12 +17,10 @@ class functionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for n in range(8):
-            f = cf.example_field(n)
-            _ = f.array
+        for f in cf.example_fields():
             _ = f.dump(display=False)
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             _ = cf.example_field(-999)
 
     def test_keyword_deprecation(self):

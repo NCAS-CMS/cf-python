@@ -407,7 +407,7 @@ class FieldDomain:
                         and isinstance(value, Query)
                         and value.operator in ('wi', 'wo')
                         and item.construct_type == 'dimension_coordinate'
-                        #                        and self.iscyclic(axis)
+                        and self.iscyclic(axis)
                 ):
                     # ------------------------------------------------
                     # 1-dimensional CASE 2: Axis is cyclic and
@@ -555,6 +555,14 @@ class FieldDomain:
                     "  ind         = {}".format(item_match, ind)
                 )  # pragma: no cover
 
+                for i in ind:
+                    if not i.size:
+                        raise ValueError(
+                            "No {!r} axis indices found from: {!r}".format(
+                                canonical_axes, value)
+                        )
+                # --- End: for
+
                 bounds = [
                     item.bounds.array[ind]
                     for item in transposed_constructs
@@ -620,7 +628,7 @@ class FieldDomain:
                 mask_shape = []  # [None] * domain_rank
                 masked_subspace_size = 1
                 ind = numpy_array(ind)
-                logger.debug('    ind = {}'.format(ind))  # pragma: no cover
+                logger.debug("  ind = {}".format(ind))  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(
                         zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))

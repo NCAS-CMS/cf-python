@@ -64,6 +64,34 @@ class Constructs(cfdm.Constructs):
 
         return super()._matching_values(value0, construct, value1)
 
+    def _flip(self, axes):
+        '''Flip (reverse the direction of) axes of the constructs in-place.
+
+    .. versionadded:: 3.TODO.0
+
+    :Parameters:
+
+        axes: sequence of `str`
+            Select the domain axes to flip, defined by there construct
+            keys. The sequnce may be empty.
+
+    :Returns:
+
+        `None`
+
+        '''
+        data_axes = self.data_axes()
+
+        # Flip any constructs which span the given axes
+        for key, construct in self.filter_by_data().items():
+            construct_axes = data_axes[key]
+            construct_flip_axes = axes.intersection(construct_axes)
+            if construct_flip_axes:
+                iaxes = [construct_axes.index(axis) for axis in
+                         construct_flip_axes]
+                construct.flip(iaxes, inplace=True)
+        # --- End: for
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------

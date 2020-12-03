@@ -330,6 +330,58 @@ class Domain(mixin.FieldDomain,
 
         return self.constructs[da_key]
 
+    @_inplace_enabled(default=False)
+    def flip(self, axes=None, inplace=False):
+        '''Flip (reverse the direction of) axes of the field. TODO
+
+    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, TODO
+                 `squeeze`, `transpose`, `unsqueeze`
+
+    :Parameters:
+
+        axes: (sequence of) `str` , optional
+
+            Select the domain axes to flip, defined by the domain axes
+            that would be selected by passing each given axis
+            description to a call of the `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X')`` is selected.
+
+            If no axes are provided then all axes are flipped.
+
+        {{inplace: `bool`, optional}}
+
+    :Returns:
+
+        `Domain` or `None`
+            The construct with flipped axes, or `None` if the
+            operation was in-place.
+
+    **Examples:**
+
+    >>> g = f.flip()
+    >>> g = f.flip('time')
+    >>> g = f.flip(1)
+    >>> g = f.flip(['time', 1, 'dim2'])
+    >>> f.flip(['dim2'], inplace=True)
+
+        '''
+        if axes is None:
+            # Flip all the axes
+            axes = set(self.domain_axes)
+        else:
+            if isinstance(axes, str):
+                axes = (axes,)
+
+            axes = set([self.domain_axis(axis, key=True) for axis in axes])
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Flip constructs with data
+        d.constructs._flip(axes)
+
+        return d
+
     def get_data_axes(self, identity, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data
     of a metadata construct.
@@ -727,12 +779,6 @@ TODO
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
 
         '''
-        if 'exact' in mode:
-            _DEPRECATION_ERROR_ARG(
-                self, 'indices', 'exact',
-                "Keywords are now never interpreted as regular expressions."
-            )  # pragma: no cover
-            
         if len(mode) > 1:
             raise ValueError(
                 "Can't provide more than one positional argument. "
@@ -747,7 +793,7 @@ TODO
             raise ValueError(
                 "Invalid value for 'mode' argument: {!r}".format(mode[0])
             )
-            
+
         domain_indices = self._indices(mode, None, **kwargs)
 
         return domain_indices['indices']
@@ -1154,7 +1200,9 @@ TODO            ``'full'``      The returned subspace has the same domain
         domain_axes = new.domain_axes
         for axis, index in zip(axes, indices):
             if isinstance(index, slice):
-                size = abs((index.stop - index.start) / index.step)
+                old_size = domain_axes[axis].get_size()
+                start, stop, step = index.indices(old_size)
+                size = abs((stop - start) / step)
                 int_size = round(size)
                 if size > int_size:
                     size = int_size + 1

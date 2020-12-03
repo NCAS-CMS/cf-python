@@ -264,7 +264,8 @@ from .query        import (Query, lt, le, gt, ge, eq, ne, contain, contains,
 from .constants    import *
 from .functions    import *
 from .maths        import relative_vorticity, histogram
-from .examplefield import example_field
+from .examplefield import (example_field,
+                           example_fields)
 
 
 from .cfimplementation import (CFImplementation,
