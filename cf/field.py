@@ -11745,7 +11745,20 @@ class Field(mixin.FieldDomain,
 
         if len(mode) > 1:
             raise ValueError(
-                "Can't provide more than one positional argument.")
+                "Can't provide more than one positional argument. "
+                "Got: {}".format(', '.join(repr(x) for x in mode))
+            )
+
+        if not mode or 'compress' in mode:
+            mode = 'compress'
+        elif 'envelope' in mode:
+            mode = 'envelope'
+        elif 'full' in mode:
+            mode = 'full'
+        else:
+            raise ValueError(
+                "Invalid value for 'mode' argument: {!r}".format(mode[0])
+            )
 
         data_axes = self.get_data_axes()
 

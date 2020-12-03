@@ -261,18 +261,15 @@ class FieldDomain:
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
 
         '''
-        if len(mode) > 1:
-            raise ValueError(
-                "Can't provide more than one positional argument.")
-
-        envelope = 'envelope' in mode
-        full = 'full' in mode
-        compress = 'compress' in mode or not (envelope or full)
+        compress = (mode == 'compress')
+        envelope = (mode == 'envelope')
+        full = (mode == 'full')
 
         logger.debug(
             "{}._indices:\n"
-            "  envelope, full, compress = {}, {}, {}".format(
-                self.__class__.__name__, envelope, full, compress
+            "  mode         = {!r}\n"
+            "  input kwargs = {!r}".format(
+                self.__class__.__name__, mode, kwargs
             )
         )  # pragma: no cover
 
@@ -327,9 +324,9 @@ class FieldDomain:
         # --- End: for
 
         logger.debug(
-            "  parsed      = {!r}\n"
-            "  unique_axes = {!r}\n"
-            "  n_axes      = {!r}".format(parsed, unique_axes, n_axes)
+            "  parsed       = {!r}\n"
+            "  unique_axes  = {!r}\n"
+            "  n_axes       = {!r}".format(parsed, unique_axes, n_axes)
         )  # pragma: no cover
 
         if len(unique_axes) < n_axes:
@@ -365,8 +362,8 @@ class FieldDomain:
             item_axes = axes[0]
 
             logger.debug(
-                "  item_axes = {!r}\n"
-                "  keys      = {!r}".format(item_axes, keys)
+                "  item_axes    = {!r}\n"
+                "  keys         = {!r}".format(item_axes, keys)
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -381,8 +378,8 @@ class FieldDomain:
 
                 logger.debug(
                     "  {} 1-d constructs: {!r}\n"
-                    "  axis      = {!r}\n"
-                    "  value     = {!r}".format(
+                    "  axis         = {!r}\n"
+                    "  value        = {!r}".format(
                         n_items, constructs, axis, value
                     )
                 )  # pragma: no cover
@@ -395,7 +392,7 @@ class FieldDomain:
                     #                       numpy.array([2,4,7]),
                     #                       [True, False, True]
                     # ------------------------------------------------
-                    logger.debug('    1-d CASE 1: ')  # pragma: no cover
+                    logger.debug("  1-d CASE 1:")  # pragma: no cover
 
                     index = value
 
@@ -418,7 +415,7 @@ class FieldDomain:
                     #                       'within' or 'without'
                     #                       Query instance
                     # ------------------------------------------------
-                    logger.debug('    1-d CASE 2: ')  # pragma: no cover
+                    logger.debug("  1-d CASE 2:")  # pragma: no cover
 
                     if item.increasing:
                         anchor0 = value.value[0]
@@ -472,7 +469,7 @@ class FieldDomain:
                     # ------------------------------------------------
                     # 1-dimensional CASE 3: All other 1-d cases
                     # ------------------------------------------------
-                    logger.debug('    1-d CASE 3:')  # pragma: no cover
+                    logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     item_match = (value == item)
 
@@ -499,7 +496,7 @@ class FieldDomain:
                     )
 
                 logger.debug(
-                    '    index = {}'.format(index))  # pragma: no cover
+                    "  index        = {}".format(index))  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -668,7 +665,7 @@ class FieldDomain:
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
             logger.debug(
-                "  create_mask = {}".format(create_mask)
+                "  create_mask  = {}".format(create_mask)
             )  # pragma: no cover
 
             if create_mask:
@@ -677,8 +674,8 @@ class FieldDomain:
                 )
                 auxiliary_mask[canonical_axes] = mask
                 logger.debug(
-                    "  mask_shape  = {}\n"
-                    "  mask.shape  = {}".format(mask_shape, mask.shape)
+                    "  mask_shape   = {}\n"
+                    "  mask.shape   = {}".format(mask_shape, mask.shape)
                 )  # pragma: no cover
         # --- End: for
 
@@ -694,7 +691,7 @@ class FieldDomain:
         }
 
         logger.debug(
-            "  indices    = {!r}".format(indices)
+            "  indices      = {!r}".format(indices)
         )  # pragma: no cover
 
         # Return the indices and the auxiliary mask

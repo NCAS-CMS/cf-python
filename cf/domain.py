@@ -1,5 +1,8 @@
 import logging
 
+from functools import reduce
+from operator import mul as operator_mul
+
 from numpy import size as numpy_size
 
 import cfdm
@@ -101,6 +104,31 @@ class Domain(mixin.FieldDomain,
             out.append(axis)
 
         return out
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def size(self):
+        '''The number of locations in the domain.
+
+    If there are no domain axis constructs, any domain axis construct
+    has a size of 0, then a size of 0 is returned.
+
+    :Returns:
+
+        `int`
+            The size.
+
+        '''
+        domain_axes = self.domain_axes
+        if not domain_axes:
+            return 0
+
+        return reduce(
+            operator_mul,
+            [domain_axis.get_size(0) for domain_axis in domain_axes.values()],
+            1)
 
     # ----------------------------------------------------------------
     # Methods
@@ -704,7 +732,22 @@ TODO
                 self, 'indices', 'exact',
                 "Keywords are now never interpreted as regular expressions."
             )  # pragma: no cover
+            
+        if len(mode) > 1:
+            raise ValueError(
+                "Can't provide more than one positional argument. "
+                "Got: {}".format(', '.join(repr(x) for x in mode))
+            )
 
+        if not mode or 'compress' in mode:
+            mode = 'compress'
+        elif 'envelope' in mode:
+            mode = 'envelope'
+        else:
+            raise ValueError(
+                "Invalid value for 'mode' argument: {!r}".format(mode[0])
+            )
+            
         domain_indices = self._indices(mode, None, **kwargs)
 
         return domain_indices['indices']
@@ -1040,6 +1083,13 @@ TODO            ``'full'``      The returned subspace has the same domain
     >>> g = f.subspace(latitude=cf.wi(51, 53))
 
         '''
+        logger.debug(
+            "{}.subspace\n"
+            "  input kwargs = {}".format(
+                self.__class__.__name__, kwargs
+            )
+        )  # pragma: no cover
+
         test = False
         if 'test' in mode:
             mode = list(mode)
@@ -1059,22 +1109,15 @@ TODO            ``'full'``      The returned subspace has the same domain
                 return False
 
             raise ValueError(error)
-        else:
-            if test:
-                return True
 
-        logger.debug(
-            "{}.subspace\n"
-            "    input indices  = {}".format(
-                self.__class__.__name__, kwargs
-            )
-        )  # pragma: no cover
+        if test:
+            return True
 
         domain_axes = self.domain_axes
 
         axes = []
-        indice2 = []
         shape = []
+        indices2 = []
         for a, b in indices.items():
             axes.append(a)
             shape.append(domain_axes[a].get_size())
@@ -1084,10 +1127,9 @@ TODO            ``'full'``      The returned subspace has the same domain
                                       cyclic=True)
 
         logger.debug(
-            "    parsed indices = {}\n"
-            "    roll           = {}".format(
-                indices, roll
-            )
+            "  axes           = {!r}\n"
+            "  parsed indices = {!r}\n"
+            "  roll           = {!r}".format(axes, indices, roll)
         )  # pragma: no cover
 
         if roll:
@@ -1129,10 +1171,13 @@ TODO            ``'full'``      The returned subspace has the same domain
         construct_data_axes = new.constructs.data_axes()
 
         for key, construct in new.constructs.filter_by_data().items():
-            dice = [indices.index(axis) for axis in construct_data_axes[key]]
+            construct_axes = construct_data_axes[key]
+
+            dice = [indices[axes.index(axis)] for axis in construct_axes]
 
             logger.debug(
-                '    dice = {}'.format(dice))  # pragma: no cover
+                " dice = {!r}".format(dice)
+            )  # pragma: no cover
 
             # Replace existing construct with its subspace
             new.set_construct(construct[tuple(dice)], key=key,
