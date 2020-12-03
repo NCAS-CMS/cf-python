@@ -308,6 +308,7 @@ logging.Logger.detail = detail
 logging.PARTITIONING = 5
 logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
 
+
 def partitioning(self, message, *args, **kwargs):
     if self.isEnabledFor(logging.PARTITIONING):
         self._log(logging.PARTITIONING, message, args, **kwargs)
