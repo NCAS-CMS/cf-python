@@ -90,22 +90,37 @@ Note, however, that datasets of different CF versions may be
 
 ----
 
-**Field construct**
--------------------
+.. _Field-and-domain-constructs:
 
-The central construct (i.e. element) to CF is the :term:`field
-construct`. The field construct, that corresponds to a CF-netCDF data
-variable, includes all of the metadata to describe it:
+**Field and domain constructs**
+-------------------------------
+
+The central constructs of CF are the :term:`field construct` and
+:term:`domain construct`.
+
+The field construct, that corresponds to a CF-netCDF data variable,
+includes all of the metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
       (e.g. the standard name),
     * a data array, and
     * "metadata constructs" that describe the locations of each cell
-      of the data array, and the physical nature of each cell's datum.
+      (i.e. the "domain") of the data array, and the physical nature
+      of each cell's datum.
 
-A field construct is stored in a `cf.Field` instance, and henceforth
-the phrase "field construct" will be assumed to mean "`cf.Field`
-instance".
+Likewise, the domain construct, that corresponds to a CF-netCDF domain
+variable or to the domain of a field construct, includes all of the
+metadata to describe it:
+
+    * descriptive properties that apply to field construct as a whole
+      (e.g. the long name), and
+    * metadata constructs that describe the locations of each cell of
+      the domain.
+
+A field construct or domain construct is stored in a `cf.Field`
+instance or `cf.Domain` instance respectively. Henceforth the phrase
+"field construct" will be assumed to mean "`cf.Field` instance", and
+"domain construct" will be assumed to mean "`cf.Domain` instance.
 
 ----
 
@@ -219,6 +234,9 @@ The `cf.read` function has optional parameters to
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right;
+
+* return only domain constructs derived from CF-netCDF domain
+  variables;
 
 * request that masking is *not* applied by convention to data elements
   (see :ref:`data masking <Data-mask>`); 
@@ -2349,12 +2367,11 @@ Constructor  Description
 **Domain**
 ----------
 
-The :ref:`domain of the CF data model <CF-data-model>` is *not* a
-construct, but is defined collectively by various other metadata
-constructs included in the field construct. It is represented by the
-`cf.Domain` class. The domain instance may be accessed with the
-`~Field.domain` attribute, or `~Field.get_domain` method, of the field
-construct.
+The :ref:`domain of the CF data model <CF-data-model>` is defined
+collectively by various other metadata constructs. It is represented
+by the `Domain` class. A domain construct may exist indpendently, or
+is accessed from a field construct with its `~Field.domain` attribute,
+or `~Field.get_domain` method.
 
 .. code-block:: python
    :caption: *Get the domain, and inspect it.*
@@ -2381,10 +2398,6 @@ construct.
 Changes to domain instance are seen by the field construct, and vice
 versa. This is because the domain instance is merely a "view" of the
 relevant metadata constructs contained in the field construct.
-
-.. The field construct also has a `~Field.domain` attribute that is an
-   alias for the `~Field.get_domain` method, which makes it easier to
-   access attributes and methods of the domain instance.
 
 .. code-block:: python
    :caption: *Change a property of a metadata construct of the domain
