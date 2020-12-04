@@ -2739,7 +2739,9 @@ corresponding non-parametric vertical coordinates, storing the result
 in a new auxiliary coordinate construct.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Create a field constructs with computed height
+             coordinates, from one with parametric
+             atmosphere_hybrid_height_coordinate coordinates.*
 	     
    >>> f = cf.example_field(1)
    >>> print(f)
