@@ -54,16 +54,8 @@ The cf package is imported as follows:
          feedback messages and it may be instructive to increase the
          verbosity whilst working through this tutorial to see and
          learn more about what cf is doing under the hood and about
-         the nature of the dataset being operated on. This can be done
-         for example by running:
-
-         .. code-block:: python
-            :caption: *Increase the verbosity of cf from the default.*
-
-            >>> cf.log_level('INFO')
-
-         See :ref:`the section on 'Logging' <Logging>` for
-         more information.
+         the nature of the dataset being operated on. See :ref:`the
+         section on 'Logging' <Logging>` for more information.
 
 .. _CF-version:
 
@@ -1186,6 +1178,8 @@ have the same relative order as the field construct:
 Data mask
 ^^^^^^^^^
 
+.. seealso:: :ref:`Assignment-by-condition`
+	     
 There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
 data mask is `False` where the the data has values, and `True` where
@@ -1421,6 +1415,9 @@ A `cf.Data` instance can also directly be indexed in the same way:
 **Assignment by index**
 -----------------------
 
+.. seealso:: :ref:`Assignment-by-condition`,
+             :ref:`Assignment-by-metadata`
+	    
 Data elements can be changed by assigning to elements selected by
 indices of the data (as described in this section); by conditions
 based on the data values of the field construct or one of its metadata
@@ -3255,6 +3252,9 @@ case in this example.
 Assignment by metadata
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. seealso:: :ref:`Assignment-by-index`,
+             :ref:`Assignment-by-condition`
+	    
 Data elements can be changed by assigning to elements selected by
 indices of the data (see :ref:`Assignment-by-index`); by conditions
 based on the data values of the field construct or one if its metadata
@@ -3681,6 +3681,9 @@ Constructor    Description
 **Assignment by condition**
 ---------------------------
 
+.. seealso:: :ref:`Assignment-by-index`,
+             :ref:`Assignment-by-metadata`, :ref:`Data-mask`
+	    
 Data elements can be changed by assigning to elements selected by
 indices of the data (see :ref:`Assignment-by-index`); by conditions
 based on the data values of the field construct or one of its metadata
@@ -3690,9 +3693,9 @@ based on arbitrary metadata constructs (see
      
 Assignment by condition uses the `~Field.where` method of the field
 construct. This method automatically infers indices for assignment
-from conditions on the field construct's data, or its metadata. In
-addition, different values can be assigned to where the conditions
-are, and are not, met
+from conditions on the field construct's data, or its metadata, or
+from other field constructs or data. Different values can be assigned
+to where the conditions are, and are not, met.
 
 .. code-block:: python
    :caption: *Set all data elements that are less than 273.15 to
@@ -3739,7 +3742,7 @@ are, and are not, met
      [0. 1. 1. 0. 0. 1. 0. 0. 0.]
      [0. 1. 1. 0. 0. 0. 0. 1. 0.]
      [1. 0. 1. 0. 1. 0. 1. 1. 0.]]]
-
+     
 .. code-block:: python
    :caption: *Where the data of field 'u' is True, multiply all
              elements of 't' by -1, and at all other points set 't' to
@@ -3764,7 +3767,8 @@ metadata construct's data:
    :caption: *Where the 'Y' coordinates are greater than 0.5, set the
              field construct data to missing data.*
 
-   >>> print(t.where(cf.gt(0.5), x=cf.masked, construct='grid_latitude').array)
+   >>> v = t.where(cf.gt(0.5), x=cf.masked, construct='grid_latitude')
+   >>> print(v.array)
    [[[   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
@@ -3783,7 +3787,75 @@ be unmasked if the mask has first been made soft.
 There are many variants on how the condition and assignment values may
 be specified. See the `~Field.where` method documentation for details.
 
-   
+The `~Field.where` method may be used for applying the mask from other
+data:
+
+.. code-block:: python
+   :caption: *Where the 'Y' coordinates are greater than 0.5, set the
+             field construct data to missing data.*
+
+   >>> print(t.where(v.mask, x=cf.masked))
+   [[[   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
+     [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+     [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
+     [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
+
+The condition may also be any object that broadcasts to the field
+constructs data:
+
+.. code-block:: python
+   :caption: *Mask all points, and those in selected columns.*
+
+   >>> print(t.where(True, x=cf.masked).array)
+   [[[-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]
+     [-- -- -- -- -- -- -- -- --]]]
+   >>> print(t.where([0, 0, 1, 0, 1, 1, 1, 0, 0], x=cf.masked).array)
+   [[[262.8 270.5 -- 269.5 -- -- -- 278.9 269.2]
+     [272.7 268.4 -- 278.9 -- -- -- 265.7 279.5]
+     [269.7 279.1 -- 274.2 -- -- -- 272.5 263.7]
+     [261.7 260.6 -- 260.3 -- -- -- 267.6 260.6]
+     [264.2 275.9 -- 264.9 -- -- -- 268.6 275.3]
+     [263.9 263.8 -- 263.7 -- -- -- 263.5 270.2]
+     [273.8 273.1 -- 272.3 -- -- -- 273.0 270.6]
+     [267.9 273.5 -- 260.3 -- -- -- 260.8 268.9]
+     [270.9 278.7 -- 261.7 -- -- -- 278.5 266.4]
+     [276.4 264.2 -- 266.1 -- -- -- 273.4 269.7]]]
+
+This is particularly useful when the field construct does not have
+sufficient metadata to unambiguously identiy its domain axes:
+
+.. code-block:: python
+   :caption: *Mask all points from "v", using the data objects and
+             therefore bypassing the metadata checks.*
+
+   >>> t.data.where(v.data.mask, x=cf.masked, inplace=True)
+   >>> print(t.array)
+   [[[   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [   --    --    --    --    --    --    --    --    --]
+     [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
+     [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+     [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
+     [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
+
+     
 ----
 
 .. _Field-creation:
@@ -3939,7 +4011,7 @@ The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
-.. Code Block 1
+.. Code Block Start 1
 .. code-block:: python
    :caption: *Create a field construct with properties; data; and domain axis, cell method and dimension coordinate metadata constructs (data arrays have been generated with dummy values using numpy.arange).*
 
@@ -4013,6 +4085,8 @@ the field construct.
    Q.set_construct(dimY)
    Q.set_construct(dimX)
 
+.. Code Block End 1
+      
 .. code-block:: python
    :caption: *Inspect the new field construct.* 
 	  
@@ -4082,7 +4156,7 @@ Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
-.. Code Block 2
+.. Code Block Start 2
    
 .. code-block:: python
    :caption: *Create a field construct that contains at least one
@@ -4241,6 +4315,8 @@ been generated with dummy values using `numpy.arange`):
                     data=cf.Data(numpy.arange(90.).reshape(9, 10)))
    
    tas.set_construct(cell_measure)
+
+.. Code Block End 2
 
 The new field construct may now be inspected:
 
@@ -6053,7 +6129,7 @@ create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs as required.
    
-.. Code Block 4
+.. Code Block Start 4
 
 .. code-block:: python
    :caption: *Create a field construct and then compress it.*
@@ -6084,6 +6160,8 @@ metadata constructs as required.
           count_properties={'long_name': 'number of obs for this timeseries'},
           inplace=True)
 				
+.. Code Block End 4
+
 The new compressed field construct can now be inspected and written to
 a netCDF file:
 
@@ -6142,7 +6220,7 @@ array that is stored in one of three special array objects:
 `RaggedContiguousArray`, `RaggedIndexedArray` or
 `RaggedIndexedContiguousArray`.
 
-.. Code Block 5
+.. Code Block Start 5
 
 .. code-block:: python
    :caption: *Create a field construct explicitly with compressed
@@ -6180,7 +6258,9 @@ array that is stored in one of three special array objects:
    
    # Set the data for the field
    T.set_data(cf.Data(array))
-	
+
+.. Code Block End 5
+
 .. _Gathering:
 
 Gathering
@@ -6303,7 +6383,7 @@ initializing a `cf.Data` instance with a gathered array that is stored
 in the special `cf.GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
-.. Code Block 6
+.. Code Block Start 6
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
@@ -6340,6 +6420,8 @@ creates a simple field construct with an underlying gathered array:
 
    # Set the data for the field
    P.set_data(cf.Data(array), axes=[T, Y, X])
+
+.. Code Block End 6
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
