@@ -35,13 +35,9 @@
 
   ```bash
   export PYTHONPATH=$PWD:$PYTHONPATH
-  d=$PWD
   cd docs/source
-  ./extract_tutorial_code
-  ./reset_test_tutorial
-  cd test_tutorial
-  python ../tutorial.py
-  cd $d
+  ./test_tutorial_code
+  cd -
   ```
 
 * Build a development copy of the documentation using to check API
