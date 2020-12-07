@@ -1,12 +1,8 @@
-#!/usr/bin/env python
-# -*-python-*-
+'''Extract tutorial python code into an executable python script.
 
+'''
 import re
 
-# --------------------------------------------------------------------
-# 
-# 
-# --------------------------------------------------------------------
 tutorial = []
 code_block = False
 caption = False
