@@ -11762,8 +11762,13 @@ class Field(mixin.FieldDomain,
 
         data_axes = self.get_data_axes()
 
-        domain_indices = self._indices(mode, data_axes, **kwargs)
+        # ------------------------------------------------------------
+        # Get the indices for every domain axis in the domain,
+        # including any auxiliary masks
+        # ------------------------------------------------------------
+        domain_indices = self._indices(mode, data_axes, True, **kwargs)
 
+        # Initialise the output indices with any auxiliary masks
         auxiliary_mask = domain_indices['auxiliary_mask']
         if auxiliary_mask:
             # Ensure that each auxiliary mask is broadcastable to the
@@ -11785,6 +11790,8 @@ class Field(mixin.FieldDomain,
         else:
             indices = []
 
+
+        # Add the indices that apply to the field's data dimensions
         indices.extend(
             [domain_indices['indices'][axis] for axis in data_axes]
         )

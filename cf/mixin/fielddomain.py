@@ -86,8 +86,8 @@ class FieldDomain:
 
         return self._Data(auxiliary_mask)
 
-    def _indices(self, mode, data_axes, **kwargs):
-        '''Create indices that define a subspace of the field construct. TODO
+    def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
+        '''Create indices that define a subspace of the construct.
 
     The subspace is defined by identifying indices based on the
     metadata constructs.
@@ -95,9 +95,6 @@ class FieldDomain:
     Metadata constructs are selected conditions are specified on their
     data. Indices for subspacing are then automatically inferred from
     where the conditions are met.
-
-    The returned tuple of indices may be used to created a subspace by
-    indexing the original field construct with them.
 
     Metadata constructs and the conditions on their data are defined
     by keyword parameters.
@@ -107,8 +104,8 @@ class FieldDomain:
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
 
-    * Subspace criteria may be provided for size 1 domain axes that
-      are not spanned by the field construct's data.
+    * If *data_axes* are provided then the subspace criteria may be
+      provided for size 1 domain axes other than those given.
 
     * Explicit indices may also be assigned to a domain axis
       identified by a metadata construct, with either a Python `slice`
@@ -126,44 +123,54 @@ class FieldDomain:
 
     **Auxiliary masks**
 
-    When creating an actual subspace with the indices, if the first
-    element of the tuple of indices is ``'mask'`` then the extent of
-    the subspace is defined only by the values of elements three and
-    onwards. In this case the second element contains an "auxiliary"
-    data mask that is applied to the subspace after its initial
-    creation, in order to set unselected locations to missing data.
+    If *auxiliary_mask* is True then the returned dictionary will also
+    have the key ``'auxiliary_mask'`` whose value is a dictionary
+    containing any "auxiliary" data masks that are applied to a
+    subspace created with these indices, after its initial creation,
+    in order to set unselected locations to missing data. Each value
+    of this dictionary is a mask data object, keyed by the tuple
+    domain axes spanned by the mask.
 
     .. versionadded:: 3.TODO.0
 
     :Parameters:
 
-        mode: sequence of `str`, optional
+        mode: `str`
             There are three modes of operation, each of which provides
             indices for a different type of subspace:
 
             ==============  ==========================================
             *mode*          Description
             ==============  ==========================================
-            ``'compress'``  This is the default mode. Unselected
-                            locations are removed to create the
-                            returned subspace. Note that if a
-                            multi-dimensional metadata construct is
-                            being used to define the indices then some
-                            missing data may still be inserted at
-                            unselected locations.
+            ``'compress'``  Return indices that identify only the
+                            requested locations.
+
+                            Note that if a multi-dimensional metadata
+                            construct is being used to define the
+                            indices then some unrequested locations
+                            may also be selected. In this case these
+                            will be identified via auxiliary masks if
+                            ``auxiliary_mask=True``.
 
             ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the selected
-                            indices. Missing data is inserted at
-                            unselected locations within the envelope.
+                            contains all of the requested
+                            location. When used with
+                            ``auxiliary_mask=True``, the auxiliary
+                            masks define the unrequested locations.
 
-            ``'full'``      The returned subspace has the same domain
-                            as the original field construct. Missing
-                            data is inserted at unselected locations.
+            ``'full'``      The returned indices define the same
+                            domain. When used with
+                            ``auxiliary_mask=True``, the auxiliary
+                            masks define the unrequested locations.
             ==============  ==========================================
 
-            At most one mode can be given.
+        data_axes: sequence of `str` 
+            The domain axes spanned by the calling construct's data
+            array, if it has one.
 
+        auxilary_mask: `bool`
+            Whether or not to create and return any auxiliary masks.
+    
         kwargs: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
@@ -174,91 +181,8 @@ class FieldDomain:
 
     :Returns:
 
-        `tuple`
-            The indices meeting the conditions.
-
-    **Examples:**
-
-    >>> q = cf.example_field(0)
-    >>> print(q)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> indices = q.indices(X=112.5)
-    >>> print(indices)
-    (slice(0, 5, 1), slice(2, 3, 1))
-    >>> q[indicies]
-    <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
-    >>> q.indices(X=112.5, latitude=cf.gt(-60))
-    (slice(1, 5, 1), slice(2, 3, 1))
-    >>> q.indices(latitude=cf.eq(-45) | cf.ge(20))
-    (array([1, 3, 4]), slice(0, 8, 1))
-    >>> q.indices(X=[1, 2, 4], Y=slice(None, None, -1))
-    (slice(4, None, -1), array([1, 2, 4]))
-    >>> q.indices(X=cf.wi(-100, 200))
-    (slice(0, 5, 1), slice(-2, 4, 1))
-    >>> q.indices(X=slice(-2, 4))
-    (slice(0, 5, 1), slice(-2, 4, 1))
-    >>> q.indices('compress', X=[1, 2, 4, 6])
-    (slice(0, 5, 1), array([1, 2, 4, 6]))
-    >>> q.indices(Y=[True, False, True, True, False])
-    (array([0, 2, 3]), slice(0, 8, 1))
-    >>> q.indices('envelope', X=[1, 2, 4, 6])
-    ('mask', [<CF Data(1, 6): [[False, ..., False]]>], slice(0, 5, 1), slice(1, 7, 1))
-    >>> indices = q.indices('full', X=[1, 2, 4, 6])
-    ('mask', [<CF Data(1, 8): [[True, ..., True]]>], slice(0, 5, 1), slice(0, 8, 1))
-    >>> print(indices)
-    >>> print(q)
-    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-
-    >>> print(a)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
-    Cell methods    : area: mean
-    Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
-    >>> a.indices(T=410.5)
-    (slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> a.indices(T=cf.dt('1960-04-16'))
-    (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> indices = a.indices(T=cf.wi(cf.dt('1962-11-01'),
-    ...                             cf.dt('1967-03-17 07:30')))
-    >>> print(indices)
-    (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> a[indices]
-    <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
-    >>> print(t)
-    Field: air_temperature (ncvar%ta)
-    ---------------------------------
-    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                    : time(1) = [2019-01-01 00:00:00]
-    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-    Coord references: grid_mapping_name:rotated_latitude_longitude
-                    : standard_name:atmosphere_hybrid_height_coordinate
-    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-    >>> indices = t.indices(latitude=cf.wi(51, 53))
-    >>> print(indices)
-    ('mask', [<CF Data(1, 5, 9): [[[False, ..., False]]]>], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))
-    >>> t[indices]
-    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+        `dict`
+            The indices.
 
         '''
         compress = (mode == 'compress')
@@ -335,7 +259,7 @@ class FieldDomain:
                 "domain axes"
             )
 
-        auxiliary_mask = {}
+        auxiliary_masks = {}
 
         for canonical_axes, axes_key_construct_value in parsed.items():
             axes, keys, constructs, points = list(
@@ -676,11 +600,11 @@ class FieldDomain:
                 "  create_mask  = {}".format(create_mask)
             )  # pragma: no cover
 
-            if create_mask:
+            if auxiliary_mask and create_mask:
                 mask = self._create_auxiliary_mask_component(
                     mask_shape, ind, compress
                 )
-                auxiliary_mask[canonical_axes] = mask
+                auxiliary_masks[canonical_axes] = mask
                 logger.debug(
                     "  mask_shape   = {}\n"
                     "  mask.shape   = {}".format(mask_shape, mask.shape)
@@ -692,17 +616,17 @@ class FieldDomain:
                 (domain_axes[axis].get_size(),), (index,)
             )[0]
 
+        indices = {'indices': indices}
+
         # Include the auxiliary mask
-        indices = {
-            'indices': indices,
-            'auxiliary_mask': auxiliary_mask,
-        }
+        if auxiliary_mask:
+            indices['auxiliary_mask'] = auxiliary_masks
 
         logger.debug(
             "  indices      = {!r}".format(indices)
         )  # pragma: no cover
 
-        # Return the indices and the auxiliary mask
+        # Return the indices, with any auxiliary masks.
         return indices
 
     def _roll_constructs(self, axis, shift):

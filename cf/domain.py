@@ -607,7 +607,7 @@ TODO
         return out
 
     def indices(self, *mode, **kwargs):
-        '''Create indices that define a subspace of the field construct.
+        '''Create indices that define a subspace of the domain construct.
 
     The subspace is defined by identifying indices based on the
     metadata constructs.
@@ -616,9 +616,6 @@ TODO
     data. Indices for subspacing are then automatically inferred from
     where the conditions are met.
 
-    The returned tuple of indices may be used to created a subspace by
-    indexing the original field construct with them.
-
     Metadata constructs and the conditions on their data are defined
     by keyword parameters.
 
@@ -626,9 +623,6 @@ TODO
 
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
-
-    * Subspace criteria may be provided for size 1 domain axes that
-      are not spanned by the field construct's data.
 
     * Explicit indices may also be assigned to a domain axis
       identified by a metadata construct, with either a Python `slice`
@@ -644,42 +638,31 @@ TODO
       acting along orthogonal dimensions, some missing data may still
       need to be inserted into the field construct's data.
 
-    **Auxiliary masks**
-
-    When creating an actual subspace with the indices, if the first
-    element of the tuple of indices is ``'mask'`` then the extent of
-    the subspace is defined only by the values of elements three and
-    onwards. In this case the second element contains an "auxiliary"
-    data mask that is applied to the subspace after its initial
-    creation, in order to set unselected locations to missing data.
+    .. versionadded:: 3.TODO.0
 
     .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
 
     :Parameters:
 
         mode: `str`, *optional*
-            There are three modes of operation, each of which provides
+            There are two modes of operation, each of which provides
             indices for a different type of subspace:
 
             ==============  ==========================================
             *mode*          Description
             ==============  ==========================================
-            ``'compress'``  This is the default mode. Unselected
-                            locations are removed to create the
-                            returned subspace. Note that if a
-                            multi-dimensional metadata construct is
-                            being used to define the indices then some
-                            missing data may still be inserted at
-                            unselected locations.
+            ``'compress'``  Return indices that identify only the
+                            requested locations.
+
+                            This is the default mode.
+
+                            Note that if a multi-dimensional metadata
+                            construct is being used to define the
+                            indices then some unrequested locations
+                            may also be selected.
 
             ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the selected
-                            indices. Missing data is inserted at
-                            unselected locations within the envelope.
-
-            ``'full'``      The returned subspace has the same domain
-                            as the original field construct. Missing
-                            data is inserted at unselected locations.
+                            contains all of the requested locations.
             ==============  ==========================================
 
         kwargs: *optional*
@@ -692,8 +675,9 @@ TODO
 
     :Returns:
 
-        `tuple`
-            The indices meeting the conditions.
+        `dict`
+            A dictionary of indices, keyed by the domain axis
+            construct identifiers to which they apply
 
     **Examples:**
 
@@ -794,8 +778,15 @@ TODO
                 "Invalid value for 'mode' argument: {!r}".format(mode[0])
             )
 
-        domain_indices = self._indices(mode, None, **kwargs)
+        # ------------------------------------------------------------
+        # Get the indices for every domain axis in the domain, without
+        # any auxiliary masks.
+        # ------------------------------------------------------------
+        domain_indices = self._indices(mode, None, False, **kwargs)
 
+        # ------------------------------------------------------------
+        # Return the indices
+        # ------------------------------------------------------------
         return domain_indices['indices']
 
     def match_by_construct(self, *identities, OR=False,
@@ -1015,17 +1006,17 @@ TODO
         return d
 
     def subspace(self, *mode, **kwargs):
-        '''Create a subspace of a field construct.
+        '''Create a subspace of a domain construct.
 
-    Creation of a new field construct which spans a subspace of the
-    domain of an existing field construct is achieved by identifying
+    Creation of a new domain construct that spans a subspace of the
+    domain of an existing domain construct is achieved by identifying
     indices based on the metadata constructs.
 
     The subspacing operation also subspaces any metadata constructs of
-    the field construct (e.g. coordinate metadata constructs) which
+    the domain construct (e.g. coordinate metadata constructs) which
     span any of the domain axis constructs that are affected. The new
-    field construct is created with the same properties as the
-    original field construct.
+    domain construct is created with the same properties as the
+    original domain construct.
 
     Metadata constructs and the conditions on their data are defined
     by keyword parameters.
@@ -1037,9 +1028,6 @@ TODO
 
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
-
-    * Subspace criteria may be provided for size 1 domain axes that
-      are not spanned by the field construct's data.
 
     * Explicit indices may also be assigned to a domain axis
       identified by a metadata construct, with either a Python `slice`
@@ -1078,10 +1066,6 @@ TODO
                             contains all of the selected
                             indices. Missing data is inserted at
                             unselected locations within the envelope.
-
-TODO            ``'full'``      The returned subspace has the same domain
-                            as the original field construct. Missing
-                            data is inserted at unselected locations.
 
             ``'test'``      May be used on its own or in addition to
                             one of the other positional arguments. Do
