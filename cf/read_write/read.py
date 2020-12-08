@@ -182,7 +182,7 @@ def read(files, external=None, verbose=None, warnings=False,
             be raised, unless the *ignore_read_error* parameter is
             True.
 
-         external: (sequence of) `str`, optional
+        external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
             by the *filename* parameter) from the given external
