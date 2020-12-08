@@ -21,6 +21,7 @@ with open('tutorial.rst', mode='r') as f:
 
         if len(code) == 2:
             tutorial.append(code[1])
+            continue
 
         if re.match('\s*\.\. Code Block Start', line):
             code_block = True
