@@ -215,17 +215,25 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
     second = numpy.array(second)
     microsecond = numpy.array(microsecond)
 
-    ndim = max(map(numpy.ndim, (month, day, hour, minute, second,
-                                microsecond)))
+    ndim = max(
+        map(numpy.ndim, (month, day, hour, minute, second, microsecond))
+    )
 
     if ndim > 1:
-        raise ValueError('TODO')
+        raise ValueError(
+            "If set, the 'month', 'day', 'hour', 'minute', 'second', "
+            "'microsecond' parameters must be scalar or 1-d"
+        )
 
     if arg.ndim > 2:
-        raise ValueError('TODO')
+        raise ValueError(
+            "The 'arg' parameter must be scalar, 1-d or 2-d. "
+            "Got: {!r}".format(arg)
+        )
 
-    sizes = set(map(numpy.size, (arg, month, day, hour, minute,
-                                 second, microsecond)))
+    sizes = set(
+        map(numpy.size, (arg, month, day, hour, minute, second, microsecond))
+    )
 
     if len(sizes) == 1 and 1 in sizes:
         # All arguments are scalars or size 1
@@ -242,19 +250,30 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
 
         return out
 
+    # Still here?
     if arg.ndim == 2 and arg.shape[1] > 7:
-        raise ValueError('TODO (890)')
+        raise ValueError(
+            "The size of the second dimension of 'arg' must be less than 8. "
+            "Got: {!r}".format(arg.shape[1])
+        )
 
     if arg.ndim == 1:
         if arg.dtype.kind in 'UOS':
             out = [dt(a, calendar=calendar) for a in arg]
-
         else:
             if len(sizes) > 2:
-                raise ValueError('TODO (891)')
+                raise ValueError(
+                    "The 'arg', 'month', 'day', 'hour', 'minute', 'second', "
+                    "'microsecond' parameters have incompatible sizes."
+                    "At least two of them have different sizes greater than 1"
+                )
 
             if len(sizes) == 2 and 1 not in sizes:
-                raise ValueError('TODO (892)')
+                raise ValueError(
+                    "The 'arg', 'month', 'day', 'hour', 'minute', 'second', "
+                    "'microsecond' parameters have incompatible sizes. "
+                    "At least two of them have different sizes greater than 1"
+                )
 
             _ = numpy.empty((max(sizes), 7), dtype=int)
             _[:, 0] = arg
