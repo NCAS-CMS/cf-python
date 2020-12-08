@@ -15,6 +15,7 @@ from .units               import Units
 
 from .decorators          import (_manage_log_level_via_verbosity,
                                   _manage_log_level_via_verbose_attr,
+                                  _reset_log_emergence_level,
                                   _deprecated_kwarg_check)
 
 from .functions           import (flat,
@@ -135,7 +136,6 @@ class _Meta:
                                         'Domain_ancillaries',
                                         'Field_ancillaries'))
 
-    @_manage_log_level_via_verbosity
     def __init__(
         self, f,
         rtol=None, atol=None,
@@ -845,7 +845,6 @@ class _Meta:
 
         return cms
 
-    @_manage_log_level_via_verbose_attr
     def cell_measure_has_data_and_units(self, msr):
         '''TODO
 
@@ -870,7 +869,6 @@ class _Meta:
 
         return True
 
-    @_manage_log_level_via_verbose_attr
     def coord_has_identity_and_data(self, coord, axes=None):
         '''TODO
 
@@ -927,7 +925,6 @@ class _Meta:
 
         return None
 
-    @_manage_log_level_via_verbose_attr
     def field_ancillary_has_identity_and_data(self, anc):
         '''TODO
 
@@ -966,7 +963,6 @@ class _Meta:
 
         return None
 
-    @_manage_log_level_via_verbose_attr
     def coordinate_reference_signatures(self, refs):
         '''TODO
 
@@ -1004,7 +1000,6 @@ class _Meta:
 
         return signatures
 
-    @_manage_log_level_via_verbose_attr
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
         '''TODO
 
@@ -1752,6 +1747,23 @@ def aggregate(fields,
 
         # Print useful information
         meta[0].print_info()
+
+        # Note (verbosity): the interface between cf.aggregate's use of:
+        #    _manage_log_level_via_verbosity
+        # and some (only print_info ATM) of _Meta's methods' use of:
+        #    _manage_log_level_via_verbose_attr
+        # breaks the verbosity management here. This is currently the
+        # only case in the codebases cfdm and cf where both decorators are at
+        # play. Logic to handle the interface between the two has not
+        # yet been added, so the latter called with print_info resets the
+        # log level prematurely w.r.t the intentions of the former. For now,
+        # we can work around this by resetting the verbosity manually after
+        # the small number of print_info calls in this function, like so:
+        if verbose is not None:
+            # We already know _is_valid_log_level_int(verbose) is True since
+            # if not, decorator would have errored before cf.aggregate ran.
+            _reset_log_emergence_level(verbose)
+
         logger.detail('')
 
         if len(meta) == 1:
@@ -1814,6 +1826,11 @@ def aggregate(fields,
         # Print useful information
         for m in meta:
             m.print_info(signature=False)
+
+        # See 'Note (verbosity)' above
+        if verbose is not None:
+            _reset_log_emergence_level(verbose)
+
         logger.detail('')
 
         # Take a shallow copy in case we abandon and want to output
