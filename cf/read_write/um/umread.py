@@ -1416,11 +1416,11 @@ class UMField:
             LBDTIME = list(LBDTIME)
             LBDTIME[0] = LBVTIME[0]
 
-            ctime = cftime.datetime(*LBDTIME)
+            ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
-            if ctime < cftime.datetime(*LBVTIME):
+            if ctime < cftime.datetime(*LBVTIME, calendar=self.calendar):
                 LBDTIME[0] += 1
-                ctime = cftime.datetime(*LBDTIME)
+                ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
             ctime = Data(ctime, reftime).array.item()
             _cached_ctime[key] = ctime
@@ -1824,7 +1824,10 @@ class UMField:
                         datetime(*LBDTIME), units, calendar)
                 else:
                     time = netCDF4_date2num(
-                        cftime.datetime(*LBDTIME), units, calendar)
+                        cftime.datetime(*LBDTIME, calendar=self.calendar),
+                        units,
+                        calendar
+                    )
 
                 _cached_date2num[key] = time
             except ValueError:
@@ -2046,7 +2049,7 @@ class UMField:
 #
 #        return numpy_dtype(data_type)
 
-    def printfdr(self):
+    def printfdr(self, display=False):
         '''Print out the contents of PP field headers.
 
     This is a bit like printfdr in the UKMO IDL PP library.
@@ -2056,8 +2059,12 @@ class UMField:
     >>> u.printfdr()
 
         '''
-        for header in self.fdr():
-            logger.info(header)
+        if display:
+            for header in self.fdr():
+                print(header)
+        else:
+            for header in self.fdr():
+                logger.info(header)
 
     def pseudolevel_coordinate(self, LBUSER5):
         '''TODO
@@ -2407,7 +2414,10 @@ class UMField:
             # It is important to use the same time_units as dtime
             try:
                 time = cftime.date2num(
-                    cftime.datetime(*LBVTIME), units, calendar)
+                    cftime.datetime(*LBVTIME, calendar=self.calendar),
+                    units,
+                    calendar
+                )
 
                 _cached_date2num[key] = time
             except ValueError:

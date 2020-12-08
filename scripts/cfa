@@ -1352,6 +1352,7 @@ Using cf-python library version {1} at {2}'''.format(
         # ------------------------------------------------------------
         # Read
         # ------------------------------------------------------------
+#        cf.log_level(2)
         try:
             f = cf.read(infile, **read_options)
         except Exception as error:

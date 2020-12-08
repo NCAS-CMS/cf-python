@@ -610,8 +610,13 @@ place.
                 if x_calendar != '':
                     if d_calendar is not None:
                         if not self.Units.equivalent(
-                                Units(x_since, x_calendar)):
-                            raise ValueError('TODO')
+                                Units(x_since, x_calendar)
+                        ):
+                            raise ValueError(
+                                "Incompatible units: {!r}, {!r}".format(
+                                    self.Units, Units(x_since, x_calendar)
+                                )
+                            )
                     else:
                         d_calendar = x_calendar
                 # --- End: if
@@ -2432,7 +2437,10 @@ place.
         bins = numpy_asanyarray(bins)
 
         if bins.ndim > 2:
-            raise ValueError("TODO")
+            raise ValueError(
+                "The 'bins' parameter must be scalar, 1-d or 2-d"
+                "Got: {!r}".format(bins)
+            )
 
         two_d_bins = None
 
@@ -2442,7 +2450,10 @@ place.
             #           the bins by lower bounds
             # --------------------------------------------------------
             if bins.shape[1] != 2:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "The second dimension of the 'bins' parameter must "
+                    "have size 2. Got: {!r}".format(bins)
+                )
 
             bins.sort(axis=1)
             bins.sort(axis=0)
@@ -2450,7 +2461,11 @@ place.
             # Check for overlaps
             for i, (u, l) in enumerate(zip(bins[:-1, 1], bins[1:, 0])):
                 if u > l:
-                    raise ValueError("TODO overlap")
+                    raise ValueError(
+                        "Overlapping bins: {}, {}".format(
+                            tuple(bins[i]), tuple(bins[i+i])
+                        )
+                    )
             # --- End: for
 
             two_d_bins = bins
@@ -3436,7 +3451,10 @@ place.
 
         iaxis = d._parse_axes(axis)
         if len(iaxis) != 1:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Must specify a unique domain axis with the 'axis' "
+                "parameter. {!r} specifies axes {!r}".format(axis, iaxes)
+            )
 
         iaxis = iaxis[0]
 
@@ -5968,7 +5986,7 @@ place.
                 weights_axes = set()
                 for key, value in tuple(weights.items()):
                     del weights[key]
-                    key = d._parse_axes(key)  # , 'asdasds12983487 TODO')
+                    key = d._parse_axes(key)
                     if weights_axes.intersection(key):
                         raise ValueError("Duplicate weights axis")
 
