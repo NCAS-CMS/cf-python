@@ -771,33 +771,137 @@ Deprecated. Use --um instead.
 .B \-\-um=option
 For Met Office (UK) PP files and Met Office (UK) fields files only,
 provide extra instructions for interpreting the files. This option is
-ignored for input files which are not PP or fields files. Valid
-options are:
+ignored for input files which are not PP or fields files.
 
-UM version: The Unified Model version to be used when decoding the
-header. Valid versions are, for example, 4.2, 6.6.3 and 8.2. The
-default version is 4.5. In general, the given version is ignored if it
-can be inferred from the header (which is usually the case for files
-created by the UM at versions 5.3 and later). The exception to this is
-when the given version has a third element (such as the 3 in 6.6.3),
-in which case any version in the header is ignored. For example
+Multiple instructions may be chosen specifying more than one
+option. For example, to specify that UM files are 32-bit, big endian
+PP files for UM version 5.1:
+
+.ft B
+\-\-um=format=PP \-\-um=endian=little --um=version=5.1
+.ft P
+
+Valid options are:
+
+.ft I
+version
+.ft P
+      The Unified Model version to be used when decoding the
+      header. Valid versions are, for example, 4.2, 6.6.3 and 8.2. The
+      default version is 4.5. In general, the given version is ignored
+      if it can be inferred from the header (which is usually the case
+      for files created by the UM at versions 5.3 and later). The
+      exception to this is when the given version has a third element
+      (such as the 3 in 6.6.3), in which case any version in the
+      header is ignored.
+
+      For example
 .ft B
 \-\-um=version=5.2
 .ft P
 
-UM format: The file format (PP or FF), word size in bytes (4 or 8) and
-byte order (big or little) of the file in the rare cases that they can
-not be automatically detected. If the format is given as PP then the
-word size and byte order default to 4 and big respectively. For example
+.ft I
+format
+.ft P
+      The file format (PP or FF) in the rare case that it can not
+      beautomatically detected.
+
+      For example
 .ft B
 \-\-um=format=PP
 .ft P
 
-Multiple instructions may be chosen specifying more than one option. For
-example, to specify that UM files are 32-bit, big endian PP files for UM version 5.1:
-.ft B
-\-\-um=format=PP \-\-um=endian=little --um=version=5.1
+.ft I
+word_size
 .ft P
+      The word size in bytes (4 or 8) of the file in the rare case
+      that it can not be automatically detected. If the format is
+      given as PP then the word size defaults to 4.
+
+      For example
+.ft B
+\-\-um=word_size=8
+.ft P
+
+.ft I
+endian
+.ft P
+      The byte order (big or little) of the file in the rare case that
+      it can not be automatically detected. If the format is given as
+      PP then byte order defaults to 4.
+
+      For example
+.ft B
+\-\-um=endian=big
+.ft P
+
+.ft I
+stash_table
+.ft P
+      A file containing new STASH code to standard name mappings.
+
+      For example
+.ft B
+\-\-um=stash_table=new_mapping.txt
+.ft P
+
+      Each mapping is defined by a seperate line in a text file. Each
+      line contains nine !-delimited entries:
+
+.ft B
+          ID:
+.ft P
+UM sub model identifier (1 = atmosphere, 2 = ocean,
+              etc.)
+.ft B
+          STASH:
+.ft P
+STASH code (e.g. 3236)
+.ft B
+          STASHmaster description:
+.ft P
+STASH name as given in the
+                                   STASHmaster files
+.ft B
+          Units:
+.ft P
+Units of this STASH code (e.g. 'kg m-2')
+.ft B
+          Valid from:
+.ft P
+This STASH valid from this UM version (e.g. 405)
+.ft B
+          Valid to:
+.ft P
+This STASH valid to this UM version (e.g. 501)
+.ft B
+          CF standard name:
+.ft P
+The CF standard name
+.ft B
+          CF info:
+.ft P
+Anything useful (such as standard name modifiers)
+.ft B
+          PP conditions:
+.ft P
+PP conditions which need to be satisfied for
+                         this translation
+
+      The default mappings are found in the file
+      {2}/etc/STASH_to_CF.txt
+      and any new mappings will replace any entries which already
+      exist.
+
+      Only entries "ID", "STASH", and "CF standard name" are
+      mandatory, all other entries may be left blank. For example
+
+            1!999!!!!!ultraviolet_index!!
+
+      is a valid mapping from atmosphere STASH code 999 to the
+      standard name ultraviolet_index. If the "Valid from" and "Valid
+      to" entries are omitted then the stash mapping is assumed to
+      apply to all UM versions.
 .
 .
 .TP
@@ -1234,21 +1338,29 @@ Using cf-python library version {1} at {2}'''.format(
     if um:
         read_options['um'] = {}
         for key in um:
+            # TODO when we no longer support Python 3.8, use the
+            # 'removeprefix' string method
             if key.startswith('version='):
-                read_options['um']['version'] = key.lstrip('version=')
-            if key.startswith('format='):
-                read_options['um']['fmt'] = key.lstrip('format=')
-            if key.startswith('endian='):
-                read_options['um']['endian'] = key.lstrip('endian=')
-            if key.startswith('word_size='):
-                read_options['um']['word_size'] = int(
-                    key.lstrip('word_size='))
-            if key.startswith('stash_table='):
-                stash_table = key.lstrip('stash_table=')
-                stash_table = os.path.expanduser(
-                    os.path.expandvars(stash_table))
-                cf.um.read.load_stash2standard_name(
-                    stash_table, delimiter='!', merge=True)
+                read_options['um']['version'] = key[len('version='):]
+            elif key.startswith('format='):
+                read_options['um']['fmt'] = key[len('format='):]
+            elif key.startswith('endian='):
+                read_options['um']['endian'] = key[len('endian='):]
+            elif key.startswith('word_size='):
+                read_options['um']['word_size'] = int(key[len('word_size='):])
+            elif key.startswith('stash_table='):
+                stash_table = key[len('stash_table='):]
+                try:
+                    cf.load_stash2standard_name(
+                        stash_table, delimiter='!', merge=True
+                    )
+                except Exception as error:
+                    print(
+                        "{} ERROR: Can't load STASH table: {}".format(
+                            iam, error
+                        )
+                    )
+                    sys.exit(2)
     # --- End: if
 
     write_options['fmt'] = fmt
@@ -1352,7 +1464,6 @@ Using cf-python library version {1} at {2}'''.format(
         # ------------------------------------------------------------
         # Read
         # ------------------------------------------------------------
-#        cf.log_level(2)
         try:
             f = cf.read(infile, **read_options)
         except Exception as error:

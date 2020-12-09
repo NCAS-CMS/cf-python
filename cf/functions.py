@@ -2348,10 +2348,36 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
 
 
 def load_stash2standard_name(table=None, delimiter='!', merge=True):
-    '''Load a STASH to standard name conversion table.
+    '''Load a STASH to standard name conversion table from a file.
 
     This used when reading PP and UM fields files.
 
+    Each mapping is defined by a seperate line in a text file. Each
+    line contains nine ``!``-delimited entries:
+
+    1. ID: UM sub model identifier (1 = atmosphere, 2 = ocean, etc.)
+    2. STASH: STASH code (e.g. 3236)
+    3. STASHmaster description:STASH name as given in the STASHmaster
+       files
+    4. Units: Units of this STASH code (e.g. 'kg m-2')
+    5. Valid from: This STASH valid from this UM version (e.g. 405)
+    6. Valid to: This STASH valid to this UM version (e.g. 501)
+    7. CF standard name: The CF standard name
+    8. CF info: Anything useful (such as standard name modifiers)
+    9. PP conditions: PP conditions which need to be satisfied for
+       this translation
+
+    Only entries "ID", "STASH", and "CF standard name" are mandatory,
+    all other entries may be left blank. For example,
+    ``1!999!!!!!ultraviolet_index!!`` is a valid mapping from
+    atmosphere STASH code 999 to the standard name
+    ultraviolet_index.
+
+    If the "Valid from" and "Valid to" entries are omitted then the
+    stash mapping is assumed to apply to all UM versions.
+
+    .. seealso:: `stash2standard_name`
+   
     :Parameters:
 
         table: `str`, optional
@@ -2359,18 +2385,27 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
             the table will be looked for at
             ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
 
+            Setting *table* to `None` will reset the table, removing
+            any modifications that have previously been made.
+
         delimiter: `str`, optional
             The delimiter of the table columns. By default, ``!`` is
             taken as the delimiter.
 
         merge: `bool`, optional
-            If *table* is None then *merge* is taken as False,
+            If False then the table is updated to only contain the
+            mappings defined by the *table* parameter. By default the
+            mappings defined by the *table* parameter are incorporated
+            into the existing table, overwriting any entries which
+            already exist.
+
+            If *table* is `None` then *merge* is taken as False,
             regardless of its given value.
 
     :Returns:
 
         `dict`
-            The new STASH to standard name conversion table.
+            The new STASH to standard name conversion table. 
 
     **Examples:**
 
@@ -2399,6 +2434,9 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
         merge = False
         package_path = os.path.dirname(__file__)
         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
+    else:
+        # User supplied table
+        table = abspath(os.path.expanduser(os.path.expandvars(table)))
 
     with open(table, 'r') as open_table:
         lines = csv.reader(open_table, delimiter=delimiter,
@@ -2480,7 +2518,17 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
     _stash2standard_name.update(stash2sn)
 
-    return _stash2standard_name
+
+def stash2standard_name():
+    '''Return a copy of the loaded STASH to standard name conversion
+    table.
+
+    .. versionadded:: 3.8.0
+   
+    .. seealso:: `load_stash2standard_name`
+   
+    '''
+    return _stash2standard_name.copy()
 
 
 def flat(x):

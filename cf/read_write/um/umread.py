@@ -41,6 +41,9 @@ from ...functions          import (equals, open_files_threshold_exceeded,
                                    load_stash2standard_name)
 from ...functions import (atol as cf_atol,
                           rtol as cf_rtol)
+
+from ...constants import _stash2standard_name
+
 from ...units              import Units
 
 from ...data.data import Data, Partition, PartitionMatrix
@@ -2896,7 +2899,8 @@ class UMField:
 # ---------------------------------------------------------------------
 # Create the STASH code to standard_name conversion dictionary
 # ---------------------------------------------------------------------
-stash2standard_name = load_stash2standard_name()
+load_stash2standard_name()
+stash2standard_name = _stash2standard_name
 
 
 class UMRead(cfdm.read_write.IORead):
