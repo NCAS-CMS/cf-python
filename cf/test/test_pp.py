@@ -43,7 +43,7 @@ class ppTest(unittest.TestCase):
         self.chunk_sizes = (100000, 300, 34)
         self.original_chunksize = cf.chunksize()
 
-    def test_PP_load_stash2standard_name(self):
+    def test_load_stash2standard_name(self):
         f = cf.read(self.ppfilename)[0]
         self.assertEqual(f.identity(), 'surface_temperature')
         self.assertEqual(f.Units, cf.Units('K'))
@@ -59,6 +59,13 @@ class ppTest(unittest.TestCase):
             self.assertEqual(f.Units, cf.Units('K'))
 
         cf.load_stash2standard_name()
+
+    def test_stash2standard_name(self):
+        d = cf.stash2standard_name()
+        self.assertIsInstance(d, dict)
+        d['test'] = None
+        e = cf.stash2standard_name()
+        self.assertNotEqual(d, e)
 
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfilename)[0]
