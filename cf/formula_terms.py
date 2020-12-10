@@ -48,7 +48,7 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
 
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
-            value of zero. If True then a missing term is assumed to be
+            value of zero. By default a missing term is assumed to be
             zero, as described in Appendix D: Parametric Vertical
             Coordinates of the CF conventions.
 
@@ -273,7 +273,7 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
     return computed_standard_name
 
 
-def _vertical_axis(f, *keys):
+def _vertical_axis(f, keys):
     '''Find the vertical axis corresponding to the parametric vertical
     coordinates.
 
@@ -284,10 +284,10 @@ def _vertical_axis(f, *keys):
         f: `Field`
             The parent field construct.
 
-        keys: one or more of `str` or `None`
-            Construct keys of 1-d domain ancillary or coordinate
-            constructs that span the vertical axis. If a key is
-            `None` then that key is ignored.
+        keys: sequence of `str` or `None`
+            The construct keys of 1-d domain ancillary or coordinate
+            constructs that span the vertical axis. If a key is `None`
+            then that key is ignored.
 
     :Returns:
 
@@ -702,7 +702,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, lev_key)
+    k_axis = _vertical_axis(g, [lev_key])
     computed_axes = k_axis
 
     # ----------------------------------------------------------------
@@ -790,7 +790,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, sigma_key)
+    k_axis = _vertical_axis(g, [sigma_key])
     computed_axes = g.get_data_axes(ps_key) + k_axis
 
     # Insert a size one dimension to allow broadcasting
@@ -903,7 +903,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, ap_key, a_key, b_key)
+    k_axis = _vertical_axis(g, [ap_key, a_key, b_key])
     computed_axes = g.get_data_axes(ps_key) + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1004,7 +1004,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, a_key, b_key)
+    k_axis = _vertical_axis(g, [a_key, b_key])
     computed_axes = g.get_data_axes(orog_key) + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1136,7 +1136,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, a_key, b1_key, b2_key)
+    k_axis = _vertical_axis(g, [a_key, b1_key, b2_key])
     computed_axes = zsurf_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1242,7 +1242,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, sigma_key)
+    k_axis = _vertical_axis(g, [sigma_key])
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1357,7 +1357,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, s_key)
+    k_axis = _vertical_axis(g, [s_key])
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1481,7 +1481,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, s_key, C_key)
+    k_axis = _vertical_axis(g, [s_key, C_key])
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1597,7 +1597,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, s_key, C_key)
+    k_axis = _vertical_axis(g, [s_key, C_key])
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1725,7 +1725,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, sigma_key, zlev_key)
+    k_axis = _vertical_axis(g, [sigma_key, zlev_key])
     computed_axes = eta_axes + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
@@ -1849,7 +1849,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     # Get the axes of the non-parametric coordinates, putting the
     # vertical axis in postition -1 (the rightmost position).
-    k_axis = _vertical_axis(g, sigma_key)
+    k_axis = _vertical_axis(g, [sigma_key])
     computed_axes = g.get_data_axes(depth_key) + k_axis
 
     # Insert a size one dimension to allow broadcasting over the
