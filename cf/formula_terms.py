@@ -542,10 +542,10 @@ def _check_standard_name_consistency(strict,
             `None`.
 
         strict: `bool`
-            If False then allow the computation to occur all of the
-            given the 'zlev', 'eta', and 'depth' domain ancillary
-            constructs have no standard name. By default if any of
-            these constructs is missing a standard anme then an
+            If False then allow the computation to occur even if none
+            of the given the 'zlev', 'eta', and 'depth' domain
+            ancillary constructs have a standard name. By default if
+            any of these constructs is missing a standard name then an
             exception will be raised.
 
     :Returns:
@@ -619,6 +619,8 @@ def _check_index_term(term, var):
     :Returns:
 
         `None`
+            A `ValueEerror` is raised if the index term does not
+            contain a single integer.
 
     '''
     if var.size != 1 or var.dtype.kind != 'i':
@@ -661,7 +663,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -676,7 +678,7 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'atmosphere_ln_pressure_coordinate'
@@ -687,10 +689,6 @@ def atmosphere_ln_pressure_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    lev, lev_key = _coordinate_term(g, standard_name,
-#                                    coordinate_reference,
-#                                    'lev')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     lev, lev_key = _domain_ancillary_term(g, standard_name,
@@ -748,7 +746,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -763,7 +761,7 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'atmosphere_sigma_coordinate'
@@ -774,10 +772,6 @@ def atmosphere_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    sigma, sigma_key = _coordinate_term(g, standard_name,
-#                                        coordinate_reference,
-#                                        'sigma')#
-
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     sigma, sigma_key = _domain_ancillary_term(g, standard_name,
@@ -849,7 +843,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -864,7 +858,7 @@ def atmosphere_hybrid_sigma_pressure_coordinate(g,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'atmosphere_hybrid_sigma_pressure_coordinate'
@@ -967,7 +961,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -982,7 +976,7 @@ def atmosphere_hybrid_height_coordinate(g, coordinate_reference,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'atmosphere_hybrid_height_coordinate'
@@ -1060,7 +1054,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1075,7 +1069,7 @@ def atmosphere_sleve_coordinate(g, coordinate_reference,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'atmosphere_sleve_coordinate'
@@ -1193,7 +1187,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1208,7 +1202,7 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'ocean_sigma_coordinate'
@@ -1219,10 +1213,6 @@ def ocean_sigma_coordinate(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    sigma, sigma_key = _coordinate_term(g, standard_name,
-#                                        coordinate_reference,
-#                                        'sigma')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     sigma, sigma_key = _domain_ancillary_term(g, standard_name,
@@ -1301,7 +1291,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1316,7 +1306,7 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'ocean_s_coordinate'
@@ -1327,9 +1317,6 @@ def ocean_s_coordinate(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    s, s_key = _coordinate_term(g, standard_name,
-#                                coordinate_reference, 's')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     s, s_key = _domain_ancillary_term(g, standard_name,
@@ -1432,7 +1419,7 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1458,9 +1445,6 @@ def ocean_s_coordinate_g1(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    s, s_key = _coordinate_term(g, standard_name,
-#                                coordinate_reference, 's')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     s, s_key = _domain_ancillary_term(g, standard_name,
@@ -1551,7 +1535,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1566,7 +1550,7 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'ocean_s_coordinate_g2'
@@ -1577,9 +1561,6 @@ def ocean_s_coordinate_g2(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    s, s_key = _coordinate_term(g, standard_name,
-#                                coordinate_reference, 's')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     s, s_key = _domain_ancillary_term(g, standard_name,
@@ -1673,7 +1654,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1688,7 +1669,7 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'ocean_sigma_z_coordinate'
@@ -1699,10 +1680,6 @@ def ocean_sigma_z_coordinate(g, coordinate_reference, default_to_zero,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    sigma, sigma_key = _coordinate_term(g, standard_name,
-#                                        coordinate_reference,
-#                                        'sigma')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     sigma, sigma_key = _domain_ancillary_term(g, standard_name,
@@ -1810,7 +1787,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
 
     :Returns:
 
-        `str`, `str`, `DomainAncillary`, `tuple`, `tuple`
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -1825,7 +1802,7 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
             * A tuple containing the construct key of the vertical
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
-              tuple, instead.
+              tuple.
 
     '''
     standard_name = 'ocean_double_sigma_coordinate'
@@ -1836,10 +1813,6 @@ def ocean_double_sigma_coordinate(g, coordinate_reference,
     # ----------------------------------------------------------------
     # Get the formula terms and their contruct keys
     # ----------------------------------------------------------------
-#    sigma, sigma_key = _coordinate_term(g, standard_name,
-#                                        coordinate_reference,
-#                                        'sigma')
-#
     coordinate_conversion = coordinate_reference.coordinate_conversion
 
     sigma, sigma_key = _domain_ancillary_term(g, standard_name,
@@ -1991,9 +1964,7 @@ def formula(f, coordinate_reference, default_to_zero=True,
 
     :Returns:
 
-        `tuple`
-            A 5-tuple containing
-
+        5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
