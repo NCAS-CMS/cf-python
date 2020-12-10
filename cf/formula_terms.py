@@ -316,8 +316,8 @@ def _conform_eta(f, eta, eta_key, depth, depth_key):
     '''Transform the 'eta' term so that broadcasting will work with the
     'depth' term.
 
-    This entails making dure that the trailing dimensions of 'eta' are
-    the same as the all of dimensions of 'depth'.
+    This entails making sure that the trailing dimensions of 'eta' are
+    the same as all of the dimensions of 'depth'.
 
     For example, if we have ``eta(i,n,j)`` and ``depth(j,i)`` then eta
     will be transformed to ``eta(n,j,i)``.
