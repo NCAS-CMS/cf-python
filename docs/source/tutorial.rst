@@ -2728,7 +2728,7 @@ stored in a vertical dimension coordinate construct. In such cases a
 parametric vertical dimension coordinate construct is stored and a
 coordinate reference construct contains the formula for computing the
 required non-parametric vertical coordinates. For example,
-multi-dimensional non-parametric parametric ocean altitude coordinates
+multi-dimensional non-parametric ocean altitude coordinates
 can be computed from one-dimensional parametric ocean sigma
 coordinates [#sigma]_.
 
@@ -2739,7 +2739,7 @@ corresponding non-parametric vertical coordinates, storing the result
 in a new auxiliary coordinate construct.
 
 .. code-block:: python
-   :caption: *Create a field constructs with computed height
+   :caption: *Create a field construct with computed height
              coordinates, from one with parametric
              atmosphere_hybrid_height_coordinate coordinates.*
 	     

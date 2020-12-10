@@ -1286,7 +1286,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         )
 
         # ----------------------------------------------------------------
-        # Get the formula terms and their contruct keys
+        # Get the formula terms and their construct keys
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
@@ -1883,8 +1883,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
-              coordinates. The may be `None` if a computed standard
-              name could not be found..
+              coordinates. This may be `None` if a computed standard
+              name could not be found.
 
             * The computed coordinates in a `DomainAncillary`
               construct.
