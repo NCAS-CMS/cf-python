@@ -48,7 +48,7 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
 
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
-            value of zero. If True the a missing term is assumed to be
+            value of zero. If True then a missing term is assumed to be
             zero, as described in Appendix D: Parametric Vertical
             Coordinates of the CF conventions.
 
