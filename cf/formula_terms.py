@@ -235,7 +235,7 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
 
     if computed_standard_name is None:
         # ------------------------------------------------------------
-        # See if the computed standard anme is a set as a coordinate
+        # See if the computed standard name is a set as a coordinate
         # conversion parameter
         # ------------------------------------------------------------
         computed_standard_name = coordinate_conversion.get_parameter(
