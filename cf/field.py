@@ -89,7 +89,7 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_SEQUENCE,
                         _DEPRECATION_ERROR_KWARG_VALUE,)
 
-from .formula_terms import formula
+from .formula_terms import FormulaTerms
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
@@ -13056,13 +13056,13 @@ class Field(mixin.PropertiesData,
     be stored in a vertical dimension coordinate construct. In such
     cases a parametric vertical dimension coordinate construct is
     stored and a coordinate reference construct contains the formula
-    for computing the required non-parametric vertical
-    coordinates.
+    for computing the required non-parametric vertical coordinates.
+
+    {{formula terms links}}
 
     For example, multi-dimensional non-parametric parametric ocean
     altitude coordinates can be computed from one-dimensional
-    parametric ocean sigma coordinates. See the "Parametric Vertical
-    Coordinate" sections of the CF conventions for more details.
+    parametric ocean sigma coordinates.
 
     Coordinate reference systems based on parametric vertical
     coordinates are identified from the coordinate reference
@@ -13079,19 +13079,14 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
 
-        default_to_zero: `bool`, optional
-            If False then do not assume that missing terms have a
-            value of zero. By default a missing term is assumed to be
-            zero, as described in Appendix D: Parametric Vertical
-            Coordinates of the CF conventions.
+        {{default_to_zero: `bool`, optional}}
 
         strict: `bool`
             If False then allow the computation to occur when
 
             * A domain ancillary construct has no standard name, but
-              the corresponding term has a standard name prescribed by
-              Appendix D: Parametric Vertical Coordinates of the CF
-              conventions.
+              the corresponding term has a standard name that is
+              prescribed
 
             * When the computed standard name can not be found by
               inference from the standard names of the domain
@@ -13102,9 +13097,9 @@ class Field(mixin.PropertiesData,
             By default an exception is raised in these cases.
 
             If a domain ancillary construct does have a standard name,
-            but one that is inconsistent with the standard names
-            prescribed by Appendix D, then an exception is raised
-            regardless of the value of *strict*.
+            but one that is inconsistent with any prescribed standard
+            names, then an exception is raised regardless of the value
+            of *strict*.
 
         {{inplace: `bool`, optional}}
 
@@ -13169,7 +13164,7 @@ class Field(mixin.PropertiesData,
              computed_standard_name,
              computed,
              computed_axes,
-             k_axis) = formula(f, cr, default_to_zero, strict)
+             k_axis) = FormulaTerms.formula(f, cr, default_to_zero, strict)
 
             if computed is None:
                 # No non-parametric vertical coordinates were
