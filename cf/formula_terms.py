@@ -477,7 +477,7 @@ def _conform_units(term, var, ref_term2, ref_units):
             A term of the formula which defines the reference units.
 
             *Parameter example:*
-              ``term='href'``
+              ``ref_term='href'``
 
         ref_units: `Units`
             The units of the *ref_term* term.
