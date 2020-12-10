@@ -551,7 +551,7 @@ def _check_standard_name_consistency(strict,
     :Returns:
 
         `None`
-            A `ValueEerror` is raised if the standard names are
+            A `ValueError` is raised if the standard names are
             inconsistent.
 
     '''
