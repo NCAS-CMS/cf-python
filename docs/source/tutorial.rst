@@ -2728,7 +2728,7 @@ stored in a vertical dimension coordinate construct. In such cases a
 parametric vertical dimension coordinate construct is stored and a
 coordinate reference construct contains the formula for computing the
 required non-parametric vertical coordinates. For example,
-multi-dimensional non-parametric parametric ocean altitude coordinates
+multi-dimensional non-parametric ocean altitude coordinates
 can be computed from one-dimensional parametric ocean sigma
 coordinates [#sigma]_.
 
