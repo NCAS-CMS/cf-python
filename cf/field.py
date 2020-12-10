@@ -13172,7 +13172,7 @@ class Field(mixin.PropertiesData,
              k_axis) = formula(f, cr, default_to_zero, strict)
 
             if computed is None:
-                # No non-paramettric vertical coordinates were
+                # No non-parametric vertical coordinates were
                 # computed
                 continue
 
