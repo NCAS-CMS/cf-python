@@ -545,7 +545,7 @@ def _check_standard_name_consistency(strict,
             If False then allow the computation to occur all of the
             given the 'zlev', 'eta', and 'depth' domain ancillary
             constructs have no standard name. By default if any of
-            these constructs is missing a standard anme then an
+            these constructs is missing a standard name then an
             exception will be raised.
 
     :Returns:
