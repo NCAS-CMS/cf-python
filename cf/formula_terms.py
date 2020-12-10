@@ -1286,7 +1286,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         )
 
         # ----------------------------------------------------------------
-        # Get the formula terms and their contruct keys
+        # Get the formula terms and their construct keys
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
