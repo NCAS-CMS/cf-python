@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def _domain_ancillary_term(f, standard_name, coordinate_conversion,
                            term, default_to_zero, strict, bounds):
-    '''Find a domain ancillary construct cooresponding to a formula term.
+    '''Find a domain ancillary construct corresponding to a formula term.
 
     .. versionadded:: 3.8.0
 
@@ -48,7 +48,7 @@ def _domain_ancillary_term(f, standard_name, coordinate_conversion,
 
         default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
-            value of zero. If True the a missing term is assumed to be
+            value of zero. If True then a missing term is assumed to be
             zero, as described in Appendix D: Parametric Vertical
             Coordinates of the CF conventions.
 
@@ -235,7 +235,7 @@ def _computed_standard_name(f, standard_name, coordinate_reference):
 
     if computed_standard_name is None:
         # ------------------------------------------------------------
-        # See if the computed standard anme is a set as a coordinate
+        # See if the computed standard name is a set as a coordinate
         # conversion parameter
         # ------------------------------------------------------------
         computed_standard_name = coordinate_conversion.get_parameter(
@@ -286,13 +286,13 @@ def _vertical_axis(f, *keys):
 
         keys: one or more of `str` or `None`
             Construct keys of 1-d domain ancillary or coordinate
-            construicts that span the vertical axis. If a key is
+            constructs that span the vertical axis. If a key is
             `None` then that key is ignored.
 
     :Returns:
 
         `tuple`
-            Either a 1-tuple containing the domain axis consrtuct key
+            Either a 1-tuple containing the domain axis construct key
             of the vertical axis, or an empty tuple if no such axis
             could be found.
 
@@ -313,11 +313,11 @@ def _vertical_axis(f, *keys):
 
 
 def _conform_eta(f, eta, eta_key, depth, depth_key):
-    '''Transform the 'eta' term so that brodcasting will work with the
+    '''Transform the 'eta' term so that broadcasting will work with the
     'depth' term.
 
-    This entails making dure that the trailing dimensions of 'eta' are
-    the same as the all of dimensions of 'depth'.
+    This entails making sure that the trailing dimensions of 'eta' are
+    the same as all of the dimensions of 'depth'.
 
     For example, if we have ``eta(i,n,j)`` and ``depth(j,i)`` then eta
     will be transformed to ``eta(n,j,i)``.
