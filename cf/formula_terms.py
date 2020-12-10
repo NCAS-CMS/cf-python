@@ -463,7 +463,7 @@ def _conform_units(term, var, ref_term2, ref_units):
     :Parameters:
 
         term: `str`
-            A term of the formula for which the units are to
+            A term of the formula for which the units are to be
             conformed.
 
             *Parameter example:*
