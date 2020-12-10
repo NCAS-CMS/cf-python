@@ -463,7 +463,7 @@ def _conform_units(term, var, ref_term2, ref_units):
     :Parameters:
 
         term: `str`
-            A term of the formula for which the units are to
+            A term of the formula for which the units are to be
             conformed.
 
             *Parameter example:*
@@ -477,7 +477,7 @@ def _conform_units(term, var, ref_term2, ref_units):
             A term of the formula which defines the reference units.
 
             *Parameter example:*
-              ``term='href'``
+              ``ref_term='href'``
 
         ref_units: `Units`
             The units of the *ref_term* term.
@@ -551,7 +551,7 @@ def _check_standard_name_consistency(strict,
     :Returns:
 
         `None`
-            A `ValueEerror` is raised if the standard names are
+            A `ValueError` is raised if the standard names are
             inconsistent.
 
     '''
