@@ -839,7 +839,7 @@ class PropertiesData(Properties):
 
     def __query_wo__(self, value):
         '''TODO
-1
+
         '''
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
@@ -3664,7 +3664,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            The missing deata value or, if one has not been set, the
+            The missing data value or, if one has not been set, the
             value specified by *default*
 
     **Examples:**

@@ -89,6 +89,8 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_SEQUENCE,
                         _DEPRECATION_ERROR_KWARG_VALUE,)
 
+from .formula_terms import FormulaTerms
+
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
                          _deprecated_kwarg_check,
@@ -313,8 +315,11 @@ class Field(mixin.PropertiesData,
         '''
         '''
         instance = super().__new__(cls)
+        instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._Bounds = Bounds
         instance._Constructs = Constructs
         instance._Domain = Domain
+        instance._DomainAncillary = DomainAncillary
         instance._DomainAxis = DomainAxis
 #        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
@@ -3815,8 +3820,9 @@ class Field(mixin.PropertiesData,
                                 src_axis_keys, dst_axis_sizes):
                             self.domain_axes[k_s].set_size(new_size)
 
-                        self.set_construct(DomainAncillary(source=value),
-                                           key=key, axes=d_axes, copy=False)
+                        self.set_construct(self._DomainAncillary(source=value),
+                                           key=key, axes=d_axes,
+                                           copy=False)
                 # --- End: if
             # --- End: for
         # --- End: for
@@ -7850,7 +7856,7 @@ class Field(mixin.PropertiesData,
 
             bounds_data = Data(
                 numpy_reshape(bin_bounds, (bin_count, 2)), units=units)
-            dim.set_bounds(Bounds(data=bounds_data))
+            dim.set_bounds(self._Bounds(data=bounds_data))
 
             logger.info('                    bins     : {} {!r}'.format(
                 dim.identity(), bounds_data))  # pragma: no cover
@@ -10639,7 +10645,7 @@ class Field(mixin.PropertiesData,
                         "coordinate={!r}".format(coordinate)
                     )
 
-                bounds = Bounds(data=Data([bounds_data], units=units))
+                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
@@ -13038,6 +13044,169 @@ class Field(mixin.PropertiesData,
 
         return mask
 
+    @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
+    def compute_vertical_coordinates(self, default_to_zero=True,
+                                     strict=True, inplace=False,
+                                     verbose=None):
+        '''Compute non-parametric vertical coordinates.
+
+    When vertical coordinates are a function of horizontal location as
+    well as parameters which depend on vertical location, they cannot
+    be stored in a vertical dimension coordinate construct. In such
+    cases a parametric vertical dimension coordinate construct is
+    stored and a coordinate reference construct contains the formula
+    for computing the required non-parametric vertical coordinates.
+
+    {{formula terms links}}
+
+    For example, multi-dimensional non-parametric parametric ocean
+    altitude coordinates can be computed from one-dimensional
+    parametric ocean sigma coordinates.
+
+    Coordinate reference systems based on parametric vertical
+    coordinates are identified from the coordinate reference
+    constructs and, if possible, the corresponding non-parametric
+    vertical coordinates are computed and stored in a new auxiliary
+    coordinate construct.
+
+    If there are no appropriate coordinate reference constructs then
+    the field construct is unchanged.
+
+    .. versionadded:: 3.8.0
+
+    .. seealso:: `CoordinateReference`
+
+    :Parameters:
+
+        {{default_to_zero: `bool`, optional}}
+
+        strict: `bool`
+            If False then allow the computation to occur when
+
+            * A domain ancillary construct has no standard name, but
+              the corresponding term has a standard name that is
+              prescribed
+
+            * When the computed standard name can not be found by
+              inference from the standard names of the domain
+              ancillary constructs, nor from the
+              ``computed_standard_name`` parameter of the relevant
+              coordinate reference construct.
+
+            By default an exception is raised in these cases.
+
+            If a domain ancillary construct does have a standard name,
+            but one that is inconsistent with any prescribed standard
+            names, then an exception is raised regardless of the value
+            of *strict*.
+
+        {{inplace: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
+
+    :Returns:
+
+        `Field` or `None`
+            The field construct with the new non-parametric vertical
+            coordinates, or `None` if the operation was in-place.
+
+    **Examples**
+
+    >>> f = cf.example_field(1)
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    >>> print(f.auxiliary_coordinate('altitude', default=None))
+    None
+    >>> g = f.compute_vertical_coordinates()
+    >>> print(g.auxiliary_coordinates)
+    Constructs:
+    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'auxiliarycoordinate2': <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+     'auxiliarycoordinate3': <CF AuxiliaryCoordinate: altitude(1, 10, 9) m>}
+    >>> g.auxiliary_coordinate('altitude').dump()
+    Auxiliary coordinate: altitude
+        long_name = 'Computed from parametric atmosphere_hybrid_height_coordinate
+                     vertical coordinates'
+        standard_name = 'altitude'
+        units = 'm'
+        Data(1, 10, 9) = [[[10.0, ..., 5410.0]]] m
+        Bounds:units = 'm'
+        Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
+
+        '''
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        for cr in f.coordinate_references.values():
+            # --------------------------------------------------------
+            # Compute the non-parametric vertical coordinates, if
+            # possible.
+            # --------------------------------------------------------
+            (standard_name,
+             computed_standard_name,
+             computed,
+             computed_axes,
+             k_axis) = FormulaTerms.formula(f, cr, default_to_zero, strict)
+
+            if computed is None:
+                # No non-parametric vertical coordinates were
+                # computed
+                continue
+
+            # --------------------------------------------------------
+            # Convert the computed domain ancillary construct to an
+            # auxiliary coordinate construct, and insert it into the
+            # field construct.
+            # --------------------------------------------------------
+            c = f._AuxiliaryCoordinate(source=computed, copy=False)
+            c.clear_properties()
+            c.long_name = (
+                "Computed from parametric {} "
+                "vertical coordinates".format(standard_name)
+            )
+            if computed_standard_name:
+                c.standard_name = computed_standard_name
+
+            logger.detail(
+                "Non-parametric coordinates:\n{}".format(
+                    c.dump(display=False, _level=1)
+                )
+            )  # pragma: no cover
+
+            key = f.set_construct(c, axes=computed_axes, copy=False)
+
+            # Reference the new coordinates from the coordinate
+            # reference construct
+            cr.set_coordinate(key)
+
+            logger.debug(
+                "Non-parametric coordinates construct key: {!r}\n"
+                "Updated coordinate reference construct:\n{}".format(
+                    key,
+                    cr.dump(display=False, _level=1)
+                )
+            )  # pragma: no cover
+
+        return f
+
     def match_by_construct(self, *identities, OR=False,
                            **conditions):
         '''Whether or not there are particular metadata constructs.
@@ -14030,7 +14199,9 @@ class Field(mixin.PropertiesData,
                     new_bounds[length - lower_offset:length, 1] = old_bounds[
                         length - 1, 1]
 
-                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
+                coord.set_bounds(
+                    self._Bounds(data=Data(new_bounds, units=coord.Units))
+                )
         # --- End: if
 
         return f
@@ -14631,7 +14802,7 @@ class Field(mixin.PropertiesData,
                     'cell_measure', 'domain_ancillary', 'field_ancillary'):
                 continue
 
-            aux = AuxiliaryCoordinate()
+            aux = self._AuxiliaryCoordinate()
             aux.set_properties(c.properties())
 
             c_data = c.get_data(None)
@@ -14651,7 +14822,9 @@ class Field(mixin.PropertiesData,
                 for x in indices.ndindex():
                     bounds[x] = c_bounds_data[indices[x]]
 
-                aux.set_bounds(Bounds(data=bounds, copy=False), copy=False)
+                aux.set_bounds(
+                    self._Bounds(data=bounds, copy=False), copy=False
+                )
 
             out.set_construct(aux, axes=out.get_data_axes(), copy=False)
 
@@ -15225,10 +15398,27 @@ class Field(mixin.PropertiesData,
                         'exact', da_key)
         # --- End: if
 
-        if key:
-            return c.key(default=default)
+#        if key:
+#            return c.key(default=default)
 
-        return c.value(default=default)
+        if key:
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No {!r} auxiliary coordinate construct".format(identity)
+                )
+
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No {!r} auxiliary coordinate construct".format(identity)
+            )
+
+        return out
 
     def construct(self, identity=None, default=ValueError(), key=False):
         '''Select a metadata construct by its identity.
@@ -15351,9 +15541,23 @@ class Field(mixin.PropertiesData,
             c = c(identity)
 
         if key:
-            return c.key(default=default)
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No {!r} construct".format(identity)
+                )
 
-        return c.value(default=default)
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No {!r} construct".format(identity)
+            )
+
+        return out
 
     def domain_ancillary(self, identity=None, default=ValueError(),
                          key=False):
@@ -17297,7 +17501,7 @@ class Field(mixin.PropertiesData,
                     c.set_data(data, copy=False)
 
                     bounds.insert_dimension(inplace=True)
-                    c.set_bounds(Bounds(data=bounds), copy=False)
+                    c.set_bounds(self._Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
         # --- End: if

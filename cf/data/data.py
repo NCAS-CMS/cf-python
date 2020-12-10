@@ -1709,7 +1709,6 @@ place.
         # ------------------------------------------------------------
         # parse the indices
         # ------------------------------------------------------------
-#        indices, roll, flip_axes = _parse_indices(self, indices)
         indices_in = indices
         indices, roll, flip_axes, mask = parse_indices(
             self._shape, indices_in, cyclic=True, reverse=True, mask=True)
@@ -3042,7 +3041,7 @@ place.
                 attrs['format'] = 'UM'
 
                 subarray = {}
-                for attr in ('file', 'shape',
+                for attr in ('filename', 'shape',
                              'header_offset', 'data_offset', 'disk_length'):
                     subarray[attr] = getattr(p_subarray, attr)
 
@@ -7044,7 +7043,9 @@ dimensions.
         if units and not self._Units.equivalent(value, verbose=1):
             raise ValueError(
                 "Can't set units (currently {!r}) to non-equivalent "
-                "units {!r}".format(units, value)
+                "units {!r}. Consider the override_units method.".format(
+                    units, value
+                )
             )
 
         dtype = self.dtype
@@ -13309,14 +13310,24 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         if base is None:
-            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
         elif base == 10:
-            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+            d.func(numpy_log10, units=_units_1, inplace=True)
         elif base == 2:
-            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+            d.func(numpy_log2, units=_units_1, inplace=True)
         else:
-            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
             d /= numpy_log(base)
+
+#        if base is None:
+#            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+#        elif base == 10:
+#            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+#        elif base == 2:
+#            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+#        else:
+#            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+#            d /= numpy_log(base)
 
         return d
 

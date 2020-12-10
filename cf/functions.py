@@ -57,7 +57,8 @@ import urllib.parse
 import cfdm
 import cfunits
 
-from .          import __version__, __file__
+from . import __version__, __file__
+
 from .constants import (CONSTANTS,
                         _file_to_fh,
                         _stash2standard_name,

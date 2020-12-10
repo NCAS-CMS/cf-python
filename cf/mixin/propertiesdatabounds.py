@@ -480,7 +480,7 @@ class PropertiesDataBounds(PropertiesData):
 
         has_bounds = self.has_bounds()
 
-        if has_bounds and inplace and other is self:
+        if bounds and has_bounds and inplace and other is self:
             other = other.copy()
 
         try:
