@@ -3025,7 +3025,7 @@ place.
                 attrs['format'] = 'UM'
 
                 subarray = {}
-                for attr in ('file', 'shape',
+                for attr in ('filename', 'shape',
                              'header_offset', 'data_offset', 'disk_length'):
                     subarray[attr] = getattr(p_subarray, attr)
 

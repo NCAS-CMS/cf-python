@@ -2765,6 +2765,7 @@ in a new auxiliary coordinate construct.
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> print(f.auxiliary_coordinate('altitude', default=None))
    None
+   >>> g = f.compute_vertical_coordinates()
    >>> g.auxiliary_coordinate('altitude').dump()
    Auxiliary coordinate: altitude
        long_name = 'Computed from parametric atmosphere_hybrid_height_coordinate

@@ -674,7 +674,12 @@ def _formula_terms(standard_name):
         field.set_construct(coordref)
 
     else:
-        raise ValueError("Bad standard name: {}".format(standard_name))
+        raise ValueError(
+            "Bad standard name: {}, "
+            "not an element of FormulaTerms.standard_names".format(
+                standard_name
+            )
+        )
 
     return (field, aux, computed_standard_name)
 
@@ -817,18 +822,9 @@ class FormulaTermsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Check other types
         # ------------------------------------------------------------
-        for standard_name in (
-                'atmosphere_ln_pressure_coordinate',
-                'atmosphere_sigma_coordinate',
-                'atmosphere_hybrid_sigma_pressure_coordinate',
-                'atmosphere_sleve_coordinate',
-                'ocean_sigma_coordinate',
-                'ocean_s_coordinate',
-                'ocean_s_coordinate_g1',
-                'ocean_s_coordinate_g2',
-                'ocean_sigma_z_coordinate',
-                'ocean_double_sigma_coordinate',
-        ):
+        for standard_name in cf.formula_terms.FormulaTerms.standard_names:
+            if standard_name == 'atmosphere_hybrid_height_coordinate':
+                continue
             f, a, csn = _formula_terms(standard_name)
 
             g = f.compute_vertical_coordinates(verbose=None)
