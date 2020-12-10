@@ -1228,6 +1228,71 @@ def _make_string_char_file(filename):
     return filename
 
 
+def _make_broken_bounds_cdl(filename):
+    with open(filename, mode='w') as f:
+        f.write(
+            '''netcdf broken_bounds {
+dimensions:
+      lat = 180 ;
+      bnds = 2 ;
+      lon = 288 ;
+      time = UNLIMITED ; // (1825 currently)
+variables:
+      double lat(lat) ;
+           lat:long_name = "latitude" ;
+           lat:units = "degrees_north" ;
+           lat:axis = "Y" ;
+           lat:bounds = "lat_bnds" ;
+           lat:standard_name = "latitude" ;
+           lat:cell_methods = "time: point" ;
+      double lat_bnds(lat, bnds) ;
+           lat_bnds:long_name = "latitude bounds" ;
+           lat_bnds:units = "degrees_north" ;
+           lat_bnds:axis = "Y" ;
+      double lon(lon) ;
+           lon:long_name = "longitude" ;
+           lon:units = "degrees_east" ;
+           lon:axis = "X" ;
+           lon:bounds = "lon_bnds" ;
+           lon:standard_name = "longitude" ;
+           lon:cell_methods = "time: point" ;
+      double lon_bnds(lon, bnds) ;
+           lon_bnds:long_name = "longitude bounds" ;
+           lon_bnds:units = "m" ;
+           lon_bnds:axis = "X" ;
+      float pr(time, lat, lon) ;
+           pr:long_name = "Precipitation" ;
+           pr:units = "kg m-2 s-1" ;
+           pr:missing_value = 1.e+20f ;
+           pr:_FillValue = 1.e+20f ;
+           pr:cell_methods = "area: time: mean" ;
+           pr:cell_measures = "area: areacella" ;
+           pr:standard_name = "precipitation_flux" ;
+           pr:interp_method = "conserve_order1" ;
+           pr:original_name = "pr" ;
+      double time(time) ;
+           time:long_name = "time" ;
+           time:units = "days since 1850-01-01 00:00:00" ;
+           time:axis = "T" ;
+           time:calendar_type = "noleap" ;
+           time:calendar = "noleap" ;
+           time:bounds = "time_bnds" ;
+           time:standard_name = "time" ;
+           time:description = "Temporal mean" ;
+      double time_bnds(time, bnds) ;
+           time_bnds:long_name = "time axis boundaries" ;
+           time_bnds:units = "days since 1850-01-01 00:00:00" ;
+ 
+// global attributes:
+           :external_variables = "areacella" ;
+           :Conventions = "CF-'''+VN+'''" ;
+           :source = "model" ;
+           :comment = "Bounds variable has incompatible units to its parent coordinate variable" ;
+}
+'''
+        )
+
+
 contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
 indexed_file = _make_indexed_file('DSG_timeSeries_indexed.nc')
 indexed_contiguous_file = _make_indexed_contiguous_file(
@@ -1250,6 +1315,7 @@ gathered = _make_gathered_file('gathered.nc')
 
 string_char_file = _make_string_char_file('string_char.nc')
 
+broken_bounds_file = _make_broken_bounds_cdl('broken_bounds.cdl')
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

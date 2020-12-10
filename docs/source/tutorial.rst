@@ -6586,18 +6586,19 @@ inferred from the STASH code of the PP and lookup headers. The text
 database that maps header items to standard names and units is stored
 in the file ``etc/STASH_to_CF.txt`` within the cf library
 installation. The database is available as a dictionary, keyed by
-submodel and stash code tuples. The database contains many STASH codes
-without standard names nor units, and will not contain user-defined
-STASH codes. However, modifying existing entries, or adding new ones,
-is straight forward with the `cf.load_stash2standard_name` function.
+submodel and stash code tuples, a copy of which is returned by the
+`cf.stash2standard_name` function. The database contains many STASH
+codes without standard names nor units, and will not contain
+user-defined STASH codes. However, modifying existing entries, or
+adding new ones, is straight forward with the
+`cf.load_stash2standard_name` function.
 
 .. code-block:: python
    :caption: *Inspect the STASH to standard name database, and modify
              it.*
    
-   >>> type(cf.read_write.um.umread.stash2standard_name)                       
-   <class 'dict'>
-   >>> cf.read_write.um.umread.stash2standard_name[(1, 4)]                    
+   >>> stash = cf.stash2standard_name()
+   >>> stash[(1, 4)]
    (['THETA AFTER TIMESTEP                ',
      'K',
      None,
@@ -6605,7 +6606,15 @@ is straight forward with the `cf.load_stash2standard_name` function.
      'air_potential_temperature',
      {},
      ''],)
-   >>> cf.read_write.um.umread.stash2standard_name[(1, 2)]
+   >>> stash[(1, 7)]
+   (['UNFILTERED OROGRAPHY                ',
+     None,
+     708.0,
+     None,
+     '',
+     {},
+    ''],)
+   >>> stash[(1, 2)]
    (['U COMPNT OF WIND AFTER TIMESTEP     ',
      'm s-1',
      None,
@@ -6620,21 +6629,29 @@ is straight forward with the `cf.load_stash2standard_name` function.
      'x_wind',
      {},
      'rotated_latitude_longitude'])
-   >>> cf.read_write.um.umread.stash2standard_name[(1, 7)]                    
-   (['UNFILTERED OROGRAPHY                ',
+   >>> stash[(1, 152)]
+   (['DENSITY*R*R   C-P RHO LEVS:VAR DUMMY',
      None,
-     708.0,
+     401.0,
+     407.0,
+     '',
+     {},
+     ''],
+    ['RIVER DIRECTION                     ',
+     None,
+     505.0,
      None,
      '',
      {},
-    ''],)
-   >>> (1, 999) in cf.read_write.um.umread.stash2standard_name
+     ''])
+   >>> (1, 999) in stash
    False
    >>> with open('new_STASH.txt', 'w') as new:  
    ...     new.write('1!999!My STASH code!1!!!ultraviolet_index!!') 
    ... 
-   >>> _ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
-   >>> cf.read_write.um.umread.stash2standard_name[(1, 999)]
+   >>> cf.load_stash2standard_name('new_STASH.txt', merge=True)
+   >>> new_stash = cf.stash2standard_name()
+   >>> new_stash[(1, 999)]
    (['My STASH code',
      '1',
      None,
@@ -6643,6 +6660,12 @@ is straight forward with the `cf.load_stash2standard_name` function.
      {},
      ''],)
 
+Note that some STASH codes have multiple standard name mappings. This
+could be due to the standard name being a function of other parts of
+the header (as is the case for ``(1, 2)``) and ``(1, 152)``), or the
+the STASH code only being valid for particular UM versions (as is the
+case for ``(1, 152)``).
+     
 ----
 
 .. include:: field_analysis.rst
