@@ -286,7 +286,7 @@ def _vertical_axis(f, *keys):
 
         keys: one or more of `str` or `None`
             Construct keys of 1-d domain ancillary or coordinate
-            construicts that span the vertical axis. If a key is
+            constructs that span the vertical axis. If a key is
             `None` then that key is ignored.
 
     :Returns:
