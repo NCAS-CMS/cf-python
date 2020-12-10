@@ -313,7 +313,7 @@ def _vertical_axis(f, *keys):
 
 
 def _conform_eta(f, eta, eta_key, depth, depth_key):
-    '''Transform the 'eta' term so that brodcasting will work with the
+    '''Transform the 'eta' term so that broadcasting will work with the
     'depth' term.
 
     This entails making dure that the trailing dimensions of 'eta' are
