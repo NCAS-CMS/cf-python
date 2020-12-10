@@ -292,7 +292,7 @@ def _vertical_axis(f, *keys):
     :Returns:
 
         `tuple`
-            Either a 1-tuple containing the domain axis consrtuct key
+            Either a 1-tuple containing the domain axis construct key
             of the vertical axis, or an empty tuple if no such axis
             could be found.
 
