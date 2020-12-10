@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def _domain_ancillary_term(f, standard_name, coordinate_conversion,
                            term, default_to_zero, strict, bounds):
-    '''Find a domain ancillary construct cooresponding to a formula term.
+    '''Find a domain ancillary construct corresponding to a formula term.
 
     .. versionadded:: 3.8.0
 
