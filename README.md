@@ -18,7 +18,7 @@ is built on a complete implementation of the CF data model.
 
 [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5281%2Fzenodo.3894533&label=DOI&up_color=264d73&up_message=10.5281%2Fzenodo.3894533&url=https%3A%2F%2Fdoi.org%2F10.5281%2Fzenodo.3894533)](https://doi.org/10.5281/zenodo.3894533)
 [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
-
+[![Website](https://img.shields.io/website?down_color=264d73&down_message=10.21105%2Fjoss.02717&label=JOSS&up_color=264d73&up_message=10.21105%2Fjoss.02717&url=https:%2F%2Fjoss.theoj.org%2Fpapers%2F10.21105%2Fjoss.02717%2Fstatus.svg)](https://doi.org/10.21105/joss.02717)
 
 Documentation
 =============
