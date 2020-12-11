@@ -1654,9 +1654,8 @@ class UMField:
                     ))
 
                     logger.info(
-                        "    header_offset = {}, location = {}, "
-                        "subarray[...].max() = {}".format(
-                            rec.hdr_offset, location, subarray[...].max()
+                        "    header_offset = {}, location = {}".format(
+                            rec.hdr_offset, location
                         )
                     )  # pragma: no cover
                 # --- End: for
@@ -1707,9 +1706,7 @@ class UMField:
                         Units=units))
 
                     logger.info(
-                        "    location = {}, subarray[...].max() = {}".format(
-                            location, subarray[...].max()
-                        )
+                        "    location = {}".format(location)
                     )  # pragma: no cover
                 # --- End: for
 
