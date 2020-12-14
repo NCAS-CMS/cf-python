@@ -601,7 +601,8 @@ class _Meta:
         self.msr = {}
         info_msr = {}
         for key, msr in f.cell_measures.items():
-
+            if msr.nc_get_external():
+                continue
             if not self.cell_measure_has_data_and_units(msr):
                 return
 
