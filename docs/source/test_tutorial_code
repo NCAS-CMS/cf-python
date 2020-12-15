@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -x
-python extract_tutorial_code.py
-ls -l extract_tutorial_code.py
-./reset_test_tutorial
-cd test_tutorial
-python ../tutorial.py
-set +x

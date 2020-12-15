@@ -23,12 +23,12 @@ ls -l tutorial.py field_analysis.py
 ./reset_test_tutorial
 cd test_tutorial
 
-#python ../tutorial.py
-#rc=$?
-#if [[ $rc != 0 ]]; then
-#    echo "Runtime failure in tutorial.py"
-#    exit $rc
-#fi
+python ../tutorial.py
+rc=$?
+if [[ $rc != 0 ]]; then
+    echo "Runtime failure in tutorial.py"
+    exit $rc
+fi
 
 python ../field_analysis.py
 rc=$?
