@@ -2377,7 +2377,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     stash mapping is assumed to apply to all UM versions.
 
     .. seealso:: `stash2standard_name`
-   
+
     :Parameters:
 
         table: `str`, optional
@@ -2405,7 +2405,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     :Returns:
 
         `dict`
-            The new STASH to standard name conversion table. 
+            The new STASH to standard name conversion table.
 
     **Examples:**
 
@@ -2524,9 +2524,9 @@ def stash2standard_name():
     table.
 
     .. versionadded:: 3.8.0
-   
+
     .. seealso:: `load_stash2standard_name`
-   
+
     '''
     return _stash2standard_name.copy()
 
