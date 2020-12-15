@@ -72,7 +72,7 @@ class Bounds(mixin.Coordinate,
         direction:
             Specify the direction of 1-d coordinates with two bounds
             vertices. Either True for increasing coordinates, or False
-            for descreasing coordinates. By default the direction is
+            for decreasing coordinates. By default the direction is
             inferred from whether the first bound of the first cell is
             less than its second bound (direction is True), or not
             (direction is False).

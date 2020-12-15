@@ -2353,7 +2353,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
     This used when reading PP and UM fields files.
 
-    Each mapping is defined by a seperate line in a text file. Each
+    Each mapping is defined by a separate line in a text file. Each
     line contains nine ``!``-delimited entries:
 
     1. ID: UM sub model identifier (1 = atmosphere, 2 = ocean, etc.)

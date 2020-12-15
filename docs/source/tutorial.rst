@@ -10,8 +10,9 @@
 
 Version |release| for version |version| of the CF conventions.
 
-All of the Python code in this tutorial is available in an executable
-script (:download:`download <../source/tutorial.py>`, 36kB).
+All of the Python code in this tutorial is available in two executable
+scripts (:download:`download <../source/tutorial.py>`, 28kB,
+:download:`download <../source/field_analysis.py>`, 8kB).
 
 .. https://stackoverflow.com/questions/24129481/how-to-include-a-local-table-of-contents-into-sphinx-doc
 
@@ -3895,7 +3896,7 @@ constructs data:
      [276.4 264.2 -- 266.1 -- -- -- 273.4 269.7]]]
 
 This is particularly useful when the field construct does not have
-sufficient metadata to unambiguously identiy its domain axes:
+sufficient metadata to unambiguously identify its domain axes:
 
 .. code-block:: python
    :caption: *Mask all points from "v", using the data objects and
