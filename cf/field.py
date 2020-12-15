@@ -17743,7 +17743,7 @@ class Field(mixin.PropertiesData,
             the construct is copied.
 
     :Returns:
-        
+
             The construct that was replaced.
 
     **Examples:**

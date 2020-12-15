@@ -2520,7 +2520,9 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None and bounds.shape[:data.ndim] != data.shape:
             # Check shape
             raise ValueError(
-                "Can't set bounds: Incorrect shape: {0})".format(bounds.shape))
+                "Can't set bounds: Incorrect bounds shape {} "
+                "for data shape {}".format(bounds.shape, data.shape)
+            )
 
         if copy:
             bounds = bounds.copy()
