@@ -113,7 +113,7 @@ def read(files, external=None, verbose=None, warnings=False,
     the first 64 bits in the file, but for the few occasions when this
     is not possible, the *um* keyword allows the format to be
     specified, as well as the UM version (if the latter is not
-    inferrable from the PP or lookup header information).
+    inferable from the PP or lookup header information).
 
     2-d "slices" within a single file are always combined, where
     possible, into field constructs with 3-d, 4-d or 5-d data. This is
@@ -182,7 +182,7 @@ def read(files, external=None, verbose=None, warnings=False,
             be raised, unless the *ignore_read_error* parameter is
             True.
 
-         external: (sequence of) `str`, optional
+        external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
             by the *filename* parameter) from the given external
@@ -385,7 +385,7 @@ def read(files, external=None, verbose=None, warnings=False,
             files only, provide extra decoding instructions. This
             option is ignored for input files which are notPP or
             fields files. In most cases, how to decode a file is
-            inferrable from the file's contents, but if not then each
+            inferable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
             follows:
 

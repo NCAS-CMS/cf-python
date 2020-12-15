@@ -81,8 +81,8 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-10-15'
-__version__ = '3.7.0'
+__date__ = '2020-12-??'
+__version__ = '3.8.0'
 
 _requires = (
     'numpy',
@@ -167,7 +167,8 @@ if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad psutil version: cf requires psutil>={}. "
         "Got {} at {}".format(
-            _minimum_vn, psutil.__version__, psutil.__file__))
+            _minimum_vn, psutil.__version__, psutil.__file__)
+    )
 
 # Check the version of netCDF4
 _minimum_vn = '1.5.3'
@@ -178,12 +179,13 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.2.1'
+_minimum_vn = '1.3.0'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
         "Got {} at {}".format(
-            _minimum_vn, cftime.__version__, cftime.__file__))
+            _minimum_vn, cftime.__version__, cftime.__file__)
+    )
 
 # Check the version of numpy
 _minimum_vn = '1.15'
@@ -194,7 +196,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.3.0'
+_minimum_vn = '3.3.1'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -202,8 +204,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.7.0'
-_maximum_vn = '1.8.8.0'
+_minimum_vn = '1.8.8.0'
+_maximum_vn = '1.8.9.0'
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
@@ -298,7 +300,13 @@ def detail(self, message, *args, **kwargs):
 logging.Logger.detail = detail
 
 
-# Also create level below even 'DEBUG'. It will not be advertised to users.
+# Also create special, secret level below even 'DEBUG'. It will not be
+# advertised to users. The user-facing cf.log_level() can set all but this
+# one level; we deliberately have not set up:
+#     cf.log_level('PARTITIONING')
+# to work to change the level to logging.PARTITIONING. Instead, to set this
+# manipulate the cf root logger directly via a built-in method, i.e call:
+#     cf.logging.getLogger().setLevel('PARTITIONING')
 logging.PARTITIONING = 5
 logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
 

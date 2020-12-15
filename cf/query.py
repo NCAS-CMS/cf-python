@@ -14,7 +14,8 @@ from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
                          _DEPRECATION_ERROR_FUNCTION)
 
 from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
+                         _manage_log_level_via_verbosity,
+                         _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -24,10 +25,10 @@ class Query:
     '''Encapsulate a condition for subsequent evaluation.
 
     A condition that may be applied to any object may be stored in a
-    `Query` object. A `Query` object encapulates a condition, such as
+    `Query` object. A `Query` object encapsulates a condition, such as
     "strictly less than 3". When applied to an object, via its
     `evaluate` method or the Python `==` operator, the condition is
-    evaulated in the context of that object.
+    evaluated in the context of that object.
 
        >>> c = cf.Query('lt', 3)
        >>> c
@@ -126,7 +127,7 @@ class Query:
 
     In general, the query operator must be permitted between the value
     of the condition and the operand for which it is being
-    evaulated. For example, when the value is an `int`, the query
+    evaluated. For example, when the value is an `int`, the query
     works if the operand is also an `int`, but fails if it is a
     `list`:
 
@@ -143,15 +144,15 @@ class Query:
     ======================  ==============================================
     Query interface method  Description
     ======================  ==============================================
-    `__query_lt__`          Called when a ``'lt'`` condition is evaulated
-    `__query_le__`          Called when a ``'le'`` condition is evaulated
-    `__query_gt__`          Called when a ``'gt'`` condition is evaulated
-    `__query_ge__`          Called when a ``'ge'`` condition is evaulated
-    `__query_eq__`          Called when an ``'eq'`` condition is evaulated
-    `__query_ne__`          Called when a ``'ne'`` condition is evaulated
-    `__query_wi__`          Called when a ``'wi'`` condition is evaulated
-    `__query_wo__`          Called when a ``'wo'`` condition is evaulated
-    `__query_set__`         Called when a ``'set'`` condition is evaulated
+    `__query_lt__`          Called when a ``'lt'`` condition is evaluated
+    `__query_le__`          Called when a ``'le'`` condition is evaluated
+    `__query_gt__`          Called when a ``'gt'`` condition is evaluated
+    `__query_ge__`          Called when a ``'ge'`` condition is evaluated
+    `__query_eq__`          Called when an ``'eq'`` condition is evaluated
+    `__query_ne__`          Called when a ``'ne'`` condition is evaluated
+    `__query_wi__`          Called when a ``'wi'`` condition is evaluated
+    `__query_wo__`          Called when a ``'wo'`` condition is evaluated
+    `__query_set__`         Called when a ``'set'`` condition is evaluated
     ======================  ==============================================
 
     In all cases the query value is the only, mandatory argument of
@@ -467,6 +468,7 @@ class Query:
         '''
         return self  # TODO
 
+    @_display_or_return
     def dump(self, display=True):
         '''Return a string containing a full description of the instance.
 
@@ -485,12 +487,7 @@ class Query:
             description is returned as a string.
 
         '''
-        string = str(self)
-
-        if display:
-            print(string)
-        else:
-            return(string)
+        return str(self)
 
     @_deprecated_kwarg_check('traceback')
     @_manage_log_level_via_verbosity
@@ -1843,7 +1840,7 @@ def mam():
 
 
 def seasons(n=4, start=12):
-    '''A customizable list of `Query` objects for "seasons in a year"
+    '''A customisable list of `Query` objects for "seasons in a year"
     conditions.
 
     Note that any date-time that lies within a particular season will

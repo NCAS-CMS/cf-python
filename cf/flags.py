@@ -6,13 +6,14 @@ from numpy import ndarray as numpy_ndarray
 
 from copy import deepcopy
 
-from .functions import equals
+from .functions import equals as cf_equals
 from .functions import (atol as cf_atol,
                         rtol as cf_rtol)
 from .functions import inspect as cf_inspect
 
 from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
+                         _manage_log_level_via_verbosity,
+                         _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -263,6 +264,7 @@ class Flags:
         '''
         return deepcopy(self)
 
+    @_display_or_return
     def dump(self, display=True, _level=0):
         '''Return a string containing a full description of the instance.
 
@@ -290,12 +292,7 @@ class Flags:
                 string.append('%s%s = %s' % (indent1, attr[1:], list(value)))
         # --- End: for
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return(string)
+        return '\n'.join(string)
 
     @_deprecated_kwarg_check('traceback')
     @_manage_log_level_via_verbosity
@@ -360,9 +357,10 @@ class Flags:
 
         # Set default tolerances
         if rtol is None:
-            rtol = cf_rtol()
+            rtol = float(cf_rtol())
+
         if atol is None:
-            atol = cf_atol()
+            atol = float(cf_atol())
 
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):
@@ -376,10 +374,13 @@ class Flags:
                 x = getattr(self, attr)
                 y = getattr(other, attr)
 
-                if (x.shape != y.shape or
-                    not equals(x, y, rtol=rtol, atol=atol,
-                               ignore_fill_value=ignore_fill_value,
-                               verbose=verbose)):
+                if (
+                        x.shape != y.shape
+                        or not cf_equals(x, y,
+                                         rtol=rtol, atol=atol,
+                                         ignore_fill_value=ignore_fill_value,
+                                         verbose=verbose)
+                ):
                     print(
                         "%s: Different '%s': %r, %r" %
                         (self.__class__.__name__, attr[1:], x, y)

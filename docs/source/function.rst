@@ -20,7 +20,6 @@ Reading and writing
 
    cf.read 
    cf.write
-   cf.load_stash2standard_name 
 
 Aggregation
 -----------
@@ -49,7 +48,8 @@ Mathematical operations
    cf.relative_vorticity
    cf.ATOL
    cf.RTOL
-
+   cf.combine_bounds_with_coordinates
+    
 Condition constructors
 ----------------------
 
@@ -181,5 +181,7 @@ Miscellaneous
    cf.relaxed_identities
    cf.relpath
    cf.unpickle
+   cf.load_stash2standard_name
+   cf.stash2standard_name 
    cf.LOG_LEVEL
    cf.RELAXED_IDENTITIES

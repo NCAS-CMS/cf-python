@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------
+# Test the code examples found in tutorial.rst and field_analysis.rst
+#
+# Call as:
+#
+#   $ ./test_tutorial_code
+#
+# Returns non-zero return code if any tutorial code did not work
+# --------------------------------------------------------------------
+
+set -x
+echo $PYTHONPATH
+
+d=$PWD
+cd docs/source
+
+python extract_tutorial_code.py tutorial.rst field_analysis.rst
+  
+ls -l tutorial.py field_analysis.py
+
+./reset_test_tutorial
+cd test_tutorial
+
+#python ../tutorial.py
+#rc=$?
+#if [[ $rc != 0 ]]; then
+#    echo "Runtime failure in tutorial.py"
+#    exit $rc
+#fi
+
+python ../field_analysis.py
+rc=$?
+if [[ $rc != 0 ]]; then
+    echo "Runtime failure in field_analysis.py"
+    exit $rc
+fi
+
+cd $d
+echo "tutorial code ran successfully"
+set +x

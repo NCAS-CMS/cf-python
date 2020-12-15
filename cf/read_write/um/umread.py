@@ -41,6 +41,9 @@ from ...functions          import (equals, open_files_threshold_exceeded,
                                    load_stash2standard_name)
 from ...functions import (atol as cf_atol,
                           rtol as cf_rtol)
+
+from ...constants import _stash2standard_name
+
 from ...units              import Units
 
 from ...data.data import Data, Partition, PartitionMatrix
@@ -81,7 +84,7 @@ _pstar = 1.0e5
 _characters = (
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 )
 
 _n_characters = len(_characters)
@@ -130,22 +133,24 @@ _header_names = (
 # --------------------------------------------------------------------
 # Positions of PP header items in their arrays
 # --------------------------------------------------------------------
-(lbyr, lbmon, lbdat, lbhr, lbmin, lbday,
- lbyrd, lbmond, lbdatd, lbhrd, lbmind,
- lbdayd, lbtim, lbft, lblrec, lbcode, lbhem,
- lbrow, lbnpt, lbext, lbpack, lbrel, lbfc,
- lbcfc, lbproc, lbvc, lbrvc, lbexp, lbegin,
- lbnrec, lbproj, lbtyp, lblev, lbrsvd1,
- lbrsvd2, lbrsvd3, lbrsvd4, lbsrce, lbuser1,
- lbuser2, lbuser3, lbuser4, lbuser5, lbuser6,
- lbuser7,
- ) = list(range(45))
+(
+    lbyr, lbmon, lbdat, lbhr, lbmin, lbday,
+    lbyrd, lbmond, lbdatd, lbhrd, lbmind,
+    lbdayd, lbtim, lbft, lblrec, lbcode, lbhem,
+    lbrow, lbnpt, lbext, lbpack, lbrel, lbfc,
+    lbcfc, lbproc, lbvc, lbrvc, lbexp, lbegin,
+    lbnrec, lbproj, lbtyp, lblev, lbrsvd1,
+    lbrsvd2, lbrsvd3, lbrsvd4, lbsrce, lbuser1,
+    lbuser2, lbuser3, lbuser4, lbuser5, lbuser6,
+    lbuser7,
+) = tuple(range(45))
 
-(brsvd1, brsvd2, brsvd3, brsvd4,
- bdatum, bacc, blev, brlev, bhlev, bhrlev,
- bplat, bplon, bgor,
- bzy, bdy, bzx, bdx, bmdi, bmks,
- ) = list(range(19))
+(
+    brsvd1, brsvd2, brsvd3, brsvd4,
+    bdatum, bacc, blev, brlev, bhlev, bhrlev,
+    bplat, bplon, bgor,
+    bzy, bdy, bzx, bdx, bmdi, bmks,
+) = tuple(range(19))
 
 # --------------------------------------------------------------------
 # Map PP axis codes to CF standard names (The full list of field code
@@ -358,7 +363,6 @@ class UMField:
     '''TODO
 
     '''
-
     def __init__(self, var, fmt, byte_ordering, word_size, um_version,
                  set_standard_name, height_at_top_of_model, verbose=None,
                  implementation=None, **kwargs):
@@ -568,7 +572,7 @@ class UMField:
         # Set source
         source = _lbsrce_model_codes.setdefault(source, None)
         if source is not None and model_um_version is not None:
-            source += ' vn{0}'.format(model_um_version)
+            source += " vn{0}".format(model_um_version)
         if source:
             cf_properties['source'] = source
 
@@ -674,10 +678,10 @@ class UMField:
             section, item = divmod(stash, 1000)
             um_stash_source = 'm%02ds%02di%03d' % (submodel, section, item)
             cf_properties['um_stash_source'] = um_stash_source
-            identity = 'UM_{0}_vn{1}'.format(um_stash_source,
+            identity = "UM_{0}_vn{1}".format(um_stash_source,
                                              self.um_version)
         else:
-            identity = 'UM_{0}_fc{1}_vn{2}'.format(submodel,
+            identity = "UM_{0}_fc{1}_vn{2}".format(submodel,
                                                    int_hdr[lbfc],
                                                    self.um_version)
 
@@ -685,7 +689,7 @@ class UMField:
             self.um_Units = _Units[None]
 
         if um_condition:
-            identity += '_{0}'.format(um_condition)
+            identity += "_{0}".format(um_condition)
 
         if long_name is None:
             cf_properties['long_name'] = identity
@@ -897,7 +901,7 @@ class UMField:
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
             logger.info(
-                'down_axes = {}'.format(down_axes))  # pragma: no cover
+                "down_axes = {}".format(down_axes))  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -937,7 +941,7 @@ class UMField:
                  'file')
 
         for attr in attrs:
-            out.append('{0}={1}'.format(attr, getattr(self, attr, None)))
+            out.append("{0}={1}".format(attr, getattr(self, attr, None)))
 
         out.append('')
 
@@ -1415,11 +1419,11 @@ class UMField:
             LBDTIME = list(LBDTIME)
             LBDTIME[0] = LBVTIME[0]
 
-            ctime = cftime.datetime(*LBDTIME)
+            ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
-            if ctime < cftime.datetime(*LBVTIME):
+            if ctime < cftime.datetime(*LBVTIME, calendar=self.calendar):
                 LBDTIME[0] += 1
-                ctime = cftime.datetime(*LBDTIME)
+                ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
             ctime = Data(ctime, reftime).array.item()
             _cached_ctime[key] = ctime
@@ -1584,8 +1588,7 @@ class UMField:
                         fill_value=fill_value)
 
             logger.info(
-                '    location = {}'.format(
-                    yx_shape)
+                "    location = {}".format(yx_shape)
             )  # pragma: no cover
         else:
             # --------------------------------------------------------
@@ -1651,9 +1654,9 @@ class UMField:
                     ))
 
                     logger.info(
-                        '    header_offset = {}, location = {}, '
-                        'subarray[...].max() = {}'.format(
-                            rec.hdr_offset, location, subarray[...].max())
+                        "    header_offset = {}, location = {}".format(
+                            rec.hdr_offset, location
+                        )
                     )  # pragma: no cover
                 # --- End: for
 
@@ -1703,8 +1706,7 @@ class UMField:
                         Units=units))
 
                     logger.info(
-                        '    location = {}, subarray[...].max() = {}'.format(
-                            location, subarray[...].max())
+                        "    location = {}".format(location)
                     )  # pragma: no cover
                 # --- End: for
 
@@ -1822,7 +1824,10 @@ class UMField:
                         datetime(*LBDTIME), units, calendar)
                 else:
                     time = netCDF4_date2num(
-                        cftime.datetime(*LBDTIME), units, calendar)
+                        cftime.datetime(*LBDTIME, calendar=self.calendar),
+                        units,
+                        calendar
+                    )
 
                 _cached_date2num[key] = time
             except ValueError:
@@ -1843,9 +1848,9 @@ class UMField:
         '''
         out2 = []
         for i, rec in enumerate(self.recs):
-            out = ['Field {0}:'.format(i)]
+            out = ["Field {0}:".format(i)]
 
-            x = ['{0}::{1}'.format(name, value)
+            x = ["{0}::{1}".format(name, value)
                  for name, value in zip(_header_names,
                                         self.int_hdr + self.real_hdr)]
 
@@ -1855,11 +1860,11 @@ class UMField:
             if self.extra:
                 out.append('EXTRA DATA:')
                 for key in sorted(self.extra):
-                    out.append('{0}: {1}'.format(key, str(self.extra[key])))
+                    out.append("{0}: {1}".format(key, str(self.extra[key])))
             # --- End: if
 
-            out.append('file: '+self.filename)
-            out.append('format, byte order, word size: {}, {}, {}'.format(
+            out.append('file: ' + self.filename)
+            out.append("fmt, byte order, word size: {}, {}, {}".format(
                 self.fmt, self.byte_ordering, self.word_size))
 
             out.append('')
@@ -2044,7 +2049,7 @@ class UMField:
 #
 #        return numpy_dtype(data_type)
 
-    def printfdr(self):
+    def printfdr(self, display=False):
         '''Print out the contents of PP field headers.
 
     This is a bit like printfdr in the UKMO IDL PP library.
@@ -2054,8 +2059,12 @@ class UMField:
     >>> u.printfdr()
 
         '''
-        for header in self.fdr():
-            logger.info(header)
+        if display:
+            for header in self.fdr():
+                print(header)
+        else:
+            for header in self.fdr():
+                logger.info(header)
 
     def pseudolevel_coordinate(self, LBUSER5):
         '''TODO
@@ -2118,7 +2127,7 @@ class UMField:
 
         '''
         LBYR = self.int_hdr[lbyr]
-        time_units = 'days since {}-1-1'.format(LBYR)
+        time_units = "days since {0}-1-1".format(LBYR)
         calendar = self.calendar
 
         key = time_units+' calendar='+calendar
@@ -2405,7 +2414,10 @@ class UMField:
             # It is important to use the same time_units as dtime
             try:
                 time = cftime.date2num(
-                    cftime.datetime(*LBVTIME), units, calendar)
+                    cftime.datetime(*LBVTIME, calendar=self.calendar),
+                    units,
+                    calendar
+                )
 
                 _cached_date2num[key] = time
             except ValueError:
@@ -2447,7 +2459,7 @@ class UMField:
                     data = numpy_mean(bounds, axis=1)
 
                 if (data, bounds) != (None, None):
-                    aux = 'aux%(auxN)d' % locals()
+                    aux = "aux%(auxN)d" % locals()
                     auxN += 1  # Increment auxiliary number
 
                     coord = _create_Coordinate(
@@ -2456,7 +2468,7 @@ class UMField:
                         # DCH xdim? should be the axis which has axis_code 13:
                         dimensions=[xdim])
             else:
-                coord_type = '{0}_domain_lower_bound'.format(extra_type)
+                coord_type = "{0}_domain_lower_bound".format(extra_type)
                 if coord_type in p.extra:
                     # Create, from extra data, an auxiliary
                     # coordinate with data but no bounds, if the
@@ -2884,7 +2896,8 @@ class UMField:
 # ---------------------------------------------------------------------
 # Create the STASH code to standard_name conversion dictionary
 # ---------------------------------------------------------------------
-stash2standard_name = load_stash2standard_name()
+load_stash2standard_name()
+stash2standard_name = _stash2standard_name
 
 
 class UMRead(cfdm.read_write.IORead):
@@ -2892,10 +2905,10 @@ class UMRead(cfdm.read_write.IORead):
 
     '''
     @_manage_log_level_via_verbosity
-    def read(self, filename, um_version=405,
-             aggregate=True, endian=None, word_size=None,
-             set_standard_name=True, height_at_top_of_model=None,
-             fmt=None, chunk=True, verbose=None):
+    def read(self, filename, um_version=405, aggregate=True,
+             endian=None, word_size=None, set_standard_name=True,
+             height_at_top_of_model=None, fmt=None, chunk=True,
+             verbose=None):
         '''Read fields from a PP file or UM fields file.
 
     The file may be big or little endian, 32 or 64 bit
@@ -2964,10 +2977,10 @@ class UMRead(cfdm.read_write.IORead):
             'filename': filename,
             'byte_ordering': byte_ordering,
             'word_size': word_size,
-            'fmt': fmt
+            'fmt': fmt,
         }
 
-        history = 'Converted from UM/PP by cf-python v{}'.format(__version__)
+        history = "Converted from UM/PP by cf-python v{}".format(__version__)
 
         if endian:
             byte_ordering = endian+'_endian'
@@ -2976,7 +2989,7 @@ class UMRead(cfdm.read_write.IORead):
 
         f = self.file_open(filename)
 
-        um = [UMField(var, f.format, f.byte_ordering, f.word_size,
+        um = [UMField(var, f.fmt, f.byte_ordering, f.word_size,
                       um_version, set_standard_name, history=history,
                       height_at_top_of_model=height_at_top_of_model,
                       verbose=verbose,
@@ -2986,10 +2999,10 @@ class UMRead(cfdm.read_write.IORead):
         return [field for x in um for field in x.fields if field]
 
     def is_um_file(self, filename):
-        '''Return True if a file is a PP file or UM fields file.
+        '''Whether or not a file is a PP file or UM fields file.
 
     Note that the file type is determined by inspecting the file's
-    contents and any file suffix is not not considered.
+    content and any file suffix is not not considered.
 
     :Parameters:
 
@@ -3052,8 +3065,8 @@ class UMRead(cfdm.read_write.IORead):
                              word_size=g['word_size'],
                              fmt=g['fmt'])
 
-
 # --- End: class
+
 
 '''
 Problems:

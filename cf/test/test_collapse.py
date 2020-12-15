@@ -337,6 +337,12 @@ class Field_collapseTest(unittest.TestCase):
         if verbose:
             print(g)
 
+        # Check area/volume collapses on fields with a different setup:
+        h = cf.example_field(3)
+        h.collapse('volume: minimum')
+        i = cf.example_field(4)
+        i.collapse('area: maximum')
+
     def test_Field_collapse_GROUPS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

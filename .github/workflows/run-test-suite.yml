@@ -4,9 +4,9 @@ name: Run test suite
 # Triggers the workflow on push or PR events for the master branch (only)
 on:
   # For now, at least, do not enable on push to save on limited usage resource
-  push:
-    branches:
-      - master
+  #push:
+  #  branches:
+  #    - master
   pull_request:
     # 'reopened' enables manual retrigger via close & re-open. Disable for all
     # edits to manage limited resource (PRs often change before merge-ready).
@@ -56,7 +56,7 @@ jobs:
     # Setup conda, which is the simplest way to access all dependencies,
     # especially as some are C-based so otherwise difficult to setup.
     - name: Setup Miniconda
-      uses: goanpeca/setup-miniconda@v1.1.2
+      uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
         miniconda-version: 'latest'
@@ -140,5 +140,5 @@ jobs:
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
       run: |
-        echo The cf-python test-suite has completed and you may now
+        echo The cf-python test suite has completed and you may now
         echo inspect the results.

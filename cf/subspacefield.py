@@ -239,7 +239,7 @@ class SubspaceField(mixin.Subspace):
 
         `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field. If the ``'test'`` positional argumnt
+            the original field. If the ``'test'`` positional argument
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.

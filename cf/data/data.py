@@ -123,7 +123,8 @@ from ..mixin_container import Container
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
                           _deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+                          _manage_log_level_via_verbosity,
+                          _display_or_return)
 
 from .abstract import Array
 #                       CompressedArray)
@@ -431,7 +432,7 @@ place.
             *Parameter example:*
                 ``dtype=numpy.dtype('i2')``
 
-            .. versionaddedd:: 3.0.4
+            .. versionadded:: 3.0.4
 
         mask: optional
             Apply this mask to the data given by the *array*
@@ -444,7 +445,7 @@ place.
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
 
-            .. versionaddedd:: 3.0.5
+            .. versionadded:: 3.0.5
 
         source: optional
             Initialize the array, units, calendar and fill value from
@@ -609,8 +610,13 @@ place.
                 if x_calendar != '':
                     if d_calendar is not None:
                         if not self.Units.equivalent(
-                                Units(x_since, x_calendar)):
-                            raise ValueError('TODO')
+                                Units(x_since, x_calendar)
+                        ):
+                            raise ValueError(
+                                "Incompatible units: {!r}, {!r}".format(
+                                    self.Units, Units(x_since, x_calendar)
+                                )
+                            )
                     else:
                         d_calendar = x_calendar
                 # --- End: if
@@ -1002,14 +1008,14 @@ place.
         '''Return the current value of the `atol` function.
 
         '''
-        return cf_atol()
+        return cf_atol().value
 
     @property
     def _rtol(self):
         '''Return the current value of the `rtol` function.
 
         '''
-        return cf_rtol()
+        return cf_rtol().value
 
     def _is_abstract_Array_subclass(self, array):
         '''Whether or not an array is a type of abstract Array.
@@ -1703,7 +1709,6 @@ place.
         # ------------------------------------------------------------
         # parse the indices
         # ------------------------------------------------------------
-#        indices, roll, flip_axes = _parse_indices(self, indices)
         indices_in = indices
         indices, roll, flip_axes, mask = parse_indices(
             self._shape, indices_in, cyclic=True, reverse=True, mask=True)
@@ -2154,7 +2159,7 @@ place.
         axis: int, optional
             The axis along which the difference is taken. By default
             the last axis is used. The *axis* argument is an integer
-            that selects the axis coresponding to the given position
+            that selects the axis corresponding to the given position
             in the list of axes of the data array.
 
         n: int, optional
@@ -2431,7 +2436,10 @@ place.
         bins = numpy_asanyarray(bins)
 
         if bins.ndim > 2:
-            raise ValueError("TODO")
+            raise ValueError(
+                "The 'bins' parameter must be scalar, 1-d or 2-d"
+                "Got: {!r}".format(bins)
+            )
 
         two_d_bins = None
 
@@ -2441,7 +2449,10 @@ place.
             #           the bins by lower bounds
             # --------------------------------------------------------
             if bins.shape[1] != 2:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "The second dimension of the 'bins' parameter must "
+                    "have size 2. Got: {!r}".format(bins)
+                )
 
             bins.sort(axis=1)
             bins.sort(axis=0)
@@ -2449,7 +2460,11 @@ place.
             # Check for overlaps
             for i, (u, l) in enumerate(zip(bins[:-1, 1], bins[1:, 0])):
                 if u > l:
-                    raise ValueError("TODO overlap")
+                    raise ValueError(
+                        "Overlapping bins: {}, {}".format(
+                            tuple(bins[i]), tuple(bins[i+i])
+                        )
+                    )
             # --- End: for
 
             two_d_bins = bins
@@ -3026,7 +3041,7 @@ place.
                 attrs['format'] = 'UM'
 
                 subarray = {}
-                for attr in ('file', 'shape',
+                for attr in ('filename', 'shape',
                              'header_offset', 'data_offset', 'disk_length'):
                     subarray[attr] = getattr(p_subarray, attr)
 
@@ -3378,7 +3393,7 @@ place.
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -3435,7 +3450,10 @@ place.
 
         iaxis = d._parse_axes(axis)
         if len(iaxis) != 1:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Must specify a unique domain axis with the 'axis' "
+                "parameter. {!r} specifies axes {!r}".format(axis, iaxes)
+            )
 
         iaxis = iaxis[0]
 
@@ -3512,7 +3530,7 @@ place.
 
         {{inplace: `bool`, optional}}
 
-            .. verisionadded:: 3.3.0
+            .. versionadded:: 3.3.0
 
     :Returns:
 
@@ -4793,7 +4811,7 @@ place.
 
             partition._original = None
             partition._write_to_disk = False
-            partition.close()
+            partition.close(units=new_Units)
 
             if not inplace:
                 partition_s.close()
@@ -5967,7 +5985,7 @@ place.
                 weights_axes = set()
                 for key, value in tuple(weights.items()):
                     del weights[key]
-                    key = d._parse_axes(key)  # , 'asdasds12983487 TODO')
+                    key = d._parse_axes(key)
                     if weights_axes.intersection(key):
                         raise ValueError("Duplicate weights axis")
 
@@ -7001,7 +7019,7 @@ dimensions.
     # ----------------------------------------------------------------
     @property
     def Units(self):
-        '''The `cf.Units` object aining the units of the data array.
+        '''The `cf.Units` object containing the units of the data array.
 
     Deleting this attribute is equivalent to setting it to an
     undefined units object, so this attribute is guaranteed to always
@@ -7025,7 +7043,9 @@ dimensions.
         if units and not self._Units.equivalent(value, verbose=1):
             raise ValueError(
                 "Can't set units (currently {!r}) to non-equivalent "
-                "units {!r}".format(units, value)
+                "units {!r}. Consider the override_units method.".format(
+                    units, value
+                )
             )
 
         dtype = self.dtype
@@ -9305,7 +9325,7 @@ False
         '''Collapse axes with their mean.
 
     The mean is unweighted by default, but may be weighted (see the
-    *weights* parmaeter).
+    *weights* parameter).
 
     Missing data array elements and their corresponding weights
     are omitted from the calculation.
@@ -10364,6 +10384,7 @@ False
 
         return type(self)(u, units=self.Units)
 
+    @_display_or_return
     def dump(self, display=True, prefix=None):
         '''Return a string containing a full description of the instance.
 
@@ -10404,12 +10425,7 @@ False
             )
         # --- End: for
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     def ndindex(self):
         '''Return an iterator over the N-dimensional indices of the data
@@ -10491,6 +10507,7 @@ False
         # Set default tolerances
         if rtol is None:
             rtol = self._rtol
+
         if atol is None:
             atol = self._atol
 
@@ -10523,7 +10540,8 @@ False
             array1 = other[partition.indices].varray
             partition.close()
 
-            if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
+            if not _numpy_allclose(array0, array1, rtol=float(rtol),
+                                   atol=float(atol)):
                 logger.info(
                     "{0}: Different array values (atol={1}, "
                     "rtol={2})".format(
@@ -11521,7 +11539,7 @@ False
 
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't override the calender of non-reference-time "
+                "Can't override the calendar of non-reference-time "
                 "units: {0!r}".format(self.Units)
             )
 
@@ -11683,13 +11701,13 @@ False
               return.
 
               *Parameter example:*
-                If the data aray shape is ``(2, 3, 6)`` then:
+                If the data array shape is ``(2, 3, 6)`` then:
                 * ``d.datum(0)`` is equivalent to ``d.datum(0, 0, 0)``.
                 * ``d.datum(-1)`` is equivalent to ``d.datum(1, 2, 5)``.
                 * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.
 
               If *index* is ``0`` or ``-1`` then the first or last data
-              array element respecitively will be returned, even if the
+              array element respectively will be returned, even if the
               data array is a scalar array.
 
             * Two or more integers. These arguments are interpreted as a
@@ -12131,6 +12149,7 @@ False
         '''
         if atol is None:
             atol = self._atol
+
         if rtol is None:
             rtol = self._rtol
 
@@ -12149,7 +12168,7 @@ False
             x = self
 
         try:
-            return abs(x - y) <= atol + rtol*abs(y)
+            return abs(x - y) <= float(atol) + float(rtol)*abs(y)
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 
@@ -13291,14 +13310,24 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         if base is None:
-            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
         elif base == 10:
-            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+            d.func(numpy_log10, units=_units_1, inplace=True)
         elif base == 2:
-            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+            d.func(numpy_log2, units=_units_1, inplace=True)
         else:
-            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+            d.func(numpy_log, units=_units_1, inplace=True)
             d /= numpy_log(base)
+
+#        if base is None:
+#            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
+#        elif base == 10:
+#            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
+#        elif base == 2:
+#            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
+#        else:
+#            d.func(numpy_log, units=d.Units.log(base), inplace=True)
+#            d /= numpy_log(base)
 
         return d
 
@@ -14229,7 +14258,7 @@ False
             corresponding data-like value of weights for those
             axes. In this case, the implied weights array is the outer
             product of the dictionary's values it may be used in
-            conjunction wih any value of *axes*, because the axes to
+            conjunction with any value of *axes*, because the axes to
             which the weights apply are given explicitly.
 
             *Parameter example:*
@@ -14344,7 +14373,7 @@ False
                 mode='dictionary'):
         '''Return a dictionary of Data objects, which are the m dimensional
     sections of this n dimensional Data object, where m <= n. The keys
-    of the dictionary are the indicies of the sections in the original
+    of the dictionary are the indices of the sections in the original
     Data object. The m dimensions that are not sliced are marked with
     None as a placeholder making it possible to reconstruct the
     original data object. The corresponding values are the resulting
@@ -14352,7 +14381,7 @@ False
 
     :Parameters:
 
-        axes: (seqeunce of) `int`
+        axes: (sequence of) `int`
             This is should be one or more integers of the m indices of
             the m axes that define the sections of the `Data`
             object. If axes is `None` (the default) or an empty

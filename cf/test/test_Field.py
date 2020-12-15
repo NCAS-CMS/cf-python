@@ -9,10 +9,15 @@ import unittest
 
 import numpy
 
-from scipy.ndimage import convolve1d
+SCIPY_AVAILABLE = False
+try:
+    from scipy.ndimage import convolve1d
+    SCIPY_AVAILABLE = True
+# not 'except ImportError' as that can hide nested errors, catch anything:
+except Exception:
+    pass  # test with this dependency will then be skipped by unittest
 
 import cf
-
 
 n_tmpfiles = 1
 tmpfiles = [tempfile.mkstemp('_test_Field.nc', dir=os.getcwd())[1]
@@ -62,8 +67,6 @@ class FieldTest(unittest.TestCase):
         'DSG_timeSeriesProfile_indexed_contiguous.nc'
     )
 
-#    f = cf.read(filename)[0]
-
     chunk_sizes = (100000, 300, 34, 17)
     original_chunksize = cf.chunksize()
     atol = cf.atol()
@@ -78,29 +81,23 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
-
-        for rd in (False, True):
-            for indent in (0, 4):
-                for s in (False, True):
-                    for ns in ('cf', ''):
-                        _ = f.creation_commands(representative_data=rd,
-                                                indent=indent,
-                                                namespace=ns,
-                                                string=s)
-        # --- End: for
-
         for i in range(7):
             f = cf.example_field(i)
-            for rd in (False, True):
-                for indent in (0, 4):
-                    for s in (False, True):
-                        for ns in ('cf', ''):
-                            _ = f.creation_commands(representative_data=rd,
-                                                    indent=indent,
-                                                    namespace=ns,
-                                                    string=s)
-        # --- End: for
+            _ = f.creation_commands()
+
+        f = cf.example_field(1)
+
+        for rd in (False, True):
+            _ = f.creation_commands(representative_data=rd)
+
+        for indent in (0, 4):
+            _ = f.creation_commands(indent=indent)
+
+        for s in (False, True):
+            _ = f.creation_commands(string=s)
+
+        for ns in ('cf', ''):
+            _ = f.creation_commands(namespace=ns)
 
     def test_Field_get_filenames(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1777,6 +1774,9 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        if not SCIPY_AVAILABLE:  # needed for 'convolution_filter' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
+
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
 
         f = cf.read(self.filename1)[0]
@@ -1790,6 +1790,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_moving_window(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'moving_window' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
@@ -1924,6 +1927,9 @@ class FieldTest(unittest.TestCase):
     def test_Field_derivative(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        if not SCIPY_AVAILABLE:  # needed for 'derivative' method
+            raise unittest.SkipTest("SciPy must be installed for this test.")
 
         x_min = 0.0
         x_max = 359.0

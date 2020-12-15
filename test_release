@@ -26,6 +26,7 @@ export PATH=~/tmp/bin:$PATH
 
 cd ~/tmp/lib/python/cf/test
 python run_tests.py
+test_result_status=$?
 
 #mpirun -n 3 python run_tests.py
 #mpirun -n 2 python run_tests.py
@@ -33,3 +34,4 @@ python run_tests.py
 
 set -x
 
+exit $test_result_status

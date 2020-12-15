@@ -89,6 +89,8 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_SEQUENCE,
                         _DEPRECATION_ERROR_KWARG_VALUE,)
 
+from .formula_terms import FormulaTerms
+
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
                          _deprecated_kwarg_check,
@@ -269,9 +271,7 @@ class Field(mixin.PropertiesData,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The selection of properties to be written as netCDF global
     attributes may be accessed with the `nc_global_attributes`,
@@ -315,8 +315,11 @@ class Field(mixin.PropertiesData,
         '''
         '''
         instance = super().__new__(cls)
+        instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._Bounds = Bounds
         instance._Constructs = Constructs
         instance._Domain = Domain
+        instance._DomainAncillary = DomainAncillary
         instance._DomainAxis = DomainAxis
 #        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
@@ -3344,7 +3347,7 @@ class Field(mixin.PropertiesData,
             A sequence of axis keys.
 
         coord_keys: sequence
-            A sequence of keys for each ot the N-D auxiliary
+            A sequence of keys for each to the N-D auxiliary
             coordinates.
 
     :Returns:
@@ -3817,8 +3820,9 @@ class Field(mixin.PropertiesData,
                                 src_axis_keys, dst_axis_sizes):
                             self.domain_axes[k_s].set_size(new_size)
 
-                        self.set_construct(DomainAncillary(source=value),
-                                           key=key, axes=d_axes, copy=False)
+                        self.set_construct(self._DomainAncillary(source=value),
+                                           key=key, axes=d_axes,
+                                           copy=False)
                 # --- End: if
             # --- End: for
         # --- End: for
@@ -6245,7 +6249,7 @@ class Field(mixin.PropertiesData,
     (such as coordinate cell sizes) or provided explicitly in the form
     of other `Field` constructs. In any case, the outer product of
     these weights components is returned in a field which is
-    broadcastable to the orginal field (see the *components* parameter
+    broadcastable to the original field (see the *components* parameter
     for returning the components individually).
 
     By default null, equal weights are returned.
@@ -6306,7 +6310,7 @@ class Field(mixin.PropertiesData,
 
                           and the outer product of these weights
                           components is returned in a field constructs
-                          which is broadcastable to the orginal field
+                          which is broadcastable to the original field
                           construct (see the *components* parameter).
               ==========  ============================================
 
@@ -6401,7 +6405,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -6461,7 +6465,7 @@ class Field(mixin.PropertiesData,
             identify each dimension of the given weights. If the
             weights do not broadcast to the field construct's data
             then setting the *axes* parameter is required so that the
-            braodcasting can be inferred, otherwise setting the *axes*
+            broadcasting can be inferred, otherwise setting the *axes*
             is not required.
 
             *Parameter example:*
@@ -6696,6 +6700,18 @@ class Field(mixin.PropertiesData,
                 else:
                     axes.append(weights)
             else:
+                # In rare edge cases, e.g. if a user sets:
+                #     weights=f[0].cell_area
+                # when they mean weights=f[0].cell_area(), we reach this
+                # code but weights is not iterable. So check it is first:
+                try:
+                    weights = iter(weights)
+                except TypeError:
+                    raise TypeError(
+                        "Invalid type of 'weights' parameter: {}".format(
+                            weights)
+                    )
+
                 for w in tuple(weights):
                     if isinstance(w, self.__class__):
                         fields.append(w)
@@ -7513,7 +7529,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -7840,7 +7856,7 @@ class Field(mixin.PropertiesData,
 
             bounds_data = Data(
                 numpy_reshape(bin_bounds, (bin_count, 2)), units=units)
-            dim.set_bounds(Bounds(data=bounds_data))
+            dim.set_bounds(self._Bounds(data=bounds_data))
 
             logger.info('                    bins     : {} {!r}'.format(
                 dim.identity(), bounds_data))  # pragma: no cover
@@ -8055,7 +8071,7 @@ class Field(mixin.PropertiesData,
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data, nor the field
+    be spanned by any metadata construct data, nor the field
     construct's data; nor be referenced by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is
@@ -8173,7 +8189,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8456,7 +8472,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -8563,8 +8579,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='coordinatereference1'``
@@ -8581,7 +8597,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `str`
-            The construct identifier for the coordinate refernece
+            The construct identifier for the coordinate reference
             construct.
 
         '''
@@ -8696,7 +8712,7 @@ class Field(mixin.PropertiesData,
 
     ``'minimum'``                 The minimum of the values.
 
-    ``'maximum_absolute_value'``  The maximi  of the absolute
+    ``'maximum_absolute_value'``  The maximum of the absolute
                                   values.
 
     ``'minimum_absolute_value'``  The minimum of the absolute
@@ -8844,7 +8860,7 @@ class Field(mixin.PropertiesData,
     element. For example, creating 12 annual means from a timeseries
     of 120 months would be a grouped collapse.
 
-    Selected statistics for overalapping groups can be calculated with
+    Selected statistics for overlapping groups can be calculated with
     the `moving_window` method.
 
     The *group* keyword defines the size of the groups. Groups can be
@@ -9218,7 +9234,7 @@ class Field(mixin.PropertiesData,
 
                       If ``weights=True`` then care also needs to be
                       taken, as a "volume" cell measure construct will
-                      be used if present, othewise the cell volumes
+                      be used if present, otherwise the cell volumes
                       will be calculated using the size of the
                       vertical coordinate cells.
 
@@ -9331,7 +9347,7 @@ class Field(mixin.PropertiesData,
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
-            is partitioned into non-overalpping groups and each group
+            is partitioned into non-overlapping groups and each group
             is collapsed to size 1, independently of the other
             groups. The results of the collapses are concatenated so
             that the output axis has a size equal to the number of
@@ -9353,8 +9369,8 @@ class Field(mixin.PropertiesData,
                              starts at the first coordinate bound of
                              the first axis element (or its coordinate
                              if there are no bounds) and spans the
-                             defined group size. Each susbsequent
-                             group immediately follows the preceeeding
+                             defined group size. Each subsequent
+                             group immediately follows the preceding
                              one. By default each group contains the
                              consective run of elements whose
                              coordinate values lie within the group
@@ -9377,8 +9393,8 @@ class Field(mixin.PropertiesData,
                              bound of the first axis element (or its
                              coordinate if there are no bounds) and
                              spans the defined group size. Each
-                             susbsequent group immediately follows the
-                             preceeeding one. By default each group
+                             subsequent group immediately follows the
+                             preceding one. By default each group
                              contains the consective run of elements
                              whose coordinate values lie within the
                              group limits (see the *group_by*
@@ -9428,8 +9444,8 @@ class Field(mixin.PropertiesData,
                              number of elements. The first group
                              starts with the first axis element and
                              spans the defined number of consecutive
-                             elements. Each susbsequent group
-                             immediately follows the preceeeding one.
+                             elements. Each subsequent group
+                             immediately follows the preceding one.
 
                              * By default each group has the defined
                                number of elements, apart from the last
@@ -9613,7 +9629,7 @@ class Field(mixin.PropertiesData,
 
             `False`         Collapse all groups, regardless of their
                             size. This is the default if the groups
-                            are defined by one ot more `Query`
+                            are defined by one to more `Query`
                             objects.
 
             `Data`          Ignore groups whose span is not equal to
@@ -9714,8 +9730,8 @@ class Field(mixin.PropertiesData,
                             bound of the first axis element (or its
                             coordinate if there are no bounds) and
                             spans the defined group size. Each
-                            susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            subsequent group immediately follows the
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -9801,8 +9817,8 @@ class Field(mixin.PropertiesData,
                             coordinate bound of the first axis element
                             (or its coordinate if there are no bounds)
                             and spans the defined group size. Each
-                            susbsequent group immediately follows the
-                            preceeeding one. By default each group
+                            subsequent group immediately follows the
+                            preceding one. By default each group
                             contains the consective run of elements
                             whose coordinate cells lie within the
                             group limits (see the *group_by*
@@ -9944,7 +9960,7 @@ class Field(mixin.PropertiesData,
               `cf.D` and `cf.h`).
 
             *Parameter example:*
-              To define groups that each spann 3 calendar months,
+              To define groups that each span 3 calendar months,
               starting and ending at 06:00 in the first day of each
               month: ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
 
@@ -10551,7 +10567,7 @@ class Field(mixin.PropertiesData,
                 # REMOVE all 2+ dimensional auxiliary coordinates
                 # which span this axis
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
-                for key in c.filter_by_axis('or', axis):
+                for key, value in c.filter_by_axis('or', axis).items():
                     logger.info(
                         '    Removing {!r}'.format(value)
                     )  # pragma: no cover
@@ -10629,7 +10645,7 @@ class Field(mixin.PropertiesData,
                         "coordinate={!r}".format(coordinate)
                     )
 
-                bounds = Bounds(data=Data([bounds_data], units=units))
+                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
@@ -11989,7 +12005,7 @@ class Field(mixin.PropertiesData,
             `domain_axis` method: ``f.domain_axis(identity)``.
 
         axes: deprecated at version 3.0.0
-            Use the *identity* parmeter instead.
+            Use the *identity* parameter instead.
 
         size:  deprecated at version 3.0.0
 
@@ -11998,7 +12014,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the domein axis is increasing.
+            Whether or not the domain axis is increasing.
 
     **Examples:**
 
@@ -12240,7 +12256,7 @@ class Field(mixin.PropertiesData,
     >>> indices = q.indices(X=112.5)
     >>> print(indices)
     (slice(0, 5, 1), slice(2, 3, 1))
-    >>> q[indicies]
+    >>> q[indices]
     <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
     >>> q.indices(X=112.5, latitude=cf.gt(-60))
     (slice(1, 5, 1), slice(2, 3, 1))
@@ -13028,6 +13044,169 @@ class Field(mixin.PropertiesData,
 
         return mask
 
+    @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
+    def compute_vertical_coordinates(self, default_to_zero=True,
+                                     strict=True, inplace=False,
+                                     verbose=None):
+        '''Compute non-parametric vertical coordinates.
+
+    When vertical coordinates are a function of horizontal location as
+    well as parameters which depend on vertical location, they cannot
+    be stored in a vertical dimension coordinate construct. In such
+    cases a parametric vertical dimension coordinate construct is
+    stored and a coordinate reference construct contains the formula
+    for computing the required non-parametric vertical coordinates.
+
+    {{formula terms links}}
+
+    For example, multi-dimensional non-parametric parametric ocean
+    altitude coordinates can be computed from one-dimensional
+    parametric ocean sigma coordinates.
+
+    Coordinate reference systems based on parametric vertical
+    coordinates are identified from the coordinate reference
+    constructs and, if possible, the corresponding non-parametric
+    vertical coordinates are computed and stored in a new auxiliary
+    coordinate construct.
+
+    If there are no appropriate coordinate reference constructs then
+    the field construct is unchanged.
+
+    .. versionadded:: 3.8.0
+
+    .. seealso:: `CoordinateReference`
+
+    :Parameters:
+
+        {{default_to_zero: `bool`, optional}}
+
+        strict: `bool`
+            If False then allow the computation to occur when
+
+            * A domain ancillary construct has no standard name, but
+              the corresponding term has a standard name that is
+              prescribed
+
+            * When the computed standard name can not be found by
+              inference from the standard names of the domain
+              ancillary constructs, nor from the
+              ``computed_standard_name`` parameter of the relevant
+              coordinate reference construct.
+
+            By default an exception is raised in these cases.
+
+            If a domain ancillary construct does have a standard name,
+            but one that is inconsistent with any prescribed standard
+            names, then an exception is raised regardless of the value
+            of *strict*.
+
+        {{inplace: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
+
+    :Returns:
+
+        `Field` or `None`
+            The field construct with the new non-parametric vertical
+            coordinates, or `None` if the operation was in-place.
+
+    **Examples**
+
+    >>> f = cf.example_field(1)
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    >>> print(f.auxiliary_coordinate('altitude', default=None))
+    None
+    >>> g = f.compute_vertical_coordinates()
+    >>> print(g.auxiliary_coordinates)
+    Constructs:
+    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'auxiliarycoordinate2': <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+     'auxiliarycoordinate3': <CF AuxiliaryCoordinate: altitude(1, 10, 9) m>}
+    >>> g.auxiliary_coordinate('altitude').dump()
+    Auxiliary coordinate: altitude
+        long_name = 'Computed from parametric atmosphere_hybrid_height_coordinate
+                     vertical coordinates'
+        standard_name = 'altitude'
+        units = 'm'
+        Data(1, 10, 9) = [[[10.0, ..., 5410.0]]] m
+        Bounds:units = 'm'
+        Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
+
+        '''
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        for cr in f.coordinate_references.values():
+            # --------------------------------------------------------
+            # Compute the non-parametric vertical coordinates, if
+            # possible.
+            # --------------------------------------------------------
+            (standard_name,
+             computed_standard_name,
+             computed,
+             computed_axes,
+             k_axis) = FormulaTerms.formula(f, cr, default_to_zero, strict)
+
+            if computed is None:
+                # No non-parametric vertical coordinates were
+                # computed
+                continue
+
+            # --------------------------------------------------------
+            # Convert the computed domain ancillary construct to an
+            # auxiliary coordinate construct, and insert it into the
+            # field construct.
+            # --------------------------------------------------------
+            c = f._AuxiliaryCoordinate(source=computed, copy=False)
+            c.clear_properties()
+            c.long_name = (
+                "Computed from parametric {} "
+                "vertical coordinates".format(standard_name)
+            )
+            if computed_standard_name:
+                c.standard_name = computed_standard_name
+
+            logger.detail(
+                "Non-parametric coordinates:\n{}".format(
+                    c.dump(display=False, _level=1)
+                )
+            )  # pragma: no cover
+
+            key = f.set_construct(c, axes=computed_axes, copy=False)
+
+            # Reference the new coordinates from the coordinate
+            # reference construct
+            cr.set_coordinate(key)
+
+            logger.debug(
+                "Non-parametric coordinates construct key: {!r}\n"
+                "Updated coordinate reference construct:\n{}".format(
+                    key,
+                    cr.dump(display=False, _level=1)
+                )
+            )  # pragma: no cover
+
+        return f
+
     def match_by_construct(self, *identities, OR=False,
                            **conditions):
         '''Whether or not there are particular metadata constructs.
@@ -13145,7 +13324,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `bool`
-            Whether or not the field construct contains the specfied
+            Whether or not the field construct contains the specified
             metadata constructs.
 
     **Examples:**
@@ -13484,7 +13663,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               For a window size of 5, if ``origin=0`` then the window
               is centred on each point. If ``origin=-2`` then the
-              window is shifted to inclued the previous four
+              window is shifted to include the previous four
               points. If ``origin=1`` then the window is shifted to
               include the previous point and the and the next three
               points.
@@ -13747,7 +13926,7 @@ class Field(mixin.PropertiesData,
               with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
             Note that the `scipy.signal.windows` package has suite of
-            window functions for creating wondow weights for filtering
+            window functions for creating window weights for filtering
             (see the examples for details).
 
             .. versionadded:: 3.3.0 (replaces the old weights
@@ -13818,7 +13997,7 @@ class Field(mixin.PropertiesData,
               window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
               ``origin=0`` then the average is centred on each
               point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
+              include the previous four points. If ``origin=1`` then
               the average is shifted to include the previous point and
               the and the next three points.
 
@@ -14020,7 +14199,9 @@ class Field(mixin.PropertiesData,
                     new_bounds[length - lower_offset:length, 1] = old_bounds[
                         length - 1, 1]
 
-                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
+                coord.set_bounds(
+                    self._Bounds(data=Data(new_bounds, units=coord.Units))
+                )
         # --- End: if
 
         return f
@@ -14142,13 +14323,18 @@ class Field(mixin.PropertiesData,
     def cumsum(self, axis, masked_as_zero=False, coordinate=None,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
+
     The cell bounds of the axis are updated to describe the range over
     which the sums apply, and a new "sum" cell method construct is
     added to the resulting field construct.
+
     .. versionadded:: 3.0.0
+
     .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
                  `sum`
+
     :Parameters:
+
         axis:
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
@@ -14156,6 +14342,7 @@ class Field(mixin.PropertiesData,
             field construct's `domain_axis` method. For example, for a
             value of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X')`` is selected.
+
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
             calculating the cumulative sum. By default the output data
@@ -14164,11 +14351,13 @@ class Field(mixin.PropertiesData,
                       always result in masked values in the output
                       data, regardless of the setting of
                       *masked_as_zero*.
+
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined, relative to the new cell bounds. By default they
             are unchanged from the original field construct. The
             *coordinate* parameter may be one of:
+
             ===============  =========================================
             *coordinate*     Description
             ===============  =========================================
@@ -14181,13 +14370,16 @@ class Field(mixin.PropertiesData,
             ``'maximum'``    An output coordinate is the maximum of
                              its output coordinate bounds.
             ===============  =========================================
+
             *Parameter Example:*
               ``coordinate='maximum'``
         {{inplace: `bool`, optional}}
+
     :Returns:
         `Field` or `None`
             The field construct with the cumulatively summed axis, or
             `None` if the operation was in-place.
+
     **Examples:**
     >>> f = cf.example_field(2)
     >>> print(f)
@@ -14610,7 +14802,7 @@ class Field(mixin.PropertiesData,
                     'cell_measure', 'domain_ancillary', 'field_ancillary'):
                 continue
 
-            aux = AuxiliaryCoordinate()
+            aux = self._AuxiliaryCoordinate()
             aux.set_properties(c.properties())
 
             c_data = c.get_data(None)
@@ -14630,7 +14822,9 @@ class Field(mixin.PropertiesData,
                 for x in indices.ndindex():
                     bounds[x] = c_bounds_data[indices[x]]
 
-                aux.set_bounds(Bounds(data=bounds, copy=False), copy=False)
+                aux.set_bounds(
+                    self._Bounds(data=bounds, copy=False), copy=False
+                )
 
             out.set_construct(aux, axes=out.get_data_axes(), copy=False)
 
@@ -14907,7 +15101,7 @@ class Field(mixin.PropertiesData,
     order.
 
     By default metadata constructs are not transposed, but they may be
-    if the *constructs* parmeter is set.
+    if the *constructs* parameter is set.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `squeeze`, `unsqueeze`
@@ -15204,10 +15398,27 @@ class Field(mixin.PropertiesData,
                         'exact', da_key)
         # --- End: if
 
-        if key:
-            return c.key(default=default)
+#        if key:
+#            return c.key(default=default)
 
-        return c.value(default=default)
+        if key:
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No {!r} auxiliary coordinate construct".format(identity)
+                )
+
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No {!r} auxiliary coordinate construct".format(identity)
+            )
+
+        return out
 
     def construct(self, identity=None, default=ValueError(), key=False):
         '''Select a metadata construct by its identity.
@@ -15330,9 +15541,23 @@ class Field(mixin.PropertiesData,
             c = c(identity)
 
         if key:
-            return c.key(default=default)
+            out = c.key(default=None)
+            if out is None:
+                return self._default(
+                    default,
+                    "No unique {!r} construct".format(identity)
+                )
 
-        return c.value(default=default)
+            return out
+
+        out = c.value(default=None)
+        if out is None:
+            return self._default(
+                default,
+                "No unique {!r} construct".format(identity)
+            )
+
+        return out
 
     def domain_ancillary(self, identity=None, default=ValueError(),
                          key=False):
@@ -15819,7 +16044,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -16315,7 +16540,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `int`
-            The position in the field construct's dat of the selected
+            The position in the field construct's data of the selected
             domain axis construct.
 
     **Examples:**
@@ -16492,7 +16717,7 @@ class Field(mixin.PropertiesData,
     spanned by the data are either inferred, or specified with the
     *axes* parameter.
 
-    For a dimension coordinate construct, an exisiting dimension
+    For a dimension coordinate construct, an existing dimension
     coordinate construct is discarded if it spans the same domain axis
     construct (since only one dimension coordinate construct can be
     associated with a given domain axis construct).
@@ -16511,8 +16736,8 @@ class Field(mixin.PropertiesData,
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            automatically. If the identifier already exists then the
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``
@@ -16715,7 +16940,7 @@ class Field(mixin.PropertiesData,
     zero). The halo region is populated with a copy of the proximate
     values from the original data.
 
-    The metadata constructs are similary extended where appropriate.
+    The metadata constructs are similarly extended where appropriate.
 
     **Cyclic axes**
 
@@ -17049,7 +17274,7 @@ class Field(mixin.PropertiesData,
     percentile rank.
 
     The output field construct has a new dimension coordinate
-    construct that records the precentile ranks represented by its
+    construct that records the percentile ranks represented by its
     data.
 
     .. versionadded:: 3.0.4
@@ -17276,7 +17501,7 @@ class Field(mixin.PropertiesData,
                     c.set_data(data, copy=False)
 
                     bounds.insert_dimension(inplace=True)
-                    c.set_bounds(Bounds(data=bounds), copy=False)
+                    c.set_bounds(self._Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
         # --- End: if
@@ -17518,28 +17743,32 @@ class Field(mixin.PropertiesData,
             the construct is copied.
 
     :Returns:
-
+        
             The construct that was replaced.
 
     **Examples:**
 
-    >>> f.replace_construct('X', new_X_construct)
+    >>> key = f.replace_construct('X', new_X_construct)
 
         '''
-        key = self.construct(identity, key=True, default=ValueError('TODO a'))
+        key = self.construct(identity, key=True)
         c = self.constructs[key]
 
         set_axes = True
 
         if not isinstance(construct, c.__class__):
-            raise ValueError('TODO')
+            raise ValueError(
+                "Can't replace a {} construct with a {} construct".format(
+                    c.__class__.__name__, construct.__class__.__name__
+                )
+            )
 
         axes = self.get_data_axes(key, None)
         if axes is not None:
             shape0 = getattr(c, 'shape', None)
             shape1 = getattr(construct, 'shape', None)
             if shape0 != shape1:
-                raise ValueError('TODO')
+                raise ValueError('TODO bb')
         # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)
@@ -18327,7 +18556,7 @@ class Field(mixin.PropertiesData,
 
         `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field. If the ``'test'`` positional argumnt
+            the original field. If the ``'test'`` positional argument
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
@@ -18391,7 +18620,7 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
-            two identites:
+            two identities:
 
                >>> x.identities()
                ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
@@ -18432,7 +18661,7 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `set`
-            The identifiers of the domain axis constructs that san
+            The identifiers of the domain axis constructs that span
             the data of all coordinate and domain ancillary constructs
             used by the selected coordinate reference construct.
 
@@ -18532,7 +18761,7 @@ class Field(mixin.PropertiesData,
     especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
-    boundaries are not known nor inferrable. Higher order patch
+    boundaries are not known nor inferable. Higher order patch
     recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
@@ -18683,7 +18912,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -19199,7 +19428,7 @@ class Field(mixin.PropertiesData,
     coarser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
-    known nor inferrable. Higher order patch recovery is available as
+    known nor inferable. Higher order patch recovery is available as
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than
@@ -19313,7 +19542,7 @@ class Field(mixin.PropertiesData,
                                     As with first order (see above),
                                     preserves the area integral of the
                                     field between source and
-                                    destinatio using a weighted sum,
+                                    destination using a weighted sum,
                                     with weights based on the
                                     proportionate area of
                                     intersection.
@@ -20278,7 +20507,7 @@ class Field(mixin.PropertiesData,
 
     @property
     def Items(self):
-        '''Deprecated at version 3.0.0. Use attribute `constructs`r instead.
+        '''Deprecated at version 3.0.0. Use attribute `constructs` instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(

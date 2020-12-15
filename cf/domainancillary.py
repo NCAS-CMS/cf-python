@@ -1,5 +1,7 @@
 import cfdm
 
+from . import Bounds
+
 from . import mixin
 
 
@@ -24,11 +26,16 @@ class DomainAncillary(mixin.PropertiesDataBounds,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netcdf variable}}
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''
+        '''
+        instance = super().__new__(cls)
+        instance._Bounds = Bounds
+        return instance
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
