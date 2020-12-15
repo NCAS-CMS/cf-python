@@ -12336,7 +12336,7 @@ False
 
     By default the minimum, mean, median, maximum, range, mid-range,
     standard deviation, root mean square, and sample size are
-    calculated. But this selection may be editted, and other metrics
+    calculated. But this selection may be edited, and other metrics
     are available.
 
     .. seealso:: `minimum`, `mean`, `median`, `maximum`, `range`,

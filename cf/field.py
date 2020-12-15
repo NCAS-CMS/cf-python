@@ -8801,7 +8801,7 @@ class Field(mixin.PropertiesData,
     either case, the weights actually used are those derived by the
     `weights` method of the field construct with the same weights
     keyword value. Collapsed axes that are not identified by the
-    *weights* keyword are un-weighted during the collapse operation.
+    *weights* keyword are unweighted during the collapse operation.
 
     *Example:*
       Create a weighted time average:
