@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>CF data model &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.4.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="introduction.html" title="previous chapter"><strong>Introduction</strong></a></li>
+      <li>Next: <a href="installation.html" title="next chapter"><strong>Installation</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cf_data_model.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <style> .small {font-size:small} </style><div class="section" id="cf-data-model">
+<span id="id1"></span><h1><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>The CF (Climate and Forecast) metadata conventions
+(<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) provide a description of the physical
+meaning of data and of their spatial and temporal properties and are
+designed to promote the creation, processing, and sharing of climate
+and forecasting data using netCDF files and libraries
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>).</p>
+<p>The CF data model <a class="footnote-reference brackets" href="#cfdm" id="id2">1</a> (<a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>)
+identifies the fundamental elements (“constructs”) of the CF
+conventions and shows how they relate to each other, independently of
+the netCDF encoding.</p>
+<p>The CF data model defines a <strong>“field construct”</strong> for storing data
+with all of its metadata. It is defined as follows:</p>
+<dl class="glossary">
+<dt id="term-field-construct">field construct</dt><dd><p>corresponds to a CF-netCDF data variable with all of its
+metadata. It consists of</p>
+<ul>
+<li><p>descriptive properties that apply to field construct as a whole
+(e.g. the standard name),</p></li>
+<li><p>a data array, and</p></li>
+<li><p><strong>“metadata constructs”</strong> that describe the locations of each
+cell of the data array (i.e. the <strong>“domain”</strong>), defined by</p>
+<dl class="glossary simple">
+<dt id="term-domain-axis-constructs">domain axis constructs</dt><dd><p>corresponding to CF-netCDF dimensions or scalar coordinate
+variables</p>
+</dd>
+<dt id="term-dimension-coordinate-constructs">dimension coordinate constructs</dt><dd><p>corresponding to CF-netCDF coordinate variables or numeric scalar
+coordinate variables</p>
+</dd>
+<dt id="term-auxiliary-coordinate-constructs">auxiliary coordinate constructs</dt><dd><p>corresponding to CF-netCDF auxiliary coordinate variables and
+non-numeric scalar coordinate variables</p>
+</dd>
+<dt id="term-coordinate-reference-constructs">coordinate reference constructs</dt><dd><p>corresponding to CF-netCDF grid mapping variables or the
+formula_terms attribute of a coordinate variable</p>
+</dd>
+<dt id="term-domain-ancillary-constructs">domain ancillary constructs</dt><dd><p>corresponding to CF-netCDF variables named by the formula_terms
+attribute of a coordinate variable</p>
+</dd>
+<dt id="term-cell-measure-constructs">cell measure constructs</dt><dd><p>corresponding to CF-netCDF cell measure variables</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>metadata constructs</strong> that describe the physical nature of the
+data array, defined by</p>
+<dl class="glossary simple">
+<dt id="term-field-ancillary-constructs">field ancillary constructs</dt><dd><p>corresponding to CF-netCDF ancillary variables</p>
+</dd>
+<dt id="term-cell-method-constructs">cell method constructs</dt><dd><p>corresponding to a CF-netCDF cell_methods attribute of data
+variable</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="figure align-default" id="id3">
+<a class="reference internal image-reference" href="_images/field.png"><img alt="_images/field.png" src="_images/field.png" style="width: 417.2px; height: 555.8px;" /></a>
+<p class="caption"><span class="caption-text"><em>The nine constructs of our CF data model described using UML The field construct corresponds to a CF-netCDF data variable. The domain provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is not a construct of the data model but an abstract concept that is useful for understanding it. Similarly, it is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="cfdm"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><span class="small">Hassell, D., Gregory, J., Blower, J.,
+Lawrence, B. N., and Taylor, K. E.: A data model of the
+Climate and Forecast metadata conventions (CF-1.6) with a
+software implementation (cf-python v2.1), Geosci. Model
+Dev., 10, 4619-4646,
+https://doi.org/10.5194/gmd-10-4619-2017, 2017.</span></p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-30.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/cf_data_model.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

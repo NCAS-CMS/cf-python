@@ -15545,7 +15545,7 @@ class Field(mixin.PropertiesData,
             if out is None:
                 return self._default(
                     default,
-                    "No unique {!r} construct".format(identity)
+                    "No {!r} construct".format(identity)
                 )
 
             return out
@@ -15554,7 +15554,7 @@ class Field(mixin.PropertiesData,
         if out is None:
             return self._default(
                 default,
-                "No unique {!r} construct".format(identity)
+                "No {!r} construct".format(identity)
             )
 
         return out
@@ -17743,32 +17743,28 @@ class Field(mixin.PropertiesData,
             the construct is copied.
 
     :Returns:
-        
+
             The construct that was replaced.
 
     **Examples:**
 
-    >>> key = f.replace_construct('X', new_X_construct)
+    >>> f.replace_construct('X', new_X_construct)
 
         '''
-        key = self.construct(identity, key=True)
+        key = self.construct(identity, key=True, default=ValueError('TODO a'))
         c = self.constructs[key]
 
         set_axes = True
 
         if not isinstance(construct, c.__class__):
-            raise ValueError(
-                "Can't replace a {} construct with a {} construct".format(
-                    c.__class__.__name__, construct.__class__.__name__
-                )
-            )
+            raise ValueError('TODO')
 
         axes = self.get_data_axes(key, None)
         if axes is not None:
             shape0 = getattr(c, 'shape', None)
             shape1 = getattr(construct, 'shape', None)
             if shape0 != shape1:
-                raise ValueError('TODO bb')
+                raise ValueError('TODO')
         # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)

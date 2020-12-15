@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CF data model &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="index.html">cf 3.0.0</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="introduction.html" title="previous chapter"><strong>Introduction</strong></a></li>
+      <li>Next: <a href="installation.html" title="next chapter"><strong>Installation</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cf_data_model.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-data-model">
+<span id="id1"></span><h1><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>The CF (Climate and Forecast) metadata conventions
+(<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) provide a description of the physical
+meaning of data and of their spatial and temporal properties and are
+designed to promote the creation, processing, and sharing of climate
+and forecasting data using netCDF files and libraries
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>).</p>
+<p>The <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">CF data model</a>
+<a class="footnote-reference" href="#cfdm" id="id3">[1]</a> identifies the fundamental elements (“constructs”) of the CF
+conventions and shows how they relate to each other, independently of
+the netCDF encoding.</p>
+<p>The <strong>field</strong> construct defined by the CF data model, which
+corresponds to a CF-netCDF data variable with all of its metadata, is
+the central construct that includes all of the other constructs. It
+consists of</p>
+<ul class="simple">
+<li>descriptive properties that apply to field construct as a whole
+(e.g. the standard name),</li>
+<li>a data array, and</li>
+<li>“metadata constructs” that describe<ul>
+<li>the locations of each cell of the data array (i.e. the “domain”),
+and</li>
+<li>the physical nature of each cell’s datum.</li>
+</ul>
+</li>
+</ul>
+<p>The domain is defined by</p>
+<ul class="simple">
+<li><strong>domain axis</strong> constructs (corresponding to CF-netCDF dimensions or
+scalar coordinate variables),</li>
+<li><strong>dimension coordinate</strong> constructs (corresponding to CF-netCDF
+coordinate variables or numeric scalar coordinate variables),</li>
+<li><strong>auxiliary coordinate</strong> constructs (corresponding to CF-netCDF
+auxiliary coordinate variables and non-numeric scalar coordinate
+variables),</li>
+<li><strong>coordinate reference</strong> constructs (corresponding to CF-netCDF grid
+mapping variables or the formula_terms attribute of a coordinate
+variable),</li>
+<li><strong>domain ancillary</strong> constructs (corresponding to CF-netCDF
+variables named by the formula_terms attribute of a coordinate
+variable), and</li>
+<li><strong>cell measure</strong> constructs (corresponding to CF-netCDF cell measure
+variables).</li>
+</ul>
+<p>The physical nature of individual data values are described by</p>
+<ul class="simple">
+<li><strong>field ancillary</strong> constructs (corresponding to CF-netCDF ancillary
+variables), and</li>
+<li><strong>cell method</strong> constructs (corresponding to a CF-netCDF
+cell_methods attribute of data variable).</li>
+</ul>
+<table class="docutils footnote" frame="void" id="cfdm" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+Taylor, K. E.: A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software
+implementation (cf-python v2.1), Geosci. Model Dev., 10,
+4619-4646, <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>, 2017.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/cf_data_model.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

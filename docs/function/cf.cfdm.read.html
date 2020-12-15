@@ -1,0 +1,297 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.cfdm.read &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/function/cf.cfdm.read.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-cfdm-read">
+<h1>cf.cfdm.read<a class="headerlink" href="#cf-cfdm-read" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cf.cfdm.read">
+<code class="descclassname">cf.cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external=None</em>, <em>extra=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cf.cfdm.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read field constructs from a dataset.</p>
+<p>The dataset may be a netCDF file on disk or on an OPeNDAP server.</p>
+<p>The returned field constructs are sorted by the netCDF variable names
+of their corresponding data variables.</p>
+<p><strong>Performance</strong></p>
+<p>Descriptive properties are always read into memory, but lazy loading
+is employed for all data arrays, which means that no data is read into
+memory until the data is required for inspection or to modify the
+array contents. This maximises the number of field constructs that may
+be read within a session, and makes the read operation fast.</p>
+<p><strong>NetCDF unlimited dimensions</strong></p>
+<p>Domain axis constructs that correspond to NetCDF unlimited dimensions
+may be accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code> methods of a field
+construct.</p>
+<p><strong>CF-compliance</strong></p>
+<p>If the dataset is partially CF-compliant to the extent that it is not
+possible to unambiguously map an element of the netCDF dataset to an
+element of the CF data model, then a field construct is still
+returned, but may be incomplete. This is so that datasets which are
+partially conformant may nonetheless be modified in memory and written
+to new datasets.</p>
+<p>Such “structural” non-compliance would occur, for example, if the
+“coordinates” attribute of a CF-netCDF data variable refers to another
+variable that does not exist, or refers to a variable that spans a
+netCDF dimension that does not apply to the data variable. Other types
+of non-compliance are not checked, such whether or not controlled
+vocabularies have been adhered to. The structural compliance of the
+dataset may be checked with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code>
+method of the field construct, as well as optionally displayed when
+the dataset is read by setting the <em>warnings</em> parameter.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_unlimited_dimensions</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.dataset_compliance</span></code></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dd><p class="first">The file name or OPenDAP URL of the dataset.</p>
+<p>Relative paths are allowed, and standard tilde and shell
+parameter expansions are applied to the string.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could be
+described by any of the following: <code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Read external variables (i.e. variables which are named by
+attributes, but are not present, in the parent file given by
+the <em>filename</em> parameter) from the given external
+files. Ignored if the parent file does not contain a global
+“external_variables” attribute. Multiple external files may be
+provided, which are searched in random order for the required
+external variables.</p>
+<p>If an external variable is not found in any external files, or
+is found in multiple external files, then the relevant
+metadata construct is still created, but without any metadata
+or data. In this case the construct’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method
+will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">external='cell_measure.nc'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">external=['cell_measure.nc']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">external=('cell_measure_A.nc',</span> <span class="pre">'cell_measure_O.nc')</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Create extra, independent fields from netCDF variables that
+correspond to particular types metadata constructs. The
+<em>extra</em> parameter may be one, or a sequence, of:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>extra</em></th>
+<th class="head">Metadata constructs</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></td>
+<td>Field ancillary constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></td>
+<td>Domain ancillary constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></td>
+<td>Dimension coordinate constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></td>
+<td>Auxiliary coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></td>
+<td>Cell measure constructs</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create fields from auxiliary coordinate constructs:
+<code class="docutils literal notranslate"><span class="pre">extra='auxiliary_coordinate'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">extra=['auxiliary_coordinate']</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create fields from domain ancillary and cell measure
+constructs: <code class="docutils literal notranslate"><span class="pre">extra=['domain_ancillary',</span> <span class="pre">'cell_measure']</span></code>.</p>
+</dd>
+</dl>
+<p class="last">An extra field construct created via the <em>extra</em> parameter
+will have a domain limited to that which can be inferred from
+the corresponding netCDF variable, but without the connections
+that are defined by the parent netCDF data variable. It is
+possible to create independent fields from metadata constructs
+that do incorporate as much of the parent field construct’s
+domain as possible by using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code> method
+of a returned field construct, instead of setting the <em>extra</em>
+parameter.</p>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then print a description of how the contents of the
+netCDF file were parsed and mapped to CF data model
+constructs.</p>
+</dd>
+<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then print warnings when an output field construct is
+incomplete due to structural non-compliance of the dataset. By
+default such warnings are not displayed.</p>
+</dd>
+<dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt>
+<dd><p class="first last">Define the CF data model implementation that provides the
+returned field constructs.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt>
+<dd><p class="first last">The field constructs found in the dataset. The list may be
+empty.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="go">&lt;type &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Read a file and create field constructs from CF-netCDF data variables
+as well as from the netCDF variables that correspond to particular
+types metadata constructs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> 
+<span class="gp">... </span>                                <span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Read a file that contains external variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="s1">&#39;external.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">j</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;external1.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;external2.nc&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/function/cf.cfdm.read.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
