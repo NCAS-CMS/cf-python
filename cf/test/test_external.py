@@ -161,6 +161,41 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=2))
 
+    def test_EXTERNAL_AGGREGATE(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Read parent file without the external file, taking first field to test
+        f = cf.read(self.parent_file, verbose=0)[0]
+        measure_name = 'measure:area'
+
+        # Split f into parts (take longitude with 3 x 3 = 9 points) so can
+        # test the difference between the aggregated result and original f.
+        # Note all parts retain the external variable cell measure.
+        f_lon_thirds = [f[:, :3], f[:, 3:6], f[:, 6:]]
+
+        g = cf.aggregate(f_lon_thirds)
+
+        self.assertEqual(len(g), 1)
+
+        # Check cell measure construct from external variable has been removed
+        self.assertFalse(g[0].cell_measures())
+
+        # Check aggregated field is identical to original with measure removed
+        f0 = f.copy()
+        f0.del_construct(measure_name)
+        self.assertEqual(g[0], f0)
+
+        # Now try aggregating when one part doesn't have the cell measure; we
+        # expect the two with the measure to aggregate but the other not to
+        f_lon_thirds[1].del_construct(measure_name)
+        g = cf.aggregate(f_lon_thirds)
+        self.assertEqual(len(g), 2)
+
+        # Neither output field should possess the cell measure construct
+        self.assertFalse(g[0].cell_measures())
+        self.assertFalse(g[1].cell_measures())
+
 # --- End: class
 
 
