@@ -2,7 +2,7 @@ version 3.8.0
 -------------
 ----
 
-**2020-12-??**
+**2020-12-18**
 
 * The setting of global constants can now be controlled by a context
   manager (https://github.com/NCAS-CMS/cf-python/issues/154)
