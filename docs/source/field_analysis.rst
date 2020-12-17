@@ -19,7 +19,6 @@ By default all axes with size greater than 1 are collapsed completely
 .. code-block:: python
    :caption: *Find the minimum of the entire data.*
 
-   >>> import cf
    >>> a = cf.read('timeseries.nc')[0]
    >>> print(a)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -1545,13 +1544,11 @@ pressure coordinates after the regridding operation.
    >>> print(z_p.array)
    [850. 700. 500. 250.  50.]
    >>> z_ln_p = z_p.log()
-   >>> z_ln_p.axis = 'Z'
    >>> print(z_ln_p.array)
    [6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]
-   >>> v.replace_construct('Z', z_ln_p)
+   >>> _ = v.replace_construct('Z', z_ln_p)
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
-   >>> new_z_ln_p.axis = 'Z'
    >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new_z_p)
    >>> print(new_v)
@@ -1700,7 +1697,7 @@ For binary operations involving constructs that have bounds, the
 result of binary operation will, by default, only have bounds if both
 operands have bounds; and the bounds of the result will be the result
 of the same binary operation on bounds objects. This behaviour may
-modified by the `cf.bounds_combination_mode` function.
+modified by the `cf.combine_bounds_with_coordinates` function.
 
 .. code-block:: python
    :caption: *Demonstrate how bounds are treated in binary
@@ -1726,7 +1723,7 @@ modified by the `cf.bounds_combination_mode` function.
        standard_name = 'longitude'
        units = 'degrees_east'
        Data(8) = [72.5, ..., 387.5] degrees_east   
-   >>> old = cf.bounds_combination_mode('OR')
+   >>> old = cf.combine_bounds_with_coordinates('OR')
    >>> (x + 50).dump()
    Dimension coordinate: longitude
        standard_name = 'longitude'
@@ -1744,7 +1741,7 @@ modified by the `cf.bounds_combination_mode` function.
        Data(8) = [45.0, ..., 675.0] degrees_east
        Bounds:units = 'degrees_east'
        Bounds:Data(8, 2) = [[22.5, ..., 697.5]] degrees_east
-   >>> cf.bounds_combination_mode(old)
+   >>> cf.combine_bounds_with_coordinates(old)
    'OR'
    
 .. warning:: Care must be taken when combining a construct with a
@@ -2208,7 +2205,7 @@ cell sizes (or custom weights) may applied to the calculation.
     [315. 360.]]
    >>> q.iscyclic('X')
    True
-   >>> g = q.moving_window('mean', 3, axis='X', weights=True)
+   >>> g = f.moving_window('mean', 3, axis='X', weights=True)
    >>> print(g)
    Field: specific_humidity (ncvar%q)
    ----------------------------------

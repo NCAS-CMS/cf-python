@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>API reference &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cf functions" href="function.html" />
+    <link rel="prev" title="Analysis" href="analysis.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.6.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="analysis.html" title="previous chapter"><strong>Analysis</strong></a></li>
+      <li>Next: <a href="function.html" title="next chapter"><strong>cf functions</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api-reference">
+<h1><strong>API reference</strong><a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.6.0 for version 1.8 of the CF conventions.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>This version of cf is for Python 3 only</strong> and there are
+<a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a> of cf.</p>
+<p>Scripts written for version 2.x but running under version
+3.x should either work as expected, or provide informative
+error messages on the new API usage. However, it is advised
+that the outputs of older scripts are checked when running
+with Python 3 versions of the cf library.</p>
+<p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#older-releases"><span class="std std-ref">older releases</span></a> page.</p>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function.html"><strong>cf functions</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function.html#reading-and-writing"><strong>Reading and writing</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#aggregation"><strong>Aggregation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#mathematical-operations"><strong>Mathematical operations</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#condition-constructors"><strong>Condition constructors</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#date-time-and-time-duration"><strong>Date-time and time duration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#resource-management"><strong>Resource management</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#miscellaneous"><strong>Miscellaneous</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="class.html"><strong>cf classes</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="class.html#field-construct-class"><strong>Field construct class</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#metadata-component-classes"><strong>Metadata component classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#constructs-class"><strong>Constructs class</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#coordinate-component-classes"><strong>Coordinate component classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#domain-class"><strong>Domain class</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#field-list-class"><strong>Field list class</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#data-classes"><strong>Data classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#miscellaneous-classes"><strong>Miscellaneous classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#data-compression-classes"><strong>Data compression classes</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="constant.html"><strong>cf constants</strong></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-07-24.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
