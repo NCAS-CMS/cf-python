@@ -79,10 +79,10 @@ class ppTest(unittest.TestCase):
                 for fmt in ('NETCDF4', 'CFA4'):
                     cf.write(f, tmpfile, fmt=fmt)
                     g = cf.read(tmpfile)[0]
-                
+
                     self.assertTrue((f.array == array).all(),
                                     'Bad unpacking of PP WGDOS packed data')
-                
+
                     self.assertTrue(f.equals(g, verbose=2),
                                     'Bad writing/reading. fmt='+fmt)
 
