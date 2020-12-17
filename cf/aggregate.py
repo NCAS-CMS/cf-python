@@ -133,7 +133,6 @@ class _Meta:
                                         'dim_coord_index',
                                         'Nd_coordinates',
                                         'Cell_measures',
-                                        'has_external_variables',
                                         'Domain_ancillaries',
                                         'Field_ancillaries'))
 
@@ -601,11 +600,29 @@ class _Meta:
         # ------------------------------------------------------------
         self.msr = {}
         info_msr = {}
-        self.has_external_cell_measures = False
+        copied_field = False
         for key, msr in f.cell_measures.items():
+            # If the measure is an external variable, remove it because
+            # the dimensions are not known so there is no way to tell if the
+            # aggregation should have changed it. (This is sufficiently
+            # sensible behaviour for now, but will be reviewed in future.)
+            # Note: for CF <=1.8 only cell measures can be external variables.
             if msr.nc_get_external():
-                self.has_external_cell_measures = True
+                # Only create one copy of field if there is >1 external measure
+                if not copied_field:
+                    self.field = self.field.copy()  # copy as will delete msr
+                    f = self.field
+                    copied_field = True
+                f.del_construct(msr.identity())
+                logger.info(
+                    "Removed '{}' construct from a copy of input field {!r} "
+                    "pre-aggregation because it is an external variable so it "
+                    "is not possible to determine the influence the "
+                    "aggregation process should have on it.".format(
+                        msr.identity(), f.identity())
+                )
                 continue
+
             if not self.cell_measure_has_data_and_units(msr):
                 return
 
@@ -1200,9 +1217,6 @@ class _Meta:
 #        signature_append(tuple(['Cell measures'] + x))
         Cell_measures = tuple(x)
 
-        # For CF <=1.8 only cell measures can be external variables
-        has_external_variables = self.has_external_cell_measures
-
         # Domain ancillaries
         domain_anc = self.domain_anc
         x = [(identity,
@@ -1245,7 +1259,6 @@ class _Meta:
             dim_coord_index=dim_coord_index,
             Nd_coordinates=Nd_coordinates,
             Cell_measures=Cell_measures,
-            has_external_variables=has_external_variables,
             Domain_ancillaries=Domain_ancillaries,
             Field_ancillaries=Field_ancillaries,
         )
@@ -1942,24 +1955,6 @@ def aggregate(fields,
 
                         unaggregatable = True
                         break
-
-                    # Two fields were successfully aggregated to one. If there
-                    # were external variable(s) on either input field, or both,
-                    # remove the corresponding cell measure construct(s) on
-                    # the aggregated output because the dimensions are unknown
-                    # so those construct(s) potentially should have changed.
-                    # There's no way to tell if they are still relevant, so
-                    # the sensible behaviour is to remove them.
-                    for c in m0.field.cell_measures().values():
-                        if c.nc_get_external():
-                            m0.field.del_construct(c.identity())
-                            logger.info(
-                                "Removed '{}' construct from aggregated field "
-                                "{!r} because it is an external variable so it "
-                                "is not possible to determine the influence "
-                                "the aggregation process should have on "
-                                "it.".format(c.identity(), m0.field.identity())
-                            )
                 # --- End: for
 
                 m[:] = [m0]
