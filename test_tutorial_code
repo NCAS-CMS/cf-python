@@ -38,5 +38,5 @@ if [[ $rc != 0 ]]; then
 fi
 
 cd $d
-echo "tutorial code ran successfully"
+echo "tutorial.rst and field_analysis.rst code ran successfully"
 set +x
