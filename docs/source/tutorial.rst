@@ -10,8 +10,9 @@
 
 Version |release| for version |version| of the CF conventions.
 
-All of the Python code in this tutorial is available in an executable
-script (:download:`download <../source/tutorial.py>`, 36kB).
+All of the Python code in this tutorial is available in two executable
+scripts (:download:`download <../source/tutorial.py>`, 28kB,
+:download:`download <../source/field_analysis.py>`, 8kB).
 
 .. https://stackoverflow.com/questions/24129481/how-to-include-a-local-table-of-contents-into-sphinx-doc
 
@@ -1249,7 +1250,7 @@ meet the criteria implied by the ``missing_value``, ``_FillValue``,
 usually applied automatically by `cf.read`. NetCDF data elements that
 equal the values of the ``missing_value`` and ``_FillValue``
 properties are masked, as are data elements that exceed the value of
-the ``valid_max`` property, subceed the value of the ``valid_min``
+the ``valid_max`` property, succeed the value of the ``valid_min``
 property, or lie outside of the range defined by the ``valid_range``
 property.
 
@@ -1287,7 +1288,7 @@ be used on any construct, not just those that have been read from
 datasets.
     
 ----
-
+g
 .. _Subspacing-by-index:
 
 **Subspacing by index**
@@ -2714,6 +2715,65 @@ A coordinate reference construct contains
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}    
 
+.. _Computing-non-parametric-vertical-coordinates:
+    
+Computing non-parametric vertical coordinates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When vertical coordinates are a function of horizontal location as
+well as parameters which depend on vertical location, they cannot be
+stored in a vertical dimension coordinate construct. In such cases a
+parametric vertical dimension coordinate construct is stored and a
+coordinate reference construct contains the formula for computing the
+required non-parametric vertical coordinates. For example,
+multi-dimensional non-parametric ocean altitude coordinates
+can be computed from one-dimensional parametric ocean sigma
+coordinates [#sigma]_.
+
+The `~cf.Field.compute_vertical_coordinates` method of the field
+construct will identify coordinate reference systems based on
+parametric vertical coordinates and, if possible, compute the
+corresponding non-parametric vertical coordinates, storing the result
+in a new auxiliary coordinate construct.
+
+.. code-block:: python
+   :caption: *Create a field construct with computed height
+             coordinates, from one with parametric
+             atmosphere_hybrid_height_coordinate coordinates.*
+	     
+   >>> f = cf.example_field(1)
+   >>> print(f)
+   Field: air_temperature (ncvar%ta
+   ---------------------------------
+   Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: grid_mapping_name:rotated_latitude_longitude
+                   : standard_name:atmosphere_hybrid_height_coordinate
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+   >>> print(f.auxiliary_coordinate('altitude', default=None))
+   None
+   >>> g = f.compute_vertical_coordinates()
+   >>> g.auxiliary_coordinate('altitude').dump()
+   Auxiliary coordinate: altitude
+       long_name = 'Computed from parametric atmosphere_hybrid_height_coordinate
+                    vertical coordinates'
+       standard_name = 'altitude'
+       units = 'm'
+       Data(1, 10, 9) = [[[10.0, ..., 5410.0]]] m
+       Bounds:units = 'm'
+       Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
+
 .. _Cell-methods:
    
 Cell methods
@@ -3836,7 +3896,7 @@ constructs data:
      [276.4 264.2 -- 266.1 -- -- -- 273.4 269.7]]]
 
 This is particularly useful when the field construct does not have
-sufficient metadata to unambiguously identiy its domain axes:
+sufficient metadata to unambiguously identify its domain axes:
 
 .. code-block:: python
    :caption: *Mask all points from "v", using the data objects and
@@ -6811,6 +6871,7 @@ if any, are filtered out.
          all zero for the first header in a 32-bit PP file, the file
          format can not reliably be detected automatically.
 
+.. [#sigma] https://cfconventions.org/cf-conventions/cf-conventions.html#_ocean_sigma_coordinate
 
 .. External links
 
@@ -6827,4 +6888,3 @@ if any, are filtered out.
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
-

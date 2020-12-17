@@ -141,7 +141,7 @@ intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
     'sphinx': ('https://www.sphinx-doc.org/en/master/',  None),
     'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy', None),
+    'numpy': ('https://numpy.org/doc/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     # 'netCDF4': ('https://unidata.github.io/netcdf4-python', None),
     'cftime': ('https://unidata.github.io/cftime', None),

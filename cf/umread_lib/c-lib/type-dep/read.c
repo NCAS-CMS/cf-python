@@ -413,7 +413,7 @@ int read_record_data_core(int fd,
 	   * this and has appropriate byte swapping code.
 	   */
 	  CKI(   unwgdos(packed_data, packed_bytes, data_return, nwords, mdi)   );
-	  
+	 
 	  break;
 	  
 	case 2:

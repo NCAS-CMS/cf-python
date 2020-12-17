@@ -81,7 +81,7 @@ installation and source code.
 '''
 __Conventions__ = 'CF-1.8'
 __author__ = 'David Hassell'
-__date__ = '2020-12-??'
+__date__ = '2020-12-18'
 __version__ = '3.8.0'
 
 _requires = (
@@ -167,7 +167,8 @@ if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad psutil version: cf requires psutil>={}. "
         "Got {} at {}".format(
-            _minimum_vn, psutil.__version__, psutil.__file__))
+            _minimum_vn, psutil.__version__, psutil.__file__)
+    )
 
 # Check the version of netCDF4
 _minimum_vn = '1.5.3'
@@ -183,7 +184,8 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
         "Got {} at {}".format(
-            _minimum_vn, cftime.__version__, cftime.__file__))
+            _minimum_vn, cftime.__version__, cftime.__file__)
+    )
 
 # Check the version of numpy
 _minimum_vn = '1.15'

@@ -480,7 +480,7 @@ class PropertiesDataBounds(PropertiesData):
 
         has_bounds = self.has_bounds()
 
-        if has_bounds and inplace and other is self:
+        if bounds and has_bounds and inplace and other is self:
             other = other.copy()
 
         try:
@@ -2520,7 +2520,9 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None and bounds.shape[:data.ndim] != data.shape:
             # Check shape
             raise ValueError(
-                "Can't set bounds: Incorrect shape: {0})".format(bounds.shape))
+                "Can't set bounds: Incorrect bounds shape {} "
+                "for data shape {}".format(bounds.shape, data.shape)
+            )
 
         if copy:
             bounds = bounds.copy()

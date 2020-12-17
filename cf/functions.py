@@ -57,7 +57,8 @@ import urllib.parse
 import cfdm
 import cfunits
 
-from .          import __version__, __file__
+from . import __version__, __file__
+
 from .constants import (CONSTANTS,
                         _file_to_fh,
                         _stash2standard_name,
@@ -232,6 +233,7 @@ def configuration(
     * `log_level`
     * `regrid_logging`
     * `relaxed_identities`
+    * `bounds_combination_mode`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -252,7 +254,7 @@ def configuration(
                  `chunksize`, `collapse_parallel_mode`,
                  `total_memory`, `free_memory_factor`, `fm_threshold`,
                  `min_total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`
+                 `relaxed_identities`, `bounds_combination_mode`
 
     :Parameters:
 
@@ -284,6 +286,10 @@ def configuration(
 
         collapse_parallel_mode: `int` or `Constant`, optional
             The new value (0, 1 or 2).
+
+        bounds_combination_mode: `str` or `Constant`, optional
+            Determine how to deal with cell bounds in binary
+            operations. See `cf.bounds_combination_mode` for details.
 
         free_memory_factor: `float` or `Constant`, optional
             The new value of the fraction of memory kept free as a
@@ -331,6 +337,7 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
+     'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
@@ -348,6 +355,7 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
+     'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
@@ -359,6 +367,48 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+
+    Use as a context manager:
+
+    >>> print(cf.configuration())
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+    >>> with cf.configuration(atol=9, rtol=10):
+    ...     print(cf.configuration())
+    ...
+    {'rtol': 9.0,
+     'atol': 10.0,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+    >>> print(cf.configuration())
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
 
     '''
@@ -1116,9 +1166,13 @@ class bounds_combination_mode(ConstantAccess):
       No          No          *No*
       ==========  ==========  ==========  ======================
 
+    .. versionadded:: 3.8.0
+
+    .. seealso:: `configuration`
+
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `str` or `Constant`, optional
             Provide a new flag value that will apply to all subsequent
             binary operations.
 
@@ -1131,16 +1185,27 @@ class bounds_combination_mode(ConstantAccess):
     **Examples:**
 
     >>> old = cf.bounds_combination_mode()
-    >>> old
-    'AND'
-    >>> cf.bounds_combination_mode('OR')
-    'AND'
-    >>> cf.bounds_combination_mode()
-    'OR'
-    >>> cf.bounds_combination_mode(old)
-    'OR'
-    >>> cf.bounds_combination_mode()
-    'AND'
+    >>> print(old)
+    AND
+    >>> print(cf.bounds_combination_mode('OR'))
+    AND
+    >>> print(cf.bounds_combination_mode())
+    OR
+    >>> print(cf.bounds_combination_mode(old))
+    OR
+    >>> print(cf.bounds_combination_mode())
+    AND
+
+    Use as a context manager:
+
+    >>> print(cf.bounds_combination_mode())
+    AND
+    >>> with cf.bounds_combination_mode('XOR'):
+    ...     print(cf.bounds_combination_mode())
+    ...
+    XOR
+    >>> print(cf.bounds_combination_mode())
+    AND
 
     '''
     _name = 'BOUNDS_COMBINATION_MODE'
@@ -2352,7 +2417,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
     This used when reading PP and UM fields files.
 
-    Each mapping is defined by a seperate line in a text file. Each
+    Each mapping is defined by a separate line in a text file. Each
     line contains nine ``!``-delimited entries:
 
     1. ID: UM sub model identifier (1 = atmosphere, 2 = ocean, etc.)
@@ -3221,40 +3286,38 @@ def environment(display=True, paths=True):
     **Examples:**
 
     >>> cf.environment()
-    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
+    Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
+    HDF5 library: 1.10.5
+    netcdf library: 4.6.3
     udunits2 library: libudunits2.so.0
-    python: 3.7.3 /home/space/anaconda3/bin/python
-    netCDF4: 1.4.2 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.0.3.4 /home/space/.local/lib/python3.7/site-packages/cftime-1.0.3.4-py3.7-linux-x86_64.egg/cftime/__init__.py
-    numpy: 1.16.2 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    psutil: 5.6.3 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
-    scipy: 1.2.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
+    python: 3.7.0 /home/space/anaconda3/bin/python
+    netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
+    cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
+    psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
+    scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
     matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
-    ESMF: 7.1.0r /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
-    cfdm: 1.7.8 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
-    cfunits: 3.2.2 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
+    ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
+    cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
+    cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
     cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
-    cf: 3.0.1 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
-
+    cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
     >>> cf.environment(paths=False)
-    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
+    HDF5 library: 1.10.5
+    netcdf library: 4.6.3
     udunits2 library: libudunits2.so.0
-    python: 3.7.3
-    netCDF4: 1.4.2
-    cftime: 1.0.3.4
-    numpy: 1.16.2
-    psutil: 5.6.3
-    scipy: 1.2.1
-    matplotlib: 3.1.1
-    ESMF: 7.1.0r
-    cfdm: 1.7.8
-    cfunits: 3.2.2
-    cfplot: 3.0.0
-    cf: 3.0.1
+    Python: 3.7.0
+    netCDF4: 1.5.4
+    cftime: 1.3.0
+    numpy: 1.18.4
+    psutil: 5.4.7
+    scipy: 1.1.0
+    matplotlib: 2.2.3
+    ESMF: 8.0.0
+    cfdm: 1.8.8.0
+    cfunits: 3.3.1
+    cfplot: 3.0.38
+    cf: 3.8.0
 
     '''
     dependency_version_paths_mapping = {

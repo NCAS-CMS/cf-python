@@ -19,7 +19,6 @@ except Exception:
 
 import cf
 
-
 n_tmpfiles = 1
 tmpfiles = [tempfile.mkstemp('_test_Field.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
@@ -67,8 +66,6 @@ class FieldTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)),
         'DSG_timeSeriesProfile_indexed_contiguous.nc'
     )
-
-#    f = cf.read(filename)[0]
 
     chunk_sizes = (100000, 300, 34, 17)
     original_chunksize = cf.chunksize()

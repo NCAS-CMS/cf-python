@@ -354,6 +354,11 @@ crs.datum.parameters()
 crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
+f = cf.example_field(1)
+print(f)
+print(f.auxiliary_coordinate('altitude', default=None))
+g = f.compute_vertical_coordinates()
+g.auxiliary_coordinate('altitude').dump()
 print(t.cell_methods)
 t.cell_methods.ordered()
 cm = t.constructs('method:mean').value()
@@ -1040,12 +1045,14 @@ pp = cf.read('umfile.pp')
 pp
 print(pp[0])
 cf.write(pp, 'umfile1.nc')
-type(cf.read_write.um.umread.stash2standard_name)
-cf.read_write.um.umread.stash2standard_name[(1, 4)]
-cf.read_write.um.umread.stash2standard_name[(1, 2)]
-cf.read_write.um.umread.stash2standard_name[(1, 7)]
-(1, 999) in cf.read_write.um.umread.stash2standard_name
+stash = cf.stash2standard_name()
+stash[(1, 4)]
+stash[(1, 7)]
+stash[(1, 2)]
+stash[(1, 152)]
+(1, 999) in stash
 with open('new_STASH.txt', 'w') as new:
     new.write('1!999!My STASH code!1!!!ultraviolet_index!!')
-_ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
-cf.read_write.um.umread.stash2standard_name[(1, 999)]
+cf.load_stash2standard_name('new_STASH.txt', merge=True)
+new_stash = cf.stash2standard_name()
+new_stash[(1, 999)]

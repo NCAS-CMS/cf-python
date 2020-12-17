@@ -70,10 +70,13 @@ class functionTest(unittest.TestCase):
         org = cf.configuration()
         self.assertIsInstance(org, dict)
 
-        # Check all keys that should be there are, with correct value type:
+        # Check all keys that should be there are, with correct value
+        # type:
         self.assertEqual(len(org), 11)  # update expected len if add new key(s)
-        # Floats expected as values for most keys. Store these for later as
-        # floats need assertAlmostEqual rather than assertEqual tests:
+
+        # Floats expected as values for most keys. Store these for
+        # later as floats need assertAlmostEqual rather than
+        # assertEqual tests:
         keys_with_float_values = [
             'atol',
             'rtol',
