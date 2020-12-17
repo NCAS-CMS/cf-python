@@ -393,9 +393,6 @@ static int bit_test(void *iword, int ibit)
   
   ui = *(unsigned int *) iword;
   
-  /* i = (ui >> ibit) & -2; */
-
-  /* from cf-0.9.9.1 */
   i = (ui >> ibit) & ~(~0 << 1);
   
   if (i == 1)
