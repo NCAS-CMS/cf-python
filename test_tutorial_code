@@ -11,7 +11,7 @@
 # --------------------------------------------------------------------
 
 set -x
-echo $PYTHONPATH
+echo PYTHONPATH=$PYTHONPATH
 
 d=$PWD
 cd docs/source
