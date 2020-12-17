@@ -186,15 +186,25 @@ class ExternalVariableTest(unittest.TestCase):
         f0.del_construct(measure_name)
         self.assertEqual(g[0], f0)
 
-        # Now try aggregating when one part doesn't have the cell measure; we
-        # expect the two with the measure to aggregate but the other not to
+        # Also check aggregation did not remove the measure from the inputs
+        for part in f_lon_thirds:
+            cell_measure = part.constructs.filter_by_identity(
+                'measure:area').value()
+            self.assertTrue(cell_measure.nc_get_external())
+
+        # Now try aggregating when one part doesn't have the cell measure,
+        # expecting all of the parts to still aggregate back to one field
+        # without the external measure (rather than  2->1 => 1 + 1 = 2 fields).
         f_lon_thirds[1].del_construct(measure_name)
         g = cf.aggregate(f_lon_thirds)
-        self.assertEqual(len(g), 2)
-
-        # Neither output field should possess the cell measure construct
+        self.assertEqual(len(g), 1)
         self.assertFalse(g[0].cell_measures())
-        self.assertFalse(g[1].cell_measures())
+
+        # Also check measure was not removed from, or added to, any input
+        for part in [f_lon_thirds[0], f_lon_thirds[2]]:
+            cm = part.constructs.filter_by_identity('measure:area').value()
+            self.assertTrue(cm.nc_get_external())
+        self.assertFalse(f_lon_thirds[1].cell_measures())
 
 # --- End: class
 
