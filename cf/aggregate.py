@@ -600,7 +600,28 @@ class _Meta:
         # ------------------------------------------------------------
         self.msr = {}
         info_msr = {}
+        copied_field = False
         for key, msr in f.cell_measures.items():
+            # If the measure is an external variable, remove it because
+            # the dimensions are not known so there is no way to tell if the
+            # aggregation should have changed it. (This is sufficiently
+            # sensible behaviour for now, but will be reviewed in future.)
+            # Note: for CF <=1.8 only cell measures can be external variables.
+            if msr.nc_get_external():
+                # Only create one copy of field if there is >1 external measure
+                if not copied_field:
+                    self.field = self.field.copy()  # copy as will delete msr
+                    f = self.field
+                    copied_field = True
+                f.del_construct(msr.identity())
+                logger.info(
+                    "Removed '{}' construct from a copy of input field {!r} "
+                    "pre-aggregation because it is an external variable so it "
+                    "is not possible to determine the influence the "
+                    "aggregation process should have on it.".format(
+                        msr.identity(), f.identity())
+                )
+                continue
 
             if not self.cell_measure_has_data_and_units(msr):
                 return
@@ -1934,7 +1955,7 @@ def aggregate(fields,
 
                         unaggregatable = True
                         break
-                # --- End: while
+                # --- End: for
 
                 m[:] = [m0]
             # --- End: for
@@ -1961,6 +1982,7 @@ def aggregate(fields,
                     output_fields.extend((m.field for m in meta0))
         else:
             output_fields.extend((m.field for m in meta))
+
     # --- End: for
 
     aggregate.status = status

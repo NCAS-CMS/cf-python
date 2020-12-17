@@ -19,6 +19,8 @@ version 3.8.0
 * Fixed bug that caused a failure when writing a dataset that contains
   a scalar domain ancillary construct
   (https://github.com/NCAS-CMS/cf-python/issues/152)
+* Fixed bug that prevented aggregation of fields with external cell measures
+  (https://github.com/NCAS-CMS/cf-python/issues/150#issuecomment-729747867)
 * Fixed bug that caused rows full of zeros to appear in WGDOS packed
   UM data that contain masked points
   (https://github.com/NCAS-CMS/cf-python/issues/161)

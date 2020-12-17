@@ -161,6 +161,51 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=2))
 
+    def test_EXTERNAL_AGGREGATE(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Read parent file without the external file, taking first field to test
+        f = cf.read(self.parent_file, verbose=0)[0]
+        measure_name = 'measure:area'
+
+        # Split f into parts (take longitude with 3 x 3 = 9 points) so can
+        # test the difference between the aggregated result and original f.
+        # Note all parts retain the external variable cell measure.
+        f_lon_thirds = [f[:, :3], f[:, 3:6], f[:, 6:]]
+
+        g = cf.aggregate(f_lon_thirds)
+
+        self.assertEqual(len(g), 1)
+
+        # Check cell measure construct from external variable has been removed
+        self.assertFalse(g[0].cell_measures())
+
+        # Check aggregated field is identical to original with measure removed
+        f0 = f.copy()
+        f0.del_construct(measure_name)
+        self.assertEqual(g[0], f0)
+
+        # Also check aggregation did not remove the measure from the inputs
+        for part in f_lon_thirds:
+            cell_measure = part.constructs.filter_by_identity(
+                'measure:area').value()
+            self.assertTrue(cell_measure.nc_get_external())
+
+        # Now try aggregating when one part doesn't have the cell measure,
+        # expecting all of the parts to still aggregate back to one field
+        # without the external measure (rather than  2->1 => 1 + 1 = 2 fields).
+        f_lon_thirds[1].del_construct(measure_name)
+        g = cf.aggregate(f_lon_thirds)
+        self.assertEqual(len(g), 1)
+        self.assertFalse(g[0].cell_measures())
+
+        # Also check measure was not removed from, or added to, any input
+        for part in [f_lon_thirds[0], f_lon_thirds[2]]:
+            cm = part.constructs.filter_by_identity('measure:area').value()
+            self.assertTrue(cm.nc_get_external())
+        self.assertFalse(f_lon_thirds[1].cell_measures())
+
 # --- End: class
 
 
