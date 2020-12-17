@@ -1282,7 +1282,7 @@ variables:
       double time_bnds(time, bnds) ;
            time_bnds:long_name = "time axis boundaries" ;
            time_bnds:units = "days since 1850-01-01 00:00:00" ;
- 
+
 // global attributes:
            :external_variables = "areacella" ;
            :Conventions = "CF-'''+VN+'''" ;
