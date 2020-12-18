@@ -40,14 +40,14 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-#if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
-#  rm -fr $dir/.doctrees
-#fi
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
+  rm -fr $dir/.doctrees
+fi
 mkdir -p $dir/_downloads
 
 make html $dir
 
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
+cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
 for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py
 do
