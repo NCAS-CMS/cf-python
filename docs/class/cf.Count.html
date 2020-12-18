@@ -10,19 +10,19 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Count.dump" href="../method/cf.Count.dump.html" />
-    <link rel="prev" title="cf.Units.conform" href="../attribute/cf.Units.conform.html" />
+    <link rel="prev" title="cf.Configuration.__repr__" href="../method/cf.Configuration.__repr__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../attribute/cf.Units.conform.html" title="previous chapter">cf.Units.conform</a></li>
+      <li>Previous: <a href="../method/cf.Configuration.__repr__.html" title="previous chapter">cf.Configuration.__repr__</a></li>
       <li>Next: <a href="../method/cf.Count.dump.html" title="next chapter">cf.Count.dump</a></li>
   </ul></li>
   </ul></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Count">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/count.py#L6-L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/count.py#L6-L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.count.Count</span></code></p>
 <p>A count variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using a contiguous ragged array
@@ -365,7 +365,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.array.html#cf.Count.array" title="cf.Count.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
 <td><p>A numpy array deep copy of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.Data.html#cf.Count.Data" title="cf.Count.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.Data.html#cf.Count.Data" title="cf.Count.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.data.html#cf.Count.data" title="cf.Count.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
@@ -487,7 +487,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.mask_invalid.html#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.apply_masking.html#cf.Count.apply_masking" title="cf.Count.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.apply_masking.html#cf.Count.apply_masking" title="cf.Count.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
 <td><p>Apply masking as defined by the CF conventions.</p></td>
 </tr>
 </tbody>
@@ -1220,7 +1220,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>TODO</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__query_wo__.html#cf.Count.__query_wo__" title="cf.Count.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
-<td><p>TODO 1</p></td>
+<td><p>TODO</p></td>
 </tr>
 </tbody>
 </table>
@@ -1313,11 +1313,11 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

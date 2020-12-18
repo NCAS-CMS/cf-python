@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.standard_deviation" href="cf.Field.standard_deviation.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -106,7 +106,7 @@
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/field.py#L6234-L6940"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/field.py#L6238-L6956"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
@@ -115,7 +115,7 @@ data. For example when computing a area weight average.</p>
 (such as coordinate cell sizes) or provided explicitly in the form
 of other <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> constructs. In any case, the outer product of
 these weights components is returned in a field which is
-broadcastable to the orginal field (see the <em>components</em> parameter
+broadcastable to the original field (see the <em>components</em> parameter
 for returning the components individually).</p>
 <p>By default null, equal weights are returned.</p>
 <div class="versionadded">
@@ -185,7 +185,7 @@ constructs with bounds</p></li>
 </div></blockquote>
 <p>and the outer product of these weights
 components is returned in a field constructs
-which is broadcastable to the orginal field
+which is broadcastable to the original field
 construct (see the <em>components</em> parameter).</p>
 </td>
 </tr>
@@ -310,7 +310,7 @@ which requires the field construct to have a
 “volume” cell measure construct.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to be
 taken, as a “volume” cell measure construct will
-be used if present, othewise the cell volumes
+be used if present, otherwise the cell volumes
 will be calculated using the size of the
 vertical coordinate cells.</p>
 </div>
@@ -364,7 +364,7 @@ axes). I.e. <code class="docutils literal notranslate"><span class="pre">weight=
 identify each dimension of the given weights. If the
 weights do not broadcast to the field construct’s data
 then setting the <em>axes</em> parameter is required so that the
-braodcasting can be inferred, otherwise setting the <em>axes</em>
+broadcasting can be inferred, otherwise setting the <em>axes</em>
 is not required.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes='T'</span></code></p>
@@ -427,11 +427,11 @@ weights in a dictionary.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.tempdir" href="cf.tempdir.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -104,7 +104,7 @@
 <h1>cf.set_performance<a class="headerlink" href="#cf-set-performance" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.set_performance">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">set_performance</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/functions.py#L710-L754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.set_performance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">set_performance</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/functions.py#L1291-L1335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.set_performance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tune performance of parallelisation by setting chunksize and free
 memory factor. By just providing the chunksize it can be changed
 to a smaller value than an upper limit, which is determined by the
@@ -116,7 +116,7 @@ between zero and one. If both arguments are provided then the free
 memory factor is changed first and then the chunksize is set
 provided it is consistent with the new free memory value. If any
 of the arguments is invalid then an error is raised and no
-parameters are changed. When called with no aruments the existing
+parameters are changed. When called with no arguments the existing
 values of the parameters are returned in a tuple.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -148,11 +148,11 @@ workspace.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

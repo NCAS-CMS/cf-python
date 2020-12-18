@@ -10,19 +10,19 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.atol" href="cf.atol.html" />
-    <link rel="prev" title="cf.load_stash2standard_name" href="cf.load_stash2standard_name.html" />
+    <link rel="prev" title="cf.write" href="cf.write.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.load_stash2standard_name.html" title="previous chapter">cf.load_stash2standard_name</a></li>
+      <li>Previous: <a href="cf.write.html" title="previous chapter">cf.write</a></li>
       <li>Next: <a href="cf.atol.html" title="next chapter">cf.atol</a></li>
   </ul></li>
   </ul></li>
@@ -104,7 +104,7 @@
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/aggregate.py#L1285-L1949"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/aggregate.py#L1302-L1993"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -228,7 +228,7 @@ identifiable by long name properties or netCDF variable names.</p>
 <dt>field_identity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify a property with which to identify field constructs
 instead of any other technique. How metadata constructs
 are identified is not affected by this parameter. See the
-<em>relaxed_identites</em> and <em>ncvar_identities</em> parameters.</p>
+<em>relaxed_identities</em> and <em>ncvar_identities</em> parameters.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>Force field constructs to be identified by the values of
 their long_name properties:
@@ -376,11 +376,11 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

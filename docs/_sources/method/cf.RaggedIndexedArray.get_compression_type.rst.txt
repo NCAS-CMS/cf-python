@@ -1,3 +1,5 @@
+:orphan:
+
 cf.RaggedIndexedArray.get_compression_type
 ==========================================
 

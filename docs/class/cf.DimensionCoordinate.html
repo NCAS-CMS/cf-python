@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.DimensionCoordinate.dump" href="../method/cf.DimensionCoordinate.dump.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DimensionCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/dimensioncoordinate.py#L23-L851"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/dimensioncoordinate.py#L23-L856"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate
@@ -132,9 +132,7 @@ domain. Note that, for climatological time axes, the bounds are
 interpreted in a special way indicated by the cell method
 constructs.</p>
 <p><strong>NetCDF interface</strong></p>
-<p>The netCDF variable name of the construct may be accessed with the
-<a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_get_variable.html#cf.DimensionCoordinate.nc_get_variable" title="cf.DimensionCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_del_variable.html#cf.DimensionCoordinate.nc_del_variable" title="cf.DimensionCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
-<a class="reference internal" href="../method/cf.DimensionCoordinate.nc_has_variable.html#cf.DimensionCoordinate.nc_has_variable" title="cf.DimensionCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>{{netcdf variable}}</p>
 <p>The netCDF variable group structure may be accessed with the
 <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_get_variable.html#cf.DimensionCoordinate.nc_get_variable" title="cf.DimensionCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_variable_groups.html#cf.DimensionCoordinate.nc_variable_groups" title="cf.DimensionCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
 <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_clear_variable_groups.html#cf.DimensionCoordinate.nc_clear_variable_groups" title="cf.DimensionCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable_groups.html#cf.DimensionCoordinate.nc_set_variable_groups" title="cf.DimensionCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
@@ -377,7 +375,7 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.interior_ring.html#cf.DimensionCoordinate.interior_ring" title="cf.DimensionCoordinate.interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_ring</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.interior_ring.html#cf.DimensionCoordinate.interior_ring" title="cf.DimensionCoordinate.interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_ring</span></code></a></p></td>
 <td><p>Return the interior ring variable for polygon geometries.</p></td>
 </tr>
 </tbody>
@@ -549,7 +547,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.array.html#cf.DimensionCoordinate.array" title="cf.DimensionCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
 <td><p>A numpy array deep copy of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.Data.html#cf.DimensionCoordinate.Data" title="cf.DimensionCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Data.html#cf.DimensionCoordinate.Data" title="cf.DimensionCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.data.html#cf.DimensionCoordinate.data" title="cf.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
@@ -739,10 +737,10 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.iscyclic.html#cf.DimensionCoordinate.iscyclic" title="cf.DimensionCoordinate.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.iscyclic.html#cf.DimensionCoordinate.iscyclic" title="cf.DimensionCoordinate.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
 <td><p>Whether or a not a given axis is cyclic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.isperiodic.html#cf.DimensionCoordinate.isperiodic" title="cf.DimensionCoordinate.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isperiodic.html#cf.DimensionCoordinate.isperiodic" title="cf.DimensionCoordinate.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
 <td><p>TODO</p></td>
 </tr>
 </tbody>
@@ -1371,7 +1369,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>TODO</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.__query_wo__.html#cf.DimensionCoordinate.__query_wo__" title="cf.DimensionCoordinate.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
-<td><p>TODO 1</p></td>
+<td><p>TODO</p></td>
 </tr>
 </tbody>
 </table>
@@ -1433,7 +1431,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.attributes.html#cf.DimensionCoordinate.attributes" title="cf.DimensionCoordinate.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.Data.html#cf.DimensionCoordinate.Data" title="cf.DimensionCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Data.html#cf.DimensionCoordinate.Data" title="cf.DimensionCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.dtvarray.html#cf.DimensionCoordinate.dtvarray" title="cf.DimensionCoordinate.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
@@ -1554,11 +1552,11 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

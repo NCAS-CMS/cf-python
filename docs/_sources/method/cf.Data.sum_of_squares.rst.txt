@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Data.sum_of_squares
 ======================
 

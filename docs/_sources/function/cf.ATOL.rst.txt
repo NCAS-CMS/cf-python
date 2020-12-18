@@ -1,7 +1,7 @@
-cf.atol
+cf.ATOL
 =======
 
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. autofunction:: cf.atol
+.. autofunction:: cf.ATOL

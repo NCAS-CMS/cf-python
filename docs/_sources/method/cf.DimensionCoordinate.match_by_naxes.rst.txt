@@ -1,3 +1,5 @@
+:orphan:
+
 cf.DimensionCoordinate.match_by_naxes
 =====================================
 

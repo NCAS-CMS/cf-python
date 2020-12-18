@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.FieldList.select_by_construct" href="../method/cf.FieldList.select_by_construct.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.FieldList">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldList</code><span class="sig-paren">(</span><em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/fieldlist.py#L21-L1365"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldList</code><span class="sig-paren">(</span><em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/fieldlist.py#L21-L1365"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.abstract.container.Container</span></code></p>
 <p>An ordered sequence of fields.</p>
 <p>Each element of a field list is a field construct.</p>
@@ -131,7 +131,7 @@ indexing and methods like <code class="xref py py-obj docutils literal notransla
 </div>
 <p>These methods provide functionality similar to that of a
 <a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html#tut-morelists" title="(in Python v3.9)"><span class="xref std std-ref">built-in list</span></a>. The main difference
-is that when a field element needs to be assesed for equality its
+is that when a field element needs to be assessed for equality its
 <a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
 operator.</p>
 <p><strong>Initialization</strong></p>
@@ -242,8 +242,8 @@ operator.</p>
 <p>These methods provide functionality identical to that of a Python
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, with one exception:</p>
 <ul class="simple">
-<li><p>When a field construct element needs to be assesed for equality, its
-<a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
+<li><p>When a field construct element needs to be assessed for equality,
+its <a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
 operator. This affects the <a class="reference internal" href="../method/cf.FieldList.count.html#cf.FieldList.count" title="cf.FieldList.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>,
 <a class="reference internal" href="../method/cf.FieldList.index.html#cf.FieldList.index" title="cf.FieldList.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>, <a class="reference internal" href="../method/cf.FieldList.remove.html#cf.FieldList.remove" title="cf.FieldList.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>,
 <a class="reference internal" href="../method/cf.FieldList.__contains__.html#cf.FieldList.__contains__" title="cf.FieldList.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a>, <a class="reference internal" href="../method/cf.FieldList.__eq__.html#cf.FieldList.__eq__" title="cf.FieldList.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a> and
@@ -398,11 +398,11 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

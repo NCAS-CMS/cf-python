@@ -40,9 +40,9 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
-  rm -fr $dir/.doctrees
-fi
+#if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
+#  rm -fr $dir/.doctrees
+#fi
 mkdir -p $dir/_downloads
 
 make html $dir

@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.NetCDFArray.get_group" href="../method/cf.NetCDFArray.get_group.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.NetCDFArray">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">ncvar=None</em>, <em class="sig-param">varid=None</em>, <em class="sig-param">group=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">mask=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/data/netcdfarray.py#L8-L137"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">ncvar=None</em>, <em class="sig-param">varid=None</em>, <em class="sig-param">group=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">mask=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/data/netcdfarray.py#L8-L137"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.netcdfarray.NetCDFArray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.abstract.filearray.FileArray</span></code></p>
 <p>A sub-array stored in a netCDF file.</p>
 <p><strong>Initialization</strong></p>
@@ -124,7 +124,7 @@ set.</p>
 <dt>group: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the netCDF4 group to which the netCDF variable
 belongs. By default, or if <em>group</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or an empty
 sequence, it assumed to be in the root group. The last
-element in the sequence isw the name of the group in which
+element in the sequence is the name of the group in which
 the variable lies, with other elements naming any parent
 groups (excluding the root group).</p>
 <dl class="field-list simple">
@@ -317,11 +317,11 @@ the netCDF variable attributes <code class="docutils literal notranslate"><span 
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

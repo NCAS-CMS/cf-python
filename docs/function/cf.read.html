@@ -10,15 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.write" href="cf.write.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -104,7 +104,7 @@
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.7.0/cf/read_write/read.py#L33-L747"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/read_write/read.py#L33-L747"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, CDL, PP or UM fields datasets.</p>
 <p>Input datasets are mapped to field constructs in memory which are
 returned as elements of a <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a>.</p>
@@ -163,7 +163,7 @@ read. In nearly all cases the file format is auto-detected from
 the first 64 bits in the file, but for the few occasions when this
 is not possible, the <em>um</em> keyword allows the format to be
 specified, as well as the UM version (if the latter is not
-inferrable from the PP or lookup header information).</p>
+inferable from the PP or lookup header information).</p>
 <p>2-d “slices” within a single file are always combined, where
 possible, into field constructs with 3-d, 4-d or 5-d data. This is
 done prior to the field construct aggregation carried out by the
@@ -188,8 +188,7 @@ operation fast.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><blockquote>
-<div><p>A string or arbitrarily nested sequence of strings giving
+<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string or arbitrarily nested sequence of strings giving
 the file names, directory names, or OPenDAP URLs from
 which to read field constructs. Various type of expansion
 are applied to the names:</p>
@@ -240,8 +239,7 @@ are read. Sub-directories are not read unless the
 files that are not valid datasets then an exception will
 be raised, unless the <em>ignore_read_error</em> parameter is
 True.</p>
-</div></blockquote>
-<dl>
+</dd>
 <dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
 attributes, but are not present, in the parent file given
 by the <em>filename</em> parameter) from the given external
@@ -260,8 +258,6 @@ any metadata or data. In this case the construct’s
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">external=['cell_measure.nc']</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">external=('cell_measure_A.nc',</span> <span class="pre">'cell_measure_O.nc')</span></code></p>
-</dd>
-</dl>
 </dd>
 </dl>
 </dd>
@@ -436,7 +432,7 @@ for details.</p>
 files only, provide extra decoding instructions. This
 option is ignored for input files which are notPP or
 fields files. In most cases, how to decode a file is
-inferrable from the file’s contents, but if not then each
+inferable from the file’s contents, but if not then each
 key/value pair in the dictionary sets a decoding option as
 follows:</p>
 <table class="docutils align-default">
@@ -595,11 +591,11 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-16.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 
