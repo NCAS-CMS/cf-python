@@ -368,7 +368,7 @@ int extrin(int32_t *icomp, int iword, int istart, int nbit, int *inum, int isign
       
       /* move sign bit */
       
-      *inum = (*icomp << (31-istart)) & -2 * (1 << 30);
+      *inum = (*icomp << (31-istart)) & (~0 << 31);
       
       /* set undefined if inum negative */
       
