@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.CellMethod &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.CellMethod.dump" href="../method/cf.CellMethod.dump.html" />
+    <link rel="prev" title="cf.CellMeasure.unsafe_array" href="../method/cf.CellMeasure.unsafe_array.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.CellMeasure.unsafe_array.html" title="previous chapter">cf.CellMeasure.unsafe_array</a></li>
+      <li>Next: <a href="../method/cf.CellMethod.dump.html" title="next chapter">cf.CellMethod.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-cellmethod">
+<span id="id1"></span><h1>cf.CellMethod<a class="headerlink" href="#cf-cellmethod" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.CellMethod">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellMethod</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">method=None</em>, <em class="sig-param">qualifiers=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/cellmethod.py#L42-L652"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellmethod.CellMethod</span></code></p>
+<p>A cell method construct of the CF data model.</p>
+<p>One or more cell method constructs describe how the cell values of
+the field construct represent the variation of the physical
+quantity within its cells, i.e. the structure of the data at a
+higher resolution.</p>
+<p>A single cell method construct consists of a set of axes, a
+“method” property which describes how a value of the field
+construct’s data array describes the variation of the quantity
+within a cell over those axes (e.g. a value might represent the
+cell area average), and descriptive qualifiers serving to indicate
+more precisely how the method was applied (e.g. recording the
+spacing of the original data, or the fact that the method was
+applied only over El Nino years).</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct, specified
+either by the construct identifiers of domain axis
+constructs, standard names, or the special string
+<code class="docutils literal notranslate"><span class="pre">'area'</span></code>.</p>
+<p>The axes may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.CellMethod.set_axes.html#cf.CellMethod.set_axes" title="cf.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a> method.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes='domainaxis0'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=('domainaxis0',</span> <span class="pre">'domainaxis1')</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes='area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2',</span> <span class="pre">'time']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct. Either one or
+more domain axis construct identifiers or standard
+names. Ignored if the <em>source</em> parameter is set.</p>
+<p>The method may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.CellMethod.set_method.html#cf.CellMethod.set_method" title="cf.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a> method.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">method='mean'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>qualifiers: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive qualifiers. The dictionary keys are
+qualifier names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Qualifiers may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.CellMethod.qualifiers.html#cf.CellMethod.qualifiers" title="cf.CellMethod.qualifiers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qualifiers</span></code></a> and <a class="reference internal" href="../method/cf.CellMethod.set_qualifier.html#cf.CellMethod.set_qualifier" title="cf.CellMethod.set_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_qualifier</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">qualifiers={'comment':</span> <span class="pre">'sampled</span> <span class="pre">instantaneously'}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">qualifiers={'where':</span> <span class="pre">'sea',</span> <span class="pre">''over':</span> <span class="pre">'ice'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Initialize the axes, method and qualifiers from those of
+<em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.CellMethod" title="cf.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethod</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.CellMethod(source=source)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.dump.html#cf.CellMethod.dump" title="cf.CellMethod.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the cell method construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.identity.html#cf.CellMethod.identity" title="cf.CellMethod.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity for the cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.identities.html#cf.CellMethod.identities" title="cf.CellMethod.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.construct_type.html#cf.CellMethod.construct_type" title="cf.CellMethod.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="qualifiers">
+<h2>Qualifiers<a class="headerlink" href="#qualifiers" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.del_axes.html#cf.CellMethod.del_axes" title="cf.CellMethod.del_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_axes</span></code></a></p></td>
+<td><p>Remove the axes of the cell method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.get_axes.html#cf.CellMethod.get_axes" title="cf.CellMethod.get_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code></a></p></td>
+<td><p>Return the axes of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.has_axes.html#cf.CellMethod.has_axes" title="cf.CellMethod.has_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_axes</span></code></a></p></td>
+<td><p>Whether the axes of the cell method have been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.set_axes.html#cf.CellMethod.set_axes" title="cf.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></p></td>
+<td><p>Set the axes of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.del_method.html#cf.CellMethod.del_method" title="cf.CellMethod.del_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_method</span></code></a></p></td>
+<td><p>Remove the method of the cell method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.get_method.html#cf.CellMethod.get_method" title="cf.CellMethod.get_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code></a></p></td>
+<td><p>Return the method of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.has_method.html#cf.CellMethod.has_method" title="cf.CellMethod.has_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_method</span></code></a></p></td>
+<td><p>Whether the method of the cell method has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.set_method.html#cf.CellMethod.set_method" title="cf.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a></p></td>
+<td><p>Set the method of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.del_qualifier.html#cf.CellMethod.del_qualifier" title="cf.CellMethod.del_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_qualifier</span></code></a></p></td>
+<td><p>Remove a qualifier of the cell method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.get_qualifier.html#cf.CellMethod.get_qualifier" title="cf.CellMethod.get_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qualifier</span></code></a></p></td>
+<td><p>Return a qualifier of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.has_qualifier.html#cf.CellMethod.has_qualifier" title="cf.CellMethod.has_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_qualifier</span></code></a></p></td>
+<td><p>Whether a qualifier of the cell method has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.set_qualifier.html#cf.CellMethod.set_qualifier" title="cf.CellMethod.set_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_qualifier</span></code></a></p></td>
+<td><p>Set a qualifier of the cell method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.qualifiers.html#cf.CellMethod.qualifiers" title="cf.CellMethod.qualifiers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qualifiers</span></code></a></p></td>
+<td><p>Return all qualifiers of the cell method.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.axes.html#cf.CellMethod.axes" title="cf.CellMethod.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.comment.html#cf.CellMethod.comment" title="cf.CellMethod.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></p></td>
+<td><p>The cell method’s comment qualifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod.interval</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.intervals.html#cf.CellMethod.intervals" title="cf.CellMethod.intervals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intervals</span></code></a></p></td>
+<td><p>The cell method’s interval qualifier(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.method.html#cf.CellMethod.method" title="cf.CellMethod.method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">method</span></code></a></p></td>
+<td><p>The cell method’s method qualifier.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.over.html#cf.CellMethod.over" title="cf.CellMethod.over"><code class="xref py py-obj docutils literal notranslate"><span class="pre">over</span></code></a></p></td>
+<td><p>The cell method’s over qualifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.where.html#cf.CellMethod.where" title="cf.CellMethod.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<td><p>The cell method’s where qualifier.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellMethod.within.html#cf.CellMethod.within" title="cf.CellMethod.within"><code class="xref py py-obj docutils literal notranslate"><span class="pre">within</span></code></a></p></td>
+<td><p>The cell method’s within qualifier.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.copy.html#cf.CellMethod.copy" title="cf.CellMethod.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.change_axes.html#cf.CellMethod.change_axes" title="cf.CellMethod.change_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">change_axes</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.create.html#cf.CellMethod.create" title="cf.CellMethod.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a></p></td>
+<td><p>Parse a CF-like cell_methods string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.creation_commands.html#cf.CellMethod.creation_commands" title="cf.CellMethod.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.equals.html#cf.CellMethod.equals" title="cf.CellMethod.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two cell method constructs are the same.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.equivalent.html#cf.CellMethod.equivalent" title="cf.CellMethod.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two cell methods are equivalent, False otherwise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.expand_intervals.html#cf.CellMethod.expand_intervals" title="cf.CellMethod.expand_intervals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_intervals</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.inspect.html#cf.CellMethod.inspect" title="cf.CellMethod.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.sorted.html#cf.CellMethod.sorted" title="cf.CellMethod.sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sorted</span></code></a></p></td>
+<td><p>Return a new cell method construct with sorted axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.write.html#cf.CellMethod.write" title="cf.CellMethod.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a></p></td>
+<td><p>Return a string of the cell method.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.__deepcopy__.html#cf.CellMethod.__deepcopy__" title="cf.CellMethod.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMethod.__repr__.html#cf.CellMethod.__repr__" title="cf.CellMethod.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.__str__.html#cf.CellMethod.__str__" title="cf.CellMethod.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMethod.remove_axes.html#cf.CellMethod.remove_axes" title="cf.CellMethod.remove_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_axes</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-12-18.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
