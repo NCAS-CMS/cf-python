@@ -1288,7 +1288,7 @@ be used on any construct, not just those that have been read from
 datasets.
     
 ----
-g
+
 .. _Subspacing-by-index:
 
 **Subspacing by index**
