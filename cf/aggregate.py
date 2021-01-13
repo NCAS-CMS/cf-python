@@ -751,8 +751,7 @@ class _Meta:
         return '\n'.join(strings)
 
     def coordinate_values(self):
-        '''TODO
-
+        '''Create a report listing all coordinate cell values and bounds.
         '''
         string = ['First cell: ' + str(self.first_values)]
         string.append('Last cell:  ' + str(self.last_values))
@@ -762,7 +761,7 @@ class _Meta:
         return '\n'.join(string)
 
     def copy(self):
-        '''TODO
+        '''Replace the field associated with a summary class with a deep copy.
         '''
         new = _Meta.__new__(_Meta)
         new.__dict__ = self.__dict__.copy()
@@ -867,7 +866,7 @@ class _Meta:
         return cms
 
     def cell_measure_has_data_and_units(self, msr):
-        '''TODO
+        '''True only if a cell measure has both data and units.
 
     :Parameters:
 
@@ -891,15 +890,15 @@ class _Meta:
         return True
 
     def coord_has_identity_and_data(self, coord, axes=None):
-        '''TODO
+        '''Return a coordinate construct's identity if it has one and has data.
 
     :Parameters:
 
         coord: Coordinate construct
-            TODO
 
         axes: sequence of `str`, optional
-            TODO
+            Specifiers for the axes the coordinate must span. By
+            default, axes are not considered when making this check.
 
     :Returns:
 
@@ -947,7 +946,7 @@ class _Meta:
         return None
 
     def field_ancillary_has_identity_and_data(self, anc):
-        '''TODO
+        '''Return a field ancillary's identity if it has one and has data.
 
     :Parameters:
 
@@ -985,7 +984,7 @@ class _Meta:
         return None
 
     def coordinate_reference_signatures(self, refs):
-        '''TODO
+        '''List the structural signatures of given coordinate references.
 
     :Parameters:
 
@@ -1357,7 +1356,7 @@ def aggregate(fields,
     :Parameters:
 
         fields: `FieldList` or sequence of `Field`
-            The field constructs to aggregated.
+            The field constructs to aggregate.
 
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
@@ -2604,7 +2603,7 @@ def _group_fields(meta, axis):
 
 
 def _sorted_by_first_values(meta, axis):
-    '''Sort fields inplace
+    '''Sort fields inplace.
 
     :Parameters:
 
