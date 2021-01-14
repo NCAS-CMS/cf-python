@@ -74,7 +74,7 @@ _no_units = Units()
 
 class _HFLCache:
     '''A cache for coordinate and cell measure hashes, first and last
-    values and first and last cell bounds
+    values and first and last cell bounds.
 
     '''
     def __init__(self):
@@ -1021,7 +1021,7 @@ class _Meta:
         return signatures
 
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
-        '''TODO
+        '''Return a domain ancillary's identity if it has one and has data.
 
     :Parameters:
 
@@ -1031,7 +1031,7 @@ class _Meta:
 
     :Returns:
 
-        `str` or `
+        `str` or `None`
             The domain ancillary identity, or None if there is no
             identity and/or no data.
 
@@ -1066,11 +1066,11 @@ class _Meta:
 
     @_manage_log_level_via_verbose_attr
     def print_info(self, signature=True):
-        '''TODO
+        '''Log information on the structural signature and coordinate values.
 
     :Parameters:
 
-        m: `_Meta`
+        signature: `_Meta`
 
     :Returns:
 
@@ -1087,7 +1087,7 @@ class _Meta:
         logger.debug('COMPLETE AGGREGATION METADATA:\n{}'.format(self))
 
     def string_structural_signature(self):
-        '''TODO
+        '''Return a multi-line string giving a field's structual signature.
 
     :Returns:
 
@@ -1102,7 +1102,7 @@ class _Meta:
         return '\n'.join(string)
 
     def structural_signature(self):
-        '''TODO
+        '''Build the structual signature of a field from its components.
 
     :Returns:
 
@@ -1263,7 +1263,7 @@ class _Meta:
         )
 
     def find_coordrefs(self, key):
-        '''TODO
+        '''Return all the coordinate references that point to a coordinate.
 
     :Parameters:
 
@@ -2359,8 +2359,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 def _get_hfl(v, canonical_units, sort_indices, null_sort,
              first_and_last_values, first_and_last_bounds,
              hfl_cache, rtol, atol):
-    '''Return the hash value, and optionally first and last values (or
-    cell bounds)
+    '''Return the hash value, and optionally first and last values or bounds.
 
     :Parameters:
 
@@ -2368,7 +2367,9 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 
     :Returns:
 
-        TODO
+        `int` or 3-`tuple`
+            Hash value for the coordinates and cell measures, in a tuple with
+            the first and last cell values or bounds if either is requested.
 
     '''
     create_hash = True
@@ -2467,7 +2468,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 
 
 def _group_fields(meta, axis):
-    '''TODO
+    '''Return a FieldList of the potentially aggregatable fields.
 
     :Parameters:
 
@@ -2627,7 +2628,7 @@ def _sorted_by_first_values(meta, axis):
 
 @_manage_log_level_via_verbosity
 def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
-    '''Return True iff the aggregating 1-d coordinates of the aggregating
+    '''Return True if the aggregating 1-d coordinates of the aggregating
     axis are all aggregatable.
 
     It is assumed that the input metadata objects have already been
@@ -2791,7 +2792,7 @@ def _aggregate_2_fields(m0, m1,
                         verbose=None,
                         concatenate=True,
                         copy=True):
-    '''TODO
+    '''Aggregate two fields, returning the _Meta object of the aggregated field.
 
     :Parameters:
 
