@@ -1,1 +1,0 @@
-from .coordinate import Coordinate

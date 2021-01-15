@@ -626,7 +626,6 @@ class Field(mixin.PropertiesData,
     >>> f.analyse_items()
     {
      'dim_coords': {'dim0': <CF Dim ....>,
-
      'aux_coords': {'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
                             'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>},
                     'dim0': {'1-d': {},

@@ -42,9 +42,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return True
 
     def _customize_createVariable(self, cfvar, kwargs):
-        '''TODO
+        '''Customise keyword arguments for `netCDF4.Dataset.createVariable`.
 
     .. versionadded:: 3.0.0
+
+    :Parameters:
+
+        cfvar: cf instance that contains data
+
+        kwargs: `dict`
 
     :Returns:
 
