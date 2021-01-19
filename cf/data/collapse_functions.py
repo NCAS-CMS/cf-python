@@ -1302,7 +1302,16 @@ def var_ffinalise(out, sub_samples=None):
         # Currently: var = SUM(pV1(pv+pm**2)
         #            avg = V1*m
         #
-        # http://en.wikipedia.org/wiki/Standard_deviation#Population-based_statistics
+        # https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+#
+        # For the general case of M non-overlapping data sets, X_{1}
+        # through X_{M}, and the aggregate data set X=\bigcup_{i}X_{i}
+        # we have the unweighted mean and variance is:
+        #
+        # \mu_{X}={\frac{1}{\sum_{i}{N_{X_{i}}}}}\left(\sum_{i}{N_{X_{i}}\mu_{X_{i}}}\right)
+        #
+        # var_{X}={{\frac{1}{\sum_{i}{N_{X_{i}}-ddof}}}\left(\sum_{i}{\left[(N_{X_{i}}-1)\sigma_{X_{i}}^{2}+N_{X_{i}}\mu_{X_{i}}^{2}\right]}-\left[\sum_{i}{N_{X_{i}}}\right]\mu_{X}^{2}\right)}
+        #
         # ----------------------------------------------------------------
         avg /= V1
         avg *= avg
