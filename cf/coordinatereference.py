@@ -152,7 +152,21 @@ class CoordinateReference(cfdm.CoordinateReference):
     # Private methods
     # ----------------------------------------------------------------
     def _matching_values(self, value0, value1):
-        '''TODO
+        '''Whether two coordinate reference construct identity values match.
+
+    :Parameters:
+
+        value0:
+            The first value to be matched.
+
+        value1:
+            The second value to be matched.
+
+    :Returns:
+
+        `bool`
+            Whether or not the two values match.
+
         '''
         if isinstance(value0, Query):
             return bool(value0.evaluate(value1))  # TODO vectors

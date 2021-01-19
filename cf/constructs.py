@@ -46,7 +46,27 @@ class Constructs(cfdm.Constructs):
         return super().__repr__().replace('<', '<CF ', 1)
 
     def _matching_values(self, value0, construct, value1):
-        '''TODO
+        '''Whether two values match according to equality on a given construct.
+
+    The definition of "match" depends on the types of *value0* and
+    *value1*.
+
+    :Parameters:
+
+        value0:
+            The first value to be matched.
+
+        construct:
+            The construct whose `equals` method is used to determine whether
+            values can be considered to match.
+
+        value1:
+            The second value to be matched.
+
+    :Returns:
+
+        `bool`
+            Whether or not the two values match.
         '''
         if isinstance(value0, Query):
             return value0.evaluate(value1)
