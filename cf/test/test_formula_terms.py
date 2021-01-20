@@ -1,6 +1,9 @@
 import datetime
 import unittest
 
+import faulthandler
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import cf
 
 

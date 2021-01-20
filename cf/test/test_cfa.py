@@ -5,6 +5,9 @@ import os
 import stat
 import subprocess
 
+import faulthandler
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import cf
 
 

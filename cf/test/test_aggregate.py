@@ -3,6 +3,9 @@ import os
 import unittest
 import warnings
 
+import faulthandler
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import cf
 
 # To facilitate the testing of logging outputs (see test_aggregate_verbosity)
