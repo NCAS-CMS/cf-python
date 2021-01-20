@@ -1,6 +1,7 @@
 import itertools
 import operator
 
+from functools import partial
 from functools import reduce as functools_reduce
 from operator import itemgetter
 from operator import mul as operator_mul
@@ -17,87 +18,18 @@ try:
 except ImportError:
     pass
 
-from dask.base import is_dask_collection
-
 import numpy as np
-from numpy import arange            as numpy_arange
-from numpy import arccos            as numpy_arccos
-from numpy import arccosh           as numpy_arccosh
-from numpy import arcsin            as numpy_arcsin
-from numpy import arcsinh           as numpy_arcsinh
-from numpy import arctan            as numpy_arctan
-# from numpy import arctan2           as numpy_arctan2  AT2
-from numpy import arctanh           as numpy_arctanh
-from numpy import array             as numpy_array
-from numpy import asanyarray        as numpy_asanyarray
-from numpy import ceil              as numpy_ceil
-from numpy import cos               as numpy_cos
-from numpy import cosh              as numpy_cosh
-from numpy import cumsum            as numpy_cumsum
-from numpy import diff              as numpy_diff
-from numpy import digitize          as numpy_digitize
-from numpy import dtype             as numpy_dtype
-from numpy import e                 as numpy_e
-from numpy import empty             as numpy_empty
-from numpy import errstate          as numpy_errstate
-from numpy import exp               as numpy_exp
-from numpy import floor             as numpy_floor
-from numpy import finfo             as numpy_finfo
-from numpy import isnan             as numpy_isnan
-from numpy import linspace          as numpy_linspace
-from numpy import log               as numpy_log
-from numpy import log10             as numpy_log10
-from numpy import log2              as numpy_log2
-from numpy import nan               as numpy_nan
-from numpy import nanpercentile     as numpy_nanpercentile
-from numpy import ndarray           as numpy_ndarray
-from numpy import ndenumerate       as numpy_ndenumerate
-from numpy import ndindex           as numpy_ndindex
-from numpy import ndim              as numpy_ndim
-from numpy import newaxis           as numpy_newaxis
-from numpy import ones              as numpy_ones
-from numpy import prod              as numpy_prod
-from numpy import percentile        as numpy_percentile
-from numpy import ravel_multi_index as numpy_ravel_multi_index
-from numpy import reshape           as numpy_reshape
-from numpy import result_type       as numpy_result_type
-from numpy import rint              as numpy_rint
-from numpy import round             as numpy_round
-from numpy import seterr            as numpy_seterr
-from numpy import shape             as numpy_shape
-from numpy import sin               as numpy_sin
-from numpy import sinh              as numpy_sinh
-from numpy import size              as numpy_size
-from numpy import tan               as numpy_tan
-from numpy import tanh              as numpy_tanh
-from numpy import tile              as numpy_tile
-from numpy import trunc             as numpy_trunc
-from numpy import unique            as numpy_unique
-from numpy import unravel_index     as numpy_unravel_index
-from numpy import where             as numpy_where
-from numpy import vectorize         as numpy_vectorize
-from numpy import zeros             as numpy_zeros
-from numpy import floating          as numpy_floating
-from numpy import bool_             as numpy_bool_
-from numpy import integer           as numpy_integer
 
-from numpy.ma import array          as numpy_ma_array
-from numpy.ma import count          as numpy_ma_count
-from numpy.ma import empty          as numpy_ma_empty
-from numpy.ma import filled         as numpy_ma_filled
-from numpy.ma import is_masked      as numpy_ma_is_masked
-from numpy.ma import isMA           as numpy_ma_isMA
-from numpy.ma import masked         as numpy_ma_masked
-from numpy.ma import masked_all     as numpy_ma_masked_all
-from numpy.ma import masked_invalid as numpy_ma_masked_invalid
-from numpy.ma import masked_where   as numpy_ma_masked_where
-from numpy.ma import MaskedArray    as numpy_ma_MaskedArray
-from numpy.ma import nomask         as numpy_ma_nomask
-from numpy.ma import var            as numpy_ma_var
-from numpy.ma import where          as numpy_ma_where
+import dask.array as da
+
+from dask.base import is_dask_collection, normalize_token, tokenize
+from dask.array.core import slices_from_chunks
+from dask.array import Array
 
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
+from uuid import uuid4
+ 
 import cftime
 import cfdm
 
@@ -159,6 +91,16 @@ logger = logging.getLogger(__name__)
 _year_length = 365.242198781
 _month_length = _year_length / 12
 
+_token_names = set()
+
+@normalize_token.register((RaggedIndexedContiguousSubarray,
+                           GatheredSubarray))
+def normalize_subarray(x):
+    return normalize_token(x.__class__.__name__,
+                           x.shape,
+                           x.dtype,
+                           uuid4())
+                    
 
 def _convert_to_builtin_type(x):
     '''Convert a non-JSON-encodable object to a JSON-encodable built-in
@@ -251,7 +193,7 @@ _dtype_object = np.dtype(object)
 _dtype_float = np.dtype(float)
 _dtype_bool = np.dtype(bool)
 
-_cached_axes = {0: []}
+_cached_axes = {}
 
 
 def _initialise_axes(ndim):
@@ -282,13 +224,13 @@ def _initialise_axes(ndim):
     '''
     axes = _cached_axes.get(ndim, None)
     if axes is None:
-        axes = ['dim%d' % i for i in range(ndim)]
+        axes = [f"dim{i}" for i in range(ndim)]
         _cached_axes[ndim] = axes
 
     return axes
 
 
-class Data(Container,
+class Data2(Container,
            cfdm.Data):
     '''An N-dimensional data array with units and masked values.
 
@@ -361,7 +303,7 @@ place.
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
-                 fill_value=None, hardmask=True, chunk=True,
+                 fill_value=None, hardmask=True, chunks='auto',
                  loadd=None, loads=None, dt=False, source=None,
                  copy=True, dtype=None, mask=None, _use_array=True):
         '''**Initialization**
@@ -493,191 +435,197 @@ place.
     >>> d = cf.Data(tuple('fly'))
 
         '''
-        data = array
+        if source is None and isinstance(array, self.__class__):
+            source = array
 
         super().__init__(source=source, fill_value=fill_value)
 
         if source is not None:
-            partitions = self._custom.get('partitions')
-            if partitions is not None:
-                self.partitions = partitions.copy()
-
-            auxiliary_mask = self._custom.get('_auxiliary_mask')
-            if auxiliary_mask is not None:
-                self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
-
+            return
+        
+        if array is None:
             return
         
         if not (loadd or loads):
             units = Units(units, calendar=calendar)
             self._Units = units
 
-        self.hardmask = hardmask
+        self.hardmask = hardmask # TODODASK
 
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
         self._HDF_chunks = None
 
-
         if loadd is not None:
-            self.loadd(loadd, chunk=chunk)
+            self.loadd(loadd)
             return
 
         if loads is not None:
-            self.loads(loads, chunk=chunk)
+            self.loads(loads)
             return
-
-        # The _cyclic attribute contains the axes of the data array
-        # which are cyclic (and therefore allow cyclic slicing). It is
-        # a subset of the axes given by the _axes attribute. DO NOT
-        # CHANGE IN PLACE.
-        self._cyclic = _empty_set
-
-        data = array
-
-        if data is None:
-            return
-
-        element = None
-
-        if not self._is_abstract_Array_subclass(data):
-            check_free_memory = True
-
-            if isinstance(data, self.__class__):
-                # self.loadd(data.dumpd(), chunk=chunk)
-                self.__dict__ = data.copy().__dict__
-#                if chunk:
-#                    self.chunk()
-
-                if mask is not None:
-                    self.where(mask, cf_masked, inplace=True)
-
-                return
-
-            if not is_dask_collection(data)
-                data = da.from_arraysanyarray(data)
-
-            if data.dtype.kind == 'O' and not dt:
-                element = data[(0,) * data.ndim].compute().item()
-                if hasattr(element, 'timetuple'):
-                    # We've been given one or more date-time objects
-                    dt = True
-        else:
-            check_free_memory = False
-
-        _dtype = data.dtype
 
         try:
-            compressed = data.get_compression_type()
+            compressed = array.get_compression_type()
         except AttributeError:
             compressed = ''
-        
-        if dt or units.isreftime:
-            # TODO raise exception if compressed
-            kind = _dtype.kind
-            if kind in 'US':
-                # Convert date-time strings to reference time floats
-                if not units:
-                    if element is None:
-                        element = data[(0,)*data.ndim].compute().item()
-                        
-                    YMD = str(element).partition('T')[0]
-                    units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
+            
+        if compressed:
+            # The data is compressed, so create a uncompressed view of
+            # it (ignoring the setting of chunks)
+            array = self._dask_compressed_array(array)
+        elif not is_dask_collection(array):
+            # Turn the data into a dask array
+            array = da.from_array(array, chunks=chunks)
 
-                data = st2rt(data, units, units)
-                _dtype = data.dtype
-            elif kind == 'O':
-                # Convert date-time objects to reference time floats
-                if element is None:
-                    element = data[(0,)*data.ndim].compute().item()
-                    
-                x = element
-                x_since = 'days since ' + '-'.join(
-                    map(str, (x.year, x.month, x.day)))
-                x_calendar = getattr(x, 'calendar', 'gregorian')
-
-                d_calendar = getattr(self.Units, 'calendar', None)
-                d_units = getattr(self.Units, 'units', None)
-
-                if x_calendar != '':
-                    if d_calendar is not None:
-                        if not self.Units.equivalent(
-                                Units(x_since, x_calendar)
-                        ):
-                            raise ValueError(
-                                "Incompatible units: {!r}, {!r}".format(
-                                    self.Units, Units(x_since, x_calendar)
-                                )
-                            )
-                    else:
-                        d_calendar = x_calendar
-                # --- End: if
-
-                if not units:
-                    # Set the units to something that is (hopefully)
-                    # close to all of the datetimes, in an attempt to
-                    # reduce errors arising from the conversion to
-                    # reference times
-                    units = Units(x_since, calendar=d_calendar)
-                else:
-                    units = Units(d_units, calendar=d_calendar)
-
-                self._Units = units
-
-                # Check that all date-time objects have correct and
-                # equivalent calendars
-                calendars = self._unique_calendars(data)
-#                calendars = set(
-#                    [getattr(x, 'calendar', 'gregorian') for x in data.flat])
-                if len(calendars) > 1:
-                    raise ValueError(
-                        "Not all date-time objects have equivalent "
-                        "calendars: {}".format(tuple(calendars))
-                    )
-
-                # If the date-times are calendar-agnostic, assign the
-                # given calendar, defaulting to Gregorian.
-                if calendars.pop() == '':
-                    calendar = getattr(self.Units, 'calendar', 'gregorian')
-
-                    # DASK: can map_blocks this
-                    new_data = da.empty_like(data, dtype=object)
-                    for i in np.ndindex(new_data.shape):
-                        new_data[i] = cf_dt(data[i], calendar=calendar)
-
-                    data = new_data
-
-                # Convert the date-time objects to reference times
-                data = dt2rt(data, None, units)
-
-            _dtype = data.dtype
-
-            if not units.isreftime:
-                raise ValueError(
-                    "Can't initialise a reference time array with "
-                    "units {!r}".format(units)
-                )
+        # Find out if we have an array of date-time objects
+        first_value = None
+        if not dt and array.dtype.kind == 'O':
+            first_value = self._dask_first_non_missing_value(array,
+                                                             first_value)
+            if first_value is not None:
+                dt = hasattr(first_value, 'timetuple')
         # --- End: if
 
-        if compressed:
-            data = self._set_CompressedArray(data)
-        elif not is_dask_collection(data)
-            data = da.from_array(data, chunks=chunks)
-                        
-        self._set_dask(data)
-        
+        # Convert string or object date-times to floating point
+        # reference times
+        if array.dtype.kind in 'USO' and (dt or units.isreftime):
+            array = self._dask_convert_to_reftime(array, units, first_value)
+
+        # Store the dask array
+        self._set_dask(array)
+# TODODASK - this _set_dask command will nuke the stored compressed array. Either remove the need to store it, or reinstate after the nuking
+
+        # Override the data type
         if dtype is not None:
             self.dtype = dtype
-        
+
+        # Apply a mask 
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-        # The _axes attribute is the ordered list of the data array's
-        # axis names. Each axis name is an arbitrary, unique
-        # string. DO NOT CHANGE IN PLACE.
-        self._axes = _initialise_axes(data.ndim)
+        # The _axes attribute is an ordered list of unique (within
+        # this Data object) names for each data array axis. DO NOT
+        # CHANGE IN PLACE.
+        self._axes = _initialise_axes(array.ndim)
+
+        # The _cyclic attribute contains identifies which axes are
+        # cyclic (and therefore allow cyclic slicing). It is a subset
+        # of the axes given by the _axes attribute. DO NOT CHANGE IN
+        # PLACE.
+        self._cyclic = _empty_set
+
+    def _dask_convert_to_reftime(self, data, units, first_value=None):
+        kind = data.dtype.kind
+        if kind in 'US':
+            # Convert date-time strings to reference time floats
+            if not units:
+                value = self._dask_first_value(data, first_value)
+                if value is not None:
+                    YMD = str(value).partition('T')[0]
+                else:
+                    YMD = '1970-01-01'
+                    
+                units = Units('days since ' + YMD, units._calendar)
+                self._Units = units
+                
+            data = data.map_blocks(st2rt, units_in=units, dtype=float)
+                
+        elif kind == 'O':
+            # Convert date-time objects to reference time floats
+            value = self._dask_first_value(data, first_value)                  
+            if value is not None:
+                x = value
+            else:
+                x = cf_dt(1970, 1, 1, calendar='gregorian')
+                    
+            x_since = 'days since ' + '-'.join(
+                map(str, (x.year, x.month, x.day))
+            )
+            x_calendar = getattr(x, 'calendar', 'gregorian')
+            
+            d_calendar = getattr(units, 'calendar', None)
+            d_units = getattr(units, 'units', None)
+            
+            if x_calendar != '':
+                if d_calendar is not None:
+                    if not units.equivalent(Units(x_since, x_calendar)):
+                        raise ValueError(
+                            f"Incompatible units: "
+                            f"{units!r}, {Units(x_since, x_calendar)!r}"
+                        )
+                else:
+                    d_calendar = x_calendar
+            # --- End: if
+
+            if not units:
+                # Set the units to something that is (hopefully)
+                # close to all of the datetimes, in an attempt to
+                # reduce errors arising from the conversion to
+                # reference times
+                units = Units(x_since, calendar=d_calendar)
+            else:
+                units = Units(d_units, calendar=d_calendar)
+
+            self._Units = units
+
+            # Check that all date-time objects have correct and
+            # equivalent calendars
+            calendars = self._dask_unique_calendars(data)
+            if len(calendars) > 1:
+                raise ValueError(
+                    "Not all date-time objects have equivalent "
+                    "calendars: {}".format(tuple(calendars))
+                )
+
+            # If the date-times are calendar-agnostic, assign the
+            # given calendar, defaulting to Gregorian.
+            if calendars.pop() == '':
+                calendar = getattr(self.Units, 'calendar', 'gregorian')
+
+                # DASK: can map_blocks this
+                new_data = da.empty_like(data, dtype=object)
+                for i in np.ndindex(new_data.shape):
+                    new_data[i] = cf_dt(data[i], calendar=calendar)
+
+                data = new_data
+
+            # Convert the date-time objects to reference times
+            data = data.map_blocks(dt2rt, units_out=units, dtype=float)
+
+        if not units.isreftime:
+            raise ValueError(
+                "Can't initialise a reference time array with "
+                f"units {units!r}"
+            )
         
+    def _dask_first_non_missing_value(self, data, cached=None):
+        if cached is not None:
+            return cached
+        
+        shape = data.shape
+        for i in range(data.size):
+            index = tuple(
+                [slice(n, n + 1) for n in np.unravel_index(i, shape)]
+            )
+            x = data[index].compute()
+            
+            if not np.ma.isMA(x):
+                return x.item()
+            
+            mask = x.mask
+            if mask is np.ma.nomask or not mask.item():
+                return x.item()
+        # --- End: for
+        
+        return None
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        '''TODODASK'''
+        d = _inplace_enabled_define_and_cleanup(self)
+        d._set_dask(d._get_dask().persist())
+        return d
+    
     def _dask_unique_calendars(self):
         def _get_calendar(x):
             getattr(x, 'calendar', 'gregorian')
@@ -692,7 +640,7 @@ place.
             cals = cals.compressed()
         
         return set(cals)
-        
+            
 #    def _set_partition_matrix(self, array, chunk=True,
 #                              check_free_memory=True):
 #        '''Set the array.
@@ -745,7 +693,7 @@ place.
 #        if source is not None and source.get_compression_type():
 #            self._del_Array(None)
 
-    def _get_dask(self, default=ValueError()):
+    def _get_dask(self):
         '''TODODASK Set the dask array.
 
     :Parameters:
@@ -760,7 +708,7 @@ place.
     **Examples:**        
 
         '''
-        return self._get_component('dask', default)
+        return  self._custom['dask']
 
     @property
     def dask_array(self):
@@ -774,8 +722,8 @@ place.
 
         '''
         return self._get_dask().copy()
-
-    def _set_dask(self, array):
+    
+    def _set_dask(self, array, copy=False):
         '''TODODASK Set the dask array.
 
     :Parameters:
@@ -792,14 +740,16 @@ place.
     >>> d._set_dask(array)
 
         '''
-        self._set_component('dask', array, copy=False)
+        if copy:
+            array = array.copy()
+            
+        self._custom['dask'] = array
         
         source = self.source(None)
         if source is not None and source.get_compression_type():
             self._del_Array(None)
 
-    def _set_CompressedArray(self, compressed_array, copy=None,
-                             check_free_memory=True):
+    def _dask_compressed_array(self, compressed_array):
         '''Create and insert a partition matrix for a compressed array.
 
     .. versionadded:: 3.0.6
@@ -818,7 +768,7 @@ place.
 
     :Returns:
 
-        `None`
+        `dask.array.Array`
 
         '''
 #        if check_free_memory and free_memory() < cf_fm_threshold():
@@ -828,8 +778,10 @@ place.
 #                               units=self.Units, chunk=False)
 #        new._axes = self._axes
 
-        source_data = compressed_array.source()
+        compressed_data = compressed_array.source()
         compression_type = compressed_array.get_compression_type()
+
+        dsk = {}
         
         if compression_type == 'ragged contiguous':
             # --------------------------------------------------------
@@ -837,16 +789,26 @@ place.
             # --------------------------------------------------------
             count = compressed_array.get_count().array
         
-            shape = (1, compressed_array.shape[1])
+            chunk_shape = (1, compressed_array.shape[1])
             
-            subarrays = []
+            # Create an empty dask array with the appropriate chunks
+            # for the compressed array
+            empty = da.empty_like(compressed_array, chunks=(1, -1))
+            positions = product(*(range(len(bds)) for bds in empty.chunks))
+            
+            token = tokenize(RaggedContiguousSubarray.__name__,
+                             compressed_array.shape,
+                             uuid4())
+            name = RaggedContiguousSubarray.__name__ + '-' + token
+
+#            subarrays = []
             start = 0
             for n in count.array:
                 end = start + n
                 
                 subarray = RaggedContiguousSubarray(
-                    array=source_data,
-                    shape=shape,
+                    array=compressed_data,
+                    shape=chunk_shape,
                     compression={
                         'instance_axis': 0,
                         'instance_index': 0,
@@ -855,11 +817,14 @@ place.
                     }
                 )
                 
-                subarrays.append(da.from_array(subarray, chunks=(-1, -1)))
-                                
                 start += n
                     
-            dx = da.concatenate(subarrays, axis=0)
+                chunk_position = next(positions)
+                dsk[(name,) + chunk_position] = subarray
+       
+#                subarrays.append(da.from_array(subarray, chunks=(-1, -1)))
+#                         
+#            dx = da.concatenate(subarrays, axis=0)
             
         elif compression_type == 'ragged indexed':
             # --------------------------------------------------------
@@ -869,13 +834,23 @@ place.
             
             (instances, inverse) = da.unique(index, return_inverse=True)
  
-            shape = (1, compressed_array.shape[1])
+            chunk_shape = (1, compressed_array.shape[1])
             
-            subarrays = []
+            # Create an empty dask array with the appropriate chunks
+            # for the compressed array
+            empty = da.empty_like(compressed_array, chunks=(1, -1))
+            positions = product(*(range(len(bds)) for bds in empty.chunks))
+            
+            token = tokenize(RaggedIndexedSubarray.__name__,
+                             compressed_array.shape,
+                             uuid4())
+            name = RaggedIndexed.__name__ + '-' + token
+
+#            subarrays = []
             for i in da.unique(inverse).compute():
                 subarray = RaggedIndexedSubarray(
-                    array=source_data,
-                    shape=shape,
+                    array=compressed_data,
+                    shape=chunk_shape,
                     compression={
                         'instance_axis': 0,
                         'instance_index': 0,
@@ -884,9 +859,12 @@ place.
                     }
                 )
                 
-                subarrays.append(da.from_array(subarray, chunks=(-1, -1)))
-                
-            dx = da.concatenate(subarrays, axis=0)
+                chunk_position = next(positions)
+                dsk[(name,) + chunk_position] = subarray
+
+#                subarrays.append(da.from_array(subarray, chunks=-1))
+#                
+#            dx = da.concatenate(subarrays, axis=0)
 
         elif compression_type == 'ragged indexed contiguous':
             # --------------------------------------------------------
@@ -906,11 +884,21 @@ place.
 
             (instances, inverse) = da.unique(index, return_inverse=True)
 
+            # Create an empty dask array with the appropriate chunks
+            # for the compressed array
+            empty = da.empty_like(compressed_array, chunks=(1, 1, -1))
+            positions = product(*(range(len(bds)) for bds in empty.chunks))
+            
             shape = compressed_array.shape
             size2 = shape[2]
             chunk_shape = (1, 1, size2)
-            
-            subarrays = []
+
+            token = tokenize(RaggedIndexedContiguousSubarray.__name__,
+                             compressed_array.shape,
+                             uuid4())
+            name = RaggedIndexedContiguousSubarray.__name__ + '-' + token
+
+#            subarrays = []
             for i in range(shape[0]):
                 # For all of the profiles in ths instance, find the
                 # locations in the count array of the number of
@@ -922,7 +910,7 @@ place.
                 n_profiles = xprofile_indices.size
 
                 # Loop over profiles in this instance
-                inner_subarrays = []
+#                inner_subarrays = []
                 for j in range(shape[1]):
 #                    partition = new_partitions[i, j]
 
@@ -946,8 +934,10 @@ place.
 
                         stop = start + int(count[profile_index])
 
+                        chunk_slice = slice(start, stop)
+                        
                         subarray = RaggedIndexedContiguousSubarray(
-                            array=source_data,
+                            array=compressed_data,
                             shape=chunk_shape,
                             compression={
                                 'instance_axis': 0,
@@ -955,20 +945,24 @@ place.
                                 'i_element_axis': 1,
                                 'i_element_index': 0,
                                 'c_element_axis': 2,
-                                'c_element_indices': slice(start, stop)
+                                'c_element_indices': chunk_slice
                             }
                         )
                     # --- End: if
 
-                    inner_subarrays.append(
-                        da.from_array(subarray, chunks=(-1, -1))
-                    )
-                # --- End: for
-                
-                subarrays.append(da.concatenate(inner_subarrays, axis=1))
-            # --- End: for
+                    chunk_position = next(positions)
+                    dsk[(name,) + chunk_position] = subarray
 
-            dx = da.concatenate(subarrays, axis=0)
+#                    name = name + tokenize(subarray)
+#                    inner_subarrays.append(
+#                        da.from_array(subarray, name=name, chunks=-1)
+#                    )
+#                # --- End: for
+#               
+#                subarrays.append(da.concatenate(inner_subarrays, axis=1))
+            # --- End: for
+#
+#            dx = da.concatenate(subarrays, axis=0)
             
         elif compression_type == 'gathered':
             # --------------------------------------------------------
@@ -979,16 +973,22 @@ place.
             compressed_axes = compressed_array.get_compressed_axes()
             indices = compressed_array.get_list()._get_dask()
 
-            new.chunk(omit_axes=compressed_axes)  # , total=[0])
-
+            # Create an empty dask array with the appropriate chunks
+            # for the compressed array
             chunks = [-1 if i in compressed_axes else 'auto'
                       for i in range(compressed_array.ndim)]
             empty = da.empty_like(compressed_array, chunks=chunks)
-            
-#indices        return tuple([slice(*r) for r in self.location])
-            for shape, chunk_slice in zip(
-                    da.core.slice_from_chunks(empty.chunks),
-                    itertools.product(*empty.chunks)
+
+            token = tokenize(GatheredSubarray.__name__,
+                             compressed_array.shape,
+                             uuid4())
+            name = GatheredSubarray.__name__ + '-' + token
+
+            for chunk_slice, chunk_shape, chunk_position in zip(
+                    slices_from_chunks(empty.chunks),
+                    itertools.product(*empty.chunks),
+                    itertools.product(*(range(len(bds))
+                                        for bds in empty.chunks)),
             ):
                 compressed_part = [
                     s
@@ -997,9 +997,9 @@ place.
                 ]
                 compressed_part.insert(compressed_dimension, slice(None))
 
-                partition.subarray = GatheredSubarray(
-                    array=source_data,
-                    shape=shape,
+                subarray = GatheredSubarray(
+                    array=compressed_data,
+                    shape=chunk_shape,
                     compression={
                         'compressed_dimension': compressed_dimension,
                         'compressed_axes': compressed_axes,
@@ -1008,28 +1008,11 @@ place.
                     }
                 )
 
-#            for partition in new.partitions.flat:
-#                partition_indices = partition.indices
-#                compressed_part = [partition_indices[i] for i in
-#                                   range(new.ndim) if
-#                                   i not in compressed_axes]
-#                compressed_part.insert(compressed_dimension, slice(None))
-#
-#                partition.subarray = GatheredSubarray(
-#                    array=source_data,
-#                    shape=partition.shape,
-#                    compression={
-#                        'compressed_dimension': compressed_dimension,
-#                        'compressed_axes': compressed_axes,
-#                        'compressed_part': compressed_part,
-#                        'indices': indices
-#                    }
-#                )
-
-                partition.part = []
+                dsk[(name,) + chunk_position] = subarray
         # --- End: if
-
-        #self.partitions = new.partitions
+        
+        dx = Array(dsk, name, chunks=empty.chunks,
+                   dtype=compressed_array.dtype)
 
         self._set_Array(compressed_array, copy=False)
 
@@ -7039,12 +7022,12 @@ dimensions.
         '''Storage for the axis names.'''
         return self._custom['_axes']
 
-   @_axes.setter
-   def _axes(self, value): self._custom['_axes'] = value
-
-   @_axes.deleter
-   def _axes(self): del self._custom['_axes']
-
+    @_axes.setter
+    def _axes(self, value): self._custom['_axes'] = value
+    
+    @_axes.deleter
+    def _axes(self): del self._custom['_axes']
+   
 #    @property
 #    def _all_axes(self):
 #        '''Storage for TODO. Must be `None` or `tuple`.
@@ -7066,18 +7049,6 @@ dimensions.
 #        else:
 #            return self._custom['flip']
 
-    def _dask_change_units(self, to_units):
-        '''TODODASK'''
-        func = partial(
-            Units.conform,
-            from_units=self.Units,
-            to_units=to_units,
-            inplace=True
-        )
-
-        dx = self._get_dask()
-        self._set_dask(dx.map_blocks(func))
-            
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -7104,29 +7075,40 @@ dimensions.
     @Units.setter
     def Units(self, value):
         old_units = getattr(self, '_Units', _units_None)
-        if units and not old_units.equivalent(value, verbose=1):
+        if old_units and not old_units.equivalent(value, verbose=1):
             raise ValueError(
                 f"Can't set units (currently {units!r}) to non-equivalent "
                 f"units {value!r}. Use the override_units method instead."
             )
 
-        dtype = self.dtype
+#        dtype = self.dtype
+#
+#        if dtype is not None:
+#            if dtype.kind == 'i':
+#                char = dtype.char
+#                if char == 'i':
+#                    old_units = getattr(self, '_Units', None)
+#                    if old_units is not None and not old_units.equals(value):
+#                        self.dtype = 'float32'
+#                elif char == 'l':
+#                    old_units = getattr(self, '_Units', None)
+#                    if old_units is not None and not old_units.equals(value):
+#                        self.dtype = float
+#        # --- End: if
 
-        if dtype is not None:
-            if dtype.kind == 'i':
-                char = dtype.char
-                if char == 'i':
-                    old_units = getattr(self, '_Units', None)
-                    if old_units is not None and not old_units.equals(value):
-                        self.dtype = 'float32'
-                elif char == 'l':
-                    old_units = getattr(self, '_Units', None)
-                    if old_units is not None and not old_units.equals(value):
-                        self.dtype = float
-        # --- End: if
+# TODODASK - check that, e.g. ints get converted to floats
 
-        self._dask_change_units(value)
-                    
+        if self.Units.equals(value):
+            return
+                  
+        func = partial(Units.conform,
+                       from_units=old_units,
+                       to_units=value,
+                       inplace=False)
+   
+        dx = self._get_dask()
+        self._set_dask(dx.map_blocks(func))
+            
         self._Units = value
 
     @Units.deleter
@@ -7200,23 +7182,16 @@ dimensions.
     [ 0.5  1.5  2.5]
 
         '''
-        dx = self._get_dask()
-        if dx is None:
-            raise AttributeError(
-                "TODODASK Can't get 'dtype' when there is no data"
-            )
-            
+        dx = self._get_dask()            
         return dx.dtype
         
     @dtype.setter
     def dtype(self, value):
         dx = self._get_dask()
-        if dx is None:
-            raise AttributeError(
-                "TODODASK Can't set 'dtype' when there is no data"
-            )
-
-        self._set_component('dask', dx.astype(value))
+        
+        # Change the datatype
+        if dx.dtype != value:        
+            self._set_dask(dx.astype(value))
          
     @dtype.deleter
     def dtype(self):
@@ -11539,21 +11514,21 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
         units = Units(units)
 
-        config = self.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            p_units = partition.Units
-            if not p_units or p_units == units:
-                # No need to create the data array if the sub-array
-                # units are the same as the master data array units or
-                # the partition units are not set
-                partition.Units = units
-                continue
-
-            partition.open(config)
-            partition.array
-            partition.Units = units
-            partition.close()
+#        config = self.partition_configuration(readonly=False)
+#
+#        for partition in d.partitions.matrix.flat:
+#            p_units = partition.Units
+#            if not p_units or p_units == units:
+#                # No need to create the data array if the sub-array
+#                # units are the same as the master data array units or
+#                # the partition units are not set
+#                partition.Units = units
+#                continue
+#
+#            partition.open(config)
+#            partition.array
+#            partition.Units = units
+#            partition.close()
 
         d._Units = units
 
@@ -11590,15 +11565,15 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not self.Units.isreftime:
-            raise ValueError(
-                "Can't override the calendar of non-reference-time "
-                "units: {0!r}".format(self.Units)
-            )
-
-        for partition in d.partitions.matrix.flat:
-            partition.Units = Units(partition.Units._units, calendar)
-            partition.close()
+#        if not self.Units.isreftime:
+#            raise ValueError(
+#                "Can't override the calendar of non-reference-time "
+#                "units: {0!r}".format(self.Units)
+#            )
+#
+#        for partition in d.partitions.matrix.flat:
+#            partition.Units = Units(partition.Units._units, calendar)
+#            partition.close()
 
         d._Units = Units(d.Units._units, calendar)
 
@@ -14729,7 +14704,7 @@ def _getattr(x, attr):
     return getattr(x, attr)
 
 
-_array_getattr = numpy_vectorize(_getattr)
+_array_getattr = np.vectorize(_getattr)
 
 
 def _broadcast(a, shape):
