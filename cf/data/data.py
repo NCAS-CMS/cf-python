@@ -9016,7 +9016,7 @@ False
 
         default: optional
             Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
+            have not been set. If set to an `Exception` instance then
             it will be raised instead.
 
     :Returns:
