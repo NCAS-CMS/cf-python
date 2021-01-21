@@ -260,7 +260,6 @@ setup(
     ],
     packages=[
         'cf',
-        'cf.abstract',
         'cf.mixin',
         'cf.data',
         'cf.data.abstract',
