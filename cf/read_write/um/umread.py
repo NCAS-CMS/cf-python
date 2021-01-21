@@ -3,6 +3,8 @@ import logging
 import os
 import textwrap
 
+from uuid import uuid4
+
 from datetime import datetime
 
 from numpy import any as numpy_any
@@ -26,6 +28,12 @@ from numpy import result_type as numpy_result_type
 from numpy import sin as numpy_sin
 from numpy import transpose as numpy_transpose
 from numpy import where as numpy_where
+
+import numpy as np
+
+import dask.array as da
+from dask.array.core import normalize_chunks
+from dask.base import tokenize
 
 from netCDF4 import date2num as netCDF4_date2num
 
@@ -1763,6 +1771,8 @@ class UMField:
 
         data_axes = [_axis["y"], _axis["x"]]
 
+        dsk = {}
+        
         if len(recs) == 1:
             # --------------------------------------------------------
             # 0-d partition matrix
@@ -1775,11 +1785,15 @@ class UMField:
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
 
+            data_shape = yx_shape
+                
+            name = self.dask_name(data_shape)
+
             data = Data(
                 UMArray(
                     filename=filename,
                     ndim=2,
-                    shape=yx_shape,
+                    shape=yz_shape,
                     size=yx_size,
                     dtype=data_type_in_file(rec),
                     header_offset=rec.hdr_offset,
@@ -1793,9 +1807,16 @@ class UMField:
                 fill_value=fill_value,
             )
 
-            logger.info(
-                "    location = {}".format(yx_shape)
-            )  # pragma: no cover
+            dsk[(name,) + (0,)] = subarray
+                    
+            dtype = numpy_result_type(*file_data_types)
+            chunks = normalize_chunks((-1, -1),
+                                      shape=data_shape,
+                                      dtype=dtype)
+
+#            logger.info(
+#                "    location = {}".format(yx_shape)
+#            )  # pragma: no cover
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1804,40 +1825,44 @@ class UMField:
 
             # Find the partition matrix shape
             pmshape = [n for n in (nt, nz) if n > 1]
-            pmndim = len(pmshape)
+#            pmndim = len(pmshape)
+#
+#            partitions = []
+#            empty_list = []
+#            partitions_append = partitions.append
+#
+#            zero_to_LBROW = (0, LBROW)
+#            zero_to_LBNPT = (0, LBNPT)
 
-            partitions = []
-            empty_list = []
-            partitions_append = partitions.append
-
-            zero_to_LBROW = (0, LBROW)
-            zero_to_LBNPT = (0, LBNPT)
-
-            if pmndim == 1:
+            if len(pmshape) == 1:
                 # ----------------------------------------------------
                 # 1-d partition matrix
                 # ----------------------------------------------------
-                data_ndim = 3
+#                data_ndim = 3
                 if nz > 1:
                     pmaxes = [_axis[self.z_axis]]
                     data_shape = (nz, LBROW, LBNPT)
-                    data_size = nz * yx_size
+#                    data_size = nz * yx_size
                 else:
                     pmaxes = [_axis["t"]]
                     data_shape = (nt, LBROW, LBNPT)
-                    data_size = nt * yx_size
-
-                partition_shape = [1, LBROW, LBNPT]
+#                    data_size = nt * yx_size
+                
+                name = self.dask_name(data_shape)
+                
+#                partition_shape = [1, LBROW, LBNPT]
 
                 for i, rec in enumerate(recs):
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
 
+                    shape = (1,) + yx_shape
+                    
                     subarray = UMArray(
                         filename=filename,
-                        ndim=2,
-                        shape=yx_shape,
+                        ndim=3,
+                        shape=shape,
                         size=yx_size,
                         dtype=file_data_type,
                         header_offset=rec.hdr_offset,
@@ -1845,55 +1870,63 @@ class UMField:
                         disk_length=rec.disk_length,
                         fmt=self.fmt,
                         word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        byte_ordering=self.byte_ordering
                     )
 
-                    location = [(i, i + 1), zero_to_LBROW, zero_to_LBNPT]
+#                    location = [(i, i+1), zero_to_LBROW, zero_to_LBNPT]
 
-                    partitions_append(
-                        Partition(
-                            subarray=subarray,
-                            location=location,
-                            shape=partition_shape,
-                            axes=data_axes,
-                            flip=empty_list,
-                            part=empty_list,
-                            Units=units,
-                        )
-                    )
+                    dsk[(name,) + (i, 0, 0)] = subarray
+                    
+#                    partitions_append(Partition(
+#                        subarray=subarray,
+#                        location=location,
+#                        shape=partition_shape,
+#                        axes=data_axes,
+#                        flip=empty_list,
+#                        part=empty_list,
+#                        Units=units
+#                    ))
 
-                    logger.info(
-                        "    header_offset = {}, location = {}".format(
-                            rec.hdr_offset, location
-                        )
-                    )  # pragma: no cover
+#                    logger.info(
+#                        "    header_offset = {}, location = {}".format(
+#                            rec.hdr_offset, location
+#                        )
+#                    )  # pragma: no cover
                 # --- End: for
 
-                # Populate the 1-d partition matrix
-                matrix = numpy_array(partitions, dtype=object)
+                dtype = numpy_result_type(*file_data_types)
+                chunks = normalize_chunks((1, -1, -1),
+                                          shape=data_shape,
+                                          dtype=dtype)
+
+#                # Populate the 1-d partition matrix
+#                matrix = numpy_array(partitions, dtype=object)
             else:
                 # ----------------------------------------------------
                 # 2-d partition matrix
                 # ----------------------------------------------------
                 pmaxes = [_axis["t"], _axis[self.z_axis]]
                 data_shape = (nt, nz, LBROW, LBNPT)
-                data_size = nt * nz * yx_size
-                data_ndim = 4
+#                data_size = nt * nz * yx_size
+#                data_ndim = 4
 
-                partition_shape = [1, 1, LBROW, LBNPT]
+                name = self.dask_name(data_shape)
+#                partition_shape = [1, 1, LBROW, LBNPT]
 
                 for i, rec in enumerate(recs):
                     # Find T and Z axis indices
                     t, z = divmod(i, nz)
-
+                    
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
 
+                    shape = (1, 1) + yx_shape
+                                       
                     subarray = UMArray(
                         filename=filename,
-                        ndim=2,
-                        shape=yx_shape,
+                        ndim=4,
+                        shape=shape,
                         size=yx_size,
                         dtype=file_data_type,
                         header_offset=rec.hdr_offset,
@@ -1901,36 +1934,36 @@ class UMField:
                         disk_length=rec.disk_length,
                         fmt=self.fmt,
                         word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        byte_ordering=self.byte_ordering
                     )
+                    
+#                    location = [(t, t+1), (z, z+1), zero_to_LBROW,
+#                                zero_to_LBNPT]
 
-                    location = [
-                        (t, t + 1),
-                        (z, z + 1),
-                        zero_to_LBROW,
-                        zero_to_LBNPT,
-                    ]
+                    dsk[(name,) + (t, z, 0, 0)] = subarray
+                    
+                    dtype = numpy_result_type(*file_data_types)
+                    chunks = normalize_chunks((1, 1, -1, -1),
+                                              shape=data_shape,
+                                              dtype=dtype)
 
-                    partitions_append(
-                        Partition(
-                            subarray=subarray,
-                            location=location,
-                            shape=partition_shape,
-                            axes=data_axes,
-                            flip=empty_list,
-                            part=empty_list,
-                            Units=units,
-                        )
-                    )
+#                    partitions_append(Partition(
+#                        subarray=subarray,
+#                        location=location,
+#                        shape=partition_shape,
+#                        axes=data_axes,
+#                        flip=empty_list,
+#                        part=empty_list,
+#                        Units=units))
 
-                    logger.info(
-                        "    location = {}".format(location)
-                    )  # pragma: no cover
+#                    logger.info(
+#                        "    location = {}".format((t, z, 0, 0))
+#                    )  # pragma: no cover
                 # --- End: for
 
-                # Populate the 2-d partition matrix
-                matrix = numpy_array(partitions, dtype=object)
-                matrix.resize(pmshape)
+#                # Populate the 2-d partition matrix
+#                matrix = numpy_array(partitions, dtype=object)
+#                matrix.resize(pmshape)
             # --- End: if
 
             data_axes = pmaxes + data_axes
@@ -1942,14 +1975,19 @@ class UMField:
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
 
-            data = Data(units=units, fill_value=fill_value)
+            array = da.Array(dsk,
+                             name,
+                             chunks=chunks,
+                             dtype=dtype)
+            
+            data = Data(array, units=units, fill_value=fill_value)
 
-            data._axes = data_axes
-            data._shape = data_shape
-            data._ndim = data_ndim
-            data._size = data_size
-            data.partitions = PartitionMatrix(matrix, pmaxes)
-            data.dtype = numpy_result_type(*file_data_types)
+#            data._axes = data_axes
+#            data._shape = data_shape
+#            data._ndim = data_ndim
+#            data._size = data_size
+#            data.partitions = PartitionMatrix(matrix, pmaxes)
+#            data.dtype = numpy_result_type(*file_data_types)
         # --- End: if
 
         self.data = data
@@ -2012,6 +2050,11 @@ class UMField:
         # Return the runid
         return runid
 
+    def dask_name(self, shape):
+        '''TODODASK'''
+        token = tokenize(shape, uuid4())
+        return 'UM-array-' + token
+        
     def dtime(self, rec):
         """Return the elapsed time since the data time of the given
         record.
@@ -2129,7 +2172,7 @@ class UMField:
 
         if lat is None:
             lat, lon = self.unrotated_latlon(
-                yc.varray, xc.varray, BPLAT, BPLON
+                yc.array, xc.array, BPLAT, BPLON
             )
 
             atol = self.atol

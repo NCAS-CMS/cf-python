@@ -41,23 +41,25 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
 
         uarray[tuple(p_indices)] = array[sample_indices]
 
-        logger.debug("instance_axis    = {}".format(instance_axis))
-        logger.debug("instance_index   = {}".format(instance_index))
-        logger.debug("element_axis     = {}".format(element_axis))
-        logger.debug("sample_indices   = {}".format(sample_indices))
-        logger.debug("p_indices        = {}".format(p_indices))
-        logger.debug("uarray.shape     = {}".format(uarray.shape))
-        logger.debug("self.array.shape = {}".format(array.shape))
+        logger.debug(
+            f"instance_axis    = {instance_axis}\n"
+            f"instance_index   = {instance_index}\n"
+            f"element_axis     = {element_axis}\n"
+            f"sample_indices   = {sample_indices}\n"
+            f"p_indices        = {p_indices}\n"
+            f"uarray.shape     = {uarray.shape}\n"
+            f"self.array.shape = {array.shape}\n"
+        )  # pragma: no cover
 
         if indices is Ellipsis:
             return uarray
         else:
-            logger.debug("indices = {}".format(indices))
+            logger.debug(f"indices = {indices}")  # pragma: no cover
 
             indices = parse_indices(self.shape, indices)
             logger.debug(
-                "parse_indices(self.shape, indices) = {}".format(indices)
-            )
+               f"parse_indices(self.shape, indices) = {indices}"
+            )  # pragma: no cover
 
             return get_subspace(uarray, indices)
 

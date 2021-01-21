@@ -9,22 +9,13 @@ from . import abstract
 
 
 class UMArray(abstract.FileArray):
-    """A sub-array stored in a PP or UM fields file."""
+    '''A sub-array stored in a PP or UM fields file.
 
-    def __init__(
-        self,
-        filename=None,
-        dtype=None,
-        ndim=None,
-        shape=None,
-        size=None,
-        header_offset=None,
-        data_offset=None,
-        disk_length=None,
-        fmt=None,
-        word_size=None,
-        byte_ordering=None,
-    ):
+    '''
+    def __init__(self, filename=None, dtype=None, ndim=None,
+                 shape=None, size=None, header_offset=None,
+                 data_offset=None, disk_length=None, fmt=None,
+                 word_size=None, byte_ordering=None):
         """**Initialization**
 
         :Parameters:
@@ -36,10 +27,15 @@ class UMArray(abstract.FileArray):
                 The data type of the data array on disk.
 
             ndim: `int`
-                The number of dimensions in the unpacked data array.
+                The number of dimensions in the unpacked data array. Must
+                match up with th *shape* parameter.
 
             shape: `tuple`
-                The shape of the unpacked data array.
+                The shape of the unpacked data array. Note that this is
+                the shape as required by the object containing the
+                `UMArray` object, and so may contain extra size one
+                dimensions. When read, the data on disk is reshaped to
+                *shape*.
 
             size: `int`
                 The number of elements in the unpacked data array.
@@ -55,20 +51,16 @@ class UMArray(abstract.FileArray):
                 LBLREC-LBEXT. If set to 0 then `!size` is used.
 
             fmt: `str`, optional
-                The file format of the UM file containing the array
-                ('FF' or 'PP').
 
             word_size: `int`, optional
-                Word size in bytes (4 or 8).
 
             byte_ordering: `str`, optional
-                The endianness of the data ('little_endian' or 'big_endian').
 
         **Examples:**
 
         >>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
-        ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-        ...                 size=720, ndim=2, disk_length=0)
+        ...                 dtype=numpy.dtype('float32'), shape=(1, 1, 30, 24),
+        ...                 size=720, ndim=4, disk_length=0)
 
         >>> a = UMFileArray(
         ...         file='packed_file.pp', header_offset=3156, data_offset=3420,
@@ -77,19 +69,13 @@ class UMArray(abstract.FileArray):
         ...     )
 
         """
-        super().__init__(
-            filename=filename,
-            dtype=dtype,
-            ndim=ndim,
-            shape=shape,
-            size=size,
-            header_offset=header_offset,
-            data_offset=data_offset,
-            disk_length=disk_length,
-            fmt=fmt,
-            word_size=word_size,
-            byte_ordering=byte_ordering,
-        )
+        super().__init__(filename=filename, dtype=dtype, ndim=ndim,
+                         shape=shape, size=size,
+                         header_offset=header_offset,
+                         data_offset=data_offset,
+                         disk_length=disk_length, fmt=fmt,
+                         word_size=word_size,
+                         byte_ordering=byte_ordering)
 
         # By default, do not close the UM file after data array access
         self._close = False
@@ -113,14 +99,8 @@ class UMArray(abstract.FileArray):
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
-        array = rec.get_data().reshape(
-            int_hdr.item(
-                17,
-            ),
-            int_hdr.item(
-                18,
-            ),
-        )
+#        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
+        array = rec.get_data().reshape(self.shape)
 
         if indices is not Ellipsis:
             indices = parse_indices(array.shape, indices)
@@ -189,7 +169,7 @@ class UMArray(abstract.FileArray):
             `str`
 
         """
-        return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
+        return f"{self.header_offset}{self.shape} in {self.filename}"
 
     @property
     def file_pointer(self):
