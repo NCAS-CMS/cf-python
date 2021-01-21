@@ -1,6 +1,7 @@
 import itertools
 import operator
 
+from functools import partial
 from functools import reduce as functools_reduce
 from operator import itemgetter
 from operator import mul as operator_mul
@@ -17,85 +18,17 @@ try:
 except ImportError:
     pass
 
-import numpy
-from numpy import arange            as numpy_arange
-from numpy import arccos            as numpy_arccos
-from numpy import arccosh           as numpy_arccosh
-from numpy import arcsin            as numpy_arcsin
-from numpy import arcsinh           as numpy_arcsinh
-from numpy import arctan            as numpy_arctan
-# from numpy import arctan2           as numpy_arctan2  AT2
-from numpy import arctanh           as numpy_arctanh
-from numpy import array             as numpy_array
-from numpy import asanyarray        as numpy_asanyarray
-from numpy import ceil              as numpy_ceil
-from numpy import cos               as numpy_cos
-from numpy import cosh              as numpy_cosh
-from numpy import cumsum            as numpy_cumsum
-from numpy import diff              as numpy_diff
-from numpy import digitize          as numpy_digitize
-from numpy import dtype             as numpy_dtype
-from numpy import e                 as numpy_e
-from numpy import empty             as numpy_empty
-from numpy import errstate          as numpy_errstate
-from numpy import exp               as numpy_exp
-from numpy import floor             as numpy_floor
-from numpy import finfo             as numpy_finfo
-from numpy import isnan             as numpy_isnan
-from numpy import linspace          as numpy_linspace
-from numpy import log               as numpy_log
-from numpy import log10             as numpy_log10
-from numpy import log2              as numpy_log2
-from numpy import nan               as numpy_nan
-from numpy import nanpercentile     as numpy_nanpercentile
-from numpy import ndarray           as numpy_ndarray
-from numpy import ndenumerate       as numpy_ndenumerate
-from numpy import ndindex           as numpy_ndindex
-from numpy import ndim              as numpy_ndim
-from numpy import newaxis           as numpy_newaxis
-from numpy import ones              as numpy_ones
-from numpy import prod              as numpy_prod
-from numpy import percentile        as numpy_percentile
-from numpy import ravel_multi_index as numpy_ravel_multi_index
-from numpy import reshape           as numpy_reshape
-from numpy import result_type       as numpy_result_type
-from numpy import rint              as numpy_rint
-from numpy import round             as numpy_round
-from numpy import seterr            as numpy_seterr
-from numpy import shape             as numpy_shape
-from numpy import sin               as numpy_sin
-from numpy import sinh              as numpy_sinh
-from numpy import size              as numpy_size
-from numpy import tan               as numpy_tan
-from numpy import tanh              as numpy_tanh
-from numpy import tile              as numpy_tile
-from numpy import trunc             as numpy_trunc
-from numpy import unique            as numpy_unique
-from numpy import unravel_index     as numpy_unravel_index
-from numpy import where             as numpy_where
-from numpy import vectorize         as numpy_vectorize
-from numpy import zeros             as numpy_zeros
-from numpy import floating          as numpy_floating
-from numpy import bool_             as numpy_bool_
-from numpy import integer           as numpy_integer
+import numpy as np
 
-from numpy.ma import array          as numpy_ma_array
-from numpy.ma import count          as numpy_ma_count
-from numpy.ma import empty          as numpy_ma_empty
-from numpy.ma import filled         as numpy_ma_filled
-from numpy.ma import is_masked      as numpy_ma_is_masked
-from numpy.ma import isMA           as numpy_ma_isMA
-from numpy.ma import masked         as numpy_ma_masked
-from numpy.ma import masked_all     as numpy_ma_masked_all
-from numpy.ma import masked_invalid as numpy_ma_masked_invalid
-from numpy.ma import masked_where   as numpy_ma_masked_where
-from numpy.ma import MaskedArray    as numpy_ma_MaskedArray
-from numpy.ma import nomask         as numpy_ma_nomask
-from numpy.ma import var            as numpy_ma_var
-from numpy.ma import where          as numpy_ma_where
+import dask.array as da
+
+from dask.base import is_dask_collection
+from dask.array.core import slices_from_chunks
+from dask.array import Array
 
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
+ 
 import cftime
 import cfdm
 
@@ -140,12 +73,13 @@ from . import (NetCDFArray,
                RaggedIndexedSubarray,
                RaggedIndexedContiguousSubarray)
 
-from .. import mpi_on
-if mpi_on:
-    from .. import mpi_comm
-    from .. import mpi_size
-    from .. import mpi_rank
-    from mpi4py.MPI import SUM as mpi_sum
+from .utils import (
+    compressed_to_dask,
+    convert_to_builtin_type,
+    convert_to_reftime,
+    initialise_axes,
+    new_axis_identifier,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -157,53 +91,16 @@ logger = logging.getLogger(__name__)
 _year_length = 365.242198781
 _month_length = _year_length / 12
 
+_token_names = set()
 
-def _convert_to_builtin_type(x):
-    '''Convert a non-JSON-encodable object to a JSON-encodable built-in
-    type.
-
-    Possible conversions are:
-
-    ================  =======  ================================
-    Input             Output   `numpy` data-types covered
-    ================  =======  ================================
-    `numpy.bool_`     `bool`   bool
-    `numpy.integer`   `int`    int, int8, int16, int32, int64,
-                               uint8, uint16, uint32, uint64
-    `numpy.floating`  `float`  float, float16, float32, float64
-    ================  =======  ================================
-
-    :Parameters:
-
-        x:
-            TODO
-
-    :Returns:
-
-            TODO
-
-    **Examples:**
-
-    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-    bool
-    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-    double
-    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-    int
-
-    '''
-    if isinstance(x, numpy_bool_):
-        return bool(x)
-
-    if isinstance(x, numpy_integer):
-        return int(x)
-
-    if isinstance(x, numpy_floating):
-        return float(x)
-
-    raise TypeError(
-        "{0!r} object is not JSON serializable: {1!r}".format(type(x), x))
-
+#@normalize_token.register((RaggedIndexedContiguousSubarray,
+#                           GatheredSubarray))
+#def normalize_subarray(x):
+#    return normalize_token(x.__class__.__name__,
+#                           x.shape,
+#                           x.dtype,
+#                           uuid4())
+#                    
 
 # --------------------------------------------------------------------
 # _seterr = How floating-point errors in the results of arithmetic
@@ -236,7 +133,7 @@ for key, value in _seterr.items():
 # --------------------------------------------------------------------
 _mask_fpe = [False]
 
-_xxx = numpy_empty((), dtype=object)
+#_xxx = np_empty((), dtype=object)
 
 _empty_set = set()
 
@@ -244,45 +141,9 @@ _units_None = Units()
 _units_1 = Units('1')
 _units_radians = Units('radians')
 
-_dtype_object = numpy_dtype(object)
-_dtype_float = numpy_dtype(float)
-_dtype_bool = numpy_dtype(bool)
-
-_cached_axes = {0: []}
-
-
-def _initialise_axes(ndim):
-    '''Initialise dimension identifiers of N-d data.
-
-    :Parameters:
-
-        ndim: `int`
-            The number of dimensions in the data.
-
-    :Returns:
-
-        `list`
-             The dimension identifiers, one of each dimension in the
-             array. If the data is scalar thn the list will be empty.
-
-    **Examples:**
-
-    >>> _initialise_axes(0)
-    []
-    >>> _initialise_axes(1)
-    ['dim1']
-    >>> _initialise_axes(3)
-    ['dim1', 'dim2', 'dim3']
-    >>> _initialise_axes(3) is _initialise_axes(3)
-    True
-
-    '''
-    axes = _cached_axes.get(ndim, None)
-    if axes is None:
-        axes = ['dim%d' % i for i in range(ndim)]
-        _cached_axes[ndim] = axes
-
-    return axes
+_dtype_object = np.dtype(object)
+_dtype_float = np.dtype(float)
+_dtype_bool = np.dtype(bool)
 
 
 class Data(Container,
@@ -358,9 +219,10 @@ place.
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
-                 fill_value=None, hardmask=True, chunk=True,
+                 fill_value=None, hardmask=True, chunks='auto',
                  loadd=None, loads=None, dt=False, source=None,
-                 copy=True, dtype=None, mask=None, _use_array=True):
+                 copy=True, dtype=None, mask=None, lock=False,
+                 _use_array=True):
         '''**Initialization**
 
     :Parameters:
@@ -480,6 +342,10 @@ place.
             if it is larger than the chunk size, as returned by the
             `cf.chunksize` function.
 
+       lock: `bool` or `dask.threaded.Lock`, optional
+            If *array* doesn't support concurrent reads then provide a
+            lock here, or pass in `True` have one created one for you.
+
     **Examples:**
 
     >>> d = cf.Data(5)
@@ -490,241 +356,183 @@ place.
     >>> d = cf.Data(tuple('fly'))
 
         '''
-        data = array
+        if source is not None:
+            if loadd is not None:
+                raise  ValueError(
+                    "Can't set the 'source' and 'loadd' parameters "
+                    "at the same time"
+                )
+
+            if loads is not None:
+                raise  ValueError(
+                    "Can't set the 'source' and 'loads' parameters "
+                    "at the same time"
+                )
+        # --- End: if 
+
+        if source is None and isinstance(array, self.__class__):
+            source = array
 
         super().__init__(source=source, fill_value=fill_value)
-
-        if source is not None:
-            partitions = self._custom.get('partitions')
-            if partitions is not None:
-                self.partitions = partitions.copy()
-
-            auxiliary_mask = self._custom.get('_auxiliary_mask')
-            if auxiliary_mask is not None:
-                self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
-
-            return
-
-        if not (loadd or loads):
-            units = Units(units, calendar=calendar)
-            self._Units = units
-
-        empty_list = []
-
-        # The _flip attribute is an unordered subset of the data
-        # array's axis names. It is a subset of the axes given by the
-        # _axes attribute. It is used to determine whether or not to
-        # reverse an axis in each partition's sub-array during the
-        # creation of the partition's data array. DO NOT CHANGE IN
-        # PLACE.
-        self._flip(empty_list)
-
-        # The _all_axes attribute must be None or a tuple
-        self._all_axes = None
-
-        self.hardmask = hardmask
 
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
         self._HDF_chunks = None
 
-        # ------------------------------------------------------------
-        # Attribute: _auxiliary_mask
-        #
-        # Must be None or a (possibly empty) list of Data objects.
-        # ------------------------------------------------------------
-        self._auxiliary_mask = None
-
         if loadd is not None:
-            self.loadd(loadd, chunk=chunk)
+            self.loadd(loadd)
             return
 
         if loads is not None:
-            self.loads(loads, chunk=chunk)
+            self.loads(loads)
             return
 
-        # The _cyclic attribute contains the axes of the data array
-        # which are cyclic (and therefore allow cyclic slicing). It is
-        # a subset of the axes given by the _axes attribute. DO NOT
-        # CHANGE IN PLACE.
-        self._cyclic = _empty_set
-
-        data = array
-
-        if data is None:
-            if dtype is not None:
-                dtype = numpy_dtype(dtype)
-
-            self._dtype = dtype
-            return
-
-#        if not isinstance(data, Array):
-        if not self._is_abstract_Array_subclass(data):
-            check_free_memory = True
-
-            if isinstance(data, self.__class__):
-                # self.loadd(data.dumpd(), chunk=chunk)
-                self.__dict__ = data.copy().__dict__
-                if chunk:
-                    self.chunk()
-
-                if mask is not None:
-                    self.where(mask, cf_masked, inplace=True)
-
-                return
-
-            if not isinstance(data, numpy_ndarray):
-                data = numpy_asanyarray(data)
-
-            if (data.dtype.kind == 'O' and not dt and
-                    hasattr(data.item((0,)*data.ndim), 'timetuple')):
-                # We've been given one or more date-time objects
-                dt = True
-        else:
-            check_free_memory = False
-
-        _dtype = data.dtype
-
-        if dt or units.isreftime:
-            # TODO raise exception if compressed
-            kind = _dtype.kind
-            if kind in 'US':
-                # Convert date-time strings to reference time floats
-                if not units:
-                    YMD = str(data.item((0,)*data.ndim)).partition('T')[0]
-                    units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
-
-                data = st2rt(data, units, units)
-                _dtype = data.dtype
-            elif kind == 'O':
-                # Convert date-time objects to reference time floats
-                x = data.item(0)
-                x_since = 'days since ' + '-'.join(
-                    map(str, (x.year, x.month, x.day)))
-                x_calendar = getattr(x, 'calendar', 'gregorian')
-
-                d_calendar = getattr(self.Units, 'calendar', None)
-                d_units = getattr(self.Units, 'units', None)
-
-                if x_calendar != '':
-                    if d_calendar is not None:
-                        if not self.Units.equivalent(
-                                Units(x_since, x_calendar)
-                        ):
-                            raise ValueError(
-                                "Incompatible units: {!r}, {!r}".format(
-                                    self.Units, Units(x_since, x_calendar)
-                                )
-                            )
-                    else:
-                        d_calendar = x_calendar
-                # --- End: if
-
-                if not units:
-                    # Set the units to something that is (hopefully)
-                    # close to all of the datetimes, in an attempt to
-                    # reduce errors arising from the conversion to
-                    # reference times
-                    units = Units(x_since, calendar=d_calendar)
+        if source is not None:
+            if copy:
+                try:
+                    array = self._get_dask().copy()
+                except KeyError:
+                    pass
                 else:
-                    units = Units(d_units, calendar=d_calendar)
+                    self._set_dask(array)
+            # --- End: if
+            
+            return
+        
+        if array is None:
+            return
 
-                self._Units = units
+        # Still here? The we have an array that needs to be stored as
+        # a dask array
+        self.hardmask = hardmask # TODODASK
+        
+        units = Units(units, calendar=calendar)
 
-                # Check that all date-time objects have correct and
-                # equivalent calendars
-                calendars = set(
-                    [getattr(x, 'calendar', 'gregorian') for x in data.flat])
-                if len(calendars) > 1:
-                    raise ValueError(
-                        "Not all date-time objects have equivalent "
-                        "calendars: {}".format(tuple(calendars))
-                    )
+        try:
+            compressed = array.get_compression_type()
+        except AttributeError:
+            compressed = ''
+            source = None
+        else:
+            source = array
+            
+        if compressed:
+            # The data is compressed, so create a uncompressed view of
+            # it (ignoring the value of the chunks parameter)
+            array = compressed_to_dask(source)
+        elif not is_dask_collection(array):
+            # Turn the data into a dask array
+            array = da.from_array(array, chunks=chunks, lock=lock)
 
-                # If the date-times are calendar-agnostic, assign the
-                # given calendar, defaulting to Gregorian.
-                if calendars.pop() == '':
-                    calendar = getattr(self.Units, 'calendar', 'gregorian')
-
-                    new_data = numpy.empty(numpy_shape(data), dtype='O')
-                    for i in numpy_ndindex(new_data.shape):
-                        new_data[i] = cf_dt(data[i], calendar=calendar)
-
-                    data = new_data
-
-                # Convert the date-time objects to reference times
-                data = dt2rt(data, None, units)
-
-            _dtype = data.dtype
-
-            if not units.isreftime:
-                raise ValueError(
-                    "Can't initialise a reference time array with "
-                    "units {!r}".format(units)
-                )
+        # Find out if we have an array of date-time objects
+        first_value = None
+        if not dt and array.dtype.kind == 'O':
+            first_value = first_non_missing_value(array)
+            if first_value is not None:
+                dt = hasattr(first_value, 'timetuple')
         # --- End: if
 
-        shape = data.shape
-        ndim = data.ndim
-        size = data.size
-        axes = _initialise_axes(ndim)
+        # Convert string or object date-times to floating point
+        # reference times
+        if array.dtype.kind in 'USO' and (dt or units.isreftime):
+            array, units = convert_to_reftime(array, units, first_value)
 
-        # The _axes attribute is the ordered list of the data array's
-        # axis names. Each axis name is an arbitrary, unique
-        # string. DO NOT CHANGE IN PLACE.
-        self._axes = axes
+        # Set the units
+        self._Units = units
+            
+        # Store the dask array
+        self._set_dask(array)
 
-        self._ndim = ndim
-        self._shape = shape
-        self._size = size
+        if source is not None:
+            self._set_Array(source, copy=False)
+        else:            
+            self._del_Array(None)
 
+#        if compressed:
+#            # The data was compressed, so store it in its compressed
+#            # form, mainly so that it can be written to disk if
+#            # required.
+#            self._set_CompressedArray(compressed_array, copy=False)
+#        else:            
+#            # The data was not compressed, so no need to store it in
+#            # its original form.
+#            self._del_Array(None)
+
+        # Override the data type
         if dtype is not None:
-            _dtype = numpy_dtype(dtype)
+            self.dtype = dtype
 
-        self._dtype = _dtype
-
-        self._set_partition_matrix(data, chunk=chunk,
-                                   check_free_memory=check_free_memory)
-
-#        if isinstance(data, CompressedArray):
-#            self._set_CompressedArray(data,
-#                                                               axes=axes)
-#            #if mask is not None:
-#            #    self.where(mask, cf_masked, inplace=True)
-##
-# #           r#eturn
-#        else:
-#            matrix = _xxx.copy()
-#
-#            matrix[()] = Partition(location = [(0, n) for n in shape],
-#                                   shape    = list(shape),
-#                                   axes     = axes,
-#                                   flip     = empty_list,
-#                                   Units    = units,
-#                                   subarray = data,
-#                                   part     = empty_list)
-#
-#            self.partitions = PartitionMatrix(matrix, empty_list)
-#
-#            if check_free_memory and free_memory() < cf_fm_threshold():
-#                self.to_disk()
-#
-#            if chunk:
-#                self.chunk()
-#        # --- End: if
-
+        # Apply a mask 
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-    def _set_partition_matrix(self, array, chunk=True,
-                              check_free_memory=True):
-        '''Set the array.
+        # The _axes attribute is an ordered list of unique (within
+        # this Data object) names for each data array axis. DO NOT
+        # CHANGE IN PLACE.
+        self._axes = initialise_axes(array.ndim)
+
+        # The _cyclic attribute contains identifies which axes are
+        # cyclic (and therefore allow cyclic slicing). It must be a
+        # subset of the axes given by the _axes attribute. If an axis
+        # is removed from _axes then it maust also be removed from
+        # _cyclic. DO NOT CHANGE IN PLACE.
+        self._cyclic = _empty_set
+
+    def _get_dask(self):
+        '''TODODASK Set the dask array.
 
     :Parameters:
 
-        array: subclass of `Array`
-            The array to be inserted.
+        array: `dask.array.Array`
+            The `dask` array to be inserted.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**        
+
+        '''
+        return self._custom['dask']
+
+    @property
+    def dask_array(self):
+        '''TODODASK Set the dask array.
+
+    :Returns:
+
+        `dask.array.Array`
+
+    **Examples:**        
+
+        '''
+        return self._get_dask().copy()
+    
+    @property
+    def dask_compressed_array(self):
+        '''TODODASK Set the dask array.
+
+    :Returns:
+
+        `dask.array.Array`
+
+    **Examples:**        
+
+        '''
+        ca = self.source(None)
+    
+        if ca is None or not ca.get_compression_type():
+            raise ValueError("not compressed: can't get compressed dask array")
+
+        return ca.dask_array
+    
+    def _set_dask(self, array, copy=False):
+        '''TODODASK Set the dask array.
+
+    :Parameters:
+
+        array: `dask.array.Array`
+            The `dask` array to be inserted.
 
     :Returns:
 
@@ -732,227 +540,21 @@ place.
 
     **Examples:**
 
-    >>> d._set_partition_matrix(array)
+    >>> d._set_dask(array)
 
         '''
-#        if isinstance(array, CompressedArray):
-        get_compression_type = getattr(array, 'get_compression_type', None)
-        if get_compression_type is not None and get_compression_type():
-            # array is compressed
-            self._set_CompressedArray(array,
-                                      check_free_memory=check_free_memory)
-            return
+        if copy:
+            array = array.copy()
+            
+        self._custom['dask'] = array
 
-        empty_list = []
-        shape = array.shape
-
-        matrix = _xxx.copy()
-
-        matrix[()] = Partition(
-            location=[(0, n) for n in shape],
-            shape=list(shape),
-            axes=self._axes,
-            flip=empty_list,
-            Units=self.Units,
-            subarray=array,
-            part=empty_list
-        )
-
-        self.partitions = PartitionMatrix(matrix, empty_list)
-
-        if check_free_memory and free_memory() < cf_fm_threshold():
-            self.to_disk()
-
-        if chunk:
-            self.chunk()
-
+        # Remove a compressed source array. This is because we can no
+        # longer guarantee its consistency with the dask array if we
+        # were to write the data to disk.
         source = self.source(None)
         if source is not None and source.get_compression_type():
             self._del_Array(None)
-
-    def _set_CompressedArray(self, compressed_array, copy=None,
-                             check_free_memory=True):
-        '''Create and insert a partition matrix for a compressed array.
-
-    .. versionadded:: 3.0.6
-
-    .. seealso:: `_set_Array`, `_set_partition_matrix`, `compress`
-
-    :Parameters:
-
-        compressed_array: subclass of `CompressedArray`
-
-        copy: optional
-            Ignored.
-
-        check_free_memory: `bool`, optional
-            TODO
-
-    :Returns:
-
-        `None`
-
-        '''
-        if check_free_memory and free_memory() < cf_fm_threshold():
-            compressed_array.to_disk()
-
-        new = type(self).empty(shape=compressed_array.shape,
-                               units=self.Units, chunk=False)
-        new._axes = self._axes
-
-        source_data = compressed_array.source()
-        compression_type = compressed_array.get_compression_type()
-
-        if compression_type == 'ragged contiguous':
-            # --------------------------------------------------------
-            # Ragged contiguous
-            # --------------------------------------------------------
-            new.chunk(total=[0], omit_axes=[1])
-
-            count = compressed_array.get_count().array
-
-            start = 0
-            for n, partition in zip(count, new.partitions.flat):
-                end = start + n
-
-                partition.subarray = RaggedContiguousSubarray(
-                    array=source_data,
-                    shape=partition.shape,
-                    compression={
-                        'instance_axis': 0,
-                        'instance_index': 0,
-                        'c_element_axis': 1,
-                        'c_element_indices': slice(start, end)
-                    },
-                )
-                partition.part = []
-
-                start += n
-
-        elif compression_type == 'ragged indexed':
-            # --------------------------------------------------------
-            # Ragged indexed
-            # --------------------------------------------------------
-            new.chunk(total=[0], omit_axes=[1])
-
-            index = compressed_array.get_index().array
-
-            (instances, inverse) = numpy.unique(index, return_inverse=True)
-
-            for i, partition in zip(
-                    numpy.unique(inverse), new.partitions.flat):
-                partition.subarray = RaggedIndexedSubarray(
-                    array=source_data,
-                    shape=partition.shape,
-                    compression={
-                        'instance_axis': 0,
-                        'instance_index': 0,
-                        'i_element_axis': 1,
-                        'i_element_indices': numpy_where(inverse == i)[0]
-                    }
-                )
-                partition.part = []
-
-        elif compression_type == 'ragged indexed contiguous':
-            # --------------------------------------------------------
-            # Ragged indexed contiguous
-            # --------------------------------------------------------
-            new.chunk(total=[0, 1], omit_axes=[2])
-
-            index = compressed_array.get_index().array
-            count = compressed_array.get_count().array
-
-            (instances, inverse) = numpy.unique(index, return_inverse=True)
-
-            new_partitions = new.partitions.matrix
-
-            shape = compressed_array.shape
-
-            for i in range(shape[0]):
-                # For all of the profiles in ths instance, find the
-                # locations in the count array of the number of
-                # elements in the profile
-                xprofile_indices = numpy.where(index == i)[0]
-
-                # Find the number of profiles in this instance
-                n_profiles = xprofile_indices.size
-
-                # Loop over profiles in this instance
-                for j in range(shape[1]):
-                    partition = new_partitions[i, j]
-
-                    if j >= n_profiles:
-                        # This partition is full of missing data
-                        subarray = FilledArray(
-                            shape=partition.shape, size=partition.size,
-                            ndim=partition.ndim, dtype=compressed_array.dtype,
-                            fill_value=cf_masked)
-                    else:
-                        # Find the location in the count array of the number
-                        # of elements in this profile
-                        profile_index = xprofile_indices[j]
-
-                        if profile_index == 0:
-                            start = 0
-                        else:
-                            start = int(count[:profile_index].sum())
-
-                        stop = start + int(count[profile_index])
-
-                        subarray = RaggedIndexedContiguousSubarray(
-                            array=source_data,
-                            shape=partition.shape,
-                            compression={
-                                'instance_axis': 0,
-                                'instance_index': 0,
-                                'i_element_axis': 1,
-                                'i_element_index': 0,
-                                'c_element_axis': 2,
-                                'c_element_indices': slice(start, stop)
-                            }
-                        )
-                    # --- End: if
-
-                    partition.subarray = subarray
-                    partition.part = []
-                # --- End: for
-            # --- End: for
-
-        elif compression_type == 'gathered':
-            # --------------------------------------------------------
-            # Gathered
-            # --------------------------------------------------------
-            compressed_dimension = compressed_array.get_compressed_dimension()
-            compressed_axes = compressed_array.get_compressed_axes()
-            indices = compressed_array.get_list().array
-
-            new.chunk(omit_axes=compressed_axes)  # , total=[0])
-
-            for partition in new.partitions.flat:
-                partition_indices = partition.indices
-                compressed_part = [partition_indices[i] for i in
-                                   range(new.ndim) if
-                                   i not in compressed_axes]
-                compressed_part.insert(compressed_dimension, slice(None))
-
-                partition.subarray = GatheredSubarray(
-                    array=source_data,
-                    shape=partition.shape,
-                    compression={
-                        'compressed_dimension': compressed_dimension,
-                        'compressed_axes': compressed_axes,
-                        'compressed_part': compressed_part,
-                        'indices': indices
-                    }
-                )
-
-                partition.part = []
-        # --- End: if
-
-        self.partitions = new.partitions
-
-        self._set_Array(compressed_array, copy=False)
-
+            
     def __contains__(self, value):
         '''Membership test operator ``in``
 
@@ -960,6 +562,10 @@ place.
 
     Returns True if the value is contained anywhere in the data
     array. The value may be a `cf.Data` object.
+
+    **Performance**
+
+    `__contains__` causes all delayed operations to be computed.
 
     **Examples:**
 
@@ -978,6 +584,12 @@ place.
     False
 
         '''
+        def contains_chunk(a, value):
+            out = value in a
+            return numpy.array(out).reshape((1,) * a.ndim)
+
+        dx = self._get_dask()
+
         if isinstance(value, self.__class__):
             self_units = self.Units
             value_units = value.Units
@@ -988,20 +600,22 @@ place.
             elif value_units:
                 return False
 
-            value = value.array
+            value = value._get_dask()
 
-        config = self.partition_configuration(readonly=True)
+        dx = self._get_dask()
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            partition.close()
+        out_ind = tuple(dx.ndim)
+        dx_ind = out_ind
 
-            if value in array:
-                return True
-        # --- End: for
+        dx = da.blockwise(
+            partial(contains_chunk, value=value),
+            out_ind,
+            dx, dx_ind,
+            adjust_chunks={i: 1 for i in out_ind},
+            dtype=bool
+        )
 
-        return False
+        return bool(dx.any())
 
     @property
     def _atol(self):
@@ -1514,122 +1128,171 @@ place.
     (1, 10, 1)
 
         '''
-        size = self._size
-
         if indices is Ellipsis:
             return self.copy()
 
         d = self
 
-        axes = d._axes
-        flip = d._flip()
-        shape = d._shape
-        cyclic_axes = d._cyclic
-        auxiliary_mask = []
-
-        try:
-            arg0 = indices[0]
-        except (IndexError, TypeError):
-            pass
-        else:
-            if isinstance(arg0, str) and arg0 == 'mask':
-                auxiliary_mask = indices[1]
-                indices = tuple(indices[2:])
-            else:
-                pass
-
-        indices, roll, flip_axes = parse_indices(shape, indices, True, True)
+        indices, roll = parse_indices(d.shape, indices, cyclic=True)
 
         if roll:
             for axis, shift in roll.items():
                 if axes[axis] not in cyclic_axes:
                     raise IndexError(
                         "Can't take a cyclic slice of a non-cyclic "
-                        "axis (axis position {})".format(axis)
+                        f"axis (axis position {axis})"
                     )
 
                 d = d.roll(axis, shift)
         # --- End: if
 
-        new_shape = tuple(map(_size_of_index, indices, shape))
-        new_size = functools_reduce(operator_mul, new_shape, 1)
+        new = self.copy()
+        # TODODASK make a copy method that also doen't copy ther dask array ??
 
-        new = d.copy()  # Data.__new__(Data)
+        dx = d._get_dask()
+        dx = dx[tuple(indices)]
+        new._set_dask(dx)
 
-        source = new.source(None)
-        if source is not None and source.get_compression_type():
-            new._del_Array(None)
+        if roll:
+            # Unroll new! TODODASK - is this necessary??? Probably
+            pass
 
-#        new.get_fill_value = d.get_fill_value(None)
-
-        new._shape = new_shape
-        new._size = new_size
-#        new._ndim       = d._ndim
-#        new.hardmask   = d.hardmask
-#        new._all_axes   = d._all_axes
-#        new._cyclic     = cyclic_axes
-#        new._axes       = axes
-#        new._flip       = flip
-#        new._dtype      = d.dtype
-#        new._HDF_chunks = d._HDF_chunks
-#        new._Units      = d._Units
-#        new._auxiliary_mask = d._auxiliary_mask
-
-        partitions = d.partitions
-
-        new_partitions = PartitionMatrix(_overlapping_partitions(partitions,
-                                                                 indices,
-                                                                 axes,
-                                                                 flip),
-                                         partitions.axes)
-
-        if new_size != size:
-            new_partitions.set_location_map(axes)
-
-        new.partitions = new_partitions
-
-        # ------------------------------------------------------------
-        # Index an existing auxiliary mask. (Note: By now indices are
-        # strictly monotonically increasing and don't roll.)
-        # ------------------------------------------------------------
-        new._auxiliary_mask_subspace(indices)
-
-        # --------------------------------------------------------
-        # Apply the input auxiliary mask
-        # --------------------------------------------------------
-        for mask in auxiliary_mask:
-            new._auxiliary_mask_add_component(mask)
-
-        # ------------------------------------------------------------
-        # Tidy up the auxiliary mask
-        # ------------------------------------------------------------
-        new._auxiliary_mask_tidy()
-
-        # ------------------------------------------------------------
-        # Flip axes
-        # ------------------------------------------------------------
-        if flip_axes:
-            new.flip(flip_axes, inplace=True)
-
-        # ------------------------------------------------------------
-        # Mark cyclic axes which have been reduced in size as
+        # Cyclic axes which have been reduced in size are no longer
         # non-cyclic
-        # ------------------------------------------------------------
+        cyclic_axes = d._cyclic
         if cyclic_axes:
             x = [i
                  for i, (axis, n0, n1) in enumerate(
-                         zip(axes, shape, new_shape))
+                         zip(axes, d.shape, new.shape))
                  if n1 != n0 and axis in cyclic_axes]
             if x:
                 new._cyclic = cyclic_axes.difference(x)
         # --- End: if
 
-        # -------------------------------------------------------------
-        # Remove size 1 axes from the partition matrix
-        # -------------------------------------------------------------
-        new_partitions.squeeze(inplace=True)
-
         return new
+    
+#        size = self._size
+#
+#        if indices is Ellipsis:
+#            return self.copy()
+#
+#        d = self
+#
+#        axes = d._axes
+#        flip = d._flip()
+#        shape = d._shape
+#        cyclic_axes = d._cyclic
+#        auxiliary_mask = []
+#
+#        try:
+#            arg0 = indices[0]
+#        except (IndexError, TypeError):
+#            pass
+#        else:
+#            if isinstance(arg0, str) and arg0 == 'mask':
+#                auxiliary_mask = indices[1]
+#                indices = tuple(indices[2:])
+#            else:
+#                pass
+#
+#        indices, roll, flip_axes = parse_indices(shape, indices, True, True)
+#
+#        if roll:
+#            for axis, shift in roll.items():
+#                if axes[axis] not in cyclic_axes:
+#                    raise IndexError(
+#                        "Can't take a cyclic slice of a non-cyclic "
+#                        "axis (axis position {})".format(axis)
+#                    )
+#
+#                d = d.roll(axis, shift)
+#        # --- End: if
+#
+#        new = self.copy()
+#        
+#        if roll:
+#            # Unroll! TODO
+#            pass
+#        
+#        new_shape = tuple(map(_size_of_index, indices, shape))
+#        new_size = functools_reduce(operator_mul, new_shape, 1)
+#
+#        new = d.copy()  # Data.__new__(Data)
+#
+#        source = new.source(None)
+#        if source is not None and source.get_compression_type():
+#            new._del_Array(None)
+#
+##        new.get_fill_value = d.get_fill_value(None)
+#
+#        new._shape = new_shape
+#        new._size = new_size
+##        new._ndim       = d._ndim
+##        new.hardmask   = d.hardmask
+##        new._all_axes   = d._all_axes
+##        new._cyclic     = cyclic_axes
+##        new._axes       = axes
+##        new._flip       = flip
+##        new._dtype      = d.dtype
+##        new._HDF_chunks = d._HDF_chunks
+##        new._Units      = d._Units
+##        new._auxiliary_mask = d._auxiliary_mask
+#
+#        partitions = d.partitions
+#
+#        new_partitions = PartitionMatrix(_overlapping_partitions(partitions,
+#                                                                 indices,
+#                                                                 axes,
+#                                                                 flip),
+#                                         partitions.axes)
+#
+#        if new_size != size:
+#            new_partitions.set_location_map(axes)
+#
+#        new.partitions = new_partitions
+#
+##        # ------------------------------------------------------------
+##        # Index an existing auxiliary mask. (Note: By now indices are
+##        # strictly monotonically increasing and don't roll.)
+##        # ------------------------------------------------------------
+##        new._auxiliary_mask_subspace(indices)
+#
+#        # --------------------------------------------------------
+#        # Apply the input auxiliary mask
+#        # --------------------------------------------------------
+#        for mask in auxiliary_mask:
+#            new._auxiliary_mask_add_component(mask)
+#
+#        # ------------------------------------------------------------
+#        # Tidy up the auxiliary mask
+#        # ------------------------------------------------------------
+#        new._auxiliary_mask_tidy()
+#
+##        # ------------------------------------------------------------
+##        # Flip axes
+##        # ------------------------------------------------------------
+##        if flip_axes:
+##            new.flip(flip_axes, inplace=True)
+#
+#        # ------------------------------------------------------------
+#        # Mark cyclic axes which have been reduced in size as
+#        # non-cyclic
+#        # ------------------------------------------------------------
+#        if cyclic_axes:
+#            x = [i
+#                 for i, (axis, n0, n1) in enumerate(
+#                         zip(axes, shape, new.shape))
+#                 if n1 != n0 and axis in cyclic_axes]
+#            if x:
+#                new._cyclic = cyclic_axes.difference(x)
+#        # --- End: if
+#
+##        # -------------------------------------------------------------
+##        # Remove size 1 axes from the partition matrix
+##        # -------------------------------------------------------------
+##        new_partitions.squeeze(inplace=True)
+#
+#        return new
 
     def __setitem__(self, indices, value):
         '''Implement indexed assignment.
@@ -1661,6 +1324,31 @@ place.
     **Examples:**
 
         '''
+        # ------------------------------------------------------------
+        # parse the indices
+        # ------------------------------------------------------------
+        indices_in = indices
+        indices, roll, flip_axes, mask = parse_indices(
+            self.shape, indices_in, cyclic=True, reverse=True, mask=True)
+
+        if roll:
+            for iaxis, shift in roll.items():
+                self.roll(iaxis, shift, inplace=True)
+        # --- End: if
+
+        # TODODASK: multiple lists
+        
+        dx = self._get_dask()
+        dx[tuple(indices)] = value
+        
+        if roll:
+            # Unroll
+            for iaxis, shift in roll.items():
+                self.roll(iaxis, -shift, inplace=True)
+        # --- End: if
+
+        return 
+        
         def _mirror_slice(index, size):
             '''Return a slice object which creates the reverse of the input
         slice.
@@ -1933,211 +1621,211 @@ place.
 
             self[indices] = u
 
-    def _flag_partitions_for_processing(self, parallelise=True):
-        '''
-        '''
-        if mpi_on and parallelise:
-            # Add a flag `_process_partition` to each partition defining
-            # whether this partition will be processed on this process
-            n_partitions = self.partitions.size
-            x = n_partitions // mpi_size
-            if n_partitions < mpi_size:
-                for i, partition in enumerate(self.partitions.matrix.flat):
-                    if i == mpi_rank:
-                        partition._process_partition = True
-                    else:
-                        partition._process_partition = False
-                    # --- End: if
-                # --- End: for
-                self._max_partitions_per_process = 1
-            elif n_partitions % mpi_size == 0:
-                for i, partition in enumerate(self.partitions.matrix.flat):
-                    if i // x == mpi_rank:
-                        partition._process_partition = True
-                    else:
-                        partition._process_partition = False
-                    # --- End: if
-                # --- End: for
-                self._max_partitions_per_process = x
-            else:
-                for i, partition in enumerate(self.partitions.matrix.flat):
-                    if i // (x + 1) == mpi_rank:
-                        partition._process_partition = True
-                    else:
-                        partition._process_partition = False
-                    # --- End: if
-                # --- End: for
-                self._max_partitions_per_process = x + 1
-            # --- End: if
-        else:
-            # Flag all partitions for processing on all processes
-            for partition in self.partitions.matrix.flat:
-                partition._process_partition = True
-        # --- End: if
-
-    def _share_lock_files(self, parallelise):
-        '''TODO
-
-        '''
-        if parallelise:
-            # Only gather the lock files if the subarrays have been
-            # gathered between procesors, otherwise this will result
-            # in incorrect handling of the removal of temporary files
-            for partition in self.partitions.matrix.flat:
-                if partition.in_cached_file:
-                    # The subarray is in a temporary file
-                    lock_file = partition._register_temporary_file()
-                    lock_files = mpi_comm.allgather(lock_file)
-                    partition._update_lock_files(lock_files)
-                # --- End: if
-            # --- End: for
-        # --- End: if
-    # --- End: if
-
-    @classmethod
-    def _share_partitions(cls, processed_partitions, parallelise):
-        '''TODO
-
-        '''
-        # Share the partitions processed on each rank with every other
-        # rank. If parallelise is False then there is nothing to be done
-        if parallelise:
-            # List to contain sublists of processed partitions from each
-            # rank
-            partition_list = []
-
-            for rank in range(mpi_size):
-                # Get the numper of processed partitions on each rank
-                if mpi_rank == rank:
-                    n_partitions = len(processed_partitions)
-                else:
-                    n_partitions = None
-                # --- End: if
-                n_partitions = mpi_comm.bcast(n_partitions, root=rank)
-
-                # Share each of the processed partitions on each rank with
-                # all the other ranks using broadcasting
-                if mpi_rank != rank:
-                    shared_partitions = []
-                # --- End: if
-
-                for i in range(n_partitions):
-                    if mpi_rank == rank:
-                        partition = processed_partitions[i]
-                        if (isinstance(partition._subarray, numpy_ndarray)
-                                and partition._subarray.dtype.kind in
-                                {'b', 'i', 'u', 'f', 'c'}):
-                            # If the subarray is a supported numpy
-                            # array, swap it out before broadcasting
-                            # the partition
-                            subarray = partition._subarray
-                            partition._subarray = None
-                            partition._subarray_removed = True
-                            partition._subarray_dtype = subarray.dtype
-                            partition._subarray_shape = subarray.shape
-                            partition._subarray_isMA = numpy_ma_isMA(
-                                subarray)
-                            if partition._subarray_isMA:
-                                partition._subarray_is_masked = (
-                                    subarray.mask is not numpy_ma_nomask)
-                            else:
-                                partition._subarray_is_masked = False
-                            # --- End: if
-                        else:
-                            # The partition's subarray is either not a
-                            # numpy array or is, for example, an array
-                            # of strings, so it will be pickled and
-                            # broadcast with the partition.
-                            partition._subarray_removed = False
-                        # --- End: if
-                    else:
-                        partition = None
-                    # --- End: if
-
-                    # Pickle and broadcast the partition with or
-                    # without the subarray
-                    partition = mpi_comm.bcast(partition, root=rank)
-
-                    if partition._subarray_removed:
-                        # If the subarray is a supported numpy array
-                        # broadcast it without pickling and swap it
-                        # back into the partition
-                        if partition._subarray_isMA:
-                            # If the subarray is a masked array broadcast
-                            # the data and the mask separately
-                            if mpi_rank != rank:
-                                if partition._subarray_is_masked:
-                                    subarray = numpy_ma_masked_all(
-                                        partition._subarray_shape,
-                                        dtype=partition._subarray_dtype
-                                    )
-                                else:
-                                    subarray = numpy_ma_empty(
-                                        partition._subarray_shape,
-                                        dtype=partition._subarray_dtype
-                                    )
-                                # --- End: if
-                            # --- End: if
-                            mpi_comm.Bcast(subarray.data, root=rank)
-                            if partition._subarray_is_masked:
-                                mpi_comm.Bcast(subarray.mask, root=rank)
-                            # --- End: if
-                        else:
-                            if mpi_rank != rank:
-                                subarray = numpy_empty(
-                                    partition._subarray_shape,
-                                    dtype=partition._subarray_dtype
-                                )
-                            # --- End: if
-                            mpi_comm.Bcast(subarray, root=rank)
-                        # --- End: if
-
-                        # Swap the subarray back into the partition
-                        partition._subarray = subarray
-                        if mpi_rank == rank:
-                            # The result of broadcasting an object is
-                            # different to the original object even on the
-                            # root PE, so the new partition with the numpy
-                            # subarray must be put back in the list of
-                            # processed partitions
-                            processed_partitions[i] = partition
-                        # --- End: if
-
-                        # Clean up temporary attributes
-                        del partition._subarray_dtype
-                        del partition._subarray_shape
-                        del partition._subarray_isMA
-                        del partition._subarray_is_masked
-                    elif mpi_rank == rank:
-                        # Remove the subarray from partition so that
-                        # when it is deleted it does not delete the
-                        # temporary file
-                        partition._subarray = None
-                    # --- End: if
-
-                    # Clean up temporary attribute
-                    del partition._subarray_removed
-
-                    if mpi_rank != rank:
-                        shared_partitions.append(partition)
-                    # --- End: if
-                # --- End: for
-
-                # Add the sublist of processed partitions from each rank
-                # to a list
-                if mpi_rank == rank:
-                    partition_list.append(processed_partitions)
-                else:
-                    partition_list.append(shared_partitions)
-                # --- End: if
-            # --- End: for
-
-            # Flatten the list of lists of processed partitions
-            processed_partitions = [item
-                                    for sublist in partition_list
-                                    for item in sublist]
-        # --- End: if
-        return processed_partitions
+#    def _flag_partitions_for_processing(self, parallelise=True):
+#        '''
+#        '''
+#        if mpi_on and parallelise:
+#            # Add a flag `_process_partition` to each partition defining
+#            # whether this partition will be processed on this process
+#            n_partitions = self.partitions.size
+#            x = n_partitions // mpi_size
+#            if n_partitions < mpi_size:
+#                for i, partition in enumerate(self.partitions.matrix.flat):
+#                    if i == mpi_rank:
+#                        partition._process_partition = True
+#                    else:
+#                        partition._process_partition = False
+#                    # --- End: if
+#                # --- End: for
+#                self._max_partitions_per_process = 1
+#            elif n_partitions % mpi_size == 0:
+#                for i, partition in enumerate(self.partitions.matrix.flat):
+#                    if i // x == mpi_rank:
+#                        partition._process_partition = True
+#                    else:
+#                        partition._process_partition = False
+#                    # --- End: if
+#                # --- End: for
+#                self._max_partitions_per_process = x
+#            else:
+#                for i, partition in enumerate(self.partitions.matrix.flat):
+#                    if i // (x + 1) == mpi_rank:
+#                        partition._process_partition = True
+#                    else:
+#                        partition._process_partition = False
+#                    # --- End: if
+#                # --- End: for
+#                self._max_partitions_per_process = x + 1
+#            # --- End: if
+#        else:
+#            # Flag all partitions for processing on all processes
+#            for partition in self.partitions.matrix.flat:
+#                partition._process_partition = True
+#        # --- End: if
+#
+#    def _share_lock_files(self, parallelise):
+#        '''TODO
+#
+#        '''
+#        if parallelise:
+#            # Only gather the lock files if the subarrays have been
+#            # gathered between procesors, otherwise this will result
+#            # in incorrect handling of the removal of temporary files
+#            for partition in self.partitions.matrix.flat:
+#                if partition.in_cached_file:
+#                    # The subarray is in a temporary file
+#                    lock_file = partition._register_temporary_file()
+#                    lock_files = mpi_comm.allgather(lock_file)
+#                    partition._update_lock_files(lock_files)
+#                # --- End: if
+#            # --- End: for
+#        # --- End: if
+#    # --- End: if
+#
+#    @classmethod
+#    def _share_partitions(cls, processed_partitions, parallelise):
+#        '''TODO
+#
+#        '''
+#        # Share the partitions processed on each rank with every other
+#        # rank. If parallelise is False then there is nothing to be done
+#        if parallelise:
+#            # List to contain sublists of processed partitions from each
+#            # rank
+#            partition_list = []
+#
+#            for rank in range(mpi_size):
+#                # Get the numper of processed partitions on each rank
+#                if mpi_rank == rank:
+#                    n_partitions = len(processed_partitions)
+#                else:
+#                    n_partitions = None
+#                # --- End: if
+#                n_partitions = mpi_comm.bcast(n_partitions, root=rank)
+#
+#                # Share each of the processed partitions on each rank with
+#                # all the other ranks using broadcasting
+#                if mpi_rank != rank:
+#                    shared_partitions = []
+#                # --- End: if
+#
+#                for i in range(n_partitions):
+#                    if mpi_rank == rank:
+#                        partition = processed_partitions[i]
+#                        if (isinstance(partition._subarray, numpy_ndarray)
+#                                and partition._subarray.dtype.kind in
+#                                {'b', 'i', 'u', 'f', 'c'}):
+#                            # If the subarray is a supported numpy
+#                            # array, swap it out before broadcasting
+#                            # the partition
+#                            subarray = partition._subarray
+#                            partition._subarray = None
+#                            partition._subarray_removed = True
+#                            partition._subarray_dtype = subarray.dtype
+#                            partition._subarray_shape = subarray.shape
+#                            partition._subarray_isMA = numpy_ma_isMA(
+#                                subarray)
+#                            if partition._subarray_isMA:
+#                                partition._subarray_is_masked = (
+#                                    subarray.mask is not numpy_ma_nomask)
+#                            else:
+#                                partition._subarray_is_masked = False
+#                            # --- End: if
+#                        else:
+#                            # The partition's subarray is either not a
+#                            # numpy array or is, for example, an array
+#                            # of strings, so it will be pickled and
+#                            # broadcast with the partition.
+#                            partition._subarray_removed = False
+#                        # --- End: if
+#                    else:
+#                        partition = None
+#                    # --- End: if
+#
+#                    # Pickle and broadcast the partition with or
+#                    # without the subarray
+#                    partition = mpi_comm.bcast(partition, root=rank)
+#
+#                    if partition._subarray_removed:
+#                        # If the subarray is a supported numpy array
+#                        # broadcast it without pickling and swap it
+#                        # back into the partition
+#                        if partition._subarray_isMA:
+#                            # If the subarray is a masked array broadcast
+#                            # the data and the mask separately
+#                            if mpi_rank != rank:
+#                                if partition._subarray_is_masked:
+#                                    subarray = numpy_ma_masked_all(
+#                                        partition._subarray_shape,
+#                                        dtype=partition._subarray_dtype
+#                                    )
+#                                else:
+#                                    subarray = numpy_ma_empty(
+#                                        partition._subarray_shape,
+#                                        dtype=partition._subarray_dtype
+#                                    )
+#                                # --- End: if
+#                            # --- End: if
+#                            mpi_comm.Bcast(subarray.data, root=rank)
+#                            if partition._subarray_is_masked:
+#                                mpi_comm.Bcast(subarray.mask, root=rank)
+#                            # --- End: if
+#                        else:
+#                            if mpi_rank != rank:
+#                                subarray = numpy_empty(
+#                                    partition._subarray_shape,
+#                                    dtype=partition._subarray_dtype
+#                                )
+#                            # --- End: if
+#                            mpi_comm.Bcast(subarray, root=rank)
+#                        # --- End: if
+#
+#                        # Swap the subarray back into the partition
+#                        partition._subarray = subarray
+#                        if mpi_rank == rank:
+#                            # The result of broadcasting an object is
+#                            # different to the original object even on the
+#                            # root PE, so the new partition with the numpy
+#                            # subarray must be put back in the list of
+#                            # processed partitions
+#                            processed_partitions[i] = partition
+#                        # --- End: if
+#
+#                        # Clean up temporary attributes
+#                        del partition._subarray_dtype
+#                        del partition._subarray_shape
+#                        del partition._subarray_isMA
+#                        del partition._subarray_is_masked
+#                    elif mpi_rank == rank:
+#                        # Remove the subarray from partition so that
+#                        # when it is deleted it does not delete the
+#                        # temporary file
+#                        partition._subarray = None
+#                    # --- End: if
+#
+#                    # Clean up temporary attribute
+#                    del partition._subarray_removed
+#
+#                    if mpi_rank != rank:
+#                        shared_partitions.append(partition)
+#                    # --- End: if
+#                # --- End: for
+#
+#                # Add the sublist of processed partitions from each rank
+#                # to a list
+#                if mpi_rank == rank:
+#                    partition_list.append(processed_partitions)
+#                else:
+#                    partition_list.append(shared_partitions)
+#                # --- End: if
+#            # --- End: for
+#
+#            # Flatten the list of lists of processed partitions
+#            processed_partitions = [item
+#                                    for sublist in partition_list
+#                                    for item in sublist]
+#        # --- End: if
+#        return processed_partitions
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -2787,7 +2475,7 @@ place.
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
-        if (not mpi_on and not _preserve_partitions and self._pmndim and
+        if (not _preserve_partitions and self._pmndim and
                 self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
             self.varray
 
@@ -2847,6 +2535,25 @@ place.
             return
 
         return out
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        '''TODODASK
+
+        should this be called `to_memory`? This is part of the larger
+        scheme for memory management
+
+    **Performance**
+
+    `persist` causes all delayed operations to be computed.
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask().persist()
+        d._set_dask(dx)
+        
+        return d
 
     def loads(self, j, chunk=True):
         '''TODO
@@ -3113,7 +2820,6 @@ place.
 
         dtype = d['dtype']
         self._dtype = dtype
-#        print ('P45 asdasdasds', dtype)
         self.Units = units
         self._axes = axes
 
@@ -3626,25 +3332,26 @@ place.
     def _chunk_add_partitions(self, d, axes):
         '''TODO
         '''
-        for axis in axes[::-1]:
-            extra_bounds = d.get(axis)
-
-            if not extra_bounds:
-                continue
-
-            if axis not in self.partitions.axes:
-                # print('self.partitions.matrix.shape=',
-                #       self.partitions.matrix.shape, axis)
-                # Create a new partition axis
-                self.partitions.insert_dimension(axis, inplace=True)
-#               print('self.partitions.matrix.shape=',
-#                   self.partitions.matrix.shape)
-
-            # Create the new partitions
-            self.add_partitions(sorted(set(extra_bounds)), axis)
-
-            # Update d in-place
-            d[axis] = []
+        raise DeprecationError("TODODASK")
+#        for axis in axes[::-1]:
+#            extra_bounds = d.get(axis)
+#
+#            if not extra_bounds:
+#                continue
+#
+#            if axis not in self.partitions.axes:
+#                # print('self.partitions.matrix.shape=',
+#                #       self.partitions.matrix.shape, axis)
+#                # Create a new partition axis
+#                self.partitions.insert_dimension(axis, inplace=True)
+##               print('self.partitions.matrix.shape=',
+##                   self.partitions.matrix.shape)
+#
+#            # Create the new partitions
+#            self.add_partitions(sorted(set(extra_bounds)), axis)
+#
+#            # Update d in-place
+#            d[axis] = []
 
     def chunk(self, chunksize=None, total=None, omit_axes=None,
               pmshape=None):
@@ -3674,227 +3381,228 @@ place.
     >>> d.chunk(100000, omit_axes=[3, 4])
 
         '''
-        if not chunksize:
-            # Set the default chunk size
-            chunksize = cf_chunksize()
-
-# TODO - check intger division for python3
-
-        # Define the factor which, when multiplied by the size of a
-        # partition, determines how many chunks are in the partition.
-        factor = (self.dtype.itemsize + 1.0)/chunksize
-
-        if not total and self._size*factor <= 1:
-            # Don't do any partitioning if the data array is already
-            # smaller than the chunk size. Note:
-            # self._size*factor=(no. bytes in array)/(no. bytes in a
-            # chunk)
-            return
-
-        # Initialise the dictionary relating each axis to new
-        # partition boundaries for that axis.
-        #
-        # E.g. {'dim0': [], 'dim1': []}
-        axes = self._axes
-        d = {}
-        for axis in axes:
-            d[axis] = []
-
-        shape = self._shape
-
-        if total:
-            if omit_axes:
-                omit_axes = list(omit_axes)
-            else:
-                omit_axes = []
-
-            for i in sorted(total):
-                if i in omit_axes:
-                    raise ValueError(
-                        "Chunking error: Axis {} can't be specified by "
-                        "both 'total' and 'omit_axes' keywords".format(i)
-                    )
-
-                omit_axes.append(i)
-
-                d[axes[i]] = list(range(1, shape[i]))
-            # --- End: for
-
-            self._chunk_add_partitions(d, axes)
-        # --- End: if
-
-        if pmshape:
-            if len(pmshape) != self._ndim:
-                raise ValueError("Bad pmshape {}".format(pmshape))
-
-            if self._pmsize > 1:
-                raise ValueError(
-                    "Can't set pmshape when there is more than one "
-                    "partition: {}".format(self._pmsize)
-                )
-
-#            shape = self._shape
-            for i, n_chunks in enumerate(pmshape):
-                axis_size = shape[i]
-
-                if axis_size == 1:
-                    if n_chunks != 1:
-                        raise ValueError("Bad shape: {}".format(pmshape))
-                    continue
-
-                if n_chunks == 1:
-                    continue
-
-                axis = axes[i]
-
-                step = int(axis_size/n_chunks)
-                if step < 1:
-                    raise ValueError("Bad shape: {}".format(pmshape))
-
-                d[axis] = list(range(step, axis_size, step))
-
-                if len(d[axis]) + 1 != n_chunks:
-                    raise ValueError(
-                        'asdasdasdasds {} {} : {}'.format(
-                            len(d[axis]) + 1, n_chunks, d[axis])
-                    )
-
-                if n_chunks <= 1:
-                    break
-            # --- End: for
-
-            self._chunk_add_partitions(d, axes)
-
-            return
-        # --- End: if
-
-        # Still here?
-        order = list(range(self._ndim))
-
-        if omit_axes:
-            # Do not chunk particular axes
-            order = [i for i in order if i not in omit_axes]
-
-        while order:  # Only enter if there are axes to chunk
-
-            (largest_partition_size, largest_partition) = sorted(
-                [(partition.size, partition)
-                 for partition in self.partitions.matrix.flat],
-                key=itemgetter(0))[-1]
-
-            # n_chunks = number of equal sized bits that the
-            #            partition needs to be split up into so
-            #            that each bit's size is less than the
-            #            chunk size.
-            n_chunks = int(largest_partition_size*factor + 0.5)
-
-            if n_chunks <= 1:
-                break
-
-            # Loop round the master array axes in the order
-            # specified. This order will be range(0, self.dim)
-            # unless the total parameter has been set, in which
-            # case the total axes will be looped through first.
-            for i in order:
-                axis_size = largest_partition.shape[i]
-                if axis_size == 1:
-                    continue
-
-                axis = axes[i]
-
-                location = largest_partition.location[i]
-
-                if axis_size <= n_chunks:
-                    d[axis] = list(range(location[0] + 1, location[1]))
-                    n_chunks = int(math_ceil(float(n_chunks)/axis_size))
-                else:
-                    step = int(axis_size/n_chunks)
-                    d[axis] = list(
-                        range(location[0] + step, location[1], step))
-                    break
-
-                if n_chunks <= 1:
-                    break
-            # --- End: for
-
-            self._chunk_add_partitions(d, axes)
-        # --- End: while
-
-#        # ------------------------------------------------------------
-#        # Find any new partition boundaries for each axis
-#        # ------------------------------------------------------------
-#        for indices in x:
-#            for partition in self.partitions.matrix[indices].flat:
+        raise DeprecationError("TODODASK. Use 'rechunk' instead")
+#        if not chunksize:
+#            # Set the default chunk size
+#            chunksize = cf_chunksize()
 #
-#                # n_chunks = number of equal sized bits that the
-#                #            partition needs to be split up into so
-#                #            that each bit's size is less than the
-#                #            chunk size.
-#                n_chunks = int(partition.size*factor + 0.5)
+## TODO - check intger division for python3
 #
-#                if not total and not pmshape and n_chunks <= 1:
+#        # Define the factor which, when multiplied by the size of a
+#        # partition, determines how many chunks are in the partition.
+#        factor = (self.dtype.itemsize + 1.0)/chunksize
+#
+#        if not total and self._size*factor <= 1:
+#            # Don't do any partitioning if the data array is already
+#            # smaller than the chunk size. Note:
+#            # self._size*factor=(no. bytes in array)/(no. bytes in a
+#            # chunk)
+#            return
+#
+#        # Initialise the dictionary relating each axis to new
+#        # partition boundaries for that axis.
+#        #
+#        # E.g. {'dim0': [], 'dim1': []}
+#        axes = self._axes
+#        d = {}
+#        for axis in axes:
+#            d[axis] = []
+#
+#        shape = self._shape
+#
+#        if total:
+#            if omit_axes:
+#                omit_axes = list(omit_axes)
+#            else:
+#                omit_axes = []
+#
+#            for i in sorted(total):
+#                if i in omit_axes:
+#                    raise ValueError(
+#                        "Chunking error: Axis {} can't be specified by "
+#                        "both 'total' and 'omit_axes' keywords".format(i)
+#                    )
+#
+#                omit_axes.append(i)
+#
+#                d[axes[i]] = list(range(1, shape[i]))
+#            # --- End: for
+#
+#            self._chunk_add_partitions(d, axes)
+#        # --- End: if
+#
+#        if pmshape:
+#            if len(pmshape) != self._ndim:
+#                raise ValueError("Bad pmshape {}".format(pmshape))
+#
+#            if self._pmsize > 1:
+#                raise ValueError(
+#                    "Can't set pmshape when there is more than one "
+#                    "partition: {}".format(self._pmsize)
+#                )
+#
+##            shape = self._shape
+#            for i, n_chunks in enumerate(pmshape):
+#                axis_size = shape[i]
+#
+#                if axis_size == 1:
+#                    if n_chunks != 1:
+#                        raise ValueError("Bad shape: {}".format(pmshape))
 #                    continue
 #
-#                # Loop round the master array axes in the order
-#                # specified. This order will be range(0, self.dim)
-#                # unless the total parameter has been set, in which
-#                # case the total axes will be looped through first.
-#                for i in order:
+#                if n_chunks == 1:
+#                    continue
 #
-#                    axis_size = partition.shape[i]
-#                    if axis_size == 1:
-#                        if pmshape and pmshape[i] != 1:
-#                            raise ValueError("Bad pmshape {}".format(pmshape))
-#                        continue
+#                axis = axes[i]
 #
-#                    axis = axes[i]
+#                step = int(axis_size/n_chunks)
+#                if step < 1:
+#                    raise ValueError("Bad shape: {}".format(pmshape))
 #
-#                    if pmshape:
-#                        n_chunks = pmshape[i]
-#                    elif total and i in total:
-#                        # This axis has been flagged for maximal
-#                        # partitioning
-#                        if axis_size > n_chunks:
-#                            n_chunks = axis_size
+#                d[axis] = list(range(step, axis_size, step))
 #
-#                    if n_chunks <= 1:
-#                        continue
+#                if len(d[axis]) + 1 != n_chunks:
+#                    raise ValueError(
+#                        'asdasdasdasds {} {} : {}'.format(
+#                            len(d[axis]) + 1, n_chunks, d[axis])
+#                    )
 #
-#                    location = partition.location[i]
-#
-#                    if axis_size <= n_chunks:
-#                        d[axis].extend(range(location[0]+1, location[1]))
-#                        n_chunks = int(math_ceil(float(n_chunks)/axis_size))
-#                    else:
-#                        step = int(axis_size/n_chunks)
-#                        new_partition_boundaries = range(
-#                            location[0]+step, location[1], step)
-#                        d[axis].extend(new_partition_boundaries)
-#
-#                        if not pmshape:
-#                            break
-#                        elif len(new_partition_boundaries) + 1 != n_chunks:
-#                            raise ValueError("Bad pmshape {}".format(pmshape))
-#                # --- End: for
+#                if n_chunks <= 1:
+#                    break
 #            # --- End: for
-#        # --- End: for
 #
-#        # ------------------------------------------------------------
-#        # Create any new partition boundaries for each axis
-#        # ------------------------------------------------------------
-#        for axis in axes[::-1]:
-#            extra_bounds = d.get(axis)
+#            self._chunk_add_partitions(d, axes)
 #
-#            if extra_bounds is None:
-#                continue
+#            return
+#        # --- End: if
 #
-#            if axis not in self.partitions.axes:
-#                # Create a new partition axis
-#                self.partitions.expand_dims(axis, i=True)
+#        # Still here?
+#        order = list(range(self._ndim))
 #
-#            # Create the new partitions
-#            self.add_partitions(sorted(set(extra_bounds)), axis)
-#        # --- End: for
+#        if omit_axes:
+#            # Do not chunk particular axes
+#            order = [i for i in order if i not in omit_axes]
+#
+#        while order:  # Only enter if there are axes to chunk
+#
+#            (largest_partition_size, largest_partition) = sorted(
+#                [(partition.size, partition)
+#                 for partition in self.partitions.matrix.flat],
+#                key=itemgetter(0))[-1]
+#
+#            # n_chunks = number of equal sized bits that the
+#            #            partition needs to be split up into so
+#            #            that each bit's size is less than the
+#            #            chunk size.
+#            n_chunks = int(largest_partition_size*factor + 0.5)
+#
+#            if n_chunks <= 1:
+#                break
+#
+#            # Loop round the master array axes in the order
+#            # specified. This order will be range(0, self.dim)
+#            # unless the total parameter has been set, in which
+#            # case the total axes will be looped through first.
+#            for i in order:
+#                axis_size = largest_partition.shape[i]
+#                if axis_size == 1:
+#                    continue
+#
+#                axis = axes[i]
+#
+#                location = largest_partition.location[i]
+#
+#                if axis_size <= n_chunks:
+#                    d[axis] = list(range(location[0] + 1, location[1]))
+#                    n_chunks = int(math_ceil(float(n_chunks)/axis_size))
+#                else:
+#                    step = int(axis_size/n_chunks)
+#                    d[axis] = list(
+#                        range(location[0] + step, location[1], step))
+#                    break
+#
+#                if n_chunks <= 1:
+#                    break
+#            # --- End: for
+#
+#            self._chunk_add_partitions(d, axes)
+#        # --- End: while
+#
+##        # ------------------------------------------------------------
+##        # Find any new partition boundaries for each axis
+##        # ------------------------------------------------------------
+##        for indices in x:
+##            for partition in self.partitions.matrix[indices].flat:
+##
+##                # n_chunks = number of equal sized bits that the
+##                #            partition needs to be split up into so
+##                #            that each bit's size is less than the
+##                #            chunk size.
+##                n_chunks = int(partition.size*factor + 0.5)
+##
+##                if not total and not pmshape and n_chunks <= 1:
+##                    continue
+##
+##                # Loop round the master array axes in the order
+##                # specified. This order will be range(0, self.dim)
+##                # unless the total parameter has been set, in which
+##                # case the total axes will be looped through first.
+##                for i in order:
+##
+##                    axis_size = partition.shape[i]
+##                    if axis_size == 1:
+##                        if pmshape and pmshape[i] != 1:
+##                            raise ValueError("Bad pmshape {}".format(pmshape))
+##                        continue
+##
+##                    axis = axes[i]
+##
+##                    if pmshape:
+##                        n_chunks = pmshape[i]
+##                    elif total and i in total:
+##                        # This axis has been flagged for maximal
+##                        # partitioning
+##                        if axis_size > n_chunks:
+##                            n_chunks = axis_size
+##
+##                    if n_chunks <= 1:
+##                        continue
+##
+##                    location = partition.location[i]
+##
+##                    if axis_size <= n_chunks:
+##                        d[axis].extend(range(location[0]+1, location[1]))
+##                        n_chunks = int(math_ceil(float(n_chunks)/axis_size))
+##                    else:
+##                        step = int(axis_size/n_chunks)
+##                        new_partition_boundaries = range(
+##                            location[0]+step, location[1], step)
+##                        d[axis].extend(new_partition_boundaries)
+##
+##                        if not pmshape:
+##                            break
+##                        elif len(new_partition_boundaries) + 1 != n_chunks:
+##                            raise ValueError("Bad pmshape {}".format(pmshape))
+##                # --- End: for
+##            # --- End: for
+##        # --- End: for
+##
+##        # ------------------------------------------------------------
+##        # Create any new partition boundaries for each axis
+##        # ------------------------------------------------------------
+##        for axis in axes[::-1]:
+##            extra_bounds = d.get(axis)
+##
+##            if extra_bounds is None:
+##                continue
+##
+##            if axis not in self.partitions.axes:
+##                # Create a new partition axis
+##                self.partitions.expand_dims(axis, i=True)
+##
+##            # Create the new partitions
+##            self.add_partitions(sorted(set(extra_bounds)), axis)
+##        # --- End: for
 
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
@@ -4561,7 +4269,7 @@ place.
                     new_axes = []
                     existing_axes = self._all_axis_names()
                     for n in new_shape:
-                        axis = data0._new_axis_identifier(existing_axes)
+                        axis = new_axis_identifier(existing_axes)
                         existing_axes.append(axis)
                         new_axes.append(axis)
                     # --- End: for
@@ -4866,65 +4574,16 @@ place.
 
         return out
 
-#        new = self.copy()
-#
-#        pda_args = new.pda_args(revert_to_file=True)
-#
-#        for partition in new.partitions.matrix.flat:
-#            array = partition.dataarray(**pda_args)
-#
-#            i = iter(values)
-#            value = next(i)
-#            out = (array == value)
-#            for value in i:
-#                out |= (array == value)
-#
-#            partition.subarray = out
-#            partition.close()
-#        # --- End: for
-#
-#        new.dtype = bool
-#
-#        return new
-
     def __query_wi__(self, value):
         '''TODO
         '''
         return (self >= value[0]) & (self <= value[1])
-
-#        new = self.copy()
-#
-#        pda_args = new.pda_args(revert_to_file=True)
-#
-#        for partition in new.partitions.matrix.flat:
-#            array = partition.dataarray(**pda_args)
-#            print(array, new.Units, type(value0), value1)
-#            partition.subarray = (array >= value0) & (array <= value1)
-#            partition.close()
-#        # --- End: for
-#
-#        new.dtype = bool
-#
-#        return new
 
     def __query_wo__(self, value):
         '''TODO
 
         '''
         return (self < value[0]) | (self > value[1])
-#        new = self.copy()
-#
-#        pda_args = new.pda_args(revert_to_file=True)
-#
-#        for partition in new.partitions.matrix.flat:
-#            array = partition.dataarray(**pda_args)
-#            partition.subarray = (array < value0) | (array > value1)
-#            partition.close()
-#        # --- End: for
-#
-#        new.dtype = bool
-#
-#        return new
 
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
@@ -5384,19 +5043,13 @@ place.
     [[1 2 3 4 5]]
 
         '''
-        self.to_memory()
+        dx = self._get_dask()
+        dx = getattr(operator, operation)(dx)
 
-        new = self.copy()
+        out = self.copy()
+        out._set_dask(dx)
 
-        config = new.partition_configuration(readonly=True)
-
-        for partition in new.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            partition.subarray = getattr(operator, operation)(array)
-            partition.close()
-
-        return new
+        return out
 
     def __add__(self, other):
         '''The binary arithmetic operation ``+``
@@ -5807,85 +5460,85 @@ place.
         '''
         return self._unary_operation('__pos__')
 
-    def _all_axis_names(self):
-        '''Return a set of all the dimension names in use by the data array.
-
-    Note that the output set includes dimensions of individual
-    partitions which are not dimensions of the master data array.
-
-    :Returns:
-
-        `list` of `str`
-            The axis names.
-
-    **Examples:**
-
-    >>> d._axes
-    ['dim1', 'dim0']
-    >>> d.partitions.info('_dimensions')
-    [['dim0', 'dim0'],
-     ['dim1', 'dim0', 'dim2']]
-    >>> d._all_axis_names()
-    ['dim2', dim0', 'dim1']
-
-        '''
-        all_axes = self._all_axes
-        if not all_axes:
-            return list(self._axes)
-        else:
-            return list(all_axes)
-
-    def _change_axis_names(self, axis_map):
-        '''Change the axis names.
-
-    The axis names are arbitrary, so mapping them to another arbitrary
-    collection does not change the data array values, units, nor axis
-    order.
-
-        '''
-        # Find any axis names which are not mapped. If there are any,
-        # then update axis_map.
-        all_axes = self._all_axes
-        if all_axes:
-            d = set(all_axes).difference(axis_map)
-            if d:
-                axis_map = axis_map.copy()
-                existing_axes = list(all_axes)
-                for axis in d:
-                    if axis in axis_map.values():
-                        axis_map[axis] = self._new_axis_identifier(
-                            existing_axes)
-                        existing_axes.append(axis)
-                    else:
-                        axis_map[axis] = axis
-        # --- End: if
-
-        if all([axis0 == axis1 for axis0, axis1 in axis_map.items()]):
-            # Return without doing anything if the mapping is null
-            return
-
-        # Axes
-        self._axes = [axis_map[axis] for axis in self._axes]
-
-        # All axes
-        if all_axes:
-            self._all_axes = tuple([axis_map[axis] for axis in all_axes])
-
-        # Flipped axes
-#        flip = self._flip
-        flip = self._flip()
-        if flip:
-            self._flip([axis_map[axis] for axis in flip])
-#            self._flip = [axis_map[axis] for axis in flip]
-
-        # HDF chunks
-        chunks = self._HDF_chunks
-        if chunks:
-            self._HDF_chunks = dict([(axis_map[axis], size)
-                                     for axis, size in chunks.items()])
-
-        # Partitions in the partition matrix
-        self.partitions.change_axis_names(axis_map)
+#    def _all_axis_names(self):
+#        '''Return a set of all the dimension names in use by the data array.
+#
+#    Note that the output set includes dimensions of individual
+#    partitions which are not dimensions of the master data array.
+#
+#    :Returns:
+#
+#        `list` of `str`
+#            The axis names.
+#
+#    **Examples:**
+#
+#    >>> d._axes
+#    ['dim1', 'dim0']
+#    >>> d.partitions.info('_dimensions')
+#    [['dim0', 'dim0'],
+#     ['dim1', 'dim0', 'dim2']]
+#    >>> d._all_axis_names()
+#    ['dim2', dim0', 'dim1']
+#
+#        '''
+#        all_axes = self._all_axes
+#        if not all_axes:
+#            return list(self._axes)
+#        else:
+#            return list(all_axes)
+#
+#    def _change_axis_names(self, axis_map):
+#        '''Change the axis names.
+#
+#    The axis names are arbitrary, so mapping them to another arbitrary
+#    collection does not change the data array values, units, nor axis
+#    order.
+#
+#        '''
+#        # Find any axis names which are not mapped. If there are any,
+#        # then update axis_map.
+#        all_axes = self._all_axes
+#        if all_axes:
+#            d = set(all_axes).difference(axis_map)
+#            if d:
+#                axis_map = axis_map.copy()
+#                existing_axes = list(all_axes)
+#                for axis in d:
+#                    if axis in axis_map.values():
+#                        axis_map[axis] = self._new_axis_identifier(
+#                            existing_axes)
+#                        existing_axes.append(axis)
+#                    else:
+#                        axis_map[axis] = axis
+#        # --- End: if
+#
+#        if all([axis0 == axis1 for axis0, axis1 in axis_map.items()]):
+#            # Return without doing anything if the mapping is null
+#            return
+#
+#        # Axes
+#        self._axes = [axis_map[axis] for axis in self._axes]
+#
+#        # All axes
+#        if all_axes:
+#            self._all_axes = tuple([axis_map[axis] for axis in all_axes])
+#
+#        # Flipped axes
+##        flip = self._flip
+#        flip = self._flip()
+#        if flip:
+#            self._flip([axis_map[axis] for axis in flip])
+##            self._flip = [axis_map[axis] for axis in flip]
+#
+#        # HDF chunks
+#        chunks = self._HDF_chunks
+#        if chunks:
+#            self._HDF_chunks = dict([(axis_map[axis], size)
+#                                     for axis, size in chunks.items()])
+#
+#        # Partitions in the partition matrix
+#        self.partitions.change_axis_names(axis_map)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
@@ -6085,7 +5738,7 @@ place.
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
-        if (not mpi_on and not _preserve_partitions and d._pmndim and
+        if (not _preserve_partitions and d._pmndim and
                 d.fits_in_one_chunk_in_memory(d.dtype.itemsize)):
             d.varray
 
@@ -6123,58 +5776,58 @@ place.
             extra_memory=False
         )
 
-        if mpi_on:
-            mode = collapse_parallel_mode()
-            if mode == 0:
-                # Calculate the number of partitions in each subspace,
-                # assuming this will always be the same in each one and
-                # compare to the number of partitions in the new partition
-                # matrix times the maximum number of partitions per process in
-                # each case. The latter is calculated by
-                # _flag_partitions_for_processing
-                new._flag_partitions_for_processing()
-                partition = new.partitions.matrix.item(
-                    (0,) * new._pmndim)  # "first" partition of new
-                indices = partition.indices[:n_non_collapse_axes] + c_slice
-                data = d[indices]
-                data._flag_partitions_for_processing()
-                n_data = data.partitions.matrix.size
-                n_new = new.partitions.matrix.size
-
-                if (new._max_partitions_per_process*n_data >
-                        data._max_partitions_per_process*n_new):
-                    # "turn on" parallelism in _collapse_subspace
-                    _parallelise_collapse_sub = True
-                    # "turn off" parallelism in _collapse
-                    _parallelise_collapse = False
-                else:
-                    # "turn off" parallelism in _collapse_subspace
-                    _parallelise_collapse_sub = False
-                    # "turn on" parallelism in _collapse
-                    _parallelise_collapse = True
-                # --- End: if
-            elif mode == 1:
-                # "turn off" parallelism in _collapse_subspace
-                _parallelise_collapse_sub = False
-                # "turn on" parallelism in _collapse
-                _parallelise_collapse = True
-            elif mode == 2:
-                # "turn on" parallelism in _collapse_subspace
-                _parallelise_collapse_sub = True
-                # "turn off" parallelism in _collapse
-                _parallelise_collapse = False
-            else:
-                raise ValueError('Invalid collapse parallel mode')
-            # --- End: if
-        else:
-            # "turn off" parallelism in both functions
-            _parallelise_collapse_sub = False
-            _parallelise_collapse = False
-
-        # Flag which partitions will be processed on this rank. If
-        # _parallelise_collapse is False then all partitions will be
-        # flagged for processing.
-        new._flag_partitions_for_processing(_parallelise_collapse)
+#        if mpi_on:
+#            mode = collapse_parallel_mode()
+#            if mode == 0:
+#                # Calculate the number of partitions in each subspace,
+#                # assuming this will always be the same in each one and
+#                # compare to the number of partitions in the new partition
+#                # matrix times the maximum number of partitions per process in
+#                # each case. The latter is calculated by
+#                # _flag_partitions_for_processing
+#                new._flag_partitions_for_processing()
+#                partition = new.partitions.matrix.item(
+#                    (0,) * new._pmndim)  # "first" partition of new
+#                indices = partition.indices[:n_non_collapse_axes] + c_slice
+#                data = d[indices]
+#                data._flag_partitions_for_processing()
+#                n_data = data.partitions.matrix.size
+#                n_new = new.partitions.matrix.size
+#
+#                if (new._max_partitions_per_process*n_data >
+#                        data._max_partitions_per_process*n_new):
+#                    # "turn on" parallelism in _collapse_subspace
+#                    _parallelise_collapse_sub = True
+#                    # "turn off" parallelism in _collapse
+#                    _parallelise_collapse = False
+#                else:
+#                    # "turn off" parallelism in _collapse_subspace
+#                    _parallelise_collapse_sub = False
+#                    # "turn on" parallelism in _collapse
+#                    _parallelise_collapse = True
+#                # --- End: if
+#            elif mode == 1:
+#                # "turn off" parallelism in _collapse_subspace
+#                _parallelise_collapse_sub = False
+#                # "turn on" parallelism in _collapse
+#                _parallelise_collapse = True
+#            elif mode == 2:
+#                # "turn on" parallelism in _collapse_subspace
+#                _parallelise_collapse_sub = True
+#                # "turn off" parallelism in _collapse
+#                _parallelise_collapse = False
+#            else:
+#                raise ValueError('Invalid collapse parallel mode')
+#            # --- End: if
+#        else:
+#            # "turn off" parallelism in both functions
+#            _parallelise_collapse_sub = False
+#            _parallelise_collapse = False
+#
+#        # Flag which partitions will be processed on this rank. If
+#        # _parallelise_collapse is False then all partitions will be
+#        # flagged for processing.
+#        new._flag_partitions_for_processing(_parallelise_collapse)
 
         processed_partitions = []
         for pmindex, partition in numpy_ndenumerate(new.partitions.matrix):
@@ -6233,14 +5886,14 @@ place.
                 datatype = numpy_result_type(p_datatype, datatype)
         # --- End: for
 
-        # Share the lock files created by each rank for each partition
-        # now in a temporary file so that __del__ knows which lock
-        # files to check if present
-        new._share_lock_files(_parallelise_collapse)
+#        # Share the lock files created by each rank for each partition
+#        # now in a temporary file so that __del__ knows which lock
+#        # files to check if present
+#        new._share_lock_files(_parallelise_collapse)
 
-        new._all_axes = None
+#        new._all_axes = None
 #        new._flip = []
-        new._flip([])
+#        new._flip([])
         new._Units = new_units
         new.dtype = datatype
 
@@ -6318,7 +5971,7 @@ dimensions.
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
-        if (not mpi_on and not _preserve_partitions and data._pmndim
+        if (not _preserve_partitions and data._pmndim
                 and data.fits_in_memory(data.dtype.itemsize)):
             data.varray
 
@@ -6436,177 +6089,177 @@ dimensions.
             # --- End: if
         # --- End: for
 
-        if _parallelise_collapse_subspace:
-            # Aggregate the outputs of each rank using the group=True
-            # keyword on fpartial on rank 0 only
-            for rank in range(1, mpi_size):
-                if mpi_rank == rank:
-                    if out is None:
-                        # out is None, so will not be sent
-                        out_is_none = True
-                        mpi_comm.send(out_is_none, dest=0)
-                    else:
-                        out_is_none = False
-                        mpi_comm.send(out_is_none, dest=0)
-                        out_props = []
-                        for item in out:
-                            item_props = {}
-                            if (isinstance(item, numpy_ndarray) and
-                                    item.dtype.kind in
-                                    {'b', 'i', 'u', 'f', 'c'}):
-                                # The item is a supported numpy array,
-                                # so can be sent without pickling it.
-                                item_props['is_numpy_array'] = True
-                                item_props['isMA'] = numpy_ma_isMA(item)
-                                if item_props['isMA']:
-                                    item_props['is_masked'] = (
-                                        item.mask is not numpy_ma_nomask)
-                                else:
-                                    item_props['is_masked'] = False
-                                # --- End: if
-                                item_props['shape'] = item.shape
-                                item_props['dtype'] = item.dtype
-                            else:
-                                # The item is either not a numpy array
-                                # or is, for example, an array of
-                                # strings, so will be pickled when
-                                # sent.
-                                item_props['is_numpy_array'] = False
-                            # --- End: if
-                            out_props.append(item_props)
-                        # --- End: for
-
-                        # Send information about the properties of
-                        # each item in out so that it can be received
-                        # correctly.
-                        mpi_comm.send(out_props, dest=0)
-
-                        # Send each item in out to process 0 in the
-                        # appropriate way.
-                        for item, item_props in zip(out, out_props):
-                            if item_props['is_numpy_array']:
-                                if item_props['is_masked']:
-                                    mpi_comm.Send(item.data, dest=0)
-                                    mpi_comm.Send(item.mask, dest=0)
-                                elif item_props['isMA']:
-                                    mpi_comm.Send(item.data, dest=0)
-                                else:
-                                    mpi_comm.Send(item, dest=0)
-                                # --- End: if
-                            else:
-                                mpi_comm.send(item, dest=0)
-                            # --- End: if
-                        # --- End: for
-                elif mpi_rank == 0:
-                    p_out_is_none = mpi_comm.recv(source=rank)
-                    if p_out_is_none:
-                        # p_out is None so there is nothing to do
-                        continue
-                    else:
-                        # Receive information about the properties of
-                        # p_out.
-                        p_out_props = mpi_comm.recv(source=rank)
-
-                        # Receive each item in p_out in the correct
-                        # way according to its properties.
-                        p_out = []
-                        for item_props in p_out_props:
-                            if item_props['is_numpy_array']:
-                                if item_props['is_masked']:
-                                    item = numpy_ma_masked_all(
-                                        item_props['shape'],
-                                        dtype=item_props['dtype']
-                                    )
-                                    mpi_comm.Recv(item.data, source=rank)
-                                    mpi_comm.Recv(item.mask, source=rank)
-                                elif item_props['isMA']:
-                                    item = numpy_ma_empty(
-                                        item_props['shape'],
-                                        dtype=item_props['dtype']
-                                    )
-                                    mpi_comm.Recv(item.data, source=rank)
-                                else:
-                                    item = numpy_empty(
-                                        item_props['shape'],
-                                        dtype=item_props['dtype']
-                                    )
-                                    mpi_comm.Recv(item, source=rank)
-                            else:
-                                item = mpi_comm.recv(source=rank)
-                            # --- End: if
-                            p_out.append(item)
-                        # --- End: for
-                        p_out = tuple(p_out)
-
-                        # Aggregate out and p_out if out is not None.
-                        if out is None:
-                            out = p_out
-                        else:
-                            out = fpartial(out, p_out, group=True)
-                        # --- End: if
-                    # --- End: if
-                # --- End: for
-            # --- End: if
-
-            # Finalise
-            sub_samples = mpi_comm.gather(sub_samples, root=0)
-            if mpi_rank == 0:
-                sub_samples = sum(sub_samples)
-                out = self._collapse_finalise(
-                    ffinalise, out, sub_samples, masked, Nmax, mtol, data,
-                    n_non_collapse_axes
-                )
-            # --- End: if
-
-            # Broadcast the aggregated result back from process 0 to
-            # all processes.
-
-            # First communicate information about the result's
-            # properties.
-            if mpi_rank == 0:
-                out_props = {}
-                out_props['isMA'] = numpy_ma_isMA(out)
-                if out_props['isMA']:
-                    out_props['is_masked'] = out.mask is not numpy_ma_nomask
-                else:
-                    out_props['is_masked'] = False
-                # --- End: if
-                out_props['shape'] = out.shape
-                out_props['dtype'] = out.dtype
-            else:
-                out_props = None
-            # --- End: if
-            out_props = mpi_comm.bcast(out_props, root=0)
-
-            # Do the broadcast.
-            if out_props['is_masked']:
-                if mpi_rank != 0:
-                    out = numpy_ma_masked_all(out_props['shape'],
-                                              dtype=out_props['dtype'])
-                # --- End: if
-                mpi_comm.Bcast(out.data, root=0)
-                mpi_comm.Bcast(out.mask, root=0)
-            elif out_props['isMA']:
-                if mpi_rank != 0:
-                    out = numpy_ma_empty(out_props['shape'],
-                                         dtype=out_props['dtype'])
-                # --- End: if
-                mpi_comm.Bcast(out.data, root=0)
-            else:
-                if mpi_rank != 0:
-                    out = numpy_empty(out_props['shape'],
-                                      dtype=out_props['dtype'])
-                # --- End: if
-                mpi_comm.Bcast(out, root=0)
-            # --- End: if
-        else:
+#        if _parallelise_collapse_subspace:
+#            # Aggregate the outputs of each rank using the group=True
+#            # keyword on fpartial on rank 0 only
+#            for rank in range(1, mpi_size):
+#                if mpi_rank == rank:
+#                    if out is None:
+#                        # out is None, so will not be sent
+#                        out_is_none = True
+#                        mpi_comm.send(out_is_none, dest=0)
+#                    else:
+#                        out_is_none = False
+#                        mpi_comm.send(out_is_none, dest=0)
+#                        out_props = []
+#                        for item in out:
+#                            item_props = {}
+#                            if (isinstance(item, numpy_ndarray) and
+#                                    item.dtype.kind in
+#                                    {'b', 'i', 'u', 'f', 'c'}):
+#                                # The item is a supported numpy array,
+#                                # so can be sent without pickling it.
+#                                item_props['is_numpy_array'] = True
+#                                item_props['isMA'] = numpy_ma_isMA(item)
+#                                if item_props['isMA']:
+#                                    item_props['is_masked'] = (
+#                                        item.mask is not numpy_ma_nomask)
+#                                else:
+#                                    item_props['is_masked'] = False
+#                                # --- End: if
+#                                item_props['shape'] = item.shape
+#                                item_props['dtype'] = item.dtype
+#                            else:
+#                                # The item is either not a numpy array
+#                                # or is, for example, an array of
+#                                # strings, so will be pickled when
+#                                # sent.
+#                                item_props['is_numpy_array'] = False
+#                            # --- End: if
+#                            out_props.append(item_props)
+#                        # --- End: for
+#
+#                        # Send information about the properties of
+#                        # each item in out so that it can be received
+#                        # correctly.
+#                        mpi_comm.send(out_props, dest=0)
+#
+#                        # Send each item in out to process 0 in the
+#                        # appropriate way.
+#                        for item, item_props in zip(out, out_props):
+#                            if item_props['is_numpy_array']:
+#                                if item_props['is_masked']:
+#                                    mpi_comm.Send(item.data, dest=0)
+#                                    mpi_comm.Send(item.mask, dest=0)
+#                                elif item_props['isMA']:
+#                                    mpi_comm.Send(item.data, dest=0)
+#                                else:
+#                                    mpi_comm.Send(item, dest=0)
+#                                # --- End: if
+#                            else:
+#                                mpi_comm.send(item, dest=0)
+#                            # --- End: if
+#                        # --- End: for
+#                elif mpi_rank == 0:
+#                    p_out_is_none = mpi_comm.recv(source=rank)
+#                    if p_out_is_none:
+#                        # p_out is None so there is nothing to do
+#                        continue
+#                    else:
+#                        # Receive information about the properties of
+#                        # p_out.
+#                        p_out_props = mpi_comm.recv(source=rank)
+#
+#                        # Receive each item in p_out in the correct
+#                        # way according to its properties.
+#                        p_out = []
+#                        for item_props in p_out_props:
+#                            if item_props['is_numpy_array']:
+#                                if item_props['is_masked']:
+#                                    item = numpy_ma_masked_all(
+#                                        item_props['shape'],
+#                                        dtype=item_props['dtype']
+#                                    )
+#                                    mpi_comm.Recv(item.data, source=rank)
+#                                    mpi_comm.Recv(item.mask, source=rank)
+#                                elif item_props['isMA']:
+#                                    item = numpy_ma_empty(
+#                                        item_props['shape'],
+#                                        dtype=item_props['dtype']
+#                                    )
+#                                    mpi_comm.Recv(item.data, source=rank)
+#                                else:
+#                                    item = numpy_empty(
+#                                        item_props['shape'],
+#                                        dtype=item_props['dtype']
+#                                    )
+#                                    mpi_comm.Recv(item, source=rank)
+#                            else:
+#                                item = mpi_comm.recv(source=rank)
+#                            # --- End: if
+#                            p_out.append(item)
+#                        # --- End: for
+#                        p_out = tuple(p_out)
+#
+#                        # Aggregate out and p_out if out is not None.
+#                        if out is None:
+#                            out = p_out
+#                        else:
+#                            out = fpartial(out, p_out, group=True)
+#                        # --- End: if
+#                    # --- End: if
+#                # --- End: for
+#            # --- End: if
+#
+#            # Finalise
+#            sub_samples = mpi_comm.gather(sub_samples, root=0)
+#            if mpi_rank == 0:
+#                sub_samples = sum(sub_samples)
+#                out = self._collapse_finalise(
+#                    ffinalise, out, sub_samples, masked, Nmax, mtol, data,
+#                    n_non_collapse_axes
+#                )
+#            # --- End: if
+#
+#            # Broadcast the aggregated result back from process 0 to
+#            # all processes.
+#
+#            # First communicate information about the result's
+#            # properties.
+#            if mpi_rank == 0:
+#                out_props = {}
+#                out_props['isMA'] = numpy_ma_isMA(out)
+#                if out_props['isMA']:
+#                    out_props['is_masked'] = out.mask is not numpy_ma_nomask
+#                else:
+#                    out_props['is_masked'] = False
+#                # --- End: if
+#                out_props['shape'] = out.shape
+#                out_props['dtype'] = out.dtype
+#            else:
+#                out_props = None
+#            # --- End: if
+#            out_props = mpi_comm.bcast(out_props, root=0)
+#
+#            # Do the broadcast.
+#            if out_props['is_masked']:
+#                if mpi_rank != 0:
+#                    out = numpy_ma_masked_all(out_props['shape'],
+#                                              dtype=out_props['dtype'])
+#                # --- End: if
+#                mpi_comm.Bcast(out.data, root=0)
+#                mpi_comm.Bcast(out.mask, root=0)
+#            elif out_props['isMA']:
+#                if mpi_rank != 0:
+#                    out = numpy_ma_empty(out_props['shape'],
+#                                         dtype=out_props['dtype'])
+#                # --- End: if
+#                mpi_comm.Bcast(out.data, root=0)
+#            else:
+#                if mpi_rank != 0:
+#                    out = numpy_empty(out_props['shape'],
+#                                      dtype=out_props['dtype'])
+#                # --- End: if
+#                mpi_comm.Bcast(out, root=0)
+#            # --- End: if
+#        else:
             # In the case that the inner loop is not parallelised,
             # just finalise.
-            out = self._collapse_finalise(
-                ffinalise, out, sub_samples, masked, Nmax, mtol, data,
-                n_non_collapse_axes
-            )
-        # --- End: if
+        out = self._collapse_finalise(
+            ffinalise, out, sub_samples, masked, Nmax, mtol, data,
+            n_non_collapse_axes
+        )
+#        # --- End: if
 
         return out
 
@@ -6813,50 +6466,6 @@ dimensions.
 
         return weights
 
-    def _new_axis_identifier(self, existing_axes=None):
-        '''Return an axis name not being used by the data array.
-
-    The returned axis name will also not be referenced by partitions
-    of the partition matrix.
-
-    :Parameters:
-
-        existing_axes: sequence of `str`, optional
-
-    :Returns:
-
-        `str`
-            The new axis name.
-
-    **Examples:**
-
-    >>> d._all_axis_names()
-    ['dim1', 'dim0']
-    >>> d._new_axis_identifier()
-    'dim2'
-
-    >>> d._all_axis_names()
-    ['dim1', 'dim0', 'dim3']
-    >>> d._new_axis_identifier()
-    'dim4'
-
-    >>> d._all_axis_names()
-    ['dim5', 'dim6', 'dim7']
-    >>> d._new_axis_identifier()
-    'dim3'
-
-        '''
-        if existing_axes is None:
-            existing_axes = self._all_axis_names()
-
-        n = len(existing_axes)
-        axis = 'dim%d' % n
-        while axis in existing_axes:
-            n += 1
-            axis = 'dim%d' % n
-
-        return axis
-
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------
@@ -6876,18 +6485,18 @@ dimensions.
     @_Units.deleter
     def _Units(self): self._custom['_Units'] = _units_None
 
-    @property
-    def _auxiliary_mask(self):
-        '''Storage for the auxiliary mask.
-
-        '''
-        return self._custom['_auxiliary_mask']
-
-    @_auxiliary_mask.setter
-    def _auxiliary_mask(self, value): self._custom['_auxiliary_mask'] = value
-
-    @_auxiliary_mask.deleter
-    def _auxiliary_mask(self): del self._custom['_auxiliary_mask']
+#    @property
+#    def _auxiliary_mask(self):
+#        '''Storage for the auxiliary mask.
+#
+#        '''
+#        return self._custom['_auxiliary_mask']
+#
+#    @_auxiliary_mask.setter
+#    def _auxiliary_mask(self, value): self._custom['_auxiliary_mask'] = value
+#
+#    @_auxiliary_mask.deleter
+#    def _auxiliary_mask(self): del self._custom['_auxiliary_mask']
 
     @property
     def _cyclic(self):
@@ -6902,18 +6511,18 @@ dimensions.
     @_cyclic.deleter
     def _cyclic(self): del self._custom['_cyclic']
 
-    @property
-    def _dtype(self):
-        '''Storage for the data type.
-
-        '''
-        return self._custom['_dtype']
-
-    @_dtype.setter
-    def _dtype(self, value): self._custom['_dtype'] = value
-
-    @_dtype.deleter
-    def _dtype(self): del self._custom['_dtype']
+#    @property
+#    def _dtype(self):
+#        '''Storage for the data type.
+#
+#        '''
+#        return self._custom['_dtype']
+#
+#    @_dtype.setter
+#    def _dtype(self, value): self._custom['_dtype'] = value
+#
+#    @_dtype.deleter
+#    def _dtype(self): del self._custom['_dtype']
 
     @property
     def _HDF_chunks(self):
@@ -6928,91 +6537,89 @@ dimensions.
     @_HDF_chunks.deleter
     def _HDF_chunks(self): del self._custom['_HDF_chunks']
 
-    @property
-    def partitions(self):
-        '''Storage for the partitions matrix.
-
-        '''
-        return self._custom['partitions']
-
-    @partitions.setter
-    def partitions(self, value): self._custom['partitions'] = value
-
-    @partitions.deleter
-    def partitions(self): del self._custom['partitions']
-
-    @property
-    def _ndim(self):
-        '''Storage for the number of dimensions
-
-        '''
-        return self._custom['_ndim']
-
-    @_ndim.setter
-    def _ndim(self, value): self._custom['_ndim'] = value
-
-    @_ndim.deleter
-    def _ndim(self): del self._custom['_ndim']
-
-    @property
-    def _size(self):
-        '''Storage for the number of elements.
-
-        '''
-        return self._custom['_size']
-
-    @_size.setter
-    def _size(self, value): self._custom['_size'] = value
-
-    @_size.deleter
-    def _size(self): del self._custom['_size']
-
-    @property
-    def _shape(self):
-        '''Storage for the data shape.
-
-        '''
-        return self._custom['_shape']
-
-    @_shape.setter
-    def _shape(self, value): self._custom['_shape'] = value
-
-    @_shape.deleter
-    def _shape(self): del self._custom['_shape']
-
+#    @property
+#    def partitions(self):
+#        '''Storage for the partitions matrix.
+#
+#        '''
+#        return self._custom['partitions']
+#
+#    @partitions.setter
+#    def partitions(self, value): self._custom['partitions'] = value
+#
+#    @partitions.deleter
+#    def partitions(self): del self._custom['partitions']
+#
+#    @property
+#    def _ndim(self):
+#        '''Storage for the number of dimensions
+#
+#        '''
+#        return self._custom['_ndim']
+#
+#    @_ndim.setter
+#    def _ndim(self, value): self._custom['_ndim'] = value
+#
+#    @_ndim.deleter
+#    def _ndim(self): del self._custom['_ndim']
+#
+#    @property
+#    def _size(self):
+#        '''Storage for the number of elements.
+#
+#        '''
+#        return self._custom['_size']
+#
+#    @_size.setter
+#    def _size(self, value): self._custom['_size'] = value
+#
+#    @_size.deleter
+#    def _size(self): del self._custom['_size']
+#
+#    @property
+#    def _shape(self):
+#        '''Storage for the data shape.
+#
+#        '''
+#        return self._custom['_shape']
+#
+#    @_shape.setter
+#    def _shape(self, value): self._custom['_shape'] = value
+#
+#    @_shape.deleter
+#    def _shape(self): del self._custom['_shape']
+#
     @property
     def _axes(self):
-        '''Storage for the axis names.
-
-        '''
+        '''Storage for the axis names.'''
         return self._custom['_axes']
 
     @_axes.setter
     def _axes(self, value): self._custom['_axes'] = value
-
+    
     @_axes.deleter
     def _axes(self): del self._custom['_axes']
-
-    @property
-    def _all_axes(self):
-        '''Storage for TODO. Must be `None` or `tuple`.
-
-        '''
-        return self._custom['_all_axes']
-
-    @_all_axes.setter
-    def _all_axes(self, value): self._custom['_all_axes'] = value
-
-    @_all_axes.deleter
-    def _all_axes(self): del self._custom['_all_axes']
-
-    def _flip(self, *flip):
-        '''
-        '''
-        if flip:
-            self._custom['flip'] = flip[0]
-        else:
-            return self._custom['flip']
+   
+#    @property
+#    def _all_axes(self):
+#        '''Storage for TODO. Must be `None` or `tuple`.
+#
+#        '''
+#        return self._custom['_all_axes']
+#
+#    @_all_axes.setter
+#    def _all_axes(self, value): self._custom['_all_axes'] = value
+#
+#    @_all_axes.deleter
+#    def _all_axes(self): del self._custom['_all_axes']
+#
+#    def _flip(self, *flip):
+#        '''
+#        '''
+#        if flip:
+#            self._custom['flip'] = flip[0]
+#        else:
+#            return self._custom['flip']
 
     # ----------------------------------------------------------------
     # Attributes
@@ -7039,35 +6646,31 @@ dimensions.
 
     @Units.setter
     def Units(self, value):
-        units = getattr(self, '_Units', _units_None)
-        if units and not self._Units.equivalent(value, verbose=1):
+        old_units = getattr(self, '_Units', _units_None)
+        if old_units and not old_units.equivalent(value, verbose=1):
             raise ValueError(
-                "Can't set units (currently {!r}) to non-equivalent "
-                "units {!r}. Consider the override_units method.".format(
-                    units, value
-                )
+                f"Current units are {old_units!r}. Can't set to "
+                f"non-equivalent units {value!r}. "
+                "Use the override_units method instead."
             )
 
-        dtype = self.dtype
+        if self.Units.equals(value):
+            return
 
-        if dtype is not None:
-            if dtype.kind == 'i':
-                char = dtype.char
-                if char == 'i':
-                    old_units = getattr(self, '_Units', None)
-                    if old_units is not None and not old_units.equals(value):
-                        self.dtype = 'float32'
-                elif char == 'l':
-                    old_units = getattr(self, '_Units', None)
-                    if old_units is not None and not old_units.equals(value):
-                        self.dtype = float
-        # --- End: if
-
+        dx = self._get_dask()
+        dx = dx.map_blocks(
+            partial(Units.conform,
+                    from_units=old_units,
+                    to_units=value,
+                    inplace=False)
+        )
+        self._set_dask(dx)
+            
         self._Units = value
 
     @Units.deleter
     def Units(self): del self._Units  # = _units_None
-
+                    
     @property
     def data(self):
         '''The data as an object identity.
@@ -7082,32 +6685,11 @@ dimensions.
 
     @property
     def dtype(self):
-        '''The `numpy` data-type of the data array.
-
-    By default this is the data-type with the smallest size and
-    smallest scalar kind to which all sub-arrays of the master data
-    array may be safely cast without loss of information. For example,
-    if the sub-arrays have data-types 'int64' and 'float32' then the
-    master data array's data-type will be 'float64'; or if the
-    sub-arrays have data-types 'int64' and 'int32' then the master
-    data array's data-type will be 'int64'.
-
-    Setting the data-type to a `numpy.dtype` object, or any object
-    convertible to a `numpy.dtype` object, will cause the master data
-    array elements to be recast to the specified type at the time that
-    they are next accessed, and not before. This does not immediately
-    change the master data array elements, so, for example,
-    reinstating the original data-type prior to data access results in
-    no loss of information.
-
-    Deleting the data-type forces the default behaviour. Note that if
-    the data-type of any sub-arrays has changed after `dtype` has been
-    set (which could occur if the data array is accessed) then the
-    reinstated default data-type may be different to the data-type
-    prior to `dtype` being set.
-
+        '''The `numpy` data-type of the data.
+        
     **Examples:**
 
+    TODODASK
     >>> d = cf.Data([0.5, 1.5, 2.5])
     >>> d.dtype
     dtype(float64')
@@ -7134,39 +6716,21 @@ dimensions.
     [ 0.5  1.5  2.5]
 
         '''
-        datatype = self._dtype
-        if datatype is None:
-            config = self.partition_configuration(readonly=True)
-
-            flat = self.partitions.matrix.flat
-
-            partition = next(flat)
-            datatype = partition.subarray.dtype
-            if datatype is None:
-                partition.open(config)
-                datatype = partition.array.dtype
-                partition.close()
-
-            for partition in flat:
-                array = partition.subarray
-                if array.dtype is None:
-                    partition.open(config)
-                    array = partition.array
-                    partition.close()
-
-                datatype = numpy_result_type(datatype, array)
-
-            self._dtype = datatype
-
-        return datatype
-
+        dx = self._get_dask()            
+        return dx.dtype
+        
     @dtype.setter
     def dtype(self, value):
-        self._dtype = numpy_dtype(value)
-
+        dx = self._get_dask()
+        
+        # Only change the datatype if it's different
+        if dx.dtype != value:
+            dx = dx.astype(value)
+            self._set_dask(dx)
+         
     @dtype.deleter
     def dtype(self):
-        self._dtype = None
+        raise AttributeError("Can't delete 'dtype' attribute")
 
     @property
     def fill_value(self):
@@ -7232,6 +6796,8 @@ False
     def ismasked(self):
         '''True if the data array has any masked values.
 
+    TODODASK
+
     **Examples:**
 
     >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
@@ -7242,32 +6808,44 @@ False
     True
 
         '''
-        if self._auxiliary_mask:
-            for m in self._auxiliary_mask:
-                if m.any():
-                    # Found a masked element
-                    return True
-            # --- End: for
+        raise DeprecatedError("TODODASK use is_masked instead")
 
-            # Still here? Then remove the auxiliary mask because it
-            # must be all False.
-            self._auxiliary_mask = None
+    @property
+    def is_masked(self):
+        '''True if the data array has any masked values.
 
-        # Still here?
-        config = self.partition_configuration(readonly=True)
+    **Performance**
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            partition.array
-            if partition.masked:
-                # Found a masked element
-                partition.close()
-                return True
+    `is_masked` causes all delayed operations to be computed.
 
-            partition.close()
+    **Examples:**
 
-        # There are no masked elements
-        return False
+    >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+    >>> print(d.is_masked)
+    False
+    >>> d[0, ...] = cf.masked
+    >>> d.is_masked
+    True
+
+        '''
+        def ismasked_chunk(a):
+            out = np.ma.is_masked(a)
+            return np.array(out).reshape((1,) * a.ndim)
+
+        dx = self._get_dask()
+
+        out_ind = tuple(dx.ndim)
+        dx_ind = out_ind
+
+        dx = da.blockwise(
+            ismasked_chunk,
+            out_ind,
+            dx, dx_ind,
+            adjust_chunks={i: 1 for i in out_ind},
+            dtype=bool
+        )
+
+        return bool(dx.any())
 
     @property
     def ispartitioned(self):
@@ -7286,7 +6864,7 @@ False
     False
 
         '''
-        return self._pmsize > 1
+        raise DeprecationError("TODODASK")
 
     @property
     def isscalar(self):
@@ -7305,7 +6883,7 @@ False
     False
 
         '''
-        return not self._ndim
+        return not self.ndim
 
     @property
     def nbytes(self):
@@ -7329,8 +6907,9 @@ False
     24
 
         '''
-        return self._size * self.dtype.itemsize
-
+        return self._get_dask().nbytes
+    # TODODASK - what about nans (e.g. after da.unique)
+    
     @property
     def ndim(self):
         '''Number of dimensions in the data array.
@@ -7359,14 +6938,15 @@ False
     0
 
         '''
-        return self._ndim
+        return self._get_dask().ndim
 
     @property
     def _pmaxes(self):
         '''TODO
 
         '''
-        return self.partitions.axes
+#        return self.partitions.axes
+        raise DeprecationError("TODODASK")
 
     @property
     def _pmndim(self):
@@ -7385,7 +6965,8 @@ False
     0
 
         '''
-        return self.partitions.ndim
+#        return self.partitions.ndim
+        raise DeprecationError("TODODASK")
 
     @property
     def _pmsize(self):
@@ -7404,7 +6985,8 @@ False
     1
 
         '''
-        return self.partitions.size
+#        return self.partitions.size
+        raise DeprecationError("TODODASK")
 
     @property
     def _pmshape(self):
@@ -7421,8 +7003,9 @@ False
     ()
 
         '''
-        return self.partitions.shape
-
+#        return self.partitions.shape
+        raise DeprecationError("TODODASK")
+    
     @property
     def shape(self):
         '''Tuple of the data array's dimension sizes.
@@ -7446,13 +7029,8 @@ False
     ()
 
         '''
-        try:
-            return self._shape
-        except Exception:
-            raise AttributeError(
-                "{!r} object has no attribute 'shape'".format(
-                    self.__class__.__name__)
-            )
+        return self._get_dask().shape
+    # TODODASK - what about nans (e.g. after da.unique)
 
     @property
     def size(self):
@@ -7481,7 +7059,8 @@ False
     1
 
         '''
-        return self._size
+        return self._get_dask().size
+    # TODODASK - what about nans (e.g. after da.unique)
 
     @property
     def array(self):
@@ -7491,6 +7070,10 @@ False
               numpy array of numeric reference times will be
               returned. A numpy array of date-time objects may be
               returned by the `datetime_array` attribute.
+
+    **Performance**
+
+    `array` causes all delayed operations to be computed.
 
     .. seealso:: `datetime_array`, `varray`
 
@@ -7510,125 +7093,127 @@ False
     -99.0 km
 
         '''
-        # Set the auxiliary_mask keyword to None because we can apply
-        # it later in one go
-        config = self.partition_configuration(readonly=True,
-                                              auxiliary_mask=None)
-
-        out_data_type = self.dtype
-        units = self.Units
-
-        _dtarray = getattr(self, '_dtarray', False)
-
-        if _dtarray:
-            del self._dtarray
-            out_data_type = _dtype_object
-#            if self._isdatetime():
-#                pda_args['func'] = None
-#        elif self._isdatetime():
-#            out_data_type = numpy_dtype(float)
-#            pda_args['func']   = dt2rt
-#            # Turn off data-type checking and partition updating
-#            pda_args['dtype']  = None
-#            pda_args['update'] = False
-
-        partitions = self.partitions
-
-        # Still here?
-        array_out = numpy_empty(self._shape, dtype=out_data_type)
-
-        masked = False
-
-        if not self.ndim:
-            # --------------------------------------------------------
-            # array_out is a scalar array so index it with Ellipsis
-            # (as opposed to the empty tuple which would be returned
-            # from partition.indices). This prevents bad behaviour
-            # when p_array is a numpy array of objects (e.g. data-time
-            # objects).
-            # --------------------------------------------------------
-            partition = partitions.matrix[()]
-            partition.open(config)
-            p_array = partition.array
-
-            # copy okect?
-
-            if _dtarray:
-                if not partition.isdt:
-                    # Convert the partition subarray to an array
-                    # of date-time objects
-                    p_array = rt2dt(p_array, units)
-            elif partition.isdt:
-                # Convert the partition subarray to an array of
-                # reference time floats
-                p_array = dt2rt(p_array, None, units)
-
-            if not masked and partition.masked:
-                array_out = array_out.view(numpy_ma_MaskedArray)
-                array_out.set_fill_value(self.get_fill_value(None))
-                masked = True
-
-            array_out[...] = p_array
-            partition.close()
-
-        else:
-            # --------------------------------------------------------
-            # array_out is not a scalar array, so it can safely be
-            # indexed with partition.indices in all cases.
-            # --------------------------------------------------------
-            for partition in partitions.matrix.flat:
-                partition.open(config)
-                p_array = partition.array
-
-                if _dtarray:
-                    if not partition.isdt:
-                        # Convert the partition subarray to an array
-                        # of date-time objects
-                        p_array = rt2dt(p_array, units)
-                elif partition.isdt:
-                    # Convert the partition subarray to an array of
-                    # reference time floats
-                    p_array = dt2rt(p_array, None, units)
-
-                # copy okect?
-
-                if not masked and partition.masked:
-                    array_out = array_out.view(numpy_ma_MaskedArray)
-                    array_out.set_fill_value(self.get_fill_value(None))
-                    masked = True
-
-                array_out[partition.indices] = p_array
-
-                partition.close()
-            # --- End: for
-
-        # ------------------------------------------------------------
-        # Apply the auxiliary mask
-        # ------------------------------------------------------------
-        if self._auxiliary_mask:
-            if not masked:
-                # Convert the output array to a masked array
-                array_out = array_out.view(numpy_ma_MaskedArray)
-                array_out.set_fill_value(self.get_fill_value(None))
-                masked = True
-
-            self._auxiliary_mask_tidy()
-
-            for mask in self._auxiliary_mask:
-                array_out.mask = array_out.mask | mask.array
-
-            if array_out.mask is numpy_ma_nomask:
-                # There are no masked points, so convert the array
-                # back to a non-masked array.
-                array_out = array_out.data
-                masked = False
-        # --- End: if
-
-        if masked and self.hardmask:
-            # Harden the mask of the output array
-            array_out.harden_mask()
-
-        return array_out
+        return self._get_dask().compute()
+        
+#        # Set the auxiliary_mask keyword to None because we can apply
+#        # it later in one go
+#        config = self.partition_configuration(readonly=True,
+#                                              auxiliary_mask=None)
+#
+#        out_data_type = self.dtype
+#        units = self.Units
+#
+#        _dtarray = getattr(self, '_dtarray', False)
+#
+#        if _dtarray:
+#            del self._dtarray
+#            out_data_type = _dtype_object
+##            if self._isdatetime():
+##                pda_args['func'] = None
+##        elif self._isdatetime():
+##            out_data_type = numpy_dtype(float)
+##            pda_args['func']   = dt2rt
+##            # Turn off data-type checking and partition updating
+##            pda_args['dtype']  = None
+##            pda_args['update'] = False
+#
+#        partitions = self.partitions
+#
+#        # Still here?
+#        array_out = numpy_empty(self._shape, dtype=out_data_type)
+#
+#        masked = False
+#
+#        if not self.ndim:
+#            # --------------------------------------------------------
+#            # array_out is a scalar array so index it with Ellipsis
+#            # (as opposed to the empty tuple which would be returned
+#            # from partition.indices). This prevents bad behaviour
+#            # when p_array is a numpy array of objects (e.g. data-time
+#            # objects).
+#            # --------------------------------------------------------
+#            partition = partitions.matrix[()]
+#            partition.open(config)
+#            p_array = partition.array
+#
+#            # copy okect?
+#
+#            if _dtarray:
+#                if not partition.isdt:
+#                    # Convert the partition subarray to an array
+#                    # of date-time objects
+#                    p_array = rt2dt(p_array, units)
+#            elif partition.isdt:
+#                # Convert the partition subarray to an array of
+#                # reference time floats
+#                p_array = dt2rt(p_array, None, units)
+#
+#            if not masked and partition.masked:
+#                array_out = array_out.view(numpy_ma_MaskedArray)
+#                array_out.set_fill_value(self.get_fill_value(None))
+#                masked = True
+#
+#            array_out[...] = p_array
+#            partition.close()
+#
+#        else:
+#            # --------------------------------------------------------
+#            # array_out is not a scalar array, so it can safely be
+#            # indexed with partition.indices in all cases.
+#            # --------------------------------------------------------
+#            for partition in partitions.matrix.flat:
+#                partition.open(config)
+#                p_array = partition.array
+#
+#                if _dtarray:
+#                    if not partition.isdt:
+#                        # Convert the partition subarray to an array
+#                        # of date-time objects
+#                        p_array = rt2dt(p_array, units)
+#                elif partition.isdt:
+#                    # Convert the partition subarray to an array of
+#                    # reference time floats
+#                    p_array = dt2rt(p_array, None, units)
+#
+#                # copy okect?
+#
+#                if not masked and partition.masked:
+#                    array_out = array_out.view(numpy_ma_MaskedArray)
+#                    array_out.set_fill_value(self.get_fill_value(None))
+#                    masked = True
+#
+#                array_out[partition.indices] = p_array
+#
+#                partition.close()
+#            # --- End: for
+#
+#        # ------------------------------------------------------------
+#        # Apply the auxiliary mask
+#        # ------------------------------------------------------------
+#        if self._auxiliary_mask:
+#            if not masked:
+#                # Convert the output array to a masked array
+#                array_out = array_out.view(numpy_ma_MaskedArray)
+#                array_out.set_fill_value(self.get_fill_value(None))
+#                masked = True
+#
+#            self._auxiliary_mask_tidy()
+#
+#            for mask in self._auxiliary_mask:
+#                array_out.mask = array_out.mask | mask.array
+#
+#            if array_out.mask is numpy_ma_nomask:
+#                # There are no masked points, so convert the array
+#                # back to a non-masked array.
+#                array_out = array_out.data
+#                masked = False
+#        # --- End: if
+#
+#        if masked and self.hardmask:
+#            # Harden the mask of the output array
+#            array_out.harden_mask()
+#
+#        return array_out
 
     @property
     def datetime_array(self):
@@ -7641,24 +7226,29 @@ False
 
     The data-type of the data array is unchanged.
 
-    .. seealso:: `array`, `varray`
+    .. seealso:: `array`
 
     **Examples:**
 
+    **Performance**
+
+    `datetime_array` causes all delayed operations to be computed.
+
         '''
-        if not self.Units.isreftime:
+        units = self.Units
+        
+        if not units.isreftime:
             raise ValueError(
-                "Can't create date-time array from units "
-                "{!r}".format(self.Units)
+                f"Can't create date-time array from units {self.Units!r}"
             )
 
-        if getattr(self.Units, 'calendar', None) == 'none':
+        if getattr(units, 'calendar', None) == 'none':
             raise ValueError(
-                "Can't create date-time array from units {!r} because "
-                "calendar is 'none'".format(self.Units)
+                f"Can't create date-time array from units {self.Units!r} "
+                "because calendar is 'none'"
             )
 
-        units, reftime = self.Units.units.split(' since ')
+        units, reftime = units.units.split(' since ')
 
         d = self
 
@@ -7667,21 +7257,23 @@ False
         if units in ('months', 'month'):
             d = self * _month_length
             d.override_units(
-                Units('days since ' + reftime, calendar=getattr(
-                    self.Units, 'calendar', None)),
+                Units(f"days since {reftime}",
+                      calendar=getattr(units, 'calendar', None)),
                 inplace=True
             )
         elif units in ('years', 'year', 'yr'):
             d = self * _year_length
             d.override_units(
-                Units('days since ' + reftime, calendar=getattr(
-                    self.Units, 'calendar', None)),
+                Units(f"days since {reftime}",
+                      calendar=getattr(units, 'calendar', None)),
                 inplace=True
             )
 
-        d._dtarray = True
-        return d.array
-
+        dx = d._get_dask()
+        dx = rt2dt(dx, units) # TODODASk
+            
+        return dx.compute()
+        
     @property
     def varray(self):
         '''A numpy array view the data array.
@@ -7703,114 +7295,115 @@ False
     array([999, 1, 2, 3, 4])
 
         '''
-        config = self.partition_configuration(readonly=False)
-
-        data_type = self.dtype
-
-        if getattr(self, '_dtarray', False):
-            del self._dtarray
-        elif self._isdatetime():  # self._isdt:
-            data_type = numpy_dtype(float)
-            config['func'] = dt2rt
-            # Turn off data-type checking and partition updating
-            config['dtype'] = None
-
-        if self.partitions.size == 1:
-            # If there is only one partition, then we can return a
-            # view of the partition's data array without having to
-            # create an empty array and then filling it up partition
-            # by partition.
-            partition = self.partitions.matrix.item()
-            partition.open(config)
-            array = partition.array
-            # Note that there is no need to close the partition here.
-            self._dtype = data_type
-
-#            source = self.source(None)
-#            if source is not None and source.get_compression_type():
-#                self._del_Array(None)
-
-# Flip to []?
-            return array
-
-        # Still here?
-        shape = self._shape
-        array_out = numpy_empty(shape, dtype=data_type)
-        masked = False
-
-        config['readonly'] = True
-
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            p_array = partition.array
-
-            if not masked and partition.masked:
-                array_out = array_out.view(numpy_ma_MaskedArray)
-                array_out.set_fill_value(self.get_fill_value(None))
-                masked = True
-
-            array_out[partition.indices] = p_array
-
-            # Note that there is no need to close the partition here
-        # --- End: for
-
-        # ------------------------------------------------------------
-        # Apply an auxiliary mask
-        # ------------------------------------------------------------
-        if self._auxiliary_mask:
-            if not masked:
-                # Convert the output array to a masked array
-                array_out = array_out.view(numpy_ma_MaskedArray)
-                array_out.set_fill_value(self.get_fill_value(None))
-                masked = True
-
-            self._auxiliary_mask_tidy()
-
-            for mask in self._auxiliary_mask:
-                array_out.mask = array_out.mask | mask.array
-
-            if array_out.mask is numpy_ma_nomask:
-                # There are no masked points, so convert back to a
-                # non-masked array.
-                array_out = array_out.data
-                masked = False
-
-            self._auxiliary_mask = None
-        # --- End: if
-
-        if masked and self.hardmask:
-            # Harden the mask of the output array
-            array_out.harden_mask()
-
-#        matrix = _xxx.copy()
-
-        if not array_out.ndim and not isinstance(array_out, numpy_ndarray):
-            array_out = numpy_asanyarray(array_out)
-
-        self._set_partition_matrix(array_out, chunk=False,
-                                   check_free_memory=False)
-
-#        matrix[()] = Partition(subarray = array_out,
-#                               location = [(0, n) for n in shape],
-#                               axes     = self._axes,
-#                               flip     = [],
-#                               shape    = list(shape),
-#                               Units    = self.Units,
-#                               part     = []
-#                               )
+        raise DeprecatedError("TODODASK")
+#        config = self.partition_configuration(readonly=False)
 #
-#        self.partitions = PartitionMatrix(matrix, [])
-
-        self._dtype = data_type
-
-#        self._flip  = []
-        self._flip([])
-
-#        source = self.source(None)
-#        if source is not None and source.get_compression_type():
-#            self._del_Array(None)
-
-        return array_out
+#        data_type = self.dtype
+#
+#        if getattr(self, '_dtarray', False):
+#            del self._dtarray
+#        elif self._isdatetime():  # self._isdt:
+#            data_type = numpy_dtype(float)
+#            config['func'] = dt2rt
+#            # Turn off data-type checking and partition updating
+#            config['dtype'] = None
+#
+#        if self.partitions.size == 1:
+#            # If there is only one partition, then we can return a
+#            # view of the partition's data array without having to
+#            # create an empty array and then filling it up partition
+#            # by partition.
+#            partition = self.partitions.matrix.item()
+#            partition.open(config)
+#            array = partition.array
+#            # Note that there is no need to close the partition here.
+#            self._dtype = data_type
+#
+##            source = self.source(None)
+##            if source is not None and source.get_compression_type():
+##                self._del_Array(None)
+#
+## Flip to []?
+#            return array
+#
+#        # Still here?
+#        shape = self._shape
+#        array_out = numpy_empty(shape, dtype=data_type)
+#        masked = False
+#
+#        config['readonly'] = True
+#
+#        for partition in self.partitions.matrix.flat:
+#            partition.open(config)
+#            p_array = partition.array
+#
+#            if not masked and partition.masked:
+#                array_out = array_out.view(numpy_ma_MaskedArray)
+#                array_out.set_fill_value(self.get_fill_value(None))
+#                masked = True
+#
+#            array_out[partition.indices] = p_array
+#
+#            # Note that there is no need to close the partition here
+#        # --- End: for
+#
+#        # ------------------------------------------------------------
+#        # Apply an auxiliary mask
+#        # ------------------------------------------------------------
+#        if self._auxiliary_mask:
+#            if not masked:
+#                # Convert the output array to a masked array
+#                array_out = array_out.view(numpy_ma_MaskedArray)
+#                array_out.set_fill_value(self.get_fill_value(None))
+#                masked = True
+#
+#            self._auxiliary_mask_tidy()
+#
+#            for mask in self._auxiliary_mask:
+#                array_out.mask = array_out.mask | mask.array
+#
+#            if array_out.mask is numpy_ma_nomask:
+#                # There are no masked points, so convert back to a
+#                # non-masked array.
+#                array_out = array_out.data
+#                masked = False
+#
+#            self._auxiliary_mask = None
+#        # --- End: if
+#
+#        if masked and self.hardmask:
+#            # Harden the mask of the output array
+#            array_out.harden_mask()
+#
+##        matrix = _xxx.copy()
+#
+#        if not array_out.ndim and not isinstance(array_out, numpy_ndarray):
+#            array_out = numpy_asanyarray(array_out)
+#
+#        self._set_partition_matrix(array_out, chunk=False,
+#                                   check_free_memory=False)
+#
+##        matrix[()] = Partition(subarray = array_out,
+##                               location = [(0, n) for n in shape],
+##                               axes     = self._axes,
+##                               flip     = [],
+##                               shape    = list(shape),
+##                               Units    = self.Units,
+##                               part     = []
+##                               )
+##
+##        self.partitions = PartitionMatrix(matrix, [])
+#
+#        self._dtype = data_type
+#
+##        self._flip  = []
+#        self._flip([])
+#
+##        source = self.source(None)
+##        if source is not None and source.get_compression_type():
+##            self._del_Array(None)
+#
+#        return array_out
 
     @property
     def mask(self):
@@ -10010,7 +9603,7 @@ False
 
         n = 0
 
-        self._flag_partitions_for_processing(parallelise=mpi_on)
+#        self._flag_partitions_for_processing(parallelise=mpi_on)
 
         processed_partitions = []
         for pmindex, partition in self.partitions.ndenumerate():
@@ -10090,7 +9683,7 @@ False
         if axes is None:
             return old
 
-        axes = [data_axes[i] for i in self._parse_axes(axes)]  # , 'cyclic')]
+        axes = [data_axes[i] for i in self._parse_axes(axes)]
 
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
@@ -10599,6 +10192,8 @@ False
     Insert a new size 1 axis, corresponding to a given position in the
     data array shape.
 
+# TODODASK bring back expand_dime alias (or rather alias this to that)
+
     .. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
 
     :Parameters:
@@ -10620,51 +10215,36 @@ False
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-
+        
         # Parse position
-        ndim = self._ndim
-        if -ndim-1 <= position < 0:
+        if not isinstance(position, int):
+             raise ValueError(
+                f"position parameter must be an integer"
+            )
+         
+        ndim = d.ndim
+        if -ndim - 1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position (%d)" % position)
+                f"Can't insert dimension: Invalid position {position!r}"
+            )
+
+        shape = list(d.shape)
+        shape.insert(position, 1)
+
+        dx = d._get_dask()
+        dx = dx.reshape(shape)
+        d._set_dask(dx)
 
         # Expand _axes
-        axis = d._new_axis_identifier()
+        axis = new_axis_identifier(d._axes)
         data_axes = d._axes[:]
         data_axes.insert(position, axis)
         d._axes = data_axes
 
-        # Increment ndim and expand shape
-        d._ndim += 1
-        shape = list(d._shape)
-        shape.insert(position, 1)
-        d._shape = tuple(shape)
-
-        # Expand the location and shape of each partition
-        location = (0, 1)
-        for partition in d.partitions.matrix.flat:
-            partition.location = partition.location[:]
-            partition.shape = partition.shape[:]
-
-            partition.location.insert(position, location)
-            partition.shape.insert(position, 1)
-
-        if d._all_axes:
-            d._all_axes += (axis,)
-
-        # HDF chunks
-        if self._HDF_chunks:
-            self._HDF_chunks[axis] = 1
-
-        # Expand dims in the auxiliary mask
-        if d._auxiliary_mask:
-            for mask in d._auxiliary_mask:
-                mask.insert_dimension(position, inplace=True)
-        # --- End: if
-
         return d
-
+        
     def get_filenames(self):
         '''Return the names of files containing parts of the data array.
 
@@ -11484,25 +11064,24 @@ False
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-        units = Units(units)
 
-        config = self.partition_configuration(readonly=False)
+#        config = self.partition_configuration(readonly=False)
+#
+#        for partition in d.partitions.matrix.flat:
+#            p_units = partition.Units
+#            if not p_units or p_units == units:
+#                # No need to create the data array if the sub-array
+#                # units are the same as the master data array units or
+#                # the partition units are not set
+#                partition.Units = units
+#                continue
+#
+#            partition.open(config)
+#            partition.array
+#            partition.Units = units
+#            partition.close()
 
-        for partition in d.partitions.matrix.flat:
-            p_units = partition.Units
-            if not p_units or p_units == units:
-                # No need to create the data array if the sub-array
-                # units are the same as the master data array units or
-                # the partition units are not set
-                partition.Units = units
-                continue
-
-            partition.open(config)
-            partition.array
-            partition.Units = units
-            partition.close()
-
-        d._Units = units
+        d._Units = Units(units)
 
         return d
 
@@ -11537,15 +11116,15 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not self.Units.isreftime:
-            raise ValueError(
-                "Can't override the calendar of non-reference-time "
-                "units: {0!r}".format(self.Units)
-            )
-
-        for partition in d.partitions.matrix.flat:
-            partition.Units = Units(partition.Units._units, calendar)
-            partition.close()
+#        if not self.Units.isreftime:
+#            raise ValueError(
+#                "Can't override the calendar of non-reference-time "
+#                "units: {0!r}".format(self.Units)
+#            )
+#
+#        for partition in d.partitions.matrix.flat:
+#            partition.Units = Units(partition.Units._units, calendar)
+#            partition.close()
 
         d._Units = Units(d.Units._units, calendar)
 
@@ -11678,6 +11257,8 @@ False
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
 
+        TODODASK consider renameing/aliasing to 'item'
+
     The first and last elements are always returned with
     ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
     array is a scalar array or has two or more dimensions.
@@ -11773,29 +11354,29 @@ False
                 index = index[0]
                 if index == 0:
                     # This also works for scalar arrays
-                    index = (slice(0, 1),) * self._ndim
+                    index = (slice(0, 1),) * self.ndim
                 elif index == -1:
                     # This also works for scalar arrays
-                    index = (slice(-1, None),) * self._ndim
+                    index = (slice(-1, None),) * self.ndim
                 elif isinstance(index, int):
                     if index < 0:
                         index += self._size
 
-                    index = numpy_unravel_index(index, self._shape)
-                elif len(index) == self._ndim:
+                    index = numpy_unravel_index(index, self.shape)
+                elif len(index) == self.ndim:
                     index = tuple(index)
                 else:
                     raise ValueError(
                         "Incorrect number of indices for {} array".format(
                             self.__class__.__name__))
-            elif n_index != self._ndim:
+            elif n_index != self.ndim:
                 raise ValueError(
                     "Incorrect number of indices for {} array".format(
                         self.__class__.__name__))
 
             array = self[index].array
 
-        elif self._size == 1:
+        elif self.size == 1:
             array = self.array
 
         else:
@@ -11998,58 +11579,22 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         if axes is not None and not axes and axes != 0:
-            # Null flip
-            if inplace:
-                d = None
             return d
 
         if axes is None:
-            iaxes = list(range(d._ndim))
+            iaxes = range(d.ndim)
         else:
-            iaxes = d._parse_axes(axes)  # , 'flip')
+            iaxes = d._parse_axes(axes)
 
-#        reverse    = d._flip[:]
-        reverse = d._flip()[:]
-        data_axes = d._axes
-        partitions = d.partitions
-        _pmaxes = partitions.axes
+        if not iaxes:
+            return d
+        
+        index = [slice(None, None, -1) if i in axes else slice(None)
+                 for i in iaxes]
 
-        flip_partition_matrix = False
-        if _pmaxes:
-            indices = [slice(None)] * partitions.ndim
-
-        for i in iaxes:
-            axis = data_axes[i]
-
-            if axis in reverse:
-                reverse.remove(axis)
-            else:
-                reverse.append(axis)
-
-            if axis in _pmaxes:
-                # This flip axis is also an axis of the partition
-                # matrix
-                indices[_pmaxes.index(axis)] = slice(None, None, -1)
-                flip_partition_matrix = True
-        # --- End: for
-
-        d._flip(reverse)
-#        d._flip = reverse
-
-        if flip_partition_matrix:
-            # TODO some problem here with d[:, 1:-2:-1] *= 10
-
-            # At least one of the flip axes is also an axis of the
-            # partition matrix
-            partitions = partitions[tuple(indices)]
-            partitions.set_location_map(data_axes)
-            d.partitions = partitions
-
-        # Flip the auxiliary mask
-        if d._auxiliary_mask:
-            for mask in d._auxiliary_mask:
-                mask.flip(iaxes, inplace=True)
-        # --- End: if
+        dx = d._get_dask()
+        dx = dx[tuple(index)]
+        d._set_dask(dx)
 
         return d
 
@@ -12080,7 +11625,7 @@ False
         for axis, size in chunks.items():
             _HDF_chunks[axes[axis]] = size
 
-        if _HDF_chunks.values() == [None] * self._ndim:
+        if _HDF_chunks.values() == [None] * self.ndim:
             _HDF_chunks = None
 
         self._HDF_chunks = _HDF_chunks
@@ -13389,21 +12934,21 @@ False
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-
-        ndim = d._ndim
-        if not ndim:
+        
+        if not d.ndim:
             if axes or axes == 0:
                 raise ValueError(
                     "Can't squeeze: Can't remove an axis from "
-                    "scalar {}".format(d.__class__.__name__)
+                    f"scalar {d.__class__.__name__}"
                 )
 
             if inplace:
                 d = None
+
             return d
 
-        shape = list(d._shape)
-
+        shape = d.shape
+        
         if axes is None:
             axes = [i for i, n in enumerate(shape) if n == 1]
         else:
@@ -13413,73 +12958,36 @@ False
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-                        "Can't squeeze {}: Can't remove axis of "
-                        "size {}".format(d.__class__.__name__, shape[i])
+                        f"Can't squeeze {d.__class__.__name__}: "
+                        f"Can't remove axis of size {shape[i]}"
                     )
         # --- End: if
 
         if not axes:
             if inplace:
                 d = None
-            return d
 
+            return d
+        
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        data_axes = d._axes[:]
-#        flip = d._flip[:]
-        flip = d._flip()[:]
+        dx = d._get_dask()
+        dx = dx.squeeze(tuple(axes))
+        d._set_dask(dx)
 
-        if not d._all_axes:
-            d._all_axes = tuple(data_axes)
+        # Remove the squeezed axes names
+        d._axes = [axis for i, axis in enumerate(d._axes)
+                   if i not in axes]
+        
+        d._cyclic = d._cyclic.difference(axes)
 
-        i_axis = []
-        for axis in [data_axes[i] for i in axes]:
-            if axis in flip:
-                flip.remove(axis)
-
-            i = data_axes.index(axis)
-            shape.pop(i)
-            data_axes.pop(i)
-
-            i_axis.append((i, axis))
-
-        for partition in d.partitions.matrix.flat:
-            p_location = partition.location[:]
-            p_shape = partition.shape[:]
-            p_flip = partition.flip[:]
-
-            for i, axis in i_axis:
-                p_location.pop(i)
-                p_shape.pop(i)
-                if axis in p_flip:
-                    p_flip.remove(axis)
-            # --- End: for
-
-            partition.location = p_location
-            partition.shape = p_shape
-            partition.flip = p_flip
-
-        d._ndim = len(shape)
-        d._shape = tuple(shape)
-
-        # Remove squeezed axes from list of cyclic axes
-        for a in axes:
-            d._cyclic.discard(d._axes[a])
-
-        d._axes = data_axes
-#        d._flip = flip
-        d._flip(flip)
-
-        # Remove size 1 partition dimensions
-        d.partitions.squeeze(inplace=True)
-
-        # Squeeze the auxiliary mask
-        if d._auxiliary_mask:
-            for mask in d._auxiliary_mask:
-                mask.squeeze(axes, inplace=True)
-        # --- End: if
-
+        hdf = self._HDF_chunks
+        if hdf:
+            self._HDF_chunks = {axis: size for axis, size in hdf.items()
+                                if axis not in axes}
+        
         return d
+            
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
@@ -14676,7 +14184,7 @@ def _getattr(x, attr):
     return getattr(x, attr)
 
 
-_array_getattr = numpy_vectorize(_getattr)
+_array_getattr = np.vectorize(_getattr)
 
 
 def _broadcast(a, shape):

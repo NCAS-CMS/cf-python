@@ -29,10 +29,15 @@ class UMArray(abstract.FileArray):
             The data type of the data array on disk.
 
         ndim: `int`
-            The number of dimensions in the unpacked data array.
+            The number of dimensions in the unpacked data array. Must
+            match up with th *shape* parameter.
 
         shape: `tuple`
-            The shape of the unpacked data array.
+            The shape of the unpacked data array. Note that this is
+            the shape as required by the object containing the
+            `UMArray` object, and so may contain extra size one
+            dimensions. When read, the data on disk is reshaped to
+            *shape*.
 
         size: `int`
             The number of elements in the unpacked data array.
@@ -56,8 +61,8 @@ class UMArray(abstract.FileArray):
     **Examples:**
 
     >>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
-    ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-    ...                 size=720, ndim=2, disk_length=0)
+    ...                 dtype=numpy.dtype('float32'), shape=(1, 1, 30, 24),
+    ...                 size=720, ndim=4, disk_length=0)
 
     >>> a = UMFileArray(
     ...         file='packed_file.pp', header_offset=3156, data_offset=3420,
@@ -65,7 +70,7 @@ class UMArray(abstract.FileArray):
     ...         size=720, ndim=2, disk_length=423
     ...     )
 
-    '''
+        '''
         super().__init__(filename=filename, dtype=dtype, ndim=ndim,
                          shape=shape, size=size,
                          header_offset=header_offset,
@@ -88,12 +93,14 @@ class UMArray(abstract.FileArray):
         f = self.open()
 
         rec = Rec.from_file_and_offsets(
-            f, self.header_offset, self.data_offset, self.disk_length)
+            f, self.header_offset, self.data_offset, self.disk_length
+        )
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
-        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
+#        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
+        array = rec.get_data().reshape(self.shape)
 
         if indices is not Ellipsis:
             indices = parse_indices(array.shape, indices)
@@ -150,7 +157,7 @@ class UMArray(abstract.FileArray):
         '''x.__str__() <==> str(x)
 
         '''
-        return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
+        return f"{self.header_offset}{self.shape} in {self.filename}"
 
     @property
     def file_pointer(self):

@@ -37,7 +37,7 @@ def read(files, external=None, verbose=None, warnings=False,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
          select_options=None, follow_symlinks=False, mask=True,
-         warn_valid=False):
+         warn_valid=False, chunks='auto'):
     '''Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
     Input datasets are mapped to field constructs in memory which are
@@ -455,6 +455,10 @@ def read(files, external=None, verbose=None, warnings=False,
 
             .. versionadded:: 1.5
 
+        chunks: TODO
+            
+            .. versionadded:: 4.0.0
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -469,6 +473,9 @@ def read(files, external=None, verbose=None, warnings=False,
 
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
+
+        chunk: deprecated at version 4.0.0
+            Use the *chunks* parameter instead.
 
     :Returns:
 
@@ -538,6 +545,13 @@ def read(files, external=None, verbose=None, warnings=False,
             "Use keyword 'um' instead."
         )  # pragma: no cover
 
+    if chunk is not True:
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.read', {'chunk': chunk},
+            "Use keyword 'chunks' instead.",
+            version='4.0.0'
+        )  # pragma: no cover
+
     # Parse select
     if isinstance(select, str):
         select = (select,)
@@ -547,8 +561,9 @@ def read(files, external=None, verbose=None, warnings=False,
 
     if follow_symlinks and not recursive:
         raise ValueError(
-            "Can't set follow_symlinks={0} when recursive={1}".format(
-                follow_symlinks, recursive))
+            f"Can't set follow_symlinks={follow_symlinks!r} "
+            f"when recursive={recursive!r}"
+        )
 
     # Initialize the output list of fields
     field_list = FieldList()
@@ -651,7 +666,8 @@ def read(files, external=None, verbose=None, warnings=False,
                 selected_fmt=fmt, um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                chunk=chunk,
+#                chunk=chunk,
+                chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,
             )
@@ -759,8 +775,8 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
                  verbose=None, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
-                 height_at_top_of_model=None, chunk=True, mask=True,
-                 warn_valid=False):
+                 height_at_top_of_model=None, mask=True,
+                 warn_valid=False, chunks='auto'):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
@@ -861,7 +877,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # --- End: if
 
     extra_read_vars = {
-        'chunk': chunk,
+        'chunks': chunks,
         'fmt': selected_fmt,
         'ignore_read_error': ignore_read_error,
         # 'cfa' defaults to False. If the file has
@@ -906,8 +922,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
-                         fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk)  # , mask=mask, warn_valid=warn_valid)
+                         fmt=fmt, word_size=word_size, endian=endian)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation

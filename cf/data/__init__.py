@@ -14,4 +14,4 @@ from .raggedindexedsubarray           import RaggedIndexedSubarray
 from .raggedindexedcontiguoussubarray import RaggedIndexedContiguousSubarray
 
 from .data                            import Data
-from .data2                            import Data2
+#from .data2                            import Data2
