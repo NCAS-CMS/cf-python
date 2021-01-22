@@ -2381,11 +2381,11 @@ class PropertiesData(Properties):
 
     @property
     def array(self):
-        """A numpy array deep copy of the data array.
+        """A numpy array deep copy of the data.
 
         Changing the returned numpy array does not change the data array.
 
-        .. seealso:: `data`, `datetime_array`, `varray`
+        .. seealso:: `data`, `datetime_array`, `dask_array`
 
         **Examples:**
 
@@ -2408,18 +2408,40 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} has no data array".format(self.__class__.__name__)
+                f"{self.__class__.__name__} has no data"
             )
 
         return data.array
 
+    def dask_array(self, copy=True):
+        '''TODODASK 
+    
+    :Parameters:
+
+      copy
+
+
+    .. seealso:: `data`, `array`, `datetime_array`
+
+    **Examples:**
+
+    TODODASK
+        '''
+        data = self.get_data(None)
+        if data is None:
+            raise AttributeError(
+                f"{self.__class__.__name__} has no data"
+            )
+
+        return data.dask_array(copy=copy)
+
     @property
     def varray(self):
-        """A numpy array view of the data array.
+        """A numpy array view of the data.
 
         Changing the elements of the returned view changes the data array.
 
-        .. seealso:: `array`, `data`, `datetime_array`
+        .. seealso:: `array`, `data`, `datetime_array`, `dask_array`
 
         **Examples:**
 
@@ -2439,13 +2461,15 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        data = self.get_data(None)
-        if data is None:
-            raise AttributeError(
-                "{} has no data array".format(self.__class__.__name__)
-            )
-
-        return data.varray
+        raise DeprecatedError("TODODASK")
+    
+#        data = self.get_data(None)
+#        if data is None:
+#            raise AttributeError(
+#                f"{self.__class__.__name__} has no data"
+#            )
+#
+#        return data.varray
 
     @property
     def isscalar(self):

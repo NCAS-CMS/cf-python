@@ -1,7 +1,7 @@
 from functools import reduce
 from operator import mul
 
-import numpy
+import numpy as np
 
 from ..functions import parse_indices, get_subspace
 
@@ -22,7 +22,7 @@ class GatheredSubarray(abstract.CompressedSubarray):
 
         # Initialize the full, uncompressed output array with missing
         # data everywhere
-        uarray = numpy.ma.masked_all(self.shape, dtype=compressed_array.dtype)
+        uarray = np.ma.masked_all(self.shape, dtype=compressed_array.dtype)
 
         compression = self.compression
         compressed_dimension = compression["compressed_dimension"]
@@ -30,6 +30,9 @@ class GatheredSubarray(abstract.CompressedSubarray):
         compressed_part = compression["compressed_part"]
         list_array = compression["indices"]
 
+
+        # TODODASK convert list_array to tuple if splace permits - way faster
+         
         # Initialise the uncomprssed array
         n_compressed_axes = len(compressed_axes)
 
