@@ -5901,7 +5901,7 @@ place.
 
         fpartial: function
 
-        ffinalize: function
+        ffinalise: function
 
         axes: (sequence of) `int`, optional
             The axes to be collapsed. By default flattened input is

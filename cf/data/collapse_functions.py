@@ -43,7 +43,7 @@ def asanyarray(*args):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
 
     '''
     out = []
@@ -75,7 +75,7 @@ def psum(x, y):
 
     :Returns:
 
-        out: `numpy.ndarray`
+        `numpy.ndarray`
 
     **Examples:**
 
@@ -104,7 +104,7 @@ def psum(x, y):
 
 
 def pmax(x, y):
-    '''TODO
+    '''The element-wise maximum of two arrays.
 
     :Parameters:
 
@@ -116,7 +116,7 @@ def pmax(x, y):
 
     :Returns:
 
-        out: `numpy.ndarray`
+        `numpy.ndarray`
 
     '''
     if numpy_ma_isMA(x):
@@ -152,7 +152,7 @@ def pmax(x, y):
 
 
 def pmin(x, y):
-    '''TODO
+    '''The element-wise minimum of two arrays.
 
     :Parameters:
 
@@ -164,7 +164,7 @@ def pmin(x, y):
 
     :Returns:
 
-        out: `numpy.ndarray`
+        `numpy.ndarray`
 
     '''
     if numpy_ma_isMA(x):
@@ -234,7 +234,7 @@ def double_precision(a):
 
     :Returns:
 
-        out: `numpy.ndarray`
+        `numpy.ndarray`
 
     '''
     char = a.dtype.char
@@ -255,8 +255,7 @@ def double_precision(a):
 # Maximum
 # --------------------------------------------------------------------
 def max_f(a, axis=None, masked=False):
-    '''Return the maximum of an array, or the maxima of an array along an
-    axis.
+    '''Return the maximum of an array or maximum along a specified axis.
 
     :Parameters:
 
@@ -271,7 +270,7 @@ def max_f(a, axis=None, masked=False):
 
     :Returns:
 
-        out: 2-tuple of numpy arrays
+        2-tuple of numpy arrays
             The sample sizes and the maxima.
 
     '''
@@ -287,7 +286,18 @@ def max_f(a, axis=None, masked=False):
 
 
 def max_fpartial(out, out1=None, group=False):
-    '''TODO
+    '''Return the partial maximum of an array.
+
+    :Parameters:
+
+        out: 2-`tuple` of `numpy.ndarray`
+
+        out1: 2-`tuple` of `numpy.ndarray`, optional
+
+    :Returns:
+
+        `numpy.ndarray`
+
     '''
     N, amax = out
 
@@ -300,7 +310,9 @@ def max_fpartial(out, out1=None, group=False):
 
 
 def max_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to the maximum of an array.
+
+    Here mask out any values derived from a too-small sample size.
 
     :Parameters:
 
@@ -315,8 +327,7 @@ def max_ffinalise(out, sub_samples=None):
 # Minimum
 # --------------------------------------------------------------------
 def min_f(a, axis=None, masked=False):
-    '''Return the minimum of an array, or the minima of an array along an
-    axis.
+    '''Return the minimum of an array or minimum along a specified axis.
 
     :Parameters:
 
@@ -331,7 +342,7 @@ def min_f(a, axis=None, masked=False):
 
     :Returns:
 
-        out: 2-tuple of `numpy.ndarray`
+        2-tuple of `numpy.ndarray`
             The sample sizes and the minima.
 
     '''
@@ -342,7 +353,18 @@ def min_f(a, axis=None, masked=False):
 
 
 def min_fpartial(out, out1=None, group=False):
-    '''TODO
+    '''Return the partial minimum of an array.
+
+    :Parameters:
+
+        out: 2-`tuple` of `numpy.ndarray`
+
+        out1: 2-`tuple` of `numpy.ndarray`, optional
+
+    :Returns:
+
+        `numpy.ndarray`
+
     '''
     N, amin = out
 
@@ -355,7 +377,9 @@ def min_fpartial(out, out1=None, group=False):
 
 
 def min_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to the minimum of an array.
+
+    Here mask out any values derived from a too-small sample size.
 
     :Parameters:
 
@@ -386,7 +410,7 @@ def max_abs_f(a, axis=None, masked=False):
 
     :Returns:
 
-        out: 2-tuple of numpy arrays
+        2-tuple of numpy arrays
             The sample sizes and the maxima of the absolute values.
 
     '''
@@ -417,7 +441,7 @@ def min_abs_f(a, axis=None, masked=False):
 
     :Returns:
 
-        out: 2-tuple of `numpy.ndarray`
+        2-tuple of `numpy.ndarray`
             The sample sizes and the minima of the absolute values.
 
     '''
@@ -449,7 +473,7 @@ def mean_f(a, axis=None, weights=None, masked=False):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
             3-tuple.
 
     '''
@@ -475,7 +499,7 @@ def mean_f(a, axis=None, weights=None, masked=False):
 
 
 def mean_fpartial(out, out1=None, group=False):
-    '''Return the partial sample size,the partial sum and partial sum of
+    '''Return the partial sample size, the partial sum and partial sum of
     the weights.
 
     :Parameters:
@@ -489,7 +513,7 @@ def mean_fpartial(out, out1=None, group=False):
 
     :Returns:
 
-        out: 3-`tuple` of `numpy.ndarray`
+        3-`tuple` of `numpy.ndarray`
 
     '''
     N, avg, sw = out
@@ -528,7 +552,7 @@ def mean_ffinalise(out, sub_samples=None):
 
     :Returns:
 
-        out: 2-`tuple` of `numpy.ndarray`
+        2-`tuple` of `numpy.ndarray`
             The sample size and the mean.
 
     '''
@@ -560,7 +584,7 @@ def mean_abs_f(a, axis=None, weights=None, masked=False):
 
     :Returns:
 
-        out: 2-tuple of `numpy.ndarray`
+        2-tuple of `numpy.ndarray`
             The sample sizes and the means of the absolute values.
 
     '''
@@ -592,7 +616,7 @@ def root_mean_square_f(a, axis=None, weights=None, masked=False):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
             3-tuple.
 
     '''
@@ -619,7 +643,7 @@ def root_mean_square_ffinalise(out, sub_samples=None):
 
     :Returns:
 
-        out: 2-`tuple` of `numpy.ndarray`
+        2-`tuple` of `numpy.ndarray`
             The sample size and the RMS.
 
     '''
@@ -653,7 +677,7 @@ def mid_range_f(a, axis=None, masked=False):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
             The minimum and maximum inside a 2-tuple.
 
     '''
@@ -689,6 +713,8 @@ def mid_range_fpartial(out, out1=None, group=False):
 def mid_range_ffinalise(out, sub_samples=None):
     '''TODO
 
+    Also mask out any values derived from a too-small sample size.
+
     :Parameters:
 
         out: ordered sequence
@@ -723,7 +749,9 @@ range_fpartial = mid_range_fpartial
 
 
 def range_ffinalise(out, sub_samples=None):
-    '''Absolute difference between maximum and minimum
+    '''Absolute difference between maximum and minimum.
+
+    Also mask out any values derived from a too-small sample size.
 
     :Parameters:
 
@@ -779,7 +807,7 @@ def sample_size_fpartial(out, out1=None, group=False):
 
     :Returns:
 
-        out: `numpy.ndarray`
+        `numpy.ndarray`
 
     '''
     N, = out
@@ -802,7 +830,7 @@ def sample_size_ffinalise(out, sub_samples=None):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
             A 2-tuple containing *N* twice.
 
     '''
@@ -873,6 +901,8 @@ def sum_fpartial(out, out1=None, group=False):
 
 def sum_ffinalise(out, sub_samples=None):
     '''TODO
+
+    Also mask out any values derived from a too-small sample size.
 
     :Parameters:
 
@@ -985,7 +1015,7 @@ def var_f(a, axis=None, weights=None, masked=False, ddof=0):
 
     :Returns:
 
-        out: `tuple`
+        `tuple`
 
     '''
     # Make sure that a is double precision
@@ -1123,7 +1153,12 @@ https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
 
 def var_ffinalise(out, sub_samples=None):
-    '''https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+    '''TODO
+
+    For detail see:
+    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+
+    Also mask out any values derived from a too-small sample size.
 
     '''
     (N, var, avg, V1, V2, ddof, weighted) = out
