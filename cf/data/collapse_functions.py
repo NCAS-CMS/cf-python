@@ -35,15 +35,16 @@ from ..functions import broadcast_array
 
 
 def asanyarray(*args):
-    '''TODO
+    '''Return every input array as an numpy ndarray, or a subclass of.
 
     :Parameters:
 
-        args: sequence of `numpy.ndarray`
+        args: sequence of array-like input objects
 
     :Returns:
 
         `tuple`
+            The input objects left as, else converted to, `numpy.ndarray`
 
     '''
     out = []
@@ -394,7 +395,7 @@ def min_ffinalise(out, sub_samples=None):
 # maximum_absolute_value
 # --------------------------------------------------------------------
 def max_abs_f(a, axis=None, masked=False):
-    '''Return the maximum of the absolute array, or the maxima of the
+    '''Return the maximum of the absolute array, or the maximum of the
     absolute array along an axis.
 
     :Parameters:
@@ -467,7 +468,9 @@ def mean_f(a, axis=None, weights=None, masked=False):
             Axis along which to operate. By default, flattened input
             is used.
 
-        weights: array-like, optional
+        weights: numpy array-like, optional
+            Weights associated with values of the array. By default the
+            statistics are unweighted.
 
         masked: `bool`, optional
 
@@ -610,7 +613,9 @@ def root_mean_square_f(a, axis=None, weights=None, masked=False):
             Axis along which to operate. By default, flattened input
             is used.
 
-        weights: array-like, optional
+        weights: numpy array-like, optional
+            Weights associated with values of the array. By default the
+            statistics are unweighted.
 
         masked: `bool`, optional
 
@@ -658,8 +663,8 @@ def root_mean_square_ffinalise(out, sub_samples=None):
 # Mid range: Average of maximum and minimum
 # --------------------------------------------------------------------
 def mid_range_f(a, axis=None, masked=False):
-    '''Return the minimum and maximum of an array or the minima and maxima
-    along an axis.
+    '''Return the minimum and maximum of an array or the minimum and
+    maximum along an axis.
 
     ``mid_range_f(a, axis=axis)`` is equivalent to ``(numpy.amin(a,
     axis=axis), numpy.amax(a, axis=axis))``
@@ -695,7 +700,7 @@ def mid_range_f(a, axis=None, masked=False):
 
 
 def mid_range_fpartial(out, out1=None, group=False):
-    '''TODO
+    '''Return the partial minimum and partial maximum of an array.
 
     '''
     N, amin, amax = out
@@ -711,7 +716,7 @@ def mid_range_fpartial(out, out1=None, group=False):
 
 
 def mid_range_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to the array mid range.
 
     Also mask out any values derived from a too-small sample size.
 
@@ -773,13 +778,16 @@ def range_ffinalise(out, sub_samples=None):
 # Sample size
 # ---------------------------------------------------------------------
 def sample_size_f(a, axis=None, masked=False):
-    '''TODO
+    '''Return the sample size.
 
     :Parameters:
 
         axis: `int`, optional
             non-negative
 
+    :Returns:
+
+        `numpy.ndarray`
 
     '''
     if masked:
@@ -799,7 +807,7 @@ def sample_size_f(a, axis=None, masked=False):
 
 
 def sample_size_fpartial(out, out1=None, group=False):
-    '''TODO
+    '''Return the partial sample size.
 
     :Parameters:
 
@@ -819,7 +827,7 @@ def sample_size_fpartial(out, out1=None, group=False):
 
 
 def sample_size_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to give the sample size.
 
     :Parameters:
 
@@ -853,7 +861,8 @@ def sum_f(a, axis=None, weights=None, masked=False):
             Input array
 
         weights: numpy array-like, optional
-            TODO
+            Weights associated with values of the array. By default the
+            statistics are unweighted.
 
         axis: `int`, optional
             Axis along which to operate. By default, flattened input
@@ -887,7 +896,8 @@ def sum_f(a, axis=None, weights=None, masked=False):
 
 
 def sum_fpartial(out, out1=None, group=False):
-    '''TODO
+    '''Return the partial sum of an array.
+
     '''
     N, asum = out
 
@@ -900,9 +910,9 @@ def sum_fpartial(out, out1=None, group=False):
 
 
 def sum_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to the sum of an array.
 
-    Also mask out any values derived from a too-small sample size.
+    Here mask out any values derived from a too-small sample size.
 
     :Parameters:
 
@@ -947,7 +957,7 @@ sum_of_squares_ffinalise = sum_ffinalise
 # ---------------------------------------------------------------------
 def sw_f(a, axis=None, masked=False, weights=None, N=None,
          sum_of_squares=False):
-    '''TODO
+    '''Return the sum of weights for an array.
 
     '''
     if N is None:
@@ -993,7 +1003,10 @@ sw2_ffinalise = sum_ffinalise
 # Variance
 # ---------------------------------------------------------------------
 def var_f(a, axis=None, weights=None, masked=False, ddof=0):
-    '''TODO
+    '''Return a tuple containing metrics relating to the array variance.
+
+    The tuple is a 7-tuple that contains, in the order given, the
+    following variables:
 
     ========  ============================================================
     Variable  Description
@@ -1075,42 +1088,41 @@ def var_f(a, axis=None, weights=None, masked=False, ddof=0):
 
 
 def var_fpartial(out, out1=None, group=False):
-    '''Return:
+    '''Return a tuple of partial metrics relating to the array variance.
 
-* The partial sum sample sizes
+    The tuple is a 7-tuple that contains, in the order given, the
+    following variables:
 
-* Partial sum of V1*(variance + mean^2)
+    ========  ============================================================
+    Variable  Description
+    ========  ============================================================
+    N         Partial sample size
 
-* Unweighted partial sum
+    var       Partial sum of V1*(variance + mean^2)
 
-========  ============================================================
-Variable  Description
-========  ============================================================
-N         Partial sample size
+    avg       Unweighted partial sum
 
-var       Partial sum of V1*(variance + mean^2)
+    V1        Partial sum of weights
 
-avg       Unweighted partial sum
+    V2        Partial sum of squares of weights
 
-V1        Partial sum of weights
+    ddof      Delta degrees of freedom
 
-V2        Partial sum of squares of weights
+    weighted  Whether or not the population is weighted
+    ========  ============================================================
 
-ddof      Delta degrees of freedom
+    For further information, see:
+    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
-weighted  Whether or not the population is weighted
-========  ============================================================
+    :Parameters:
 
+        out: 7-`tuple`
 
-https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+        out1: 7-`tuple`, optional
 
-:Parameters:
+    :Returns:
 
-    out: 7-`tuple`
-
-    out1: 7-`tuple`, optional
-
-:Returns:
+        7-`tuple`
 
     '''
     (N, var, avg, V1, V2, ddof, weighted) = out
@@ -1153,10 +1165,7 @@ https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
 
 def var_ffinalise(out, sub_samples=None):
-    '''TODO
-
-    For detail see:
-    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+    '''Apply any logic to finalise the collapse to give the variance.
 
     Also mask out any values derived from a too-small sample size.
 
@@ -1226,7 +1235,7 @@ sd_fpartial = var_fpartial
 
 
 def sd_ffinalise(out, sub_samples=None):
-    '''TODO
+    '''Apply any logic to finalise the collapse to the standard deviation.
 
     :Parameters:
 
