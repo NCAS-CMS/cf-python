@@ -9,6 +9,8 @@ class NetCDFArray(cfdm.NetCDFArray,
                   abstract.FileArray):
     '''A sub-array stored in a netCDF file.
     '''
+    _dask_lock = True
+
     def __init__(self, filename=None, ncvar=None, varid=None,
                  group=None, dtype=None, ndim=None, shape=None,
                  size=None, mask=True):
@@ -89,9 +91,10 @@ class NetCDFArray(cfdm.NetCDFArray,
                          group=group, dtype=dtype, ndim=ndim,
                          shape=shape, size=size, mask=mask)
 
-        # By default, keep the netCDF file open after data array
-        # access
-        self._set_component('close', False, copy=False)
+#        # By default, keep the netCDF file open after data array
+#        # access
+#        self._set_component('close', False, copy=False)
+#        self._set_component('close', True, copy=False)
 
     @property
     def file_pointer(self):
@@ -104,37 +107,37 @@ class NetCDFArray(cfdm.NetCDFArray,
 
         return (self.get_filename(), offset)
 
-    def close(self):
-        '''Close the file containing the data array.
-
-    If the file is not open then no action is taken.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.close()
-
-        '''
-        _close_netcdf_file(self.get_filename())
-
-    def open(self):
-        '''Return a `netCDF4.Dataset` object for the file containing the data
-    array.
-
-    :Returns:
-
-        `netCDF4.Dataset`
-
-    **Examples:**
-
-    >>> f.open()
-    <netCDF4.Dataset at 0x115a4d0>
-
-        '''
-        return _open_netcdf_file(self.get_filename(), 'r')
+#    def close(self):
+#        '''Close the file containing the data array.
+#
+#    If the file is not open then no action is taken.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.close()
+#
+#        '''
+#        _close_netcdf_file(self.get_filename())
+#
+#    def open(self):
+#        '''Return a `netCDF4.Dataset` object for the file containing the data
+#    array.
+#
+#    :Returns:
+#
+#        `netCDF4.Dataset`
+#
+#    **Examples:**
+#
+#    >>> f.open()
+#    <netCDF4.Dataset at 0x115a4d0>
+#
+#        '''
+#        return _open_netcdf_file(self.get_filename(), 'r')
 
 # --- End: class
 

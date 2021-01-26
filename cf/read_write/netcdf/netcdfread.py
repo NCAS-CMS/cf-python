@@ -269,14 +269,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         '''
         chunks = self.read_vars.get('chunks', 'auto')
 
-        # netCDF.variable objects do not support concurrent reads
-        lock = True
+#        dask_from_array = {'lock': array._dask_lock,
+#                           'asarray': array._dask_asarray}
+        
         # TODODASK - is this necessar given that each NetCDFArray.__getitem__ could open (and then close) it's own netCDF4.Dataset instance?
         
         return super()._create_Data(array=array, units=units,
                                     calendar=calendar, ncvar=ncvar,
-                                    loadd=loadd, lock=lock,
-                                    chunks=chunks, **kwargs)
+                                    loadd=loadd, chunks=chunks,
+                                    **kwargs)
 
     def _customize_read_vars(self):
         '''TODO

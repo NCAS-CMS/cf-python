@@ -1,15 +1,15 @@
-import itertools
 import operator
 
 from functools import partial
-from functools import reduce as functools_reduce
+from functools import reduce
+from itertools import product
 from operator import itemgetter
-from operator import mul as operator_mul
+from operator import mul
 
 from json import dumps as json_dumps
 from json import loads as json_loads
 
-from math import ceil as math_ceil
+# from math import nan
 
 import logging
 
@@ -41,7 +41,7 @@ from ..functions import (fm_threshold as cf_fm_threshold,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals,
-                         abspath)
+                         abspath, log_level)
 from ..functions import (atol as cf_atol,
                          chunksize as cf_chunksize,
                          rtol as cf_rtol)
@@ -59,26 +59,33 @@ from ..decorators import (_inplace_enabled,
                           _display_or_return)
 
 from .abstract import Array
-#                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .collapse_functions import *
 
-from . import (NetCDFArray,
-               UMArray,
-               GatheredSubarray,
-               RaggedContiguousSubarray,
-               RaggedIndexedSubarray,
-               RaggedIndexedContiguousSubarray)
+from . import (
+    NetCDFArray,
+    UMArray,
+    GatheredSubarray,
+    RaggedContiguousSubarray,
+    RaggedIndexedSubarray,
+    RaggedIndexedContiguousSubarray,
+)
 
 from .utils import (
-    compressed_to_dask,
-    convert_to_builtin_type,
     convert_to_reftime,
     convert_to_datetime,
-    generate_axis_identifiers,
     new_axis_identifier,
+    is_small,
+    is_very_small,
+)
+
+from .creation import (
+    to_dask,
+    compressed_to_dask,
+    convert_to_builtin_type,
+    generate_axis_identifiers,
 )
 
 
@@ -131,6 +138,9 @@ _units_radians = Units('radians')
 _dtype_object = np.dtype(object)
 _dtype_float = np.dtype(float)
 _dtype_bool = np.dtype(bool)
+
+_DEFAULT_CHUNKS = "auto"
+_DEFAULT_HARDMASK = True
 
 
 class Data(Container,
@@ -206,10 +216,10 @@ place.
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
-                 fill_value=None, hardmask=True, chunks='auto',
-                 loadd=None, loads=None, dt=False, source=None,
-                 copy=True, dtype=None, mask=None, lock=False,
-                 _use_array=True):
+                 fill_value=None, hardmask=_DEFAULT_HARDMASK,
+                 chunks=_DEFAULT_CHUNKS, loadd=None, loads=None,
+                 dt=False, source=None, copy=True, dtype=None,
+                 mask=None, dask_from_array={}, _use_array=True):
         '''**Initialization**
 
     :Parameters:
@@ -323,15 +333,33 @@ place.
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.
 
-        chunk: `bool`, optional
-            If False then the data array will be stored in a single
-            partition. By default the data array will be partitioned
-            if it is larger than the chunk size, as returned by the
-            `cf.chunksize` function.
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the dask array. One of
 
-       lock: `bool` or `dask.threaded.Lock`, optional
-            If *array* doesn't support concurrent reads then provide a
-            lock here, or pass in `True` have one created one for you.
+            * A blocksize like ``1000`` to apply to all
+              dimensions. The value ``-1`` indicates the full size of
+              the each dimension.
+
+            * A blockshape like ``(1000, 1000)``. A value of ``-1`` or
+              `None` indicates the full size of the corresponding
+              dimension.
+
+            * Explicit sizes of all blocks along all dimensions like
+              ``((1000, 1000, 500), (400, 400))``.
+
+            * A size in bytes, like ``"100 MiB"``, which will choose a
+              uniform block-like shape. TODODASK - special syntax
+
+
+            * The word ``"auto"`` which acts like a size in bytes, but
+              uses a configuration value ``array.chunk-size`` for the
+              chunk size. TODODASK - config
+
+            By default, ``"auto"`` is used to specify the array
+            chunking.
+
+        chunk: deprecated at version 4.0.0
+            Use the *chunks* parameter instead.
 
     **Examples:**
 
@@ -340,9 +368,13 @@ place.
     >>> import numpy
     >>> d = cf.Data(numpy.arange(10).reshape(2,5),
     ...             units=Units('m/s'), fill_value=-999)
+    >>> d = cf.Data('fly')
     >>> d = cf.Data(tuple('fly'))
 
         '''
+        if source is None and isinstance(array, self.__class__):
+            source = array
+            
         if source is not None:
             if loadd is not None:
                 raise  ValueError(
@@ -357,11 +389,23 @@ place.
                 )
         # --- End: if 
 
-        if source is None and isinstance(array, self.__class__):
-            source = array
+        if source is not None:
+            super().__init__(source=source, _use_array=_use_array)
+            if _use_array:
+                try:
+                    array = source.dask_array(copy=copy)
+                except (AttributeError, TypeError):
+                    pass
+                else:
+                    self._set_dask(array, delete_source=False)
+            else:
+                self._del_dask(None)
+            
+            return
 
-        super().__init__(source=source, fill_value=fill_value)
-
+        super().__init__(array=array, fill_value=fill_value,
+                         _use_array=_use_array)
+        
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary.
         #
@@ -375,44 +419,73 @@ place.
         if loads is not None:
             self.loads(loads)
             return
+        
+        # Set the units
+        units = Units(units, calendar=calendar)
+        self._Units = units
 
-        if source is not None:
-            if _use_array:
-                try:
-                    array = source.dask_array(copy=copy)
-                except (AttributeError, TypeError):
-                    pass
-                else:
-                    self._set_dask(array, delete_source=False)
-            else:
-                self._del_dask(None)
-            
-            return
+        # Set the mask hardness
+        self.hardmask = hardmask
         
         if array is None:
             return
 
-        # Still here? The we have an array that needs to be stored as
-        # a dask array
-        self.hardmask = hardmask # TODODASK
-        
-        units = Units(units, calendar=calendar)
+        try:
+            ndim = array.ndim
+        except AttributeError:
+            ndim = np.ndim(array)
+           
+#        try:
+#            size = array.size
+#        except AttributeError:
+#            size = None
+            
+        # The _axes attribute is an ordered sequence of unique (within
+        # this `Data` instance) names for each array axis.
+        self._axes = generate_axis_identifiers(ndim)
 
+        # The _cyclic attribute contains identifies which axes are
+        # cyclic (and therefore allow cyclic slicing). It must be a
+        # subset of the axes given by the _axes attribute. If an axis
+        # is removed from _axes then it maust also be removed from
+        # _cyclic.
+        #
+        # NEVER CHANGE _cyclic IN PLACE
+        self._cyclic = _empty_set
+
+        if not _use_array:
+            return
+
+        # Still here? Then create a dask array adn store it.
+        
+        # Find out if the data is compressed
         try:
             compressed = array.get_compression_type()
         except AttributeError:
             compressed = ''
-            source = None
-        else:
-            source = array
             
         if compressed:
-            # The data is compressed, so create a uncompressed view of
-            # it (ignoring the value of the chunks parameter)
-            array = compressed_to_dask(source)
+            # The data is compressed, so create a uncompressed dask
+            # view of it.
+            if chunks != _DEFAULT_CHUNKS:                
+                raise ValueError(
+                    "Can't define chunks for compressed input arrays. "
+                    "Consider rechunking after initialisation."
+                )
+            
+            if dask_from_array:
+                raise ValueError(
+                    "Can't define 'dask.array.from_array' parameters for "
+                    "compressed input arrays"
+                )
+            
+            array = compressed_to_dask(array)
+            
         elif not is_dask_collection(array):
             # Turn the data into a dask array
-            array = da.from_array(array, chunks=chunks, lock=lock)
+            array = to_dask(array, chunks, dask_from_array)
+#            if size is None:
+#                size = array.size
 
         # Find out if we have an array of date-time objects
         first_value = None
@@ -426,17 +499,9 @@ place.
         # reference times
         if array.dtype.kind in 'USO' and (dt or units.isreftime):
             array, units = convert_to_reftime(array, units, first_value)
+            # Reset the units
+            self._Units = units
 
-        # Set the units
-        self._Units = units
-            
-        # Store the original input array.
-        if source is not None:
-            self._set_Array(source, copy=False)
-
-        # TODODASK - deep copy input array, since we no longer have
-        # copy-on-write?
-            
         # Store the dask array
         self._set_dask(array, delete_source=False)
 
@@ -447,21 +512,6 @@ place.
         # Apply a mask 
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
-
-        # The _axes attribute is an ordered list of unique (within
-        # this `Data` instance) names for each array axis.
-        #
-        # NEVER CHANGE _axes IN PLACE
-        self._axes = generate_axis_identifiers(array.ndim)
-
-        # The _cyclic attribute contains identifies which axes are
-        # cyclic (and therefore allow cyclic slicing). It must be a
-        # subset of the axes given by the _axes attribute. If an axis
-        # is removed from _axes then it maust also be removed from
-        # _cyclic.
-        #
-        # NEVER CHANGE _cyclic IN PLACE
-        self._cyclic = _empty_set
 
     def _get_dask(self):
         '''TODODASK
@@ -528,7 +578,10 @@ place.
             # Remove a source array, on the grounds that we can't
             # guarentee its consistency with the new dask array.            
             self._del_Array(None)
-                
+
+#        if size is not None:
+#            self._original_size = size
+            
     def _del_dask(self, default=ValueError()):
         '''TODODASK Set the dask array.
 
@@ -621,61 +674,7 @@ place.
 
         '''
         return cf_rtol().value
-    
-    def print_mode(self, *mode):
-        """TODODASK - consider global setting and context manager """
-        if mode:
-            self._custom['print_mode'] = mode[0]
-    
-    def _ok_to_print(self):
-        print_mode = self._custom.get('print_mode', 1)
 
-        ok = False
-        if print_mode == -1:
-            ok = True
-        
-        elif not print_mode:
-            ok =False
-        else:
-            dx = self.dask_array(copy=False)
-            layers = dx.dask.layers
-            if len(layers) == 1:
-                ok = True
-            else:
-                # Only print if we think computation is not too arduous
-                if print_mode == 1:
-                    print_mode = ("getitem-",)
-                    
-                ok = all(
-                    [True
-                     for key in tuple(layers)[1:]
-                     if any([key.startswith(x) for x in print_mode])]
-                )
-        # --- End: if
-
-        return ok
-
-    # TODODASK wrap with deocorator for print mode
-    def first_element(self):
-        if self._ok_to_print():
-            return super().first_element()
-
-        return "??"
-       
-    # TODODASK wrap with deocorator for print mode
-    def second_element(self):
-        if self._ok_to_print():
-            return super().second_element()
-
-        return "??"
-    
-    # TODODASK wrap with deocorator for print mode
-    def last_element(self):
-        if self._ok_to_print():
-            return super().last_element()
-
-        return "??"
-    
     def _is_abstract_Array_subclass(self, array):
         '''Whether or not an array is a type of abstract Array.
 
@@ -1177,38 +1176,38 @@ place.
             return self.copy()
 
         d = self
-
+        
         indices, roll = parse_indices(d.shape, indices, cyclic=True)
 
+        axes = d._axes
+        cyclic_axes = d._cyclic
+        
         if roll:
+            # Roll axes with cyclic slices
+            roll_axes = []
+            shifts = []
             for axis, shift in roll.items():
-                if axes[axis] not in cyclic_axes:
-                    raise IndexError(
-                        "Can't take a cyclic slice of a non-cyclic "
-                        f"axis (axis position {axis})"
-                    )
+                roll_axes.append(axis)
+                shifts.append(shift)
+                
+            if set(roll_axes).intersection(cyclic_axes):                
+                raise IndexError(
+                    "Can't take a cyclic slice of a non-cyclic axis"
+                )
+                
+            d = d.roll(axis=roll_axes, shift=shifts)
 
-                d = d.roll(axis, shift)
-        # --- End: if
-
-        new = self.copy(array=False)
-        # TODODASK make a copy method that also doen't copy ther dask array ??
+        new = d.copy(array=False)
 
         dx = d.dask_array(copy=False)
         dx = dx[tuple(indices)]
         new._set_dask(dx)
 
-        if roll:
-            # Unroll new! TODODASK - is this necessary??? Probably
-            pass
-
         # Cyclic axes which have been reduced in size are no longer
-        # non-cyclic
-        cyclic_axes = d._cyclic
+        # cyclic
         if cyclic_axes:
-            x = [i
-                 for i, (axis, n0, n1) in enumerate(
-                         zip(axes, d.shape, new.shape))
+            x = [axis
+                 for axis, n0, n1 in zip(axes, d.shape, new.shape)
                  if n1 != n0 and axis in cyclic_axes]
             if x:
                 # Never change _cyclic in-place
@@ -1217,129 +1216,6 @@ place.
 
         return new
     
-#        size = self._size
-#
-#        if indices is Ellipsis:
-#            return self.copy()
-#
-#        d = self
-#
-#        axes = d._axes
-#        flip = d._flip()
-#        shape = d._shape
-#        cyclic_axes = d._cyclic
-#        auxiliary_mask = []
-#
-#        try:
-#            arg0 = indices[0]
-#        except (IndexError, TypeError):
-#            pass
-#        else:
-#            if isinstance(arg0, str) and arg0 == 'mask':
-#                auxiliary_mask = indices[1]
-#                indices = tuple(indices[2:])
-#            else:
-#                pass
-#
-#        indices, roll, flip_axes = parse_indices(shape, indices, True, True)
-#
-#        if roll:
-#            for axis, shift in roll.items():
-#                if axes[axis] not in cyclic_axes:
-#                    raise IndexError(
-#                        "Can't take a cyclic slice of a non-cyclic "
-#                        "axis (axis position {})".format(axis)
-#                    )
-#
-#                d = d.roll(axis, shift)
-#        # --- End: if
-#
-#        new = self.copy()
-#        
-#        if roll:
-#            # Unroll! TODO
-#            pass
-#        
-#        new_shape = tuple(map(_size_of_index, indices, shape))
-#        new_size = functools_reduce(operator_mul, new_shape, 1)
-#
-#        new = d.copy()  # Data.__new__(Data)
-#
-#        source = new.source(None)
-#        if source is not None and source.get_compression_type():
-#            new._del_Array(None)
-#
-##        new.get_fill_value = d.get_fill_value(None)
-#
-#        new._shape = new_shape
-#        new._size = new_size
-##        new._ndim       = d._ndim
-##        new.hardmask   = d.hardmask
-##        new._all_axes   = d._all_axes
-##        new._cyclic     = cyclic_axes
-##        new._axes       = axes
-##        new._flip       = flip
-##        new._dtype      = d.dtype
-##        new._HDF_chunks = d._HDF_chunks
-##        new._Units      = d._Units
-##        new._auxiliary_mask = d._auxiliary_mask
-#
-#        partitions = d.partitions
-#
-#        new_partitions = PartitionMatrix(_overlapping_partitions(partitions,
-#                                                                 indices,
-#                                                                 axes,
-#                                                                 flip),
-#                                         partitions.axes)
-#
-#        if new_size != size:
-#            new_partitions.set_location_map(axes)
-#
-#        new.partitions = new_partitions
-#
-##        # ------------------------------------------------------------
-##        # Index an existing auxiliary mask. (Note: By now indices are
-##        # strictly monotonically increasing and don't roll.)
-##        # ------------------------------------------------------------
-##        new._auxiliary_mask_subspace(indices)
-#
-#        # --------------------------------------------------------
-#        # Apply the input auxiliary mask
-#        # --------------------------------------------------------
-#        for mask in auxiliary_mask:
-#            new._auxiliary_mask_add_component(mask)
-#
-#        # ------------------------------------------------------------
-#        # Tidy up the auxiliary mask
-#        # ------------------------------------------------------------
-#        new._auxiliary_mask_tidy()
-#
-##        # ------------------------------------------------------------
-##        # Flip axes
-##        # ------------------------------------------------------------
-##        if flip_axes:
-##            new.flip(flip_axes, inplace=True)
-#
-#        # ------------------------------------------------------------
-#        # Mark cyclic axes which have been reduced in size as
-#        # non-cyclic
-#        # ------------------------------------------------------------
-#        if cyclic_axes:
-#            x = [i
-#                 for i, (axis, n0, n1) in enumerate(
-#                         zip(axes, shape, new.shape))
-#                 if n1 != n0 and axis in cyclic_axes]
-#            if x:
-#                new._cyclic = cyclic_axes.difference(x)
-#        # --- End: if
-#
-##        # -------------------------------------------------------------
-##        # Remove size 1 axes from the partition matrix
-##        # -------------------------------------------------------------
-##        new_partitions.squeeze(inplace=True)
-#
-#        return new
-
     def __setitem__(self, indices, value):
         '''Implement indexed assignment.
 
@@ -2867,14 +2743,14 @@ place.
         dtype = d['dtype']
         self._dtype = dtype
         self.Units = units
-        self._axes = axes  # never change _axes in-place
+        self._axes = axes
 
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
 
         self._shape = shape
         self._ndim = len(shape)
-        self._size = functools_reduce(operator_mul, shape, 1)
+        self._size = reduce(mul, shape, 1)
 
         cyclic = d.get('_cyclic', None)
         # Never change _cyclic in-place
@@ -2969,8 +2845,7 @@ place.
                 kwargs['shape'] = tuple(kwargs['shape'])
 
                 kwargs['ndim'] = len(kwargs['shape'])
-                kwargs['size'] = functools_reduce(
-                    operator_mul, kwargs['shape'], 1)
+                kwargs['size'] = reduce(mul, kwargs['shape'], 1)
 
                 kwargs.setdefault('dtype', dtype)
 
@@ -3013,18 +2888,105 @@ place.
         else:
             self._auxiliary_mask = None
 
-#    def copy(self, array=True):
-#        """TODODASK"""
-#        out = super().copy(array=array)
-#
-#        if array:
-#            dx = self.dask_array(copy=True)
-#            out._set_dask(dx, delete_source=False)
-#        else:
-#            out._del_dask(None)
-#
-#        return out            
+    def can_compute(self, functions=None, log_levels=None,
+                    override=False):
+        """Whether or not it is acceptable to compute the data.
+        
+        If the data is explicitly requested to be computed (as would
+        be the case when writing to disk, or accessing the `array`
+        attribute) then computation will always occur.
+
+        This method is meant for cases when compution is desirable but
+        not essential, by providing an assessment of whether
+        computation would require too excessive resources (time,
+        memory, and CPU), if carried out.
+
+        By default it is considered acceptable to compute the data if
+        the computed array fits in available memory and any of the
+        following are true, assessed in the order given up to the
+        first criterion satisfied:
+
+        1. The `force_compute` attribute is True.
+
+        2. The current log level is ``'DEBUG'``.
+
+        3. Any computations stored after initialisation consist only
+           subspace and copy functions.
+
+        .. versionadded:: 4.0.0
+
+        .. seealso:: `force_compute`, `cf.log_level`
+
+        :Parameters:
+
+            functions: (sequence of) `str`, optional
+                Include the specified functions, in addition to the
+                defaults, as those that will allow
+                computation. Functions are identified by matching the
+                beginnings of the key names in the dask graph layers,
+                found with `dask.layers` attribute of the dask
+                array. See the *override* parameter.
+    
+            log_level: (sequence of) `str`, optional
+                Include the specified log levels, in addition to the
+                default, as those that will allow compuitation. See
+                the *override* parameter.
+    
+            override : `bool`, optional
+                If True then only compute the data for the given
+                *log_levels* (if any) and the given *functions* (if
+                any), ignoring the defaults. If the `force_compute`
+                attribute is True then computation occurs in any case.
+
+        :Returns:
+        
+            `bool`
+                True if acceptable to compute the data, otherwise
+                False.
+
+        """
+        dx = self.dask_array(copy=False)
+
+        # TODODASK fits in memory.
+
+        # 1 Force compute     
+        if self.force_compute:
+            return True
+
+        # 2 Log levels
+        if override:
+            allowed_log_levels = ()
+            allowed_functions = ()
+        else:
+            allowed_log_levels = ("DEBUG",)
+            allowed_functions = ("getitem-", "copy-")
             
+        if log_levels:
+            if isinstance(log_levels, str):
+                log_levels = (log_levels,)
+                
+            allowed_log_levels += tuple(log_levels)
+
+        if log_level().value in allowed_log_levels:
+            return True
+            
+        # 3 Stored computations
+        layers = dx.dask.layers
+        if len(layers) == 1:
+            # No stored computations after initialisation
+            return True
+
+        if functions:
+            if isinstance(functions, str):
+                functions = (functions,)
+                  
+            allowed_functions += tuple(allowed_functions)
+        
+        return all(
+            [any([key.startswith(x) for x in allowed_functions])
+             for key in tuple(layers)[1:]]
+        )
+    
     @_deprecated_kwarg_check('i')
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -3389,10 +3351,9 @@ place.
 
         return out
 
-    def _chunk_add_partitions(self, d, axes):
-        '''TODO
-        '''
-        raise DeprecationError("TODODASK")
+#    def _chunk_add_partitions(self, d, axes):
+#        '''TODO
+#        '''
 #        for axis in axes[::-1]:
 #            extra_bounds = d.get(axis)
 #
@@ -3413,6 +3374,88 @@ place.
 #            # Update d in-place
 #            d[axis] = []
 
+    @_inplace_enabled(default=False)
+    def rechunk(self, chunks=_DEFAULT_CHUNKS, threshold=None,
+                block_size_limit=None, balance=False, inplace=False):
+        """Convert blocks in the dask array for new chunks.
+
+    See `dask.array.rechunk`for more details.
+
+    .. versionadded:: 4.0.0
+
+    .. seealso:: `chunks`
+
+    :Parameters:
+
+    chunks:  `int`, `tuple`, `dict` or `str`, optional
+        The new block dimensions to create. ``-1`` indicates the full
+        size of the corresponding dimension. Default is ``"auto"``
+        which automatically determines chunk sizes.
+
+    threshold: `int`, optional
+        The graph growth factor under which we don't bother introducing an
+        intermediate step.
+
+    block_size_limit: `int`, optional
+        The maximum block size (in bytes) we want to produce Defaults
+        to the configuration value ``dask.array.chunk-size``
+
+        TODODASK - how to use/import dask config items??
+
+    balance: `bool`, optional
+        If True, try to make each chunk to be the same size. By
+        default this is not attempted.
+    
+        This means ``balance=True`` will remove any small leftover
+        chunks, so using ``x.rechunk(chunks=len(x) // N,
+        balance=True)`` will almost certainly result in ``N`` chunks.
+
+    :Returns: 
+
+        TODODASK
+
+    **Examples:** 
+
+    >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
+    
+    Specify uniform chunk sizes with a tuple
+    
+    >>> y = x.rechunk((1000, 10))
+    
+    Or chunk only specific dimensions with a dictionary
+    
+    >>> y = x.rechunk({0: 1000})
+    
+    Use the value ``-1`` to specify that you want a single chunk along
+    a dimension or the value ``"auto"`` to specify that dask can
+    freely rechunk a dimension to attain blocks of a uniform block
+    size
+    
+    >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
+    
+    If a chunk size does not divide the dimension then rechunk will
+    leave any unevenness to the last chunk.
+    
+    >>> x.rechunk(chunks=(400, -1)).chunks
+    ((400, 400, 200), (1000,))
+    
+    However if you want more balanced chunks, and don't mind Dask
+    choosing a different chunksize for you then you can use the
+    ``balance=True`` option.
+    
+    >>> x.rechunk(chunks=(400, -1), balance=True).chunks
+    ((500, 500), (1000,))
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.dask_array(copy=False)
+        dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
+
+        d._set_dask(dx, delete_source=False)
+
+        return d
+        
     def chunk(self, chunksize=None, total=None, omit_axes=None,
               pmshape=None):
         '''Partition the data array.
@@ -3441,7 +3484,7 @@ place.
     >>> d.chunk(100000, omit_axes=[3, 4])
 
         '''
-        raise DeprecationError("TODODASK. Use 'rechunk' instead")
+        _DEPRECATION_ERROR_METHOD("TODODASK. Use 'rechunk' instead")
 #        if not chunksize:
 #            # Set the default chunk size
 #            chunksize = cf_chunksize()
@@ -4358,7 +4401,7 @@ place.
 
                 broadcast_indices.append(slice(None))
 
-            new_size = functools_reduce(operator_mul, new_shape, 1)
+            new_size = reduce(mul, new_shape, 1)
 
             dummy_location = [None] * new_ndim
         # ---End: if
@@ -4413,10 +4456,10 @@ place.
         #     dummy_location   = [None] * new_ndim
         # else:
         #     set_location_map = False
-        #     new_size = functools_reduce(mul, new_shape, 1)
+        #     new_size = reduce(mul, new_shape, 1)
 
 #        if not set_location_map:
-#            new_size = functools_reduce(mul, new_shape, 1)
+#            new_size = reduce(mul, new_shape, 1)
 #        else:
 #            new_size = self._size
 
@@ -4424,7 +4467,7 @@ place.
         result._shape = new_shape
         result._ndim = new_ndim
         result._size = new_size
-        result._axes = new_axes  # never change _axes in-place
+        result._axes = new_axes
 #        result._flip  = new_flip()
 
         # Is the result an array of date-time objects?
@@ -4609,7 +4652,7 @@ place.
             data0._shape = new_shape
             data0._ndim = new_ndim
             data0._size = new_size
-            data0._axes = new_axes  # never change _axes in-place
+            data0._axes = new_axes
             data0._flip(new_flip)
             data0._Units = new_Units
             data0.dtype = new_dtype
@@ -5958,7 +6001,7 @@ place.
         new.dtype = datatype
 
         if squeeze:
-            new._axes = p_axes  # never change _axes in-place
+            new._axes = p_axes
             new._ndim = ndim - n_collapse_axes
             new._shape = new._shape[:new._ndim]
         else:
@@ -6116,8 +6159,8 @@ dimensions.
                     ndim = array.ndim
                     new_shape = shape[:n_non_collapse_axes]
                     new_shape += (
-                        functools_reduce(
-                            operator_mul, shape[n_non_collapse_axes:]),)
+                        reduce(mul, shape[n_non_collapse_axes:]),
+                    )
                     array = numpy_reshape(array.copy(), new_shape)
 
                     if weights is not None:
@@ -6566,7 +6609,9 @@ dimensions.
         return self._custom['_cyclic']
 
     @_cyclic.setter
-    def _cyclic(self, value): self._custom['_cyclic'] = value
+    def _cyclic(self, value):
+        # Never change _cyclic in-place
+        self._custom['_cyclic'] = value
 
     @_cyclic.deleter
     def _cyclic(self): del self._custom['_cyclic']
@@ -6596,6 +6641,15 @@ dimensions.
 
     @_HDF_chunks.deleter
     def _HDF_chunks(self): del self._custom['_HDF_chunks']
+
+#    def _original_size(self):
+#        """TODODASK"""       
+#        return self._custom.get("_original_size", nan)
+#
+#    @_original_size.setter
+#    def _original_size(self, value):
+#        """TODODASK"""       
+#         return self._custom["_original_size"] = value
 
 #    @property
 #    def partitions(self):
@@ -6655,7 +6709,8 @@ dimensions.
         return self._custom['_axes']
 
     @_axes.setter
-    def _axes(self, value): self._custom['_axes'] = value
+    def _axes(self, value):
+        self._custom['_axes'] = tuple(value)
     
     @_axes.deleter
     def _axes(self): del self._custom['_axes']
@@ -6680,6 +6735,21 @@ dimensions.
 #            self._custom['flip'] = flip[0]
 #        else:
 #            return self._custom['flip']
+    # ----------------------------------------------------------------
+    # Dask attributes
+    # ----------------------------------------------------------------
+    def chunks(self):
+        """TODODASK"""
+        return self.dask_array(copy=False).chunks
+    
+    @property
+    def force_compute(self):
+        """TODODASK"""
+        return self._custom.get("force_compute", False)
+
+    @force_compute.setter
+    def force_compute(self, value):
+        self._custom['force_compute'] = bool(value)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -6868,7 +6938,7 @@ False
     True
 
         '''
-        raise DeprecatedError("TODODASK use is_masked instead")
+        _DEPRECATION_ERROR_METHOD("TODODASK use is_masked instead")
 
     @property
     def is_masked(self):
@@ -6924,7 +6994,7 @@ False
     False
 
         '''
-        raise DeprecationError("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")
 
     @property
     def isscalar(self):
@@ -7002,71 +7072,67 @@ False
         dx = self.dask_array(copy=False)
         return dx.ndim
 
-    @property
-    def _pmaxes(self):
-        '''TODO
-
-        '''
+#    @property
+#    def _pmaxes(self):
+#        '''TODO
+#
+#        '''
 #        return self.partitions.axes
-        raise DeprecationError("TODODASK")
-
-    @property
-    def _pmndim(self):
-        '''Number of dimensions in the partition matrix.
-
-    **Examples:**
-
-    >>> d._pmshape
-    (4, 7)
-    >>> d._pmndim
-    2
-
-    >>> d._pmshape
-    ()
-    >>> d._pmndim
-    0
-
-        '''
+#
+#    @property
+#    def _pmndim(self):
+#        '''Number of dimensions in the partition matrix.
+#
+#    **Examples:**
+#
+#    >>> d._pmshape
+#    (4, 7)
+#    >>> d._pmndim
+#    2
+#
+#    >>> d._pmshape
+#    ()
+#    >>> d._pmndim
+#    0
+#
+#        '''
 #        return self.partitions.ndim
-        raise DeprecationError("TODODASK")
-
-    @property
-    def _pmsize(self):
-        '''Number of partitions in the partition matrix.
-
-    **Examples:**
-
-    >>> d._pmshape
-    (4, 7)
-    >>> d._pmsize
-    28
-
-    >>> d._pmndim
-    0
-    >>> d._pmsize
-    1
-
-        '''
+# 
+#    @property
+#    def _pmsize(self):
+#        '''Number of partitions in the partition matrix.
+#
+#    **Examples:**
+#
+#    >>> d._pmshape
+#    (4, 7)
+#    >>> d._pmsize
+#    28
+#
+#    >>> d._pmndim
+#    0
+#    >>> d._pmsize
+#    1
+#
+#        '''
 #        return self.partitions.size
-        raise DeprecationError("TODODASK")
-
-    @property
-    def _pmshape(self):
-        '''Tuple of the partition matrix's dimension sizes.
-
-    **Examples:**
-
-    >>> d._pmshape
-    (4, 7)
-
-    >>> d._pmndim
-    0
-    >>> d._pmshape
-    ()
-
-        '''
+#
+#    @property
+#    def _pmshape(self):
+#        '''Tuple of the partition matrix's dimension sizes.
+#
+#    **Examples:**
+#
+#    >>> d._pmshape
+#    (4, 7)
+#
+#    >>> d._pmndim
+#    0
+#    >>> d._pmshape
+#    ()
+#
+#        '''
 #        return self.partitions.shape
-        raise DeprecationError("TODODASK")
     
     @property
     def shape(self):
@@ -7367,7 +7433,7 @@ False
 #        
 #        return array
         
-        raise DeprecatedError("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")
     
 #        config = self.partition_configuration(readonly=False)
 #
@@ -8121,9 +8187,10 @@ False
     >>> d.add_partitions(    )
 
         '''
-        self.partitions.add_partitions(self._axes, self._flip(),
-                                       extra_boundaries,
-                                       pdim)
+        _DEPRECATION_ERROR_METHOD("TODODASK Consider using rechunk instead")
+#        self.partitions.add_partitions(self._axes, self._flip(),
+#                                       extra_boundaries,
+#                                       pdim)
 
     def all(self):
         '''Test whether all data array elements evaluate to True.
@@ -9495,6 +9562,7 @@ False
     >>> d.close()
 
         '''
+        print ("TODODASK - is this still needed/valid?")
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
@@ -9772,13 +9840,13 @@ False
         else:
             self._cyclic = cyclic_axes.difference(axes)
 
-        # Make sure that the auxiliary mask has the same cyclicity
-        auxiliary_mask = self._custom.get('_auxiliary_mask')
-        if auxiliary_mask is not None:
-            self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
-            for mask in self._auxiliary_mask:
-                mask.cyclic(axes_in, iscyclic)
-        # --- End: if
+#        # Make sure that the auxiliary mask has the same cyclicity
+#        auxiliary_mask = self._custom.get('_auxiliary_mask')
+#        if auxiliary_mask is not None:
+#            self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
+#            for mask in self._auxiliary_mask:
+#                mask.cyclic(axes_in, iscyclic)
+#        # --- End: if
 
         return old
 
@@ -10135,8 +10203,8 @@ False
     ...
     ()
 
-        '''
-        return itertools.product(*[range(0, r) for r in self._shape])
+        '''        
+        return product(*[range(0, r) for r in self.shape])
 
     @_deprecated_kwarg_check('traceback')
     @_manage_log_level_via_verbosity
@@ -10319,9 +10387,9 @@ False
         dx = dx.reshape(shape)
         d._set_dask(dx)
 
-        # Expand _axes. Never change _axes in-place.
+        # Expand _axes
         axis = new_axis_identifier(d._axes)
-        data_axes = d._axes[:]
+        data_axes = list(d._axes)
         data_axes.insert(position, axis)
         d._axes = data_axes
 
@@ -10348,6 +10416,7 @@ False
     set()
 
         '''
+        print ("TODODASK - is this still possible?")
         out = set(
             [abspath(p.subarray.get_filename())
              for p in self.partitions.matrix.flat if p.in_file]
@@ -10674,7 +10743,7 @@ False
         # Corners
         # ------------------------------------------------------------
         if len(axes) > 1:
-            for indices in itertools.product(
+            for indices in product(
                     *[(slice(0, size[i]), slice(-size[i], None))
                       if i in axes else
                       (slice(None),)
@@ -10779,7 +10848,130 @@ False
         d.hardmask = hardmask
 
         return d
+    
+    def first_element(self, verbose=None):
+        """Return the first element of the data as a scalar.
 
+        If the value is deemed too expensive to compute then a
+        `ValueError` is raised instead. It is considered acceptable to
+        compute the value in the following circumstances:
+
+        * The `force_compute` attribute is True.
+
+        * The current log level is ``'DEBUG'``.
+
+        * The stored computations consist only of initialisation,
+          subspace or copy functions.
+        
+        .. versionadded:: 4.0.0
+
+        .. seealso:: `last_element`, `second_element`
+
+        :Returns:
+
+                The first element of the data
+
+        **Examples:**
+
+        >>> d = cf.Data([[1, 2], [3, 4]])
+        >>> d.first_element()
+        1
+        >>> d[0, 0] = cf.masked
+        >>> d.first_element()
+        masked
+
+        """
+        if self.can_compute():
+            return super().first_element()
+
+        raise ValueError(
+            "First element of the data is considered too expensive "
+            "to compute. Consider setting the 'force_compute' attribute, or "
+            "setting the log level to 'DEBUG'."
+        )
+    
+    def second_element(self, verbose=None):
+        """Return the second element of the data as a scalar.
+
+        If the value is deemed too expensive to compute then a
+        `ValueError` is raised instead. It is considered acceptable to
+        compute the value in the following circumstances:
+
+        * The `force_compute` attribute is True.
+
+        * The current log level is ``'DEBUG'``.
+
+        * The stored computations consist only of initialisation,
+          subspace or copy functions.
+        
+        .. versionadded:: 4.0.0
+
+        .. seealso:: `last_element`, `first_element`
+
+        :Returns:
+
+                The second element of the data
+
+        **Examples:**
+
+        >>> d = cf.Data([[1, 2], [3, 4]])
+        >>> d.second_element()
+        2
+        >>> d[0, 1] = cf.masked
+        >>> d.second_element()
+        masked
+
+        """
+        if self.can_compute():
+            return super().second_element()
+
+        raise ValueError(
+            "Second element of the data is considered too expensive "
+            "to compute. Consider setting the 'force_compute' atribute, or "
+            "setting the log level to 'DEBUG'."
+        )
+    
+    def last_element(self):
+        """Return the last element of the data as a scalar.
+
+        If the value is deemed too expensive to compute then a
+        `ValueError` is raised instead. It is considered acceptable to
+        compute the value in the following circumstances:
+
+        * The `force_compute` attribute is True.
+
+        * The current log level is ``'DEBUG'``.
+
+        * The stored computations consist only of initialisation,
+          subspace or copy functions.
+
+        .. versionadded:: 4.0.0
+
+        .. seealso:: `first_element`, `second_element`
+
+        :Returns:
+
+                The last element of the data
+
+        **Examples:**
+
+        >>> d = cf.Data([[1, 2], [3, 4]])
+        >>> d.last_element()
+        4
+        >>> d[1, 1] = cf.masked
+        >>> d.last_element()
+        masked
+
+        """
+        if self.can_compute():
+            return super().last_element()
+
+        raise ValueError(
+            "First element of the data is considered too expensive "
+            "to compute. Consider setting the 'force_compute' attribute, or "
+            "setting the log level to 'DEBUG'."
+        )
+    
     def flat(self, ignore_masked=True):
         '''Return a flat iterator over elements of the data array.
 
@@ -11227,6 +11419,7 @@ False
     >>> d.to_disk()
 
         '''
+        print ("TODODASK - ???")
         config = self.partition_configuration(readonly=True, to_disk=True)
 
         for partition in self.partitions.matrix.flat:
@@ -11263,6 +11456,7 @@ False
     >>> d.to_memory(regardless=True)
 
         '''
+        print ("TODODASK - ???")
         config = self.partition_configuration(readonly=True)
         fm_threshold = cf_fm_threshold()
 
@@ -11293,6 +11487,7 @@ False
     >>> d.in_memory
 
         '''
+        print ("TODODASK - ???")
         for partition in self.partitions.matrix.flat:
             if not partition.in_memory:
                 return False
@@ -11310,31 +11505,34 @@ False
     **Examples:**
 
         '''
-        return self.partitions.partition_boundaries(self._axes)
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK - consider using 'chunks' instead"
+        )
+#        return self.partitions.partition_boundaries(self._axes)
 
-    def partition_configuration(self, readonly, **kwargs):
-        '''Return parameters for opening and closing array partitions.
-
-    If dtype=None then data-type checking is disabled.
-
-        '''
-        config = {
-            'readonly': readonly,
-            'axes': self._axes,
-            'flip': self._flip(),
-            'hardmask': self.hardmask,
-            'auxiliary_mask': self._auxiliary_mask,
-            'units': self.Units,
-            'dtype': self._dtype,
-            'func': None,
-            'update': True,
-            'serial': True,
-        }
-
-        if kwargs:
-            config.update(kwargs)
-
-        return config
+#    def partition_configuration(self, readonly, **kwargs):
+#        '''Return parameters for opening and closing array partitions.
+#
+#    If dtype=None then data-type checking is disabled.
+#
+#        '''
+#        config = {
+#            'readonly': readonly,
+#            'axes': self._axes,
+#            'flip': self._flip(),
+#            'hardmask': self.hardmask,
+#            'auxiliary_mask': self._auxiliary_mask,
+#            'units': self.Units,
+#            'dtype': self._dtype,
+#            'func': None,
+#            'update': True,
+#            'serial': True,
+#        }
+#
+#        if kwargs:
+#            config.update(kwargs)
+#
+#        return config
 
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
@@ -11581,7 +11779,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=functools_reduce(operator_mul, shape, 1),
+                            size=reduce(mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=cf_masked)
 
@@ -12213,7 +12411,7 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return self._size*(itemsize+1) <= free_memory() - cf_fm_threshold()
+        return self.size*(itemsize+1) <= free_memory() - cf_fm_threshold()
 
     def fits_in_one_chunk_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
@@ -12233,12 +12431,12 @@ False
     >>> print(d.fits_one_chunk_in_memory(8))
     False
 
-        '''
+        '''        
         # ------------------------------------------------------------
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return (cf_chunksize() >= self._size*(itemsize+1) <=
+        return (cf_chunksize() >= self.size*(itemsize+1) <=
                 free_memory() - cf_fm_threshold())
 
     @_deprecated_kwarg_check('i')
@@ -13054,7 +13252,7 @@ False
         dx = dx.squeeze(tuple(axes))
         d._set_dask(dx)
 
-        # Remove the squeezed axes names. Never change _axes in-place.
+        # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes)
                    if i not in axes]
 
@@ -13219,7 +13417,7 @@ False
                     "Can't tranpose: Axes don't match array: {}".format(iaxes))
         # --- End: if
 
-        # Permute the axes. Never change _axes in-place.
+        # Permute the axes.
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
@@ -13363,7 +13561,7 @@ False
 
         '''
         array = FilledArray(shape=tuple(shape),
-                            size=functools_reduce(operator_mul, shape, 1),
+                            size=reduce(mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=fill_value)
 
@@ -13527,6 +13725,7 @@ False
                               mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
@@ -13542,47 +13741,22 @@ False
         `Data` or `None`
 
         '''
-        if not shift:
-            # Null roll
-            if inplace:
-                return
+        d = _inplace_enabled_define_and_cleanup(self)
 
-            return self.copy()
-
-        iaxes = self._parse_axes(axis)  # , 'roll')
-        if len(iaxes) != 1:
-            raise ValueError("TODO 987345 9087345 ^^ roll ^")
-
-        axis = iaxes[0]
-
-        n = self._shape[axis]
-
-        shift %= n
+        if isinstance(shift, int):
+            shift = (shift,)
+                     
+        axes = self._parse_axes(axis)
+        if len(axes) != len(shift):
+            raise ValueError("TODODASK")
 
         if not shift:
             # Null roll
-            if inplace:
-                return
-
-            return self.copy()
-
-        shift = n - shift
-
-        indices0 = [slice(None)] * self._ndim
-        indices0[axis] = slice(None, shift)
-
-        indices1 = indices0[:]
-        indices1[axis] = slice(shift, None)
-
-        indices0 = tuple(indices0)
-        indices1 = tuple(indices1)
-
-        d = type(self).concatenate((self[indices1], self[indices0]),
-                                   axis=axis)
-
-        if inplace:
-            self.__dict__ = d.__dict__
-            return
+            return d
+        
+        dx = d.dask_array(copy=False)
+        dx = da.roll(dx, axis=axes, shift=shift)
+        d._set_dask(dx)
 
         return d
 

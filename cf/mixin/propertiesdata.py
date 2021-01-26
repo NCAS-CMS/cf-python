@@ -2490,21 +2490,21 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'ceil',
             inplace=inplace, i=i, delete_props=True)
 
-    def chunk(self, chunksize=None):
-        '''Partition the data array.
-
-    :Parameters:
-
-        chunksize: `int`
-
-    :Returns:
-
-        `None`
-
-        '''
-        data = self.get_data(None)
-        if data is not None:
-            data.chunk(chunksize)
+#    def chunk(self, chunksize=None):
+#        '''Partition the data array.
+#
+#    :Parameters:
+#
+#        chunksize: `int`
+#
+#    :Returns:
+#
+#        `None`
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is not None:
+#            data.chunk(chunksize)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)

@@ -2,13 +2,15 @@ import abc
 
 from functools import reduce
 from operator  import mul
-from sys       import getrefcount
+#from sys       import getrefcount
 
 
 class CompressedSubarray(abc.ABC):
     '''TODO
 
     '''
+    _dask_asarray = False
+    
     def __init__(self, array, shape, compression):
         '''**Initialization**
 
@@ -54,9 +56,18 @@ class CompressedSubarray(abc.ABC):
         shape = str(array.shape)
         shape = shape.replace(',)', ')')
 
-        return "<CF {}{}: {}>".format(
-            self.__class__.__name__, shape, str(array))
+        return f"<CF {self.__class__.__name__}{shape}: {array}>"
 
+    # ----------------------------------------------------------------
+    # Dask attributes
+    # ----------------------------------------------------------------
+    @property
+    def _dask_lock(self):
+        return self.array._dask_lock
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def dtype(self):
         return self.array.dtype
@@ -74,6 +85,9 @@ class CompressedSubarray(abc.ABC):
         '''
         return getattr(self.array, 'file', None)
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def close(self):
         '''Close all referenced open files.
 
@@ -122,11 +136,11 @@ class CompressedSubarray(abc.ABC):
         '''
         return not hasattr(self.array, '__array_interface__')
 
-    def unique(self):
-        '''TODO
-
-        '''
-        return getrefcount(self.array) <= 2
+#    def unique(self):
+#        '''TODO
+#
+#        '''
+#        return getrefcount(self.array) <= 2
 
 
 # --- End: class
