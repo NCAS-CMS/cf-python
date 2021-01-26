@@ -1,7 +1,8 @@
 from .cachedarray import CachedArray
 from .netcdfarray import NetCDFArray
-from .filledarray import FilledArray
 from .umarray import UMArray
+
+from .filledarray import FilledArray
 
 from .gatheredarray import GatheredArray
 from .raggedcontiguousarray import RaggedContiguousArray
@@ -14,4 +15,3 @@ from .raggedindexedsubarray import RaggedIndexedSubarray
 from .raggedindexedcontiguoussubarray import RaggedIndexedContiguousSubarray
 
 from .data import Data
-#from .data2 import Data2

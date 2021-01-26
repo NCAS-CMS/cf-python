@@ -11,13 +11,24 @@ class FileArray(Array):
 
     """
 
+    _dask_asarray = False
+    
     def __getitem__(self, indices):
         """"""
         pass
 
     def __str__(self):
-        """x.__str__() <==> str(x)"""
-        return "%s in %s" % (self.shape, self.file)
+        '''x.__str__() <==> str(x)
+
+        '''
+        return f"{self.shape} in {self.file}"
+
+    # ----------------------------------------------------------------
+    # Dask attributes
+    # ----------------------------------------------------------------
+    @property
+    def _dask_lock(self):
+        return getattr(self._get_Array(), "_dask_lock", False)
 
     # ----------------------------------------------------------------
     # Attributes

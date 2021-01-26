@@ -10,6 +10,7 @@ class Array(cfdm.Array):
     .. versionadded:: 3.0.0
 
     """
+    _dask_asarray = False
 
     def __repr__(self):
         """Called by the `repr` built-in function.

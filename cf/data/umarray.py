@@ -12,6 +12,8 @@ class UMArray(abstract.FileArray):
     '''A sub-array stored in a PP or UM fields file.
 
     '''
+    _dask_lock = True
+
     def __init__(self, filename=None, dtype=None, ndim=None,
                  shape=None, size=None, header_offset=None,
                  data_offset=None, disk_length=None, fmt=None,
@@ -77,8 +79,8 @@ class UMArray(abstract.FileArray):
                          word_size=word_size,
                          byte_ordering=byte_ordering)
 
-        # By default, do not close the UM file after data array access
-        self._close = False
+        # By default, close the UM file after data array access
+        self._close = True
 
     def __getitem__(self, indices):
         """Implement indexing.
@@ -147,6 +149,7 @@ class UMArray(abstract.FileArray):
         if scale_factor != 1.0 and scale_factor != 0.0:
             if integer_array:
                 scale_factor = int(scale_factor)
+                
             array *= scale_factor
 
         # Treat BDATUM as an add_offset if it is not 0
@@ -156,8 +159,12 @@ class UMArray(abstract.FileArray):
         if add_offset != 0.0:
             if integer_array:
                 add_offset = int(add_offset)
+
             array += add_offset
 
+        if self._close:
+            self.close()
+            
         # Return the numpy array
         return array
 

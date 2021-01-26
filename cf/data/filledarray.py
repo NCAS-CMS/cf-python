@@ -1,7 +1,4 @@
-from numpy import empty as numpy_empty
-from numpy import full as numpy_full
-
-from numpy.ma import masked_all as numpy_ma_masked_all
+import numpy as np
 
 from . import abstract
 
@@ -12,14 +9,14 @@ from ..constants import masked as cf_masked
 class FilledArray(abstract.Array):
     """An underlying filled array."""
 
+    _dask_lock = False
+
     def __init__(
         self,
         dtype=None,
-        ndim=None,
         shape=None,
         size=None,
-        fill_value=None,
-        masked_all=False,
+        fill_value=None
     ):
         """**Initialization**
 
@@ -28,11 +25,8 @@ class FilledArray(abstract.Array):
                 dtype : numpy.dtype
                     The numpy data type of the data array.
 
-                ndim : int
-                    Number of dimensions in the data array.
-
-                shape : tuple
-                    The data array's dimension sizes.
+            shape : tuple
+                The data array's dimension sizes.
 
                 size : int
                     Number of elements in the data array.
@@ -44,7 +38,6 @@ class FilledArray(abstract.Array):
         """
         super().__init__(
             dtype=dtype,
-            ndim=ndim,
             shape=shape,
             size=size,
             fill_value=fill_value,
@@ -79,19 +72,20 @@ class FilledArray(abstract.Array):
                         a, b = divmod(stop - index.start, step)
                         if b:
                             a += 1
+                            
                         array_shape.append(a)
                 else:
                     array_shape.append(len(index))
         # --- End: if
 
         if self.fill_value() is cf_masked:
-            return numpy_ma_masked_all(array_shape, dtype=self.dtype)
+            return np.ma.masked_all(array_shape, dtype=self.dtype)
         elif self.fill_value() is not None:
             return numpy_full(
                 array_shape, fill_value=self.fill_value(), dtype=self.dtype
             )
         else:
-            return numpy_empty(array_shape, dtype=self.dtype)
+            return np.empty(array_shape, dtype=self.dtype)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -138,7 +132,7 @@ class FilledArray(abstract.Array):
         1
 
         """
-        return self._get_component("ndim")
+        return len(self.shape)
 
     @property
     def shape(self):
@@ -213,13 +207,11 @@ class FilledArray(abstract.Array):
         """Give a new shape to the array."""
         new = self.copy()
         new.shape = newshape
-        new.ndim = len(newshape)
         return new
 
     def resize(self, newshape):
         """Change the shape and size of the array in-place."""
         self.shape = newshape
-        self.ndim = len(newshape)
 
     def view(self):
         """Return a view of the entire array."""

@@ -19,6 +19,6 @@ class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
     .. versionadded:: 3.0.0
 
     """
-
+    _dask_asarray = False
 
 # --- End: class
