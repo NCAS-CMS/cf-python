@@ -10,9 +10,6 @@ from ..cfdatetime import dt2rt, st2rt, rt2dt
 from ..cfdatetime import dt as cf_dt
 from ..units import Units
 
-# Cache of axis identities
-_cached_axes = {}
-
 
 def convert_to_datetime(array, units):
     '''
