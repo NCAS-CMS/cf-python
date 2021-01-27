@@ -21,7 +21,6 @@ except ImportError:
 import numpy as np
 
 import dask.array as da
-
 from dask.base import is_dask_collection
 from dask.array.core import slices_from_chunks
 from dask.array import Array
@@ -624,20 +623,22 @@ class Data(Container, cfdm.Data):
         return ca.dask_array(copy=copy)
     
     def _set_dask(self, array, copy=False, delete_source=True):
-        '''TODODASK Set the dask array.
+        """Set the dask array.
 
         :Parameters:
-
+        
             array: `dask.array.Array`
                 The `dask` array to be inserted.
-
+    
             copy: 
+    
+            delete_source: `bool`, optional
 
         :Returns:
+        
+            `None`
 
-                `None`
-
-        '''
+        """
         if copy:
             array = array.copy()
             
@@ -645,48 +646,70 @@ class Data(Container, cfdm.Data):
 
         if delete_source:
             # Remove a source array, on the grounds that we can't
-            # guarentee its consistency with the new dask array.            
+            # guarantee its consistency with the new dask array.            
             self._del_Array(None)
 
 #        if size is not None:
 #            self._original_size = size
             
-    def _del_dask(self, default=ValueError()):
-        '''TODODASK Set the dask array.
+    def _del_dask(self, default=ValueError(), delete_source=True):
+        """Remove the dask array.
 
-    :Parameters:
+        :Parameters:
 
-        default
+            default
 
-    :Returns:
+            delete_source: `bool`, optional
 
-        `dask.array.Array`
-'''
+        :Returns:
+            
+        """
         try:
-            return self._custom.pop("dask")
+            out = self._custom.pop("dask")
         except KeyError:
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no dask array"
             )
+        else:
+            if delete_source:
+                # Remove a source array, on the grounds that we can't
+                # guarantee its consistency with any new dask array.
+                self._del_Array(None)
+
+            return out
         
     def __contains__(self, value):
-        """Membership test operator ``in``
+        """
+        Membership test operator ``in``
 
         x.__contains__(y) <==> y in x
-
-    Returns True if the value is contained anywhere in the data
-    array. The value may be a `cf.Data` object.
-
-    **Performance**
-
-    `__contains__` causes all delayed operations to be computed.
-
-    **Examples:**
-
+    
+        Returns True if the value is contained anywhere in the data
+        array. The value may be a `cf.Data` object.
+    
+        **Performance**
+    
+        All delayed operations are computed, and the operation does
+        not short-circuit once the first occurrence is found.
+    
         **Examples:**
+    
+        >>> d = Data([[0.0, 1,  2], [3, 4, 5]], 'm')
+        >>> 4 in d
+        True
+        >>> Data(3) in d
+        True
+        >>> Data([2.5], units='2 m') in d
+        True
+        >>> [[2]] in d
+        True
+        >>> numpy.array([[[2]]]) in d
+        True
+        >>> Data(2, 'seconds') in d
+        False
 
-        '''
+        """
         def contains_chunk(a, value):
             out = value in a
             return numpy.array(out).reshape((1,) * a.ndim)
@@ -742,251 +765,245 @@ class Data(Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
-    def _auxiliary_mask_from_1d_indices(self, compressed_indices):
-        """Returns the auxiliary masks corresponding to given indices.
-
-        :Parameters:
-
-            compressed_indices:
-
-        :Returns:
-
-            `list` of `Data`
-                The auxiliary masks in a list.
-
-        """
-        auxiliary_mask = []
-
-        for i, (compressed_index, size) in enumerate(
-            zip(compressed_indices, self._shape)
-        ):
-
-            if isinstance(
-                compressed_index, slice
-            ) and compressed_index.step in (-1, 1):
-                # Compressed index is a slice object with a step of
-                # +-1 => no auxiliary mask required for this axis
-                continue
-
-            index = numpy_zeros(size, dtype=bool)
-            index[compressed_index] = True
-
-            compressed_size = index.sum()
-
-            ind = numpy_where(index)
-
-            ind0 = ind[0]
-            start = ind0[0]
-            envelope_size = ind0[-1] - start + 1
-
-            if 0 < compressed_size < envelope_size:
-                jj = [None] * self._ndim
-                jj[i] = envelope_size
-
-                if start:
-                    ind0 -= start
-
-                mask = self._auxiliary_mask_component(jj, ind, True)
-                auxiliary_mask.append(mask)
-        # --- End: for
-
-        return auxiliary_mask
-
-    def _auxiliary_mask_return(self):
-        """Return the auxiliary mask.
-
-        :Returns:
-
-            `Data` or `None`
-                The auxiliary mask, or `None` if there isn't one.
-
-        **Examples:**
-
-        >>> m = d._auxiliary_mask_return()
-
-        """
-        _auxiliary_mask = self._auxiliary_mask
-        if not _auxiliary_mask:
-            shape = getattr(self, "shape", None)
-            if shape is not None:
-                return type(self).full(shape, fill_value=False, dtype=bool)
-            else:
-                return None
-        # --- End: if
-
-        mask = _auxiliary_mask[0]
-        for m in _auxiliary_mask[1:]:
-            mask = mask | m
-
-        return mask
-
-    def _auxiliary_mask_add_component(self, mask):
-        """Add a new auxiliary mask.
-
-        :Parameters:
-
-            mask: `cf.Data` or `None`
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d._auxiliary_mask_add_component(m)
-
-        """
-        if mask is None:
-            return
-
-        # Check that this mask component has the correct number of
-        # dimensions
-        if mask.ndim != self._ndim:
-            raise ValueError(
-                "Auxiliary mask must have same number of axes as the data "
-                "array ({}!={})".format(mask.ndim, self.ndim)
-            )
-
-        # Check that this mask component has an appropriate shape
-        mask_shape = mask.shape
-        for i, j in zip(mask_shape, self._shape):
-            if not (i == j or i == 1):
-                raise ValueError(
-                    "Auxiliary mask shape {} is not broadcastable to data "
-                    "array shape {}".format(mask.shape, self._shape)
-                )
-
-        # Merge this mask component with another, if possible.
-        append = True
-        if self._auxiliary_mask is not None:
-            for m0 in self._auxiliary_mask:
-                if m0.shape == mask_shape:
-                    # Merging the new mask with an existing auxiliary
-                    # mask component
-                    m0 |= mask
-                    append = False
-                    break
-        # --- End: if
-
-        if append:
-            mask = mask.copy()
-
-            # Make sure that the same axes are cyclic for the data
-            # array and the auxiliary mask
-            indices = [self._axes.index(axis) for axis in self._cyclic]
-            mask._cyclic = set([mask._axes[i] for i in indices])  # never change _cyclic in-place
-
-            if self._auxiliary_mask is None:
-                self._auxiliary_mask = [mask]
-            else:
-                self._auxiliary_mask.append(mask)
-
-    def _auxiliary_mask_subspace(self, indices):
-        """Subspace the new auxiliary mask.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d._auxiliary_mask_subspace((slice(0, 9, 2))
-
-        """
-        if not self._auxiliary_mask:
-            # There isn't an auxiliary mask
-            return
-
-        new = []
-        for mask in self._auxiliary_mask:
-            mask_indices = [
-                (slice(None) if n == 1 else index)
-                for n, index in zip(mask.shape, indices)
-            ]
-            new.append(mask[tuple(mask_indices)])
-
-        self._auxiliary_mask = new
-
-    def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
-        """Create a new auxiliary mask component of given shape.
-
-        :Parameters:
-
-            mask_shape: `tuple`
-                The shape of the mask component to be created. This will
-                contain `None` for axes not spanned by the *ind*
-                parameter.
-
-                  *Parameter example*
-                      ``mask_shape=(3, 11, None)``
-
-            ind: `numpy.ndarray`
-                As returned by a single argument call of
-                ``numpy.array(numpy[.ma].where(....))``.
-
-            compress: `bool`
-                If True then remove whole slices which only contain masked
-                points.
-
-        :Returns:
-
-            `Data`
-
-        """
-        # --------------------------------------------------------
-        # Find the shape spanned by ind
-        # --------------------------------------------------------
-        shape = [n for n in mask_shape if n]
-
-        # Note that, for now, auxiliary_mask has to be numpy array
-        # (rather than a cf.Data object) because we're going to index
-        # it with fancy indexing which a cf.Data object might not
-        # support - namely a non-monotonic list of integers.
-        auxiliary_mask = numpy_ones(shape, dtype=bool)
-
-        auxiliary_mask[tuple(ind)] = False
-
-        if compress:
-            # For compressed indices, remove slices which only
-            # contain masked points. (Note that we only expect to
-            # be here if there were N-d item criteria.)
-            for iaxis, (index, n) in enumerate(zip(ind, shape)):
-                index = set(index)
-                if len(index) < n:
-                    auxiliary_mask = auxiliary_mask.take(
-                        sorted(index), axis=iaxis
-                    )
-        # --- End: if
-
-        # Add missing size 1 axes to the auxiliary mask
-        if auxiliary_mask.ndim < self.ndim:
-            i = [(slice(None) if n else numpy_newaxis) for n in mask_shape]
-            auxiliary_mask = auxiliary_mask[tuple(i)]
-
-        return type(self)(auxiliary_mask)
-    
-    def _auxiliary_mask_tidy(self):
-        """Remove unnecessary auxiliary mask components.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d._auxiliary_mask_tidy()
-
-        """
-        auxiliary_mask = self._auxiliary_mask
-        if auxiliary_mask:
-            # Get rid of auxiliary mask components which are all False
-            auxiliary_mask = [m for m in auxiliary_mask if m.any()]
-            if not auxiliary_mask:
-                auxiliary_mask = None
-        else:
-            auxiliary_mask = None
-
-        self._auxiliary_mask = auxiliary_mask
+#    def _auxiliary_mask_from_1d_indices(self, compressed_indices):
+#        '''TODO
+#
+#    :Parameters:
+#
+#        compressed_indices:
+#
+#    :Returns:
+#
+#        `list` of `Data`
+#
+#    '''
+#        auxiliary_mask = []
+#
+#        for i, (compressed_index, size) in enumerate(
+#                zip(compressed_indices, self._shape)):
+#
+#            if (isinstance(compressed_index, slice) and
+#                    compressed_index.step in (-1, 1)):
+#                # Compressed index is a slice object with a step of
+#                # +-1 => no auxiliary mask required for this axis
+#                continue
+#
+#            index = numpy_zeros(size, dtype=bool)
+#            index[compressed_index] = True
+#
+#            compressed_size = index.sum()
+#
+#            ind = numpy_where(index)
+#
+#            ind0 = ind[0]
+#            start = ind0[0]
+#            envelope_size = ind0[-1] - start + 1
+#
+#            if 0 < compressed_size < envelope_size:
+#                jj = [None] * self._ndim
+#                jj[i] = envelope_size
+#
+#                if start:
+#                    ind0 -= start
+#
+#                mask = self._auxiliary_mask_component(jj, ind, True)
+#                auxiliary_mask.append(mask)
+#        # --- End: for
+#
+#        return auxiliary_mask
+#
+#    def _auxiliary_mask_return(self):
+#        '''Return the auxiliary mask.
+#
+#    :Returns:
+#
+#        `Data` or `None`
+#            The auxiliary mask, or `None` if there isn't one.
+#
+#    **Examples:**
+#
+#    >>> m = d._auxiliary_mask_return()
+#
+#        '''
+#        _auxiliary_mask = self._auxiliary_mask
+#        if not _auxiliary_mask:
+#            shape = getattr(self, 'shape', None)
+#            if shape is not None:
+#                return type(self).full(shape, fill_value=False, dtype=bool)
+#            else:
+#                return None
+#        # --- End: if
+#
+#        mask = _auxiliary_mask[0]
+#        for m in _auxiliary_mask[1:]:
+#            mask = mask | m
+#
+#        return mask
+#
+#    def _auxiliary_mask_add_component(self, mask):
+#        '''Add a new auxiliary mask.
+#
+#    :Parameters:
+#
+#        mask: `cf.Data` or `None`
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> d._auxiliary_mask_add_component(m)
+#
+#        '''
+#        if mask is None:
+#            return
+#
+#        # Check that this mask component has the correct number of
+#        # dimensions
+#        if mask.ndim != self._ndim:
+#            raise ValueError(
+#                "Auxiliary mask must have same number of axes as the data "
+#                "array ({}!={})".format(mask.ndim, self.ndim)
+#            )
+#
+#        # Check that this mask component has an appropriate shape
+#        mask_shape = mask.shape
+#        for i, j in zip(mask_shape, self._shape):
+#            if not (i == j or i == 1):
+#                raise ValueError(
+#                    "Auxiliary mask shape {} is not broadcastable to data "
+#                    "array shape {}".format(mask.shape, self._shape)
+#                )
+#
+#        # Merge this mask component with another, if possible.
+#        append = True
+#        if self._auxiliary_mask is not None:
+#            for m0 in self._auxiliary_mask:
+#                if m0.shape == mask_shape:
+#                    # Merging the new mask with an existing auxiliary
+#                    # mask component
+#                    m0 |= mask
+#                    append = False
+#                    break
+#        # --- End: if
+#
+#        if append:
+#            mask = mask.copy()
+#
+#            # Make sure that the same axes are cyclic for the data
+#            # array and the auxiliary mask
+#            indices = [self._axes.index(axis) for axis in self._cyclic]
+#            mask._cyclic = set([mask._axes[i] for i in indices])  # never change _cyclic in-place
+#
+#            if self._auxiliary_mask is None:
+#                self._auxiliary_mask = [mask]
+#            else:
+#                self._auxiliary_mask.append(mask)
+#
+#    def _auxiliary_mask_subspace(self, indices):
+#        '''Subspace the new auxiliary mask.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> d._auxiliary_mask_subspace((slice(0, 9, 2))
+#
+#        '''
+#        if not self._auxiliary_mask:
+#            # There isn't an auxiliary mask
+#            return
+#
+#        new = []
+#        for mask in self._auxiliary_mask:
+#            mask_indices = [(slice(None) if n == 1 else index)
+#                            for n, index in zip(mask.shape, indices)]
+#            new.append(mask[tuple(mask_indices)])
+#
+#        self._auxiliary_mask = new
+#
+#    def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
+#        '''TODO
+#
+#    :Parameters:
+#
+#        mask_shape: `tuple`
+#            The shape of the mask component to be created. This will
+#            contain `None` for axes not spanned by the *ind*
+#            parameter.
+#
+#              *Parameter example*
+#                  ``mask_shape=(3, 11, None)``
+#
+#        ind: `numpy.ndarray`
+#            As returned by a single argument call of
+#            ``numpy.array(numpy[.ma].where(....))``.
+#
+#        compress: `bool`
+#            If True then remove whole slices which only contain masked
+#            points.
+#
+#    :Returns:
+#
+#        `Data`
+#
+#        '''
+#        # --------------------------------------------------------
+#        # Find the shape spanned by ind
+#        # --------------------------------------------------------
+#        shape = [n for n in mask_shape if n]
+#
+#        # Note that, for now, auxiliary_mask has to be numpy array
+#        # (rather than a cf.Data object) because we're going to index
+#        # it with fancy indexing which a cf.Data object might not
+#        # support - namely a non-monotonic list of integers.
+#        auxiliary_mask = numpy_ones(shape, dtype=bool)
+#
+#        auxiliary_mask[tuple(ind)] = False
+#
+#        if compress:
+#            # For compressed indices, remove slices which only
+#            # contain masked points. (Note that we only expect to
+#            # be here if there were N-d item criteria.)
+#            for iaxis, (index, n) in enumerate(zip(ind, shape)):
+#                index = set(index)
+#                if len(index) < n:
+#                    auxiliary_mask = auxiliary_mask.take(
+#                        sorted(index), axis=iaxis)
+#        # --- End: if
+#
+#        # Add missing size 1 axes to the auxiliary mask
+#        if auxiliary_mask.ndim < self.ndim:
+#            i = [(slice(None) if n else numpy_newaxis) for n in mask_shape]
+#            auxiliary_mask = auxiliary_mask[tuple(i)]
+#
+#        return type(self)(auxiliary_mask)
+#    
+#    def _auxiliary_mask_tidy(self):
+#        '''Remove unnecessary auxiliary mask components.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> d._auxiliary_mask_tidy()
+#
+#        '''
+#        auxiliary_mask = self._auxiliary_mask
+#        if auxiliary_mask:
+#            # Get rid of auxiliary mask components which are all False
+#            auxiliary_mask = [m for m in auxiliary_mask if m.any()]
+#            if not auxiliary_mask:
+#                auxiliary_mask = None
+#        else:
+#            auxiliary_mask = None
+#
+#        self._auxiliary_mask = auxiliary_mask
 
     def __data__(self):
         """Returns a new reference to self."""
@@ -1237,8 +1254,11 @@ class Data(Container, cfdm.Data):
             return self.copy()
 
         d = self
+
+        numpy_indexing = self.numpy_indexing # TODOASK- replace with config
         
-        indices, roll = parse_indices(d.shape, indices, cyclic=True)
+        indices, roll = parse_indices(d.shape, indices, cyclic=True,
+                                      numpy_indexing=numpy_indexing)
 
         axes = d._axes
         cyclic_axes = d._cyclic
@@ -1278,336 +1298,364 @@ class Data(Container, cfdm.Data):
         return new
     
     def __setitem__(self, indices, value):
-        """Implement indexed assignment.
+        '''Implement indexed assignment.
 
-        x.__setitem__(indices, y) <==> x[indices]=y
+    x.__setitem__(indices, y) <==> x[indices]=y
 
-        Assignment to data array elements defined by indices.
+    Assignment to data array elements defined by indices.
 
-        Elements of a data array may be changed by assigning values to a
-        subspace. See `__getitem__` for details on how to define subspace
-        of the data array.
+    Elements of a data array may be changed by assigning values to a
+    subspace. See `__getitem__` for details on how to define subspace
+    of the data array.
 
-        **Missing data**
+    **Missing data**
 
-        The treatment of missing data elements during assignment to a
-        subspace depends on the value of the `hardmask` attribute. If it
-        is True then masked elements will not be unmasked, otherwise masked
-        elements may be set to any value.
+    The treatment of missing data elements during assignment to a
+    subspace depends on the value of the `hardmask` attribute. If it
+    is True then masked elements will not be unmasked, otherwise masked
+    elements may be set to any value.
 
-        In either case, unmasked elements may be set, (including missing
-        data).
+    In either case, unmasked elements may be set, (including missing
+    data).
 
-        Unmasked elements may be set to missing data by assignment to the
-        `cf.masked` constant or by assignment to a value which contains
-        masked elements.
+    Unmasked elements may be set to missing data by assignment to the
+    `cf.masked` constant or by assignment to a value which contains
+    masked elements.
 
-        .. seealso:: `cf.masked`, `hardmask`, `where`
+    .. seealso:: `cf.masked`, `hardmask`, `where`
 
-        **Examples:**
+    **Examples:**
 
-        """
+        '''
         # ------------------------------------------------------------
         # parse the indices
         # ------------------------------------------------------------
-        indices_in = indices
-        indices, roll, flip_axes, mask = parse_indices(
-            self.shape, indices_in, cyclic=True, reverse=True, mask=True)
+        numpy_indexing = self.numpy_indexing # TODOASK- replace with config
+        
+        indices, roll = parse_indices(self.shape, indices,
+                                      cyclic=True,
+                                      preserve_integers=numpy_indexing)
 
         if roll:
-            for iaxis, shift in roll.items():
-                self.roll(iaxis, shift, inplace=True)
-        # --- End: if
+            # Roll axes with cyclic slices
+            roll_axes = []
+            shifts = []
+            for axis, shift in roll.items():
+                roll_axes.append(axis)
+                shifts.append(shift)
+
+            self.roll(axis=roll_axes, shift=shifts, inplace=True)
 
         # TODODASK: multiple lists
+
+        # Convert the units of value
+        try:
+            value_units = value.Units
+        except AttributeError:
+            pass
+        else:
+            self_units = self.Units
+            print (repr(value_units), repr(self_units) )
+            if value_units.equivalent(self_units):
+                if not value_units.equals(self_units):
+                    value = value.copy()
+                    value.Units = self.Units
+                    copied = True
+            elif value_units and self_units:
+                raise ValueError(
+                    f"Can't assign values with units {value_units!r} "
+                    f"to data with units {self_units!r}"
+                )
+        # --- End: try
         
+        # Extract a dask array from value
+        try:
+            value = value.dask_array(copy=False)
+        except AttributeError:
+            pass
+
+        # Do the assignment
         dx = self.dask_array(copy=False)
         dx[tuple(indices)] = value
         
         if roll:
             # Unroll
-            for iaxis, shift in roll.items():
-                self.roll(iaxis, -shift, inplace=True)
-        # --- End: if
+            shifts = [-shift for shift in shifts]            
+            self.roll(axis=roll_axes, shift=shifts, inplace=True)
 
         return 
         
-        def _mirror_slice(index, size):
-            """Return a slice object which creates the reverse of the
-            input slice.
-
-            The step of the input slice must have a step of `.
-
-            :Parameters:
-
-                index: `slice`
-                    A slice object with a step of 1.
-
-                size: `int`
-
-            :Returns:
-
-                `slice`
-
-            **Examples:**
-
-            >>> s = slice(2, 6)
-            >>> t = _mirror_slice(s, 8)
-            >>> s, t
-            slice(2, 6), slice(5, 1, -1)
-            >>> range(8)[s]
-            [2, 3, 4, 5]
-            >>> range(8)[t]
-            [5, 4, 3, 2]
-            >>> range(7, -1, -1)[s]
-            [5, 4, 3, 2]
-            >>> range(7, -1, -1)[t]
-            [2, 3, 4, 5]
-
-            """
-            start, stop, step = index.indices(size)
-            size -= 1
-            start = size - start
-            stop = size - stop
-            if stop < 0:
-                stop = None
-
-            return slice(start, stop, -1)
-
-        # --- End: def
-
-        config = self.partition_configuration(readonly=False)
-
-        # ------------------------------------------------------------
-        # parse the indices
-        # ------------------------------------------------------------
-        indices_in = indices
-        indices, roll, flip_axes, mask = parse_indices(
-            self._shape, indices_in, cyclic=True, reverse=True, mask=True
-        )
-
-        if roll:
-            for iaxis, shift in roll.items():
-                self.roll(iaxis, shift, inplace=True)
-        # --- End: if
-
-        if mask:
-            original_self = self.copy()
-
-        scalar_value = False
-        if value is cf_masked:
-            scalar_value = True
-        else:
-            copied = False
-            if not isinstance(value, Data):
-                # Convert to the value to a Data object
-                value = type(self)(value, self.Units)
-            else:
-                if value.Units.equivalent(self.Units):
-                    if not value.Units.equals(self.Units):
-                        value = value.copy()
-                        value.Units = self.Units
-                        copied = True
-                elif not value.Units:
-                    value = value.override_units(self.Units)
-                    copied = True
-                else:
-                    raise ValueError(
-                        "Can't assign values with units {!r} to data with "
-                        "units {!r}".format(value.Units, self.Units)
-                    )
-            # --- End: if
-
-            if value._size == 1:
-                scalar_value = True
-                value = value.datum(0)
-        # --- End: if
-
-        source = self.source(None)
-        if source is not None and source.get_compression_type():
-            self._del_Array(None)
-
-        if scalar_value:
-            # --------------------------------------------------------
-            # The value is logically scalar
-            # --------------------------------------------------------
-            for partition in self.partitions.matrix.flat:
-                p_indices, shape = partition.overlaps(indices)
-                if p_indices is None:
-                    # This partition does not overlap the indices
-                    continue
-
-                partition.open(config)
-                array = partition.array
-
-                if value is cf_masked and not partition.masked:
-                    # The assignment is masking elements, so turn a
-                    # non-masked sub-array into a masked one.
-                    array = array.view(numpy_ma_MaskedArray)
-                    partition.subarray = array
-
-                self._set_subspace(array, p_indices, value)
-                partition.close()
-
-            if roll:
-                for iaxis, shift in roll.items():
-                    self.roll(iaxis, -shift, inplace=True)
-            # --- End: if
-
-            if mask:
-                indices = tuple(indices)
-                original_self = original_self[indices]
-                u = self[indices]
-                for m in mask:
-                    u.where(m, original_self, inplace=True)
-
-                self[indices] = u
-            # --- End: if
-
-            return
-
-        # ------------------------------------------------------------
-        # Still here? Then the value is not logically scalar.
-        # ------------------------------------------------------------
-        data0_shape = self._shape
-        value_shape = value._shape
-
-        shape00 = list(map(_size_of_index, indices, data0_shape))
-        shape0 = shape00[:]
-
-        self_ndim = self._ndim
-        value_ndim = value._ndim
-        align_offset = self_ndim - value_ndim
-        if align_offset >= 0:
-            # self has more dimensions than other
-            shape0 = shape0[align_offset:]
-            shape1 = value_shape
-            ellipsis = None
-
-            flip_axes = [
-                i - align_offset for i in flip_axes if i >= align_offset
-            ]
-        else:
-            # value has more dimensions than self
-            v_align_offset = -align_offset
-            if value_shape[:v_align_offset] != [1] * v_align_offset:
-                # Can only allow value to have more dimensions then
-                # self if the extra dimensions all have size 1.
-                raise ValueError(
-                    "Can't broadcast shape %r across shape %r"
-                    % (value_shape, data0_shape)
-                )
-
-            shape1 = value_shape[v_align_offset:]
-            ellipsis = Ellipsis
-            align_offset = 0
-
-        # Find out which of the dimensions of value are to be
-        # broadcast, and those which are not. Note that, as in numpy,
-        # it is not allowed for a dimension in value to be larger than
-        # a size 1 dimension in self
-        base_value_indices = []
-        non_broadcast_dimensions = []
-
-        for i, (a, b) in enumerate(zip(shape0, shape1)):
-            if b == 1:
-                base_value_indices.append(slice(None))
-            elif a == b and b != 1:
-                base_value_indices.append(None)
-                non_broadcast_dimensions.append(i)
-            else:
-                raise ValueError(
-                    "Can't broadcast data with shape {!r} across "
-                    "shape {!r}".format(shape1, tuple(shape00))
-                )
-        # --- End: for
-
-        previous_location = ((-1,),) * self_ndim
-        start = [0] * value_ndim
-
-        #        save = pda_args['save']
-        #        keep_in_memory = pda_args['keep_in_memory']
-
-        value.to_memory()
-
-        for partition in self.partitions.matrix.flat:
-            p_indices, shape = partition.overlaps(indices)
-
-            if p_indices is None:
-                # This partition does not overlap the indices
-                continue
-
-            # --------------------------------------------------------
-            # Find which elements of value apply to this partition
-            # --------------------------------------------------------
-            value_indices = base_value_indices[:]
-
-            for i in non_broadcast_dimensions:
-                j = i + align_offset
-                location = partition.location[j][0]
-                reference_location = previous_location[j][0]
-
-                if location > reference_location:
-                    stop = start[i] + shape[j]
-                    value_indices[i] = slice(start[i], stop)
-                    start[i] = stop
-
-                elif location == reference_location:
-                    value_indices[i] = previous_slice[i]
-
-                elif location < reference_location:
-                    stop = shape[j]
-                    value_indices[i] = slice(0, stop)
-                    start[i] = stop
-            # --- End: for
-
-            previous_location = partition.location
-            previous_slice = value_indices[:]
-
-            for i in flip_axes:
-                value_indices[i] = _mirror_slice(value_indices[i], shape1[i])
-
-            if ellipsis:
-                value_indices.insert(0, ellipsis)
-
-            # --------------------------------------------------------
-            #
-            # --------------------------------------------------------
-            v = value[tuple(value_indices)].varray
-
-#            if keep_in_memory: #not save:
-#                v = v.copy()
-
-            # Update the partition's data
-            partition.open(config)
-            array = partition.array
-
-            if not partition.masked and numpy_ma_isMA(v):
-                # The sub-array is not masked and the assignment is
-                # masking elements, so turn the non-masked sub-array
-                # into a masked one.
-                array = array.view(numpy_ma_MaskedArray)
-                partition.subarray = array
-
-            self._set_subspace(array, p_indices, v)
-
-            partition.close()
-        # --- End: For
-
-        if roll:
-            # Unroll
-            for iaxis, shift in roll.items():
-                self.roll(iaxis, -shift, inplace=True)
-        # --- End: if
-
-        if mask:
-            indices = tuple(indices)
-            original_self = original_self[indices]
-            u = self[indices]
-            for m in mask:
-                u.where(m, original_self, inplace=True)
-
-            self[indices] = u
+#        def _mirror_slice(index, size):
+#            '''Return a slice object which creates the reverse of the input
+#        slice.
+#
+#        The step of the input slice must have a step of `.
+#
+#        :Parameters:
+#
+#            index: `slice`
+#                A slice object with a step of 1.
+#
+#            size: `int`
+#
+#        :Returns:
+#
+#            `slice`
+#
+#        **Examples:**
+#
+#        >>> s = slice(2, 6)
+#        >>> t = _mirror_slice(s, 8)
+#        >>> s, t
+#        slice(2, 6), slice(5, 1, -1)
+#        >>> range(8)[s]
+#        [2, 3, 4, 5]
+#        >>> range(8)[t]
+#        [5, 4, 3, 2]
+#        >>> range(7, -1, -1)[s]
+#        [5, 4, 3, 2]
+#        >>> range(7, -1, -1)[t]
+#        [2, 3, 4, 5]
+#
+#        '''
+#            start, stop, step = index.indices(size)
+#            size -= 1
+#            start = size - start
+#            stop = size - stop
+#            if stop < 0:
+#                stop = None
+#
+#            return slice(start, stop, -1)
+#        # --- End: def
+#
+#        config = self.partition_configuration(readonly=False)
+#
+#        # ------------------------------------------------------------
+#        # parse the indices
+#        # ------------------------------------------------------------
+#        indices_in = indices
+#        indices, roll, flip_axes, mask = parse_indices(
+#            self._shape, indices_in, cyclic=True, reverse=True, mask=True)
+#
+#        if roll:
+#            for iaxis, shift in roll.items():
+#                self.roll(iaxis, shift, inplace=True)
+#        # --- End: if
+#
+#        if mask:
+#            original_self = self.copy()
+#
+#        scalar_value = False
+#        if value is cf_masked:
+#            scalar_value = True
+#        else:
+#            copied = False
+#            if not isinstance(value, Data):
+#                # Convert to the value to a Data object
+#                value = type(self)(value, self.Units)
+#            else:
+#                if value.Units.equivalent(self.Units):
+#                    if not value.Units.equals(self.Units):
+#                        value = value.copy()
+#                        value.Units = self.Units
+#                        copied = True
+#                elif not value.Units:
+#                    value = value.override_units(self.Units)
+#                    copied = True
+#                else:
+#                    raise ValueError(
+#                        "Can't assign values with units {!r} to data with "
+#                        "units {!r}".format(value.Units, self.Units)
+#                    )
+#            # --- End: if
+#
+#            if value._size == 1:
+#                scalar_value = True
+#                value = value.datum(0)
+#        # --- End: if
+#
+#        source = self.source(None)
+#        if source is not None and source.get_compression_type():
+#            self._del_Array(None)
+#
+#        if scalar_value:
+#            # --------------------------------------------------------
+#            # The value is logically scalar
+#            # --------------------------------------------------------
+#            for partition in self.partitions.matrix.flat:
+#                p_indices, shape = partition.overlaps(indices)
+#                if p_indices is None:
+#                    # This partition does not overlap the indices
+#                    continue
+#
+#                partition.open(config)
+#                array = partition.array
+#
+#                if value is cf_masked and not partition.masked:
+#                    # The assignment is masking elements, so turn a
+#                    # non-masked sub-array into a masked one.
+#                    array = array.view(numpy_ma_MaskedArray)
+#                    partition.subarray = array
+#
+#                self._set_subspace(array, p_indices, value)
+#                partition.close()
+#
+#            if roll:
+#                for iaxis, shift in roll.items():
+#                    self.roll(iaxis, -shift, inplace=True)
+#            # --- End: if
+#
+#            if mask:
+#                indices = tuple(indices)
+#                original_self = original_self[indices]
+#                u = self[indices]
+#                for m in mask:
+#                    u.where(m, original_self, inplace=True)
+#
+#                self[indices] = u
+#            # --- End: if
+#
+#            return
+#
+#        # ------------------------------------------------------------
+#        # Still here? Then the value is not logically scalar.
+#        # ------------------------------------------------------------
+#        data0_shape = self._shape
+#        value_shape = value._shape
+#
+#        shape00 = list(map(_size_of_index, indices, data0_shape))
+#        shape0 = shape00[:]
+#
+#        self_ndim = self._ndim
+#        value_ndim = value._ndim
+#        align_offset = self_ndim - value_ndim
+#        if align_offset >= 0:
+#            # self has more dimensions than other
+#            shape0 = shape0[align_offset:]
+#            shape1 = value_shape
+#            ellipsis = None
+#
+#            flip_axes = [i-align_offset for i in flip_axes
+#                         if i >= align_offset]
+#        else:
+#            # value has more dimensions than self
+#            v_align_offset = -align_offset
+#            if value_shape[:v_align_offset] != [1] * v_align_offset:
+#                # Can only allow value to have more dimensions then
+#                # self if the extra dimensions all have size 1.
+#                raise ValueError("Can't broadcast shape %r across shape %r" %
+#                                 (value_shape, data0_shape))
+#
+#            shape1 = value_shape[v_align_offset:]
+#            ellipsis = Ellipsis
+#            align_offset = 0
+#
+#        # Find out which of the dimensions of value are to be
+#        # broadcast, and those which are not. Note that, as in numpy,
+#        # it is not allowed for a dimension in value to be larger than
+#        # a size 1 dimension in self
+#        base_value_indices = []
+#        non_broadcast_dimensions = []
+#
+#        for i, (a, b) in enumerate(zip(shape0, shape1)):
+#            if b == 1:
+#                base_value_indices.append(slice(None))
+#            elif a == b and b != 1:
+#                base_value_indices.append(None)
+#                non_broadcast_dimensions.append(i)
+#            else:
+#                raise ValueError(
+#                    "Can't broadcast data with shape {!r} across "
+#                    "shape {!r}".format(shape1, tuple(shape00))
+#                )
+#        # --- End: for
+#
+#        previous_location = ((-1,),) * self_ndim
+#        start = [0] * value_ndim
+#
+##        save = pda_args['save']
+##        keep_in_memory = pda_args['keep_in_memory']
+#
+#        value.to_memory()
+#
+#        for partition in self.partitions.matrix.flat:
+#            p_indices, shape = partition.overlaps(indices)
+#
+#            if p_indices is None:
+#                # This partition does not overlap the indices
+#                continue
+#
+#            # --------------------------------------------------------
+#            # Find which elements of value apply to this partition
+#            # --------------------------------------------------------
+#            value_indices = base_value_indices[:]
+#
+#            for i in non_broadcast_dimensions:
+#                j = i + align_offset
+#                location = partition.location[j][0]
+#                reference_location = previous_location[j][0]
+#
+#                if location > reference_location:
+#                    stop = start[i] + shape[j]
+#                    value_indices[i] = slice(start[i], stop)
+#                    start[i] = stop
+#
+#                elif location == reference_location:
+#                    value_indices[i] = previous_slice[i]
+#
+#                elif location < reference_location:
+#                    stop = shape[j]
+#                    value_indices[i] = slice(0, stop)
+#                    start[i] = stop
+#            # --- End: for
+#
+#            previous_location = partition.location
+#            previous_slice = value_indices[:]
+#
+#            for i in flip_axes:
+#                value_indices[i] = _mirror_slice(value_indices[i], shape1[i])
+#
+#            if ellipsis:
+#                value_indices.insert(0, ellipsis)
+#
+#            # --------------------------------------------------------
+#            #
+#            # --------------------------------------------------------
+#            v = value[tuple(value_indices)].varray
+#
+##            if keep_in_memory: #not save:
+##                v = v.copy()
+#
+#            # Update the partition's data
+#            partition.open(config)
+#            array = partition.array
+#
+#            if not partition.masked and numpy_ma_isMA(v):
+#                # The sub-array is not masked and the assignment is
+#                # masking elements, so turn the non-masked sub-array
+#                # into a masked one.
+#                array = array.view(numpy_ma_MaskedArray)
+#                partition.subarray = array
+#
+#            self._set_subspace(array, p_indices, v)
+#
+#            partition.close()
+#        # --- End: For
+#
+#        if roll:
+#            # Unroll
+#            for iaxis, shift in roll.items():
+#                self.roll(iaxis, -shift, inplace=True)
+#        # --- End: if
+#
+#        if mask:
+#            indices = tuple(indices)
+#            original_self = original_self[indices]
+#            u = self[indices]
+#            for m in mask:
+#                u.where(m, original_self, inplace=True)
+#
+#            self[indices] = u
 
 #    def _flag_partitions_for_processing(self, parallelise=True):
 #        '''
@@ -7003,7 +7051,20 @@ class Data(Container, cfdm.Data):
 
     @force_compute.setter
     def force_compute(self, value):
-        self._custom['force_compute'] = bool(value)
+        self._custom["force_compute"] = bool(value)
+
+    @property
+    def numpy_indexing(self):
+        """TODODASK - replace with 
+
+        with cf.numpy_indexing():
+            # do stuff
+        """
+        return self._custom.get("numpy_indexing", False)
+
+    @numpy_indexing.setter
+    def numpy_indexing(self, value):
+        self._custom["numpy_indexing"] = bool(value)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -15108,45 +15169,51 @@ def _broadcast(a, shape):
     return numpy_tile(a, tile)
 
 
-class AuxiliaryMask:
-    """TODO."""
-
-    def __init__(self):
-        """TODO."""
-        self._mask = []
-
-    def __getitem__(self, indices):
-        """TODO."""
-        new = type(self)()
-
-        for mask in self._mask:
-            mask_indices = [
-                (slice(None) if n == 1 else index)
-                for n, index in zip(mask.shape, indices)
-            ]
-            new._mask.append(mask[tuple(mask_indices)])
-
-        return new
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def ndim(self):
-        """TODO."""
-        return self._mask[0].ndim
-
-    @property
-    def dtype(self):
-        """TODO."""
-        return self._mask[0].dtype
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-    def append(self, mask):
-        """TODO."""
-        self._mask.append(mask)
-
-
-# --- End: class
+#class AuxiliaryMask:
+#    '''TODO
+#
+#    '''
+#    def __init__(self):
+#        '''TODO
+#        '''
+#        self._mask = []
+#
+#    def __getitem__(self, indices):
+#        '''TODO
+#        '''
+#        new = type(self)()
+#
+#        for mask in self._mask:
+#            mask_indices = [(slice(None) if n == 1 else index)
+#                            for n, index in zip(mask.shape, indices)]
+#            new._mask.append(mask[tuple(mask_indices)])
+#
+#        return new
+#
+#    # ----------------------------------------------------------------
+#    # Attributes
+#    # ----------------------------------------------------------------
+#    @property
+#    def ndim(self):
+#        '''TODO
+#
+#        '''
+#        return self._mask[0].ndim
+#
+#    @property
+#    def dtype(self):
+#        '''TODO
+#
+#        '''
+#        return self._mask[0].dtype
+#
+#    # ----------------------------------------------------------------
+#    # Methods
+#    # ----------------------------------------------------------------
+#    def append(self, mask):
+#        '''TODO
+#        '''
+#        self._mask.append(mask)
+#
+#
+## --- End: class
