@@ -389,7 +389,7 @@ def compressed_to_dask(array):
     return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
 
-def generate_axis_identifiers(n):
+def generate_axis_identifiers(n, basename="dim"):
     '''Return new, unique axis identifiers.
     
     The names are arbitrary and have no semantic meaning.
@@ -418,7 +418,7 @@ def generate_axis_identifiers(n):
     '''
     axes = _cached_axes.get(n, None)
     if axes is None:
-        axes = [f"dim{n}" for n in range(n)]
+        axes = [f"{basename}{n}" for n in range(n)]
         _cached_axes[n] = axes
         
     return axes
@@ -448,8 +448,8 @@ def processes():
 
 def synchronous():
     """Return True if the single-threaded synchronous scheduler executes
-    all computations computations in the local thread with no
-    parallelism at all.
+    computations computations in the local thread with no parallelism
+    at all.
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
@@ -475,4 +475,4 @@ def get_lock():
     if processes():
         raise ValueError("TODODASK - not yet sorted out processes lock")
 
-    raise ValueError("TODODASK - what now? raise exception? cluter?")
+    raise ValueError("TODODASK - what now? raise exception? cluster?")

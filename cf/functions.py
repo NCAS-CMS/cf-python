@@ -1884,7 +1884,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
     except (IndexError, NotImplementedError, TypeError):
         return a == b
 
-#TODODASK - replace if numpy_indexing is None use config
+#TODODASK - enhance with cionfig/decorator
 def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
 #reverse=False,
 #                  envelope=False, mask=False, ):
@@ -1917,12 +1917,12 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
     if not isinstance(indices, tuple):
         indices = (indices,)
 
-    if mask and indices:
-        arg0 = indices[0]
-        if isinstance(arg0, str) and arg0 == "mask":
-            mask_indices = indices[1]
-            indices = indices[2:]
-    # --- End: if
+#    if mask and indices:
+#        arg0 = indices[0]
+#        if isinstance(arg0, str) and arg0 == 'mask':
+#            mask_indices = indices[1]
+#            indices = indices[2:]
+#    # --- End: if
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded

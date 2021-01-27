@@ -9,8 +9,6 @@ from operator import mul
 from json import dumps as json_dumps
 from json import loads as json_loads
 
-# from math import nan
-
 import logging
 
 try:
@@ -499,11 +497,6 @@ class Data(Container, cfdm.Data):
         except AttributeError:
             ndim = np.ndim(array)
            
-#        try:
-#            size = array.size
-#        except AttributeError:
-#            size = None
-            
         # The _axes attribute is an ordered sequence of unique (within
         # this `Data` instance) names for each array axis.
         self._axes = generate_axis_identifiers(ndim)
@@ -548,8 +541,6 @@ class Data(Container, cfdm.Data):
         elif not is_dask_collection(array):
             # Turn the data into a dask array
             array = to_dask(array, chunks, dask_from_array)
-#            if size is None:
-#                size = array.size
 
         # Find out if we have an array of date-time objects
         first_value = None
@@ -648,9 +639,6 @@ class Data(Container, cfdm.Data):
             # Remove a source array, on the grounds that we can't
             # guarantee its consistency with the new dask array.            
             self._del_Array(None)
-
-#        if size is not None:
-#            self._original_size = size
             
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
@@ -764,6 +752,8 @@ class Data(Container, cfdm.Data):
 
         """
         return isinstance(array, cfdm.Array)
+
+# These _auxiliary_* methods will be replaced by stuff in Field.py
 
 #    def _auxiliary_mask_from_1d_indices(self, compressed_indices):
 #        '''TODO
@@ -1255,7 +1245,7 @@ class Data(Container, cfdm.Data):
 
         d = self
 
-        numpy_indexing = self.numpy_indexing # TODOASK- replace with config
+        numpy_indexing = self.numpy_indexing # TODOASK- enhance with config/decorator
         
         indices, roll = parse_indices(d.shape, indices, cyclic=True,
                                       numpy_indexing=numpy_indexing)
@@ -1327,14 +1317,14 @@ class Data(Container, cfdm.Data):
     **Examples:**
 
         '''
-        # ------------------------------------------------------------
+        # TODODASK - implement hardmask stuff as discussed on 2021-01-27
+        
         # parse the indices
-        # ------------------------------------------------------------
-        numpy_indexing = self.numpy_indexing # TODOASK- replace with config
+        numpy_indexing = self.numpy_indexing # TODOASK- enhance with config/decorator
         
         indices, roll = parse_indices(self.shape, indices,
                                       cyclic=True,
-                                      preserve_integers=numpy_indexing)
+                                      numpy_indexing=numpy_indexing)
 
         if roll:
             # Roll axes with cyclic slices
@@ -1360,7 +1350,6 @@ class Data(Container, cfdm.Data):
                 if not value_units.equals(self_units):
                     value = value.copy()
                     value.Units = self.Units
-                    copied = True
             elif value_units and self_units:
                 raise ValueError(
                     f"Can't assign values with units {value_units!r} "
@@ -1368,7 +1357,7 @@ class Data(Container, cfdm.Data):
                 )
         # --- End: try
         
-        # Extract a dask array from value
+        # Extract a dask array from within value
         try:
             value = value.dask_array(copy=False)
         except AttributeError:
@@ -2873,13 +2862,12 @@ class Data(Container, cfdm.Data):
 
         cfa_data["Partitions"] = partitions
 
-        # ------------------------------------------------------------
-        # Auxiliary mask
-        # ------------------------------------------------------------
-        if self._auxiliary_mask:
-            cfa_data["_auxiliary_mask"] = [
-                m.copy() for m in self._auxiliary_mask
-            ]
+#        # ------------------------------------------------------------
+#        # Auxiliary mask
+#        # ------------------------------------------------------------
+#        if self._auxiliary_mask:
+#            cfa_data['_auxiliary_mask'] = [m.copy() for m in
+#                                           self._auxiliary_mask]
 
         return cfa_data
 
@@ -3066,18 +3054,21 @@ class Data(Container, cfdm.Data):
         if chunk:
             self.chunk()
 
-        # ------------------------------------------------------------
-        # Auxiliary mask
-        # ------------------------------------------------------------
-        _auxiliary_mask = d.get("_auxiliary_mask", None)
-        if _auxiliary_mask:
-            self._auxiliary_mask = [m.copy() for m in _auxiliary_mask]
-        else:
-            self._auxiliary_mask = None
+#        # ------------------------------------------------------------
+#        # Auxiliary mask
+#        # ------------------------------------------------------------
+#        _auxiliary_mask = d.get('_auxiliary_mask', None)
+#        if _auxiliary_mask:
+#            self._auxiliary_mask = [m.copy() for m in _auxiliary_mask]
+#        else:
+#            self._auxiliary_mask = None
 
     def can_compute(self, functions=None, log_levels=None,
                     override=False):
-        """Whether or not it is acceptable to compute the data.
+        """TODODASK - this method is premature - needs thinking about as part
+        of the wider resource management issue
+
+        Whether or not it is acceptable to compute the data.
         
         If the data is explicitly requested to be computed (as would
         be the case when writing to disk, or accessing the `array`
@@ -3327,41 +3318,9 @@ class Data(Container, cfdm.Data):
                 The convolved data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
-
-        >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'metres')
-        >>> print(d.array)
-        [[ 0,  1,  2,  3],
-         [ 4,  5,  6,  7],
-         [ 8,  9, 10, 11]])
-        >>> d.cyclic()
-        set()
-        >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
-        >>> print(e.array)
-        [[-- 0.7 1.55 --]
-         [-- 4.1 4.95 --]
-         [-- 7.5 8.35 --]]
-        >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1, cval=0)
-        >>> print(e.array)
-        [[0.1  0.7  1.55 2.  ]
-         [2.5  4.1  4.95 5.  ]
-         [4.9  7.5  8.35 8.  ]]
-        >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1, mode='wrap')
-        >>> print(e.array)
-        [[0.85 0.7  1.55 2.  ]
-         [4.25 4.1  4.95 5.4 ]
-         [7.65 7.5  8.35 8.8 ]]
-        >>> d.cyclic(1)
-        set()
-        >>> d.cyclic()
-        {1}
-        >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
-        >>> print(e.array)
-        [[0.85 0.7  1.55 2.  ]
-         [4.25 4.1  4.95 5.4 ]
-         [7.65 7.5  8.35 8.8 ]]
-
         """
+        # TODODSAK - map_overlap
+        
         try:
             scipy_convolve1d
         except NameError:
@@ -5205,63 +5164,61 @@ class Data(Container, cfdm.Data):
             if dtype0 != dtype1:
                 data0.dtype = numpy_result_type(dtype0, dtype1)
 
-            # --------------------------------------------------------
-            # 8. Concatenate the auxiliary mask
-            # --------------------------------------------------------
-            new_auxiliary_mask = []
-            if data0._auxiliary_mask:
-                # data0 has an auxiliary mask
-                for mask in data0._auxiliary_mask:
-                    size = mask.size
-                    if (size > 1 and mask.shape[axis] > 1) or (
-                        size == 1 and mask.datum()
-                    ):
-                        new_shape = list(mask.shape)
-                        new_shape[axis] = shape0[axis]
-                        new_mask = cls.empty(new_shape, dtype=bool)
-                        indices = [slice(None)] * new_mask.ndim
-
-                        indices[axis] = slice(0, original_shape0[axis])
-                        new_mask[tuple(indices)] = mask
-
-                        indices[axis] = slice(original_shape0[axis], None)
-                        new_mask[tuple(indices)] = False
-                    else:
-                        new_auxiliary_mask.append(mask)
-
-                    new_auxiliary_mask.append(new_mask)
-                # --- End: for
-
-            if data1._auxiliary_mask:
-                # data1 has an auxiliary mask
-                for mask in data1._auxiliary_mask:
-                    size = mask.size
-                    if (size > 1 and mask.shape[axis] > 1) or (
-                        size == 1 and mask.datum()
-                    ):
-                        new_shape = list(mask.shape)
-                        new_shape[axis] = shape0[axis]
-                        new_mask = cls.empty(new_shape, dtype=bool)
-
-                        indices = [slice(None)] * new_mask.ndim
-
-                        indices[axis] = slice(0, original_shape0[axis])
-                        new_mask[tuple(indices)] = False
-
-                        indices[axis] = slice(original_shape0[axis], None)
-                        new_mask[tuple(indices)] = mask
-                    else:
-                        new_auxiliary_mask.append(mask)
-
-                    new_auxiliary_mask.append(new_mask)
-                # --- End: for
-            # --- End: if
-
-            if new_auxiliary_mask:
-                data0._auxiliary_mask = new_auxiliary_mask
-        #                # Set the concatenated auxiliary mask
-        #                for mask in new_auxiliary_mask:
-        #                    data0._auxiliary_mask_add_component(mask)
+#            # --------------------------------------------------------
+#            # 8. Concatenate the auxiliary mask
+#            # --------------------------------------------------------
+#            new_auxiliary_mask = []
+#            if data0._auxiliary_mask:
+#                # data0 has an auxiliary mask
+#                for mask in data0._auxiliary_mask:
+#                    size = mask.size
+#                    if ((size > 1 and mask.shape[axis] > 1) or
+#                            (size == 1 and mask.datum())):
+#                        new_shape = list(mask.shape)
+#                        new_shape[axis] = shape0[axis]
+#                        new_mask = cls.empty(new_shape, dtype=bool)
+#                        indices = [slice(None)] * new_mask.ndim
+#
+#                        indices[axis] = slice(0, original_shape0[axis])
+#                        new_mask[tuple(indices)] = mask
+#
+#                        indices[axis] = slice(original_shape0[axis], None)
+#                        new_mask[tuple(indices)] = False
+#                    else:
+#                        new_auxiliary_mask.append(mask)
+#
+#                    new_auxiliary_mask.append(new_mask)
+#                # --- End: for
+#
+#            if data1._auxiliary_mask:
+#                # data1 has an auxiliary mask
+#                for mask in data1._auxiliary_mask:
+#                    size = mask.size
+#                    if ((size > 1 and mask.shape[axis] > 1) or
+#                            (size == 1 and mask.datum())):
+#                        new_shape = list(mask.shape)
+#                        new_shape[axis] = shape0[axis]
+#                        new_mask = cls.empty(new_shape, dtype=bool)
+#
+#                        indices = [slice(None)] * new_mask.ndim
+#
+#                        indices[axis] = slice(0, original_shape0[axis])
+#                        new_mask[tuple(indices)] = False
+#
+#                        indices[axis] = slice(original_shape0[axis], None)
+#                        new_mask[tuple(indices)] = mask
+#                    else:
+#                        new_auxiliary_mask.append(mask)
+#
+#                    new_auxiliary_mask.append(new_mask)
+#                # --- End: for
+#            # --- End: if
+#
+#            if new_auxiliary_mask:
+#                data0._auxiliary_mask = new_auxiliary_mask
+##                # Set the concatenated auxiliary mask
+##                for mask in new_auxiliary_mask:
+##                    data0._auxiliary_mask_add_component(mask)
         # --- End: for
 
         # ------------------------------------------------------------
@@ -5375,10 +5332,11 @@ class Data(Container, cfdm.Data):
         [[1 2 3 4 5]]
 
         """
+        out = self.copy(array=False)
+    
         dx = self.dask_array(copy=False)
         dx = getattr(operator, operation)(dx)
-
-        out = self.copy(array=False)
+        
         out._set_dask(dx)
 
         return out
@@ -6102,7 +6060,7 @@ class Data(Container, cfdm.Data):
         # -------------------------------------------------------------
         new = d[(Ellipsis,) + (0,) * n_collapse_axes]
 
-        new._auxiliary_mask = None
+#        new._auxiliary_mask = None
         for partition in new.partitions.matrix.flat:
             # Do this so as not to upset the ref count on the
             # parittion's of d
@@ -6944,14 +6902,6 @@ class Data(Container, cfdm.Data):
     def _HDF_chunks(self):
         del self._custom["_HDF_chunks"]
 
-#    def _original_size(self):
-#        """TODODASK"""       
-#        return self._custom.get("_original_size", nan)
-#
-#    @_original_size.setter
-#    def _original_size(self, value):
-#        """TODODASK"""       
-#         return self._custom["_original_size"] = value
 
 #    @property
 #    def partitions(self):
@@ -7015,7 +6965,8 @@ class Data(Container, cfdm.Data):
         self._custom['_axes'] = tuple(value)
     
     @_axes.deleter
-    def _axes(self): del self._custom['_axes']
+    def _axes(self):
+        del self._custom['_axes']
    
 #    @property
 #    def _all_axes(self):
@@ -7040,6 +6991,7 @@ class Data(Container, cfdm.Data):
     # ----------------------------------------------------------------
     # Dask attributes
     # ----------------------------------------------------------------
+    @property
     def chunks(self):
         """TODODASK"""
         return self.dask_array(copy=False).chunks
@@ -7055,10 +7007,9 @@ class Data(Container, cfdm.Data):
 
     @property
     def numpy_indexing(self):
-        """TODODASK - replace with 
+        """TODODASK - probably thewrong name - needa gneral numpy
+        compatability flag. See also confg settings
 
-        with cf.numpy_indexing():
-            # do stuff
         """
         return self._custom.get("numpy_indexing", False)
 
@@ -7072,13 +7023,14 @@ class Data(Container, cfdm.Data):
     @property
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
-
+    
         Deleting this attribute is equivalent to setting it to an
-        undefined units object, so this attribute is guaranteed to always
-        exist.
-
+        undefined units object, so this attribute is guaranteed to
+        always exist. TODODASK - is is True? Should be undelable, I
+        think. Commenting out @deleter for now.
+    
         **Examples:**
-
+    
         >>> d.Units = Units('m')
         >>> d.Units
         <Units: m>
@@ -7092,13 +7044,17 @@ class Data(Container, cfdm.Data):
     @Units.setter
     def Units(self, value):
         old_units = getattr(self, '_Units', _units_None)
-        if old_units and not old_units.equivalent(value, verbose=1):
+        if not old_units.equivalent(value):
             raise ValueError(
                 f"Current units are {old_units!r}. Can't set to "
                 f"non-equivalent units {value!r}. "
                 "Use the override_units method instead."
             )
 
+        if not old_units:
+            self.override_units(value, inplace=True)
+            return
+        
         if self.Units.equals(value):
             return
 
@@ -7113,10 +7069,9 @@ class Data(Container, cfdm.Data):
             
         self._Units = value
 
-    @Units.deleter
-    def Units(self):
-        del self._Units  # = _units_None
-
+#    @Units.deleter
+#    def Units(self): del self._Units  # = _units_None
+                    
     @property
     def data(self):
         """The data as an object identity.
@@ -7174,10 +7129,6 @@ class Data(Container, cfdm.Data):
             dx = dx.astype(value)
             self._set_dask(dx)
          
-    @dtype.deleter
-    def dtype(self):
-        raise AttributeError("Can't delete 'dtype' attribute")
-
     @property
     def fill_value(self):
         """The data array missing data value.
@@ -7232,14 +7183,6 @@ class Data(Container, cfdm.Data):
     @hardmask.setter
     def hardmask(self, value):
         self._custom["hardmask"] = bool(value)
-
-    @hardmask.deleter
-    def hardmask(self):
-        raise AttributeError(
-            "Can't delete {} attribute 'hardmask'".format(
-                self.__class__.__name__
-            )
-        )
 
     @property
     def ismasked(self):
@@ -7719,7 +7662,7 @@ class Data(Container, cfdm.Data):
             d = self
 
         dx = d.dask_array(copy=False)
-        dx = convert_to_datetime(dx, d.Units) # TODODASk
+        dx = convert_to_datetime(dx, d.Units) # TODODASK
             
         return dx.compute()
         
@@ -12889,11 +12832,11 @@ class Data(Container, cfdm.Data):
             iaxes[axis1], iaxes[axis0] = axis0, axis1
             d.transpose(iaxes, inplace=True)
 
-        # Swap axes in the auxiliary mask
-        if d._auxiliary_mask:
-            for mask in d._auxiliary_mask:
-                mask.swapaxes(axis0, axis1, inplace=True)
-        # --- End: if
+#        # Swap axes in the auxiliary mask
+#        if d._auxiliary_mask:
+#            for mask in d._auxiliary_mask:
+#                mask.swapaxes(axis0, axis1, inplace=True)
+#        # --- End: if
 
         return d
 
@@ -13965,10 +13908,10 @@ class Data(Container, cfdm.Data):
             partition.location = [location[i] for i in iaxes]
             partition.shape = [shape[i] for i in iaxes]
 
-        # Transpose the auxiliary mask
-        if d._auxiliary_mask:
-            for mask in d._auxiliary_mask:
-                mask.transpose(iaxes, inplace=True)
+#        # Transpose the auxiliary mask
+#        if d._auxiliary_mask:
+#            for mask in d._auxiliary_mask:
+#                mask.transpose(iaxes, inplace=True)
 
         return d
 
