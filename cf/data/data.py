@@ -455,11 +455,11 @@ class Data(Container, cfdm.Data):
             super().__init__(source=source, _use_array=_use_array)
             if _use_array:
                 try:
-                    array = source.dask_array(copy=copy)
+                    array = source._get_dask()
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, delete_source=False)
+                    self._set_dask(array, copy=copy, delete_source=False)
             else:
                 self._del_dask(None)
             
@@ -569,7 +569,8 @@ class Data(Container, cfdm.Data):
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-    def dask_array(self, copy=True):
+    @property
+    def dask_array(self):
         '''TODODASK 
 
     :Returns:
@@ -577,13 +578,10 @@ class Data(Container, cfdm.Data):
         `dask.array.Array`
 
         '''
-        dx = self._get_dask()
-        if copy:
-            dx = dx.copy()
+        return self._get_dask().copy()
 
-        return dx
-    
-    def dask_compressed_array(self, copy=True):
+    @property
+    def dask_compressed_array(self):
         '''TODODASK 
 
     :Returns:
@@ -597,8 +595,8 @@ class Data(Container, cfdm.Data):
             raise ValueError(
                 "not compressed: can't get compressed dask array"
             )
-
-        return ca.dask_array(copy=copy)
+        
+        return ca._get_dask().copy()
     
     def __contains__(self, value):
         """
@@ -635,7 +633,7 @@ class Data(Container, cfdm.Data):
             out = value in a
             return numpy.array(out).reshape((1,) * a.ndim)
 
-        if isinstance(value, self.__class__):
+        if isinstance(value, self.__class__): # TODDASK chek aother type stoo
             self_units = self.Units
             value_units = value.Units
             if value_units.equivalent(self_units):
@@ -645,9 +643,9 @@ class Data(Container, cfdm.Data):
             elif value_units:
                 return False
 
-            value = value.dask_array(copy=False)
+            value = value._get_dask()
 
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
 
         out_ind = tuple(dx.ndim)
         dx_ind = out_ind
@@ -1203,7 +1201,7 @@ class Data(Container, cfdm.Data):
 
         new = d.copy(array=False)
 
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = dx[tuple(indices)]
         new._set_dask(dx)
 
@@ -1292,12 +1290,12 @@ class Data(Container, cfdm.Data):
         
         # Extract a dask array from within value
         try:
-            value = value.dask_array(copy=False)
+            value = value._get_dask()
         except AttributeError:
             pass
 
         # Do the assignment
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         dx[tuple(indices)] = value
         
         if roll:
@@ -2625,7 +2623,8 @@ class Data(Container, cfdm.Data):
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.dask_array(copy=False).persist()
+        dx = self._get_dask()
+        dx = dx.persist()
         d._set_dask(dx)
         
         return d
@@ -3123,7 +3122,7 @@ class Data(Container, cfdm.Data):
                 False.
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
 
         # TODODASK fits in memory.
 
@@ -3608,7 +3607,7 @@ class Data(Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
 
         d._set_dask(dx, delete_source=False)
@@ -5335,7 +5334,7 @@ class Data(Container, cfdm.Data):
         """
         out = self.copy(array=False)
     
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         dx = getattr(operator, operation)(dx)
         
         out._set_dask(dx)
@@ -7010,7 +7009,7 @@ class Data(Container, cfdm.Data):
     @property
     def chunks(self):
         """TODODASK"""
-        return self.dask_array(copy=False).chunks
+        return self._get_dask().chunks
     
     @property
     def force_compute(self):
@@ -7063,7 +7062,7 @@ class Data(Container, cfdm.Data):
         if self.Units.equals(value):
             return
 
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         dx = dx.map_blocks(
             partial(Units.conform,
                     from_units=old_units,
@@ -7125,12 +7124,12 @@ class Data(Container, cfdm.Data):
     [ 0.5  1.5  2.5]
 
         '''
-        dx = self.dask_array(copy=False)            
+        dx = self._get_dask()            
         return dx.dtype
         
     @dtype.setter
     def dtype(self, value):
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         
         # Only change the datatype if it's different
         if dx.dtype != value:
@@ -7232,7 +7231,7 @@ class Data(Container, cfdm.Data):
             out = np.ma.is_masked(a)
             return np.array(out).reshape((1,) * a.ndim)
 
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
 
         out_ind = tuple(dx.ndim)
         dx_ind = out_ind
@@ -7307,7 +7306,7 @@ class Data(Container, cfdm.Data):
         24
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         return dx.nbytes    
     # TODODASK - what about nans (e.g. after da.unique)
     
@@ -7338,7 +7337,7 @@ class Data(Container, cfdm.Data):
         0
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         return dx.ndim
 
 #    @property
@@ -7426,9 +7425,10 @@ class Data(Container, cfdm.Data):
         ()
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
+#        if nan: do some compute
         return dx.shape
-    # TODODASK - what about nans (e.g. after da.unique)
+    # TODODASK - what about nans (e.g. after da.unique  dx.shape -> (nan,))
 
     @property
     def size(self):
@@ -7457,7 +7457,7 @@ class Data(Container, cfdm.Data):
         1
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         return dx.size
     # TODODASK - what about nans (e.g. after da.unique)
 
@@ -7492,7 +7492,7 @@ class Data(Container, cfdm.Data):
     -99.0 km
 
         """
-        dx = self.dask_array(copy=False)
+        dx = self._get_dask()
         return dx.compute()
         
 #        # Set the auxiliary_mask keyword to None because we can apply
@@ -7669,7 +7669,7 @@ class Data(Container, cfdm.Data):
         else:
             d = self
 
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = convert_to_datetime(dx, d.Units) # TODODASK
             
         return dx.compute()
@@ -9228,7 +9228,7 @@ class Data(Container, cfdm.Data):
         #
         # This is only here for now, in this form, to ensure that
         # cf.read works
-        return self.dask_array(copy=False).max()
+        return self.get_dask().max()
     
 #        return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
 #                              squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9960,7 +9960,7 @@ class Data(Container, cfdm.Data):
         >>> d.close()
 
         """
-        print ("TODODASK - is this still needed/valid?")
+        print ("TODODASK - is this still needed/valid? Not needed")
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
@@ -10776,7 +10776,7 @@ class Data(Container, cfdm.Data):
         shape = list(d.shape)
         shape.insert(position, 1)
 
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = dx.reshape(shape)
         d._set_dask(dx)
 
@@ -12305,7 +12305,7 @@ class Data(Container, cfdm.Data):
         index = [slice(None, None, -1) if i in axes else slice(None)
                  for i in iaxes]
 
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = dx[tuple(index)]
         d._set_dask(dx)
 
@@ -13727,12 +13727,14 @@ class Data(Container, cfdm.Data):
                     )
         # --- End: if
 
+        # TODODASK - checkif axi parsing in be done in dask
+
         if not axes:
             return d
         
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = dx.squeeze(axis=tuple(axes))
         d._set_dask(dx)
 
@@ -14289,7 +14291,7 @@ class Data(Container, cfdm.Data):
             # Null roll
             return d
         
-        dx = d.dask_array(copy=False)
+        dx = d._get_dask()
         dx = da.roll(dx, axis=axes, shift=shift)
         d._set_dask(dx)
 
