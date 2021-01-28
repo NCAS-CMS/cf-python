@@ -6,15 +6,15 @@ from . import abstract
 
 
 class RaggedIndexedSubarray(abstract.CompressedSubarray):
-    '''TODO
+    """TODODASK
 
-    '''
+    """
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        """x.__getitem__(indices) <==> x[indices]
 
     Returns a numpy array.
 
-        '''
+        """
         # The compressed array
         array = self.array
 

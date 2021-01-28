@@ -10,8 +10,6 @@ class FilledArray(abstract.Array):
     '''TODO
 
     '''
-    _dask_lock = False
-    
     def __init__(self, dtype=None, shape=None, size=None,
                  fill_value=None):
         '''**Initialization**
@@ -79,6 +77,13 @@ class FilledArray(abstract.Array):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
+    @property
+    def dask_lock(self):
+        """TODODASK
+
+        """
+        return False
+    
     @property
     def dtype(self):
         '''Data-type of the data elements.

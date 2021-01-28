@@ -2,7 +2,8 @@ import cfdm
 
 
 class RaggedIndexedArray(cfdm.RaggedIndexedArray):
-    '''An underlying indexed ragged array.
+    """
+    An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array
     combines all features along a single dimension (the "sample
@@ -15,7 +16,9 @@ class RaggedIndexedArray(cfdm.RaggedIndexedArray):
 
     .. versionadded:: 3.0.0
 
-    '''
-    _dask_asarray = False
+    """
+    @property
+    def dask_asarray(self):
+        return False
 
 # --- End: class
