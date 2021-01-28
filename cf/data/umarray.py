@@ -48,10 +48,14 @@ class UMArray(abstract.FileArray):
             LBLREC-LBEXT. If set to 0 then `!size` is used.
 
         fmt: `str`, optional
+            The file format of the UM file containing the array
+            ('FF' or 'PP').
 
         word_size: `int`, optional
+            Word size in bytes (4 or 8).
 
         byte_ordering: `str`, optional
+            The endianness of the data ('little_endian' or 'big_endian').
 
     **Examples:**
 
@@ -78,11 +82,13 @@ class UMArray(abstract.FileArray):
         self._close = False
 
     def __getitem__(self, indices):
-        '''Implement indexing
+        '''Implement indexing.
 
     x.__getitem__(indices) <==> x[indices]
 
-    Returns a numpy array.
+    :Returns:
+
+        `numpy.ndarray`
 
         '''
         f = self.open()
@@ -149,54 +155,89 @@ class UMArray(abstract.FileArray):
     def __str__(self):
         '''x.__str__() <==> str(x)
 
+    :Returns:
+
+        `str`
+
         '''
         return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
 
     @property
     def file_pointer(self):
-        '''TODO
+        '''The file pointer starting at the position of the header.
+
+    :Returns:
+
+        2-`tuple`
 
         '''
         return (self.filename, self.header_offset)
 
     @property
     def header_offset(self):
-        '''TODO
+        '''The start position in the file of the header.
+
+    :Returns:
+
+        `int`
 
         '''
         return self._get_component('header_offset')
 
     @property
     def data_offset(self):
-        '''TODO
+        '''The start position in the file of the data array.
+
+    :Returns:
+
+        `int`
 
         '''
         return self._get_component('data_offset')
 
     @property
     def disk_length(self):
-        '''TODO
+        '''The number of words on disk for the data array.
+
+    :Returns:
+
+        `int`
 
         '''
         return self._get_component('disk_length')
 
     @property
     def fmt(self):
-        '''TODO
+        '''The file format of the UM file containing the array.
+
+    :Returns:
+
+        `str`
+            'FF' or 'PP'
 
         '''
         return self._get_component('fmt')
 
     @property
     def byte_ordering(self):
-        '''TODO
+        '''The endianness of the data.
+
+    :Returns:
+
+        `str`
+            'little_endian' or 'big_endian'
 
         '''
         return self._get_component('byte_ordering')
 
     @property
     def word_size(self):
-        '''TODO
+        '''Word size in bytes.
+
+    :Returns:
+
+        `int`
+            4 or 8
 
         '''
         return self._get_component('word_size')
