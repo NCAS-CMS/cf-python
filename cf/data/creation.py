@@ -87,22 +87,22 @@ def convert_to_builtin_type(x):
     )
         
 
-def to_dask(array, chunks, dask_from_array):
+def to_dask(array, chunks, dask_from_array_options):
     """TODODASK
 
     .. versionadded:: 4.0.0
     """        
-    if "chunks" in dask_from_array:
+    if "chunks" in dask_from_array_options:
         raise TypeError(
-            "Can't define chunks in the 'dask_from_array' "
+            "Can't define chunks in the 'dask_from_array_options' "
             "dictionary. Use the 'chunks' parameter instead"
         )
     
-    kwargs = dask_from_array.copy()
+    kwargs = dask_from_array_options.copy()
     kwargs.setdefault('asarray',
-                      getattr(array, '_dask_asarray', None))
+                      getattr(array, 'dask_asarray', None))
     kwargs.setdefault('lock',
-                      getattr(array, '_dask_lock', None))
+                      getattr(array, 'dask_lock', False))
 
     return da.from_array(array, chunks=chunks, **kwargs)
 
@@ -144,14 +144,14 @@ def compressed_to_dask(array):
     dsk = {}
     full_slice = Ellipsis
     default_asarray = False
-    if getattr(compressed_data.source(), '_dask_lock', True):
+    if getattr(compressed_data.source(), 'dask_lock', True):
         lock = get_lock()
 
     if compression_type == 'ragged contiguous':
         # ------------------------------------------------------------
         # Ragged contiguous
         # ------------------------------------------------------------
-        asarray = getattr(RaggedContiguousSubarray, '_dask_asarray',
+        asarray = getattr(RaggedContiguousSubarray, 'dask_asarray',
                           default_asarray)
 
         count = array.get_count().dask_array(copy=False)
@@ -204,7 +204,7 @@ def compressed_to_dask(array):
         # ------------------------------------------------------------
         # Ragged indexed
         # ------------------------------------------------------------
-        asarray = getattr(RaggedIndexedSubarray, '_dask_asarray',
+        asarray = getattr(RaggedIndexedSubarray, 'dask_asarray',
                           default_asarray)
 
         index = array.get_index().dask_array(copy=False)
@@ -319,7 +319,7 @@ def compressed_to_dask(array):
                         }
                     )
                     
-                asarray = getattr(subarray, '_dask_asarray',
+                asarray = getattr(subarray, 'dask_asarray',
                                   default_asarray)
 
                 dsk[name + next(chunk_position)] =  (
@@ -346,7 +346,7 @@ def compressed_to_dask(array):
         # ------------------------------------------------------------
         # Gathered
         # ------------------------------------------------------------
-        asarray = getattr(GatheredSubarray, '_dask_asarray',
+        asarray = getattr(GatheredSubarray, 'dask_asarray',
                           default_asarray)
 
         compressed_dimension = array.get_compressed_dimension()

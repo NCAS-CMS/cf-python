@@ -1,11 +1,13 @@
 class CompressedArray:
-    '''TODO
+    """TODODASK
 
-    '''
-    _dask_asarray = False
+    """
+    @property
+    def dask_lock(self):
+        return getattr(self._get_compressed_Array(), "dask_lock", False)
 
     @property
-    def _dask_lock(self):
-        return getattr(self._get_compressed_Array(), "_dask_lock", False)
+    def dask_asarray(self):
+        return False
 
 # -- End; class

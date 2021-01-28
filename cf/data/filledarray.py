@@ -9,8 +9,6 @@ from ..constants import masked as cf_masked
 class FilledArray(abstract.Array):
     """An underlying filled array."""
 
-    _dask_lock = False
-
     def __init__(
         self,
         dtype=None,
@@ -90,6 +88,13 @@ class FilledArray(abstract.Array):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
+    @property
+    def dask_lock(self):
+        """TODODASK
+
+        """
+        return False
+    
     @property
     def dtype(self):
         """Data-type of the data elements.

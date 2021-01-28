@@ -280,7 +280,7 @@ class Data(Container, cfdm.Data):
         copy=True,
         dtype=None,
         mask=None,
-        dask_from_array={},
+        dask_from_array_options={},
         _use_array=True
     ):
         '''**Initialization**
@@ -531,7 +531,7 @@ class Data(Container, cfdm.Data):
                     "Consider rechunking after initialisation."
                 )
             
-            if dask_from_array:
+            if dask_from_array_options:
                 raise ValueError(
                     "Can't define 'dask.array.from_array' parameters for "
                     "compressed input arrays"
@@ -541,7 +541,7 @@ class Data(Container, cfdm.Data):
             
         elif not is_dask_collection(array):
             # Turn the data into a dask array
-            array = to_dask(array, chunks, dask_from_array)
+            array = to_dask(array, chunks, dask_from_array_options)
 
         # Find out if we have an array of date-time objects
         first_value = None

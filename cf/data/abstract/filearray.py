@@ -11,8 +11,6 @@ class FileArray(Array):
 
     """
 
-    _dask_asarray = False
-    
     def __getitem__(self, indices):
         """"""
         pass
@@ -27,8 +25,12 @@ class FileArray(Array):
     # Dask attributes
     # ----------------------------------------------------------------
     @property
-    def _dask_lock(self):
-        return getattr(self._get_Array(), "_dask_lock", False)
+    def dask_lock(self):
+        return getattr(self._get_Array(), "dask_lock", False)
+
+    @property
+    def dask_asarray(self):
+        return False
 
     # ----------------------------------------------------------------
     # Attributes

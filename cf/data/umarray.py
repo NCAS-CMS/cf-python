@@ -3,17 +3,15 @@ import numpy
 from ..functions import parse_indices, get_subspace
 from .functions import _open_um_file, _close_um_file
 
-from ..umread_lib.umfile import Rec
+from ..umread_lib.umfile import File, Rec
 
 from . import abstract
 
 
 class UMArray(abstract.FileArray):
-    '''A sub-array stored in a PP or UM fields file.
+    """A sub-array stored in a PP or UM fields file.
 
-    '''
-    _dask_lock = True
-
+    """
     def __init__(self, filename=None, dtype=None, ndim=None,
                  shape=None, size=None, header_offset=None,
                  data_offset=None, disk_length=None, fmt=None,
@@ -21,54 +19,58 @@ class UMArray(abstract.FileArray):
         """**Initialization**
 
         :Parameters:
-
+    
             filename: `str`
                 The file name in normalized, absolute form.
-
+    
             dtype: `numpy.dtype`
                 The data type of the data array on disk.
-
+    
             ndim: `int`
-                The number of dimensions in the unpacked data array. Must
-                match up with th *shape* parameter.
-
+                The number of dimensions in the unpacked data
+                array. Must match up with th *shape* parameter.
+    
             shape: `tuple`
-                The shape of the unpacked data array. Note that this is
-                the shape as required by the object containing the
+                The shape of the unpacked data array. Note that this
+                is the shape as required by the object containing the
                 `UMArray` object, and so may contain extra size one
                 dimensions. When read, the data on disk is reshaped to
                 *shape*.
-
+    
             size: `int`
                 The number of elements in the unpacked data array.
-
+    
             header_offset: `int`
                 The start position in the file of the header.
-
+    
             data_offset: `int`
                 The start position in the file of the data array.
-
+    
             disk_length: `int`
-                The number of words on disk for the data array, usually
-                LBLREC-LBEXT. If set to 0 then `!size` is used.
-
+                The number of words on disk for the data array,
+                usually LBLREC-LBEXT. If set to 0 then `!size` is
+                used.
+    
             fmt: `str`, optional
-
+    
             word_size: `int`, optional
-
+    
             byte_ordering: `str`, optional
-
+    
         **Examples:**
-
-        >>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
-        ...                 dtype=numpy.dtype('float32'), shape=(1, 1, 30, 24),
+    
+        >>> a = UMFileArray(file='file.pp', header_offset=3156,
+        ...                 data_offset=3420,
+        ...                 dtype=numpy.dtype('float32'),
+        ...                 shape=(1, 1, 30, 24),
         ...                 size=720, ndim=4, disk_length=0)
-
+    
         >>> a = UMFileArray(
-        ...         file='packed_file.pp', header_offset=3156, data_offset=3420,
+        ...         file='packed_file.pp', header_offset=3156,
+        ...         data_offset=3420,
         ...         dtype=numpy.dtype('float32'), shape=(30, 24),
         ...         size=720, ndim=2, disk_length=423
-        ...     )
+        ... )
 
         """
         super().__init__(filename=filename, dtype=dtype, ndim=ndim,
@@ -83,13 +85,9 @@ class UMArray(abstract.FileArray):
         self._close = True
 
     def __getitem__(self, indices):
-        """Implement indexing.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        :Returns:
-
-            `numpy.ndarray`
+        """x.__getitem__(indices) <==> x[indices]
+        
+        Returns a numpy array.
 
         """
         f = self.open()
@@ -278,20 +276,31 @@ class UMArray(abstract.FileArray):
         """Open the file containing the data array.
 
         :Returns:
-
+    
             `umfile_lib.File`
-
+    
         **Examples:**
-
+    
         >>> f.open()
 
         """
-        return _open_um_file(
-            self.filename,
-            fmt=self.fmt,
-            word_size=self.word_size,
-            byte_ordering=self.byte_ordering,
-        )
+        try:
+            f = File(path=self.filename,
+                     byte_ordering=self.byte_ordering,
+                     word_size=self.word_size, fmt=self.fmt)
+        except Exception as error:
+            try:
+                f.close_fd()
+            except Exception:
+                pass
+            
+            raise Exception(error)
+        else:
+            return f
+#        return _open_um_file(self.filename,
+#                             fmt=self.fmt,
+#                             word_size=self.word_size,
+#                             byte_ordering=self.byte_ordering)
 
 
 # --- End: class

@@ -8,8 +8,6 @@ from operator  import mul
 class CompressedSubarray(abc.ABC):
     """Abstract base class for a compressed sub-array container."""
 
-    _dask_asarray = False
-    
     def __init__(self, array, shape, compression):
         """**Initialization**
 
@@ -59,8 +57,18 @@ class CompressedSubarray(abc.ABC):
     # Dask attributes
     # ----------------------------------------------------------------
     @property
-    def _dask_lock(self):
-        return self.array._dask_lock
+    def dask_lock(self):
+        """TODODASK
+
+        """
+        return self.array.dask_lock
+
+    @property
+    def dask_asarray(self):
+        """TODODASK
+
+        """
+        return False
 
     # ----------------------------------------------------------------
     # Attributes
