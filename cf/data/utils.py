@@ -1,6 +1,9 @@
+"""
+General functions useful for `Data` functionality.
+
+"""
 from functools import partial
 from itertools import product
-from math import isnan, nan
 
 import numpy as np
 
@@ -8,11 +11,12 @@ import dask.array as da
 
 from ..cfdatetime import dt2rt, st2rt, rt2dt
 from ..cfdatetime import dt as cf_dt
+
 from ..units import Units
 
 
 def convert_to_datetime(array, units):
-    '''
+    """
         Convert a daskarray to 
     
     .. versionadded:: 4.0.0
@@ -28,7 +32,7 @@ def convert_to_datetime(array, units):
             dask array
                 A new dask array containing datetime objects.
 
-    '''
+    """
     dx = array.map_blocks(
         partial(rt2dt, units_in=units),
         dtype=object
@@ -124,7 +128,7 @@ def convert_to_reftime(array, units, first_value=None):
         if calendars.pop() == '':
             calendar = getattr(units, 'calendar', 'gregorian')
 
-            # DASK: can map_blocks this
+            # TODODASK: can map_blocks this, I think
             new_array = da.empty_like(array, dtype=object)
             for i in np.ndindex(new_array.shape):
                 new_array[i] = cf_dt(array[i], calendar=calendar)
@@ -136,15 +140,15 @@ def convert_to_reftime(array, units, first_value=None):
 
     if not units.isreftime:
         raise ValueError(
-            "Can't create a reference time array with "
-            f"units {units!r}"
+            f"Can't create a reference time array with units {units!r}"
         )
 
     return array, units
 
 
 def first_non_missing_value(array, cached=None):
-    '''Return the first non-missing value of an array.
+    """
+    Return the first non-missing value of an array.
 
     If the array contains only missing data then `None` is returned.
 
@@ -168,7 +172,7 @@ def first_non_missing_value(array, cached=None):
             returned. Otherwise return the first non-missing value, or
             `None` if there isn't one.
 
-    '''
+    """
     if cached is not None:
         return cached
     
@@ -188,7 +192,6 @@ def first_non_missing_value(array, cached=None):
 
 
 def unique_calendars(array):
-
     """
     Find the unique calendars from a dask array of date-time objects.
 
@@ -212,11 +215,16 @@ def unique_calendars(array):
     if np.ma.isMA(cals):
         cals = cals.compressed()
         
+    # TODODASK - need to allow differetn bu equivalent calendars, such
+    # as "gregorian" and 'standard'. Or perhaps this should by the
+    # caller?
+        
     return set(cals.tolist())
 
 
 def new_axis_identifier(existing_axes=(), basename="dim"):
-    '''Return a new, unique axis identifiers.
+    """
+    Return a new, unique axis identifiers.
     
     The name is arbitrary and has no semantic meaning.
 
@@ -263,7 +271,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
     >>> d._new_axis_identifier(['dim0', 'dim1'], basename='axis')
     'axis2'
 
-    '''
+    """
     n = len(existing_axes)
     axis = f"{basename}{n}"
     while axis in existing_axes:
@@ -278,6 +286,8 @@ def chunk_positions(chunks):
     Find the position of each chunk.
 
     .. versionadded:: 4.0.0
+
+    .. seealso:: `chunk_shapes`
 
     :Parameters:
        
@@ -305,6 +315,8 @@ def chunk_shapes(chunks):
     Find the shape of each chunk.
 
     .. versionadded:: 4.0.0
+
+    .. seealso:: `chunk_positions`
 
     :Parameters:
        
@@ -343,10 +355,9 @@ def is_small(array, threshold=None):
     return array.size * (array.dtype.itemsize + 1) < threshold
 
 def is_very_small(array, threshold=None):
-    """TODODASK - need to define what 'very small' is, and consider the API
+    """
+    TODODASK - need to define what 'very small' is, and consider the API
     in general
-
-    We adjust the size of the data here for the potiential of a mask
 
     .. versionadded:: 4.0.0
 
