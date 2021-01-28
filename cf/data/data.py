@@ -497,18 +497,19 @@ class Data(Container, cfdm.Data):
         except AttributeError:
             ndim = np.ndim(array)
            
-        # The _axes attribute is an ordered sequence of unique (within
-        # this `Data` instance) names for each array axis.
-        self._axes = generate_axis_identifiers(ndim)
 
-        # The _cyclic attribute contains identifies which axes are
+        # Create the _cyclic attribute: identifies which axes are
         # cyclic (and therefore allow cyclic slicing). It must be a
         # subset of the axes given by the _axes attribute. If an axis
-        # is removed from _axes then it maust also be removed from
+        # is removed from _axes then it must also be removed from
         # _cyclic.
         #
         # NEVER CHANGE _cyclic IN PLACE
         self._cyclic = _empty_set
+
+        # Create the _axes attribute: an ordered sequence of unique
+        # (within this `Data` instance) names for each array axis.
+        self._axes = generate_axis_identifiers(ndim)
 
         if not _use_array:
             return
@@ -568,20 +569,6 @@ class Data(Container, cfdm.Data):
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-    def _get_dask(self):
-        """TODODASK
-
-            check_free_memory: `bool`, optional
-                If True then store the data array on disk if there is
-                is sufficient memory there.
-
-        `dask.array.Array`
-
-        **Examples:**        
-
-        """
-        return self._custom['dask']
-
     def dask_array(self, copy=True):
         '''TODODASK 
 
@@ -613,60 +600,6 @@ class Data(Container, cfdm.Data):
 
         return ca.dask_array(copy=copy)
     
-    def _set_dask(self, array, copy=False, delete_source=True):
-        """Set the dask array.
-
-        :Parameters:
-        
-            array: `dask.array.Array`
-                The `dask` array to be inserted.
-    
-            copy: 
-    
-            delete_source: `bool`, optional
-
-        :Returns:
-        
-            `None`
-
-        """
-        if copy:
-            array = array.copy()
-            
-        self._custom['dask'] = array
-
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with the new dask array.            
-            self._del_Array(None)
-            
-    def _del_dask(self, default=ValueError(), delete_source=True):
-        """Remove the dask array.
-
-        :Parameters:
-
-            default
-
-            delete_source: `bool`, optional
-
-        :Returns:
-            
-        """
-        try:
-            out = self._custom.pop("dask")
-        except KeyError:
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no dask array"
-            )
-        else:
-            if delete_source:
-                # Remove a source array, on the grounds that we can't
-                # guarantee its consistency with any new dask array.
-                self._del_Array(None)
-
-            return out
-        
     def __contains__(self, value):
         """
         Membership test operator ``in``
@@ -1851,6 +1784,73 @@ class Data(Container, cfdm.Data):
 #                                    for item in sublist]
 #        # --- End: if
 #        return processed_partitions
+
+    # ----------------------------------------------------------------
+    # Private dask methods
+    # ----------------------------------------------------------------
+    def _get_dask(self):
+        '''TODODASK
+
+    :Returns:
+
+        `dask.array.Array`
+
+        '''
+        return self._custom['dask']
+
+    def _set_dask(self, array, copy=False, delete_source=True):
+        """Set the dask array.
+
+        :Parameters:
+        
+            array: `dask.array.Array`
+                The `dask` array to be inserted.
+    
+            copy: 
+    
+            delete_source: `bool`, optional
+
+        :Returns:
+        
+            `None`
+
+        """
+        if copy:
+            array = array.copy()
+            
+        self._custom['dask'] = array
+
+        if delete_source:
+            # Remove a source array, on the grounds that we can't
+            # guarantee its consistency with the new dask array.            
+            self._del_Array(None)
+            
+    def _del_dask(self, default=ValueError(), delete_source=True):
+        """Remove the dask array.
+
+        :Parameters:
+
+            default
+
+            delete_source: `bool`, optional
+
+        :Returns:
+            
+        """
+        try:
+            out = self._custom.pop("dask")
+        except KeyError:
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no dask array"
+            )
+        else:
+            if delete_source:
+                # Remove a source array, on the grounds that we can't
+                # guarantee its consistency with any new dask array.
+                self._del_Array(None)
+
+            return out
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -3089,7 +3089,7 @@ class Data(Container, cfdm.Data):
         2. The current log level is ``'DEBUG'``.
 
         3. Any computations stored after initialisation consist only
-           subspace and copy functions.
+           subspace, concatenate, reshape, and copy functions.
 
         .. versionadded:: 4.0.0
 
@@ -3137,7 +3137,8 @@ class Data(Container, cfdm.Data):
             allowed_functions = ()
         else:
             allowed_log_levels = ("DEBUG",)
-            allowed_functions = ("getitem-", "copy-")
+            allowed_functions = ("array-", "getitem-", "copy-",
+                                 "concatenate-", "reshape-")
             
         if log_levels:
             if isinstance(log_levels, str):
@@ -6865,12 +6866,12 @@ class Data(Container, cfdm.Data):
 
     @_cyclic.setter
     def _cyclic(self, value):
-        # Never change _cyclic in-place
-        self._custom["_cyclic"] = value
+        # Value must be a set. Never change _cyclic in-place.
+        self._custom['_cyclic'] = value
 
     @_cyclic.deleter
     def _cyclic(self):
-        del self._custom["_cyclic"]
+        self._custom['_cyclic'] = _empty_set
 
 #    @property
 #    def _dtype(self):
@@ -6963,11 +6964,25 @@ class Data(Container, cfdm.Data):
     @_axes.setter
     def _axes(self, value):
         self._custom['_axes'] = tuple(value)
-    
-    @_axes.deleter
-    def _axes(self):
-        del self._custom['_axes']
-   
+
+        # Update cyclic: remove cyclic axes that are not in the new
+        # axes
+        cyclic = self._cyclic
+        if cyclic:
+            self._cyclic = cyclic.intersection(value)
+        
+    @property
+    def numpy_indexing(self):
+        """TODODASK - probably thewrong name - need a gneral numpy
+        compatability flag. See also confg settings
+
+        """
+        return self._custom.get("numpy_indexing", False)
+
+    @numpy_indexing.setter
+    def numpy_indexing(self, value):
+        self._custom["numpy_indexing"] = bool(value)
+
 #    @property
 #    def _all_axes(self):
 #        '''Storage for TODO. Must be `None` or `tuple`.
@@ -6988,6 +7003,7 @@ class Data(Container, cfdm.Data):
 #            self._custom['flip'] = flip[0]
 #        else:
 #            return self._custom['flip']
+
     # ----------------------------------------------------------------
     # Dask attributes
     # ----------------------------------------------------------------
@@ -6998,31 +7014,20 @@ class Data(Container, cfdm.Data):
     
     @property
     def force_compute(self):
-        """TODODASK"""
+        """TODODASK See also confg settings"""
         return self._custom.get("force_compute", False)
 
     @force_compute.setter
     def force_compute(self, value):
         self._custom["force_compute"] = bool(value)
 
-    @property
-    def numpy_indexing(self):
-        """TODODASK - probably thewrong name - needa gneral numpy
-        compatability flag. See also confg settings
-
-        """
-        return self._custom.get("numpy_indexing", False)
-
-    @numpy_indexing.setter
-    def numpy_indexing(self, value):
-        self._custom["numpy_indexing"] = bool(value)
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def Units(self):
-        """The `cf.Units` object containing the units of the data array.
+        """
+        The `cf.Units` object containing the units of the data array.
     
         Deleting this attribute is equivalent to setting it to an
         undefined units object, so this attribute is guaranteed to
@@ -7048,7 +7053,7 @@ class Data(Container, cfdm.Data):
             raise ValueError(
                 f"Current units are {old_units!r}. Can't set to "
                 f"non-equivalent units {value!r}. "
-                "Use the override_units method instead."
+                "Consider using the override_units method instead."
             )
 
         if not old_units:
@@ -7069,8 +7074,11 @@ class Data(Container, cfdm.Data):
             
         self._Units = value
 
-#    @Units.deleter
-#    def Units(self): del self._Units  # = _units_None
+    @Units.deleter
+    def Units(self):
+        raise ValueError(
+            "TODODASK - Consider using the override_units method instead."
+        )
                     
     @property
     def data(self):
@@ -13633,35 +13641,37 @@ class Data(Container, cfdm.Data):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
-        """Remove size 1 axes from the data array.
-
-        By default all size 1 axes are removed, but particular axes may be
-        selected with the keyword arguments.
-
-        .. seealso:: `flatten`, `insert_dimension`, `flip`, `swapaxes`,
-                     `transpose`
-
+        """
+        Remove size 1 axes from the data array.
+    
+        By default all size 1 axes are removed, but particular axes
+        may be selected with the keyword arguments.
+    
+        .. seealso:: `flatten`, `insert_dimension`, `flip`,
+                     `swapaxes`, `transpose`
+    
         :Parameters:
-
+    
             axes: (sequence of) int, optional
-                Select the axes.  By default all size 1 axes are
-                removed. The *axes* argument may be one, or a sequence, of
-                integers that select the axis corresponding to the given
-                position in the list of axes of the data array.
-
+                Select the axes. By default all size 1 axes are
+                removed. The *axes* argument may be one, or a
+                sequence, of integers that select the axis
+                corresponding to the given position in the list of
+                axes of the data array.
+    
                 No axes are removed if *axes* is an empty sequence.
-
+    
             {{inplace: `bool`, optional}}
-
+    
             {{i: deprecated at version 3.0.0}}
-
+    
         :Returns:
-
+    
             `Data` or `None`
                 The squeezed data array.
-
+    
         **Examples:**
-
+    
         >>> v.shape
         (1,)
         >>> v.squeeze()
@@ -13723,15 +13733,12 @@ class Data(Container, cfdm.Data):
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
         dx = d.dask_array(copy=False)
-        dx = dx.squeeze(tuple(axes))
+        dx = dx.squeeze(axis=tuple(axes))
         d._set_dask(dx)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes)
                    if i not in axes]
-
-        # Never change _cyclic in-place
-        d._cyclic = d._cyclic.difference(axes)
 
         hdf = self._HDF_chunks
         if hdf:
@@ -13739,8 +13746,7 @@ class Data(Container, cfdm.Data):
             self._HDF_chunks = {axis: size for axis, size in hdf.items()
                                 if axis not in axes}
         
-        return d
-            
+        return d            
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i")
@@ -14245,6 +14251,8 @@ class Data(Container, cfdm.Data):
 
         Equivalent in function to `numpy.roll`.
 
+        TODODASK  - works for multiple axes
+
         :Parameters:
 
             axis: `int`
@@ -14259,6 +14267,14 @@ class Data(Container, cfdm.Data):
                 *Parameter example:*
                   Convolve the last axis: ``axis=-1``.
 
+            {{inplace: `bool`, optional}}
+    
+            {{i: deprecated at version 3.0.0}}
+    
+        :Returns:
+    
+            `Data` or `None`
+    
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -14895,8 +14911,9 @@ class Data(Container, cfdm.Data):
         _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
+        '''Deprecated at version 3.4.0, use method `get_` instead.
+
+        '''
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",

@@ -1,3 +1,8 @@
+"""
+Functions used during the creation of `Data` objects.
+
+"""
+from functools import lru_cache
 from uuid import uuid4
 
 import numpy as np
@@ -389,8 +394,10 @@ def compressed_to_dask(array):
     return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
 
-def generate_axis_identifiers(n, basename="dim"):
-    '''Return new, unique axis identifiers.
+@lru_cache(maxsize=32)
+def generate_axis_identifiers(n):
+    """
+    Return new, unique axis identifiers.
     
     The names are arbitrary and have no semantic meaning.
 
@@ -415,13 +422,8 @@ def generate_axis_identifiers(n, basename="dim"):
     >>> generate_axis_identifiers(3)
     ['dim0', 'dim1', 'dim2']
 
-    '''
-    axes = _cached_axes.get(n, None)
-    if axes is None:
-        axes = [f"{basename}{n}" for n in range(n)]
-        _cached_axes[n] = axes
-        
-    return axes
+    """
+    return [f"dim{i}" for i in range(n)]
 
 
 def threads():
