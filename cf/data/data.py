@@ -133,6 +133,7 @@ from . import (
 )
 
 from .utils import (
+    geted,
     convert_to_reftime,
     convert_to_datetime,
     new_axis_identifier,
@@ -1176,16 +1177,20 @@ class Data(Container, cfdm.Data):
 
         d = self
 
-        numpy_indexing = self.numpy_indexing # TODOASK- enhance with config/decorator
+        # TODOASK- enhance numpy_indexing with config/decorator
+        numpy_indexing = self.numpy_indexing
         
         indices, roll = parse_indices(d.shape, indices, cyclic=True,
                                       numpy_indexing=numpy_indexing)
 
         axes = d._axes
         cyclic_axes = d._cyclic
-        
+        print(roll)
         if roll:
-            # Roll axes with cyclic slices
+            # Roll axes with cyclic slices. For example, if slice(-2,
+            # 3) has been requested on a cyclic axis (and we're not
+            # using numpy indexing), then we roll that axis by two
+            # points and apply the slice(0, 5) instead.
             roll_axes = []
             shifts = []
             for axis, shift in roll.items():
@@ -1248,17 +1253,21 @@ class Data(Container, cfdm.Data):
     **Examples:**
 
         '''
-        # TODODASK - implement hardmask stuff as discussed on 2021-01-27
-        
-        # parse the indices
-        numpy_indexing = self.numpy_indexing # TODOASK- enhance with config/decorator
+        # TODOASK- enhance numpy_indexing with config/decorator
+        numpy_indexing = self.numpy_indexing
         
         indices, roll = parse_indices(self.shape, indices,
                                       cyclic=True,
-                                      numpy_indexing=numpy_indexing)
+                                      numpy_indexing=True) #numpy_indexing)
+        indices = tuple(indices)
 
         if roll:
-            # Roll axes with cyclic slices
+            # Roll axes with cyclic slices. For example, if assigning
+            # to slice(-2, 3) has been requested on a cyclic axis (and
+            # we're not using numpy indexing), then we roll that axis
+            # by two points and assign to slice(0, 5) instead. The
+            # axis is then unrolled by two points afer the assignment
+            # has been made.
             roll_axes = []
             shifts = []
             for axis, shift in roll.items():
@@ -1269,16 +1278,15 @@ class Data(Container, cfdm.Data):
 
         # TODODASK: multiple lists
 
-        # Convert the units of value
+        # Make sure that the units of value are the same as self
         try:
             value_units = value.Units
         except AttributeError:
             pass
         else:
             self_units = self.Units
-            print (repr(value_units), repr(self_units) )
             if value_units.equivalent(self_units):
-                if not value_units.equals(self_units):
+                if value_units != self_units:
                     value = value.copy()
                     value.Units = self.Units
             elif value_units and self_units:
@@ -1287,17 +1295,14 @@ class Data(Container, cfdm.Data):
                     f"to data with units {self_units!r}"
                 )
         # --- End: try
-        
-        # Extract a dask array from within value
-        try:
-            value = value._get_dask()
-        except AttributeError:
-            pass
+
+        if self.hardmask:
+            self.harden_mask()
 
         # Do the assignment
         dx = self._get_dask()
-        dx[tuple(indices)] = value
-        
+        dx[indices] = geted(value)
+
         if roll:
             # Unroll
             shifts = [-shift for shift in shifts]            
@@ -1305,278 +1310,6 @@ class Data(Container, cfdm.Data):
 
         return 
         
-#        def _mirror_slice(index, size):
-#            '''Return a slice object which creates the reverse of the input
-#        slice.
-#
-#        The step of the input slice must have a step of `.
-#
-#        :Parameters:
-#
-#            index: `slice`
-#                A slice object with a step of 1.
-#
-#            size: `int`
-#
-#        :Returns:
-#
-#            `slice`
-#
-#        **Examples:**
-#
-#        >>> s = slice(2, 6)
-#        >>> t = _mirror_slice(s, 8)
-#        >>> s, t
-#        slice(2, 6), slice(5, 1, -1)
-#        >>> range(8)[s]
-#        [2, 3, 4, 5]
-#        >>> range(8)[t]
-#        [5, 4, 3, 2]
-#        >>> range(7, -1, -1)[s]
-#        [5, 4, 3, 2]
-#        >>> range(7, -1, -1)[t]
-#        [2, 3, 4, 5]
-#
-#        '''
-#            start, stop, step = index.indices(size)
-#            size -= 1
-#            start = size - start
-#            stop = size - stop
-#            if stop < 0:
-#                stop = None
-#
-#            return slice(start, stop, -1)
-#        # --- End: def
-#
-#        config = self.partition_configuration(readonly=False)
-#
-#        # ------------------------------------------------------------
-#        # parse the indices
-#        # ------------------------------------------------------------
-#        indices_in = indices
-#        indices, roll, flip_axes, mask = parse_indices(
-#            self._shape, indices_in, cyclic=True, reverse=True, mask=True)
-#
-#        if roll:
-#            for iaxis, shift in roll.items():
-#                self.roll(iaxis, shift, inplace=True)
-#        # --- End: if
-#
-#        if mask:
-#            original_self = self.copy()
-#
-#        scalar_value = False
-#        if value is cf_masked:
-#            scalar_value = True
-#        else:
-#            copied = False
-#            if not isinstance(value, Data):
-#                # Convert to the value to a Data object
-#                value = type(self)(value, self.Units)
-#            else:
-#                if value.Units.equivalent(self.Units):
-#                    if not value.Units.equals(self.Units):
-#                        value = value.copy()
-#                        value.Units = self.Units
-#                        copied = True
-#                elif not value.Units:
-#                    value = value.override_units(self.Units)
-#                    copied = True
-#                else:
-#                    raise ValueError(
-#                        "Can't assign values with units {!r} to data with "
-#                        "units {!r}".format(value.Units, self.Units)
-#                    )
-#            # --- End: if
-#
-#            if value._size == 1:
-#                scalar_value = True
-#                value = value.datum(0)
-#        # --- End: if
-#
-#        source = self.source(None)
-#        if source is not None and source.get_compression_type():
-#            self._del_Array(None)
-#
-#        if scalar_value:
-#            # --------------------------------------------------------
-#            # The value is logically scalar
-#            # --------------------------------------------------------
-#            for partition in self.partitions.matrix.flat:
-#                p_indices, shape = partition.overlaps(indices)
-#                if p_indices is None:
-#                    # This partition does not overlap the indices
-#                    continue
-#
-#                partition.open(config)
-#                array = partition.array
-#
-#                if value is cf_masked and not partition.masked:
-#                    # The assignment is masking elements, so turn a
-#                    # non-masked sub-array into a masked one.
-#                    array = array.view(numpy_ma_MaskedArray)
-#                    partition.subarray = array
-#
-#                self._set_subspace(array, p_indices, value)
-#                partition.close()
-#
-#            if roll:
-#                for iaxis, shift in roll.items():
-#                    self.roll(iaxis, -shift, inplace=True)
-#            # --- End: if
-#
-#            if mask:
-#                indices = tuple(indices)
-#                original_self = original_self[indices]
-#                u = self[indices]
-#                for m in mask:
-#                    u.where(m, original_self, inplace=True)
-#
-#                self[indices] = u
-#            # --- End: if
-#
-#            return
-#
-#        # ------------------------------------------------------------
-#        # Still here? Then the value is not logically scalar.
-#        # ------------------------------------------------------------
-#        data0_shape = self._shape
-#        value_shape = value._shape
-#
-#        shape00 = list(map(_size_of_index, indices, data0_shape))
-#        shape0 = shape00[:]
-#
-#        self_ndim = self._ndim
-#        value_ndim = value._ndim
-#        align_offset = self_ndim - value_ndim
-#        if align_offset >= 0:
-#            # self has more dimensions than other
-#            shape0 = shape0[align_offset:]
-#            shape1 = value_shape
-#            ellipsis = None
-#
-#            flip_axes = [i-align_offset for i in flip_axes
-#                         if i >= align_offset]
-#        else:
-#            # value has more dimensions than self
-#            v_align_offset = -align_offset
-#            if value_shape[:v_align_offset] != [1] * v_align_offset:
-#                # Can only allow value to have more dimensions then
-#                # self if the extra dimensions all have size 1.
-#                raise ValueError("Can't broadcast shape %r across shape %r" %
-#                                 (value_shape, data0_shape))
-#
-#            shape1 = value_shape[v_align_offset:]
-#            ellipsis = Ellipsis
-#            align_offset = 0
-#
-#        # Find out which of the dimensions of value are to be
-#        # broadcast, and those which are not. Note that, as in numpy,
-#        # it is not allowed for a dimension in value to be larger than
-#        # a size 1 dimension in self
-#        base_value_indices = []
-#        non_broadcast_dimensions = []
-#
-#        for i, (a, b) in enumerate(zip(shape0, shape1)):
-#            if b == 1:
-#                base_value_indices.append(slice(None))
-#            elif a == b and b != 1:
-#                base_value_indices.append(None)
-#                non_broadcast_dimensions.append(i)
-#            else:
-#                raise ValueError(
-#                    "Can't broadcast data with shape {!r} across "
-#                    "shape {!r}".format(shape1, tuple(shape00))
-#                )
-#        # --- End: for
-#
-#        previous_location = ((-1,),) * self_ndim
-#        start = [0] * value_ndim
-#
-##        save = pda_args['save']
-##        keep_in_memory = pda_args['keep_in_memory']
-#
-#        value.to_memory()
-#
-#        for partition in self.partitions.matrix.flat:
-#            p_indices, shape = partition.overlaps(indices)
-#
-#            if p_indices is None:
-#                # This partition does not overlap the indices
-#                continue
-#
-#            # --------------------------------------------------------
-#            # Find which elements of value apply to this partition
-#            # --------------------------------------------------------
-#            value_indices = base_value_indices[:]
-#
-#            for i in non_broadcast_dimensions:
-#                j = i + align_offset
-#                location = partition.location[j][0]
-#                reference_location = previous_location[j][0]
-#
-#                if location > reference_location:
-#                    stop = start[i] + shape[j]
-#                    value_indices[i] = slice(start[i], stop)
-#                    start[i] = stop
-#
-#                elif location == reference_location:
-#                    value_indices[i] = previous_slice[i]
-#
-#                elif location < reference_location:
-#                    stop = shape[j]
-#                    value_indices[i] = slice(0, stop)
-#                    start[i] = stop
-#            # --- End: for
-#
-#            previous_location = partition.location
-#            previous_slice = value_indices[:]
-#
-#            for i in flip_axes:
-#                value_indices[i] = _mirror_slice(value_indices[i], shape1[i])
-#
-#            if ellipsis:
-#                value_indices.insert(0, ellipsis)
-#
-#            # --------------------------------------------------------
-#            #
-#            # --------------------------------------------------------
-#            v = value[tuple(value_indices)].varray
-#
-##            if keep_in_memory: #not save:
-##                v = v.copy()
-#
-#            # Update the partition's data
-#            partition.open(config)
-#            array = partition.array
-#
-#            if not partition.masked and numpy_ma_isMA(v):
-#                # The sub-array is not masked and the assignment is
-#                # masking elements, so turn the non-masked sub-array
-#                # into a masked one.
-#                array = array.view(numpy_ma_MaskedArray)
-#                partition.subarray = array
-#
-#            self._set_subspace(array, p_indices, v)
-#
-#            partition.close()
-#        # --- End: For
-#
-#        if roll:
-#            # Unroll
-#            for iaxis, shift in roll.items():
-#                self.roll(iaxis, -shift, inplace=True)
-#        # --- End: if
-#
-#        if mask:
-#            indices = tuple(indices)
-#            original_self = original_self[indices]
-#            u = self[indices]
-#            for m in mask:
-#                u.where(m, original_self, inplace=True)
-#
-#            self[indices] = u
-
 #    def _flag_partitions_for_processing(self, parallelise=True):
 #        '''
 #        '''
@@ -1620,7 +1353,7 @@ class Data(Container, cfdm.Data):
 #        # --- End: if
 #
 #    def _share_lock_files(self, parallelise):
-#        '''TODO
+#        '''
 #
 #        '''
 #        if parallelise:
@@ -1640,7 +1373,7 @@ class Data(Container, cfdm.Data):
 #
 #    @classmethod
 #    def _share_partitions(cls, processed_partitions, parallelise):
-#        '''TODO
+#        '''
 #
 #        '''
 #        # Share the partitions processed on each rank with every other
@@ -1804,9 +1537,10 @@ class Data(Container, cfdm.Data):
             array: `dask.array.Array`
                 The `dask` array to be inserted.
     
-            copy: 
+            copy: TODODASK
     
             delete_source: `bool`, optional
+                TODODASK
 
         :Returns:
         
@@ -1828,9 +1562,10 @@ class Data(Container, cfdm.Data):
 
         :Parameters:
 
-            default
+            default TODODASK get from docstring rewrite
 
             delete_source: `bool`, optional
+                TODODASK
 
         :Returns:
             
@@ -11207,6 +10942,34 @@ class Data(Container, cfdm.Data):
             d = out
 
         return d
+
+    def harden_mask(self):
+        """TODODASK"""        
+        def harden_mask(a):
+            if np.ma.isMA(a):
+                a.harden_mask()
+                
+            return a
+
+        dx = self._get_dask()
+        dx = dx.map_blocks(harden_mask, dtype=dx.dtype)
+        self._set_dask(dx)
+
+        self.hardmask = True
+        
+    def soften_mask(self):
+        """TODODASK"""        
+        def soften_mask(a):
+            if np.ma.isMA(a):
+                a.soften_mask()
+                
+            return a
+
+        dx = self._get_dask()
+        dx = dx.map_blocks(soften_mask, dtype=dx.dtype)
+        self._set_dask(dx)
+        
+        self.hardmask = False
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
