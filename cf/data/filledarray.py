@@ -197,10 +197,6 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('fill_value')
 
-#    def masked_all(self):
-#        '''TODO        '''
-#        return self._get_component('masked_all')
-
     @property
     def array(self):
         '''An independent numpy array containing the data.

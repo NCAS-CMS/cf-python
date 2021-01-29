@@ -1,6 +1,5 @@
 import logging
 
-
 import numpy
 
 from ..functions import parse_indices, get_subspace
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class RaggedIndexedSubarray(abstract.CompressedSubarray):
-    '''TODO
+    '''An underlying indexed ragged sub-array.
 
     '''
 

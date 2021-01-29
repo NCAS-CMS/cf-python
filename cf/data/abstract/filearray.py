@@ -40,7 +40,7 @@ class FileArray(Array):
 
     @property
     def ndim(self):
-        '''Number of array dimensions
+        '''Number of array dimensions.
 
     **Examples:**
 
