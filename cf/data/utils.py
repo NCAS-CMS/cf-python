@@ -366,3 +366,13 @@ def is_very_small(array, threshold=None):
         threshold = 0.125 * 2**90  # TODODASK - True for now!
 
     return is_small(array, threshold)
+
+
+def geted(a):
+    """TODODASK
+    """
+    try:
+        return a.data._get_data()
+    except AttributeError:
+        return a
+    

@@ -1910,7 +1910,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
     except (IndexError, NotImplementedError, TypeError):
         return a == b
 
-#TODODASK - enhance with cionfig/decorator
+#TODODASK - nump_indexing enhance with cionfig/decorator
 def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
 #reverse=False,
 #                  envelope=False, mask=False, ):
