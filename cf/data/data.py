@@ -423,9 +423,7 @@ place.
         units = Units(units, calendar=calendar)
         self._Units = units
 
-        # Set the mask hardness
-        self.hardmask = hardmask
-        
+       
         if array is None:
             return
 
@@ -498,9 +496,16 @@ place.
         # Store the dask array
         self._set_dask(array, delete_source=False)
 
+        # Set the mask hardness
+        if hardmask:
+            self.harden_mask()
+        else:
+            self.soften_mask()
+
         # Override the data type
         if dtype is not None:
             self.dtype = dtype
+
 
         # Apply a mask 
         if mask is not None:
@@ -1234,8 +1239,10 @@ place.
                 )
         # --- End: try
 
-        if self.hardmask:
-            self.harden_mask()
+#        if self.hardmask:
+#            self.harden_mask()
+#        else:
+#            self.soften_mask()
 
         # Do the assignment
         dx = self._get_dask()
@@ -1455,7 +1462,7 @@ place.
 #        return processed_partitions
 
     # ----------------------------------------------------------------
-    # Private dask methods
+    # Private dask methods ppp
     # ----------------------------------------------------------------
     def _get_dask(self):
         '''TODODASK
@@ -1522,6 +1529,17 @@ place.
                 self._del_Array(None)
 
             return out
+
+    def _map_blocks(self, func, **kwargs):
+        """TODODASK
+
+        in-place
+        """
+        dx = self._get_dask()
+        dx = dx.map_blocks(func, **kwargs)
+        self._set_dask(dx)
+
+        return dx
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -4892,6 +4910,7 @@ place.
 #
 #         return axes2
 
+   
     def _unary_operation(self, operation):
         '''Implement unary arithmetic operations.
 
@@ -6429,6 +6448,21 @@ dimensions.
     def _HDF_chunks(self):
         del self._custom['_HDF_chunks']
 
+    @property
+    def _hardmask(self):
+        '''TODODASK
+
+        '''
+        return self._custom['_hardmask']
+
+    @_hardmask.setter
+    def _hardmask(self, value):
+        self._custom['_hardmask'] = value
+
+    @_hardmask.deleter
+    def _hardmask(self):
+        del self._custom['_hardmask']
+
 #    @property
 #    def partitions(self):
 #        '''Storage for the partitions matrix.
@@ -6588,14 +6622,12 @@ dimensions.
         if self.Units.equals(value):
             return
 
-        dx = self._get_dask()
-        dx = dx.map_blocks(
+        self._map_blocks(
             partial(Units.conform,
                     from_units=old_units,
                     to_units=value,
                     inplace=False)
         )
-        self._set_dask(dx)
             
         self._Units = value
 
@@ -6694,28 +6726,17 @@ dimensions.
 
     @property
     def hardmask(self):
-        '''Whether the mask is hard (True) or soft (False).
+        """Whether the mask is hard (True) or soft (False).
 
-When the mask is hard, masked entries of the data array can not be
-unmasked by assignment, but unmasked entries may still be masked.
+        When the mask is hard, masked entries of the data array can
+        not be unmasked by assignment, but unmasked entries may still
+        be masked.
 
-When the mask is soft, masked entries of the data array may be
-unmasked by assignment and unmasked entries may be masked.
+        When the mask is soft, masked entries of the data array may be
+        unmasked by assignment and unmasked entries may be masked.
 
-By default, the mask is hard.
-
-**Examples:**
-
->>> d.hardmask = False
->>> d.hardmask
-False
-
-        '''
-        return self._custom['hardmask']
-
-    @hardmask.setter
-    def hardmask(self, value):
-        self._custom['hardmask'] = bool(value)
+        """
+        return self._custom['_hardmask']
 
     @property
     def ismasked(self):
@@ -6753,7 +6774,7 @@ False
     True
 
         '''
-        def ismasked_chunk(a):
+        def is_masked(a):
             out = np.ma.is_masked(a)
             return np.array(out).reshape((1,) * a.ndim)
 
@@ -6763,7 +6784,7 @@ False
         dx_ind = out_ind
 
         dx = da.blockwise(
-            ismasked_chunk,
+            is_masked,
             out_ind,
             dx, dx_ind,
             adjust_chunks={i: 1 for i in out_ind},
@@ -7020,8 +7041,16 @@ False
 
         '''
         dx = self._get_dask()
-        return dx.compute()
-        
+
+        a = dx.compute()
+#        if self.hardmask:
+#            if np.ma.isMA(a):
+#                a.harden_mask()
+#        elif np.ma.isMA(a):
+#            a.soften_mask()
+            
+        return a
+         
 #        # Set the auxiliary_mask keyword to None because we can apply
 #        # it later in one go
 #        config = self.partition_configuration(readonly=True,
@@ -8727,7 +8756,7 @@ False
         #
         # This is only here for now, in this form, to ensure that
         # cf.read works
-        return self.get_dask().max()
+        return self._get_dask().max()
     
 #        return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
 #                              squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -10593,11 +10622,9 @@ False
                 
             return a
 
-        dx = self._get_dask()
-        dx = dx.map_blocks(harden_mask, dtype=dx.dtype)
-        self._set_dask(dx)
+        self._map_blocks(harden_mask, dtype=self.dtype)
 
-        self.hardmask = True
+        self._hardmask = True
         
     def soften_mask(self):
         """TODODASK"""        
@@ -10607,11 +10634,9 @@ False
                 
             return a
 
-        dx = self._get_dask()
-        dx = dx.map_blocks(soften_mask, dtype=dx.dtype)
-        self._set_dask(dx)
+        self._map_blocks(soften_mask, dtype=self.dtype)
         
-        self.hardmask = False
+        self._hardmask = False
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
