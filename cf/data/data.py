@@ -423,7 +423,9 @@ place.
         units = Units(units, calendar=calendar)
         self._Units = units
 
-       
+        # Set the mask hardness
+        self._hardmask = hardmask
+        
         if array is None:
             return
 
@@ -496,11 +498,11 @@ place.
         # Store the dask array
         self._set_dask(array, delete_source=False)
 
-        # Set the mask hardness
-        if hardmask:
-            self.harden_mask()
-        else:
-            self.soften_mask()
+#        # Set the mask hardness
+#        if hardmask:
+#            self.harden_mask()
+#        else:
+#            self.soften_mask()
 
         # Override the data type
         if dtype is not None:
@@ -1238,13 +1240,9 @@ place.
                     f"to data with units {self_units!r}"
                 )
         # --- End: try
-
-#        if self.hardmask:
-#            self.harden_mask()
-#        else:
-#            self.soften_mask()
-
+        
         # Do the assignment
+        self._set_mask_hardness()
         dx = self._get_dask()
         dx[indices] = geted(value)
 
@@ -1530,7 +1528,7 @@ place.
 
             return out
 
-    def _map_blocks(self, func, **kwargs):
+    def _dask_map_blocks(self, func, **kwargs):
         """TODODASK
 
         in-place
@@ -1540,6 +1538,7 @@ place.
         self._set_dask(dx)
 
         return dx
+
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -6450,9 +6449,7 @@ dimensions.
 
     @property
     def _hardmask(self):
-        '''TODODASK
-
-        '''
+        """TODODASK"""
         return self._custom['_hardmask']
 
     @_hardmask.setter
@@ -6622,7 +6619,7 @@ dimensions.
         if self.Units.equals(value):
             return
 
-        self._map_blocks(
+        self._dask_map_blocks(
             partial(Units.conform,
                     from_units=old_units,
                     to_units=value,
@@ -6738,6 +6735,10 @@ dimensions.
         """
         return self._custom['_hardmask']
 
+    @hardmask.setter
+    def hardmask(self, value):
+        raise AttributeError("TODODASK - use harden_mask/soften_mask instead")
+    
     @property
     def ismasked(self):
         '''True if the data array has any masked values.
@@ -7041,13 +7042,13 @@ dimensions.
 
         '''
         dx = self._get_dask()
-
         a = dx.compute()
-#        if self.hardmask:
-#            if np.ma.isMA(a):
-#                a.harden_mask()
-#        elif np.ma.isMA(a):
-#            a.soften_mask()
+
+        if self.hardmask:
+            if np.ma.isMA(a):
+                a.harden_mask()
+        else:
+            a.soften_mask()
             
         return a
          
@@ -7418,7 +7419,7 @@ dimensions.
         mask._Units = _units_None
         mask.dtype = _dtype_bool
 
-        mask.hardmask = True
+        mask._hardmask = _DEFAULT_HARDMASK
 
         return mask
 
@@ -10622,8 +10623,7 @@ dimensions.
                 
             return a
 
-        self._map_blocks(harden_mask, dtype=self.dtype)
-
+        self._dask_map_blocks(harden_mask, dtype=self.dtype)
         self._hardmask = True
         
     def soften_mask(self):
@@ -10634,10 +10634,16 @@ dimensions.
                 
             return a
 
-        self._map_blocks(soften_mask, dtype=self.dtype)
-        
+        self._dask_map_blocks(soften_mask, dtype=self.dtype)
         self._hardmask = False
 
+    def _set_mask_hardness(self):
+        """TODODASK"""
+        if self.hardmask:
+            self.harden_mask()
+        else:
+            self.soften_mask()
+            
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         '''Replace masked elements with the fill value.
