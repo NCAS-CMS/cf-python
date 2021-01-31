@@ -487,7 +487,9 @@ class Data(Container, cfdm.Data):
         units = Units(units, calendar=calendar)
         self._Units = units
 
-       
+        # Set the mask hardness
+        self._hardmask = hardmask
+        
         if array is None:
             return
 
@@ -560,11 +562,11 @@ class Data(Container, cfdm.Data):
         # Store the dask array
         self._set_dask(array, delete_source=False)
 
-        # Set the mask hardness
-        if hardmask:
-            self.harden_mask()
-        else:
-            self.soften_mask()
+#        # Set the mask hardness
+#        if hardmask:
+#            self.harden_mask()
+#        else:
+#            self.soften_mask()
 
         # Override the data type
         if dtype is not None:
@@ -1300,13 +1302,9 @@ class Data(Container, cfdm.Data):
                     f"to data with units {self_units!r}"
                 )
         # --- End: try
-
-#        if self.hardmask:
-#            self.harden_mask()
-#        else:
-#            self.soften_mask()
-
+        
         # Do the assignment
+        self._set_mask_hardness()
         dx = self._get_dask()
         dx[indices] = geted(value)
 
@@ -1592,7 +1590,7 @@ class Data(Container, cfdm.Data):
 
             return out
 
-    def _map_blocks(self, func, **kwargs):
+    def _dask_map_blocks(self, func, **kwargs):
         """TODODASK
 
         in-place
@@ -1602,6 +1600,7 @@ class Data(Container, cfdm.Data):
         self._set_dask(dx)
 
         return dx
+
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -6659,9 +6658,7 @@ class Data(Container, cfdm.Data):
 
     @property
     def _hardmask(self):
-        '''TODODASK
-
-        '''
+        """TODODASK"""
         return self._custom['_hardmask']
 
     @_hardmask.setter
@@ -6831,7 +6828,7 @@ class Data(Container, cfdm.Data):
         if self.Units.equals(value):
             return
 
-        self._map_blocks(
+        self._dask_map_blocks(
             partial(Units.conform,
                     from_units=old_units,
                     to_units=value,
@@ -6947,6 +6944,10 @@ class Data(Container, cfdm.Data):
         """
         return self._custom['_hardmask']
 
+    @hardmask.setter
+    def hardmask(self, value):
+        raise AttributeError("TODODASK - use harden_mask/soften_mask instead")
+    
     @property
     def ismasked(self):
         """True if the data array has any masked values.
@@ -7249,13 +7250,13 @@ class Data(Container, cfdm.Data):
 
         """
         dx = self._get_dask()
-
         a = dx.compute()
-#        if self.hardmask:
-#            if np.ma.isMA(a):
-#                a.harden_mask()
-#        elif np.ma.isMA(a):
-#            a.soften_mask()
+
+        if self.hardmask:
+            if np.ma.isMA(a):
+                a.harden_mask()
+        else:
+            a.soften_mask()
             
         return a
          
@@ -7627,7 +7628,7 @@ class Data(Container, cfdm.Data):
         mask._Units = _units_None
         mask.dtype = _dtype_bool
 
-        mask.hardmask = True
+        mask._hardmask = _DEFAULT_HARDMASK
 
         return mask
 
@@ -10980,8 +10981,7 @@ class Data(Container, cfdm.Data):
                 
             return a
 
-        self._map_blocks(harden_mask, dtype=self.dtype)
-
+        self._dask_map_blocks(harden_mask, dtype=self.dtype)
         self._hardmask = True
         
     def soften_mask(self):
@@ -10992,10 +10992,16 @@ class Data(Container, cfdm.Data):
                 
             return a
 
-        self._map_blocks(soften_mask, dtype=self.dtype)
-        
+        self._dask_map_blocks(soften_mask, dtype=self.dtype)
         self._hardmask = False
 
+    def _set_mask_hardness(self):
+        """TODODASK"""
+        if self.hardmask:
+            self.harden_mask()
+        else:
+            self.soften_mask()
+            
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with the fill value.
