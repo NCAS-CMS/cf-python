@@ -176,11 +176,13 @@ def _convert_to_builtin_type(x):
     :Parameters:
 
         x:
-            TODO
+            `numpy.bool_` or `numpy.integer` or `numpy.floating`
+                The object of some numpy primitive data type.
 
     :Returns:
 
-            TODO
+            `bool` or `int` or `float`
+                 The object converted to a JSON-encodable type.
 
     **Examples:**
 
@@ -726,6 +728,10 @@ place.
         array: subclass of `Array`
             The array to be inserted.
 
+        check_free_memory: `bool`, optional
+            If True then store the data array on disk if there is
+            is sufficient memory there.
+
     :Returns:
 
         `None`
@@ -786,7 +792,8 @@ place.
             Ignored.
 
         check_free_memory: `bool`, optional
-            TODO
+            If True then store the data array on disk if there is
+            is sufficient memory there.
 
     :Returns:
 
@@ -1992,11 +1999,10 @@ place.
                 # --- End: if
             # --- End: for
         # --- End: if
-    # --- End: if
 
     @classmethod
     def _share_partitions(cls, processed_partitions, parallelise):
-        '''TODO
+        '''Share the partitions processed on each rank with every other rank.
 
         '''
         # Share the partitions processed on each rank with every other
@@ -2575,7 +2581,7 @@ place.
     def median(
             self, axes=None, squeeze=False, mtol=1, inplace=False,
             _preserve_partitions=False):
-        '''TODO
+        '''Compute the median of the values.
 
         '''
 
@@ -11623,7 +11629,7 @@ False
 
     @property
     def in_memory(self):
-        '''TODO
+        '''True if the array is retained in memory.
 
     :Returns:
 
@@ -11910,7 +11916,7 @@ False
     :Returns:
 
         `Data`
-            TODO
+            The new data array having all elements masked.
 
     **Examples:**
 
@@ -13292,7 +13298,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
-        '''TODO
+        '''Takes the logarithm of the data array.
 
     :Parameters:
 
@@ -13740,7 +13746,7 @@ False
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
              calendar=None, chunk=True):
-        '''Return a new data array of given shape and type, filled with the
+        '''Returns a new data array of given shape and type, filled with the
     given value.
 
     .. seealso:: `empty`, `ones`, `zeros`
@@ -13783,7 +13789,7 @@ False
     @classmethod
     def ones(cls, shape, dtype=None, units=None, calendar=None,
              chunk=True):
-        '''TODO
+        '''Returns a new array filled with ones of set shape and type.
 
         '''
         return cls.full(shape, 1, dtype=dtype, units=units,
@@ -13792,7 +13798,7 @@ False
     @classmethod
     def zeros(cls, shape, dtype=None, units=None, calendar=None,
               chunk=True):
-        '''TODO
+        '''Returns a new array filled with zeros of set shape and type.
 
         '''
         return cls.full(shape, 0, dtype=dtype, units=units,
@@ -13940,9 +13946,23 @@ False
 
     @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
-        '''A lot like `numpy.roll`
+        '''Roll array elements along a given axis.
+
+    Equivalent in function to `numpy.roll`.
 
     :Parameters:
+
+        axis: `int`
+            Select the axis over which the elements are to be rolled.
+            removed. The *axis* parameter is an integer that selects
+            the axis corresponding to the given position in the list
+            of axes of the data.
+
+            *Parameter example:*
+              Convolve the second axis: ``axis=1``.
+
+            *Parameter example:*
+              Convolve the last axis: ``axis=-1``.
 
         {{inplace: `bool`, optional}}
 
@@ -13960,9 +13980,12 @@ False
 
             return self.copy()
 
-        iaxes = self._parse_axes(axis)  # , 'roll')
+        iaxes = self._parse_axes(axis)
         if len(iaxes) != 1:
-            raise ValueError("TODO 987345 9087345 ^^ roll ^")
+            raise ValueError(
+                "Must specify a unique domain axis with the 'axis' "
+                "parameter. {!r} specifies axes {!r}".format(axis, iaxes)
+            )
 
         axis = iaxes[0]
 
