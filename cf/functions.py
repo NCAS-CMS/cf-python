@@ -2151,15 +2151,15 @@ def parse_indices(shape, indices, cyclic=False,
 
                         index = slice(start, stop, step)
                         is_slice = True
-#                    else:
-#                        if ((step > 0 and (steps <= 0).any()) or
-#                                (step < 0 and (steps >= 0).any()) or
-#                                not step):
-#                            raise ValueError(
-#                                "Bad index (not strictly monotonic): "
-#                                "{}".format(index)
-#                            )
-#
+                    else:
+                        if ((step > 0 and (steps <= 0).any()) or
+                                (step < 0 and (steps >= 0).any()) or
+                                not step):
+                            raise ValueError(
+                                "Bad index (not strictly monotonic): "
+                                "{}".format(index)
+                            )
+
 #                        if reverse and step < 0:
 #                            # The array is strictly monotonically
 #                            # decreasing, so reverse it so that it's
