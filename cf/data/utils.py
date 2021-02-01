@@ -368,8 +368,15 @@ def is_very_small(array, threshold=None):
     return is_small(array, threshold)
 
 
-def geted(a):
-    """TODODASK
+def dask_compatible(a):
+    """Convert an object to one which is dask compatible.
+
+    The object is returned unchanged unless it is a cf object
+    containing data, in which case the dask array of the data is
+    returned instead.
+
+    .. versionadded:: 4.0.0
+
     """
     try:
         return a.data._get_data()

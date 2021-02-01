@@ -2,7 +2,6 @@ import abc
 
 from functools import reduce
 from operator  import mul
-#from sys       import getrefcount
 
 
 class CompressedSubarray(abc.ABC):
