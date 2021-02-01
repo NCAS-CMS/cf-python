@@ -2,13 +2,12 @@ import abc
 
 from functools import reduce
 from operator  import mul
-#from sys       import getrefcount
 
 
 class CompressedSubarray(abc.ABC):
-    '''TODO
+    """TODO
 
-    '''
+    """
     def __init__(self, array, shape, compression):
         '''**Initialization**
 

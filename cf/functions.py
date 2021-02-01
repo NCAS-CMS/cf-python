@@ -1910,11 +1910,12 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
     except (IndexError, NotImplementedError, TypeError):
         return a == b
 
-#TODODASK - nump_indexing enhance with cionfig/decorator
-def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
-#reverse=False,
-#                  envelope=False, mask=False, ):
-    '''TODO
+
+# TODODASK - sort out the "numpy" environment
+    
+def parse_indices(shape, indices, cyclic=False,
+                  numpy_indexing=False):
+    """TODODASK
 
     :Parameters:
 
@@ -1933,7 +1934,7 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
     >>> cf.parse_indices((5, 8), ([2, 4, 6],))
     [slice(2, 7, 2), slice(0, 8, 1)]
 
-    '''
+    """
     parsed_indices = []
     roll = {}
     flip = []
@@ -2159,31 +2160,31 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=None):
                                 "{}".format(index)
                             )
 
-                        if reverse and step < 0:
-                            # The array is strictly monotonically
-                            # decreasing, so reverse it so that it's
-                            # strictly monotonically increasing.  Make
-                            # a note that this dimension will need
-                            # flipping later
-                            index = index[::-1]
-                            flip.append(i)
-                            step = -step
-
-                        if envelope:
-                            # Create an envelope slice for a parsed
-                            # index of a numpy array of integers
-                            compressed_indices.append(index)
-
-                            step = _numpy_sign(step)
-                            if step > 0:
-                                stop = index[-1] + 1
-                            else:
-                                stop = index[-1] - 1
-                                if stop < 0:
-                                    stop = None
-
-                            index = slice(index[0], stop, step)
-                            is_slice = True
+#                        if reverse and step < 0:
+#                            # The array is strictly monotonically
+#                            # decreasing, so reverse it so that it's
+#                            # strictly monotonically increasing.  Make
+#                            # a note that this dimension will need
+#                            # flipping later
+#                            index = index[::-1]
+#                            flip.append(i)
+#                            step = -step
+#
+#                        if envelope:
+#                            # Create an envelope slice for a parsed
+#                            # index of a numpy array of integers
+#                            compressed_indices.append(index)
+#
+#                            step = _numpy_sign(step)
+#                            if step > 0:
+#                                stop = index[-1] + 1
+#                            else:
+#                                stop = index[-1] - 1
+#                                if stop < 0:
+#                                    stop = None
+#
+#                            index = slice(index[0], stop, step)
+#                            is_slice = True
                 else:
                     raise IndexError(
                         "Invalid indices {} for array with shape {}".format(

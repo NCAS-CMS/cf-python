@@ -71,9 +71,9 @@ from . import (
 )
 
 from .utils import (
-    geted,
     convert_to_reftime,
     convert_to_datetime,
+    dask_compatible,
     new_axis_identifier,
     is_small,
     is_very_small,
@@ -133,7 +133,7 @@ _units_None = Units()
 _units_1 = Units('1')
 _units_radians = Units('radians')
 
-_dtype_object = np.dtype(object)
+_dtype_float32 = np.dtype('float32')
 _dtype_float = np.dtype(float)
 _dtype_bool = np.dtype(bool)
 
@@ -405,10 +405,10 @@ place.
         super().__init__(array=array, fill_value=fill_value,
                          _use_array=_use_array)
         
-        # The _HDF_chunks attribute is.... Is either None or a
-        # dictionary.
+        # Create the _HDF_chunks attribute: defines HDF chunking when
+        # writing to disk.
         #
-        # NEVER CHANGE _HDF_chunks IN PLACE
+        # Never change the _HDF_chunks attribute  in-place.
         self._HDF_chunks = None
 
         if loadd is not None:
@@ -434,14 +434,13 @@ place.
         except AttributeError:
             ndim = np.ndim(array)
            
-
         # Create the _cyclic attribute: identifies which axes are
         # cyclic (and therefore allow cyclic slicing). It must be a
         # subset of the axes given by the _axes attribute. If an axis
         # is removed from _axes then it must also be removed from
         # _cyclic.
         #
-        # NEVER CHANGE _cyclic IN PLACE
+        # Never change the _cyclic attribute in-place.
         self._cyclic = _empty_set
 
         # Create the _axes attribute: an ordered sequence of unique
@@ -498,18 +497,14 @@ place.
         # Store the dask array
         self._set_dask(array, delete_source=False)
 
-#        # Set the mask hardness
-#        if hardmask:
-#            self.harden_mask()
-#        else:
-#            self.soften_mask()
-
         # Override the data type
         if dtype is not None:
             self.dtype = dtype
 
-
-        # Apply a mask 
+        # Set the mask hardness
+        self._set_mask_hardness()
+            
+        # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
@@ -1122,25 +1117,24 @@ place.
 
         d = self
 
-        # TODOASK- enhance numpy_indexing with config/decorator
-        numpy_indexing = self.numpy_indexing
+        # TODODASK - sort out the "numpy" environment
+        
+        # TODODASK - multiple list indices
         
         indices, roll = parse_indices(d.shape, indices, cyclic=True,
-                                      numpy_indexing=numpy_indexing)
+                                      numpy_indexing=False)
+
 
         axes = d._axes
         cyclic_axes = d._cyclic
-        print(roll)
+
         if roll:
             # Roll axes with cyclic slices. For example, if slice(-2,
             # 3) has been requested on a cyclic axis (and we're not
             # using numpy indexing), then we roll that axis by two
             # points and apply the slice(0, 5) instead.
-            roll_axes = []
-            shifts = []
-            for axis, shift in roll.items():
-                roll_axes.append(axis)
-                shifts.append(shift)
+            roll_axes = tuple(roll.keys())
+            shifts = tuple(roll.values())
                 
             if set(roll_axes).intersection(cyclic_axes):                
                 raise IndexError(
@@ -1151,6 +1145,7 @@ place.
 
         new = d.copy(array=False)
 
+        # Get the subspaced dask array 
         dx = d._get_dask()
         dx = dx[tuple(indices)]
         new._set_dask(dx)
@@ -1162,14 +1157,14 @@ place.
                  for axis, n0, n1 in zip(axes, d.shape, new.shape)
                  if n1 != n0 and axis in cyclic_axes]
             if x:
-                # Never change _cyclic in-place
+                # Never change the _cyclic attribute in-place
                 new._cyclic = cyclic_axes.difference(x)
         # --- End: if
 
         return new
     
     def __setitem__(self, indices, value):
-        '''Implement indexed assignment.
+        """Implement indexed assignment.
 
     x.__setitem__(indices, y) <==> x[indices]=y
 
@@ -1197,13 +1192,12 @@ place.
 
     **Examples:**
 
-        '''
-        # TODOASK- enhance numpy_indexing with config/decorator
-        numpy_indexing = self.numpy_indexing
+        """
+        # TODODASK - sort out the "numpy" environment
         
         indices, roll = parse_indices(self.shape, indices,
                                       cyclic=True,
-                                      numpy_indexing=True) #numpy_indexing)
+                                      numpy_indexing=False)
         indices = tuple(indices)
 
         if roll:
@@ -1240,14 +1234,18 @@ place.
                     f"to data with units {self_units!r}"
                 )
         # --- End: try
-        
-        # Do the assignment
+
+        # Set the mask hardness, in case any previous operations have
+        # inadvertently hanged it.
         self._set_mask_hardness()
+
+        # Do the assignment
         dx = self._get_dask()
-        dx[indices] = geted(value)
+        dx[indices] = dask_compatible(value)
 
         if roll:
-            # Unroll
+            # Unroll any axes that were rolled to enable a cyclic
+            # assignment
             shifts = [-shift for shift in shifts]            
             self.roll(axis=roll_axes, shift=shifts, inplace=True)
 
@@ -1460,27 +1458,34 @@ place.
 #        return processed_partitions
 
     # ----------------------------------------------------------------
-    # Private dask methods ppp
+    # Private dask methods
     # ----------------------------------------------------------------
     def _get_dask(self):
-        '''TODODASK
+        """Get the dask array.
 
-    :Returns:
+        .. versionadded:: 4.0.0
+        
+        :Returns:
 
-        `dask.array.Array`
+            `dask.array.Array`
+                The dask array.
 
-        '''
+        """
         return self._custom['dask']
 
     def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
+
+        .. versionadded:: 4.0.0
 
         :Parameters:
         
             array: `dask.array.Array`
                 The `dask` array to be inserted.
     
-            copy: TODODASK
+            copy: `bool`, optional
+                If True then copy the dask array before setting it. By
+                default the dask array is not copied.
     
             delete_source: `bool`, optional
                 TODODASK
@@ -1503,15 +1508,39 @@ place.
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
 
+        .. versionadded:: 4.0.0
+
         :Parameters:
 
-            default TODODASK get from docstring rewrite
+            default: optional
+                Return the value of the *default* parameter if the
+                dask array axes has not been set.
+
+                {{default Exception}}
 
             delete_source: `bool`, optional
                 TODODASK
 
         :Returns:
-            
+
+            `dask.array.Array`
+                The removed dask array.
+
+        **Examples:**
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> dx = d._del_dask()
+        >>> d._del_dask("No dask array")
+        'No dask array'
+        >>> d._del_dask()
+        Traceback (most recent call last):
+            ...
+        ValueError: 'Data' has no dask array
+        >>> d._del_dask(RuntimeError('No dask array'))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: No dask array
+
         """
         try:
             out = self._custom.pop("dask")
@@ -1520,25 +1549,48 @@ place.
                 default,
                 f"{self.__class__.__name__!r} has no dask array"
             )
-        else:
-            if delete_source:
-                # Remove a source array, on the grounds that we can't
-                # guarantee its consistency with any new dask array.
-                self._del_Array(None)
 
-            return out
+        if delete_source:
+            # Remove a source array, on the grounds that we can't
+            # guarantee its consistency with any future new dask
+            # array.
+            self._del_Array(None)
+            
+        return out
 
     def _dask_map_blocks(self, func, **kwargs):
-        """TODODASK
+        """Apply a function in-place to the dask array using `map_blocks`.
 
-        in-place
+        .. versionadded:: 4.0.0
+
+        :Parameters:
+        
+            func: 
+                The funciton to be applied to each chunk of the dask
+                array.
+
+            kwargs: optional
+                Keyword arguments passed to the map `map_blocks`
+                method of the dask array.
+
+        :Returns:
+
+            `dask.array.Array`
+                The updated dask array.
+
+        **Examples:**
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> dx = d._dask_map_blocks(lambda x: x / 2, dtype=float)
+        >>> print(d.array)
+        [0.5 1.  1.5]
+
         """
         dx = self._get_dask()
         dx = dx.map_blocks(func, **kwargs)
         self._set_dask(dx)
 
         return dx
-
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -2545,14 +2597,14 @@ place.
         self._size = reduce(mul, shape, 1)
 
         cyclic = d.get('_cyclic', None)
-        # Never change _cyclic in-place
+        # Never change the _cyclic attribute in-place
         if cyclic:
             self._cyclic = cyclic.copy()
         else:
             self._cyclic = _empty_set 
 
         HDF_chunks = d.get('_HDF_chunks', None)
-        # Never change _HDF_chunks in-place
+        # Never change the _HDF_chunks attribute in-place
         if HDF_chunks:
             self._HDF_chunks = HDF_chunks.copy()
         else:
@@ -6374,13 +6426,10 @@ dimensions.
     # ----------------------------------------------------------------
     @property
     def _Units(self):
-        '''Storage for the units.
+        """Storage for the units.
 
-        '''
-        try:
-            return self._custom['_Units']
-        except KeyError:
-            raise AttributeError()
+        """        
+        return self._custom['_Units']
 
     @_Units.setter
     def _Units(self, value):
@@ -6405,32 +6454,30 @@ dimensions.
 
     @property
     def _cyclic(self):
-        '''Storage for axis cyclicity
+        """Storage for axis cyclicity.
 
-        '''
+        Identifies which axes are cyclic (and therefore allow cyclic
+        slicing).
+
+        It must be a subset of the axis identifiers given by the
+        `_axes` attribute.
+
+        .. warning:: Never change the `_cyclic` attribute in-place.
+
+        .. note:: When an axis identifier is removed from the `_axes`
+                  attribute then it is automatically also removed from
+                  the `_cyclic` attribute.
+
+        """
         return self._custom['_cyclic']
 
     @_cyclic.setter
     def _cyclic(self, value):
-        # Value must be a set. Never change _cyclic in-place.
         self._custom['_cyclic'] = value
 
     @_cyclic.deleter
     def _cyclic(self):
         self._custom['_cyclic'] = _empty_set
-
-#    @property
-#    def _dtype(self):
-#        '''Storage for the data type.
-#
-#        '''
-#        return self._custom['_dtype']
-#
-#    @_dtype.setter
-#    def _dtype(self, value): self._custom['_dtype'] = value
-#
-#    @_dtype.deleter
-#    def _dtype(self): del self._custom['_dtype']
 
     @property
     def _HDF_chunks(self):
@@ -6472,57 +6519,28 @@ dimensions.
 #
 #    @partitions.deleter
 #    def partitions(self): del self._custom['partitions']
-#
-#    @property
-#    def _ndim(self):
-#        '''Storage for the number of dimensions
-#
-#        '''
-#        return self._custom['_ndim']
-#
-#    @_ndim.setter
-#    def _ndim(self, value): self._custom['_ndim'] = value
-#
-#    @_ndim.deleter
-#    def _ndim(self): del self._custom['_ndim']
-#
-#    @property
-#    def _size(self):
-#        '''Storage for the number of elements.
-#
-#        '''
-#        return self._custom['_size']
-#
-#    @_size.setter
-#    def _size(self, value): self._custom['_size'] = value
-#
-#    @_size.deleter
-#    def _size(self): del self._custom['_size']
-#
-#    @property
-#    def _shape(self):
-#        '''Storage for the data shape.
-#
-#        '''
-#        return self._custom['_shape']
-#
-#    @_shape.setter
-#    def _shape(self, value): self._custom['_shape'] = value
-#
-#    @_shape.deleter
-#    def _shape(self): del self._custom['_shape']
-#
+
     @property
     def _axes(self):
-        '''Storage for the axis names.'''
+        """Storage for the axis identifiers.
+
+        Contains an ordered sequence of unique (within this `Data`
+        instance) identifiers for each array axis.
+
+        .. note:: When an axis identifier is removed from the `_axes`
+                  attribute then it is automatically also removed from
+                  the `_cyclic` attribute.
+
+        """
         return self._custom['_axes']
 
     @_axes.setter
     def _axes(self, value):
-        self._custom['_axes'] = tuple(value)
+        value = tuple(value)
+        self._custom['_axes'] = value
 
-        # Update cyclic: remove cyclic axes that are not in the new
-        # axes
+        # Update cyclic: Remove cyclic axes that are not in the new
+        # axes 
         cyclic = self._cyclic
         if cyclic:
             self._cyclic = cyclic.intersection(value)
@@ -6585,30 +6603,32 @@ dimensions.
         """
         The `cf.Units` object containing the units of the data array.
     
-        Deleting this attribute is equivalent to setting it to an
-        undefined units object, so this attribute is guaranteed to
-        always exist. TODODASK - is is True? Should be undelable, I
-        think. Commenting out @deleter for now.
-    
+        Can be set to any units equivalent to the existing units.
+
+        .. seealso `override_units`, `override_calendar`
+        
         **Examples:**
     
-        >>> d.Units = Units('m')
+        >>> d = cf.Data([1, 2, 3], units='m')
         >>> d.Units
         <Units: m>
-        >>> del d.Units
+        >>> d.Units = cf.Units('kilmetres')
         >>> d.Units
-        <Units: >
+        <Units: kilmetres>
+        >>> d.Units = cf.Units('km')
+        >>> d.Units
+        <Units: km>
 
         """
         return self._Units
 
     @Units.setter
     def Units(self, value):
-        old_units = getattr(self, '_Units', _units_None)
+        old_units = self._Units
         if not old_units.equivalent(value):
             raise ValueError(
-                f"Current units are {old_units!r}. Can't set to "
-                f"non-equivalent units {value!r}. "
+                f"Can't set to Units to {value!r} that are not equivalent "
+                f"to the current units {old_units!r}. "
                 "Consider using the override_units method instead."
             )
 
@@ -6619,11 +6639,20 @@ dimensions.
         if self.Units.equals(value):
             return
 
+        dtype = self.dtype
+        if dtype.kind in "iu":
+            if dtype.char in "iI":
+                dtype = _dtype_float32
+            else:
+                dtype = _dtype_float
+        # --- End: if
+
         self._dask_map_blocks(
             partial(Units.conform,
                     from_units=old_units,
                     to_units=value,
-                    inplace=False)
+                    inplace=False),
+            dtype=dtype
         )
             
         self._Units = value
@@ -6631,7 +6660,8 @@ dimensions.
     @Units.deleter
     def Units(self):
         raise ValueError(
-            "TODODASK - Consider using the override_units method instead."
+            "Can't delete the Units attribute. "
+            "Consider using the override_units method instead."
         )
                     
     @property
@@ -6723,14 +6753,51 @@ dimensions.
 
     @property
     def hardmask(self):
-        """Whether the mask is hard (True) or soft (False).
+        """Hardness of the mask.
 
-        When the mask is hard, masked entries of the data array can
-        not be unmasked by assignment, but unmasked entries may still
-        be masked.
+        If the `hardmask` attribute is `True`, i.e. there is a hard
+        mask, then unmasking an entry will silently not occur. This
+        feature prevents overwriting the mask. To allow the unmasking
+        of an entries when the data has a hard mask, the mask must
+        first to be softened using the `soften_mask` method, that
+        changes the `hardmask` attribute to `False`. The mask can be
+        re-hardened with `harden_mask` method.
 
-        When the mask is soft, masked entries of the data array may be
-        unmasked by assignment and unmasked entries may be masked.
+        The following operations
+        
+        .. seealso:: `harden_mask`, `soften_mask`, `where`
+
+        **Examples:**
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.hardmask
+        True
+        >>> d[0] = cf.masked
+        >>> print(d.array)
+        [-- 2 3]
+        >>> d[...]= 9
+        >>> print(d.array)
+        [-- 9 9]
+        >>> d.soften_mask()
+        >>> d.hardmask
+        False
+        >>> d[...] = -1
+        False
+        >>> print(d.array)
+        [-1 -1 -1]
+        >>> d.harden_mask()
+        >>> d.hardmask
+        True
+        >>> d[0] = cf.masked
+        >>> d = d.where(True, 9)
+        >>> print(d.array)
+        [-- 9 9]
+        >>> d.soften_mask()
+        >>> d.hardmask
+        False
+        >>> d = d.where(True, 9)
+        >>> print(d.array)
+        [9 9 9]
 
         """
         return self._custom['_hardmask']
@@ -7044,134 +7111,15 @@ dimensions.
         dx = self._get_dask()
         a = dx.compute()
 
-        if self.hardmask:
-            if np.ma.isMA(a):
+        if np.ma.isMA(a):
+            if self.hardmask:
                 a.harden_mask()
-        else:
-            a.soften_mask()
-            
+            else:
+                a.soften_mask()
+        # --- End: if
+        
         return a
          
-#        # Set the auxiliary_mask keyword to None because we can apply
-#        # it later in one go
-#        config = self.partition_configuration(readonly=True,
-#                                              auxiliary_mask=None)
-#
-#        out_data_type = self.dtype
-#        units = self.Units
-#
-#        _dtarray = getattr(self, '_dtarray', False)
-#
-#        if _dtarray:
-#            del self._dtarray
-#            out_data_type = _dtype_object
-##            if self._isdatetime():
-##                pda_args['func'] = None
-##        elif self._isdatetime():
-##            out_data_type = numpy_dtype(float)
-##            pda_args['func']   = dt2rt
-##            # Turn off data-type checking and partition updating
-##            pda_args['dtype']  = None
-##            pda_args['update'] = False
-#
-#        partitions = self.partitions
-#
-#        # Still here?
-#        array_out = numpy_empty(self._shape, dtype=out_data_type)
-#
-#        masked = False
-#
-#        if not self.ndim:
-#            # --------------------------------------------------------
-#            # array_out is a scalar array so index it with Ellipsis
-#            # (as opposed to the empty tuple which would be returned
-#            # from partition.indices). This prevents bad behaviour
-#            # when p_array is a numpy array of objects (e.g. data-time
-#            # objects).
-#            # --------------------------------------------------------
-#            partition = partitions.matrix[()]
-#            partition.open(config)
-#            p_array = partition.array
-#
-#            # copy okect?
-#
-#            if _dtarray:
-#                if not partition.isdt:
-#                    # Convert the partition subarray to an array
-#                    # of date-time objects
-#                    p_array = rt2dt(p_array, units)
-#            elif partition.isdt:
-#                # Convert the partition subarray to an array of
-#                # reference time floats
-#                p_array = dt2rt(p_array, None, units)
-#
-#            if not masked and partition.masked:
-#                array_out = array_out.view(numpy_ma_MaskedArray)
-#                array_out.set_fill_value(self.get_fill_value(None))
-#                masked = True
-#
-#            array_out[...] = p_array
-#            partition.close()
-#
-#        else:
-#            # --------------------------------------------------------
-#            # array_out is not a scalar array, so it can safely be
-#            # indexed with partition.indices in all cases.
-#            # --------------------------------------------------------
-#            for partition in partitions.matrix.flat:
-#                partition.open(config)
-#                p_array = partition.array
-#
-#                if _dtarray:
-#                    if not partition.isdt:
-#                        # Convert the partition subarray to an array
-#                        # of date-time objects
-#                        p_array = rt2dt(p_array, units)
-#                elif partition.isdt:
-#                    # Convert the partition subarray to an array of
-#                    # reference time floats
-#                    p_array = dt2rt(p_array, None, units)
-#
-#                # copy okect?
-#
-#                if not masked and partition.masked:
-#                    array_out = array_out.view(numpy_ma_MaskedArray)
-#                    array_out.set_fill_value(self.get_fill_value(None))
-#                    masked = True
-#
-#                array_out[partition.indices] = p_array
-#
-#                partition.close()
-#            # --- End: for
-#
-#        # ------------------------------------------------------------
-#        # Apply the auxiliary mask
-#        # ------------------------------------------------------------
-#        if self._auxiliary_mask:
-#            if not masked:
-#                # Convert the output array to a masked array
-#                array_out = array_out.view(numpy_ma_MaskedArray)
-#                array_out.set_fill_value(self.get_fill_value(None))
-#                masked = True
-#
-#            self._auxiliary_mask_tidy()
-#
-#            for mask in self._auxiliary_mask:
-#                array_out.mask = array_out.mask | mask.array
-#
-#            if array_out.mask is numpy_ma_nomask:
-#                # There are no masked points, so convert the array
-#                # back to a non-masked array.
-#                array_out = array_out.data
-#                masked = False
-#        # --- End: if
-#
-#        if masked and self.hardmask:
-#            # Harden the mask of the output array
-#            array_out.harden_mask()
-#
-#        return array_out
-
     @property
     def datetime_array(self):
         '''An independent numpy array of date-time objects.
@@ -7229,7 +7177,16 @@ dimensions.
         dx = d._get_dask()
         dx = convert_to_datetime(dx, d.Units) # TODODASK
             
-        return dx.compute()
+        a = dx.compute()
+        
+        if np.ma.isMA(a):
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+        # --- End: if
+        
+        return a
         
     @property
     def varray(self):
@@ -7419,7 +7376,7 @@ dimensions.
         mask._Units = _units_None
         mask.dtype = _dtype_bool
 
-        mask._hardmask = _DEFAULT_HARDMASK
+        mask._hardmask = True
 
         return mask
 
@@ -9660,7 +9617,7 @@ dimensions.
 
         axes = [data_axes[i] for i in self._parse_axes(axes)]
 
-        # Never change _cyclic in-place
+        # Never change the _cyclic attribute in-place
         if iscyclic:        
             self._cyclic = cyclic_axes.union(axes)
         else:
@@ -10616,30 +10573,74 @@ dimensions.
         return d
 
     def harden_mask(self):
-        """TODODASK"""        
+        """Force the mask to hard.
+
+        Whether the mask of a masked array is hard or soft is
+        determined by its the `hardmask` property. `harden_mask` sets
+        `hardmask` to True.
+
+
+        **Examples:**
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.hardmask
+        True
+
+        >>> d = cf.Data([1, 2, 3], hardmask=False)
+        >>> d.hardmask
+        False
+        >>> d.harden_mask()
+        >>> d.hardmask
+        True
+
+        """        
         def harden_mask(a):
             if np.ma.isMA(a):
                 a.harden_mask()
                 
             return a
 
+        if self._hardmask:
+            # Mask is already hard
+            return 
+
         self._dask_map_blocks(harden_mask, dtype=self.dtype)
+
         self._hardmask = True
         
     def soften_mask(self):
-        """TODODASK"""        
+        """TODODASK
+
+        **Examples:**
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.hardmask
+        True
+        >>> d.soften_mask()
+        >>> d.hardmask
+        False
+        
+        """  
         def soften_mask(a):
             if np.ma.isMA(a):
                 a.soften_mask()
                 
             return a
+ 
+        if not self._hardmask:
+            # Mask is already soft
+            return 
 
         self._dask_map_blocks(soften_mask, dtype=self.dtype)
+
         self._hardmask = False
 
-    def _set_mask_hardness(self):
+    def _set_mask_hardness(self, hardmask=None):
         """TODODASK"""
-        if self.hardmask:
+        if hardmask is None:
+            hardmask = self.hardmask
+            
+        if hardmask:
             self.harden_mask()
         else:
             self.soften_mask()
@@ -10876,6 +10877,8 @@ dimensions.
 
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
+
+    TODODASK - check against daask flatten behaviour
 
     Any subset of the axes may be flattened.
 
@@ -11193,25 +11196,8 @@ dimensions.
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-
-#        config = self.partition_configuration(readonly=False)
-#
-#        for partition in d.partitions.matrix.flat:
-#            p_units = partition.Units
-#            if not p_units or p_units == units:
-#                # No need to create the data array if the sub-array
-#                # units are the same as the master data array units or
-#                # the partition units are not set
-#                partition.Units = units
-#                continue
-#
-#            partition.open(config)
-#            partition.array
-#            partition.Units = units
-#            partition.close()
-
         d._Units = Units(units)
-
+        
         return d
 
     @_deprecated_kwarg_check('i')
@@ -11244,17 +11230,6 @@ dimensions.
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-
-#        if not self.Units.isreftime:
-#            raise ValueError(
-#                "Can't override the calendar of non-reference-time "
-#                "units: {0!r}".format(self.Units)
-#            )
-#
-#        for partition in d.partitions.matrix.flat:
-#            partition.Units = Units(partition.Units._units, calendar)
-#            partition.close()
-
         d._Units = Units(d.Units._units, calendar)
 
         return d
@@ -11752,7 +11727,8 @@ dimensions.
         chunks = chunks[0]
 
         if chunks is None:
-            # Clear all chunking. Never change _HDF_CHUNKS in-place.
+            # Clear all chunking. Never change the _HDF_chunks
+            # attribute in-place.
             self._HDF_chunks = None 
             return org_HDF_chunks
 
@@ -11763,7 +11739,8 @@ dimensions.
         if _HDF_chunks.values() == [None] * self.ndim:
             _HDF_chunks = None
 
-        self._HDF_chunks = _HDF_chunks  # Never change _HDF_CHUNKS in-place
+        # Never change the _HDF_chunks attribute in-place
+        self._HDF_chunks = _HDF_chunks
 
         return org_HDF_chunks
 
@@ -13072,6 +13049,8 @@ dimensions.
         """
         d = _inplace_enabled_define_and_cleanup(self)
         
+        # TODODASK - check if axis parsing is done in dask
+
         if not d.ndim:
             if axes or axes == 0:
                 raise ValueError(
@@ -13100,8 +13079,6 @@ dimensions.
                     )
         # --- End: if
 
-        # TODODASK - checkif axi parsing in be done in dask
-
         if not axes:
             return d
         
@@ -13117,8 +13094,9 @@ dimensions.
 
         hdf = self._HDF_chunks
         if hdf:
-            # Never change _HDF_chunks in-place
-            self._HDF_chunks = {axis: size for axis, size in hdf.items()
+            # Never change the _HDF_chunks attribute in-place
+            self._HDF_chunks = {axis: size
+                                for axis, size in hdf.items()
                                 if axis not in axes}
         
         return d            
@@ -13586,7 +13564,7 @@ dimensions.
         """
         A lot like `numpy.roll`
 
-        TODODASK  - works for multiple axes
+        TODODASK  - note that it works for multiple axes
 
         Will roll non-cyclic axes
 

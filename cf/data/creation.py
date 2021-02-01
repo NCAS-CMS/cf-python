@@ -118,12 +118,6 @@ def compressed_to_dask(array):
 
         array: subclass of `CompressedArray`
 
-        copy: optional
-            Ignored.
-
-        check_free_memory: `bool`, optional
-            TODO
-
     :Returns:
 
         `dask.array.Array`
@@ -175,16 +169,16 @@ def compressed_to_dask(array):
         for n in count:
             end = start + int(n)
             subarray = RaggedContiguousSubarray(
-                    array=compressed_data,
-                    shape=next(chunk_shape),
-                    compression={
-                        'instance_axis': 0,
-                        'instance_index': 0,
-                        'c_element_axis': 1,
-                        'c_element_indices': slice(start, end),
-                    }
-                )
-                
+                array=compressed_data,
+                shape=next(chunk_shape),
+                compression={
+                    'instance_axis': 0,
+                    'instance_index': 0,
+                    'c_element_axis': 1,
+                    'c_element_indices': slice(start, end),
+                }
+            )
+            
             dsk[name + next(chunk_position)] = (
                     (getter, subarray, full_slice, asarray, lock)
                 )
@@ -397,7 +391,7 @@ def compressed_to_dask(array):
 @lru_cache(maxsize=32)
 def generate_axis_identifiers(n):
     """
-    Return new, unique axis identifiers.
+    Return new, unique axis identifiers for a given number of axes.
     
     The names are arbitrary and have no semantic meaning.
 
@@ -406,7 +400,7 @@ def generate_axis_identifiers(n):
     :Parameters:
 
         n: `int`
-            Generate the given number of axis identifiers.
+            Generate this number of axis identifiers.
 
     :Returns:
 
@@ -459,6 +453,7 @@ def synchronous():
 
     """
     return config.get("scheduler") == "synchronous"
+
 
 def get_lock():
     """TODODASK
