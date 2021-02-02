@@ -1179,15 +1179,24 @@ class Data(Container, cfdm.Data):
             return self.copy()
 
         d = self
+        
+        auxiliary_mask = ()
+        try:
+            arg = indices[0]
+        except (IndexError, TypeError):
+            pass
+        else:
+            if isinstance(arg, str) and arg == 'mask':
+                auxiliary_mask = indices[1]
+                indices = indices[2:]
+
+        indices, roll = parse_indices(d.shape, indices, cyclic=True,
+                                      numpy_indexing=False)
 
         # TODODASK - sort out the "numpy" environment
         
         # TODODASK - multiple list indices
         
-        indices, roll = parse_indices(d.shape, indices, cyclic=True,
-                                      numpy_indexing=False)
-
-
         axes = d._axes
         cyclic_axes = d._cyclic
 
@@ -1196,23 +1205,26 @@ class Data(Container, cfdm.Data):
             # 3) has been requested on a cyclic axis (and we're not
             # using numpy indexing), then we roll that axis by two
             # points and apply the slice(0, 5) instead.
-            roll_axes = tuple(roll.keys())
-            shifts = tuple(roll.values())
-                
-            if set(roll_axes).intersection(cyclic_axes):                
+            if cyclic_axes.intersection([axes[i] for i in roll]):
                 raise IndexError(
                     "Can't take a cyclic slice of a non-cyclic axis"
                 )
                 
-            d = d.roll(axis=roll_axes, shift=shifts)
-
-        new = d.copy(array=False)
-
-        # Get the subspaced dask array 
+            d = d.roll(axis=tuple(roll.keys()),
+                       shift=tuple(roll.values()))
+            new = d
+        else:
+            new = d.copy(array=False)
+            
+        # Get the subspaced dask array
         dx = d._get_dask()
         dx = dx[tuple(indices)]
         new._set_dask(dx)
 
+        # Apply any auxiliary mask
+        for mask in auxiliary_mask:
+            new.where(mask, cf_masked, inplace=True)
+        
         # Cyclic axes which have been reduced in size are no longer
         # cyclic
         if cyclic_axes:
@@ -1229,31 +1241,31 @@ class Data(Container, cfdm.Data):
     def __setitem__(self, indices, value):
         """Implement indexed assignment.
 
-    x.__setitem__(indices, y) <==> x[indices]=y
-
-    Assignment to data array elements defined by indices.
-
-    Elements of a data array may be changed by assigning values to a
-    subspace. See `__getitem__` for details on how to define subspace
-    of the data array.
-
-    **Missing data**
-
-    The treatment of missing data elements during assignment to a
-    subspace depends on the value of the `hardmask` attribute. If it
-    is True then masked elements will not be unmasked, otherwise masked
-    elements may be set to any value.
-
-    In either case, unmasked elements may be set, (including missing
-    data).
-
-    Unmasked elements may be set to missing data by assignment to the
-    `cf.masked` constant or by assignment to a value which contains
-    masked elements.
-
-    .. seealso:: `cf.masked`, `hardmask`, `where`
-
-    **Examples:**
+        x.__setitem__(indices, y) <==> x[indices]=y
+    
+        Assignment to data array elements defined by indices.
+    
+        Elements of a data array may be changed by assigning values to
+        a subspace. See `__getitem__` for details on how to define
+        subspace of the data array.
+    
+        **Missing data**
+    
+        The treatment of missing data elements during assignment to a
+        subspace depends on the value of the `hardmask` attribute. If
+        it is True then masked elements will not be unmasked,
+        otherwise masked elements may be set to any value.
+    
+        In either case, unmasked elements may be set, (including
+        missing data).
+    
+        Unmasked elements may be set to missing data by assignment to
+        the `cf.masked` constant or by assignment to a value which
+        contains masked elements.
+    
+        .. seealso:: `cf.masked`, `hardmask`, `where`
+    
+        **Examples:**
 
         """
         # TODODASK - sort out the "numpy" environment
@@ -1270,12 +1282,14 @@ class Data(Container, cfdm.Data):
             # by two points and assign to slice(0, 5) instead. The
             # axis is then unrolled by two points afer the assignment
             # has been made.
-            roll_axes = []
-            shifts = []
-            for axis, shift in roll.items():
-                roll_axes.append(axis)
-                shifts.append(shift)
+            axes = self._axes
+            if self._cyclic.intersection([axes[i] for i in roll]):
+                raise IndexError(
+                    "Can't do a cyclic assignment to a non-cyclic axis"
+                )
 
+            roll_axes = tuple(roll.keys())
+            shifts = tuple(roll.values())
             self.roll(axis=roll_axes, shift=shifts, inplace=True)
 
         # TODODASK: multiple lists
@@ -6929,7 +6943,7 @@ class Data(Container, cfdm.Data):
     @dtype.setter
     def dtype(self, value):
         dx = self._get_dask()
-        
+
         # Only change the datatype if it's different
         if dx.dtype != value:
             dx = dx.astype(value)
