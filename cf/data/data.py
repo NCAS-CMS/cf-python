@@ -501,13 +501,14 @@ place.
         if dtype is not None:
             self.dtype = dtype
 
-        # Set the mask hardness
-        self._set_mask_hardness()
-            
         # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
-
+        else:
+            # Set the mask hardness (which is otherwise set by the
+            # 'where' method)
+            self._set_mask_hardness()
+            
     @property
     def dask_array(self):
         '''TODODASK 
@@ -1236,7 +1237,7 @@ place.
         # --- End: try
 
         # Set the mask hardness, in case any previous operations have
-        # inadvertently hanged it.
+        # inadvertently changed it.
         self._set_mask_hardness()
 
         # Do the assignment
