@@ -1039,7 +1039,7 @@ place.
         return isinstance(array, cfdm.Array)
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
-        '''TODO
+        '''Returns the auxiliary masks corresponding to given indices.
 
     :Parameters:
 
@@ -1048,6 +1048,7 @@ place.
     :Returns:
 
         `list` of `Data`
+            The auxiliary masks in a list.
 
     '''
         auxiliary_mask = []
@@ -1199,7 +1200,7 @@ place.
         self._auxiliary_mask = new
 
     def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
-        '''TODO
+        '''Create a new auxiliary mask component of given shape.
 
     :Parameters:
 
@@ -1983,7 +1984,7 @@ place.
         # --- End: if
 
     def _share_lock_files(self, parallelise):
-        '''TODO
+        '''Share the lock files created by each rank for each partition.
 
         '''
         if parallelise:
@@ -2431,7 +2432,10 @@ place.
 
         if bin_units:
             if not bin_units.equivalent(org_units):
-                raise ValueError("non-equiv units TODO")
+                raise ValueError(
+                    "Can't put data into bins that have units that are "
+                    "not equivalent to the units of the data."
+                )
 
             if not bin_units.equals(org_units):
                 bins = bins.copy()
@@ -2594,7 +2598,10 @@ place.
     def mean_of_upper_decile(
             self, axes=None, include_decile=True, squeeze=False,
             weights=None, mtol=1, inplace=False, _preserve_partitions=False):
-        '''TODO
+        '''Compute the mean the of upper decile.
+
+        Specifically, calculate the mean of the upper group of data
+        values defined by the upper tenth of their distribution.
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2855,7 +2862,24 @@ place.
         return out
 
     def loads(self, j, chunk=True):
-        '''TODO
+        '''Reset the data in place from a string serialization.
+
+    .. seealso:: `dumpd`, `loadd`
+
+    :Parameters:
+
+        j: `str`
+            A JSON document string serialization of a `cf.Data` object.
+
+        chunk: `bool`, optional
+            If True (the default) then the reset data array will be
+            re-partitioned according the current chunk size, as defined
+            by the `cf.chunksize` function.
+
+    :Returns:
+
+        `None`
+
         '''
         d = json_loads(j)
 
@@ -3086,8 +3110,8 @@ place.
 
         chunk: `bool`, optional
             If True (the default) then the reset data array will be
-            re-partitions according the current chunk size, as defined
-            by the `cf.chunksize` function.
+            re-partitioned according the current chunk size, as
+            defined by the `cf.chunksize` function.
 
     :Returns:
 
@@ -3630,7 +3654,8 @@ place.
         return out
 
     def _chunk_add_partitions(self, d, axes):
-        '''TODO
+        '''Create new partitions and add them to `d` in-place.
+
         '''
         for axis in axes[::-1]:
             extra_bounds = d.get(axis)
@@ -3761,7 +3786,7 @@ place.
 
                 if len(d[axis]) + 1 != n_chunks:
                     raise ValueError(
-                        'asdasdasdasds {} {} : {}'.format(
+                        'Bad partition matrix shape: {} {} : {}'.format(
                             len(d[axis]) + 1, n_chunks, d[axis])
                     )
 
@@ -4288,7 +4313,11 @@ place.
                 else:
                     # units1 is defined and is not dimensionless
                     if data0._size > 1:
-                        raise ValueError("kkkkkkkkkjjjjjjjjjjjjjjjj")
+                        raise ValueError(
+                            "Can only raise units to the power of a single "
+                            "value at a time. Asking to raise to the power of "
+                            "{}".format(data0)
+                        )
 
                     if not units0:
                         # Check that the units are not shifted, as
@@ -4361,7 +4390,10 @@ place.
                     # units0 is defined and is not dimensionless
                     if data1._size > 1:
                         raise ValueError(
-                            "kkkkkkkkkjjjjjjjjjjjjjjjj 8888888888888888")
+                            "Can only raise units to the power of a single "
+                            "value at a time. Asking to raise to the power of "
+                            "{}".format(data1)
+                        )
 
                     if not units1:
                         # Check that the units are not shifted, as
@@ -6776,7 +6808,11 @@ dimensions.
 
             if masked and numpy_ma_isMA(array):
                 if not (array.mask | weights_out.mask == array.mask).all():
-                    raise ValueError("weights mask is duff")
+                    raise ValueError(
+                        "The output weights mask {} is not compatible with "
+                        "the array mask {}.".format{
+                            weights_out.mask, array.mask}
+                    )
         # --- End: if
 
         return weights_out
@@ -12182,12 +12218,7 @@ False
     def root_mean_square(self, axes=None, squeeze=False, mtol=1,
                          weights=None, inplace=False,
                          _preserve_partitions=False):
-        r'''TODO Collapse axes with their weighted mean.
-
-    The weighted mean, :math:`\mu`, for array elements :math:`x_i` and
-    corresponding weights elements :math:`w_i` is
-
-    .. math:: \mu=\frac{\sum w_i x_i}{\sum w_i}
+        '''Collapse axes with their root mean square.
 
     Missing data array elements and their corresponding weights are
     omitted from the calculation.
