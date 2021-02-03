@@ -1029,7 +1029,7 @@ place.
 
     :Parameters:
 
-        array: TODO
+        array:
 
     :Returns:
 
@@ -3927,7 +3927,6 @@ place.
     :Returns:
 
         `Data` or `None`
-            TODO
 
     **Examples:**
 
@@ -4035,7 +4034,6 @@ place.
         data1: `Data`
 
         method: `str`
-            The TODO
 
         {{inplace: `bool`, optional}}
 
@@ -7828,7 +7826,6 @@ False
     :Returns:
 
         `Data`
-            TODO
 
     **Examples:**
 
@@ -8199,8 +8196,6 @@ False
 #        `Data`
 #
 #    **Examples:**
-#
-#    TODO
 #
 #        '''
 #        return cls(numpy_arctan2(y, x), units=_units_radians)
@@ -9195,8 +9190,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9215,10 +9208,8 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9273,8 +9264,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9293,10 +9282,8 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9502,12 +9489,10 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
-        weights: TODO
+        weights: 
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9590,8 +9575,6 @@ False
                  `var`
 
     **Examples:**
-
-    TODO
 
         '''
         if weights is None:
@@ -9766,7 +9749,7 @@ False
        dtype: data-type, optional
             By default, the data-type is inferred from the input data.
 
-       copy: TODO
+       copy: 
 
     :Returns:
 
@@ -10073,19 +10056,14 @@ False
     :Parameters:
 
         axes: (sequence of) `int`, optional
-            TODO
 
         iscyclic: `bool`
-            TODO
 
     :Returns:
 
         `set`
-            TODO
 
     **Examples:**
-
-        TODO
 
         '''
         cyclic_axes = self._cyclic
@@ -10579,8 +10557,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -10621,8 +10597,6 @@ False
         `Data` or `None`
 
     **Examples:**
-
-    TODO
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -11538,8 +11512,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -11957,8 +11929,6 @@ False
 
     **Examples:**
 
-        TODO
-
         '''
         return self._collapse(mid_range_f, mid_range_fpartial,
                               mid_range_ffinalise, axes=axes,
@@ -12274,7 +12244,6 @@ False
 
     **Examples:**
 
-        TODO
         '''
         return self._collapse(root_mean_square_f,
                               root_mean_square_fpartial,
@@ -12724,8 +12693,6 @@ False
             operation was in-place.
 
     **Examples:**
-
-    TODO
 
         '''
         def _slice_to_partition(data, indices):
@@ -13772,7 +13739,6 @@ False
     :Returns:
 
         `Data`
-            TODO
 
     **Examples:**
 
@@ -13830,7 +13796,6 @@ False
     :Returns:
 
         `Data` or `None`
-            TODO
 
     **Examples:**
 
@@ -13934,8 +13899,6 @@ False
             The collapsed array.
 
     **Examples:**
-
-        TODO
 
         '''
         return self._collapse(range_f, range_fpartial,
@@ -14047,8 +14010,6 @@ False
             The collapsed array.
 
     **Examples:**
-
-        TODO
 
         '''
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
@@ -14380,7 +14341,6 @@ False
 
     **Examples:**
 
-    TODO
         '''
         units = self.Units
         if units:
