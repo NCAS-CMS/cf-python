@@ -1,20 +1,26 @@
 import logging
 
-from numpy import argmax as numpy_argmax
-from numpy import array as numpy_array
-from numpy import asanyarray as numpy_asanyarray
-from numpy import ndarray as numpy_ndarray
-from numpy import ones as numpy_ones
-from numpy import where as numpy_where
+from numbers import Integral
 
-from numpy.ma import isMA as numpy_ma_isMA
-from numpy.ma import where as numpy_ma_where
+import numpy as np
+
+try:
+    from matplotlib.path import Path
+except ImportError:
+    pass
 
 from ..query import Query
 
-from ..functions import parse_indices
-from ..functions import (bounds_combination_mode,
-                         _DEPRECATION_ERROR_KWARGS,)
+from ..data import Data
+
+from ..functions import (
+    parse_indices,
+    bounds_combination_mode,
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_DICT,
+    _DEPRECATION_ERROR_SEQUENCE,
+)
 
 from ..decorators import (
     _inplace_enabled,
@@ -27,174 +33,70 @@ logger = logging.getLogger(__name__)
 
 
 class FieldDomain:
-    '''Mixin class for methods common to both field and domain constructs
+    """Mixin class for methods common to both field and domain constructs
 
     .. versionadded:: 3.TODO.0
 
-    '''
+    """
+    
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _create_auxiliary_mask_component(self, mask_shape, ind,
-                                         compress):
-        '''TODO
-
-    .. versionadded:: 3.TODO.0
-
-    :Parameters:
-
-        mask_shape: `tuple`
-            The shape of the mask component to be created.
-
-              *Parameter example*
-                  ``mask_shape=(3,)``
-
-              *Parameter example*
-                  ``mask_shape=(9, 10)``
-
-        ind: `numpy.ndarray`
-            As returned by a single argument call of
-            ``numpy.array(numpy[.ma].where(....))``.
-
-        compress: `bool`
-            If True then remove whole slices which only contain masked
-            points.
-
-    :Returns:
-
-        `Data`
-
-        '''
-        # Note that, for now, auxiliary_mask has to be numpy array
-        # (rather than a cf.Data object) because we're going to index
-        # it with fancy indexing which a cf.Data object might not
-        # support - namely a non-monotonic list of integers.
-        auxiliary_mask = numpy_ones(mask_shape, dtype=bool)
-
-        auxiliary_mask[tuple(ind)] = False
-
-        if compress:
-            # For compressed indices, remove slices which only
-            # contain masked points. (Note that we only expect to
-            # be here if there were N-d item criteria.)
-            for iaxis, (index, n) in enumerate(zip(ind, mask_shape)):
-                index = set(index)
-                if len(index) < n:
-                    auxiliary_mask = auxiliary_mask.take(sorted(index),
-                                                         axis=iaxis)
-        # --- End: if
-
-        return self._Data(auxiliary_mask)
-
     def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
-        '''Create indices that define a subspace of the construct.
+        """Create indices that define a subspace of the field or domain
+        construct.
 
-    The subspace is defined by identifying indices based on the
-    metadata constructs.
+        This method is intended to be called by the `indices` method.
 
-    Metadata constructs are selected conditions are specified on their
-    data. Indices for subspacing are then automatically inferred from
-    where the conditions are met.
+        See the `indices` method for more details.
 
-    Metadata constructs and the conditions on their data are defined
-    by keyword parameters.
+        .. versionadded:: 3.TODO.0
 
-    * Any domain axes that have not been identified remain unchanged.
+        :Parameters:
 
-    * Multiple domain axes may be subspaced simultaneously, and it
-      doesn't matter which order they are specified in.
+            mode: `str`
+                The mode of operation. See the *mode* parameter of
+                `indices` for details.
 
-    * If *data_axes* are provided then the subspace criteria may be
-      provided for size 1 domain axes other than those given.
+            data_axes: sequence of `str`, or `None`
+                The domain axis identifiers of the data axes, or
+                `None` if there is no data array.
 
-    * Explicit indices may also be assigned to a domain axis
-      identified by a metadata construct, with either a Python `slice`
-      object, or a sequence of integers or booleans.
+            auxiliary_mask: `bool`
+                Whether or not to create an auxiliary mask. See
+                `indices` for details. 
 
-    * For a dimension that is cyclic, a subspace defined by a slice or
-      by a `Query` instance is assumed to "wrap" around the edges of
-      the data.
+            kwargs: *optional*
+                See the **kwargs** parameters of `indices` for
+                details.
 
-    * Conditions may also be applied to multi-dimensional metadata
-      constructs. The "compress" mode is still the default mode (see
-      the positional arguments), but because the indices may not be
-      acting along orthogonal dimensions, some missing data may still
-      need to be inserted into the field construct's data.
+        :Returns:
 
-    **Auxiliary masks**
+            `dict`
+                 The dictionary has two keys: ``'indices'`` and
+                 ``'mask'``.
 
-    If *auxiliary_mask* is True then the returned dictionary will also
-    have the key ``'auxiliary_mask'`` whose value is a dictionary
-    containing any "auxiliary" data masks that are applied to a
-    subspace created with these indices, after its initial creation,
-    in order to set unselected locations to missing data. Each value
-    of this dictionary is a mask data object, keyed by the tuple
-    domain axes spanned by the mask.
+                 The ``'indices'`` key stores a dictionary in keyed by
+                 domain axis identifiers, each of which has a value of
+                 the index for that domain axis.
 
-    .. versionadded:: 3.TODO.0
+                 The ``'mask'`` key stores a dictionary in keyed by
+                 tuples of domain axis identifier combinations, each
+                 of which has of a `Data` object containing the
+                 auxiliary mask to apply to those domain axes at time
+                 of the indices being used to create a subspace. This
+                 dictionary will always be empty if *auxiliary_mask*
+                 is False.
 
-    :Parameters:
-
-        mode: `str`
-            There are three modes of operation, each of which provides
-            indices for a different type of subspace:
-
-            ==============  ==========================================
-            *mode*          Description
-            ==============  ==========================================
-            ``'compress'``  Return indices that identify only the
-                            requested locations.
-
-                            Note that if a multi-dimensional metadata
-                            construct is being used to define the
-                            indices then some unrequested locations
-                            may also be selected. In this case these
-                            will be identified via auxiliary masks if
-                            ``auxiliary_mask=True``.
-
-            ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the requested
-                            location. When used with
-                            ``auxiliary_mask=True``, the auxiliary
-                            masks define the unrequested locations.
-
-            ``'full'``      The returned indices define the same
-                            domain. When used with
-                            ``auxiliary_mask=True``, the auxiliary
-                            masks define the unrequested locations.
-            ==============  ==========================================
-
-        data_axes: sequence of `str` 
-            The domain axes spanned by the calling construct's data
-            array, if it has one.
-
-        auxilary_mask: `bool`
-            Whether or not to create and return any auxiliary masks.
-    
-        kwargs: *optional*
-            A keyword name is an identity of a metadata construct, and
-            the keyword value provides a condition for inferring
-            indices that apply to the dimension (or dimensions)
-            spanned by the metadata construct's data. Indices are
-            created that select every location for which the metadata
-            construct's data satisfies the condition.
-
-    :Returns:
-
-        `dict`
-            The indices.
-
-        '''
-        compress = (mode == 'compress')
-        envelope = (mode == 'envelope')
-        full = (mode == 'full')
+        """
+        compress = mode == "compress"
+        envelope = mode == "envelope"
+        full = mode == "full"
 
         logger.debug(
-            "{}._indices:\n"
-            "  mode         = {!r}\n"
-            "  input kwargs = {!r}".format(
-                self.__class__.__name__, mode, kwargs
-            )
+            f"{self.__class__.__name__}._indices:\n"
+            f"  mode         = {mode!r}\n"
+            f"  input kwargs = {kwargs!r}"
         )  # pragma: no cover
 
         domain_axes = self.domain_axes
@@ -215,8 +117,8 @@ class FieldDomain:
                 c = constructs.filter_by_identity(identity)
                 if len(c) != 1:
                     raise ValueError(
-                        "Can't find indices: Ambiguous axis or axes: "
-                        "{!r}".format(identity)
+                        f"Can't find indices. Ambiguous axis or axes: "
+                        f"{identity!r}"
                     )
 
                 key, construct = dict(c).popitem()
@@ -242,15 +144,14 @@ class FieldDomain:
                     # as any keys, so create an new key.
                     n_axes += len(axes)
                     parsed[axes] = [(axes, key, construct, value)]
-            # --- End: if
 
             unique_axes.update(axes)
         # --- End: for
 
         logger.debug(
-            "  parsed       = {!r}\n"
-            "  unique_axes  = {!r}\n"
-            "  n_axes       = {!r}".format(parsed, unique_axes, n_axes)
+            f"  parsed       = {parsed!r}\n"
+            f"  unique_axes  = {unique_axes!r}\n"
+            f"  n_axes       = {n_axes!r}"
         )  # pragma: no cover
 
         if len(unique_axes) < n_axes:
@@ -259,7 +160,7 @@ class FieldDomain:
                 "domain axes"
             )
 
-        auxiliary_masks = {}
+        auxiliary_mask = {}
 
         for canonical_axes, axes_key_construct_value in parsed.items():
             axes, keys, constructs, points = list(
@@ -271,14 +172,13 @@ class FieldDomain:
 
             if n_items > n_axes:
                 if n_axes == 1:
-                    a = 'axis'
+                    a = "axis"
                 else:
-                    a = 'axes'
+                    a = "axes"
 
                 raise ValueError(
-                    "Error: Can't specify {} conditions for {} {}: {}".format(
-                        n_items, n_axes, a, points
-                    )
+                    f"Error: Can't specify {n_items} conditions for "
+                    f"{n_axes} {a}: {points}"
                 )
 
             create_mask = False
@@ -286,8 +186,7 @@ class FieldDomain:
             item_axes = axes[0]
 
             logger.debug(
-                "  item_axes    = {!r}\n"
-                "  keys         = {!r}".format(item_axes, keys)
+                f"  item_axes    = {item_axes!r}\n keys         = {keys!r}"
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -301,17 +200,15 @@ class FieldDomain:
                 value = points[0]
 
                 logger.debug(
-                    "  {} 1-d constructs: {!r}\n"
-                    "  axis         = {!r}\n"
-                    "  value        = {!r}".format(
-                        n_items, constructs, axis, value
-                    )
+                    f"  {n_items} 1-d constructs: {constructs!r}\n"
+                    f"  axis         = {axis!r}\n"
+                    f"  value        = {value!r}"
                 )  # pragma: no cover
 
-                if isinstance(value, (list, slice, tuple, numpy_ndarray)):
+                if isinstance(value, (list, slice, tuple, np.ndarray)):
                     # ------------------------------------------------
                     # 1-dimensional CASE 1: Value is already an index,
-                    #                       e.g. [0], (0,3),
+                    #                       e.g. [0], [7,4,2],
                     #                       slice(0,4,2),
                     #                       numpy.array([2,4,7]),
                     #                       [True, False, True]
@@ -327,11 +224,11 @@ class FieldDomain:
                         index = slice(None)
 
                 elif (
-                        item is not None
-                        and isinstance(value, Query)
-                        and value.operator in ('wi', 'wo')
-                        and item.construct_type == 'dimension_coordinate'
-                        and self.iscyclic(axis)
+                    item is not None
+                    and isinstance(value, Query)
+                    and value.operator in ("wi", "wo")
+                    and item.construct_type == "dimension_coordinate"
+                    and self.iscyclic(axis)
                 ):
                     # ------------------------------------------------
                     # 1-dimensional CASE 2: Axis is cyclic and
@@ -348,13 +245,14 @@ class FieldDomain:
                         anchor0 = value.value[1]
                         anchor1 = value.value[0]
 
-                    a = self.anchor(axis, anchor0, dry_run=True)['roll']
-                    b = self.flip(axis).anchor(
-                            axis, anchor1, dry_run=True)['roll']
+                    a = self.anchor(axis, anchor0, dry_run=True)["roll"]
+                    b = self.flip(axis).anchor(axis, anchor1, dry_run=True)[
+                        "roll"
+                    ]
 
                     size = item.size
                     if abs(anchor1 - anchor0) >= item.period():
-                        if value.operator == 'wo':
+                        if value.operator == "wo":
                             set_start_stop = 0
                         else:
                             set_start_stop = -a
@@ -362,9 +260,10 @@ class FieldDomain:
                         start = set_start_stop
                         stop = set_start_stop
                     elif a + b == size:
-                        b = self.anchor(axis, anchor1, dry_run=True)['roll']
-                        if (b == a and value.operator == 'wo') or not (
-                                b == a or value.operator == 'wo'):
+                        b = self.anchor(axis, anchor1, dry_run=True)["roll"]
+                        if (b == a and value.operator == "wo") or not (
+                            b == a or value.operator == "wo"
+                        ):
                             set_start_stop = -a
                         else:
                             set_start_stop = 0
@@ -372,7 +271,7 @@ class FieldDomain:
                         start = set_start_stop
                         stop = set_start_stop
                     else:
-                        if value.operator == 'wo':
+                        if value.operator == "wo":
                             start = b - size
                             stop = -a + size
                         else:
@@ -395,32 +294,31 @@ class FieldDomain:
                     # ------------------------------------------------
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    item_match = (value == item)
+                    item_match = value == item
 
                     if not item_match.any():
                         raise ValueError(
-                            "No {!r} axis indices found from: {}".format(
-                                identity, value)
+                            f"No {identity!r} axis indices found "
+                            f"from: {value}"
                         )
 
-                    index = numpy_asanyarray(item_match)
+                    index = np.asanyarray(item_match)
 
                     if envelope or full:
-                        if numpy_ma_isMA(index):
-                            ind = numpy_ma_where(index)
+                        if np.ma.isMA(index):
+                            ind = np.ma.where(index)
                         else:
-                            ind = numpy_where(index)
+                            ind = np.where(index)
 
                         index = slice(None)
 
                 else:
                     raise ValueError(
-                        "Must specify a domain axis construct or a construct "
-                        "with data for which to create indices"
+                        "Must specify a domain axis construct or a "
+                        "construct with data for which to create indices"
                     )
 
-                logger.debug(
-                    "  index        = {}".format(index))  # pragma: no cover
+                logger.debug(f"  index        = {index}")  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -434,10 +332,8 @@ class FieldDomain:
                 # N-dimensional constructs
                 # ----------------------------------------------------
                 logger.debug(
-                    "  {} N-d constructs: {!r}\n"
-                    "  {} points        : {!r}\n".format(
-                        n_items, constructs, len(points), points,
-                    )
+                    f"  {n_items} N-d constructs: {constructs!r}\n"
+                    f"  {len(points)} points        : {points!r}\n"
                 )  # pragma: no cover
 
                 # Make sure that each N-d item has the same axis order
@@ -445,16 +341,16 @@ class FieldDomain:
 
                 for construct, construct_axes in zip(constructs, axes):
                     if construct_axes != canonical_axes:
-                        iaxes = [construct_axes.index(axis)
-                                 for axis in canonical_axes]
+                        iaxes = [
+                            construct_axes.index(axis)
+                            for axis in canonical_axes
+                        ]
                         construct = construct.transpose(iaxes)
 
                     transposed_constructs.append(construct)
 
                 logger.debug(
-                    "  transposed N-d constructs: {!r}".format(
-                        transposed_constructs
-                    )
+                    f"  transposed N-d constructs: {transposed_constructs!r}"
                 )  # pragma: no cover
 
                 item_matches = [
@@ -469,23 +365,21 @@ class FieldDomain:
 
                 item_match = item_match.array  # LAMA alert
 
-                if numpy_ma_isMA:
-                    ind = numpy_ma_where(item_match)
+                if np.ma.isMA:
+                    ind = np.ma.where(item_match)
                 else:
-                    ind = numpy_where(item_match)
+                    ind = np.where(item_match)
 
                 logger.debug(
-                    "  item_match  = {}\n"
-                    "  ind         = {}".format(item_match, ind)
+                    f"  item_match  = {item_match}\n" f"  ind         = {ind}"
                 )  # pragma: no cover
 
                 for i in ind:
                     if not i.size:
                         raise ValueError(
-                            "No {!r} axis indices found from: {!r}".format(
-                                canonical_axes, value)
+                            f"No {canonical_axes!r} axis indices found "
+                            f"from: {value!r}"
                         )
-                # --- End: for
 
                 bounds = [
                     item.bounds.array[ind]
@@ -498,22 +392,20 @@ class FieldDomain:
                     points2 = []
                     for v, construct in zip(points, transposed_constructs):
                         if isinstance(v, Query):
-                            if v.operator == 'contains':
+                            if v.operator == "contains":
                                 contains = True
                                 v = v.value
-                            elif v.operator == 'eq':
+                            elif v.operator == "eq":
                                 v = v.value
                             else:
                                 contains = False
                                 break
-                        # --- End: if
-
-                        v = Data.asdata(v)
+                        
+                        v = self._Data.asdata(v)
                         if v.Units:
                             v.Units = construct.Units
 
                         points2.append(v.datum())
-                # --- End: if
 
                 if contains:
                     # The coordinates have bounds and the condition is
@@ -524,15 +416,15 @@ class FieldDomain:
                         Path
                     except NameError:
                         raise ImportError(
-                            "Must install matplotlib to create indices based "
-                            "on {}-d constructs and a 'contains' Query "
-                            "object".format(transposed_constructs[0].ndim)
+                            "Need to install matplotlib to create indices "
+                            f"based on {transposed_constructs[0].ndim}-d "
+                            "constructs and a 'contains' Query object"
                         )
 
                     if n_items != 2:
                         raise ValueError(
-                            "Can't index for cell from {}-d coordinate "
-                            "objects".format(n_axes)
+                            f"Can't index for cell from {n_axes}-d "
+                            "coordinate objects"
                         )
 
                     if 0 < len(bounds) < n_items:
@@ -540,22 +432,25 @@ class FieldDomain:
 
                     # Remove grid cells if, upon closer inspection,
                     # they do actually contain the point.
-                    delete = [n for n, vertices in
-                              enumerate(zip(*zip(*bounds))) if not
-                              Path(zip(*vertices)).contains_point(points2)]
+                    delete = [
+                        n
+                        for n, vertices in enumerate(zip(*zip(*bounds)))
+                        if not Path(zip(*vertices)).contains_point(points2)
+                    ]
 
                     if delete:
-                        ind = [numpy_delete(ind_1d, delete) for ind_1d in ind]
+                        ind = [np.delete(ind_1d, delete) for ind_1d in ind]
             # --- End: if
 
             if ind is not None:
-                mask_shape = []  # [None] * domain_rank
+                mask_shape = []
                 masked_subspace_size = 1
-                ind = numpy_array(ind)
-                logger.debug("  ind = {}".format(ind))  # pragma: no cover
+                ind = np.array(ind)
+                
+                logger.debug("  ind = {ind}")  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(
-                        zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
+                    zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
                 ):
                     if data_axes and axis not in data_axes:
                         continue
@@ -586,10 +481,10 @@ class FieldDomain:
                     mask_shape.append(size)
                     masked_subspace_size *= size
                     ind[i] -= start
-                # --- End: for
 
-                create_mask = (data_axes
-                               and ind.shape[1] < masked_subspace_size)
+                create_mask = (
+                    data_axes and ind.shape[1] < masked_subspace_size
+                )
             else:
                 create_mask = False
 
@@ -597,17 +492,17 @@ class FieldDomain:
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
             logger.debug(
-                "  create_mask  = {}".format(create_mask)
+                f"  create_mask  = {create_mask}"
             )  # pragma: no cover
 
-            if auxiliary_mask and create_mask:
-                mask = self._create_auxiliary_mask_component(
+            if create_mask:
+                mask = _create_auxiliary_mask_component(
                     mask_shape, ind, compress
                 )
-                auxiliary_masks[canonical_axes] = mask
+                auxiliary_mask[canonical_axes] = mask
                 logger.debug(
-                    "  mask_shape   = {}\n"
-                    "  mask.shape   = {}".format(mask_shape, mask.shape)
+                    f"  mask_shape   = {mask_shape}\n"
+                    f"  mask.shape   = {mask.shape}"
                 )  # pragma: no cover
         # --- End: for
 
@@ -616,196 +511,236 @@ class FieldDomain:
                 (domain_axes[axis].get_size(),), (index,)
             )[0]
 
-        indices = {'indices': indices}
-
         # Include the auxiliary mask
-        if auxiliary_mask:
-            indices['auxiliary_mask'] = auxiliary_masks
+        indices = {
+            "indices": indices,
+            "mask": auxiliary_mask,
+        }
 
-        logger.debug(
-            "  indices      = {!r}".format(indices)
-        )  # pragma: no cover
+        logger.debug(f"  indices      = {indices!r}")  # pragma: no cover
 
-        # Return the indices, with any auxiliary masks.
+        # Return the indices and the auxiliary mask
         return indices
 
     def _roll_constructs(self, axis, shift):
-        '''Roll the constructs along a cyclic axis.
+        """Roll the metadata constructs in-place along axes.
 
-    A unique axis is selected with the axes and kwargs parameters.
+        If a roll axis is spanned by a dimension coordinate construct
+        then it must be a periodic dimension coordinate construct.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `anchor`, `axis`, `cyclic`, `iscyclic`, `period`
+        :Parameters:
 
-    :Parameters:
+            axis: sequence of `str`
+                The axis or axes along which elements are to be
+                shifted, defined by their domain axis identifiers.
 
-        axis:
-            The cyclic axis to be rolled, defined by that which would
-            be selected by passing the given axis description to a
-            call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            shift: (sequence of) `int`
+                The number of places by which elements are shifted.
+                If a sequence, then *axis* must be a sequence of the
+                same size, and each of the given axes is shifted by
+                the corresponding number.  If an `int` while *axis* is
+                a sequence, then the same value is used for all given
+                axes.
 
-        shift: `int`
-            The number of places by which the selected cyclic axis is
-            to be rolled.
+        :Returns:
 
-    :Returns:
+            `list`
 
-        `None`
+                The shifts corresponding to each rolled axis.
 
-    **Examples:**
+        **Examples:**
 
-    Roll the data of the "X" axis one elements to the right:
+        """
+        if isinstance(shift, Integral):
+            if axis:
+                shift = [shift] * len(axis)
+            else:
+                shift = [shift]
+        else:
+            shift = list(shift)
 
-    >>> f.roll('X', 1)
-
-    Roll the data of the "X" axis three elements to the left:
-
-    >>> f.roll('X', -3)
-
-        '''
-        dim = self.dimension_coordinates.filter_by_axis(
-            'exact', axis
-        ).value(None)
-
-        if dim is not None and dim.period() is None:
+        if len(shift) != len(axis):
             raise ValueError(
-                "Can't roll: {!r} axis has non-periodic dimension "
-                "coordinate construct".format(dim.identity())
+                f"Can't roll {self.__class__.__name__}: "
+                f"Must have the same number of shifts ({len(shift)}) "
+                f"as axes ({len(axis)})."
             )
 
-        data_axes = self.constructs.data_axes()
+        dims = self.dimension_coordinates
+        if dims:
+            for a in axis:
+                dim = dims.filter_by_axis("exact", a).value(None)
+                if dim is not None and dim.period() is None:
+                    raise ValueError(
+                        f"Can't roll {self.__class__.__name__}. "
+                        f"{dim.identity()!r} axis has a non-periodic "
+                        "dimension coordinate construct"
+                    )
+        # --- End: if
 
+        data_axes = self.constructs.data_axes()
         for key, construct in self.constructs.filter_by_data().items():
-            axes = data_axes.get(key, ())
-            if axis in axes:
-                construct.roll(axes.index(axis), shift, inplace=True)
-        # --- End: for
+            construct_axes = data_axes.get(key, ())
+
+            c_axes = []
+            c_shifts = []
+            for a, s in zip(axis, shift):
+                if a in construct_axes:
+                    c_axes.append(construct_axes.index(a))
+                    c_shifts.append(s)
+
+            if not c_axes:
+                # This construct does not span the roll axes
+                continue
+            
+            # TODODASK - remove these two lines when multiaxis rolls
+            #            are allowed at v4.0.0
+            c_axes = c_axes[0]
+            c_shifts = c_shifts[0]
+            
+            construct.roll(c_axes, shift=c_shifts, inplace=True)
+
+        return shift
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecated_kwarg_check('i')
+    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    def anchor(self, axis, value, inplace=False, dry_run=False,
-               i=False, **kwargs):
-        '''Roll a cyclic axis so that the given value lies in the first
-    coordinate cell.
+    def anchor(
+        self, axis, value, inplace=False, dry_run=False, i=False, **kwargs
+    ):
+        """Roll a cyclic axis so that the given value lies in the first
+        coordinate cell.
 
-    A unique axis is selected with the *axes* and *kwargs* parameters.
+        A unique axis is selected with the *axes* and *kwargs*
+        parameters.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `axis`, `cyclic`, `iscyclic`, `roll`
+        .. seealso:: `axis`, `cyclic`, `iscyclic`, `roll`
 
-    :Parameters:
+        :Parameters:
 
-        axis:
-            The cyclic axis to be rolled, defined by that which would
-            be selected by passing the given axis description to a
-            call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            axis:
+                The cyclic axis to be rolled, defined by that which
+                would be selected by passing the given axis
+                description to a call of the construct's `domain_axis`
+                method. For example, for a value of ``'X'``, the
+                domain axis construct returned by
+                ``f.domain_axis('X')`` is selected.
 
-        value:
-            Anchor the dimension coordinate values for the selected
-            cyclic axis to the *value*. May be any numeric scalar
-            object that can be converted to a `Data` object (which
-            includes `numpy` and `Data` objects). If *value* has units
-            then they must be compatible with those of the dimension
-            coordinates, otherwise it is assumed to have the same
-            units as the dimension coordinates. The coordinate values
-            are transformed so that *value* is "equal to or just
-            before" the new first coordinate value. More specifically:
+            value:
+                Anchor the dimension coordinate values for the
+                selected cyclic axis to the *value*. May be any
+                numeric scalar object that can be converted to a
+                `Data` object (which includes `numpy` and `Data`
+                objects). If *value* has units then they must be
+                compatible with those of the dimension coordinates,
+                otherwise it is assumed to have the same units as the
+                dimension coordinates. The coordinate values are
+                transformed so that *value* is "equal to or just
+                before" the new first coordinate value. More
+                specifically:
 
-              * Increasing dimension coordinates with positive period,
-                P, are transformed so that *value* lies in the
-                half-open range (L-P, F], where F and L are the
-                transformed first and last coordinate values,
-                respectively.
+                  * Increasing dimension coordinates with positive
+                    period, P, are transformed so that *value* lies in
+                    the half-open range (L-P, F], where F and L are
+                    the transformed first and last coordinate values,
+                    respectively.
 
-        ..
+            ..
 
-              * Decreasing dimension coordinates with positive period,
-                P, are transformed so that *value* lies in the
-                half-open range (L+P, F], where F and L are the
-                transformed first and last coordinate values,
-                respectively.
+                  * Decreasing dimension coordinates with positive
+                    period, P, are transformed so that *value* lies in
+                    the half-open range (L+P, F], where F and L are
+                    the transformed first and last coordinate values,
+                    respectively.
 
-            *Parameter example:*
-              If the original dimension coordinates are ``0, 5, ...,
-              355`` (evenly spaced) and the period is ``360`` then
-              ``value=0`` implies transformed coordinates of ``0, 5,
-              ..., 355``; ``value=-12`` implies transformed
-              coordinates of ``-10, -5, ..., 345``; ``value=380``
-              implies transformed coordinates of ``380, 385, ...,
-              715``.
+                *Parameter example:*
+                  If the original dimension coordinates are ``0, 5,
+                  ..., 355`` (evenly spaced) and the period is ``360``
+                  then ``value=0`` implies transformed coordinates of
+                  ``0, 5, ..., 355``; ``value=-12`` implies
+                  transformed coordinates of ``-10, -5, ..., 345``;
+                  ``value=380`` implies transformed coordinates of
+                  ``380, 385, ..., 715``.
 
-            *Parameter example:*
-              If the original dimension coordinates are ``355, 350,
-              ..., 0`` (evenly spaced) and the period is ``360`` then
-              ``value=355`` implies transformed coordinates of ``355,
-              350, ..., 0``; ``value=0`` implies transformed
-              coordinates of ``0, -5, ..., -355``; ``value=392``
-              implies transformed coordinates of ``390, 385, ...,
-              30``.
+                *Parameter example:*
+                  If the original dimension coordinates are ``355,
+                  350, ..., 0`` (evenly spaced) and the period is
+                  ``360`` then ``value=355`` implies transformed
+                  coordinates of ``355, 350, ..., 0``; ``value=0``
+                  implies transformed coordinates of ``0, -5, ...,
+                  -355``; ``value=392`` implies transformed
+                  coordinates of ``390, 385, ..., 30``.
 
-        {{inplace: `bool`, optional}}
+            {{inplace: `bool`, optional}}
 
-        dry_run: `bool`, optional
-            Return a dictionary of parameters which describe the
-            anchoring process. The field is not changed, even if *i*
-            is True.
+            dry_run: `bool`, optional
+                Return a dictionary of parameters which describe the
+                anchoring process. The construct is not changed, even
+                if *inplace* is True.
 
-        {{i: deprecated at version 3.0.0}}
+            {{i: deprecated at version 3.0.0}}
 
-        kwargs: deprecated at version 3.0.0
+            kwargs: deprecated at version 3.0.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.iscyclic('X')
-    True
-    >>> f.dimension_coordinate('X').data
-    <CF Data(8): [0, ..., 315] degrees_east> TODO
-    >>> print(f.dimension_coordinate('X').array)
-    [  0  45  90 135 180 225 270 315]
-    >>> g = f.anchor('X', 230)
-    >>> print(g.dimension_coordinate('X').array)
-    [270 315   0  45  90 135 180 225]
-    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
-    >>> print(g.dimension_coordinate('X').array)
-    [630 675 360 405 450 495 540 585]
-    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
-    >>> print(g.dimension_coordinate('X').array)
-    [-450 -405 -720 -675 -630 -585 -540 -495]
+        >>> f.iscyclic('X')
+        True
+        >>> f.dimension_coordinate('X').data
+        <CF Data(8): [0, ..., 315] degrees_east> TODO
+        >>> print(f.dimension_coordinate('X').array)
+        [  0  45  90 135 180 225 270 315]
+        >>> g = f.anchor('X', 230)
+        >>> print(g.dimension_coordinate('X').array)
+        [270 315   0  45  90 135 180 225]
+        >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
+        >>> print(g.dimension_coordinate('X').array)
+        [630 675 360 405 450 495 540 585]
+        >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
+        >>> print(g.dimension_coordinate('X').array)
+        [-450 -405 -720 -675 -630 -585 -540 -495]
 
-    >>> f.iscyclic('X')
-    True
-    >>> f.dimension_coordinate('X').data
-    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
-    >>> f.anchor('X', 10000).dimension_coordinate('X').data
-    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-    >>> d = f.anchor('X', 10000, dry_run=True)
-    >>> d
-    {'axis': 'domainaxis2',
-     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
-     'roll': 28}
-    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
-    ...     d['axis']) + d['nperiod']).data
-    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+        >>> f.iscyclic('X')
+        True
+        >>> f.dimension_coordinate('X').data
+        <CF Data(8): [0.0, ..., 357.1875] degrees_east>
+        >>> f.anchor('X', 10000).dimension_coordinate('X').data
+        <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
+        >>> d = f.anchor('X', 10000, dry_run=True)
+        >>> d
+        {'axis': 'domainaxis2',
+         'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
+         'roll': 28}
+        >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
+        ...     d['axis']) + d['nperiod']).data
+        <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
 
-        '''
+        """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'anchor', kwargs)  # pragma: no cover
+                self, "anchor", kwargs
+            )  # pragma: no cover
 
-        axis = self.domain_axis(axis, key=True)
+        axis_in = axis
+        axis = self._parse_axes(axis_in)
+                
+        if len(axis) != 1:
+            raise ValueError(
+                f"Can't anchor {self.__class.__.__name__}. "
+                f"Must provide exactly one axis: Got {axis_in!r}"
+            )
+
+        axis = axis[0]
 
         if dry_run:
             f = self
@@ -814,34 +749,33 @@ class FieldDomain:
 
         dimension_coordinates = f.dimension_coordinates
 
-        dim = dimension_coordinates.filter_by_axis('and', axis).value(
+        dim = dimension_coordinates.filter_by_axis("and", axis).value(
             default=None
         )
         if dim is None:
             raise ValueError(
-                "Can't anchor non-cyclic {!r} axis".format(
-                    f.constructs.domain_axis_identity(axis))
+                f"Can't anchor {self.__class.__.__name__}. "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis "
+                "is non-cyclic"
             )
 
         period = dim.period()
         if period is None:
-            raise ValueError(
-                "Cyclic {!r} axis has no period".format(dim.identity()))
+            raise ValueError(f"Cyclic {dim.identity()!r} axis has no period")
 
         value = f._Data.asdata(value)
         if not value.Units:
             value = value.override_units(dim.Units)
         elif not value.Units.equivalent(dim.Units):
             raise ValueError(
-                "Anchor value has incompatible units: {!r}".format(
-                    value.Units)
+                f"Anchor value has incompatible units: {value.Units!r}"
             )
 
         axis_size = f.domain_axes[axis].get_size()
 
         if axis_size <= 1:
             # Don't need to roll a size one axis
-            return {'axis': axis, 'roll': 0, 'nperiod': 0}
+            return {"axis": axis, "roll": 0, "nperiod": 0}
 
         c = dim.get_data()
 
@@ -850,81 +784,78 @@ class FieldDomain:
             n = ((c[0] - value) / period).ceil()
             value1 = value + n * period
 
-            shift = axis_size - numpy_argmax((c - value1 >= 0).array)
+            shift = axis_size - np.argmax((c - value1 >= 0).array)
             if not dry_run:
                 f.roll(axis, shift, inplace=True)
 
-            dim = dimension_coordinates.filter_by_axis('and', axis).value()
+            dim = dimension_coordinates.filter_by_axis("and", axis).value()
             n = ((value - dim.data[0]) / period).ceil()
         else:
             # Adjust value so it's in the range (c[0]-period, c[0]]
             n = ((c[0] - value) / period).floor()
             value1 = value + n * period
 
-            shift = axis_size - numpy_argmax((value1 - c >= 0).array)
+            shift = axis_size - np.argmax((value1 - c >= 0).array)
 
             if not dry_run:
                 f.roll(axis, shift, inplace=True)
 
             dim = f.dimension_coordinate(axis)
             n = ((value - dim.data[0]) / period).floor()
-        # --- End: if
 
         if dry_run:
-            return {'axis': axis, 'roll': shift, 'nperiod': n * period}
+            return {"axis": axis, "roll": shift, "nperiod": n * period}
 
         if n:
-            np = n * period
-            with bounds_combination_mode('OR'):
-                dim += np
-        # --- End: if
+            with bounds_combination_mode("OR"):
+                dim += n * period
 
         return f
 
     @_manage_log_level_via_verbosity
     def autocyclic(self, verbose=None):
-        '''Set dimensions to be cyclic.
+        """Set dimensions to be cyclic.
 
-    A dimension is set to be cyclic if it has a unique longitude (or
-    grid longitude) dimension coordinate construct with bounds and the
-    first and last bounds values differ by 360 degrees (or an
-    equivalent amount in other units).
+        A dimension is set to be cyclic if it has a unique longitude
+        (or grid longitude) dimension coordinate construct with bounds
+        and the first and last bounds values differ by 360 degrees (or
+        an equivalent amount in other units).
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `cyclic`, `iscyclic`, `period`
+        .. seealso:: `cyclic`, `iscyclic`, `period`
 
-    :Parameters:
+        :Parameters:
 
-        {{verbose: `int` or `str` or `None`, optional}}
+            {{verbose: `int` or `str` or `None`, optional}}
 
-    :Returns:
+        :Returns:
 
-       `bool`
+           `bool`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.autocyclic()
+        >>> f.autocyclic()
 
-        '''
-        dims = self.dimension_coordinates('X')
+        """
+        dims = self.dimension_coordinates("X")
 
         if len(dims) != 1:
             logger.debug(
-                "Not one 'X' dimension coordinate construct: {}".format(
-                    len(dims))
+                f"{len(dims)} 'X' dimension coordinate constructs"
             )  # pragma: no cover
             return False
 
         key, dim = dict(dims).popitem()
         if not dim.Units.islongitude:
             logger.debug(0)
-            if dim.get_property('standard_name', None) not in (
-                    'longitude', 'grid_longitude'):
+            if dim.get_property("standard_name", None) not in (
+                "longitude",
+                "grid_longitude",
+            ):
                 self.cyclic(key, iscyclic=False)
                 logger.debug(1)  # pragma: no cover
                 return False
-        # --- End: if
 
         bounds = dim.get_bounds(None)
         if bounds is None:
@@ -940,7 +871,7 @@ class FieldDomain:
 
         bounds = bounds_data.array
 
-        period = self._Data(360.0, units='degrees')
+        period = self._Data(360.0, units="degrees")
 
         period.Units = bounds_data.Units
 
@@ -948,202 +879,203 @@ class FieldDomain:
             self.cyclic(key, iscyclic=False)
             logger.debug(4)  # pragma: no cover
             return False
-
+        
         self.cyclic(key, iscyclic=True, period=period)
         logger.debug(5)  # pragma: no cover
 
         return True
 
     def del_construct(self, identity=None, default=ValueError()):
-        '''Remove a metadata construct.
+        """Remove a metadata construct.
 
-    If a domain axis construct is selected for removal then it can't
-    be spanned by any metadata construct's data. See `del_domain_axis`
-    for more options in this case.
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any metadata construct's data. See
+        `del_domain_axis` for more options in this case.
 
-    A domain ancillary construct may be removed even if it is
-    referenced by coordinate reference construct. In this case the
-    reference is replace with `None`.
+        A domain ancillary construct may be removed even if it is
+        referenced by coordinate reference construct. In this case the
+        reference is replace with `None`.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `constructs`, `get_construct`, `has_construct`,
-                 `set_construct`, `del_domain_axis`,
-                 `del_coordinate_reference`
+        .. seealso:: `constructs`, `get_construct`, `has_construct`,
+                     `set_construct`, `del_domain_axis`,
+                     `del_coordinate_reference`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  metadata construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='T'
+                *Parameter example:*
+                  ``identity='T'
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-            Select the construct to removed. Must be
+                Select the construct to removed. Must be
 
-              * The identity or key of a metadata construct.
+                  * The identity or key of a metadata construct.
 
-            A construct identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``,
-            ``'ncvar%lat'``, etc.); a `Query` object
-            (e.g. ``cf.eq('longitude')``); or a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``) that
-            selects the relevant constructs whose identities match via
-            `re.search`.
+                A construct identity is specified by a string
+                (e.g. ``'latitude'``, ``'long_name=time'``,
+                ``'ncvar%lat'``, etc.); a `Query` object
+                (e.g. ``cf.eq('longitude')``); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``) that
+                selects the relevant constructs whose identities match via
+                `re.search`.
 
-            A construct has a number of identities, and is selected if
-            any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            six identities:
+                A construct has a number of identities, and is selected if
+                any of them match any of those provided. A construct's
+                identities are those returned by its `!identities`
+                method. In the following example, the construct ``x`` has
+                six identities:
 
-               >>> x.identities()
-               ['time',
-                'long_name=Time',
-                'foo=bar',
-                'standard_name=time',
-                'ncvar%t',
-                'T']
+                   >>> x.identities()
+                   ['time',
+                    'long_name=Time',
+                    'foo=bar',
+                    'standard_name=time',
+                    'ncvar%t',
+                    'T']
 
-            A construct key may optionally have the ``'key%'``
-            prefix. For example ``'dimensioncoordinate2'`` and
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+                A construct key may optionally have the ``'key%'``
+                prefix. For example ``'dimensioncoordinate2'`` and
+                ``'key%dimensioncoordinate2'`` are both acceptable keys.
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+                Note that in the output of a `print` call or `!dump`
+                method, a construct is always described by one of its
+                identities, and so this description may always be used as
+                an *identity* argument.
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity='cell_area'``
+                *Parameter example:*
+                  ``identity='cell_area'``
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist. If set to
+                an `Exception` instance then it will be raised instead.
 
-    :Returns:
+        :Returns:
 
-            The removed metadata construct.
+                The removed metadata construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.del_construct('X')
-    <CF DimensionCoordinate: grid_latitude(111) degrees>
+        >>> f.del_construct('X')
+        <CF DimensionCoordinate: grid_latitude(111) degrees>
 
-        '''
+        """
         key = self.construct_key(identity, default=None)
         if key is None:
             return self._default(
                 default,
-                "Can't identify construct to delete from {!r}".format(identity)
+                f"Can't identify construct to delete from {identity!r}",
             )
 
         return super().del_construct(key, default=default)
 
-    def del_coordinate_reference(self, identity=None, construct=None,
-                                 default=ValueError()):
-        '''Remove a coordinate reference construct and all of its domain
-    ancillary constructs.
+    def del_coordinate_reference(
+        self, identity=None, construct=None, default=ValueError()
+    ):
+        """Remove a coordinate reference construct and all of its domain
+        ancillary constructs.
 
-    .. versionadded:: 3.0.0
+                .. versionadded:: 3.0.0
 
-    .. seealso:: `del_construct`
+                .. seealso:: `del_construct`
 
-    :Parameters:
+                :Parameters:
 
-        identity: optional
-            Select the coordinate reference construct by one of:
+                    identity: optional
+                        Select the coordinate reference construct by one of:
 
-            * The identity of a coordinate reference construct.
+                        * The identity of a coordinate reference construct.
 
-              {{construct selection identity}}
+                          {{construct selection identity}}
 
-            * The key of a coordinate reference construct
+                        * The key of a coordinate reference construct
 
-            * `None`. This is the default, which selects the
-              coordinate reference construct when there is only one of
-              them.
+                        * `None`. This is the default, which selects the
+                          coordinate reference construct when there is only
+                          one of them.
 
-            *Parameter example:*
-              ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                        *Parameter example:*
+                          ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-            *Parameter example:*
-              ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                        *Parameter example:*
+                          ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-            *Parameter example:*
-              ``identity='transverse_mercator'``
+                        *Parameter example:*
+                          ``identity='transverse_mercator'``
 
-            *Parameter example:*
-              ``identity='coordinatereference1'``
+                        *Parameter example:*
+                          ``identity='coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='key%coordinatereference1'``
+                        *Parameter example:*
+                          ``identity='key%coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='ncvar%lat_lon'``
+                        *Parameter example:*
+                          ``identity='ncvar%lat_lon'``
 
-            *Parameter example:*
-              ``identity=cf.eq('rotated_pole')'``
+                        *Parameter example:*
+                          ``identity=cf.eq('rotated_pole')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^rotated')``
+                        *Parameter example:*
+                          ``identity=re.compile('^rotated')``
 
-        construct: optional
-            TODO
+                    construct: optional
+                        TODO
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist.
+                    default: optional
+                        Return the value of the *default* parameter if the
+                        construct can not be removed, or does not exist.
 
-            {{default Exception}}
+                        {{default Exception}}
 
-    :Returns:
+                :Returns:
 
-            The removed coordinate reference construct.
+                        The removed coordinate reference construct.
 
-    **Examples:**
+                **Examples:**
 
-    >>> f.del_coordinate_reference('rotated_latitude_longitude')
-    <CF CoordinateReference: rotated_latitude_longitude>
+                >>> f.del_coordinate_reference('rotated_latitude_longitude')
+                <CF CoordinateReference: rotated_latitude_longitude>
 
-        '''
+        """
         if construct is None:
             if identity is None:
                 raise ValueError("TODO")
@@ -1151,13 +1083,14 @@ class FieldDomain:
             key = self.coordinate_reference(identity, key=True, default=None)
             if key is None:
                 return self._default(
-                    default,
-                    "Can't identify construct from {!r}".format(identity))
+                    default, f"Can't identify construct from {construct!r}"
+                )
 
             ref = self.del_construct(key)
 
-            for da_key in (
-                    ref.coordinate_conversion.domain_ancillaries().values()):
+            for (
+                da_key
+            ) in ref.coordinate_conversion.domain_ancillaries().values():
                 self.del_construct(da_key, default=None)
 
             return ref
@@ -1169,122 +1102,127 @@ class FieldDomain:
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
             return self._default(
-                default,
-                "Can't identify construct from {!r}".format(construct))
+                default, f"Can't identify construct from {construct!r}"
+            )
 
         for key, ref in tuple(self.coordinate_references.items()):
             if c_key in ref.coordinates():
-                self.del_coordinate_reference(key, construct=None,
-                                              default=default)
+                self.del_coordinate_reference(
+                    key, construct=None, default=default
+                )
                 out.append(ref)
                 continue
 
-            if (c_key in
-                    ref.coordinate_conversion.domain_ancillaries().values()):
-                self.del_coordinate_reference(key, construct=None,
-                                              default=default)
+            if c_key in (
+                ref.coordinate_conversion.domain_ancillaries().values()
+            ):
+                self.del_coordinate_reference(
+                    key, construct=None, default=default
+                )
                 out.append(ref)
                 continue
-        # --- End: for
 
         return out
 
-    def del_domain_axis(self, identity=None, squeeze=False,
-                        default=ValueError()):
-        '''Remove a domain axis construct.
+    def del_domain_axis(
+        self, identity=None, squeeze=False, default=ValueError()
+    ):
+        """Remove a domain axis construct.
 
-    In general, a domain axis construct can only be removed if it is
-    not spanned by any construct's data. However, a size 1 domain axis
-    construct can be removed in any case if the *squeeze* parameter is
-    set to `True`. In this case, a metadata construct whose data spans
-    only the removed domain axis construct will also be removed.
+        In general, a domain axis construct can only be removed if it
+        is not spanned by any construct's data. However, a size 1
+        domain axis construct can be removed in any case if the
+        *squeeze* parameter is set to `True`. In this case, a metadata
+        construct whose data spans only the removed domain axis
+        construct will also be removed.
 
-    .. versionadded:: 3.6.0
+        .. versionadded:: 3.6.0
 
-    .. seealso:: `del_construct`
+        .. seealso:: `del_construct`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct by one of:
+            identity: optional
+                Select the domain axis construct by one of:
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+                * An identity or key of a 1-d dimension or auxiliary
+                  coordinate construct that whose data spans the
+                  domain axis construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * A domain axis construct identity.
+                * A domain axis construct identity.
 
-              {{domain axis selection identity}}
+                  {{domain axis selection identity}}
 
-            * The key of a domain axis construct.
+                * The key of a domain axis construct.
 
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.
-            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+                * `None`. This is the default, which selects the
+                  domain axis construct when there is only one of
+                  them.  ``'key%dimensioncoordinate2'`` are both
+                  acceptable keys.
 
-            *Parameter example:*
-              ``identity='long_name=Latitude'``
+                *Parameter example:*
+                  ``identity='long_name=Latitude'``
 
-            *Parameter example:*
-              ``identity='dimensioncoordinate1'``
+                *Parameter example:*
+                  ``identity='dimensioncoordinate1'``
 
-            *Parameter example:*
-              ``identity='domainaxis2'``
+                *Parameter example:*
+                  ``identity='domainaxis2'``
 
-            *Parameter example:*
-              ``identity='key%domainaxis2'``
+                *Parameter example:*
+                  ``identity='key%domainaxis2'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-        squeeze: `bool`, optional
-            If True then allow the removal of a size 1 domain axis
-            construct that is spanned by any data array and squeeze
-            the corresponding dimension from those arrays.
+            squeeze: `bool`, optional
+                If True then allow the removal of a size 1 domain axis
+                construct that is spanned by any data array and
+                squeeze the corresponding dimension from those arrays.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist.
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `DomainAxis`
-            The removed domain axis construct.
+            `DomainAxis`
+                The removed domain axis construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = cf.example_field(0)
-    >>> g = f[0]
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(1), longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: latitude(1) = [-75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> g.del_domain_axis('Y', squeeze=True)
-    <CF DomainAxis: size(1)>
-    >>> print(g)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> g.del_domain_axis('T', squeeze=True)
-    <CF DomainAxis: size(1)>
-    >>> print(g)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+        >>> f = cf.example_field(0)
+        >>> g = f[0]
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(1), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(1) = [-75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g.del_domain_axis('Y', squeeze=True)
+        <CF DomainAxis: size(1)>
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g.del_domain_axis('T', squeeze=True)
+        <CF DomainAxis: size(1)>
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
 
-        '''
+        """
         dakey = self.domain_axis(identity, key=True)
         domain_axis = self.constructs[dakey]
 
@@ -1311,76 +1249,77 @@ class FieldDomain:
 
             if not construct_axes:
                 self.del_construct(ckey)
-        # --- End: for
 
         return domain_axis
 
-    def auxiliary_coordinate(self, identity=None,
-                             default=ValueError(), key=False):
-        '''Return an auxiliary coordinate construct, or its key.
+    def auxiliary_coordinate(
+        self, identity=None, default=ValueError(), key=False
+    ):
+        """Return an auxiliary coordinate construct, or its key.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinates`, `cell_measure`,
-                 `cell_method`, `coordinate`, `coordinate_reference`,
-                 `dimension_coordinate`, `domain_ancillary`,
-                 `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinates`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_reference`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the auxiliary coordinate construct by one of:
+            identity: optional
+                Select the auxiliary coordinate construct by one of:
 
-            * The identity of a auxiliary coordinate construct.
+                * The identity of a auxiliary coordinate construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a auxiliary coordinate construct
+                * The key of a auxiliary coordinate construct
 
-            * `None`. This is the default, which selects the auxiliary
-              coordinate construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  auxiliary coordinate construct when there is only
+                  one of them.
 
-            *Parameter example:*
-              ``identity='Y'``
+                *Parameter example:*
+                  ``identity='Y'``
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='long_name=Latitude'``
+                *Parameter example:*
+                  ``identity='long_name=Latitude'``
 
-            *Parameter example:*
-              ``identity='auxiliarycoordinate1'``
+                *Parameter example:*
+                  ``identity='auxiliarycoordinate1'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `AuxiliaryCoordinate` or `str`
-            The selected auxiliary coordinate construct, or its key.
+            `AuxiliaryCoordinate` or `str`
+                The selected auxiliary coordinate construct, or its
+                key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-
-        '''
+        """
         c = self.auxiliary_coordinates
 
         if identity is not None:
@@ -1389,7 +1328,8 @@ class FieldDomain:
                 da_key = self.domain_axis(identity, key=True, default=None)
                 if da_key is not None:
                     c = self.auxiliary_coordinates.filter_by_axis(
-                        'exact', da_key)
+                        "exact", da_key
+                    )
         # --- End: if
 
         if key:
@@ -1398,103 +1338,103 @@ class FieldDomain:
         return c.value(default=default)
 
     def construct(self, identity=None, default=ValueError(), key=False):
-        '''Select a metadata construct by its identity.
+        """Select a metadata construct by its identity.
 
-    .. seealso:: `del_construct`, `get_construct`, `has_construct`,
-                 `set_construct`
+        .. seealso:: `del_construct`, `get_construct`,
+                     `has_construct`, `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  metadata construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='T'
+                *Parameter example:*
+                  ``identity='T'
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a construct
+                can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The selected coordinate construct, or its key.
+                The selected coordinate construct, or its key.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = cf.example_field(1)
-    >>> print(f)
-    Field: air_temperature (ncvar%ta)
-    ---------------------------------
-    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                    : time(1) = [2019-01-01 00:00:00]
-    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-    Coord references: grid_mapping_name:rotated_latitude_longitude
-                    : standard_name:atmosphere_hybrid_height_coordinate
-    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+        >>> f = cf.example_field(1)
+        >>> print(f)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+                        : standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
-    >>> f.construct('long_name=Grid latitude name')
-    <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
-    >>> f.construct('ncvar%a')
-    <CF DomainAncillary: ncvar%a(1) m>
-    >>> f.construct('measure:area')
-    <CF CellMeasure: measure:area(9, 10) km2>
-    >>> f.construct('domainaxis0')
-    <CF DomainAxis: size(1)>
-    >>> f.construct('height')
-    Traceback (most recent call last):
-        ...
-    ValueError: Can't return zero constructs
-    >>> f.construct('height', default=False)
-    False
-    >>> f.construct('height', default=TypeError("No height coordinates"))
-    Traceback (most recent call last):
-        ...
-    TypeError: No height coordinates
+        >>> f.construct('long_name=Grid latitude name')
+        <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
+        >>> f.construct('ncvar%a')
+        <CF DomainAncillary: ncvar%a(1) m>
+        >>> f.construct('measure:area')
+        <CF CellMeasure: measure:area(9, 10) km2>
+        >>> f.construct('domainaxis0')
+        <CF DomainAxis: size(1)>
+        >>> f.construct('height')
+        Traceback (most recent call last):
+            ...
+        ValueError: Can't return zero constructs
+        >>> f.construct('height', default=False)
+        False
+        >>> f.construct('height', default=TypeError("No height coordinates"))
+        Traceback (most recent call last):
+            ...
+        TypeError: No height coordinates
 
-        '''
+        """
         c = self.constructs(identity)
 
         if key:
@@ -1503,67 +1443,66 @@ class FieldDomain:
         return c.value(default=default)
 
     def cell_measure(self, identity=None, default=ValueError(), key=False):
-        '''Select a cell measure construct by its identity.
+        """Select a cell measure construct by its identity.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measures`,
-                 `cell_method`, `coordinate`, `coordinate_reference`,
-                 `dimension_coordinate`, `domain_ancillary`,
-                 `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measures`, `cell_method`, `coordinate`,
+                     `coordinate_reference`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the cell measure construct by one of:
+            identity: optional
+                Select the cell measure construct by one of:
 
-            * The identity of a cell measure construct.
+                * The identity of a cell measure construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a cell measure construct
+                * The key of a cell measure construct
 
-            * `None`. This is the default, which selects the cell
-              measure construct when there is only one of them.
+                * `None`. This is the default, which selects the cell
+                  measure construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity='cell_area'``
+                *Parameter example:*
+                  ``identity='cell_area'``
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity=cf.eq('cell_area')'``
+                *Parameter example:*
+                  ``identity=cf.eq('cell_area')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^cell')``
+                *Parameter example:*
+                  ``identity=re.compile('^cell')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `CellMeasure`or `str`
-            The selected cell measure construct, or its key.
+            `CellMeasure`or `str`
+                The selected cell measure construct, or its key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-
-        '''
+        """
         c = self.cell_measures
 
         if identity is not None:
@@ -1571,7 +1510,7 @@ class FieldDomain:
             if not c:
                 da_key = self.domain_axis(identity, key=True, default=None)
                 if da_key is not None:
-                    c = self.cell_measures.filter_by_axis('exact', da_key)
+                    c = self.cell_measures.filter_by_axis("exact", da_key)
         # --- End: if
 
         if key:
@@ -1579,73 +1518,70 @@ class FieldDomain:
 
         return c.value(default=default)
 
-    def coordinate(self, identity=None, default=ValueError(),
-                   key=False):
-        '''Return a dimension or auxiliary coordinate construct, or its key.
+    def coordinate(self, identity=None, default=ValueError(), key=False):
+        """Return a dimension or auxiliary coordinate construct, or its key.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `coordinates`,
-                 `dimension_coordinate`
+        .. seealso:: `construct`, `auxiliary_coordinate`, `coordinates`,
+                     `dimension_coordinate`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the coordinate construct by one of:
+            identity: optional
+                Select the coordinate construct by one of:
 
-            * The identity of a dimension or auxiliary coordinate
-              construct.
+                * The identity of a dimension or auxiliary coordinate
+                  construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a dimension or auxiliary coordinate construct
+                * The key of a dimension or auxiliary coordinate construct
 
-            * `None`. This is the default, which selects the dimension
-              or auxiliary coordinate construct when there is only one
-              of them.
+                * `None`. This is the default, which selects the dimension
+                  or auxiliary coordinate construct when there is only one
+                  of them.
 
-            *Parameter example:*
-              ``identity='Y'``
+                *Parameter example:*
+                  ``identity='Y'``
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='long_name=Latitude'``
+                *Parameter example:*
+                  ``identity='long_name=Latitude'``
 
-            *Parameter example:*
-              ``identity='auxiliarycoordinate1'``
+                *Parameter example:*
+                  ``identity='auxiliarycoordinate1'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a construct
+                can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `DimensionCoordinate` or `AuxiliaryCoordinate` or `str`
-            The selected dimension or auxiliary coordinate construct,
-            or its key.
+            `DimensionCoordinate` or `AuxiliaryCoordinate` or `str`
+                The selected dimension or auxiliary coordinate construct,
+                or its key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-
-        '''
+        """
         c = self.coordinates
 
         if identity is not None:
@@ -1653,7 +1589,7 @@ class FieldDomain:
             if not c:
                 da_key = self.domain_axis(identity, key=True, default=None)
                 if da_key is not None:
-                    c = self.coordinates.filter_by_axis('exact', da_key)
+                    c = self.coordinates.filter_by_axis("exact", da_key)
         # --- End: if
 
         if key:
@@ -1661,76 +1597,77 @@ class FieldDomain:
 
         return c.value(default=default)
 
-    def coordinate_reference(self, identity=None,
-                             default=ValueError(), key=False):
-        '''Return a coordinate reference construct, or its key.
+    def coordinate_reference(
+        self, identity=None, default=ValueError(), key=False
+    ):
+        """Return a coordinate reference construct, or its key.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                 `cell_method`, `coordinate`, `coordinate_references`,
-                 `dimension_coordinate`, `domain_ancillary`,
-                 `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_references`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the coordinate reference construct by one of:
+            identity: optional
+                Select the coordinate reference construct by one of:
 
-            * The identity of a coordinate reference construct.
+                * The identity of a coordinate reference construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a coordinate reference construct
+                * The key of a coordinate reference construct
 
-            * `None`. This is the default, which selects the
-              coordinate reference construct when there is only one of
-              them.
+                * `None`. This is the default, which selects the
+                  coordinate reference construct when there is only
+                  one of them.
 
-            *Parameter example:*
-              ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                *Parameter example:*
+                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-            *Parameter example:*
-              ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                *Parameter example:*
+                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-            *Parameter example:*
-              ``identity='transverse_mercator'``
+                *Parameter example:*
+                  ``identity='transverse_mercator'``
 
-            *Parameter example:*
-              ``identity='coordinatereference1'``
+                *Parameter example:*
+                  ``identity='coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='key%coordinatereference1'``
+                *Parameter example:*
+                  ``identity='key%coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='ncvar%lat_lon'``
+                *Parameter example:*
+                  ``identity='ncvar%lat_lon'``
 
-            *Parameter example:*
-              ``identity=cf.eq('rotated_pole')'``
+                *Parameter example:*
+                  ``identity=cf.eq('rotated_pole')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^rotated')``
+                *Parameter example:*
+                  ``identity=re.compile('^rotated')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `CoordinateReference` or `str`
-            The selected coordinate reference construct, or its key.
+            `CoordinateReference` or `str`
+                The selected coordinate reference construct, or its
+                key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-
-        '''
+        """
         c = self.coordinate_references
 
         if identity is not None:
@@ -1746,144 +1683,147 @@ class FieldDomain:
         return c.value(default=default)
 
     def coordinate_reference_domain_axes(self, identity=None):
-        '''Return the domain axes that apply to a coordinate reference
-    construct.
+        """Return the domain axes that apply to a coordinate reference
+        construct.
 
-    :Parameters:
+                :Parameters:
 
-        identity: optional
-            Select the coordinate reference construct by one of:
+                    identity: optional
+                        Select the coordinate reference construct by one of:
 
-            * The identity of a coordinate reference construct.
+                        * The identity of a coordinate reference construct.
 
-              {{construct selection identity}}
+                          {{construct selection identity}}
 
-            * The key of a coordinate reference construct
+                        * The key of a coordinate reference construct
 
-            * `None`. This is the default, which selects the
-              coordinate reference construct when there is only one of
-              them.
+                        * `None`. This is the default, which selects the
+                          coordinate reference construct when there is only
+                          one of them.
 
-            *Parameter example:*
-              ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                        *Parameter example:*
+                          ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-            *Parameter example:*
-              ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                        *Parameter example:*
+                          ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-            *Parameter example:*
-              ``identity='transverse_mercator'``
+                        *Parameter example:*
+                          ``identity='transverse_mercator'``
 
-            *Parameter example:*
-              ``identity='coordinatereference1'``
+                        *Parameter example:*
+                          ``identity='coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='key%coordinatereference1'``
+                        *Parameter example:*
+                          ``identity='key%coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='ncvar%lat_lon'``
+                        *Parameter example:*
+                          ``identity='ncvar%lat_lon'``
 
-            *Parameter example:*
-              ``identity=cf.eq('rotated_pole')'``
+                        *Parameter example:*
+                          ``identity=cf.eq('rotated_pole')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^rotated')``
+                        *Parameter example:*
+                          ``identity=re.compile('^rotated')``
 
-    :Returns:
+                :Returns:
 
-        `set`
-            The identifiers of the domain axis constructs that san
-            the data of all coordinate and domain ancillary constructs
-            used by the selected coordinate reference construct.
+                    `set`
+                        The identifiers of the domain axis constructs that san
+                        the data of all coordinate and domain ancillary
+                        constructs used by the selected coordinate reference
+                        construct.
 
-    **Examples:**
+                **Examples:**
 
-    >>> f.coordinate_reference_domain_axes('coordinatereference0')
-    {'domainaxis0', 'domainaxis1', 'domainaxis2'}
+                >>> f.coordinate_reference_domain_axes('coordinatereference0')
+                {'domainaxis0', 'domainaxis1', 'domainaxis2'}
 
-    >>> f.coordinate_reference_domain_axes(
-    ...     'atmosphere_hybrid_height_coordinate')
-    {'domainaxis0', 'domainaxis1', 'domainaxis2'}
+                >>> f.coordinate_reference_domain_axes(
+                ...     'atmosphere_hybrid_height_coordinate')
+                {'domainaxis0', 'domainaxis1', 'domainaxis2'}
 
-        '''
+        """
         cr = self.coordinate_reference(identity)
 
-        domain_axes = tuple(self.domain_axes)
         data_axes = self.constructs.data_axes()
 
         axes = []
         for i in cr.coordinates() | set(
-                cr.coordinate_conversion.domain_ancillaries().values()):
+            cr.coordinate_conversion.domain_ancillaries().values()
+        ):
             i = self.construct_key(i, None)
             axes.extend(data_axes.get(i, ()))
 
         return set(axes)
 
-    def dimension_coordinate(self, identity=None, key=False,
-                             default=ValueError()):
-        '''Return a dimension coordinate construct, or its key.
+    def dimension_coordinate(
+        self, identity=None, key=False, default=ValueError()
+    ):
+        """Return a dimension coordinate construct, or its key.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                 `cell_method`, `coordinate_reference`,
-                 `dimension_coordinates`, `domain_ancillary`,
-                 `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`,
+                     `coordinate_reference`, `dimension_coordinates`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the dimension coordinate construct by one of:
+            identity: optional
 
-            * The identity of a dimension coordinate construct.
+                Select the dimension coordinate construct by one of:
 
-              {{construct selection identity}}
+                * The identity of a dimension coordinate construct.
 
-            * The key of a dimension coordinate construct
+                  {{construct selection identity}}
 
-            * `None`. This is the default, which selects the dimension
-              coordinate construct when there is only one of them.
+                * The key of a dimension coordinate construct
 
-            *Parameter example:*
-              ``identity='Y'``
+                * `None`. This is the default, which selects the
+                  dimension coordinate construct when there is only
+                  one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='Y'``
 
-            *Parameter example:*
-              ``identity='long_name=Latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='dimensioncoordinate1'``
+                *Parameter example:*
+                  ``identity='long_name=Latitude'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='dimensioncoordinate1'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By default
-            the construct itself is returned.
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-            {{default Exception}}
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-    :Returns:
+                {{default Exception}}
 
-        `DimensionCoordinate` or `str`
-            The selected dimension coordinate construct, or its key.
+        :Returns:
 
-    **Examples:**
+            `DimensionCoordinate` or `str`
+                The selected dimension coordinate construct, or its key.
 
-    TODO
+        **Examples:**
 
-        '''
+        """
         c = self.dimension_coordinates
 
         if identity is not None:
@@ -1892,7 +1832,8 @@ class FieldDomain:
                 da_key = self.domain_axis(identity, key=True, default=None)
                 if da_key is not None:
                     c = self.dimension_coordinates.filter_by_axis(
-                        'exact', da_key)
+                        "exact", da_key
+                    )
         # --- End: if
 
         if key:
@@ -1900,63 +1841,65 @@ class FieldDomain:
 
         return c.value(default=default)
 
-    @_deprecated_kwarg_check('axes')
+    @_deprecated_kwarg_check("axes")
     def direction(self, identity=None, axes=None, **kwargs):
-        '''Whether or not a domain axis is increasing.
+        """Whether or not a domain axis is increasing.
 
-    An domain axis is considered to be increasing if its dimension
-    coordinate values are increasing in index space or if it has no
-    dimension coordinate.
+        An domain axis is considered to be increasing if its dimension
+        coordinate values are increasing in index space or if it has
+        no dimension coordinate.
 
-    .. seealso:: `directions`
+        .. seealso:: `directions`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct by one of:
+            identity: optional
+                Select the domain axis construct by one of:
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+                * An identity or key of a 1-d dimension or auxiliary
+                  coordinate construct that whose data spans the
+                  domain axis construct.
 
-               {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * A domain axis construct identity
+                * A domain axis construct identity
 
-              {{construct selection identity}}
+                  The domain axis is that which would be selected by
+                  passing the given axis description to a call of the
+                  construct's `domain_axis` method. For example, for a
+                  value of ``'X'``, the domain axis construct returned
+                  by ``f.domain_axis('X')`` is selected.
 
-            * The integer position of the domain axis construct in the
-              field construct's data.
+                * `None`. This is the default, which selects the
+                   domain construct when there is only one of them.
 
-            * `None`. This is the default, which selects the domain
-               construct when there is only one of them.
+            axes: deprecated at version 3.0.0
+                Use the *identity* parmeter instead.
 
-        axes: deprecated at version 3.0.0
-            Use the *identity* parmeter instead.
+            size: deprecated at version 3.0.0
 
-        size:  deprecated at version 3.0.0
+            kwargs: deprecated at version 3.0.0
 
-        kwargs: deprecated at version 3.0.0
+        :Returns:
 
-    :Returns:
+            `bool`
+                Whether or not the domain axis is increasing.
 
-        `bool`
-            Whether or not the domein axis is increasing.
+        **Examples:**
 
-    **Examples:**
+        >>> print(f.dimension_coordinate('X').array)
+        array([  0  30  60])
+        >>> f.direction('X')
+        True
+        >>> g = f.flip('X')
+        >>> g.direction('X')
+        False
 
-    >>> print(f.dimension_coordinate('X').array)
-    array([  0  30  60])
-    >>> f.direction('X')
-    True
-    >>> g = f.flip('X')
-    >>> g.direction('X')
-    False
-
-        '''
+        """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'direction', kwargs)  # pragma: no cover
+                self, "direction", kwargs
+            )  # pragma: no cover
 
         axis = self.domain_axis(identity, key=True, default=None)
         if axis is None:
@@ -1965,27 +1908,26 @@ class FieldDomain:
         for key, coord in self.dimension_coordinates.items():
             if axis == self.get_data_axes(key)[0]:
                 return coord.direction()
-        # --- End: for
 
         return True
 
     def directions(self):
-        '''Return a dictionary mapping all domain axes to their directions.
+        """Return a dictionary mapping all domain axes to their directions.
 
-    .. seealso:: `direction`
+        .. seealso:: `direction`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            A dictionary whose key/value pairs are domain axis keys
-            and their directions.
+            `dict`
+                A dictionary whose key/value pairs are domain axis
+                keys and their directions.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.directions()
-    {'domainaxis1': True, 'domainaxis1': False}
+        >>> d.directions()
+        {'domainaxis1': True, 'domainaxis1': False}
 
-        '''
+        """
         out = {key: True for key in self.domain_axes.keys()}
 
         for key, dc in self.dimension_coordinates.items():
@@ -1997,73 +1939,71 @@ class FieldDomain:
 
         return out
 
-    def domain_ancillary(self, identity=None, default=ValueError(),
-                         key=False):
-        '''Return a domain ancillary construct, or its key.
+    def domain_ancillary(self, identity=None, default=ValueError(), key=False):
+        """Return a domain ancillary construct, or its key.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                 `cell_method`, `coordinate`, `coordinate_reference`,
-                 `dimension_coordinate`, `domain_ancillaries`,
-                 `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_reference`, `dimension_coordinate`,
+                     `domain_ancillaries`, `domain_axis`,
+                     `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain ancillary construct by one of:
+            identity: optional
+                Select the domain ancillary construct by one of:
 
-            * A domin ancillary construct identity
+                * A domin ancillary construct identity
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a domain ancillary construct
+                * The key of a domain ancillary construct
 
-            * `None`. This is the default, which selects the domain
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  domain construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='Y'``
+                *Parameter example:*
+                  ``identity='Y'``
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='long_name=Latitude'``
+                *Parameter example:*
+                  ``identity='long_name=Latitude'``
 
-            *Parameter example:*
-              ``identity='domainancillary1'``
+                *Parameter example:*
+                  ``identity='domainancillary1'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-            *Parameter example:*
-              ``identity=cf.eq('latitude')'``
+                *Parameter example:*
+                  ``identity=cf.eq('latitude')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `DomainAncillary` or `str`
-            The selected domain ancillary coordinate construct, or its
-            key.
+            `DomainAncillary` or `str`
+                The selected domain ancillary coordinate construct, or
+                its key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-
-        '''
+        """
         c = self.domain_ancillaries
 
         if identity is not None:
@@ -2071,8 +2011,7 @@ class FieldDomain:
             if not c:
                 da_key = self.domain_axis(identity, key=True, default=None)
                 if da_key is not None:
-                    c = self.domain_ancillaries.filter_by_axis(
-                        'exact', da_key)
+                    c = self.domain_ancillaries.filter_by_axis("exact", da_key)
         # --- End: if
 
         if key:
@@ -2080,91 +2019,93 @@ class FieldDomain:
 
         return c.value(default=default)
 
-    def get_coordinate_reference(self, identity=None, key=False,
-                                 construct=None, default=ValueError()):
-        '''TODO
+    def get_coordinate_reference(
+        self, identity=None, key=False, construct=None, default=ValueError()
+    ):
+        """TODO
 
-    .. versionadded:: 3.0.2
+        .. versionadded:: 3.0.2
 
-    .. seealso:: `construct`
+        .. seealso:: `construct`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the coordinate reference construct by one of:
+            identity: optional
+                Select the coordinate reference construct by one of:
 
-            * The identity of a coordinate reference construct.
+                * The identity of a coordinate reference construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a coordinate reference construct
+                * The key of a coordinate reference construct
 
-            * `None`. This is the default, which selects the
-              coordinate reference construct when there is only one of
-              them.
+                * `None`. This is the default, which selects the
+                  coordinate reference construct when there is only
+                  one of them.
 
-            *Parameter example:*
-              ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                *Parameter example:*
+                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-            *Parameter example:*
-              ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                *Parameter example:*
+                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-            *Parameter example:*
-              ``identity='transverse_mercator'``
+                *Parameter example:*
+                  ``identity='transverse_mercator'``
 
-            *Parameter example:*
-              ``identity='coordinatereference1'``
+                *Parameter example:*
+                  ``identity='coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='key%coordinatereference1'``
+                *Parameter example:*
+                  ``identity='key%coordinatereference1'``
 
-            *Parameter example:*
-              ``identity='ncvar%lat_lon'``
+                *Parameter example:*
+                  ``identity='ncvar%lat_lon'``
 
-            *Parameter example:*
-              ``identity=cf.eq('rotated_pole')'``
+                *Parameter example:*
+                  ``identity=cf.eq('rotated_pole')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^rotated')``
+                *Parameter example:*
+                  ``identity=re.compile('^rotated')``
 
-        construct: optional
-            TODO
+            construct: optional
+                TODO
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `CoordinateReference` or `str`
-            The selected coordinate reference construct, or its key.
+            `CoordinateReference` or `str`
+                The selected coordinate reference construct, or its
+                key.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
-        '''
+        """
         if construct is None:
-            return self.coordinate_reference(identity=identity,
-                                             key=key, default=default)
+            return self.coordinate_reference(
+                identity=identity, key=key, default=default
+            )
 
         out = []
 
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
             return self._default(
-                default,
-                "Can't identify construct from {!r}".format(construct))
+                default, f"Can't identify construct from {construct!r}"
+            )
 
         for cr_key, ref in tuple(self.coordinate_references.items()):
             if c_key in (
-                    ref.coordinates(),
-                    ref.coordinate_conversion.domain_ancillaries().values()
+                ref.coordinates(),
+                ref.coordinate_conversion.domain_ancillaries().values(),
             ):
                 if key:
                     if cr_key not in out:
@@ -2173,338 +2114,370 @@ class FieldDomain:
                     out.append(ref)
 
                 continue
-        # --- End: for
 
         return out
 
     def has_construct(self, identity=None):
-        '''Whether a metadata construct exists.
+        """Whether a metadata construct exists.
 
-    .. versionadded:: 3.4.0
+        .. versionadded:: 3.4.0
 
-    .. seealso:: `construct`, `del_construct`, `get_construct`,
-                 `set_construct`
+        .. seealso:: `construct`, `del_construct`, `get_construct`,
+                     `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the metadata construct by one of:
+            identity: optional
+                Select the metadata construct by one of:
 
-            * The identity of a metadata construct.
+                * The identity of a metadata construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  metadata construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='T'
+                *Parameter example:*
+                  ``identity='T'
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity='cell_area'``
+                *Parameter example:*
+                  ``identity='cell_area'``
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity=cf.eq('air_temperature')'``
+                *Parameter example:*
+                  ``identity=cf.eq('air_temperature')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^air')``
+                *Parameter example:*
+                  ``identity=re.compile('^air')``
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            `True` if the construct exists, otherwise `False`.
+            `bool`
+                `True` if the construct exists, otherwise `False`.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = cf.example_field(0)
-    >>> print(f)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> f.has_construct('T')
-    True
-    >>> f.has_construct('longitude')
-    True
-    >>> f.has_construct('Z')
-    False
+        >>> f.has_construct('T')
+        True
+        >>> f.has_construct('longitude')
+        True
+        >>> f.has_construct('Z')
+        False
 
-        '''
+        """
         return bool(self.construct(identity, default=False))
 
     def iscyclic(self, identity=None):
-        '''Returns True if the given axis is cyclic.
+        """Returns True if the given axis is cyclic.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `axis`, `cyclic`, `period`
+        .. seealso:: `axis`, `cyclic`, `period`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct by one of:
+            identity: optional
+                Select the domain axis construct by one of:
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+                * An identity or key of a 1-d dimension or auxiliary
+                  coordinate construct that whose data spans the
+                  domain axis construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * A domain axis construct identity.
+                * A domain axis construct identity.
 
-              {{domain axis selection identity}}
+                  {{domain axis selection identity}}
 
-            * The key of a domain axis construct.
+                * The key of a domain axis construct.
 
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  domain axis construct when there is only one of
+                  them.
 
-            *Parameter example:*
-              ``identity='time'``
+                *Parameter example:*
+                  ``identity='time'``
 
-            *Parameter example:*
-              ``identity='domainaxis2'``
+                *Parameter example:*
+                  ``identity='domainaxis2'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            True if the selected axis is cyclic, otherwise False.
+            `bool`
+                True if the selected axis is cyclic, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.iscyclic('X')
-    True
-    >>> f.iscyclic('latitude')
-    False
+        >>> f.iscyclic('X')
+        True
+        >>> f.iscyclic('latitude')
+        False
 
-    >>> x = f.iscyclic('long_name=Latitude')
-    >>> x = f.iscyclic('dimensioncoordinate1')
-    >>> x = f.iscyclic('domainaxis2')
-    >>> x = f.iscyclic('key%domainaxis2')
-    >>> x = f.iscyclic('ncdim%y')
-    >>> x = f.iscyclic(2)
+        >>> x = f.iscyclic('long_name=Latitude')
+        >>> x = f.iscyclic('dimensioncoordinate1')
+        >>> x = f.iscyclic('domainaxis2')
+        >>> x = f.iscyclic('key%domainaxis2')
+        >>> x = f.iscyclic('ncdim%y')
+        >>> x = f.iscyclic(2)
 
-        '''
+        """
         axis = self.domain_axis(identity, key=True)
         return axis in self.cyclic()
 
     def match_by_rank(self, *ranks):
-        '''Whether or not the number of domain axis constructs satisfies
-    conditions.
+        """Whether or not the number of domain axis constructs satisfies
+        conditions.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `match`, `match_by_property`, `match_by_identity`,
-                 `match_by_ncvar`, `match_by_construct`
+        .. seealso:: `match`, `match_by_property`,
+                     `match_by_identity`, `match_by_ncvar`,
+                     `match_by_construct`
 
-    :Parameters:
+        :Parameters:
 
-        ranks: optional
-            Define conditions on the number of domain axis constructs.
+            ranks: optional
+                Define conditions on the number of domain axis
+                constructs.
 
-            A condition is one of:
+                A condition is one of:
 
-              * `int`
-              * a `Query` object
+                * `int`
+                * a `Query` object
 
-            The condition is satisfied if the number of domain axis
-            constructs equals the condition value.
+                The condition is satisfied if the number of domain
+                axis constructs equals the condition value.
 
-            *Parameter example:*
-              To see if the field construct has 4 domain axis
-              constructs: ``4``
+                *Parameter example:*
+                  To see if the field construct has 4 domain axis
+                  constructs: ``4``
 
-            *Parameter example:*
-              To see if the field construct has at least 3 domain axis
-              constructs: ``cf.ge(3)``
+                *Parameter example:*
+                  To see if the field construct has at least 3 domain
+                  axis constructs: ``cf.ge(3)``
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not at least one of the conditions are met.
+            `bool`
+                Whether or not at least one of the conditions are met.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.match_by_rank(3, 4)
+        >>> f.match_by_rank(3, 4)
 
-    >>> f.match_by_rank(cf.wi(2, 4))
+        >>> f.match_by_rank(cf.wi(2, 4))
 
-    >>> f.match_by_rank(1, cf.gt(3))
+        >>> f.match_by_rank(1, cf.gt(3))
 
-        '''
+        """
         if not ranks:
             return True
 
         n_domain_axes = len(self.domain_axes)
         for rank in ranks:
-            ok = (rank == n_domain_axes)
+            ok = rank == n_domain_axes
             if ok:
                 return True
-        # --- End: for
 
         return False
 
+    def _parse_axes(self, axes):
+        """Convert the given axes to their domain axis identifiers.
+
+        .. versionadded:: 3.TODO:0
+
+        :Parameters:
+        
+            axes:
+                One or more axis specifications.
+
+                If *axes* is a sequence then the returned identifiers
+                are in the same order.
+
+        :Returns:
+        
+            `list`
+                The domain axis identifiers.
+
+        """
+        if isinstance(axes, str):
+            axes = (axes,)
+        else:
+            try:
+                len(axes)
+            except TypeError:
+                axes = (axes,)
+
+        return [self.domain_axis(x, key=True) for x in axes]
+
     def replace_construct(self, identity, construct, copy=True):
-        '''Replace a metadata construct.
+        """Replace a metadata construct.
 
-    Replacement assigns the same construct key and, if applicable, the
-    domain axes of the original construct to the new, replacing
-    construct.
+        Replacement assigns the same construct key and, if applicable,
+        the domain axes of the original construct to the new,
+        replacing construct.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `set_construct`
+        .. seealso:: `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  metadata construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='T'
+                *Parameter example:*
+                  ``identity='T'
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        construct:
-           The new construct to replace the one selected by the
-           *identity* parameter.
+            construct:
+               The new construct to replace the one selected by the
+               *identity* parameter.
 
-        copy: `bool`, optional
-            If True then set a copy of the new construct. By default
-            the construct is copied.
+            copy: `bool`, optional
+                If True then set a copy of the new construct. By
+                default the construct is copied.
 
-    :Returns:
+        :Returns:
 
-            The construct that was replaced.
+                The construct that was replaced.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.replace_construct('X', new_X_construct)
+        >>> f.replace_construct('X', new_X_construct)
 
-        '''
-        key = self.construct(identity, key=True, default=ValueError('TODO a'))
+        """
+        key = self.construct(identity, key=True)
         c = self.constructs[key]
 
-        set_axes = True
-
         if not isinstance(construct, c.__class__):
-            raise ValueError('TODO')
+            raise ValueError(
+                "Replacement construct type "
+                f"({constructs.__class__.__name__}) "
+                "is not compatible with the original construct type "
+                f"({c.__class__.__name__})"
+        )
 
         axes = self.get_data_axes(key, None)
         if axes is not None:
-            shape0 = getattr(c, 'shape', None)
-            shape1 = getattr(construct, 'shape', None)
+            shape0 = getattr(c, "shape", None)
+            shape1 = getattr(construct, "shape", None)
             if shape0 != shape1:
-                raise ValueError('TODO')
-        # --- End: if
+                raise ValueError(
+                    f"Replacement construct shape {shape1} is not the "
+                    f"same as the original construct shape {shape0}"
+                )
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)
 
         return c
 
-    def set_coordinate_reference(self, coordinate_reference, key=None,
-                                 field=None, strict=True):
-        '''Set a coordinate reference construct.
+    def set_coordinate_reference(
+        self, coordinate_reference, key=None, parent=None, strict=True
+    ):
+        """Set a coordinate reference construct.
 
-    By default, this is equivalent to using the `set_construct`
-    method. If, however, the *field* parameter has been set then it is
-    assumed to be a field construct that contains the new coordinate
-    reference construct. In this case, existing coordinate and domain
-    ancillary constructs will be referenced by the inserted coordinate
-    reference construct, based on those which are referenced from the
-    other parent field construct (given by the *field* parameter).
+        By default, this is equivalent to using the `set_construct`
+        method. If, however, the *parent* parameter has been set to be
+        a field or domain construct that contains the new coordinate
+        reference construct then copies of its coordinate and domain
+        ancillary constructs will be referenced by the inserted
+        coordinate reference construct.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `set_construct`
+        .. seealso:: `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct to be inserted.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct to be inserted.
 
-        key: `str`, optional
-            The construct identifier to be used for the construct. If
-            not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
-            exisiting construct will be replaced.
+            key: `str`, optional
+                The construct identifier to be used for the
+                construct. If not set then a new, unique identifier is
+                created automatically. If the identifier already
+                exisits then the exisiting construct will be replaced.
 
-            *Parameter example:*
-              ``key='coordinatereference1'``
+                *Parameter example:*
+                  ``key='coordinatereference1'``
 
-        field: `Field`, optional
-            A parent field construct that contains the new coordinate
-            reference construct.
+            parent: `Field` or `Domain`, optional
+                A field or domain construct that contains the new
+                coordinate reference construct.
 
-        strict: `bool`, optional
-            If False then allow non-strict identities for
-            identifying coordinate and domain ancillary metadata
-            constructs.
+            strict: `bool`, optional
+                If False then allow non-strict identities for
+                identifying coordinate and domain ancillary metadata
+                constructs.
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct identifier for the coordinate refernece
-            construct.
+            `str`
+                The construct identifier for the coordinate refernece
+                construct.
 
-        '''
-        if field is None:
-            return self.set_construct(
-                coordinate_reference, key=key, copy=True)
+        """
+        if parent is None:
+            return self.set_construct(coordinate_reference, key=key, copy=True)
 
         # Still here?
         ref = coordinate_reference.copy()
 
         ckeys = []
         for value in coordinate_reference.coordinates():
-            if value in field.coordinates:
-                identity = field.coordinates[value].identity(strict=strict)
-                ckeys.append(
-                    self.coordinate(identity, key=True, default=None))
-        # --- End: for
+            if value in parent.coordinates:
+                identity = parent.coordinates[value].identity(strict=strict)
+                ckeys.append(self.coordinate(identity, key=True, default=None))
 
         ref.clear_coordinates()
         ref.set_coordinates(ckeys)
@@ -2513,14 +2486,15 @@ class FieldDomain:
 
         dakeys = {}
         for term, value in coordinate_conversion.domain_ancillaries().items():
-            if value in field.domain_ancillaries:
-                identity = field.domain_ancillaries[value].identity(
-                    strict=strict)
+            if value in parent.domain_ancillaries:
+                identity = parent.domain_ancillaries[value].identity(
+                    strict=strict
+                )
                 dakeys[term] = self.domain_ancillary(
-                    identity, key=True, default=None)
+                    identity, key=True, default=None
+                )
             else:
                 dakeys[term] = None
-        # --- End: for
 
         ref.coordinate_conversion.clear_domain_ancillaries()
         ref.coordinate_conversion.set_domain_ancillaries(dakeys)
@@ -2531,26 +2505,27 @@ class FieldDomain:
     # Aliases
     # ----------------------------------------------------------------
     def aux(self, identity, default=ValueError(), key=False, **kwargs):
-        '''Alias for `cf.{{class}}.auxiliary_coordinate`.
-
-        '''
+        """Alias for `cf.{{class}}.auxiliary_coordinate`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'aux', kwargs,
-                "Use methods of the 'auxiliary_coordinates' attribute instead."
+                self,
+                "aux",
+                kwargs,
+                "Use methods of the 'auxiliary_coordinates' attribute "
+                "instead.",
             )  # pragma: no cover
 
         return self.auxiliary_coordinate(identity, key=key, default=default)
 
     def auxs(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.auxiliary_coordinates`.
-
-        '''
+        """Alias for `cf.{{class}}.auxiliary_coordinates`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'auxs', kwargs,
+                self,
+                "auxs",
+                kwargs,
                 "Use methods of the 'auxiliary_coordinates' attribute "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         for i in identities:
@@ -2558,62 +2533,64 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ':' in i:
+            elif isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(':', '=', 1))
+                        f"The identity format {i!r} has been deprecated at "
+                        "version 3.0.0. Consider replacing the "
+                        "first ':' with '='"
+                        f"version 3.0.0. Try {i}.replace(':', '=', 1) "
+                        "instead."
                     )  # pragma: no cover
         # --- End: for
 
         return self.auxiliary_coordinates(*identities)
 
     def axis(self, identity, key=False, default=ValueError(), **kwargs):
-        '''Alias of `cf.{{class}}.domain_axis`.
-
-        '''
+        """Alias of `cf.{{class}}.domain_axis`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'axis', kwargs,
-                "Use methods of the 'domain_axes' attribute instead."
+                self,
+                "axis",
+                kwargs,
+                "Use methods of the 'domain_axes' attribute instead.",
             )  # pragma: no cover
 
         return self.domain_axis(identity, key=key, default=default)
 
-    def coord(self, identity, default=ValueError(), key=False,
-              **kwargs):
-        '''Alias for `cf.{{class}}.coordinate`.
-
-        '''
+    def coord(self, identity, default=ValueError(), key=False, **kwargs):
+        """Alias for `cf.{{class}}.coordinate`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'coord', kwargs,
-                "Use methods of the 'coordinates' attribute instead."
+                self,
+                "coord",
+                kwargs,
+                "Use methods of the 'coordinates' attribute instead.",
             )  # pragma: no cover
 
         if identity in self.domain_axes:
             # Allow an identity to be the domain axis construct key
             # spanned by a dimension coordinate construct
             return self.dimension_coordinate(
-                identity, key=key, default=default)
+                identity, key=key, default=default
+            )
 
         return self.coordinate(identity, key=key, default=default)
 
     def coords(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.coordinates`.
-
-        '''
+        """Alias for `cf.{{class}}.coordinates`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'coords', kwargs,
-                "Use methods of the 'coordinates' attribute instead."
+                self,
+                "coords",
+                kwargs,
+                "Use methods of the 'coordinates' attribute instead.",
             )  # pragma: no cover
 
         for i in identities:
@@ -2621,45 +2598,45 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ':' in i:
+            elif isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(':', '=', 1))
+                        f"The identity format {i!r} has been deprecated at "
+                        "version 3.0.0. Consider replacing the "
+                        "first ':' with '='"
                     )  # pragma: no cover
         # --- End: for
 
         return self.coordinates.filter_by_identity(*identities)
 
     def dim(self, identity, default=ValueError(), key=False, **kwargs):
-        '''Alias for `cf.{{class}}.dimension_coordinate`.
-
-        '''
+        """Alias for `cf.{{class}}.dimension_coordinate`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'dim', kwargs,
+                self,
+                "dim",
+                kwargs,
                 "Use methods of the 'dimension_coordinates' attribute "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         return self.dimension_coordinate(identity, key=key, default=default)
 
     def dims(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.dimension_coordinates`.
-
-        '''
+        """Alias for `cf.{{class}}.dimension_coordinates`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'dims', kwargs,
+                self,
+                "dims",
+                kwargs,
                 "Use methods of the 'dimension_coordinates' attribute "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         for i in identities:
@@ -2667,45 +2644,43 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ':' in i:
+            elif isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(':', '=', 1))
+                        f"The identity format {i!r} has been deprecated at "
+                        "version 3.0.0. Consider replacing the "
+                        "first ':' with '='"
                     )  # pragma: no cover
         # --- End: for
 
         return self.dimension_coordinates.filter_by_identity(*identities)
 
-    def domain_anc(self, identity, default=ValueError(), key=False,
-                   **kwargs):
-        '''Alias for `cf.{{class}}.domain_ancillary`.
-        '''
+    def domain_anc(self, identity, default=ValueError(), key=False, **kwargs):
+        """Alias for `cf.{{class}}.domain_ancillary`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'domain_anc', kwargs,
-                "Use methods of the 'domain_ancillaries' attribute "
-                "instead."
+                self,
+                "domain_anc",
+                kwargs,
+                "Use methods of the 'domain_ancillaries' attribute instead.",
             )  # pragma: no cover
 
         return self.domain_ancillary(identity, key=key, default=default)
 
     def domain_ancs(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.domain_ancillaries`.
-
-        '''
+        """Alias for `cf.{{class}}.domain_ancillaries`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'domain_ancs', kwargs,
-                "Use methods of the 'domain_ancillaries' attribute "
-                "instead."
+                self,
+                "domain_ancs",
+                kwargs,
+                "Use methods of the 'domain_ancillaries' attribute instead.",
             )  # pragma: no cover
 
         for i in identities:
@@ -2713,56 +2688,55 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ':' in i:
+            elif isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(':', '=', 1))
+                        f"The identity format {i!r} has been deprecated at "
+                        "version 3.0.0. Consider replacing the "
+                        "first ':' with '='"
                     )  # pragma: no cover
         # --- End: for
 
         return self.domain_ancillaries.filter_by_identity(*identities)
 
     def key(self, identity, default=ValueError(), **kwargs):
-        '''Alias for `cf.{{class}}.construct_key`.
-
-        '''
+        """Alias for `cf.{{class}}.construct_key`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'key', kwargs,
-                "Use 'construct' method or 'construct_key' method instead."
+                self,
+                "key",
+                kwargs,
+                "Use 'construct' method or 'construct_key' method instead.",
             )  # pragma: no cover
 
         return self.construct_key(identity, default=default)
 
-    def measure(self, identity, default=ValueError(), key=False,
-                **kwargs):
-        '''Alias for `cf.{{class}}.cell_measure`.
-
-        '''
+    def measure(self, identity, default=ValueError(), key=False, **kwargs):
+        """Alias for `cf.{{class}}.cell_measure`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'measure', kwargs,
-                "Use methods of the 'cell_measures' attribute instead"
+                self,
+                "measure",
+                kwargs,
+                "Use methods of the 'cell_measures' attribute instead",
             )  # pragma: no cover
 
         return self.cell_measure(identity, key=key, default=default)
 
     def measures(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.cell_measures`.
-
-        '''
+        """Alias for `cf.{{class}}.cell_measures`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'measures', kwargs,
-                "Use methods of the 'cell_measures' attribute instead"
+                self,
+                "measures",
+                kwargs,
+                "Use methods of the 'cell_measures' attribute instead",
             )  # pragma: no cover
 
         for i in identities:
@@ -2770,48 +2744,48 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ':' in i:
+            elif isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
-                if error and i.startswith('measure:'):
+                if error and i.startswith("measure:"):
                     error = False
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(':', '=', 1))
+                        f"The identity format {i!r} has been deprecated at "
+                        "version 3.0.0. Consider replacing the "
+                        "first ':' with '='"
                     )  # pragma: no cover
         # --- End: for
 
         return self.cell_measures(*identities)
 
     def ref(self, identity, default=ValueError(), key=False, **kwargs):
-        '''Alias for `cf.{{class}}.coordinate_reference`.
-
-        '''
+        """Alias for `cf.{{class}}.coordinate_reference`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'ref', kwargs,
+                self,
+                "ref",
+                kwargs,
                 "Use methods of the 'coordinate_references' attribute "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         return self.coordinate_reference(identity, key=key, default=default)
 
     def refs(self, *identities, **kwargs):
-        '''Alias for `cf.{{class}}.coordinate_references`.
-
-        '''
+        """Alias for `cf.{{class}}.coordinate_references`."""
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'refs', kwargs,
+                self,
+                "refs",
+                kwargs,
                 "Use methods of the 'coordinate_references' attribute "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         for i in identities:
@@ -2819,8 +2793,73 @@ class FieldDomain:
                 _DEPRECATION_ERROR_DICT()  # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-        # --- End: for
 
         return self.coordinate_references(*identities)
 
-# --- End: class
+
+def _create_auxiliary_mask_component(mask_shape, ind, compress):
+    """Create an auxiliary mask component
+    
+    .. versionadded:: 3.TODO.0
+    
+    :Parameters:
+    
+        mask_shape: `tuple`
+            The shape of the mask component to be created.
+
+              *Parameter example*
+                ``mask_shape=(3,)``
+
+              *Parameter example*
+                ``mask_shape=(9, 10)``
+
+        ind: sequnce of `list`
+            As returned by a single argument call of
+            ``np[.ma].where(....)``.
+
+        compress: `bool`
+            If True then remove whole slices which only contain masked
+            points.
+
+    :Returns:
+
+        `Data`
+            The mask array.
+
+    **Examples:**
+
+    >>> f = cf.{{class}}()
+    >>> d = _create_auxiliary_mask_component(
+    ...     (4,), ([0, 3, 1],)
+    ... )
+    >>> print(d.array)
+    [False False  True False]
+    >>> d = f._create_auxiliary_mask_component(
+    ...     (4, 6), ([0, 3, 1], [5, 3, 2])
+    ... )
+    >>> print(d.array)
+    [[ True  True  True  True  True False]
+     [ True  True False  True  True  True]
+     [ True  True  True  True  True  True]
+     [ True  True  True False  True  True]]
+
+    """
+    # Note that, for now, auxiliary_mask has to be numpy array (rather
+    # than a cf.Data object) because we're going to index it with
+    # fancy indexing which a cf.Data object might not support - namely
+    # a non-monotonic list of integers.
+    auxiliary_mask = np.ones(mask_shape, dtype=bool)
+
+    auxiliary_mask[tuple(ind)] = False
+
+    # For compressed indices, remove slices which only contain masked
+    # points.
+    if compress:
+        for i, (index, n) in enumerate(zip(ind, mask_shape)):
+            index = set(index)
+            if len(index) == n:
+                continue
+
+            auxiliary_mask = auxiliary_mask.take(sorted(index), axis=i)
+
+    return Data(auxiliary_mask)

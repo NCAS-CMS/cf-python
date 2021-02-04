@@ -772,38 +772,33 @@ class DimensionCoordinate(mixin.Coordinate,
         '''TODO `{{class}}`
 
         '''
-        if self.size <= 1:
-            if inplace:
-                return
-            else:
-                return self.copy()
-        # --- End: if
+        c = _inplace_enabled_define_and_cleanup(self)
 
-        shift %= self.size
-
-#        period = self._custom.get('period')
-        period = self.period()
-
+        size = c.size
+        if size <= 1:
+            return c
+        
+        shift %= size
         if not shift:
             # Null roll
-            if inplace:
-                return
-            else:
-                return self.copy()
-        elif period is None:
+            return c
+
+#        period = self._custom.get('period')
+        period = c.period()
+
+        if period is None:
             raise ValueError(
                 "Can't roll {} when no period has been set".format(
-                    self.__class__.__name__))
+                    c.__class__.__name__))
 
-        direction = self.direction()
+        direction = c.direction()
 
-        centre = self._centre(period)
+        centre = c._centre(period)
 
         if axis not in [0, -1]:
             raise ValueError(
                 "Can't roll axis {} when there is only one axis".format(axis))
 
-        c = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, c).roll(axis, shift, inplace=True)
 
         c.dtype = numpy_result_type(c.dtype, period.dtype)

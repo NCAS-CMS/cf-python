@@ -2203,7 +2203,7 @@ class FieldTest(unittest.TestCase):
 
         cr = g.coordinate_reference(
             'grid_mapping_name:rotated_latitude_longitude')
-        f.set_coordinate_reference(cr, field=g)
+        f.set_coordinate_reference(cr, parent=g)
         self.assertTrue(len(f.coordinate_references) == 1)
 
         cr = g.coordinate_reference(
@@ -2211,7 +2211,7 @@ class FieldTest(unittest.TestCase):
         cr = cr.copy()
         cr.coordinate_conversion.set_domain_ancillary(
             'foo', 'domainancillary99')
-        f.set_coordinate_reference(cr, field=g)
+        f.set_coordinate_reference(cr, parent=g)
         self.assertTrue(len(f.coordinate_references) == 2)
         self.assertTrue(len(f.domain_ancillaries) == 3)
 

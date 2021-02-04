@@ -60,50 +60,23 @@ class Domain(mixin.FieldDomain,
     # ----------------------------------------------------------------
     @property
     def _cyclic(self):
-        '''Storage for axis cyclicity
+        '''Storage for axis cyclicity.
 
+        Do not change in-place.
         '''
         return self._custom.get('_cyclic', set())
 
     @_cyclic.setter
-    def _cyclic(self, value): self._custom['_cyclic'] = value
+    def _cyclic(self, value):
+        self._custom['_cyclic'] = value
 
     @_cyclic.deleter
-    def _cyclic(self): del self._custom['_cyclic']
+    def _cyclic(self):
+        self._custom['_cyclic'] = set()
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _parse_axes(self, axes):
-        '''Conform axes.
-
-    :Parameters:
-
-        axes: (sequence of) `str`
-            TODO
-
-    :Returns:
-
-        `list`
-            The conformed axes.
-
-        '''
-        if axes is None:
-            return axes
-
-        if isinstance(axes, str):
-            axes = (axes,)
-
-        domain_axes_keys = self.domain_axes.keys()
-
-        out = []
-        for axis in axes:
-            if axis not in domain_axes_keys:
-                raise ValueError("Invalid axis: {!r}".format(axis))
-
-            out.append(axis)
-
-        return out
 
     # ----------------------------------------------------------------
     # Attributes
@@ -988,20 +961,21 @@ TODO
     >>> f.roll('X', -3)
 
         '''
+        # TODODASK - allow multiple roll axes
+        
         axis = self.domain_axis(
             axis, key=True,
             default=ValueError(
-                "Can't roll: Bad axis specification: {!r}".format(axis)
+                f"Can't roll {self.__class__.__name__}. "
+                f"Bad axis specification: {axis!r}"
             )
         )
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if d.domain_axes[axis].get_size() <= 1:
-            return d
-
         # Roll the metadata constructs in-place
-        d._roll_constructs(axis, shift)
+        axes = d._parse_axes(axis)
+        d._roll_constructs(axes, shift)
 
         return d
 
@@ -1009,14 +983,8 @@ TODO
         '''Create a subspace of a domain construct.
 
     Creation of a new domain construct that spans a subspace of the
-    domain of an existing domain construct is achieved by identifying
+    domain of the existing domain construct is achieved by identifying
     indices based on the metadata constructs.
-
-    The subspacing operation also subspaces any metadata constructs of
-    the domain construct (e.g. coordinate metadata constructs) which
-    span any of the domain axis constructs that are affected. The new
-    domain construct is created with the same properties as the
-    original domain construct.
 
     Metadata constructs and the conditions on their data are defined
     by keyword parameters.
@@ -1024,7 +992,10 @@ TODO
     The subspace is defined by identifying indices based on the
     metadata constructs.
 
-    * Any domain axes that have not been identified remain unchanged.
+    The following beahviouts apply:
+
+    * Any domain axes that have not been identified are indexed with
+      `slice(None)`.
 
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
@@ -1266,26 +1237,28 @@ TODO    By default the order of the axes is reversed, but any ordering may
     >>> f.transpose(['time', -2, 'dim2'], inplace=True)
 
         '''
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        try:
-            axes = f._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError("Can't transpose domain: {}".format(error))
-
-        if axes is None or len(axes) != len(f.domain_axes):
+        d = _inplace_enabled_define_and_cleanup(self)        
+        
+        if axes is None:
             raise ValueError(
-                "Can't transpose domain: Must provide order for "
-                "all domain axes. Got: {}".format(axes)
+                f"Can't transpose {self.__class__.__name__}. "
+                f"Must provide an order for all axes. Got: {axes}"
             )
 
-        for key, construct in f.constructs.filter_by_data().items():
-            construct_axes = f.get_data_axes(key)
+        axes_in = axes
+        axes = d._parse_axes(axes_in)
+        
+        if len(axes) != len(d.domain_axes):
+            raise ValueError(
+                f"Can't transpose {self.__class__.__name__}. "
+                f"Must provide an order for all axes. Got: {axes_in}"
+            )
 
-            iaxes = [
-                construct_axes.index(axis) for axis in axes
-                if axis in construct_axes
-            ]
+        for key, construct in d.constructs.filter_by_data().items():
+            construct_axes = d.get_data_axes(key)
+
+            iaxes = [construct_axes.index(a)
+                     for a in axes if a in construct_axes]
 
             # Transpose the construct
             construct.transpose(iaxes, inplace=True)

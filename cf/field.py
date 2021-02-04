@@ -892,6 +892,54 @@ class Field(mixin.FieldDomain,
 
         return True
 
+    def _axis_positions(self, axes, parse=True, return_axes=False):
+        """Convert the given axes to their positions in the data.
+
+        Any domain axes that are not spanned by the data are ignored.
+
+        If there is no data then an empty list is returned.
+
+        .. versionadded:: 3.TODO.0
+
+        :Parameters:
+        
+            axes: 
+                The axes to be converted. See `_parse_axes` for
+                details.
+
+            parse: `bool`, optional
+                If False then do not parse the *axes*. Parsing should
+                always occur unless the given *axes* are the output of
+                a previous call to `parse_axes`. By default *axes* is
+                parsed by `_parse_axes`.
+
+            return_axes: `bool`, optional
+                If True then also return the domain axis identifiers
+                corresponding to the positions.
+
+        :Returns:
+        
+            `list` [, `list`]
+                The domain axis identifiers. If *return_axes* is True
+                then also return the corresponding domain axis
+                identifiers.
+
+        """
+        data_axes = self.get_data_axes(default=None)
+        if data_axes is None:
+            return []
+
+        if parse:
+            axes = self._parse_axes(axes)
+            
+        axes = [a for a in axes if a in data_axes]
+        positions = [data_axes.index(a) for a in axes]
+
+        if return_axes:
+            return positions, axes
+
+        return positions
+
     def _binary_operation_old(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
     data array with metadata-aware broadcasting.
@@ -5841,6 +5889,7 @@ class Field(mixin.FieldDomain,
 
         return w
 
+    
     def radius(self, default=None):
         '''Return the radius used for calculating cell areas in spherical
     polar coordinates.
@@ -9978,7 +10027,7 @@ class Field(mixin.FieldDomain,
                 # REMOVE all 2+ dimensional auxiliary coordinates
                 # which span this axis
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
-                for key in c.filter_by_axis('or', axis):
+                for key, value in c.filter_by_axis('or', axis).items():
                     logger.info(
                         '    Removing {!r}'.format(value)
                     )  # pragma: no cover
@@ -11567,20 +11616,33 @@ class Field(mixin.FieldDomain,
     def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the field construct.
 
-    The subspace is defined by identifying indices based on the
-    metadata constructs.
+    The indices returned by this method be used to create the
+    subspace by indexing the original field construct with them.
 
-    Metadata constructs are selected conditions are specified on their
-    data. Indices for subspacing are then automatically inferred from
-    where the conditions are met.
+    The indices which define a subspace of the domain of the existing
+    field construct are based on the metadata constructs.
 
-    The returned tuple of indices may be used to created a subspace by
-    indexing the original field construct with them.
+    Indices for subspacing are then inferred from where
+    the conditions on the metadata construicts are met.
 
-    Metadata constructs and the conditions on their data are defined
-    by keyword parameters.
+    Indices are defined by keyword parameters to the subspace
+    method. A keyword name is an identity of a metadata construct, and
+    the keyword value provides a condition on the metadata construct's
+    data for inferring the indices that apply to the dimension (or
+    dimensions) spanned by the metadata construct’s data. Indices are
+    created that select every location for which the metadata
+    construct’s data satisfies the condition. 
 
-    * Any domain axes that have not been identified remain unchanged.
+    Explicit indices (such as a `slice` object, or a list of integers)
+    may also be assigned to a keyword parameter. In this case the data
+    of the identified metadata construct is ignored and given index
+    simply selects elements of the axis. Keywords may identify domain
+    axis constructs for this purpose, as they have no data.
+
+    The following beahviours apply:
+
+    * Any domain axes that have not been identified are indexed with
+      `slice(None)`.
 
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
@@ -11588,28 +11650,30 @@ class Field(mixin.FieldDomain,
     * Subspace criteria may be provided for size 1 domain axes that
       are not spanned by the field construct's data.
 
-    * Explicit indices may also be assigned to a domain axis
-      identified by a metadata construct, with either a Python `slice`
-      object, or a sequence of integers or booleans.
-
     * For a dimension that is cyclic, a subspace defined by a slice or
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
     * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
-      the positional arguments), but because the indices may not be
-      acting along orthogonal dimensions, some missing data may still
-      need to be inserted into the field construct's data.
+      the *mode* parameter), but because the indices may not be acting
+      along orthogonal dimensions, some missing data may still need to
+      be inserted into the field construct's data.
 
-    **Auxiliary masks**
+    **Masking unwanted regions**
 
-    When creating an actual subspace with the indices, if the first
-    element of the tuple of indices is ``'mask'`` then the extent of
-    the subspace is defined only by the values of elements three and
-    onwards. In this case the second element contains an "auxiliary"
-    data mask that is applied to the subspace after its initial
-    creation, in order to set unselected locations to missing data.
+    The subspace is defined by a standard index object (such as a
+    `slice` object, or a list of integers) per domain axis. However,
+    the requested subspace may correspond to a curvilinear region or
+    an unstructured selection of points (see the *mode* parameter). In
+    these cases, an auxiliary mask is returned that should be applied
+    to the subpsace defined by the standard indices. The presence of
+    an auxiliary mask is defined by the first element of the returned
+    `tuple` od indices being the string ``"mask"``, in which case the
+    second element will be a `tuple` of `Data` objects, each of which
+    contains a mask should be applied to the subspaced data. The
+    `subspace` and `__getitem__` methods automatically apply such a
+    mask.
 
     .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
 
@@ -11746,7 +11810,7 @@ class Field(mixin.FieldDomain,
         if len(mode) > 1:
             raise ValueError(
                 "Can't provide more than one positional argument. "
-                "Got: {}".format(', '.join(repr(x) for x in mode))
+                f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
         if not mode or 'compress' in mode:
@@ -11757,7 +11821,7 @@ class Field(mixin.FieldDomain,
             mode = 'full'
         else:
             raise ValueError(
-                "Invalid value for 'mode' argument: {!r}".format(mode[0])
+                f"Invalid value for 'mode' argument: {mode[0]!r}"
             )
 
         data_axes = self.get_data_axes()
@@ -11769,7 +11833,7 @@ class Field(mixin.FieldDomain,
         domain_indices = self._indices(mode, data_axes, True, **kwargs)
 
         # Initialise the output indices with any auxiliary masks
-        auxiliary_mask = domain_indices['auxiliary_mask']
+        auxiliary_mask = domain_indices['mask']
         if auxiliary_mask:
             # Ensure that each auxiliary mask is broadcastable to the
             # data
@@ -13305,25 +13369,18 @@ class Field(mixin.FieldDomain,
             )  # pragma: no cover
 
         if axes is None:
-            # Flip all the axes
-            axes = set(self.get_data_axes(default=()))
-            iaxes = list(range(self.ndim))
+            axes = self.get_data_axes(default=())
+            iaxes = list(range(len(axes)))
         else:
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-
-            axes = set([self.domain_axis(axis, key=True) for axis in axes])
-
-            data_axes = self.get_data_axes(default=())
-            iaxes = [data_axes.index(axis) for axis in
-                     axes.intersection(self.get_data_axes())]
-
+            axes = self._parse_axes(axes)
+            iaxes = self._axis_positions(axes, parse=False)
+            
         # Flip the requested axes in the field's data array
         f = _inplace_enabled_define_and_cleanup(self)
         super(Field, f).flip(iaxes, inplace=True)
 
         # Flip the domain and field ancillaries
-        f.constructs._flip(axes)
+        f.constructs._flip(set(axes))
 
         return f
 
@@ -13649,16 +13706,11 @@ class Field(mixin.FieldDomain,
 
         if axes is None:
             all_axes = self.domain_axes
-            axes = [axis for axis in data_axes
-                    if all_axes[axis].get_size(None) == 1]
+            axes = [a for a in data_axes
+                    if all_axes[a].get_size(None) == 1]
+            iaxes = self._axis_positions(axes, parse=False)
         else:
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-
-            axes = [self.domain_axis(x, key=True) for x in axes]
-            axes = set(axes).intersection(data_axes)
-
-        iaxes = [data_axes.index(axis) for axis in axes]
+            iaxes = self._axis_positions(axes)
 
         # Squeeze the field's data array
         return super().squeeze(iaxes, inplace=inplace)
@@ -13800,18 +13852,8 @@ class Field(mixin.FieldDomain,
         if axes is None:
             iaxes = list(range(self.ndim - 1, -1, -1))
         else:
-            data_axes = self.get_data_axes(default=())
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-            axes2 = [self.domain_axis(x, key=True) for x in axes]
-            if sorted(axes2) != sorted(data_axes):
-                raise ValueError(
-                    "Can't transpose {}: Bad axis specification: {!r}".format(
-                        self.__class__.__name__, axes)
-                )
-
-            iaxes = [data_axes.index(axis) for axis in axes2]
-
+            iaxes = self._axis_positions(axes)
+           
         # Transpose the field's data array
         return super().transpose(iaxes, constructs=constructs,
                                  inplace=inplace)
@@ -15120,15 +15162,11 @@ TODO
 
         if axes is None:
             axes = data_axes[:]
-            iaxes = list(range(self.ndim))
+            iaxes = list(range(len(data_axes)))
         else:
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-
-            axes = set([self.domain_axis(axis, key=True) for axis in axes])
-            iaxes = [data_axes.index(axis) for axis in
-                     axes.intersection(self.get_data_axes())]
-
+            axes = self._parse_axes(axes)
+            iaxes = self._axis_positions(axes, parse=False)
+            
         data = self.data.percentile(ranks, axes=iaxes,
                                     interpolation=interpolation,
                                     squeeze=False, mtol=mtol)
@@ -15389,41 +15427,34 @@ TODO
      None)
 
         '''
+        # TODODASK - check dask's flattening behaviour against that
+        #            defined in the docstring.
+        
         f = _inplace_enabled_define_and_cleanup(self)
 
         data_axes = self.get_data_axes()
-
         if axes is None:
+            iaxes = list(range(len(data_axes)))
             axes = data_axes
         else:
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
+            iaxes, axes = self._axis_positions(axes, return_axes=True)
+            iaxes = sorted(iaxes)
 
-            axes = [self.domain_axis(x, key=True) for x in axes]
-            axes = set(axes).intersection(data_axes)
-
-        # Note that it is important to sort the iaxes, as we rely on
-        # the first iaxis in the list being the left-most flattened
-        # axis
-        iaxes = sorted([data_axes.index(axis) for axis in axes])
-
+        # Note that it is important that the iaxes are ascending
+        # sequence, as we rely on the first iaxis in the list being
+        # the left-most flattened axis
+        
         if not len(iaxes):
-            if inplace:
-                f = None
             if return_axis:
                 return f, None
+            
             return f
 
         if len(iaxes) == 1:
-            if inplace:
-                f = None
             if return_axis:
                 return f, tuple(axes)[0]
+            
             return f
-
-#        # Make sure that the metadata constructs have the same
-#        # relative axis order as the data (pre-flattening)
-#        f.transpose(f.get_data_axes(), constructs=True, inplace=True)
 
         # Create the new data axes
         shape = f.shape
@@ -15492,7 +15523,8 @@ TODO
         for key, c in f.constructs.filter_by_axis('and', *axes).items():
             c_axes = f.get_data_axes(key)
             c_iaxes = sorted(
-                [c_axes.index(axis) for axis in axes if axis in c_axes])
+                [c_axes.index(axis) for axis in axes if axis in c_axes]
+            )
             c.flatten(c_iaxes, inplace=True)
             new_data_axes = [axis for i, axis in enumerate(c_axes)
                              if i not in c_iaxes]
@@ -15550,15 +15582,43 @@ TODO
 
     **Examples:**
 
-    Roll the data of the "X" axis one elements to the right:
+    Roll the field along its "X" axis two elements to the right:
 
-    >>> f.roll('X', 1)
-
-    Roll the data of the "X" axis three elements to the left:
-
-    >>> f.roll('X', -3)
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g = f.roll("X", 2)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [-67.5, ..., 247.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> print(g.array)
+    print(g.array)
+    [[0.024 0.029 0.007 0.034 0.003 0.014 0.018 0.037]
+     [0.006 0.066 0.023 0.036 0.045 0.062 0.046 0.073]
+     [0.057 0.011 0.11  0.131 0.124 0.146 0.087 0.103]
+     [0.009 0.017 0.029 0.059 0.039 0.07  0.058 0.072]
+     [0.034 0.013 0.006 0.036 0.019 0.035 0.018 0.037]]
 
         '''
+        # TODODASK - allow multiple roll axes
+        
         axis = self.domain_axis(
             axis, key=True,
             default=ValueError(
@@ -15568,19 +15628,20 @@ TODO
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if f.domain_axes[axis].get_size() <= 1:
-            return f
-
+        axis = f._parse_axes(axis)
+        
         # Roll the metadata constructs in-place
-        f._roll_constructs(axis, shift)
+        shift = f._roll_constructs(axis, shift)
 
-        try:
-            iaxis = self.get_data_axes().index(axis)
-        except ValueError:
-            return f
-
-        super(Field, f).roll(iaxis, shift, inplace=True)
-
+        iaxes = self._axis_positions(axis, parse=False)            
+        if iaxes:            
+            # TODODASK - remove these two lines when multiaxis rolls
+            #            are allowed at v4.0.0
+            iaxis = iaxes[0]
+            shift = shift[0]
+            
+            super(Field, f).roll(iaxis, shift, inplace=True)
+        
         return f
 
     @_deprecated_kwarg_check('i')
