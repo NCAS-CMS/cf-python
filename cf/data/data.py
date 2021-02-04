@@ -3930,13 +3930,13 @@ place.
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         '''Change the internal representation of data array elements from
-    numeric reference times to datatime-like objects.
+    numeric reference times to datetime-like objects.
 
     If the calendar has not been set then the default CF calendar will
     be used and the units' and the `calendar` attribute will be
     updated accordingly.
 
-    If the internal representations are already datatime-like objects
+    If the internal representations are already datetime-like objects
     then no change occurs.
 
     .. versionadded:: 1.3
@@ -3987,14 +3987,15 @@ place.
         return d
 
     def _isdatetime(self):
-        '''TODO
+        '''True if the internal representation is a datetime-like object.
+
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
 
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         '''Change the internal representation of data array elements from
-    datatime-like objects to numeric reference times.
+    datetime-like objects to numeric reference times.
 
     If the calendar has not been set then the default CF calendar will
     be used and the units' and the `calendar` attribute will be
@@ -4052,7 +4053,7 @@ place.
         return d
 
     def _combined_units(self, data1, method, inplace):
-        '''TODO
+        '''Combines by given method the data's units with other units.
 
     :Parameters:
 
@@ -4890,7 +4891,7 @@ place.
             return self
 
     def __query_set__(self, values):
-        '''TODO
+        '''Implements the “member of set” condition.
 
         '''
         i = iter(values)
@@ -4924,7 +4925,8 @@ place.
 #        return new
 
     def __query_wi__(self, value):
-        '''TODO
+        '''Implements the “within a range” condition.
+
         '''
         return (self >= value[0]) & (self <= value[1])
 
@@ -4944,7 +4946,7 @@ place.
 #        return new
 
     def __query_wo__(self, value):
-        '''TODO
+        '''Implements the “without a range” condition.
 
         '''
         return (self < value[0]) | (self > value[1])
@@ -7022,7 +7024,7 @@ dimensions.
 
     @property
     def _axes(self):
-        '''Storage for the axis names.
+        '''Storage for the axes names.
 
         '''
         return self._custom['_axes']
@@ -7035,7 +7037,11 @@ dimensions.
 
     @property
     def _all_axes(self):
-        '''Storage for TODO. Must be `None` or `tuple`.
+        '''Storage for the full collection of axes names.
+
+    :Returns:
+
+        `None` or `tuple`.
 
         '''
         return self._custom['_all_axes']
@@ -7393,7 +7399,6 @@ False
     >>> d.ndim
     1
 
-
     >>> d = cf.Data(3)
     >>> d.ndim
     0
@@ -7403,7 +7408,7 @@ False
 
     @property
     def _pmaxes(self):
-        '''TODO
+        '''The axes of the partition matrix.
 
         '''
         return self.partitions.axes
