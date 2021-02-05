@@ -72,8 +72,8 @@ class Constructs(cfdm.Constructs):
     :Parameters:
 
         axes: sequence of `str`
-            Select the domain axes to flip, defined by there construct
-            keys. The sequnce may be empty.
+            Select the domain axes to flip, defined by the domain axis
+            identifiers. The sequence may be empty.
 
     :Returns:
 
@@ -90,7 +90,6 @@ class Constructs(cfdm.Constructs):
                 iaxes = [construct_axes.index(axis) for axis in
                          construct_flip_axes]
                 construct.flip(iaxes, inplace=True)
-        # --- End: for
 
     # ----------------------------------------------------------------
     # Methods
@@ -110,6 +109,8 @@ class Constructs(cfdm.Constructs):
     >>> c.close()
 
         '''
+        # TODODASK - is this method still needed?
+        
         for construct in self.filter_by_data().values():
             construct.close()
 
@@ -190,9 +191,7 @@ class Constructs(cfdm.Constructs):
         identities = list(identities)
         for n, identity in enumerate(identities):
             if identity in self:
-                identities[n] = 'key%'+identity
-        # --- End: for
+                identities[n] = f"key%{identity}"
 
         return super().filter_by_identity(*identities)
 
-# --- End: class

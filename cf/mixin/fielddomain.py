@@ -488,6 +488,13 @@ class FieldDomain:
             else:
                 create_mask = False
 
+            # TODODASK - if we have 2 list of integers then we need to
+            #             apply different auxiliary masks (if any)
+            #             after different __getitems__. SCRUB THAT! if
+            #             we have an auxiliary mask, then by
+            #             definition we do _not_ have a list(s) of
+            #             integers
+            
             # --------------------------------------------------------
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
@@ -625,12 +632,9 @@ class FieldDomain:
         :Parameters:
 
             axis:
-                The cyclic axis to be rolled, defined by that which
-                would be selected by passing the given axis
-                description to a call of the construct's `domain_axis`
-                method. For example, for a value of ``'X'``, the
-                domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
+                The cyclic axis to be anchored.
+
+                {{domain axis selection}}
 
             value:
                 Anchor the dimension coordinate values for the

@@ -903,9 +903,10 @@ class Field(mixin.FieldDomain,
 
         :Parameters:
         
-            axes: 
-                The axes to be converted. See `_parse_axes` for
-                details.
+            axes: (sequence of) `str` or `int`
+                The axes to be converted.
+ 
+                {{domain axis selection}}
 
             parse: `bool`, optional
                 If False then do not parse the *axes*. Parsing should
@@ -2593,6 +2594,12 @@ class Field(mixin.FieldDomain,
         item: metadata construct
 
         axes: (sequence of) `str or `int`, optional
+
+            A domain axis is identified by that which would be
+            selected by passing a given axis description to a call of
+            the `domain_axis` method. For example, a value of ``'X'``
+            would select the domain axis construct returned by
+            ``f.domain_axis('X')``.
 
         allow_scalar: `bool`, optional
 
@@ -6059,25 +6066,13 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of
+            Select the domain axis construct.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity.
-
-              {{domain axis selection identity}}
-
-            * The key of a domain axis construct.
-
-            * The integer position of the domain axis construct in the
-              field construct's data.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.]
+            If *identity is `None` (the default) then the unique
+            domain axis construct is selected when there is only one
+            of them.
 
             *Parameter example:*
               ``identity='long_name=Latitude'``
@@ -6239,25 +6234,13 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity.
-
-              {{domain axis selection identity}}
-
-            * The key of a domain axis construct.
-
-            * The integer position of the domain axis construct in the
-              field construct's data.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.]
+            If *identity is `None` (the default) then the unique
+            domain axis construct is selected when there is only one
+            of them.
 
             *Parameter example:*
               ``identity='long_name=Latitude'``
@@ -6585,6 +6568,8 @@ class Field(mixin.FieldDomain,
             then setting the *axes* parameter is required so that the
             broadcasting can be inferred, otherwise setting the *axes*
             is not required.
+ 
+            {{domain axis selection}}
 
             *Parameter example:*
               ``axes='T'``
@@ -11542,11 +11527,9 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         axis:
-            Select the domain axis to, generally defined by that which
-            would be selected by passing the given axis description to
-            a call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            Select the domain axis to insert.
+
+            {{domain axis selection}}
 
             If *axis* is `None` then a new domain axis construct will
             created for the inserted dimension.
@@ -11629,7 +11612,7 @@ class Field(mixin.FieldDomain,
     method. A keyword name is an identity of a metadata construct, and
     the keyword value provides a condition on the metadata construct's
     data for inferring the indices that apply to the dimension (or
-    dimensions) spanned by the metadata construct’s data. Indices are
+    dimensions) spanned by the metadata construct's data. Indices are
     created that select every location for which the metadata
     construct’s data satisfies the condition. 
 
@@ -11639,7 +11622,7 @@ class Field(mixin.FieldDomain,
     simply selects elements of the axis. Keywords may identify domain
     axis constructs for this purpose, as they have no data.
 
-    The following beahviours apply:
+    The following behaviours apply:
 
     * Any domain axes that have not been identified are indexed with
       `slice(None)`.
@@ -11885,9 +11868,7 @@ class Field(mixin.FieldDomain,
             an attempt will be made to assign existing domain axis
             constructs to the data.
 
-            The contents of the *axes* parameter is mapped to domain
-            axis constructs by translating each element into a domain
-            axis construct key via the `domain_axis` method.
+            {{domain axis selection}}
 
             *Parameter example:*
               ``axes='domainaxis1'``
@@ -12165,29 +12146,10 @@ class Field(mixin.FieldDomain,
 
     :Parameters:
 
-        identities: optional
-            Identify the metadata constructs by one or more of
+        identities: 
+            Identify the metadata constructs.
 
-            * A metadata construct identity.
-
-              {{construct selection identity}}
-
-            * The key of a metadata construct
-
-            If a cell method construct identity is given (such as
-            ``'method:mean'``) then it will only be compared with the
-            most recently applied cell method operation.
-
-            Alternatively, one or more cell method constucts may be
-            identified in a single string with a CF-netCDF cell
-            methods-like syntax for describing both the collapse
-            dimensions, the collapse method, and any cell method
-            construct qualifiers. If N cell methods are described in
-            this way then they will collectively identify the N most
-            recently applied cell method operations. For example,
-            ``'T: maximum within years T: mean over years'`` will be
-            compared with the most two most recently applied cell
-            method operations.
+            {{construct selection}}
 
             *Parameter example:*
               ``identity='latitude'``
@@ -12215,6 +12177,23 @@ class Field(mixin.FieldDomain,
 
             *Parameter example:*
               ``'domainancillary2', 'longitude'``
+
+            **Cell methods**
+
+            If a cell method construct identity is given (such as
+            ``'method:mean'``) then it will only be compared with the
+            most recently applied cell method operation.
+
+            Alternatively, one or more cell method constucts may be
+            identified in a single string with a CF-netCDF cell
+            methods-like syntax for describing both the collapse
+            dimensions, the collapse method, and any cell method
+            construct qualifiers. If N cell methods are described in
+            this way then they will collectively identify the N most
+            recently applied cell method operations. For example,
+            ``'T: maximum within years T: mean over years'`` will be
+            compared with the most two most recently applied cell
+            method operations.
 
             *Parameter example:*
               ``'area: mean T: maximum'``
@@ -12461,11 +12440,9 @@ class Field(mixin.FieldDomain,
 
         axis: `str` or `int`
             Select the domain axis over which the filter is to be
-            applied, defined by that which would be selected by
-            passing the given axis description to a call of the field
-            construct's `domain_axis` method. For example, for a value
-            of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            applied.
+
+            {{domain axis selection}}
 
         weights: optional
             Specify the weights for the moving window. The weights
@@ -12817,11 +12794,9 @@ class Field(mixin.FieldDomain,
 
         axis:
             Select the domain axis over which the filter is to be
-            applied, defined by that which would be selected by
-            passing the given axis description to a call of the field
-            construct's `domain_axis` method. For example, for a value
-            of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            applied.
+
+            {{domain axis selection}}
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
@@ -13111,16 +13086,12 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the metadata construct by one of:
+            Select the metadata construct.
 
-            * The identity of a metadata construct.
+            {{construct selection}}
 
-              {{construct selection identity}}
-
-            * The key of a metadata construct
-
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             *Parameter example:*
               ``identity='latitude'``
@@ -13187,33 +13158,40 @@ class Field(mixin.FieldDomain,
     def cumsum(self, axis, masked_as_zero=False, coordinate=None,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
+
     The cell bounds of the axis are updated to describe the range over
     which the sums apply, and a new "sum" cell method construct is
     added to the resulting field construct.
+
     .. versionadded:: 3.0.0
+
     .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
                  `sum`
+
     :Parameters:
+
         axis:
             Select the domain axis over which the cumulative sums are
-            to be calculated, defined by that which would be selected
-            by passing the given axis description to a call of the
-            field construct's `domain_axis` method. For example, for a
-            value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            to be calculated.
+
+            {{domain axis selection}
+
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
             calculating the cumulative sum. By default the output data
             will be masked at the same locations as the original data.
+
             .. note:: Sums produced entirely from masked elements will
                       always result in masked values in the output
                       data, regardless of the setting of
                       *masked_as_zero*.
+
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined, relative to the new cell bounds. By default they
             are unchanged from the original field construct. The
             *coordinate* parameter may be one of:
+
             ===============  =========================================
             *coordinate*     Description
             ===============  =========================================
@@ -13226,14 +13204,20 @@ class Field(mixin.FieldDomain,
             ``'maximum'``    An output coordinate is the maximum of
                              its output coordinate bounds.
             ===============  =========================================
+
             *Parameter Example:*
               ``coordinate='maximum'``
+
         {{inplace: `bool`, optional}}
+
     :Returns:
+
         `Field` or `None`
             The field construct with the cumulatively summed axis, or
             `None` if the operation was in-place.
+
     **Examples:**
+
     >>> f = cf.example_field(2)
     >>> print(f)
     Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -13276,6 +13260,7 @@ class Field(mixin.FieldDomain,
     >>> g = f.cumsum('latitude', masked_as_zero=True)
     >>> g = f.cumsum('latitude', coordinate='mid_range')
     >>> f.cumsum('latitude', inplace=True)
+
         '''
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
@@ -13333,12 +13318,9 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         axes: (sequence of) `str` or `int`, optional
-            Select the domain axes to flip, defined by the domain axes
-            that would be selected by passing each given axis
-            description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Select the domain axes to flip.
+
+            {{domain axis selction}}
 
             If no axes are provided then all axes are flipped.
 
@@ -13383,139 +13365,6 @@ class Field(mixin.FieldDomain,
         f.constructs._flip(set(axes))
 
         return f
-
-#    @_inplace_enabled(default=False)
-#    def anchor(self, axis, value, inplace=False, dry_run=False):
-#        '''Roll a cyclic axis so that the given value lies in the first
-#    coordinate cell.
-#
-#    A unique axis is selected with the *axes* and *kwargs* parameters.
-#
-#    .. versionadded:: 1.0
-#
-#    .. seealso:: `axis`, `cyclic`, `iscyclic`, `period`, `roll`
-#
-#    :Parameters:
-#
-#        axis:
-#            The cyclic axis to be rolled, defined by that which would
-#            be selected by passing the given axis description to a
-#            call of the field construct's `domain_axis` method. For
-#            example, for a value of ``'X'``, the domain axis construct
-#            returned by ``f.domain_axis('X')`` is selected.
-#
-#        value:
-#            Anchor the dimension coordinate values for the selected
-#            cyclic axis to the *value*. May be any numeric scalar
-#            object that can be converted to a `Data` object (which
-#            includes `numpy` and `Data` objects). If *value* has units
-#            then they must be compatible with those of the dimension
-#            coordinates, otherwise it is assumed to have the same
-#            units as the dimension coordinates. The coordinate values
-#            are transformed so that *value* is "equal to or just
-#            before" the new first coordinate value. More specifically:
-#
-#              * Increasing dimension coordinates with positive period,
-#                P, are transformed so that *value* lies in the
-#                half-open range (L-P, F], where F and L are the
-#                transformed first and last coordinate values,
-#                respectively.
-#
-#        ..
-#
-#              * Decreasing dimension coordinates with positive period,
-#                P, are transformed so that *value* lies in the
-#                half-open range (L+P, F], where F and L are the
-#                transformed first and last coordinate values,
-#                respectively.
-#
-#            *Parameter example:*
-#              If the original dimension coordinates are ``0, 5, ...,
-#              355`` (evenly spaced) and the period is ``360`` then
-#              ``value=0`` implies transformed coordinates of ``0, 5,
-#              ..., 355``; ``value=-12`` implies transformed
-#              coordinates of ``-10, -5, ..., 345``; ``value=380``
-#              implies transformed coordinates of ``380, 385, ...,
-#              715``.
-#
-#            *Parameter example:*
-#              If the original dimension coordinates are ``355, 350,
-#              ..., 0`` (evenly spaced) and the period is ``360`` then
-#              ``value=355`` implies transformed coordinates of ``355,
-#              350, ..., 0``; ``value=0`` implies transformed
-#              coordinates of ``0, -5, ..., -355``; ``value=392``
-#              implies transformed coordinates of ``390, 385, ...,
-#              30``.
-#
-#        {{inplace: `bool`, optional}}
-#
-#        dry_run: `bool`, optional
-#            Return a dictionary of parameters which describe the
-#            anchoring process. The field is not changed, even if *i*
-#            is True.
-#
-#    :Returns:
-#
-#        `{{class}}` or `None` or `dict`
-#
-#    **Examples:**
-#
-#    >>> f.iscyclic('X')
-#    True
-#    >>> f.dimension_coordinate('X').data
-#    <CF Data(8): [0, ..., 315] degrees_east> TODO
-#    >>> print(f.dimension_coordinate('X').array)
-#    [  0  45  90 135 180 225 270 315]
-#    >>> g = f.anchor('X', 230)
-#    >>> print(g.dimension_coordinate('X').array)
-#    [270 315   0  45  90 135 180 225]
-#    >>> g = f.anchor('X', cf.Data(590, 'degreesE'))
-#    >>> print(g.dimension_coordinate('X').array)
-#    [630 675 360 405 450 495 540 585]
-#    >>> g = f.anchor('X', cf.Data(-490, 'degreesE'))
-#    >>> print(g.dimension_coordinate('X').array)
-#    [-450 -405 -720 -675 -630 -585 -540 -495]
-#
-#    >>> f.iscyclic('X')
-#    True
-#    >>> f.dimension_coordinate('X').data
-#    <CF Data(8): [0.0, ..., 357.1875] degrees_east>
-#    >>> f.anchor('X', 10000).dimension_coordinate('X').data
-#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-#    >>> d = f.anchor('X', 10000, dry_run=True)
-#    >>> d
-#    {'axis': 'domainaxis2',
-#     'nperiod': <CF Data(1): [10080.0] 0.0174532925199433 rad>,
-#     'roll': 28}
-#    >>> (f.roll(d['axis'], d['roll']).dimension_coordinate(
-#    ...     d['axis']) + d['nperiod']).data
-#    <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
-#
-#        '''
-#        axis = self.domain_axis(
-#            axis, key=True,
-#            default=ValueError(
-#                "Can't roll: Bad axis specification: {!r}".format(axis)
-#            )
-#        )
-#
-#        f = _inplace_enabled_define_and_cleanup(self)
-#
-#        # Anchor the metadata constructs in-place
-#        out = f.constructs._anchor(axis, value, dry_run=dry_run)
-#
-#        if dry_run:
-#            return out
-#
-#        try:
-#            iaxis = self.get_data_axes().index(axis)
-#        except ValueError:
-#            return f
-#
-#        # Roll the data
-#        super(Field, f).roll(iaxis, out['roll'], inplace=True)
-#
-#        return f
 
     def argmax(self, axis=None):
         '''Return the indices of the maximum values along an axis.
@@ -13668,12 +13517,9 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         axes: (sequence of) `str` or `int`, optional
-            Select the domain axes to squeeze, defined by the domain
-            axes that would be selected by passing each given axis
-            description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Select the domain axes to squeeze.
+
+            {{domain axis selection}}
 
             If no axes are provided then all size 1 axes are squeezed.
 
@@ -13724,9 +13570,10 @@ class Field(mixin.FieldDomain,
 
     :Parameters:
 
-        axis0, axis1: TODO
-            Select the axes to swap. Each axis is identified by its
-            original integer position.
+        axis0, axis1:
+            Select the axes to swap.
+
+            {{domain axis selection}}
 
         {{inplace: `bool`, optional}}
 
@@ -13798,12 +13645,9 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         axes: (sequence of) `str` or `int`, optional
-            Select the domain axis order, defined by the domain axes
-            that would be selected by passing each given axis
-            description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Select the new domain axis order.
+
+            {{domain axis selection}}
 
             Each dimension of the field construct's data must be
             provided, or if no axes are specified then the axis order
@@ -13817,12 +13661,12 @@ class Field(mixin.FieldDomain,
 
         {{inplace: `bool`, optional}}
 
-        items: deprecated at version 3.0.0
-            Use the *constructs* parameter instead.
-
         {{i: deprecated at version 3.0.0}}
 
         kwargs: deprecated at version 3.0.0
+
+        items: deprecated at version 3.0.0
+            Use the *constructs* parameter instead.
 
     :Returns:
 
@@ -13973,21 +13817,18 @@ class Field(mixin.FieldDomain,
 
     :Parameters:
 
-        identity: optional
-            Select the cell method construct by:
+        identity: `str` or `int`, optional
+            Select the cell method construct.
 
-            * The identity of a cell method construct.
+            {{construct selection}}
 
-              {{construct selection identity}}
+            If an integer provided then this identifies a unique cell
+            method that applies to the domain axis construct that has
+            thie given position in the field construct's data.
 
-            * The key of a cell method construct
-
-            * The integer position, in the field construct's data, of
-              a domain axis construct that a unique cell method
-              construct applies to.
-
-            * `None`. This is the default, which selects the cell
-              method construct when there is only one of them.
+            If *identity is `None` (the default) then the unique cell
+            method construct is selected when there is only one of
+            them.
 
             *Parameter example:*
               ``identity='method:variance'``
@@ -14054,16 +13895,12 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the cell measure construct by one of:
+            Select the field ancillary construct.
 
-            * The identity of a field ancillary construct.
+            {{construct identities}}
 
-              {{construct selection identity}}
-
-            * The key of a field ancillary construct
-
-            * `None`. This is the default, which selects the field
-              ancillary construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             *Parameter example:*
               ``identity='air_temperature'``
@@ -14129,28 +13966,23 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis construct.
 
             * An identity or key of a 1-d dimension or auxiliary
               coordinate construct that whose data spans the domain
               axis construct.
 
-              {{construct selection identity}}
+              {{construct selection}}
 
             * A domain axis construct identity
 
-              A domain axis construct has a number of string-valued
-              identities (defined by its `!identities` method) and is
-              selected if any of them match the *identity* parameter.
-              *identity* may be a string or a `Query` object that
-              equals one of a construct's identities; or a
-              `re.Pattern` object that matches one of a construct's
-              identities via `re.search`.
-
-            * The key of a domain axis construct.
+              {{domain axis identities}}
 
             * The integer position of the domain axis construct in the
               field construct's data.
+
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             * `None`. This is the default, which selects the domain
               axis construct when there is only one of them.
@@ -14215,18 +14047,13 @@ class Field(mixin.FieldDomain,
 
             * A domain axis construct identity
 
-              A domain axis construct has a number of string-valued
-              identities (defined by its `!identities` method) and is
-              selected if any of them match the *identity* parameter.
-              *identity* may be a string or a `Query` object that
-              equals one of a construct's identities; or a
-              `re.Pattern` object that matches one of a construct's
-              identities via `re.search`.
-
-            * The key of a domain axis construct.
+              {{domain axis identities}}
 
             * The integer position of the domain axis construct in the
               field construct's data.
+
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             * `None`. This is the default, which selects the domain
               axis construct when there is only one of them.
@@ -14316,31 +14143,12 @@ class Field(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis construct.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity
-
-              A domain axis construct has a number of string-valued
-              identities (defined by its `!identities` method) and is
-              selected if any of them match the *identity* parameter.
-              *identity* may be a string or a `Query` object that
-              equals one of a construct's identities; or a
-              `re.Pattern` object that matches one of a construct's
-              identities via `re.search`.
-
-            * The key of a domain axis construct.
-
-            * The integer position of the domain axis construct in the
-              field construct's data.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             *Parameter example:*
               ``identity='time'``
@@ -14560,14 +14368,12 @@ class Field(mixin.FieldDomain,
 
         identity: optional
             Select the construct for which to return the domain axis
-            constructs spanned by its data. By default, if *identity*
-            is `None`, the field construct is selected. May be one of
+            constructs spanned by its data.
 
-            * A metadata construct identity.
+            {{construct selection}}
 
-              {{construct selection identity}}
-
-            * The key of a metadata construct
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             *Parameter example:*
               ``identity='latitude'``
@@ -14603,17 +14409,37 @@ class Field(mixin.FieldDomain,
 
     **Examples:**
 
-    >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
-    >>> f.get_data_axes()
-    ('domainaxis0', 'domainaxis1')
-    >>> f.del_data_axes()
-    ('domainaxis0', 'domainaxis1')
-    >>> print(f.del_dataxes(None))
-    None
-    >>> print(f.get_data_axes(default=None))
-    None
-
-    TODO more examples with key=
+    >>> f = cf.example_field(7)
+    >>> print(f)
+    Field: eastward_wind (ncvar%ua)
+    -------------------------------
+    Data            : eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1
+    Cell methods    : time(3): mean
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+    >>> print(f.constructs)
+    Constructs:
+    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(4, 5) degrees_north>,
+     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(4, 5) degrees_east>,
+     'cellmethod0': <CF CellMethod: domainaxis0: mean>,
+     'coordinatereference0': <CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+     'dimensioncoordinate0': <CF DimensionCoordinate: time(3) days since 1979-1-1 gregorian>,
+     'dimensioncoordinate1': <CF DimensionCoordinate: air_pressure(1) hPa>,
+     'dimensioncoordinate2': <CF DimensionCoordinate: grid_latitude(4) degrees>,
+     'dimensioncoordinate3': <CF DimensionCoordinate: grid_longitude(5) degrees>,
+     'domainaxis0': <CF DomainAxis: size(3)>,
+     'domainaxis1': <CF DomainAxis: size(1)>,
+     'domainaxis2': <CF DomainAxis: size(4)>,
+     'domainaxis3': <CF DomainAxis: size(5)>}
+    >>> f.get_data_axes('grid_latitude')
+    ('domainaxis2',)
+    >>> f.get_data_axes('latitude')
+    ('domainaxis2', 'domainaxis3')
 
         '''
         if identity is None:
@@ -14680,7 +14506,7 @@ TODO
 
     :Parameters:
 
-        size:  `int` or `dict`
+        size: `int` or `dict`
             Specify the size of the halo for each axis.
 
             If *size* is a non-negative `int` then this is the halo
@@ -14718,12 +14544,9 @@ TODO
               'longitude': 2}``.
 
         axes: (sequence of) `str` or `int`, optional
-            Select the domain axes to be expanded, defined by the
-            domain axes that would be selected by passing each given
-            axis description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Select the domain axes to be expanded.
+
+            {{domain axis selection}}
 
             By default, or if *axes* is `None`, all axes that span the
             data are selected. No axes are expanded if *axes* is an
@@ -15010,11 +14833,9 @@ TODO
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes over which to calculate the
-            percentiles, defined by the domain axes that would be
-            selected by passing each given axis description to a call
-            of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            percentiles.
+
+            {{domain axis selection}}
 
             By default, or if *axes* is `None`, all axes are selected.
 
@@ -15318,12 +15139,9 @@ TODO
     :Parameters:
 
         axes: (sequence of) `str` or `int`, optional
-            Select the domain axes to be flattened, defined by the
-            domain axes that would be selected by passing each given
-            axis description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Select the domain axes to be flattened.
+
+            {{domain axis selection}}
 
             If no axes are provided then all axes spanned by the field
             construct's data are flattened.
@@ -15559,11 +15377,9 @@ TODO
     :Parameters:
 
         axis:
-            The cyclic axis to be rolled, defined by that which would
-            be selected by passing the given axis description to a
-            call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            The cyclic axis to be rolled.
+        
+            {{domain axis selection}}
 
         shift: `int`
             The number of places by which the selected cyclic axis is
@@ -17443,16 +17259,12 @@ TODO
     :Parameters:
 
         identity: optional
-            Select the construct by one of
+            Select the construct.
 
-            * A metadata construct identity.
+            {{construct selection}}
 
-              {{construct selection identity}}
-
-            * The key of a metadata construct
-
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            construct is selected when there is only one of them.
 
             *Parameter example:*
               ``identity='latitude'``
@@ -17556,25 +17368,13 @@ TODO
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis construct.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity.
-
-              {{domain axis selection identity}}
-
-            * The key of a domain axis construct.
-
-            * The integer position of the domain axis construct in the
-              field construct's data.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.]
+            If *identity is `None` (the default) then the unique
+            domain axis construct is selected when there is only one
+            of them.
 
             *Parameter example:*
               ``identity='long_name=Latitude'``
@@ -17666,11 +17466,9 @@ TODO
     :Parameters:
 
         axis:
-            The axis , defined by that which would be selected by
-            passing the given axis description to a call of the field
-            construct's `domain_axis` method. For example, for a value
-            of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            The axis.
+        
+            {{domain axis selection}}
 
         wrap: `bool`, optional
             If True then the boundary is wrapped around, otherwise the

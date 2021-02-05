@@ -82,7 +82,7 @@ installation and source code.
 __Conventions__ = 'CF-1.9'
 __author__ = 'David Hassell'
 __date__ = '2021-??-??'
-__version__ = '3.?.0'
+__version__ = '3.9.0'
 
 _requires = (
     'numpy',
