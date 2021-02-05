@@ -23,12 +23,8 @@ class DomainTest(unittest.TestCase):
         # cf.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cf.log_level('DISABLE')
-        self.test_only = []
 
     def test_Domain__repr__str__dump(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = self.d
 
         _ = repr(d)
@@ -39,9 +35,6 @@ class DomainTest(unittest.TestCase):
         d = cf.Domain(source='qwerty')
 
     def test_Domain_equals(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = self.d
         e = d.copy()
 
@@ -50,9 +43,6 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
     def test_Domain_flip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.d.copy()
 
         kwargs = {axis: slice(None, None, -1) for axis in f.domain_axes}
@@ -91,9 +81,6 @@ class DomainTest(unittest.TestCase):
                          {'long_name': 'qwerty', 'foo': 'bar'})
 
     def test_Domain_creation_commands(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for f in cf.example_fields():
             _ = f.domain.creation_commands()
 
@@ -112,9 +99,6 @@ class DomainTest(unittest.TestCase):
             _ = f.creation_commands(namespace=ns)
 
     def test_Domain_subspace(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.d.copy()
 
         x = f.dimension_coordinate('X')
@@ -276,7 +260,38 @@ class DomainTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f.subspace(grid_latitude=cf.contains(-23.2))
 
-# --- End: class
+    def test_Domain_transpose(self):
+        f = cf.example_field(1)
+        d = f.domain
+
+        axes = [re.compile('^atmos'), 'grid_latitude', 'X']
+
+        g = f.transpose(axes, constructs=True)
+        e = d.transpose(axes +  ['T'])
+        self.assertTrue(e.equals(g.domain))
+
+        self.assertIsNone(e.transpose(axes +  ['T'], inplace=True))
+        
+        with self.assertRaises(ValueError):
+            d.transpose(['X', 'Y'])
+
+        with self.assertRaises(ValueError):
+            d.transpose(['X', 'Y', 1])
+
+        with self.assertRaises(ValueError):
+            d.transpose([2, 1])
+
+        with self.assertRaises(ValueError):
+            d.transpose(['Y', 'Z'])
+
+        with self.assertRaises(ValueError):
+            d.transpose(['Y', 'Y', 'Z'])
+
+        with self.assertRaises(ValueError):
+            d.transpose(['Y', 'X', 'Z', 'Y'])
+
+        with self.assertRaises(ValueError):
+            d.transpose(['Y', 'X', 'Z', 1])
 
 
 if __name__ == '__main__':
