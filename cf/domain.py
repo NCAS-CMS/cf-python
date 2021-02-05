@@ -20,6 +20,7 @@ from .decorators import (_inplace_enabled,
 
 logger = logging.getLogger(__name__)
 
+_empty_set = set()
 
 class Domain(mixin.FieldDomain,
              mixin.Properties,
@@ -39,8 +40,7 @@ class Domain(mixin.FieldDomain,
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''TODO
-
+        '''
         '''
         instance = super().__new__(cls)
         instance._Data = Data
@@ -60,23 +60,17 @@ class Domain(mixin.FieldDomain,
     # ----------------------------------------------------------------
     @property
     def _cyclic(self):
-        '''Storage for axis cyclicity.
-
-        Do not change in-place.
-        '''
-        return self._custom.get('_cyclic', set())
+        '''Storage for axis cyclicity. Do not change the value in-place.'''
+        return self._custom.get('_cyclic', _empty_set)
 
     @_cyclic.setter
     def _cyclic(self, value):
+        '''value must be a set. Do not change the value in-place.'''
         self._custom['_cyclic'] = value
 
     @_cyclic.deleter
     def _cyclic(self):
-        self._custom['_cyclic'] = set()
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+        self._custom['_cyclic'] = _empty_set
 
     # ----------------------------------------------------------------
     # Attributes
@@ -85,13 +79,8 @@ class Domain(mixin.FieldDomain,
     def size(self):
         '''The number of locations in the domain.
 
-    If there are no domain axis constructs, any domain axis construct
-    has a size of 0, then a size of 0 is returned.
-
-    :Returns:
-
-        `int`
-            The size.
+    If there are no domain axis constructs, or any domain axis
+    construct has a size of 0, then the size is 0.
 
         '''
         domain_axes = self.domain_axes
@@ -101,7 +90,8 @@ class Domain(mixin.FieldDomain,
         return reduce(
             operator_mul,
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()],
-            1)
+            1
+        )
 
     # ----------------------------------------------------------------
     # Methods
@@ -121,6 +111,8 @@ class Domain(mixin.FieldDomain,
     >>> d.close()
 
         '''
+        # TODODASK - is this still needed?
+        
         self.constructs.close()
 
     def cyclic(self, identity=None, iscyclic=True, period=None):
@@ -133,22 +125,13 @@ class Domain(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis construct.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity.
-
-              {{domain axis selection identity}}
-
-            * The key of a domain axis construct.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            domain axis construct is selected when there is only one
+            of them.
 
             *Parameter example:*
               ``identity='time'``
@@ -209,9 +192,11 @@ class Domain(mixin.FieldDomain,
                     dim.period(period)
                 elif dim.period() is None:
                     raise ValueError(
-                        "A cyclic dimension coordinate must have a period")
+                        "A cyclic dimension coordinate must have a period"
+                    )
         # --- End: if
 
+        # Never change _cyclic in-place
         self._cyclic = cyclic.union((axis,))
 
         return old
@@ -230,22 +215,13 @@ class Domain(mixin.FieldDomain,
     :Parameters:
 
         identity: optional
-            Select the domain axis construct by one of:
+            Select the domain axis construct.
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+            {{domain axis selection}}
 
-              {{construct selection identity}}
-
-            * A domain axis construct identity.
-
-              {{domain axis selection identity}}
-
-            * The key of a domain axis construct.
-
-            * `None`. This is the default, which selects the domain
-              axis construct when there is only one of them.
+            If *identity is `None` (the default) then the unique
+            domain axis construct is selected when there is only one
+            of them.
 
             *Parameter example:*
               ``identity='time'``
@@ -273,8 +249,6 @@ class Domain(mixin.FieldDomain,
 
     **Examples:**
 
-    TODO
-
         '''
         domain_axes = self.domain_axes(identity)
 
@@ -289,14 +263,17 @@ class Domain(mixin.FieldDomain,
         if n_domain_axes > 1:
             return self._default(
                 default,
-                "No unique domain axis construct is identifiable from "
-                "{!r}".format(identity)
+                message="Mulitple domain axes found from identity "
+                f"{identity!r}"
             )
 
         # identity is not a unique domain axis construct identity
         da_key = self.domain_axis_key(identity, default=None)
         if da_key is None:
-            return self._default(default, message="TODO")
+            return self._default(
+                default,
+                message=f"No domain axis found from identity {identity!r}"
+            )
 
         if key:
             return da_key
@@ -305,20 +282,20 @@ class Domain(mixin.FieldDomain,
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):
-        '''Flip (reverse the direction of) axes of the field. TODO
+        '''Flip (reverse the direction of) domain axes.
 
-    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, TODO
-                 `squeeze`, `transpose`, `unsqueeze`
+    .. seealso:: `domain_axis`, `transpose`
 
     :Parameters:
 
         axes: (sequence of) `str` , optional
+            Select the domain axes to flip.
 
-            Select the domain axes to flip, defined by the domain axes
-            that would be selected by passing each given axis
-            description to a call of the `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            A domain axis is identified by that which would be
+            selected by passing a given axis description to a call of
+            the `domain_axis` method. For example, a value of ``'X'``
+            would select the domain axis construct returned by
+            ``f.domain_axis('X')``.
 
             If no axes are provided then all axes are flipped.
 
@@ -327,29 +304,43 @@ class Domain(mixin.FieldDomain,
     :Returns:
 
         `Domain` or `None`
-            The construct with flipped axes, or `None` if the
-            operation was in-place.
+            The domain with flipped axes, or `None` if the operation
+            was in-place.
 
     **Examples:**
 
-    >>> g = f.flip()
-    >>> g = f.flip('time')
-    >>> g = f.flip(1)
-    >>> g = f.flip(['time', 1, 'dim2'])
-    >>> f.flip(['dim2'], inplace=True)
+    >>> d = cf.example_field(0).domain
+    >>> print(d)
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> print(d.flip('X'))
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [337.5, ..., 22.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> print(d.flip(['T', 'Y']))
+    Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> print(d.flip())
+    Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
+                    : longitude(8) = [337.5, ..., 22.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
 
         '''
-        if axes is None:
-            # Flip all the axes
-            axes = set(self.domain_axes)
-        else:
-            if isinstance(axes, str):
-                axes = (axes,)
-
-            axes = set([self.domain_axis(axis, key=True) for axis in axes])
-
         d = _inplace_enabled_define_and_cleanup(self)
 
+        if axes is None:
+            # Flip all the axes
+            axes = self.domain_axes
+        else:
+            axes = self._parse_axes(axes)
+
+        axes = set(axes)
+            
         # Flip constructs with data
         d.constructs._flip(axes)
 
@@ -411,7 +402,32 @@ class Domain(mixin.FieldDomain,
 
     **Examples:**
 
-    TODO
+    >>> d = cf.example_field(7).domain
+    >>> print(d)
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+    >>> print(d.constructs)
+    Constructs:
+    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(4, 5) degrees_north>,
+     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(4, 5) degrees_east>,
+     'coordinatereference0': <CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+     'dimensioncoordinate0': <CF DimensionCoordinate: time(3) days since 1979-1-1 gregorian>,
+     'dimensioncoordinate1': <CF DimensionCoordinate: air_pressure(1) hPa>,
+     'dimensioncoordinate2': <CF DimensionCoordinate: grid_latitude(4) degrees>,
+     'dimensioncoordinate3': <CF DimensionCoordinate: grid_longitude(5) degrees>,
+     'domainaxis0': <CF DomainAxis: size(3)>,
+     'domainaxis1': <CF DomainAxis: size(1)>,
+     'domainaxis2': <CF DomainAxis: size(4)>,
+     'domainaxis3': <CF DomainAxis: size(5)>}
+    >>> d.get_data_axes('grid_latitude')
+    ('domainaxis2',)
+    >>> d.get_data_axes('latitude')
+    ('domainaxis2', 'domainaxis3')
 
         '''
         key = self.construct(identity, key=True, default=None)
@@ -492,30 +508,32 @@ TODO
         if nc_only:
             if strict:
                 raise ValueError(
-                    "'strict' and 'nc_only' parameters cannot both be True")
+                    "'strict' and 'nc_only' parameters cannot both be True"
+                )
 
             if relaxed:
                 raise ValueError(
-                    "'relaxed' and 'nc_only' parameters cannot both be True")
+                    "'relaxed' and 'nc_only' parameters cannot both be True"
+                )
 
             n = self.nc_get_variable(None)
             if n is not None:
-                return 'ncvar%{0}'.format(n)
+                return f"ncvar%{n}"
 
             return default
 
         n = getattr(self, 'id', None)
         if n is not None:
-            return 'id%{0}'.format(n)
+            return f"id%{n}"
 
         if relaxed:
             n = self.get_property('long_name', None)
             if n is not None:
-                return 'long_name={0}'.format(n)
+                return f"long_name={n}"
 
             n = self.nc_get_variable(None)
             if n is not None:
-                return 'ncvar%{0}'.format(n)
+                return f"ncvar%{n}"
 
             return default
 
@@ -525,12 +543,11 @@ TODO
         for prop in ('cf_role', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
-                return '{0}={1}'.format(prop, n)
-        # --- End: for
+                return f"{prop}={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return 'ncvar%{0}'.format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -570,17 +587,20 @@ TODO
         i = getattr(self, 'id', None)
         if i is not None:
             # Insert id attribute
-            i = 'id%{0}'.format(i)
+            i = f"id%{i}"
             if not out:
                 out = [i]
             else:
                 out.insert(0, i)
-        # --- End: if
 
         return out
 
     def indices(self, *mode, **kwargs):
         '''Create indices that define a subspace of the domain construct.
+
+    The indices returned by this method be used to create the subspace
+    by passing them to the `subspace` method of the original domain
+    construct.
 
     The subspace is defined by identifying indices based on the
     metadata constructs.
@@ -650,96 +670,49 @@ TODO
 
         `dict`
             A dictionary of indices, keyed by the domain axis
-            construct identifiers to which they apply
+            construct identifiers to which they apply.
 
     **Examples:**
 
-    >>> q = cf.example_field(0)
-    >>> print(q)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 1
-    Cell methods    : area: mean
+    >>> d = cf.example_field(0).domain
+    >>> print(d)
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
-    >>> indices = q.indices(X=112.5)
-    >>> print(indices)
-    (slice(0, 5, 1), slice(2, 3, 1))
-    >>> q[indicies]
-    <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
-    >>> q.indices(X=112.5, latitude=cf.gt(-60))
-    (slice(1, 5, 1), slice(2, 3, 1))
-    >>> q.indices(latitude=cf.eq(-45) | cf.ge(20))
-    (array([1, 3, 4]), slice(0, 8, 1))
-    >>> q.indices(X=[1, 2, 4], Y=slice(None, None, -1))
-    (slice(4, None, -1), array([1, 2, 4]))
-    >>> q.indices(X=cf.wi(-100, 200))
-    (slice(0, 5, 1), slice(-2, 4, 1))
-    >>> q.indices(X=slice(-2, 4))
-    (slice(0, 5, 1), slice(-2, 4, 1))
-    >>> q.indices('compress', X=[1, 2, 4, 6])
-    (slice(0, 5, 1), array([1, 2, 4, 6]))
-    >>> q.indices(Y=[True, False, True, True, False])
-    (array([0, 2, 3]), slice(0, 8, 1))
-    >>> q.indices('envelope', X=[1, 2, 4, 6])
-    ('mask', [<CF Data(1, 6): [[False, ..., False]]>], slice(0, 5, 1), slice(1, 7, 1))
-    >>> indices = q.indices('full', X=[1, 2, 4, 6])
-    ('mask', [<CF Data(1, 8): [[True, ..., True]]>], slice(0, 5, 1), slice(0, 8, 1))
-    >>> print(indices)
-    >>> print(q)
-    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-
-    >>> print(a)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
-    Cell methods    : area: mean
-    Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
-    >>> a.indices(T=410.5)
-    (slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> a.indices(T=cf.dt('1960-04-16'))
-    (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> indices = a.indices(T=cf.wi(cf.dt('1962-11-01'),
-    ...                             cf.dt('1967-03-17 07:30')))
-    >>> print(indices)
-    (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
-    >>> a[indices]
-    <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
-    >>> print(t)
-    Field: air_temperature (ncvar%ta)
-    ---------------------------------
-    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+    >>> indices = d.indices(X=112.5)
+    >>> indices
+    {'domainaxis0': slice(0, 5, 1),
+     'domainaxis1': slice(2, 3, 1),
+     'domainaxis2': slice(0, 1, 1)}
+    >>> print(d.subspace(**indices))
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(1) = [112.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
-    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-    Coord references: grid_mapping_name:rotated_latitude_longitude
-                    : standard_name:atmosphere_hybrid_height_coordinate
-    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-    >>> indices = t.indices(latitude=cf.wi(51, 53))
-    >>> print(indices)
-    ('mask', [<CF Data(1, 5, 9): [[[False, ..., False]]]>], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))
-    >>> t[indices]
-    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+    
+    >>> indices = d.indices(X=112.5, Y=cf.wi(-60, 30))
+    >>> indices
+    {'domainaxis0': slice(1, 3, 1),
+     'domainaxis1': slice(2, 3, 1),
+     'domainaxis2': slice(0, 1, 1)}
+    >>> print(d.subspace(**indices))
+    Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
+                    : longitude(1) = [112.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> d.indices(X=[-1, 0], Y=slice(1, -1))
+    {'domainaxis0': slice(1, 4, 1),
+     'domainaxis1': slice(7, None, -7),
+     'domainaxis2': slice(0, 1, 1)}
+    >>> print(print(d.subspace(**indices)))
+    Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
+                    : longitude(2) = [337.5, 22.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
 
         '''
         if len(mode) > 1:
             raise ValueError(
                 "Can't provide more than one positional argument. "
-                "Got: {}".format(', '.join(repr(x) for x in mode))
+                f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
         if not mode or 'compress' in mode:
@@ -748,7 +721,7 @@ TODO
             mode = 'envelope'
         else:
             raise ValueError(
-                "Invalid value for 'mode' argument: {!r}".format(mode[0])
+                f"Invalid value for 'mode' argument: {mode[0]!r}"
             )
 
         # ------------------------------------------------------------
@@ -887,7 +860,6 @@ TODO
                     self, 'match_by_construct', 'and',
                     message="Use 'OR=False' instead.", version='3.1.0'
                 )  # pragma: no cover
-        # --- End: if
 
         if not identities and not conditions:
             return True
@@ -905,7 +877,6 @@ TODO
                 n += 1
             elif not OR:
                 return False
-        # --- End: for
 
         if conditions:
             for identity, value in conditions.items():
@@ -980,22 +951,23 @@ TODO
         return d
 
     def subspace(self, *mode, **kwargs):
-        '''Create a subspace of a domain construct.
+        '''Create indices that define a subspace of the domain construct.
 
-    Creation of a new domain construct that spans a subspace of the
-    domain of the existing domain construct is achieved by identifying
-    indices based on the metadata constructs.
-
-    Metadata constructs and the conditions on their data are defined
-    by keyword parameters.
+    The indices returned by this method be used to create the subspace
+    by passing them to the `subspace` method of the original domain
+    construct.
 
     The subspace is defined by identifying indices based on the
     metadata constructs.
 
-    The following beahviouts apply:
+    Metadata constructs are selected conditions are specified on their
+    data. Indices for subspacing are then automatically inferred from
+    where the conditions are met.
 
-    * Any domain axes that have not been identified are indexed with
-      `slice(None)`.
+    Metadata constructs and the conditions on their data are defined
+    by keyword parameters.
+
+    * Any domain axes that have not been identified remain unchanged.
 
     * Multiple domain axes may be subspaced simultaneously, and it
       doesn't matter which order they are specified in.
@@ -1010,33 +982,35 @@ TODO
 
     * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
-      the *mode* parameter). Depending on the distribution of metadata
-      construct values and the subspace criteria, unselected cells may
-      still occur in the new domain.
+      the positional arguments), but because the indices may not be
+      acting along orthogonal dimensions, some missing data may still
+      need to be inserted into the field construct's data.
+
+    .. versionadded:: 3.TODO.0
 
     .. seealso:: `indices`
 
     :Parameters:
 
-        mode: *optional*
-            There are three modes of operation, each of which provides
-            a different type of subspace, plus a testing mode:
+        mode: `str`, *optional*
+            There are two modes of operation, each of which provides
+            indices for a different type of subspace:
 
             ==============  ==========================================
-            *argument*      Description
+            *mode*          Description
             ==============  ==========================================
-            ``'compress'``  This is the default mode. Unselected
-                            locations are removed to create the
-                            returned subspace. Note that if a
-                            multi-dimensional metadata construct is
-                            being used to define the indices then some
-                            unsleceted cells still occur in the new
-                            domain.
+            ``'compress'``  Return indices that identify only the
+                            requested locations.
+
+                            This is the default mode.
+
+                            Note that if a multi-dimensional metadata
+                            construct is being used to define the
+                            indices then some unrequested locations
+                            may also be selected.
 
             ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the selected
-                            indices. Missing data is inserted at
-                            unselected locations within the envelope.
+                            contains all of the requested locations.
 
             ``'test'``      May be used on its own or in addition to
                             one of the other positional arguments. Do
@@ -1046,7 +1020,7 @@ TODO
                             subspace.
             ==============  ==========================================
 
-        Keyword parameters: *optional*
+        kwargs: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
             indices that apply to the dimension (or dimensions)
@@ -1065,23 +1039,25 @@ TODO
 
     **Examples:**
 
-    There are further worked examples
-    :ref:`in the tutorial <Subspacing-by-metadata>`.
+    >>> d = cf.example_field(0).domain
+    >>> print(d)
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(d.subspace(X=112.5))
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(1) = [112.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    
+    >>> print(d.indices(X=112.5, Y=cf.wi(-60, 30)))
+    Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
+                    : longitude(1) = [112.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
 
-    >>> g = f.subspace(X=112.5)
-    >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))
-    >>> g = f.subspace(latitude=cf.eq(-45) | cf.ge(20))
-    >>> g = f.subspace(X=[1, 2, 4], Y=slice(None, None, -1))
-    >>> g = f.subspace(X=cf.wi(-100, 200))
-    >>> g = f.subspace(X=slice(-2, 4))
-    >>> g = f.subspace(Y=[True, False, True, True, False])
-    >>> g = f.subspace(T=410.5)
-    >>> g = f.subspace(T=cf.dt('1960-04-16'))
-    >>> g = f.subspace(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30')))
-    >>> g = f.subspace('compress', X=[1, 2, 4, 6])
-    >>> g = f.subspace('envelope', X=[1, 2, 4, 6])
-    >>> g = f.subspace('full', X=[1, 2, 4, 6])
-    >>> g = f.subspace(latitude=cf.wi(51, 53))
+    >>> print(d.indices(X=[-1, 0], Y=slice(1, -1))
+    Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
+                   : longitude(2) = [337.5, 22.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
 
         '''
         logger.debug(
@@ -1140,9 +1116,9 @@ TODO
                 axis = axes[iaxis]
                 if axis not in cyclic_axes:
                     raise IndexError(
-                        "Can't take a cyclic slice from non-cyclic {!r} "
-                        "axis".format(
-                            self.constructs.domain_axis_identity(axis))
+                        "Can't take a cyclic slice from non-cyclic "
+                        f"{self.constructs.domain_axis_identity(axis)!r} "
+                        "axis"
                     )
 
                 new = new.roll(axis, shift)
@@ -1169,18 +1145,13 @@ TODO
             domain_axes[axis].set_size(size)
 
         # ------------------------------------------------------------
-        # Subspace constructs with data
+        # Subspace constructs that have data
         # ------------------------------------------------------------
         construct_data_axes = new.constructs.data_axes()
 
         for key, construct in new.constructs.filter_by_data().items():
             construct_axes = construct_data_axes[key]
-
             dice = [indices[axes.index(axis)] for axis in construct_axes]
-
-            logger.debug(
-                " dice = {!r}".format(dice)
-            )  # pragma: no cover
 
             # Replace existing construct with its subspace
             new.set_construct(construct[tuple(dice)], key=key,
@@ -1190,29 +1161,31 @@ TODO
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
-        '''Permute the axes of the data array.
+        '''Permute the data axes of the metadata constructs.
 
-TODO    By default the order of the axes is reversed, but any ordering may
-    be specified by selecting the axes of the output in the required
-    order.
+    Each metadata construct has its data axis order changed to the
+    relative ordering defined by the *axes* parameter. For instance,
+    if the given *axes* are ``['X', 'Z', 'Y']`` then a metadata
+    construct whose data axis order is ('Y', 'X') will be tranposed to
+    have data order ('X', 'Y').
 
     .. versionadded:: 3.TODO.0
 
-    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
-                 `squeeze`, `unsqueeze`
+    .. seealso:: `domain_axis`, `flip`
 
     :Parameters:
 
         axes: sequence of `str`
-            Select the domain axis order, defined by the domain axes
-            that would be selected by passing each given axis
-            description to a call of the field construct's
-            `domain_axis` method. For example, for a value of ``'X'``,
-            the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+            Define the new domain axis order.
+
+            A domain axis is identified by that which would be
+            selected by passing a given axis description to a call of
+            the `domain_axis` method. For example, a value of ``'X'``
+            would select the domain axis construct returned by
+            ``f.domain_axis('X')``.
 
             Each domain axis of the domain construct data must be
-            provided.
+            specified.
 
         constructs: `bool`, optional
             If True then metadata constructs are also transposed so
@@ -1230,39 +1203,60 @@ TODO    By default the order of the axes is reversed, but any ordering may
 
     **Examples:**
 
-    >>> f.ndim
-    3
-    >>> g = f.transpose()
-    >>> g = f.transpose(['time', 1, 'dim2'])
-    >>> f.transpose(['time', -2, 'dim2'], inplace=True)
+    >>> d = cf.example_field(7).domain
+    >>> print(d)
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+
+
+    >>> print(d.transpose(['X', 'T', 'Y', 'Z']))
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_longitude(5), grid_latitude(4)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_longitude(5), grid_latitude(4)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)        
-        
+
+        # Parse the axes
         if axes is None:
             raise ValueError(
                 f"Can't transpose {self.__class__.__name__}. "
                 f"Must provide an order for all axes. Got: {axes}"
             )
 
-        axes_in = axes
-        axes = d._parse_axes(axes_in)
+        axes = d._parse_axes(axes)
         
-        if len(axes) != len(d.domain_axes):
+        if len(set(axes)) != len(d.domain_axes):
             raise ValueError(
                 f"Can't transpose {self.__class__.__name__}. "
-                f"Must provide an order for all axes. Got: {axes_in}"
+                f"Must provide an unambiguous order for all "
+                f"{len(d.domain_axes)} domain axes. Got: {axes}"
             )
 
+        data_axes = d.constructs.data_axes()
         for key, construct in d.constructs.filter_by_data().items():
-            construct_axes = d.get_data_axes(key)
+            construct_axes = data_axes[key]
 
+            if len(construct_axes) < 2:
+                # No need to transpose 1-d constructs
+                continue
+
+            # Transpose the construct            
             iaxes = [construct_axes.index(a)
                      for a in axes if a in construct_axes]
-
-            # Transpose the construct
             construct.transpose(iaxes, inplace=True)
 
-        return f
-
-# --- End: class
+            # Update the axis order
+            new_axes = [construct_axes[i] for i in iaxes]            
+            d.set_data_axes(axes=new_axes, key=key)
+            
+        return d
