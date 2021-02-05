@@ -5317,7 +5317,7 @@ place.
         return data0
 
     def _move_flip_to_partitions(self):
-        '''TODO
+        '''Reverses an axis in the sub-array of each partition.
 
     .. note:: This does not change the master array.
 
@@ -6651,7 +6651,7 @@ dimensions.
     @classmethod
     def _collapse_finalise(cls, ffinalise, out, sub_samples, masked,
                            Nmax, mtol, data, n_non_collapse_axes):
-        '''TODO
+        '''Finalise a collapse over a data array.
 
         '''
         if out is not None:
@@ -6667,7 +6667,7 @@ dimensions.
 
     @staticmethod
     def _collapse_mask(array, masked, N, Nmax, mtol):
-        '''TODO
+        '''Re-masks a masked array to reflect a collapse.
 
     :Parameters:
 
@@ -6698,7 +6698,7 @@ dimensions.
     def _collapse_create_weights(array, indices, master_indices, master_shape,
                                  master_weights, n_non_collapse_axes,
                                  n_collapse_axes):
-        '''TODO
+        '''Collapse weights of an array.
 
     :Parameters:
 
@@ -9042,9 +9042,13 @@ False
         return out
 
     def get_data(self, default=ValueError()):
-        '''TODO
+        '''Returns the data.
 
     .. versionadded:: 3.0.0
+
+    :Returns:
+
+            `Data`
 
         '''
         return self
@@ -9560,9 +9564,11 @@ False
 
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
                  inplace=False, _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with their integral.
 
-    TODO if no weights => sum
+    If weights are not provided then all non-missing elements are
+    given weighting of one such that the collapse method becomes
+    a `sum`.
 
     :Parameters:
 
@@ -9578,8 +9584,6 @@ False
             broadcast correctly against the original array.
 
         weights: data-like or dict, optional
-            TODO note that the units of the weights matter
-
             Weights associated with values of the array. By default
             all non-missing elements of the array are assumed to have
             a weight equal to one. If *weights* is a data-like object
@@ -9590,6 +9594,11 @@ False
             corresponding data-like value of weights for those
             axes. In this case, the implied weights array is the outer
             product of the dictionary's values.
+
+            Note that the units of the weights matter for an integral
+            collapse, which differs from a weighted sum in that the units
+            of the weights are incorporated into the result.
+
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
@@ -9644,7 +9653,7 @@ False
     def sample_size(
             self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
             _preserve_partitions=False):
-        '''TODO
+        '''Collapses axes with their sample size.
 
     :Parameters:
 
@@ -10092,7 +10101,7 @@ False
         return self._size - self.count()
 
     def cyclic(self, axes=None, iscyclic=True):
-        '''TODO
+        '''Returns or sets the axes of the data array which are cyclic.
 
     :Parameters:
 
@@ -10133,7 +10142,7 @@ False
         return old
 
     def _YMDhms(self, attr):
-        '''TODO
+        '''Provides datetime components of the data array elements.
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -14103,7 +14112,7 @@ False
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False, i=False,
                        _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with the sum of weights.
 
     Missing data array elements are omitted from the calculation.
 
@@ -14152,7 +14161,7 @@ False
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
                         _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with the sum of squares of weights.
 
     Missing data array elements are omitted from the calculation.
 
