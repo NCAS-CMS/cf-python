@@ -498,8 +498,8 @@ class DimensionCoordinate(mixin.Coordinate,
 
     :Returns:
 
-        `Bounds` or `None`
-            TODO
+        `Bounds`
+            The newly-created coordinate cell bounds object.
 
     **Examples:**
 
@@ -644,7 +644,8 @@ class DimensionCoordinate(mixin.Coordinate,
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
-        '''TODO
+        '''Flips the dimension coordinate, that is reverses its direction.
+
         '''
         d = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
@@ -769,7 +770,7 @@ class DimensionCoordinate(mixin.Coordinate,
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
-        '''TODO `{{class}}`
+        '''Rolls the dimension coordinate along a cyclic axis.
 
         '''
         if self.size <= 1:
