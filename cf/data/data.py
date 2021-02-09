@@ -6812,8 +6812,8 @@ dimensions.
                 if not (array.mask | weights_out.mask == array.mask).all():
                     raise ValueError(
                         "The output weights mask {} is not compatible with "
-                        "the array mask {}.".format{
-                            weights_out.mask, array.mask}
+                        "the array mask {}.".format(
+                            weights_out.mask, array.mask)
                     )
         # --- End: if
 
