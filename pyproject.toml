@@ -1,0 +1,10 @@
+# This file is currently used only to configure the black Python code
+# formatter, rather than provide project metadata (see
+# https://www.python.org/dev/peps/pep-0621/) which can be found instead
+# in the setup.py file.
+
+# To run the black checker with this configuration, execute 'black .' in the
+# root of this repository. See https://black.readthedocs.io/en/stable/ for
+# the 'black' documentation.
+[tool.black]
+line-length = 79
