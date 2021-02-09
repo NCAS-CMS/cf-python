@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-python-*-
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     from getopt import getopt, GetoptError
     import sys
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     def print_help(version, date):
         import subprocess
 
-        manpage = '''\
+        manpage = """\
 .TH "CFA" "1" "{0}" "{1}" "cfa"
 .
 .
@@ -988,40 +988,48 @@ Open Source Initiative MIT License
 .
 .SH AUTHOR
 Written by David Hassell
-'''.format(version, date, os.path.dirname(os.path.abspath(cf.__file__)))
+""".format(
+            version, date, os.path.dirname(os.path.abspath(cf.__file__))
+        )
 
         p = subprocess.Popen(
-            ['man', '-r', ' Manual page cfa(1)\ ?ltline\ %lt?L/%L.:',
-             '-l', '-'],
+            [
+                "man",
+                "-r",
+                " Manual page cfa(1)\ ?ltline\ %lt?L/%L.:",
+                "-l",
+                "-",
+            ],
             stdin=subprocess.PIPE,
-            universal_newlines=True
+            universal_newlines=True,
         )
         p.communicate(input=manpage)
 
     def _check_overwrite(outfile, files, overwrite):
-        '''
-        '''
+        """"""
         if not os.path.isfile(outfile):
             return
 
         if not overwrite:
             print(
                 "{} ERROR: Can't overwrite output file {} unless "
-                "--overwrite is set".format(iam, outfile), file=sys.stderr
+                "--overwrite is set".format(iam, outfile),
+                file=sys.stderr,
             )
             sys.exit(2)
 
         if not os.access(outfile, os.W_OK):
             print(
                 "{} ERROR: Can't overwrite output file {} without "
-                "permission".format(iam, outfile), file=sys.stderr
+                "permission".format(iam, outfile),
+                file=sys.stderr,
             )
             sys.exit(2)
 
         if set((outfile,)).intersection(files):
             print(
-                "{} ERROR: Can't overwrite input file {}".format(
-                    iam, outfile), file=sys.stderr
+                "{} ERROR: Can't overwrite input file {}".format(iam, outfile),
+                file=sys.stderr,
             )
             sys.exit(2)
 
@@ -1035,7 +1043,7 @@ Written by David Hassell
         "INPUTS".format(iam)
     )
 
-    short_help = '''\
+    short_help = """\
 {0}
   [-1]                   View all input files as a single dataset
   [-D]                   Write to the same directories as its input files
@@ -1081,10 +1089,8 @@ Written by David Hassell
   [--um=option]          Extra decoding instructions for PP and fields files
   INPUTS                 Input files and directories
 
-Using cf-python library version {1} at {2}'''.format(
-            usage, cf.__version__, os.path.dirname(
-                os.path.abspath(cf.__file__)
-            )
+Using cf-python library version {1} at {2}""".format(
+        usage, cf.__version__, os.path.dirname(os.path.abspath(cf.__file__))
     )
 
     # --------------------------------------------------------------------
@@ -1092,54 +1098,60 @@ Using cf-python library version {1} at {2}'''.format(
     # --------------------------------------------------------------------
     try:
         opts, infiles = getopt(
-            sys.argv[1:], "1aDd:f:hino:r:s:uv:x:",
+            sys.argv[1:],
+            "1aDd:f:hino:r:s:uv:x:",
             longopts=[
-                'axis=',
-                'cfa_base=',
-                'compress=',
-                'contiguous',
-                'Directory',
-                'directory=',
-                'double',
-                'equal=',
-                'equal_all',
-                'exclude=',
-                'exist=',
-                'exist_all',
-                'external=',
-                'fletcher32',
-                'follow_symlinks',
-                'format=',
-                'help',
-                'ignore=',
-                'ignore_read_error',
-                'info=',
-                'least_sig_digit=',
-                'ncvar_identities',
-                'no_aggregation',
-                'no_overlap',
-                'no_shuffle',
-                'one',
-                'outfile=',
-                'overwrite',
-                'promote=',
-                'recursive',
-                'reference_datetime=',
-                'relaxed_identities',
-                'relaxed_units',
-                'respect_valid',
-                'select=',
-                'single',
-                'shared_nc_domain',
-                'squeeze',
-                'unlimited=',
-                'um_version=',
-                'um=',
-                'unsqueeze',
-                'view=',
+                "axis=",
+                "cfa_base=",
+                "compress=",
+                "contiguous",
+                "Directory",
+                "directory=",
+                "double",
+                "equal=",
+                "equal_all",
+                "exclude=",
+                "exist=",
+                "exist_all",
+                "external=",
+                "fletcher32",
+                "follow_symlinks",
+                "format=",
+                "help",
+                "ignore=",
+                "ignore_read_error",
+                "info=",
+                "least_sig_digit=",
+                "ncvar_identities",
+                "no_aggregation",
+                "no_overlap",
+                "no_shuffle",
+                "one",
+                "outfile=",
+                "overwrite",
+                "promote=",
+                "recursive",
+                "reference_datetime=",
+                "relaxed_identities",
+                "relaxed_units",
+                "respect_valid",
+                "select=",
+                "single",
+                "shared_nc_domain",
+                "squeeze",
+                "unlimited=",
+                "um_version=",
+                "um=",
+                "unsqueeze",
+                "view=",
                 # Deprecated options
-                'all', 'aggregate=', 'read=', 'write=', 'verbose=',
-            ])
+                "all",
+                "aggregate=",
+                "read=",
+                "write=",
+                "verbose=",
+            ],
+        )
     except GetoptError as err:
         # print help information and exit:
         print("{} ERROR: {}".format(iam, str(err)), file=sys.stderr)
@@ -1150,7 +1162,7 @@ Using cf-python library version {1} at {2}'''.format(
         sys.exit(0)
 
     # Defaults
-    fmt = 'NETCDF4'
+    fmt = "NETCDF4"
     one_to_one = True
     one = False
     exclude = False  # By default unaggregatable fields are output
@@ -1161,7 +1173,7 @@ Using cf-python library version {1} at {2}'''.format(
     Directory = None
     directory = None
     outfile = None
-    verbose = 1      # By default no info is printed to STDOUT
+    verbose = 1  # By default no info is printed to STDOUT
     axes = []
     equal = []
     exist = []
@@ -1169,190 +1181,202 @@ Using cf-python library version {1} at {2}'''.format(
     promote = []
     unlimited = []
     aggregate_options = {}
-    read_options = {}     # Keyword parameters to cf.read
-    write_options = {}     # Keyword parameters to cf.write
+    read_options = {}  # Keyword parameters to cf.read
+    write_options = {}  # Keyword parameters to cf.write
 
     for option, arg in opts:
-        if option in ('-h', '--help'):
+        if option in ("-h", "--help"):
             print_help(cf.__version__, cf.__date__)
             sys.exit(0)
-        elif option in ('-o', '--outfile'):
+        elif option in ("-o", "--outfile"):
             outfile = arg
             one_to_one = False
-        elif option in ('-f', '--format'):
+        elif option in ("-f", "--format"):
             fmt = arg
-        elif option in ('-D', '--Directory'):
+        elif option in ("-D", "--Directory"):
             Directory = True
             directory_output = True
-        elif option in ('-d', '--directory'):
+        elif option in ("-d", "--directory"):
             directory = arg
             directory_output = True
-        elif option == '--axis':
+        elif option == "--axis":
             axes.append(arg)
-        elif option == '--overwrite':
+        elif option == "--overwrite":
             overwrite = True
-        elif option == '--info':
+        elif option == "--info":
             verbose = int(arg)  # note info in cfa <-> verbose in cf-python
-        elif option in ('-x', '--exclude'):
+        elif option in ("-x", "--exclude"):
             exclude = True
-        elif option == '--contiguous':
-            aggregate_options['contiguous'] = True
-        elif option == '--equal':
+        elif option == "--contiguous":
+            aggregate_options["contiguous"] = True
+        elif option == "--equal":
             equal.append(arg)
-        elif option == '--exist':
+        elif option == "--exist":
             exist.append(arg)
-        elif option == '--ignore':
+        elif option == "--ignore":
             ignore.append(arg)
-        elif option == '--promote':
+        elif option == "--promote":
             promote.append(arg)
-        elif option == '--equal_all':
-            aggregate_options['equal_all'] = True
-        elif option == '--exist_all':
-            aggregate_options['exist_all'] = True
-        elif option == '--no_overlap':
-            aggregate_options['no_overlap'] = True
-        elif option in ('-1', '--one'):
+        elif option == "--equal_all":
+            aggregate_options["equal_all"] = True
+        elif option == "--exist_all":
+            aggregate_options["exist_all"] = True
+        elif option == "--no_overlap":
+            aggregate_options["no_overlap"] = True
+        elif option in ("-1", "--one"):
             one = True
-        elif option in ('-i', '--relaxed_identities'):
-            aggregate_options['relaxed_identities'] = True
-        elif option in ('-u', '--relaxed_units'):
-            aggregate_options['relaxed_units'] = True
-        elif option == '--respect_valid':
-            aggregate_options['respect_valid'] = True
-        elif option == '--ncvar_identities':
-            aggregate_options['ncvar_identities'] = True
-        elif option == '--shared_nc_domain':
-            aggregate_options['shared_nc_domain'] = True
-        elif option in ('-e', '--external'):
-            read_options.setdefault('external', []).append(arg)
-        elif option == '--unsqueeze':
-            read_options['unsqueeze'] = True
-        elif option == '--recursive':
-            read_options['recursive'] = True
-        elif option == '--follow_symlinks':
-            read_options['follow_symlinks'] = True
-        elif option in ('-s', '--select'):
-            read_options.setdefault('select', []).append(arg)
-        elif option in ('-n', '--no_aggregation'):
+        elif option in ("-i", "--relaxed_identities"):
+            aggregate_options["relaxed_identities"] = True
+        elif option in ("-u", "--relaxed_units"):
+            aggregate_options["relaxed_units"] = True
+        elif option == "--respect_valid":
+            aggregate_options["respect_valid"] = True
+        elif option == "--ncvar_identities":
+            aggregate_options["ncvar_identities"] = True
+        elif option == "--shared_nc_domain":
+            aggregate_options["shared_nc_domain"] = True
+        elif option in ("-e", "--external"):
+            read_options.setdefault("external", []).append(arg)
+        elif option == "--unsqueeze":
+            read_options["unsqueeze"] = True
+        elif option == "--recursive":
+            read_options["recursive"] = True
+        elif option == "--follow_symlinks":
+            read_options["follow_symlinks"] = True
+        elif option in ("-s", "--select"):
+            read_options.setdefault("select", []).append(arg)
+        elif option in ("-n", "--no_aggregation"):
             no_aggregation = True
-        elif option == '--squeeze':
-            read_options['squeeze'] = True
-        elif option == '--um_version':
+        elif option == "--squeeze":
+            read_options["squeeze"] = True
+        elif option == "--um_version":
             print(
                 "{} ERROR: The {} option has been removed. Use "
                 "--um=version=VN instead.".format(iam, option),
-                file=sys.stderr
+                file=sys.stderr,
             )
             sys.exit(2)
-        elif option == '--um':
-            read_options.setdefault('um', []).append(arg)
-        elif option == '--ignore_read_error':
-            read_options['ignore_read_error'] = True
-        elif option == '--reference_datetime':
-            write_options['reference_datetime'] = arg
-        elif option == '--compress':
-            write_options['compress'] = int(arg)
-        elif option == '--no_shuffle':
-            write_options['no_shuffle'] = True
-        elif option == '--fletcher32':
-            write_options['fletcher32'] = True
-        elif option == '--least_sig_digit':
-            write_options['least_significant_digit'] = int(arg)
-        elif option == '--single':
-            write_options['single'] = True
-        elif option == '--double':
-            write_options['double'] = True
-        elif option == '--cfa_base':
-            write_options['cfa_options'] = {'base': arg}
-        elif option == '--unlimited':
+        elif option == "--um":
+            read_options.setdefault("um", []).append(arg)
+        elif option == "--ignore_read_error":
+            read_options["ignore_read_error"] = True
+        elif option == "--reference_datetime":
+            write_options["reference_datetime"] = arg
+        elif option == "--compress":
+            write_options["compress"] = int(arg)
+        elif option == "--no_shuffle":
+            write_options["no_shuffle"] = True
+        elif option == "--fletcher32":
+            write_options["fletcher32"] = True
+        elif option == "--least_sig_digit":
+            write_options["least_significant_digit"] = int(arg)
+        elif option == "--single":
+            write_options["single"] = True
+        elif option == "--double":
+            write_options["double"] = True
+        elif option == "--cfa_base":
+            write_options["cfa_options"] = {"base": arg}
+        elif option == "--unlimited":
             unlimited.append(arg)
-        elif option in ('-v', '--view'):
+        elif option in ("-v", "--view"):
             view = arg
-            if view not in 'smc':
+            if view not in "smc":
                 print(
                     "{} ERROR: The {} option must have an argument of "
-                    "either s, m or c".format(iam, option), file=sys.stderr
+                    "either s, m or c".format(iam, option),
+                    file=sys.stderr,
                 )
                 sys.exit(2)
-        elif option in ('-a', '--all'):
+        elif option in ("-a", "--all"):
             print(
                 "{} ERROR: The {} option has been deprecated and is now "
                 "the default behaviour. See the -x option.".format(
-                    iam, option), file=sys.stderr
+                    iam, option
+                ),
+                file=sys.stderr,
             )
             sys.exit(2)
         elif option in (
-                '-r', '-w', '--aggregate', '--read', '--write', '--verbose'):
+            "-r",
+            "-w",
+            "--aggregate",
+            "--read",
+            "--write",
+            "--verbose",
+        ):
             print(
                 "{} ERROR: The {} option has been deprecated.".format(
-                    iam, option), file=sys.stderr
+                    iam, option
+                ),
+                file=sys.stderr,
             )
             sys.exit(2)
         else:
             print(usage)
-            assert False, "Unknown option: "+option
+            assert False, "Unknown option: " + option
     # --- End: for
 
     if outfile is None and not directory_output and view is None:
         # No output file or directory options are set, then output a
         # short view.
-        view = 's'
+        view = "s"
 
     if one and view is None:
         print(
             "{} ERROR: Can only set the -1 option if the -v option is "
-            "also set.".format(iam), file=sys.stderr
+            "also set.".format(iam),
+            file=sys.stderr,
         )
         sys.exit(2)
 
     if promote:
-        read_options['promote'] = promote
+        read_options["promote"] = promote
 
     if no_aggregation:
-        read_options['aggregate'] = False
+        read_options["aggregate"] = False
     else:
-        aggregate_options['verbose'] = verbose
-        aggregate_options['exclude'] = exclude
+        aggregate_options["verbose"] = verbose
+        aggregate_options["exclude"] = exclude
 
         if axes:
-            aggregate_options['dimension'] = axes
+            aggregate_options["dimension"] = axes
 
         if equal:
-            aggregate_options['equal'] = equal
+            aggregate_options["equal"] = equal
 
         if exist:
-            aggregate_options['exist'] = exist
+            aggregate_options["exist"] = exist
 
         if ignore:
-            aggregate_options['ignore'] = ignore
+            aggregate_options["ignore"] = ignore
 
-#        if aggregate_options:
-#            read_options['aggregate'] = aggregate_options
+        #        if aggregate_options:
+        #            read_options['aggregate'] = aggregate_options
 
-        read_options['aggregate'] = aggregate_options
+        read_options["aggregate"] = aggregate_options
 
-#    if read_options.get('select'):
-#        read_options['select_options'] = {'exact': True}
+    #    if read_options.get('select'):
+    #        read_options['select_options'] = {'exact': True}
 
-    um = read_options.pop('um', None)
+    um = read_options.pop("um", None)
     if um:
-        read_options['um'] = {}
+        read_options["um"] = {}
         for key in um:
             # TODO when we no longer support Python 3.8, use the
             # 'removeprefix' string method
-            if key.startswith('version='):
-                read_options['um']['version'] = key[len('version='):]
-            elif key.startswith('format='):
-                read_options['um']['fmt'] = key[len('format='):]
-            elif key.startswith('endian='):
-                read_options['um']['endian'] = key[len('endian='):]
-            elif key.startswith('word_size='):
-                read_options['um']['word_size'] = int(key[len('word_size='):])
-            elif key.startswith('stash_table='):
-                stash_table = key[len('stash_table='):]
+            if key.startswith("version="):
+                read_options["um"]["version"] = key[len("version=") :]
+            elif key.startswith("format="):
+                read_options["um"]["fmt"] = key[len("format=") :]
+            elif key.startswith("endian="):
+                read_options["um"]["endian"] = key[len("endian=") :]
+            elif key.startswith("word_size="):
+                read_options["um"]["word_size"] = int(key[len("word_size=") :])
+            elif key.startswith("stash_table="):
+                stash_table = key[len("stash_table=") :]
                 try:
                     cf.load_stash2standard_name(
-                        stash_table, delimiter='!', merge=True
+                        stash_table, delimiter="!", merge=True
                     )
                 except Exception as error:
                     print(
@@ -1363,16 +1387,17 @@ Using cf-python library version {1} at {2}'''.format(
                     sys.exit(2)
     # --- End: if
 
-    write_options['fmt'] = fmt
+    write_options["fmt"] = fmt
 
     if unlimited:
-        write_options['unlimited'] = unlimited
+        write_options["unlimited"] = unlimited
 
-    if fmt == 'CFA':
+    if fmt == "CFA":
         print(
             "{} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
             "'-f CFA4' for netCDF3 classic and netCDF4 CFA output formats "
-            "respectively".format(iam), file=sys.stderr
+            "respectively".format(iam),
+            file=sys.stderr,
         )
         sys.exit(2)
 
@@ -1383,25 +1408,27 @@ Using cf-python library version {1} at {2}'''.format(
         )
         sys.exit(2)
 
-    if sum(
-            [outfile is not None,
-             directory is not None,
-             Directory is not None]
-    ) > 1:
+    if (
+        sum(
+            [outfile is not None, directory is not None, Directory is not None]
+        )
+        > 1
+    ):
         print(
             "{} ERROR: Can only set one of the -o, -d and -D "
-            "options".format(iam), file=sys.stderr
+            "options".format(iam),
+            file=sys.stderr,
         )
         sys.exit(2)
 
     if directory is not None:
         # Check that the directory is ok and replace it with its
         # absolute, normalised path.
-        if (not os.path.isdir(directory) or
-                not os.access(directory, os.W_OK)):
+        if not os.path.isdir(directory) or not os.access(directory, os.W_OK):
             print(
                 "{} ERROR: Can't write to output directory "
-                "{}".format(iam, directory), file=sys.stderr
+                "{}".format(iam, directory),
+                file=sys.stderr,
             )
             sys.exit(2)
 
@@ -1409,12 +1436,13 @@ Using cf-python library version {1} at {2}'''.format(
 
     # Replace the input files with their absolute, normalised paths
     # and recursively scan input directories
-    recursive = read_options.get('recursive', False)
-    follow_symlinks = read_options.get('follow_symlinks', False)
+    recursive = read_options.get("recursive", False)
+    follow_symlinks = read_options.get("follow_symlinks", False)
     if follow_symlinks and not recursive:
         print(
             "{} ERROR: Can't set --follow_symlinks without setting "
-            "--recursive".format(iam), file=sys.stderr
+            "--recursive".format(iam),
+            file=sys.stderr,
         )
         sys.exit(2)
 
@@ -1425,7 +1453,8 @@ Using cf-python library version {1} at {2}'''.format(
         else:
             # Walk through directories
             for path, subdirs, filenames in os.walk(
-                    x, followlinks=follow_symlinks):
+                x, followlinks=follow_symlinks
+            ):
                 infiles2.extend([os.path.join(path, f) for f in filenames])
                 if not recursive:
                     break
@@ -1450,9 +1479,9 @@ Using cf-python library version {1} at {2}'''.format(
         # can be created.
         # ------------------------------------------------------------
         if view is None and one_to_one:
-            outfile = re_sub('(\.pp|\.nc|\.nca)$', '.nc', infile)
-            if fmt in ('CFA3', 'CFA4'):
-                outfile += 'a'
+            outfile = re_sub("(\.pp|\.nc|\.nca)$", ".nc", infile)
+            if fmt in ("CFA3", "CFA4"):
+                outfile += "a"
 
             if directory is not None:
                 outfile = cf.pathjoin(directory, os.path.basename(outfile))
@@ -1469,7 +1498,7 @@ Using cf-python library version {1} at {2}'''.format(
         except Exception as error:
             print(
                 "{} ERROR reading {}: {}".format(iam, infile, error),
-                file=sys.stderr
+                file=sys.stderr,
             )
             sys.exit(1)
 
@@ -1478,26 +1507,26 @@ Using cf-python library version {1} at {2}'''.format(
             # View
             # --------------------------------------------------------
             for g in f:
-                if view == 's':
+                if view == "s":
                     # Omit the angled brackets from the repr output
                     print(repr(g)[1:-1])
-                elif view == 'm':
+                elif view == "m":
                     print(g)
-                elif view == 'c':
+                elif view == "c":
                     g.dump()
         else:
             # --------------------------------------------------------
             # Write
             # --------------------------------------------------------
-            if one_to_one and write_options.get('verbose', False) and f:
-                print('\nOUTPUT FILE:', outfile)
+            if one_to_one and write_options.get("verbose", False) and f:
+                print("\nOUTPUT FILE:", outfile)
 
             try:
                 cf.write(f, outfile, **write_options)
             except Exception as error:
                 print(
                     "{} ERROR writing {}: {}".format(iam, outfile, error),
-                    file=sys.stderr
+                    file=sys.stderr,
                 )
                 sys.exit(1)
     # --- End: for
