@@ -832,11 +832,11 @@ class Field(mixin.PropertiesData,
         }
 
     def _is_broadcastable(self, shape):
-        '''TODO
+        '''Checks the field's data array is broadcastable to a shape.
 
     :Parameters:
 
-        shape1: sequence of `int`
+        shape: sequence of `int`
 
     :Returns:
 
@@ -2395,7 +2395,7 @@ class Field(mixin.PropertiesData,
         # --- End: for
 
     def _coordinate_reference_axes(self, key):
-        '''TODO
+        '''Returns the field's set of coordinate reference axes for a key.
 
     :Parameters:
 
@@ -2424,7 +2424,7 @@ class Field(mixin.PropertiesData,
         return set(axes)
 
     def _conform_cell_methods(self):
-        '''TODO
+        '''Changes the axes of the field's cell methods so they conform.
 
     :Parameters:
 
@@ -2460,7 +2460,7 @@ class Field(mixin.PropertiesData,
                                           s=None, t=None,
                                           verbose=None,
                                           axis_map=None):
-        '''TODO
+        '''True if coordinate reference constructs are equivalent.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -2849,9 +2849,9 @@ class Field(mixin.PropertiesData,
         return other
 
     def _conform_for_data_broadcasting(self, other):
-        '''TODO
+        '''Conforms the field with another, ready for data broadcasting.
 
-    Note that *other* is not changed in-place.
+    Note that the other field, *other*, is not changed in-place.
 
     :Parameters:
 
@@ -2885,14 +2885,13 @@ class Field(mixin.PropertiesData,
                                    s=None, t=None, atol=None,
                                    rtol=None, verbose=None,
                                    axis_map=None):
-        '''TODO
+        '''True if the field has equivalent construct data to another.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-
 
     :Parameters:
 
@@ -4153,7 +4152,7 @@ class Field(mixin.PropertiesData,
 
     def _weights_data(self, w, comp, weights_axes, axes=None,
                       data=False, components=False, methods=False):
-        '''TODO
+        '''Creates weights for the field construct's data array.
 
     :Parameters:
 
@@ -4226,7 +4225,9 @@ class Field(mixin.PropertiesData,
 
     def _weights_field(self, fields, comp, weights_axes,
                        methods=False):
-        '''TODO'''
+        '''Creates a weights field.
+
+        '''
         s = self.analyse_items()
 
         for w in fields:
@@ -4360,7 +4361,7 @@ class Field(mixin.PropertiesData,
                                auto=False, measure=False, radius=None,
                                great_circle=False, return_areas=False,
                                methods=False):
-        '''TODO
+        '''Creates area weights for polygon geometry cells.
 
     .. versionadded:: 3.2.0
 
@@ -4588,7 +4589,7 @@ class Field(mixin.PropertiesData,
     def _weights_geometry_line(self, domain_axis, comp, weights_axes,
                                auto=False, measure=False, radius=None,
                                great_circle=False, methods=False):
-        '''TODO
+        '''Creates line-length weights for line geometries.
 
     .. versionadded:: 3.2.0
 
