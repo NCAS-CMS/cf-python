@@ -1,8 +1,7 @@
-from distutils.core import setup, Extension
+from distutils.core import setup
 from distutils.command.build import build
 import os
 import fnmatch
-import sys
 import re
 import subprocess
 
