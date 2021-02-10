@@ -78,14 +78,10 @@ class MathTest(unittest.TestCase):
         lon_size = lon_1d.size
 
         u_1d = lat_1d * 2.0 + 1.0
-        u_2d = numpy.broadcast_to(
-            lat_1d[numpy.newaxis, :], (lon_size, lat_size)
-        )
+        u_2d = numpy.broadcast_to(u_1d[numpy.newaxis, :], (lon_size, lat_size))
 
         v_1d = lon_1d * 2.0 + 1.0
-        v_2d = numpy.broadcast_to(
-            lon_1d[:, numpy.newaxis], (lon_size, lat_size)
-        )
+        v_2d = numpy.broadcast_to(v_1d[:, numpy.newaxis], (lon_size, lat_size))
         v_2d = v_2d * numpy.cos(lat_1d * numpy.pi / 180.0)[numpy.newaxis, :]
 
         rv_array = (

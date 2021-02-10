@@ -47,7 +47,7 @@ class generalTest(unittest.TestCase):
 
         c = cf.set([0, 3, 4, 5])
 
-        a = f == c
+        _ = f == c
 
         # +, -, *, /, **
         h = g.copy()
@@ -82,9 +82,9 @@ class generalTest(unittest.TestCase):
         self.assertTrue(g.equals(h, verbose=2))
 
         # Access the field's data as a numpy array
-        a = g.array
-        a = g.item("latitude").array
-        a = g.item("longitude").array
+        g.array
+        g.item("latitude").array
+        g.item("longitude").array
 
         # Subspace the field
         g[..., 2:5].array
@@ -204,7 +204,7 @@ class generalTest(unittest.TestCase):
 
         b = f[:, 0:6, :]
         c = f[:, 6:, :]
-        d = cf.aggregate([b, c], verbose=2)[0]
+        cf.aggregate([b, c], verbose=2)[0]
 
         # Remove temporary files
         cf.data.partition._remove_temporary_files()

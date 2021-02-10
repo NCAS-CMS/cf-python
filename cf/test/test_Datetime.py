@@ -12,13 +12,13 @@ from cf import Units
 
 class DatetimeTest(unittest.TestCase):
     def test_Datetime(self):
-        d = cf.dt(2003)
-        d = cf.dt(2003, 2)
-        d = cf.dt(2003, 2, 30, calendar="360_day")
-        d = cf.dt(2003, 2, 30, 0, 0, calendar="360_day")
-        d = cf.dt(2003, 2, 30, 0, 0, 0, calendar="360_day")
-        d = cf.dt(2003, 4, 5, 12, 30, 15)
-        d = cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
+        cf.dt(2003)
+        cf.dt(2003, 2)
+        cf.dt(2003, 2, 30, calendar="360_day")
+        cf.dt(2003, 2, 30, 0, 0, calendar="360_day")
+        cf.dt(2003, 2, 30, 0, 0, 0, calendar="360_day")
+        cf.dt(2003, 4, 5, 12, 30, 15)
+        cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
 
     def test_Datetime_rt2dt(self):
         for a in (

@@ -440,27 +440,25 @@ class FieldTest(unittest.TestCase):
                     if components:
                         d = False
 
-                    y = f.weights(w, components=components, measure=m, data=d)
-                    y = f.weights(
+                    f.weights(w, components=components, measure=m, data=d)
+                    f.weights(
                         w.transpose(), components=components, measure=m, data=d
                     )
-                    y = f.weights(
-                        w.data, components=components, measure=m, data=d
-                    )
-                    y = f.weights(
+                    f.weights(w.data, components=components, measure=m, data=d)
+                    f.weights(
                         f.data.squeeze(),
                         components=components,
                         measure=m,
                         data=d,
                     )
-                    y = f.weights(components=components, measure=m, data=d)
-                    y = f.weights(
+                    f.weights(components=components, measure=m, data=d)
+                    f.weights(
                         "grid_longitude",
                         components=components,
                         measure=m,
                         data=d,
                     )
-                    y = f.weights(
+                    f.weights(
                         ["grid_longitude"],
                         components=components,
                         measure=m,
@@ -756,7 +754,7 @@ class FieldTest(unittest.TestCase):
             ):
                 message = "method={!r}".format(method)
 
-                i = f.indices(method, time=query1)
+                f.indices(method, time=query1)
 
                 g = f.subspace(method, time=query1)
                 t = g.coordinate("time")
@@ -1340,10 +1338,10 @@ class FieldTest(unittest.TestCase):
         g = cf.Field()
         #        with self.assertRaises(Exception):
         #            g.set_data(cf.Data(list(range(9))))
-        a = g.set_construct(cf.DomainAxis(9))
-        b = g.set_construct(cf.DomainAxis(9))
-        c = g.set_construct(cf.DomainAxis(10))
-        d = g.set_construct(cf.DomainAxis(8))
+        g.set_construct(cf.DomainAxis(9))
+        g.set_construct(cf.DomainAxis(9))
+        g.set_construct(cf.DomainAxis(10))
+        g.set_construct(cf.DomainAxis(8))
         with self.assertRaises(Exception):
             g.set_data(cf.Data(numpy.arange(81).reshape(9, 9)))
         with self.assertRaises(Exception):
@@ -2128,7 +2126,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
 
         self.assertIsNone(f.squeeze(inplace=True))
-        g = f.copy()
+
         h = f.copy()
         h.squeeze(inplace=True)
         self.assertTrue(f.equals(h))
@@ -2555,7 +2553,6 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        a = f.array
 
         f = self.f.copy()
         f0 = f.copy()
@@ -2603,7 +2600,6 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        g = f.mask_invalid()
         self.assertIsNone(f.mask_invalid(inplace=True))
 
     def test_Field_del_domain_axis(self):

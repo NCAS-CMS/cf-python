@@ -683,13 +683,13 @@ def _formula_terms(standard_name):
         z2.set_data(data)
         z2_key = field.set_construct(z2, axes=(), copy=False)
 
-        # domain_ancillary: z2
+        # domain_ancillary: a
         a = cf.DomainAncillary()
         data = cf.Data(2.5, units="m")
         a.set_data(data)
         a_key = field.set_construct(a, axes=(), copy=False)
 
-        # domain_ancillary: z2
+        # domain_ancillary: href
         href = cf.DomainAncillary()
         data = cf.Data(10.5, units="m")
         href.set_data(data)
@@ -725,6 +725,7 @@ def _formula_terms(standard_name):
                 "k_c": k_c_key,
                 "z1": z1_key,
                 "z2": z2_key,
+                "href": href_key,
                 "sigma": sigma_key,
             }
         )

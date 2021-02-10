@@ -600,7 +600,7 @@ class DataTest(unittest.TestCase):
         for partition in d.partitions.flat:
             self.assertTrue(partition.in_cached_file)
 
-        a = numpy.arange(1000000).reshape(100, 10000)
+        _ = numpy.arange(1000000).reshape(100, 10000)
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
@@ -1157,7 +1157,6 @@ class DataTest(unittest.TestCase):
             [1.0, 2],
             units=cf.Units("years since 2000-1-1", calendar="360_day"),
         )
-        e = d * 31
         d *= 31
 
     def test_Data_datetime_array(self):
@@ -1503,7 +1502,7 @@ class DataTest(unittest.TestCase):
             with cf.chunksize(chunksize):
                 d = cf.Data(a.copy())
 
-                pmshape = d._pmshape
+                _ = d._pmshape
 
                 e = d.roll(0, 4)
                 e.roll(2, 120, inplace=True)
@@ -2085,7 +2084,7 @@ class DataTest(unittest.TestCase):
             return
 
         a = numpy.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
-        ones = numpy.ones(a.shape, dtype=float)
+        _ = numpy.ones(a.shape, dtype=float)
 
         for h in (
             "sample_size",
@@ -2111,7 +2110,7 @@ class DataTest(unittest.TestCase):
 
             d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
             d.flip(inplace=True)
-            x = cf.Data(self.w.copy())
+            _ = cf.Data(self.w.copy())
 
             shape = list(d.shape)
 
@@ -3019,11 +3018,11 @@ class DataTest(unittest.TestCase):
                 d = cf.read(self.filename)[0].data
 
                 dumpd = d.dumpd()
-                self.assertTrue(d.equals(cf.Data(loadd=d.dumpd()), verbose=2))
-                self.assertTrue(d.equals(cf.Data(loadd=d.dumpd()), verbose=2))
+                self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
+                self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
 
                 d.to_disk()
-                self.assertTrue(d.equals(cf.Data(loadd=d.dumpd()), verbose=2))
+                self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
 
     def test_Data_section(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

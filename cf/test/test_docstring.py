@@ -158,13 +158,13 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_default(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
@@ -172,7 +172,7 @@ class DocstringTest(unittest.TestCase):
             )
 
     def test_docstring_classmethod(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(

@@ -94,7 +94,7 @@ class DecoratorsTest(unittest.TestCase):
         res_2 = test_class.decorated_func_2(good_kwarg="good")
         res_3 = test_class.func_2(good_kwarg="good", traceback=False)
         res_4 = test_class.decorated_func_2(good_kwarg="good", traceback=False)
-        res_5 = test_class.multikwarg_decorated_func_2(
+        _ = test_class.multikwarg_decorated_func_2(
             good_kwarg="good", traceback=False
         )
         self.assertEqual(res_1, res_2)
