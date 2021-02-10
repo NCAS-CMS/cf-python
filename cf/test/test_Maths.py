@@ -23,7 +23,7 @@ class MathTest(unittest.TestCase):
 
     def test_relative_vorticity_distance(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            returncf
+            return
 
         x_min = 0.0
         x_max = 100.0

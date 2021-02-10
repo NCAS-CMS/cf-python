@@ -367,7 +367,7 @@ class read_writeTest(unittest.TestCase):
         )
 
         for single in (True, False):
-            for dousble in (True, False):
+            for double in (True, False):
                 with self.assertRaises(Exception):
                     _ = cf.write(g, double=double, single=single)
         # --- End: for

@@ -1695,7 +1695,7 @@ class FieldTest(unittest.TestCase):
 
         # Calls that should fail
         with self.assertRaises(Exception):
-            f.indices(grid_longitudecf.gt(23), grid_longitude=cf.wi(92, 134))
+            f.indices(longitude=cf.gt(23), grid_longitude=cf.wi(92, 134))
         with self.assertRaises(Exception):
             f.indices(grid_longitude=cf.gt(23), longitude=cf.wi(92, 134))
         with self.assertRaises(Exception):
