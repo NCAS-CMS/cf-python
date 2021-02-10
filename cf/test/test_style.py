@@ -48,7 +48,10 @@ class styleTest(unittest.TestCase):
             "E501",  # ... docstring examples include output lines >79 chars
             "E712",  # ... query module requires a (specific) '== False' check
             "E731",  # ... one sensible (default sort key) lambda expression
-        )  # TODO remove these incrementally as move towards full compliance
+            # Black auto-formatting doesn't abide by this code (e.g. see
+            # https://github.com/psf/black/issues/315)
+            "E203",
+        )
 
         # First add Python files which lie outside of the cf directory:
         python_files = self.non_cf_dir_python_paths
