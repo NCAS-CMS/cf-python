@@ -117,6 +117,7 @@ DimensionCoordinate
 dirname
 div
 djf
+docstrings
 domainancillary
 DomainAncillary
 domainaxis
@@ -156,6 +157,7 @@ fpe
 fracfield
 fromconstructs
 fromkeys
+fullname
 func
 GatheredArray
 ge
