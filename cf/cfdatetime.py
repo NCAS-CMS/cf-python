@@ -128,7 +128,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
         year = arg
 
 #    calendar=_calendar_map.get(calendar, calendar)
-#    
+#
 #    return cftime.datetime(year, month, day, hour, minute, second,
 #                           microsecond, calendar=calendar)
 
@@ -448,7 +448,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
         array = np.asanyarray(array)
 
     return array
- 
+
 
 def st2rt(array, units_in, units_out, dummy1=None):
     '''The returned array is always independent.

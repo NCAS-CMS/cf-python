@@ -53,19 +53,21 @@ class DatetimeTest(unittest.TestCase):
         )
         b = cf.cfdatetime.rt2dt([1, 3], cf.Units('days since 2004-2-28'))
         self.assertTrue((a == b).all())
-        
-        for a in (np.ma.array(3),
-                  np.ma.array([3]),
+
+        for a in (
+                np.ma.array(3),
+                np.ma.array([3]),
         ):
             b = cf.cfdatetime.rt2dt(a, cf.Units('days since 1970-01-01'))
             self.assertTrue(b == cf.dt(1970, 1, 4, calendar='gregorian'))
 
-        for a in (np.ma.array(3, mask=True),
-                  np.ma.array([3], mask=True),
+        for a in (
+                np.ma.array(3, mask=True),
+                np.ma.array([3], mask=True),
         ):
             b = cf.cfdatetime.rt2dt(a, cf.Units('days since 1970-01-01'))
             self.assertEqual(b.mask, True)
-       
+
     def test_Datetime_dt2rt(self):
         units = cf.Units('days since 2004-2-28')
         self.assertEqual(
@@ -135,7 +137,6 @@ class DatetimeTest(unittest.TestCase):
             self.assertEqual(x.tolist(),
                              [cf.dt(2000, 1, 1), cf.dt(2001, 2, 1)])
 
-
     def test_Datetime_st2dt(self):
         for a in (
                 '1970-01-04',
@@ -150,7 +151,7 @@ class DatetimeTest(unittest.TestCase):
             self.assertIsInstance(b, np.ndarray)
             self.assertEqual(b, 3)
 
-            
+
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
     cf.environment()
