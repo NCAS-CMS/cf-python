@@ -4706,7 +4706,7 @@ class Field(mixin.PropertiesData,
     def _weights_geometry_volume(self, comp, weights_axes, auto=False,
                                  measure=False, radius=None,
                                  great_circle=False, methods=False):
-        '''TODO
+        '''Creates volume weights for polygon geometry cells.
 
     .. versionadded:: 3.2.0
 
@@ -5068,7 +5068,7 @@ class Field(mixin.PropertiesData,
 
     def _weights_yyy(self, domain_axis, geometry_type, methods=False,
                      auto=False):
-        '''TODO
+        '''Checks whether weights can be created for given coordinates.
 
     .. versionadded:: 3.2.0
 
@@ -6059,15 +6059,17 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         fields: `FieldList`
-            TODO
+            The sequence of fields to concatenate.
 
         axis: `int`, optional
-            TODO
+            The axis along which the arrays will be joined. The
+            default is 0. Note that scalar arrays are treated as if
+            they were one dimensional.
 
     :Returns:
 
         `Field`
-            TODO
+            The field generated from the concatenation of input fields.
 
         '''
         if isinstance(fields, cls):
@@ -8228,7 +8230,8 @@ class Field(mixin.PropertiesData,
               ``identity='ncvar%lat_lon'``
 
         construct: optional
-            TODO
+            The coordinate reference construct to remove. This may
+            alternatively be specified via the *identity* parameter.
 
         default: optional
             Return the value of the *default* parameter if the
@@ -8445,7 +8448,7 @@ class Field(mixin.PropertiesData,
 
     def get_coordinate_reference(self, identity=None, key=False,
                                  construct=None, default=ValueError()):
-        '''TODO
+        '''Returns selected coordinate reference constructs.
 
     .. versionadded:: 3.0.2
 
@@ -8527,6 +8530,7 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     TODO
+
         '''
         if construct is None:
             return self.coordinate_reference(identity=identity,
@@ -10676,7 +10680,10 @@ class Field(mixin.PropertiesData,
                           coordinate=None, measure=False,
                           weights=None, squeeze=None, group_by=None,
                           axis_in=None, verbose=None):
-        '''TODO
+        '''Implements a grouped collapse on a field.
+
+    A grouped collapse is one for which an axis is not collapsed
+    completely to size 1.
 
     :Parameters:
 
@@ -12082,9 +12089,9 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         axis:
-            Select the domain axis to, generally defined by that which
-            would be selected by passing the given axis description to
-            a call of the field construct's `domain_axis` method. For
+            Select the domain axis to insert, generally defined by that
+            which would be selected by passing the given axis description
+            to a call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
             returned by ``f.domain_axis('X')`` is selected.
 
@@ -13010,7 +13017,9 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         kwargs: optional
-            TODO
+            A dictionary of keyword arguments to pass to the `indices`
+            method to define the criteria to meet for a element to be
+            set as `True`.
 
     :Returns:
 
@@ -14759,15 +14768,12 @@ class Field(mixin.PropertiesData,
 
     :Returns:
 
-        `Field`
-            TODO
-
     **Examples:**
 
     >>> g = f.argmax('T')
 
         '''
-        print('not ready')
+        print('This method is not ready for use.')
         return
 
         standard_name = None
