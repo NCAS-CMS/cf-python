@@ -7,6 +7,7 @@ import unittest
 import inspect
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -81,24 +82,24 @@ class functionTest(unittest.TestCase):
         # later as floats need assertAlmostEqual rather than
         # assertEqual tests:
         keys_with_float_values = [
-            'atol',
-            'rtol',
-            'of_fraction',
-            'free_memory_factor',
-            'chunksize',
+            "atol",
+            "rtol",
+            "of_fraction",
+            "free_memory_factor",
+            "chunksize",
         ]
         for key in keys_with_float_values:
             self.assertIsInstance(org[key], float)
 
         # Other types expected:
-        self.assertIsInstance(org['collapse_parallel_mode'], int)
-        self.assertIsInstance(org['relaxed_identities'], bool)
-        self.assertIsInstance(org['bounds_combination_mode'], str)
-        self.assertIsInstance(org['regrid_logging'], bool)
+        self.assertIsInstance(org["collapse_parallel_mode"], int)
+        self.assertIsInstance(org["relaxed_identities"], bool)
+        self.assertIsInstance(org["bounds_combination_mode"], str)
+        self.assertIsInstance(org["regrid_logging"], bool)
         # Log level may be input as an int but always given as
         # equiv. string
-        self.assertIsInstance(org['log_level'], str)
-        self.assertIsInstance(org['tempdir'], str)
+        self.assertIsInstance(org["log_level"], str)
+        self.assertIsInstance(org["tempdir"], str)
 
         # Store some sensible values to reset items to for testing, ensuring:
         # 1) they are kept different to the defaults (i.e. org values); and
@@ -106,17 +107,17 @@ class functionTest(unittest.TestCase):
         #    qdifferent by the assertAlmostEqual decimal places (8, see
         #    below)
         reset_values = {
-            'rtol': 5e-7,
-            'atol': 2e-7,
-            'tempdir': '/my-custom-tmpdir',
-            'of_fraction': 0.1,
-            'free_memory_factor': 0.25,
-            'regrid_logging': True,
-            'collapse_parallel_mode': 2,
-            'relaxed_identities': True,
-            'bounds_combination_mode': 'XOR',
-            'log_level': 'INFO',
-            'chunksize': 8e9,
+            "rtol": 5e-7,
+            "atol": 2e-7,
+            "tempdir": "/my-custom-tmpdir",
+            "of_fraction": 0.1,
+            "free_memory_factor": 0.25,
+            "regrid_logging": True,
+            "collapse_parallel_mode": 2,
+            "relaxed_identities": True,
+            "bounds_combination_mode": "XOR",
+            "log_level": "INFO",
+            "chunksize": 8e9,
         }
 
         # Test the setting of each lone item.
@@ -136,8 +137,9 @@ class functionTest(unittest.TestCase):
             # assertAlmostEqual testing:
             for name, val in expected_post_set.items():
                 if isinstance(val, float):
-                    self.assertAlmostEqual(post_set[name], val, places=8,
-                                           msg=setting)
+                    self.assertAlmostEqual(
+                        post_set[name], val, places=8, msg=setting
+                    )
                 else:
                     self.assertEqual(post_set[name], val)
         # --- End: for
@@ -145,17 +147,17 @@ class functionTest(unittest.TestCase):
         # Test the setting of more than one, but not all, items
         # simultaneously:
         new_values = {
-            'regrid_logging': True,
-            'tempdir': '/bin/bag',
-            'of_fraction': 0.33,
+            "regrid_logging": True,
+            "tempdir": "/bin/bag",
+            "of_fraction": 0.33,
         }
         cf.configuration(**new_values)
         post_set = cf.configuration()
         for name, val in new_values.items():  # test values that should change
             self.assertEqual(post_set[name], val)
         # ...and some values that should not:
-        self.assertEqual(post_set['log_level'], 'INFO')
-        self.assertAlmostEqual(post_set['rtol'], 5e-7)
+        self.assertEqual(post_set["log_level"], "INFO")
+        self.assertAlmostEqual(post_set["rtol"], 5e-7)
 
         # Test setting all possible items simultaneously (back to originals):
         cf.configuration(**org)
@@ -175,17 +177,17 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cf.configuration(free_memory_factor=0.0)
         new_values = {
-            'tempdir': '',
-            'atol': 0.0,
-            'regrid_logging': False,
+            "tempdir": "",
+            "atol": 0.0,
+            "regrid_logging": False,
         }
         cf.configuration(**new_values)
         post_set = cf.configuration()
         for name, val in new_values.items():  # test values that should change
             self.assertEqual(post_set[name], val)
         # ...and some values that should not:
-        self.assertEqual(post_set['log_level'], pre_set_config['log_level'])
-        self.assertAlmostEqual(post_set['rtol'], pre_set_config['rtol'])
+        self.assertEqual(post_set["log_level"], pre_set_config["log_level"])
+        self.assertAlmostEqual(post_set["rtol"], pre_set_config["rtol"])
 
         # 2. None as an input kwarg rather than as a default:
         pre_set_config = cf.configuration()
@@ -193,15 +195,16 @@ class functionTest(unittest.TestCase):
         cf.configuration(of_fraction=set_of, rtol=None, log_level=None)
         post_set = cf.configuration()
         # test values that should change
-        self.assertEqual(post_set['of_fraction'], set_of)
+        self.assertEqual(post_set["of_fraction"], set_of)
         # ...and values that should not:
-        self.assertEqual(post_set['rtol'], pre_set_config['rtol'])
+        self.assertEqual(post_set["rtol"], pre_set_config["rtol"])
         self.assertAlmostEqual(
-            post_set['log_level'], pre_set_config['log_level'])
+            post_set["log_level"], pre_set_config["log_level"]
+        )
 
         # 3. Gracefully error with invalid inputs:
         with self.assertRaises(ValueError):
-            cf.configuration(of_fraction='bad')
+            cf.configuration(of_fraction="bad")
 
         with self.assertRaises(ValueError):
             cf.configuration(log_level=7)
@@ -212,7 +215,7 @@ class functionTest(unittest.TestCase):
 
         old = cf.configuration()
         try:
-            cf.configuration(atol=888, rtol=999, log_level='BAD')
+            cf.configuration(atol=888, rtol=999, log_level="BAD")
         except ValueError:
             self.assertEqual(cf.configuration(), old)
         else:
@@ -222,7 +225,7 @@ class functionTest(unittest.TestCase):
 
         # Reset so later test fixtures don't spam with output
         # messages:
-        cf.log_level('DISABLE')
+        cf.log_level("DISABLE")
 
     def test_context_managers(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -230,11 +233,11 @@ class functionTest(unittest.TestCase):
 
         # rtol, atol, chunksize
         for func in (
-                cf.atol,
-                cf.rtol,
-                cf.chunksize,
-                cf.free_memory_factor,
-                cf.of_fraction,
+            cf.atol,
+            cf.rtol,
+            cf.chunksize,
+            cf.free_memory_factor,
+            cf.of_fraction,
         ):
             old = func()
             new = old * 1.001
@@ -262,9 +265,9 @@ class functionTest(unittest.TestCase):
         # log_level
         func = cf.log_level
 
-        org = func('DETAIL')
+        org = func("DETAIL")
         old = func()
-        new = 'DEBUG'
+        new = "DEBUG"
         with func(new):
             self.assertEqual(func(), new)
 
@@ -280,9 +283,9 @@ class functionTest(unittest.TestCase):
         # bounds_combination_mode
         func = cf.bounds_combination_mode
 
-        org = func('XOR')
+        org = func("XOR")
         old = func()
-        new = 'AND'
+        new = "AND"
         with func(new):
             self.assertEqual(func(), new)
 
@@ -298,9 +301,9 @@ class functionTest(unittest.TestCase):
         # Full configuration
         func = cf.configuration
 
-        org = func(rtol=cf.Constant(10), atol=20, log_level='WARNING')
+        org = func(rtol=cf.Constant(10), atol=20, log_level="WARNING")
         old = func()
-        new = dict(rtol=cf.Constant(20), atol=40, log_level='DISABLE')
+        new = dict(rtol=cf.Constant(20), atol=40, log_level="DISABLE")
 
         with func(**new):
             self.assertEqual(cf.atol(), 40)
@@ -331,29 +334,28 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(e, str)
         self.assertIsInstance(ep, str)
 
-        components = ['Platform: ', 'udunits2 library: ', 'numpy: ', 'cfdm: ']
+        components = ["Platform: ", "udunits2 library: ", "numpy: ", "cfdm: "]
         for component in components:
             self.assertIn(component, e)
             self.assertIn(component, ep)
         for component in [
-            'cf: {} {}'.format(
-                cf.__version__, os.path.abspath(cf.__file__)),
-            'Python: {} {}'.format(
-                platform.python_version(), sys.executable),
+            "cf: {} {}".format(cf.__version__, os.path.abspath(cf.__file__)),
+            "Python: {} {}".format(platform.python_version(), sys.executable),
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
         for component in [
-            'cf: {}'.format(cf.__version__),
-            'Python: {}'.format(platform.python_version()),
+            "cf: {}".format(cf.__version__),
+            "Python: {}".format(platform.python_version()),
         ]:
             self.assertIn(component, ep)
+
 
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

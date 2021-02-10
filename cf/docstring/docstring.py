@@ -1,4 +1,4 @@
-'''Define docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -25,16 +25,13 @@ Keys must be `str` or `re.Pattern` objects:
 
 .. versionadded:: 3.7.0
 
-'''
+"""
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General docstring susbstitutions
     # ----------------------------------------------------------------
-    '{{repr}}':
-    'CF ',
-
-    '{{formula terms links}}':
-    """See the parametric vertical coordinate sections of the CF
+    "{{repr}}": "CF ",
+    "{{formula terms links}}": """See the parametric vertical coordinate sections of the CF
     conventions for more details:
 
     `4.3.3. Parametric Vertical Coordinate
@@ -42,25 +39,19 @@ _docstring_substitution_definitions = {
 
     `Appendix D: Parametric Vertical Coordinates
     <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-v-coord>`_""",
-
     # ----------------------------------------------------------------
     # Parameter description substitutions
     # ----------------------------------------------------------------
-    '{{i: deprecated at version 3.0.0}}':
-    """i: deprecated at version 3.0.0
+    "{{i: deprecated at version 3.0.0}}": """i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.""",
-
-    '{{default_to_zero: `bool`, optional}}':
-    """default_to_zero: `bool`, optional
+    "{{default_to_zero: `bool`, optional}}": """default_to_zero: `bool`, optional
             If False then do not assume that missing terms have a
             value of zero. By default a missing term is assumed to be
             zero.""",
-
     # ----------------------------------------------------------------
     # Returns substitutions
     # ----------------------------------------------------------------
-    '{{Returns formula}}':
-    """5-`tuple`
+    "{{Returns formula}}": """5-`tuple`
             * The standard name of the parametric coordinates.
 
             * The standard name of the computed non-parametric
@@ -76,5 +67,4 @@ _docstring_substitution_definitions = {
               domain axis. If the vertical axis does not appear in the
               computed non-parametric coodinates then this an empty
               tuple.""",
-
 }

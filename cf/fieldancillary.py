@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class FieldAncillary(mixin.PropertiesData,
-                     cfdm.FieldAncillary):
-    '''A field ancillary construct of the CF data model.
+class FieldAncillary(mixin.PropertiesData, cfdm.FieldAncillary):
+    """A field ancillary construct of the CF data model.
 
     The field ancillary construct provides metadata which are
     distributed over the same sampling domain as the field itself. For
@@ -30,15 +29,15 @@ class FieldAncillary(mixin.PropertiesData,
 
     {{netcdf variable}}
 
-    '''
+    """
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
         x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

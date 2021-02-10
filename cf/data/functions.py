@@ -8,12 +8,12 @@ from ..functions import open_files_threshold_exceeded, close_one_file
 from ..umread_lib.umfile import File
 
 
-_file_to_UM = _file_to_fh.setdefault('UM', {})
-_file_to_Dataset = _file_to_fh.setdefault('netCDF', {})
+_file_to_UM = _file_to_fh.setdefault("UM", {})
+_file_to_Dataset = _file_to_fh.setdefault("netCDF", {})
 
 
-def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
-    '''Open a netCDF file and read it into a netCDF4.Dataset object.
+def _open_netcdf_file(filename, mode, fmt="NETCDF4"):  # set_auto_mask=True):
+    """Open a netCDF file and read it into a netCDF4.Dataset object.
 
     If the file is already open then the existing netCDF4.Dataset
     object will be returned.
@@ -41,17 +41,17 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
     >>> nc2 is nc1
     True
 
-    '''
-    if filename in _file_to_Dataset and mode == 'r':
+    """
+    if filename in _file_to_Dataset and mode == "r":
         # File is already open
         return _file_to_Dataset[filename]
     elif open_files_threshold_exceeded():
         # Close a random data file to make way for this one
         close_one_file()
 
-    if mode in ('a', 'r+'):
+    if mode in ("a", "r+"):
         if not isfile(filename):
-            nc = netCDF4_Dataset(filename, 'w', format=fmt)
+            nc = netCDF4_Dataset(filename, "w", format=fmt)
             nc.close()
         elif filename in _file_to_Dataset:
             _close_netcdf_file(filename)
@@ -62,7 +62,7 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
     except RuntimeError as runtime_error:
         raise RuntimeError("{0}: {1}".format(runtime_error, filename))
 
-    if mode == 'r':
+    if mode == "r":
         # Update the _file_to_Dataset dictionary
         _file_to_Dataset[filename] = nc
 
@@ -70,7 +70,7 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
 
 
 def _close_netcdf_file(filename):
-    '''Close a netCDF file.
+    """Close a netCDF file.
 
     Does nothing if the file is already closed.
 
@@ -83,15 +83,16 @@ def _close_netcdf_file(filename):
 
         `None`
 
-    '''
+    """
     nc = _file_to_Dataset.pop(filename, None)
     if nc is not None:
         nc.close()
 
 
-def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
-                  byte_ordering=None):
-    '''Open a UM fields file or PP file and read it into a `umfile.File`
+def _open_um_file(
+    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
+):
+    """Open a UM fields file or PP file and read it into a `umfile.File`
     object.
 
     If there is already a `umfile.File` object for the file then it is
@@ -107,7 +108,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
         `umfile.File`
             The opened file with an open file descriptor.
 
-    '''
+    """
     f = _file_to_UM.get(filename)
 
     if f is not None:
@@ -126,8 +127,12 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
         close_one_file()
 
     try:
-        f = File(path=filename, byte_ordering=byte_ordering,
-                 word_size=word_size, fmt=fmt)
+        f = File(
+            path=filename,
+            byte_ordering=byte_ordering,
+            word_size=word_size,
+            fmt=fmt,
+        )
     except Exception as error:
         try:
             f.close_fd()
@@ -146,7 +151,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
 
 def _close_um_file(filename):
-    '''Close a PP or UM fields file.
+    """Close a PP or UM fields file.
 
     Does nothing if the file is already closed.
 
@@ -159,7 +164,7 @@ def _close_um_file(filename):
 
         `None`
 
-    '''
+    """
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()

@@ -2,7 +2,7 @@ import cfdm
 
 
 class Domain(cfdm.Domain):
-    '''A domain of the CF data model.
+    """A domain of the CF data model.
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
@@ -14,14 +14,15 @@ class Domain(cfdm.Domain):
     coordinate, cell measure, coordinate reference and domain
     ancillary constructs.
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

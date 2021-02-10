@@ -11,16 +11,15 @@ from ... import DomainAncillary, Coordinate, Bounds
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
-    '''TODO
+    """TODO"""
 
-    '''
     def _write_as_cfa(self, cfvar):
-        '''TODO
+        """TODO
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-        '''
-        if not self.write_vars['cfa']:
+        """
+        if not self.write_vars["cfa"]:
             return False
 
         data = self.implementation.get_data(cfvar, None)
@@ -42,50 +41,58 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return True
 
     def _customize_createVariable(self, cfvar, kwargs):
-        '''Customise keyword arguments for `netCDF4.Dataset.createVariable`.
+        """Customise keyword arguments for `netCDF4.Dataset.createVariable`.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        cfvar: cf instance that contains data
+            cfvar: cf instance that contains data
 
-        kwargs: `dict`
+            kwargs: `dict`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            Dictionary of keyword arguments to be passed to
-            `netCDF4.Dataset.createVariable`.
+            `dict`
+                Dictionary of keyword arguments to be passed to
+                `netCDF4.Dataset.createVariable`.
 
-        '''
+        """
         kwargs = super()._customize_createVariable(cfvar, kwargs)
 
         if self._write_as_cfa(cfvar):
-            kwargs['dimensions'] = ()
-            kwargs['chunksizes'] = None
+            kwargs["dimensions"] = ()
+            kwargs["chunksizes"] = None
 
         return kwargs
 
-    def _write_data(self, data, cfvar, ncvar, ncdimensions,
-                    unset_values=(), compressed=False, attributes={}):
-        '''TODO
+    def _write_data(
+        self,
+        data,
+        cfvar,
+        ncvar,
+        ncdimensions,
+        unset_values=(),
+        compressed=False,
+        attributes={},
+    ):
+        """TODO
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        data: `Data`
+            data: `Data`
 
-        cfvar: cf instance
+            cfvar: cf instance
 
-        ncvar: `str`
+            ncvar: `str`
 
-        ncdimensions: `tuple` of `str`
+            ncdimensions: `tuple` of `str`
 
-        unset_values: sequence of numbers
+            unset_values: sequence of numbers
 
-        '''
+        """
         g = self.write_vars
 
         if self._write_as_cfa(cfvar):
@@ -108,7 +115,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             array = partition.array
 
             # Convert data type
-            new_dtype = g['datatype'].get(array.dtype)
+            new_dtype = g["datatype"].get(array.dtype)
             if new_dtype is not None:
                 array = array.astype(new_dtype)
 
@@ -127,153 +134,158 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     )
             # --- End: if
 
-            if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
-                    numpy.ma.isMA(array)):
+            if (
+                g["fmt"] == "NETCDF4"
+                and array.dtype.kind in "SU"
+                and numpy.ma.isMA(array)
+            ):
                 # VLEN variables can not be assigned to by masked arrays
                 # https://github.com/Unidata/netcdf4-python/pull/465
-                array = array.filled('')
+                array = array.filled("")
 
-            if not warned_valid and g['warn_valid']:
+            if not warned_valid and g["warn_valid"]:
                 # Check for out-of-range values
                 warned_valid = self._check_valid(cfvar, array, attributes)
 
             # Copy the array into the netCDF variable
-            g['nc'][ncvar][partition.indices] = array
+            g["nc"][ncvar][partition.indices] = array
 
             partition.close()
 
-    def _write_dimension_coordinate(self, f, key, coord, ncdim=None,
-                                    coordinates=None):
-        '''Write a coordinate variable and its bound variable to the file.
+    def _write_dimension_coordinate(
+        self, f, key, coord, ncdim=None, coordinates=None
+    ):
+        """Write a coordinate variable and its bound variable to the file.
 
-    This also writes a new netCDF dimension to the file and, if
-    required, a new netCDF dimension for the bounds.
+        This also writes a new netCDF dimension to the file and, if
+        required, a new netCDF dimension for the bounds.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
+            key: `str`
 
-        coord: Dimension coordinate construct
+            coord: Dimension coordinate construct
 
-        ncdim: `str` or `None`
-            The name of the netCDF dimension for this dimension
-            coordinate construct, including any groups structure. Note
-            that the group structure may be different to the
-            corodinate variable, and the basename.
+            ncdim: `str` or `None`
+                The name of the netCDF dimension for this dimension
+                coordinate construct, including any groups structure. Note
+                that the group structure may be different to the
+                corodinate variable, and the basename.
 
-            .. versionadded:: 3.6.0
+                .. versionadded:: 3.6.0
 
-        coordinates: `list`
-           This list may get updated in-place.
+            coordinates: `list`
+               This list may get updated in-place.
 
-            .. versionadded:: 3.7.0
+                .. versionadded:: 3.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF name of the dimension coordinate.
+            `str`
+                The netCDF name of the dimension coordinate.
 
-        '''
+        """
         coord = self._change_reference_datetime(coord)
 
-        return super()._write_dimension_coordinate(f, key, coord,
-                                                   ncdim=ncdim,
-                                                   coordinates=coordinates)
+        return super()._write_dimension_coordinate(
+            f, key, coord, ncdim=ncdim, coordinates=coordinates
+        )
 
-    def _write_scalar_coordinate(self, f, key, coord_1d, axis,
-                                 coordinates, extra=None):
-        '''Write a scalar coordinate and its bounds to the netCDF file.
+    def _write_scalar_coordinate(
+        self, f, key, coord_1d, axis, coordinates, extra=None
+    ):
+        """Write a scalar coordinate and its bounds to the netCDF file.
 
-    It is assumed that the input coordinate has size 1, but this is
-    not checked.
+        It is assumed that the input coordinate has size 1, but this is
+        not checked.
 
-    If an equal scalar coordinate has already been written to the file
-    then the input coordinate is not written.
+        If an equal scalar coordinate has already been written to the file
+        then the input coordinate is not written.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
-            The coordinate construct key
+            key: `str`
+                The coordinate construct key
 
-        coord_1d: Coordinate construct
+            coord_1d: Coordinate construct
 
-        axis: `str`
-            The field's axis identifier for the scalar coordinate.
+            axis: `str`
+                The field's axis identifier for the scalar coordinate.
 
-        coordinates: `list`
+            coordinates: `list`
 
-    :Returns:
+        :Returns:
 
-        coordinates: `list`
-            The updated list of netCDF auxiliary coordinate names.
+            coordinates: `list`
+                The updated list of netCDF auxiliary coordinate names.
 
-        '''
+        """
         # Unsafe to set mutable '{}' as default in the func signature.
         if extra is None:  # distinguish from falsy '{}'
             extra = {}
 
         coord_1d = self._change_reference_datetime(coord_1d)
 
-        return super()._write_scalar_coordinate(f, key, coord_1d,
-                                                axis, coordinates,
-                                                extra=extra)
+        return super()._write_scalar_coordinate(
+            f, key, coord_1d, axis, coordinates, extra=extra
+        )
 
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
-        '''Write auxiliary coordinates and bounds to the netCDF file.
+        """Write auxiliary coordinates and bounds to the netCDF file.
 
-    If an equal auxiliary coordinate has already been written to the
-    file then the input coordinate is not written.
+        If an equal auxiliary coordinate has already been written to the
+        file then the input coordinate is not written.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
+            key: `str`
 
-        coord: Coordinate construct
+            coord: Coordinate construct
 
-        coordinates: `list`
+            coordinates: `list`
 
-    :Returns:
+        :Returns:
 
-        coordinates: `list`
-            The list of netCDF auxiliary coordinate names updated in
-            place.
+            coordinates: `list`
+                The list of netCDF auxiliary coordinate names updated in
+                place.
 
-    **Examples:**
+        **Examples:**
 
-    >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
+        >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
-        '''
+        """
         coord = self._change_reference_datetime(coord)
 
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
 
     def _change_reference_datetime(self, coord):
-        '''TODO
+        """TODO
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        coord: Coordinate instance
+            coord: Coordinate instance
 
-    :Returns:
+        :Returns:
 
-            The coordinate construct with changed units.
+                The coordinate construct with changed units.
 
-    '''
-        reference_datetime = self.write_vars.get('reference_datetime')
+        """
+        reference_datetime = self.write_vars.get("reference_datetime")
         if not reference_datetime or not coord.Units.isreftime:
             return coord
 
@@ -289,34 +301,34 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             return coord2
 
     def _write_cfa_data(self, ncvar, ncdimensions, data, cfvar):
-        '''Write a CFA variable to the netCDF file.
+        """Write a CFA variable to the netCDF file.
 
-    Any CFA private variables required will be autmatically created
-    and written to the file.
+        Any CFA private variables required will be autmatically created
+        and written to the file.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        ncvar: `str`
-            The netCDF name for the variable.
+            ncvar: `str`
+                The netCDF name for the variable.
 
-        ncdimensions: sequence of `str`
+            ncdimensions: sequence of `str`
 
-        netcdf_attrs: `dict`
+            netcdf_attrs: `dict`
 
-        data: `Data`
+            data: `Data`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         g = self.write_vars
 
         netcdf_attrs = {
-            'cf_role': 'cfa_variable',
-            'cfa_dimensions': ' '.join(ncdimensions)
+            "cf_role": "cfa_variable",
+            "cfa_dimensions": " ".join(ncdimensions),
         }
 
         # Create a dictionary representation of the data object
@@ -332,39 +344,39 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         # Modify the dictionary so that it is suitable for JSON
         # serialization
-        del cfa_array['_axes']
-        del cfa_array['shape']
-        del cfa_array['Units']
-        del cfa_array['dtype']
-        cfa_array.pop('_cyclic', None)
-        cfa_array.pop('_fill', None)
-        cfa_array.pop('fill_value', None)
+        del cfa_array["_axes"]
+        del cfa_array["shape"]
+        del cfa_array["Units"]
+        del cfa_array["dtype"]
+        cfa_array.pop("_cyclic", None)
+        cfa_array.pop("_fill", None)
+        cfa_array.pop("fill_value", None)
 
-        pmshape = cfa_array.pop('_pmshape', None)
+        pmshape = cfa_array.pop("_pmshape", None)
         if pmshape:
-            cfa_array['pmshape'] = pmshape
+            cfa_array["pmshape"] = pmshape
 
-        pmaxes = cfa_array.pop('_pmaxes', None)
+        pmaxes = cfa_array.pop("_pmaxes", None)
         if pmaxes:
-            cfa_array['pmdimensions'] = pmaxes
+            cfa_array["pmdimensions"] = pmaxes
 
         config = data.partition_configuration(readonly=True)
 
-        base = g['cfa_options'].get('base', None)
+        base = g["cfa_options"].get("base", None)
         if base is not None:
-            cfa_array['base'] = base
+            cfa_array["base"] = base
 
-        convert_dtype = g['datatype']
+        convert_dtype = g["datatype"]
 
-        for attrs in cfa_array['Partitions']:
-            fmt = attrs.get('format', None)
+        for attrs in cfa_array["Partitions"]:
+            fmt = attrs.get("format", None)
 
             if fmt is None:
                 # --------------------------------------------------------
                 # This partition has an internal sub-array. This could be
                 # a numpy array or a temporary FileArray object.
                 # --------------------------------------------------------
-                index = attrs.get('index', ())
+                index = attrs.get("index", ())
                 if len(index) == 1:
                     index = index[0]
                 else:
@@ -382,7 +394,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                 shape = array.shape
                 ncdim_strlen = []
-                if array.dtype.kind == 'S':
+                if array.dtype.kind == "S":
                     # This is an array of strings
                     strlen = array.dtype.itemsize
                     if strlen > 1:
@@ -390,53 +402,62 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                         array = _character_array(array)
                         # Get the netCDF dimension for the string length
                         ncdim_strlen = [
-                            _string_length_dimension(strlen, g=None)]
+                            _string_length_dimension(strlen, g=None)
+                        ]
                 # --- End: if
 
                 # Create a name for the netCDF variable to contain the array
-                p_ncvar = 'cfa_'+self._random_hex_string()
-                while p_ncvar in g['ncvar_names']:
-                    p_ncvar = 'cfa_'+self._random_hex_string()
+                p_ncvar = "cfa_" + self._random_hex_string()
+                while p_ncvar in g["ncvar_names"]:
+                    p_ncvar = "cfa_" + self._random_hex_string()
 
-                g['ncvar_names'].add(p_ncvar)
+                g["ncvar_names"].add(p_ncvar)
 
                 # Get the private CFA netCDF dimensions for the array.
-                cfa_dimensions = [self._netcdf_name('cfa{0}'.format(size),
-                                                    dimsize=size,
-                                                    role='cfa_private')
-                                  for size in array.shape]
+                cfa_dimensions = [
+                    self._netcdf_name(
+                        "cfa{0}".format(size), dimsize=size, role="cfa_private"
+                    )
+                    for size in array.shape
+                ]
 
-                for ncdim, size, in zip(cfa_dimensions, array.shape):
-                    if ncdim not in g['ncdim_to_size']:
+                for (
+                    ncdim,
+                    size,
+                ) in zip(cfa_dimensions, array.shape):
+                    if ncdim not in g["ncdim_to_size"]:
                         # This cfa private dimension needs creating
-                        g['ncdim_to_size'][ncdim] = size
-                        g['netcdf'].createDimension(ncdim, size)
+                        g["ncdim_to_size"][ncdim] = size
+                        g["netcdf"].createDimension(ncdim, size)
 
                 # Create the private CFA variable and write the array to it
-#                v = g['netcdf'].createVariable(p_ncvar, self._datatype(array),
-#                                               cfa_dimensions + ncdim_strlen,
-# #                                              fill_value=fill_value,
-#                                               fill_value=False,
-#                                               least_significant_digit=None,
-#                                               endian=g['endian'],
-#                                               **g['netcdf_compression'])
+                #                v = g['netcdf'].createVariable(p_ncvar, self._datatype(array),
+                #                                               cfa_dimensions + ncdim_strlen,
+                # #                                              fill_value=fill_value,
+                #                                               fill_value=False,
+                #                                               least_significant_digit=None,
+                #                                               endian=g['endian'],
+                #                                               **g['netcdf_compression'])
 
                 kwargs = {
-                    'varname': p_ncvar,
-                    'datatype': self._datatype(array),
-                    'dimensions': cfa_dimensions + ncdim_strlen,
-                    'fill_value': None,  # False,
-                    'least_significant_digit': None,
-                    'endian': g['endian']
+                    "varname": p_ncvar,
+                    "datatype": self._datatype(array),
+                    "dimensions": cfa_dimensions + ncdim_strlen,
+                    "fill_value": None,  # False,
+                    "least_significant_digit": None,
+                    "endian": g["endian"],
                 }
-                kwargs.update(g['netcdf_compression'])
+                kwargs.update(g["netcdf_compression"])
 
                 self._createVariable(**kwargs)
 
-                self._write_attributes(parent=None, ncvar=p_ncvar,
-                                       extra={'cf_role': 'cfa_private'})
+                self._write_attributes(
+                    parent=None,
+                    ncvar=p_ncvar,
+                    extra={"cf_role": "cfa_private"},
+                )
 
-                g['nc'][p_ncvar][...] = array
+                g["nc"][p_ncvar][...] = array
 
                 # Update the attrs dictionary.
                 #
@@ -444,8 +465,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # 'calendar', 'dimensions' and 'reverse' since the
                 # partition's in-memory data array always matches up with
                 # the master data array.
-                attrs['subarray'] = {'shape': shape,
-                                     'ncvar': p_ncvar}
+                attrs["subarray"] = {"shape": shape, "ncvar": p_ncvar}
 
             else:
                 # --------------------------------------------------------
@@ -453,135 +473,137 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # --------------------------------------------------------
                 # PUNITS, PCALENDAR: Change from Units object to netCDF
                 #                    string(s)
-                units = attrs.pop('Units', None)
+                units = attrs.pop("Units", None)
                 if units is not None:
-                    attrs['punits'] = units.units
-                    if hasattr(units, 'calendar'):
-                        attrs['pcalendar'] = units.calendar
+                    attrs["punits"] = units.units
+                    if hasattr(units, "calendar"):
+                        attrs["pcalendar"] = units.calendar
 
                 # PDIMENSIONS:
-                p_axes = attrs.pop('axes', None)
+                p_axes = attrs.pop("axes", None)
                 if p_axes is not None:
-                    attrs['pdimensions'] = p_axes
+                    attrs["pdimensions"] = p_axes
 
                 # REVERSE
-                p_flip = attrs.pop('flip', None)
+                p_flip = attrs.pop("flip", None)
                 if p_flip:
-                    attrs['reverse'] = p_flip
+                    attrs["reverse"] = p_flip
 
                 # DTYPE: Change from numpy.dtype object to netCDF string
-                dtype = attrs['subarray'].pop('dtype', None)
+                dtype = attrs["subarray"].pop("dtype", None)
                 if dtype is not None:
-                    if dtype.kind != 'S':
-                        attrs['subarray']['dtype'] = (
-                            _convert_to_netCDF_datatype(dtype))
+                    if dtype.kind != "S":
+                        attrs["subarray"][
+                            "dtype"
+                        ] = _convert_to_netCDF_datatype(dtype)
 
                 # FORMAT:
-                sfmt = attrs.pop('format', None)
+                sfmt = attrs.pop("format", None)
                 if sfmt is not None:
-                    attrs['subarray']['format'] = sfmt
+                    attrs["subarray"]["format"] = sfmt
             # --- End: if
 
             # LOCATION: Change from python to CFA indexing (i.e. range
             #           includes the final index)
-            attrs['location'] = [(x[0], x[1]-1) for x in attrs['location']]
+            attrs["location"] = [(x[0], x[1] - 1) for x in attrs["location"]]
 
             # PART: Change from python to to CFA indexing (i.e. slice
             #       range includes the final index)
-            part = attrs.get('part', None)
+            part = attrs.get("part", None)
             if part:
                 p = []
-                for x, size in zip(part, attrs['subarray']['shape']):
+                for x, size in zip(part, attrs["subarray"]["shape"]):
                     if isinstance(x, slice):
                         x = x.indices(size)
                         if x[2] > 0:
-                            p.append([x[0], x[1]-1, x[2]])
+                            p.append([x[0], x[1] - 1, x[2]])
                         elif x[1] == -1:
                             p.append([x[0], 0, x[2]])
                         else:
-                            p.append([x[0], x[1]+1, x[2]])
+                            p.append([x[0], x[1] + 1, x[2]])
                     else:
                         p.append(tuple(x))
                 # --- End: for
-                attrs['part'] = str(p)
+                attrs["part"] = str(p)
             # --- End: if
 
-            if 'base' in cfa_array and 'file' in attrs['subarray']:
+            if "base" in cfa_array and "file" in attrs["subarray"]:
                 # Make the file name relative to base
-                attrs['subarray']['file'] = relpath(attrs['subarray']['file'],
-                                                    cfa_array['base'])
+                attrs["subarray"]["file"] = relpath(
+                    attrs["subarray"]["file"], cfa_array["base"]
+                )
         # --- End: for
 
         # Add the description (as a JSON string) of the partition array to
         # the netcdf attributes.
-        netcdf_attrs['cfa_array'] = json.dumps(
-            cfa_array, default=self._convert_to_builtin_type)
+        netcdf_attrs["cfa_array"] = json.dumps(
+            cfa_array, default=self._convert_to_builtin_type
+        )
 
         # Write the netCDF attributes to the file
-        self._write_attributes(parent=None, ncvar=ncvar,
-                               extra=netcdf_attrs)
+        self._write_attributes(parent=None, ncvar=ncvar, extra=netcdf_attrs)
 
     def _random_hex_string(self, size=10):
-        '''Return a random hexadecimal string with the given number of
-    characters.
+        """Return a random hexadecimal string with the given number of
+        characters.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        size: `int`, optional
-            The number of characters in the generated string.
+            size: `int`, optional
+                The number of characters in the generated string.
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The hexadecimal string.
+            `str`
+                The hexadecimal string.
 
-    **Examples:**
+        **Examples:**
 
-    >>> _random_hex_string()
-    'C3eECbBBcf'
-    >>> _random_hex_string(6)
-    '7a4acc'
+        >>> _random_hex_string()
+        'C3eECbBBcf'
+        >>> _random_hex_string(6)
+        '7a4acc'
 
-        '''
-        return ''.join(random.choice(hexdigits) for i in range(size))
+        """
+        return "".join(random.choice(hexdigits) for i in range(size))
 
     def _convert_to_builtin_type(self, x):
-        '''Convert a non-JSON-encodable object to a JSON-encodable built-in
-    type.
+        """Convert a non-JSON-encodable object to a JSON-encodable built-in
+        type.
 
-    Possible conversions are:
+        Possible conversions are:
 
-    ==============  =============  ======================================
-    Input object    Output object  numpy data types covered
-    ==============  =============  ======================================
-    numpy.bool_     bool           bool
-    numpy.integer   int            int, int8, int16, int32, int64, uint8,
-                                   uint16, uint32, uint64
-    numpy.floating  float          float, float16, float32, float64
-    ==============  =============  ======================================
+        ==============  =============  ======================================
+        Input object    Output object  numpy data types covered
+        ==============  =============  ======================================
+        numpy.bool_     bool           bool
+        numpy.integer   int            int, int8, int16, int32, int64, uint8,
+                                       uint16, uint32, uint64
+        numpy.floating  float          float, float16, float32, float64
+        ==============  =============  ======================================
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    :Parameters:
+        :Parameters:
 
-        x:
+            x:
 
-    :Returns:
+        :Returns:
 
-        'int' or `float` or `bool`
+            'int' or `float` or `bool`
 
-    **Examples:**
+        **Examples:**
 
-    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-    bool
-    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-    double
-    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-    int
+        >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+        bool
+        >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+        double
+        >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+        int
 
-        '''
+        """
         if isinstance(x, numpy.bool_):
             return bool(x)
 
@@ -595,5 +617,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             "{!r} object can't be converted to a JSON serializable type: "
             "{!r}".format(type(x), x)
         )
+
 
 # --- End: class

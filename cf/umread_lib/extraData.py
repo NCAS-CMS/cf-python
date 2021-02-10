@@ -4,20 +4,20 @@ import numpy
 
 
 _codes = {
-    1: ('x', float),
-    2: ('y', float),
-    3: ('y_domain_lower_bound', float),
-    4: ('x_domain_lower_bound', float),
-    5: ('y_domain_upper_bound', float),
-    6: ('x_domain_upper_bound', float),
-    7: ('z_domain_lower_bound', float),
-    8: ('x_domain_upper_bound', float),
-    10: ('title', str),
-    11: ('domain_title', str),
-    12: ('x_lower_bound', float),
-    13: ('x_upper_bound', float),
-    14: ('y_lower_bound', float),
-    15: ('y_upper_bound', float),
+    1: ("x", float),
+    2: ("y", float),
+    3: ("y_domain_lower_bound", float),
+    4: ("x_domain_lower_bound", float),
+    5: ("y_domain_upper_bound", float),
+    6: ("x_domain_upper_bound", float),
+    7: ("z_domain_lower_bound", float),
+    8: ("x_domain_upper_bound", float),
+    10: ("title", str),
+    11: ("domain_title", str),
+    12: ("x_lower_bound", float),
+    13: ("x_upper_bound", float),
+    14: ("y_lower_bound", float),
+    15: ("y_upper_bound", float),
 }
 
 
@@ -34,8 +34,10 @@ class ExtraData(dict):
         k.sort()
         return k
 
-    _tolerances = {numpy.dtype(numpy.float32): 1e-5,
-                   numpy.dtype(numpy.float64): 1e-13}
+    _tolerances = {
+        numpy.dtype(numpy.float32): 1e-5,
+        numpy.dtype(numpy.float64): 1e-13,
+    }
 
     def _cmp_floats(self, a, b, tolerance):
         if a == b:
@@ -60,9 +62,7 @@ class ExtraData(dict):
         return 0
 
     def __cmp__(self, other):
-        """Compare two extra data dictionaries returned by unpacker
-
-        """
+        """Compare two extra data dictionaries returned by unpacker"""
         if other is None:
             return 1
         ka = self.sorted_keys()
@@ -79,7 +79,7 @@ class ExtraData(dict):
             elif type == str:
                 c = cmp(valsa, valsb)
             else:
-                assert(False)
+                assert False
             if c != 0:
                 return c
         return 0
@@ -106,7 +106,7 @@ class ExtraDataUnpacker:
         """
         pos = n * self.ws
         rv = self.rdata[:pos]
-        assert(len(rv) == pos)
+        assert len(rv) == pos
         self.rdata = self.rdata[pos:]
         return rv
 
@@ -116,8 +116,13 @@ class ExtraDataUnpacker:
         """
         if self.is_swapped:
             # concatenate backwards substrings
-            st = string.join([st[pos: pos + self.ws][::-1]
-                              for pos in range(0, len(st), self.ws)], "")
+            st = string.join(
+                [
+                    st[pos : pos + self.ws][::-1]
+                    for pos in range(0, len(st), self.ws)
+                ],
+                "",
+            )
         while st.endswith("\x00"):
             st = st[:-1]
         return st

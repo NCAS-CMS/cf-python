@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class List(mixin.PropertiesData,
-           cfdm.List):
-    '''A list variable required to uncompress a gathered array.
+class List(mixin.PropertiesData, cfdm.List):
+    """A list variable required to uncompress a gathered array.
 
     Compression by gathering combines axes of a multidimensional array
     into a new, discrete axis whilst omitting the missing values and
@@ -22,14 +21,15 @@ class List(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

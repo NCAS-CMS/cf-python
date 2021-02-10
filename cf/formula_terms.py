@@ -20,111 +20,118 @@ logger = logging.getLogger(__name__)
 
 
 class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
-    '''Functions for computing non-parametric vertical coordinates from
+    """Functions for computing non-parametric vertical coordinates from
     the formula defined by a coordinate reference construct.
 
     {{formula terms links}}
 
     .. versionaddedd:: 3.8.0
 
-    '''
+    """
+
     # The standard names for which there are formulas. There must be a
     # method with the same name.
     standard_names = (
-        'atmosphere_ln_pressure_coordinate',
-        'atmosphere_sigma_coordinate',
-        'atmosphere_hybrid_sigma_pressure_coordinate',
-        'atmosphere_hybrid_height_coordinate',
-        'atmosphere_sleve_coordinate',
-        'ocean_sigma_coordinate',
-        'ocean_s_coordinate',
-        'ocean_s_coordinate_g1',
-        'ocean_s_coordinate_g2',
-        'ocean_sigma_z_coordinate',
-        'ocean_double_sigma_coordinate',
+        "atmosphere_ln_pressure_coordinate",
+        "atmosphere_sigma_coordinate",
+        "atmosphere_hybrid_sigma_pressure_coordinate",
+        "atmosphere_hybrid_height_coordinate",
+        "atmosphere_sleve_coordinate",
+        "ocean_sigma_coordinate",
+        "ocean_s_coordinate",
+        "ocean_s_coordinate_g1",
+        "ocean_s_coordinate_g2",
+        "ocean_sigma_z_coordinate",
+        "ocean_double_sigma_coordinate",
     )
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    .. seealso:: `_docstring_substitutions`
+        .. seealso:: `_docstring_substitutions`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-        '''
+        """
         return 1
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     @staticmethod
-    def _domain_ancillary_term(f, standard_name,
-                               coordinate_conversion, term,
-                               default_to_zero, strict, bounds):
-        '''Find a domain ancillary construct corresponding to a formula term.
+    def _domain_ancillary_term(
+        f,
+        standard_name,
+        coordinate_conversion,
+        term,
+        default_to_zero,
+        strict,
+        bounds,
+    ):
+        """Find a domain ancillary construct corresponding to a formula term.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        standard_name: `str`
-            The standard name of the parametric vertical coordinate.
+            standard_name: `str`
+                The standard name of the parametric vertical coordinate.
 
-        coordinate_conversion: `CoordinateConversion`
-            The definition of the formula
+            coordinate_conversion: `CoordinateConversion`
+                The definition of the formula
 
-        term: `str`
-            A term of the formula.
+            term: `str`
+                A term of the formula.
 
-            *Parameter example:*
-              ``term='orog'``
+                *Parameter example:*
+                  ``term='orog'``
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-        strict: `bool`
-            If False then allow the computation to occur when
+            strict: `bool`
+                If False then allow the computation to occur when
 
-            * A term with a defined standard name (or names) has no
-              standard name.
+                * A term with a defined standard name (or names) has no
+                  standard name.
 
-            * When the computed standard name can not be found by
-              inference from the standard names of the domain
-              ancillary constructs; or from the
-              ``computed_standard_name`` property.
+                * When the computed standard name can not be found by
+                  inference from the standard names of the domain
+                  ancillary constructs; or from the
+                  ``computed_standard_name`` property.
 
-        bounds: `bool`, optional
-            If False then do not create bounds of zero for a default
-            domain ancillary construct.
+            bounds: `bool`, optional
+                If False then do not create bounds of zero for a default
+                domain ancillary construct.
 
-    :Returns:
+        :Returns:
 
-        `DomainAncillary`, `str`
-            The domain ancillary construct for the formula term and
-            its construct key.
+            `DomainAncillary`, `str`
+                The domain ancillary construct for the formula term and
+                its construct key.
 
-        '''
+        """
         units = formula_terms_units[standard_name].get(term, None)
         if units is None:
             raise ValueError(
@@ -147,11 +154,11 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 )
             )  # pragma: no cover
 
-            valid_standard_names = (
-                formula_terms_standard_names[standard_name][term]
-            )
+            valid_standard_names = formula_terms_standard_names[standard_name][
+                term
+            ]
 
-            vsn = var.get_property('standard_name', None)
+            vsn = var.get_property("standard_name", None)
 
             if vsn is None:
                 if (
@@ -163,8 +170,9 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                         "Can't calculate non-parametric vertical coordinates: "
                         "{!r} term {!r} has no standard name. "
                         "Expected one of {}".format(
-                            term, var,
-                            ', '.join(repr(x) for x in valid_standard_names)
+                            term,
+                            var,
+                            ", ".join(repr(x) for x in valid_standard_names),
                         )
                     )
             elif vsn not in valid_standard_names:
@@ -172,8 +180,10 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     "Can't calculate non-parametric vertical coordinates: "
                     "{!r} term {!r} has invalid "
                     "standard name: {!r}. Expected one of {}".format(
-                        term, var, vsn,
-                        ', '.join(repr(x) for x in valid_standard_names)
+                        term,
+                        var,
+                        vsn,
+                        ", ".join(repr(x) for x in valid_standard_names),
                     )
                 )
 
@@ -223,35 +233,35 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _computed_standard_name(f, standard_name, coordinate_reference):
-        '''Find the standard name of the computed non-parametric vertical
-    coordinates.
+        """Find the standard name of the computed non-parametric vertical
+        coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        standard_name: `str`
-            The standard name of the parametric vertical coordinate.
+            standard_name: `str`
+                The standard name of the parametric vertical coordinate.
 
-        coordinate_reference: `CoordinateReference`
-            A coordinate reference construct of the parent field
-            construct.
+            coordinate_reference: `CoordinateReference`
+                A coordinate reference construct of the parent field
+                construct.
 
-    :Returns:
+        :Returns:
 
-        `str` or `None`
-            The standard name of the computed vertical coordinates, or
-            `None` if one could not be found.
+            `str` or `None`
+                The standard name of the computed vertical coordinates, or
+                `None` if one could not be found.
 
-        '''
-        computed_standard_name = (
-            formula_terms_computed_standard_names[standard_name]
-        )
+        """
+        computed_standard_name = formula_terms_computed_standard_names[
+            standard_name
+        ]
 
         if isinstance(computed_standard_name, str):
             # ------------------------------------------------------------
@@ -277,7 +287,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if key is not None:
             var = f.domain_ancillary(key, default=None)
             if var is not None:
-                term_standard_name = var.get_property('standard_name', None)
+                term_standard_name = var.get_property("standard_name", None)
                 if term_standard_name is not None:
                     for x, y in mapping.items():
                         if term_standard_name == x:
@@ -291,7 +301,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             # conversion parameter
             # ------------------------------------------------------------
             computed_standard_name = coordinate_conversion.get_parameter(
-                'computed_standard_name', None
+                "computed_standard_name", None
             )
 
         if computed_standard_name is None:
@@ -307,18 +317,18 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 if var is None:
                     continue
 
-                if var.get_property('standard_name', None) != standard_name:
+                if var.get_property("standard_name", None) != standard_name:
                     continue
 
                 computed_standard_name = var.get_property(
-                    'computed_standard_name', None
+                    "computed_standard_name", None
                 )
                 break
         # --- End: if
 
         logger.detail(
             "computed_standard_name: {}".format(
-                repr(computed_standard_name) if computed_standard_name else ''
+                repr(computed_standard_name) if computed_standard_name else ""
             )
         )  # pragma: no cover
 
@@ -326,29 +336,29 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _vertical_axis(f, keys):
-        '''Find the vertical axis corresponding to the parametric vertical
-    coordinates.
+        """Find the vertical axis corresponding to the parametric vertical
+        coordinates.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        keys: sequence of `str` or `None`
-            The construct keys of 1-d domain ancillary or coordinate
-            constructs that span the vertical axis. If a key is `None`
-            then that key is ignored.
+            keys: sequence of `str` or `None`
+                The construct keys of 1-d domain ancillary or coordinate
+                constructs that span the vertical axis. If a key is `None`
+                then that key is ignored.
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            Either a 1-tuple containing the domain axis construct key
-            of the vertical axis, or an empty tuple if no such axis
-            could be found.
+            `tuple`
+                Either a 1-tuple containing the domain axis construct key
+                of the vertical axis, or an empty tuple if no such axis
+                could be found.
 
-        '''
+        """
         axis = ()
         for key in keys:
             if key is None:
@@ -357,51 +367,49 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             axis = f.get_data_axes(key)
             break
 
-        logger.detail(
-            "Vertical axis: {!r}".format(axis)
-        )  # pragma: no cover
+        logger.detail("Vertical axis: {!r}".format(axis))  # pragma: no cover
 
         return axis
 
     @staticmethod
     def _conform_eta(f, eta, eta_key, depth, depth_key):
-        '''Transform the 'eta' term so that broadcasting will work with the
-    'depth' term.
+        """Transform the 'eta' term so that broadcasting will work with the
+        'depth' term.
 
-    This entails making sure that the trailing dimensions of 'eta' are
-    the same as all of the dimensions of 'depth'.
+        This entails making sure that the trailing dimensions of 'eta' are
+        the same as all of the dimensions of 'depth'.
 
-    For example, if we have ``eta(i,n,j)`` and ``depth(j,i)`` then eta
-    will be transformed to ``eta(n,j,i)``.
+        For example, if we have ``eta(i,n,j)`` and ``depth(j,i)`` then eta
+        will be transformed to ``eta(n,j,i)``.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        eta: `DomainAncillary`
-            The 'eta' domain ancillary construct.
+            eta: `DomainAncillary`
+                The 'eta' domain ancillary construct.
 
-        eta_key: `str`
-            The construct key of the 'eta' domain ancillary construct.
+            eta_key: `str`
+                The construct key of the 'eta' domain ancillary construct.
 
-        depth: `DomainAncillary`
-            The 'depth' domain ancillary construct.
+            depth: `DomainAncillary`
+                The 'depth' domain ancillary construct.
 
-        depth_key: `str`
-            The construct key of the 'depth' domain ancillary
-            construct.
+            depth_key: `str`
+                The construct key of the 'depth' domain ancillary
+                construct.
 
-    :Returns:
+        :Returns:
 
-        `DomainAncillary`, `tuple`
-            The conformed 'eta' domain ancillary construct for the
-            formula term, and the domain axis construct keys of its
-            dimensions.
+            `DomainAncillary`, `tuple`
+                The conformed 'eta' domain ancillary construct for the
+                formula term, and the domain axis construct keys of its
+                dimensions.
 
-        '''
+        """
         eta_axes = f.get_data_axes(eta_key, default=None)
         depth_axes = f.get_data_axes(depth_key, default=None)
 
@@ -415,8 +423,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
             eta_axes2 = depth_axes
             if len(eta_axes) > len(depth_axes):
-                diff = [axis for axis in eta_axes
-                        if axis not in depth_axes]
+                diff = [axis for axis in eta_axes if axis not in depth_axes]
                 eta_axes2 = tuple(diff) + depth_axes
 
             iaxes = [eta_axes.index(axis) for axis in eta_axes2]
@@ -427,8 +434,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         logger.debug(
             "Transposed domain ancillary 'eta': {!r}\n"
             "Transposed domain ancillary 'eta' axes: {!r}".format(
-                eta,
-                eta_axes
+                eta, eta_axes
             )
         )  # pragma: no cover
 
@@ -436,56 +442,56 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _conform_computed(f, computed, computed_axes, k_axis):
-        '''Move the vertical axis of the computed non-parametric vertical
-    coordinates from its current position as the last (rightmost)
-    dimension, if applicable.
+        """Move the vertical axis of the computed non-parametric vertical
+        coordinates from its current position as the last (rightmost)
+        dimension, if applicable.
 
-    **Note:**
+        **Note:**
 
-    * If the input computed coordinates do not span the vertical axis
-      then they are returned unchanged.
+        * If the input computed coordinates do not span the vertical axis
+          then they are returned unchanged.
 
-    * If the input computed coordinates do span the vertical axis then
-      it assumed to be the last (rightmost) dimension.
+        * If the input computed coordinates do span the vertical axis then
+          it assumed to be the last (rightmost) dimension.
 
-    * If the input computed coordinates span a unique time axis then
-      the vertical axis is moved to position immediately to the right
-      of it. Otherwise the vertical axis is moved to the first
-      (leftmost) position.
+        * If the input computed coordinates span a unique time axis then
+          the vertical axis is moved to position immediately to the right
+          of it. Otherwise the vertical axis is moved to the first
+          (leftmost) position.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        computed: `DomainAncillary`
-            The computed non-parametric vertical coordinates.
+            computed: `DomainAncillary`
+                The computed non-parametric vertical coordinates.
 
-        computed_axes: `tuple`
-            The construct keys of the domain axes spanned by the
-            computed coordinates.
+            computed_axes: `tuple`
+                The construct keys of the domain axes spanned by the
+                computed coordinates.
 
-        k_axis: `tuple`
-            The construct key of the vertical domain axis. If the
-            vertical axis does not appear in the computed
-            non-parametric coodinates then this must be an empty
-            tuple.
+            k_axis: `tuple`
+                The construct key of the vertical domain axis. If the
+                vertical axis does not appear in the computed
+                non-parametric coodinates then this must be an empty
+                tuple.
 
-    :Returns:
+        :Returns:
 
-        `DomainAncillary`, `tuple`
-            The conformed computed non-parametric vertical coordinates
-            construct and the domain axis construct keys of its
-            dimensions.
+            `DomainAncillary`, `tuple`
+                The conformed computed non-parametric vertical coordinates
+                construct and the domain axis construct keys of its
+                dimensions.
 
-        '''
+        """
         ndim = computed.ndim
         if k_axis and ndim >= 2:
             iaxes = list(range(ndim - 1))
 
-            time = f.domain_axis('T', key=True, default=None)
+            time = f.domain_axis("T", key=True, default=None)
             if time in computed_axes:
                 # Move it to the immediate right of the time
                 # axis
@@ -507,51 +513,49 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _conform_units(term, var, ref_term2, ref_units):
-        '''Make sure that the units of a variable of the formula are the same
-    as the units of another formula term.
+        """Make sure that the units of a variable of the formula are the same
+        as the units of another formula term.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        term: `str`
-            A term of the formula for which the units are to be
-            conformed.
+            term: `str`
+                A term of the formula for which the units are to be
+                conformed.
 
-            *Parameter example:*
-              ``term='z2'``
+                *Parameter example:*
+                  ``term='z2'``
 
-        var: `DomainAncillary` or `Coordinate`
-            The variable for the *term* term whose units are to
-            conformed to *ref_units*.
+            var: `DomainAncillary` or `Coordinate`
+                The variable for the *term* term whose units are to
+                conformed to *ref_units*.
 
-        ref_term: `str`
-            A term of the formula which defines the reference units.
+            ref_term: `str`
+                A term of the formula which defines the reference units.
 
-            *Parameter example:*
-              ``ref_term='href'``
+                *Parameter example:*
+                  ``ref_term='href'``
 
-        ref_units: `Units`
-            The units of the *ref_term* term.
+            ref_units: `Units`
+                The units of the *ref_term* term.
 
-            *Parameter example:*
-              ``ref_units=cf.Units('1')`
+                *Parameter example:*
+                  ``ref_units=cf.Units('1')`
 
-    :Returns:
+        :Returns:
 
-        `DomainAncillary` or `Coordinate`
-            The input *var* construct with conformed units.
+            `DomainAncillary` or `Coordinate`
+                The input *var* construct with conformed units.
 
-        '''
+        """
         units = var.Units
 
         if units != ref_units:
             if not units.equivalent(ref_units):
                 raise ValueError(
                     "Terms {!r} and {!r} have incompatible units: "
-                    "{!r}, {!r} ".format(
-                        ref_term, term, ref_units, units
-                    )
+                    "{!r}, {!r} ".format(ref_term, term, ref_units, units)
                 )
 
             var = var.copy()
@@ -560,56 +564,55 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         return var
 
     @staticmethod
-    def _check_standard_name_consistency(strict,
-                                         zlev=(None, None),
-                                         eta=(None, None),
-                                         depth=(None, None)):
-        '''Check that there are consistent sets of values for the
-    standard_names of formula terms and the computed_standard_name
-    needed in defining the ocean sigma coordinate, the ocean
-    s-coordinate, the ocean_sigma over z coordinate, and the ocean
-    double sigma coordinate.
+    def _check_standard_name_consistency(
+        strict, zlev=(None, None), eta=(None, None), depth=(None, None)
+    ):
+        """Check that there are consistent sets of values for the
+        standard_names of formula terms and the computed_standard_name
+        needed in defining the ocean sigma coordinate, the ocean
+        s-coordinate, the ocean_sigma over z coordinate, and the ocean
+        double sigma coordinate.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        zlev: `tuple`, optional
-            The 'zlev' term domain ancillary construct and its
-            construct key. If the domain ancillary construct was
-            created from default values then the construct key will be
-            `None`.
+            zlev: `tuple`, optional
+                The 'zlev' term domain ancillary construct and its
+                construct key. If the domain ancillary construct was
+                created from default values then the construct key will be
+                `None`.
 
-        eta: `tuple`, optional
-            The 'eta' term domain ancillary construct and its
-            construct key. If the domain ancillary construct was
-            created from default values then the construct key will be
-            `None`.
+            eta: `tuple`, optional
+                The 'eta' term domain ancillary construct and its
+                construct key. If the domain ancillary construct was
+                created from default values then the construct key will be
+                `None`.
 
-        depth: `tuple`, optional
-            The 'depth' term domain ancillary construct and its
-            construct key. If the domain ancillary construct was
-            created from default values then the construct key will be
-            `None`.
+            depth: `tuple`, optional
+                The 'depth' term domain ancillary construct and its
+                construct key. If the domain ancillary construct was
+                created from default values then the construct key will be
+                `None`.
 
-        strict: `bool`
-            If False then allow the computation to occur even if none
-            of the given the 'zlev', 'eta', and 'depth' domain
-            ancillary constructs have a standard name. By default if
-            any of these constructs is missing a standard name then an
-            exception will be raised.
+            strict: `bool`
+                If False then allow the computation to occur even if none
+                of the given the 'zlev', 'eta', and 'depth' domain
+                ancillary constructs have a standard name. By default if
+                any of these constructs is missing a standard name then an
+                exception will be raised.
 
-    :Returns:
+        :Returns:
 
-        `None`
-            A `ValueError` is raised if the standard names are
-            inconsistent.
+            `None`
+                A `ValueError` is raised if the standard names are
+                inconsistent.
 
-        '''
+        """
         kwargs = locals()
-        kwargs.pop('strict')
+        kwargs.pop("strict")
 
         indices = set()
 
@@ -617,7 +620,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             if var is None:
                 continue
 
-            standard_name = var.get_property('standard_name', None)
+            standard_name = var.get_property("standard_name", None)
 
             if standard_name is None and key is None:
                 continue
@@ -630,8 +633,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 if strict:
                     raise ValueError(
                         "{!r} term {!r} has invalid "
-                        "standard name: {!r}".format(
-                            term, var, standard_name)
+                        "standard name: {!r}".format(term, var, standard_name)
                     )
         # --- End: for
 
@@ -640,7 +642,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 "Terms {} have no standard names. "
                 "See Appendix D: Parametric Vertical Coordinates "
                 "of the CF conventions.".format(
-                    ', '.join(repr(term) for term in kwargs),
+                    ", ".join(repr(term) for term in kwargs),
                 )
             )
 
@@ -649,35 +651,35 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 "Terms {} have incompatible standard names. "
                 "See Appendix D: Parametric Vertical Coordinates "
                 "of the CF conventions.".format(
-                    ', '.join(repr(term) for term in kwargs),
+                    ", ".join(repr(term) for term in kwargs),
                 )
             )
 
     @staticmethod
     def _check_index_term(term, var):
-        '''Check that an index term contains a single integer.
+        """Check that an index term contains a single integer.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        term: `str`
-            A term of the formula.
+            term: `str`
+                A term of the formula.
 
-            *Parameter example:*
-              ``term='nsigma'``
+                *Parameter example:*
+                  ``term='nsigma'``
 
-        eta: `DomainAncillary`
-            The corresponding domain ancillary construct.
+            eta: `DomainAncillary`
+                The corresponding domain ancillary construct.
 
-    :Returns:
+        :Returns:
 
-        `None`
-            A `ValueEerror` is raised if the index term does not
-            contain a single integer.
+            `None`
+                A `ValueEerror` is raised if the index term does not
+                contain a single integer.
 
-        '''
-        if var.size != 1 or var.dtype.kind != 'i':
+        """
+        if var.size != 1 or var.dtype.kind != "i":
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
                 "{!r} term {!r} doen't contain exactly one "
@@ -688,42 +690,40 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     # Methods
     # ----------------------------------------------------------------
     @classmethod
-    def atmosphere_ln_pressure_coordinate(cls, g,
-                                          coordinate_reference,
-                                          default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    atmosphere_ln_pressure_coordinate parametric coordinates.
+    def atmosphere_ln_pressure_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        atmosphere_ln_pressure_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-    '''
-        standard_name = 'atmosphere_ln_pressure_coordinate'
+        """
+        standard_name = "atmosphere_ln_pressure_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -731,14 +731,25 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        lev, lev_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'lev', default_to_zero,
-                                                  strict, True)
+        lev, lev_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "lev",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        p0, _ = cls._domain_ancillary_term(g, standard_name,
-                                           coordinate_conversion, 'p0',
-                                           default_to_zero, strict, True)
+        p0, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "p0",
+            default_to_zero,
+            strict,
+            True,
+        )
 
         # Get the axes of the non-parametric coordinates, putting the
         # vertical axis in postition -1 (the rightmost position).
@@ -748,50 +759,52 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
-        with bounds_combination_mode(
-                'OR' if lev.has_bounds() else 'AND'
-        ):
+        with bounds_combination_mode("OR" if lev.has_bounds() else "AND"):
             computed = p0 * (-lev).exp()
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def atmosphere_sigma_coordinate(cls, g, coordinate_reference,
-                                    default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    atmosphere_sigma_coordinate parametric coordinates.
+    def atmosphere_sigma_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        atmosphere_sigma_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'atmosphere_sigma_coordinate'
+        """
+        standard_name = "atmosphere_sigma_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -799,23 +812,35 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        sigma, sigma_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'sigma',
-                                                      default_to_zero,
-                                                      strict, True)
+        sigma, sigma_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "sigma",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        ptop, _ = cls._domain_ancillary_term(g, standard_name,
-                                             coordinate_conversion,
-                                             'ptop', default_to_zero,
-                                             strict, True)
+        ptop, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "ptop",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        ps, ps_key = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'ps',
-                                                default_to_zero,
-                                                strict, True)
+        ps, ps_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "ps",
+            default_to_zero,
+            strict,
+            True,
+        )
 
         # Get the axes of the non-parametric coordinates, putting the
         # vertical axis in postition -1 (the rightmost position).
@@ -830,53 +855,52 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
-        with bounds_combination_mode(
-            'OR' if sigma.has_bounds() else 'AND'
-        ):
-            computed = (ptop
-                        + (ps - ptop) * sigma)
+        with bounds_combination_mode("OR" if sigma.has_bounds() else "AND"):
+            computed = ptop + (ps - ptop) * sigma
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def atmosphere_hybrid_sigma_pressure_coordinate(cls, g,
-                                                    coordinate_reference,
-                                                    default_to_zero,
-                                                    strict):
-        '''Compute non-parametric vertical coordinates from
-    atmosphere_hybrid_sigma_pressure_coordinate parametric coordinates.
+    def atmosphere_hybrid_sigma_pressure_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        atmosphere_hybrid_sigma_pressure_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'atmosphere_hybrid_sigma_pressure_coordinate'
+        """
+        standard_name = "atmosphere_hybrid_sigma_pressure_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -884,37 +908,62 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        ap_term = 'ap' in coordinate_conversion.domain_ancillaries()
+        ap_term = "ap" in coordinate_conversion.domain_ancillaries()
 
         if ap_term:
-            ap, ap_key = cls._domain_ancillary_term(g, standard_name,
-                                                    coordinate_conversion,
-                                                    'ap', default_to_zero,
-                                                    strict, True)
+            ap, ap_key = cls._domain_ancillary_term(
+                g,
+                standard_name,
+                coordinate_conversion,
+                "ap",
+                default_to_zero,
+                strict,
+                True,
+            )
 
             a_key = None
         else:
-            a, a_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'a', default_to_zero,
-                                                  strict, True)
+            a, a_key = cls._domain_ancillary_term(
+                g,
+                standard_name,
+                coordinate_conversion,
+                "a",
+                default_to_zero,
+                strict,
+                True,
+            )
 
-            p0, _ = cls._domain_ancillary_term(g, standard_name,
-                                               coordinate_conversion,
-                                               'p0', default_to_zero,
-                                               strict, False)
+            p0, _ = cls._domain_ancillary_term(
+                g,
+                standard_name,
+                coordinate_conversion,
+                "p0",
+                default_to_zero,
+                strict,
+                False,
+            )
 
             ap_key = None
 
-        b, b_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion, 'b',
-                                              default_to_zero, strict,
-                                              True)
+        b, b_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "b",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        ps, ps_key = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'ps', default_to_zero,
-                                                strict, False)
+        ps, ps_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "ps",
+            default_to_zero,
+            strict,
+            False,
+        )
 
         # Get the axes of the non-parametric coordinates, putting the
         # vertical axis in postition -1 (the rightmost position).
@@ -931,57 +980,58 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         if ap_term:
             with bounds_combination_mode(
-                'OR' if ap.has_bounds() and b.has_bounds() else 'AND'
+                "OR" if ap.has_bounds() and b.has_bounds() else "AND"
             ):
-                computed = (ap
-                            + b * ps)
+                computed = ap + b * ps
         else:
             with bounds_combination_mode(
-                    'OR' if a.has_bounds() and b.has_bounds() else 'AND'
+                "OR" if a.has_bounds() and b.has_bounds() else "AND"
             ):
-                computed = (a * p0
-                            + b * ps)
+                computed = a * p0 + b * ps
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def atmosphere_hybrid_height_coordinate(cls, g,
-                                            coordinate_reference,
-                                            default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    atmosphere_hybrid_height_coordinate parametric coordinates.
+    def atmosphere_hybrid_height_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        atmosphere_hybrid_height_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'atmosphere_hybrid_height_coordinate'
+        """
+        standard_name = "atmosphere_hybrid_height_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -989,21 +1039,35 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        a, a_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion, 'a',
-                                              default_to_zero, strict,
-                                              True)
+        a, a_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "a",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        b, b_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion, 'b',
-                                              default_to_zero, strict,
-                                              True)
+        b, b_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "b",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        orog, orog_key = cls._domain_ancillary_term(g, standard_name,
-                                                    coordinate_conversion,
-                                                    'orog',
-                                                    default_to_zero,
-                                                    strict, False)
+        orog, orog_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "orog",
+            default_to_zero,
+            strict,
+            False,
+        )
 
         # Get the axes of the non-parametric coordinates, putting the
         # vertical axis in postition -1 (the rightmost position).
@@ -1019,50 +1083,53 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
         with bounds_combination_mode(
-            'OR' if a.has_bounds() and b.has_bounds() else 'AND'
+            "OR" if a.has_bounds() and b.has_bounds() else "AND"
         ):
-            computed = (a
-                        + b * orog)
+            computed = a + b * orog
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def atmosphere_sleve_coordinate(cls, g, coordinate_reference,
-                                    default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    atmosphere_sleve_coordinate parametric coordinates.
+    def atmosphere_sleve_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        atmosphere_sleve_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'atmosphere_sleve_coordinate'
+        """
+        standard_name = "atmosphere_sleve_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1070,39 +1137,65 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        a, a_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion, 'a',
-                                              default_to_zero, strict,
-                                              True)
+        a, a_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "a",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        b1, b1_key = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'b1', default_to_zero,
-                                                strict, True)
+        b1, b1_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "b1",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        b2, b2_key = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'b2', default_to_zero,
-                                                strict, True)
+        b2, b2_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "b2",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        ztop, _ = cls._domain_ancillary_term(g, standard_name,
-                                             coordinate_conversion,
-                                             'ztop', default_to_zero,
-                                             strict, False)
+        ztop, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "ztop",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        zsurf1, zsurf1_key = cls._domain_ancillary_term(g,
-                                                        standard_name,
-                                                        coordinate_conversion,
-                                                        'zsurf1',
-                                                        default_to_zero,
-                                                        strict, False)
+        zsurf1, zsurf1_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "zsurf1",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        zsurf2, zsurf2_key = cls._domain_ancillary_term(g,
-                                                        standard_name,
-                                                        coordinate_conversion,
-                                                        'zsurf2',
-                                                        default_to_zero,
-                                                        strict, False)
+        zsurf2, zsurf2_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "zsurf2",
+            default_to_zero,
+            strict,
+            False,
+        )
 
         # Make sure that zsurf1 and zsurf2 have the same number of axes
         # and the same axis order
@@ -1143,52 +1236,55 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
         with bounds_combination_mode(
-            'OR' if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
-            else 'AND'
+            "OR"
+            if a.has_bounds() and b1.has_bounds() and b2.has_bounds()
+            else "AND"
         ):
-            computed = (a * ztop
-                        + b1 * zsurf1
-                        + b2 * zsurf2)
+            computed = a * ztop + b1 * zsurf1 + b2 * zsurf2
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_sigma_coordinate(cls, g, coordinate_reference,
-                               default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    ocean_sigma_coordinate parametric coordinates
+    def ocean_sigma_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        ocean_sigma_coordinate parametric coordinates
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_sigma_coordinate'
+        """
+        standard_name = "ocean_sigma_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1196,29 +1292,39 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        sigma, sigma_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'sigma',
-                                                      default_to_zero,
-                                                      strict, True)
+        sigma, sigma_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "sigma",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        eta, eta_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'eta',
-                                                  default_to_zero,
-                                                  strict, False)
+        eta, eta_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "eta",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        cls._check_standard_name_consistency(strict,
-                                             eta=(eta, eta_key),
-                                             depth=(depth, depth_key))
+        cls._check_standard_name_consistency(
+            strict, eta=(eta, eta_key), depth=(depth, depth_key)
+        )
 
         # Make sure that eta and depth are consistent, which may require
         # eta to be transposed.
@@ -1238,51 +1344,52 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
-        with bounds_combination_mode(
-            'OR' if sigma.has_bounds() else 'AND'
-        ):
-            computed = (eta
-                        + (eta + depth) * sigma)
+        with bounds_combination_mode("OR" if sigma.has_bounds() else "AND"):
+            computed = eta + (eta + depth) * sigma
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_s_coordinate(cls, g, coordinate_reference,
-                           default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from ocean_s_coordinate
-    parametric coordinates.
+    def ocean_s_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from ocean_s_coordinate
+        parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_s_coordinate'
+        """
+        standard_name = "ocean_s_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1290,43 +1397,69 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        s, s_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion,
-                                              's', default_to_zero,
-                                              strict, True)
+        s, s_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "s",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        eta, eta_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'eta',
-                                                  default_to_zero,
-                                                  strict, False)
+        eta, eta_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "eta",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        a, _ = cls._domain_ancillary_term(g, standard_name,
-                                          coordinate_conversion, 'a',
-                                          default_to_zero, strict,
-                                          True)
+        a, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "a",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        b, _ = cls._domain_ancillary_term(g, standard_name,
-                                          coordinate_conversion, 'b',
-                                          default_to_zero, strict,
-                                          True)
+        b, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "b",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        depth_c, _ = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'depth_c',
-                                                default_to_zero,
-                                                strict, False)
+        depth_c, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth_c",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        cls._check_standard_name_consistency(strict,
-                                             eta=(eta, eta_key),
-                                             depth=(depth, depth_key))
+        cls._check_standard_name_consistency(
+            strict, eta=(eta, eta_key), depth=(depth, depth_key)
+        )
 
         # Make sure that eta and depth are consistent, which may require
         # eta to be transposed.
@@ -1347,61 +1480,58 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # Compute the non-parametric coordinates as
         # ----------------------------------------------------------------
         # Ensure that a has the same units as s
-        a = cls._conform_units('a', a, 's', s.Units)
+        a = cls._conform_units("a", a, "s", s.Units)
 
-        with bounds_combination_mode(
-            'OR' if s.has_bounds() else 'AND'
-        ):
-            C = (
-                (1 - b) * (a * s).sinh() / a.sinh()
-                + b * (
-                    (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh()) - 0.5
-                )
+        with bounds_combination_mode("OR" if s.has_bounds() else "AND"):
+            C = (1 - b) * (a * s).sinh() / a.sinh() + b * (
+                (a * (s + 0.5)).tanh() / (2 * (a * 0.5).tanh()) - 0.5
             )
 
-            computed = (eta * (s + 1)
-                        + depth_c * s
-                        + (depth - depth_c) * C)
+            computed = eta * (s + 1) + depth_c * s + (depth - depth_c) * C
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_s_coordinate_g1(cls, g, coordinate_reference,
-                              default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    ocean_s_coordinate_g1 parametric coordinates.
+    def ocean_s_coordinate_g1(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        ocean_s_coordinate_g1 parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_s_coordinate_g1'
+        """
+        standard_name = "ocean_s_coordinate_g1"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1409,38 +1539,59 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        s, s_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion,
-                                              's', default_to_zero,
-                                              strict, True)
+        s, s_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "s",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        C, C_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion,
-                                              'C', default_to_zero,
-                                              strict, True)
+        C, C_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "C",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        eta, eta_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'eta',
-                                                  default_to_zero,
-                                                  strict, False)
+        eta, eta_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "eta",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth_c, _ = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'depth_c',
-                                                default_to_zero,
-                                                strict, False)
+        depth_c, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth_c",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        cls._check_standard_name_consistency(strict,
-                                             eta=(eta, eta_key),
-                                             depth=(depth, depth_key))
+        cls._check_standard_name_consistency(
+            strict, eta=(eta, eta_key), depth=(depth, depth_key)
+        )
 
         # Make sure that eta and depth are consistent, which may require
         # eta to be transposed.
@@ -1461,53 +1612,55 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
         with bounds_combination_mode(
-            'OR' if s.has_bounds() and C.has_bounds() else 'AND'
+            "OR" if s.has_bounds() and C.has_bounds() else "AND"
         ):
-            S = (depth_c * s
-                 + (depth - depth_c) * C)
+            S = depth_c * s + (depth - depth_c) * C
 
-            computed = (S
-                        + eta * (1 + S / depth))
+            computed = S + eta * (1 + S / depth)
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_s_coordinate_g2(cls, g, coordinate_reference,
-                              default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    ocean_s_coordinate_g2 parametric coordinates.
+    def ocean_s_coordinate_g2(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        ocean_s_coordinate_g2 parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_s_coordinate_g2'
+        """
+        standard_name = "ocean_s_coordinate_g2"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1515,38 +1668,59 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        s, s_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion,
-                                              's', default_to_zero,
-                                              strict, True)
+        s, s_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "s",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        eta, eta_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'eta',
-                                                  default_to_zero,
-                                                  strict, False)
+        eta, eta_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "eta",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth_c, _ = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'depth_c',
-                                                default_to_zero,
-                                                strict, False)
+        depth_c, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth_c",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        C, C_key = cls._domain_ancillary_term(g, standard_name,
-                                              coordinate_conversion,
-                                              'C', default_to_zero,
-                                              strict, True)
+        C, C_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "C",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        cls._check_standard_name_consistency(strict,
-                                             eta=(eta, eta_key),
-                                             depth=(depth, depth_key))
+        cls._check_standard_name_consistency(
+            strict, eta=(eta, eta_key), depth=(depth, depth_key)
+        )
 
         # Make sure that eta and depth are consistent, which may require
         # eta to be transposed.
@@ -1567,56 +1741,55 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # Compute the non-parametric coordinates
         # ----------------------------------------------------------------
         with bounds_combination_mode(
-            'OR' if s.has_bounds() and C.has_bounds() else 'AND'
+            "OR" if s.has_bounds() and C.has_bounds() else "AND"
         ):
-            S = (
-                (depth_c * s
-                 + depth * C)
-                / (depth + depth_c)
-            )
+            S = (depth_c * s + depth * C) / (depth + depth_c)
 
-            computed = (eta
-                        + (eta + depth) * S)
+            computed = eta + (eta + depth) * S
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_sigma_z_coordinate(cls, g, coordinate_reference,
-                                 default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    ocean_sigma_z_coordinate parametric coordinates.
+    def ocean_sigma_z_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        ocean_sigma_z_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_sigma_z_coordinate'
+        """
+        standard_name = "ocean_sigma_z_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1624,48 +1797,72 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        sigma, sigma_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'sigma',
-                                                      default_to_zero,
-                                                      strict, True)
+        sigma, sigma_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "sigma",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        eta, eta_key = cls._domain_ancillary_term(g, standard_name,
-                                                  coordinate_conversion,
-                                                  'eta',
-                                                  default_to_zero,
-                                                  strict, False)
+        eta, eta_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "eta",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        depth_c, _ = cls._domain_ancillary_term(g, standard_name,
-                                                coordinate_conversion,
-                                                'depth_c',
-                                                default_to_zero,
-                                                strict, False)
+        depth_c, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth_c",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        nsigma, _ = cls._domain_ancillary_term(g, standard_name,
-                                               coordinate_conversion,
-                                               'nsigma',
-                                               default_to_zero,
-                                               strict, False)
+        nsigma, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "nsigma",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        zlev, zlev_key = cls._domain_ancillary_term(g, standard_name,
-                                                    coordinate_conversion,
-                                                    'zlev',
-                                                    default_to_zero,
-                                                    strict, True)
+        zlev, zlev_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "zlev",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        cls._check_standard_name_consistency(strict,
-                                             zlev=(zlev, zlev_key),
-                                             eta=(eta, eta_key),
-                                             depth=(depth, depth_key))
+        cls._check_standard_name_consistency(
+            strict,
+            zlev=(zlev, zlev_key),
+            eta=(eta, eta_key),
+            depth=(depth, depth_key),
+        )
 
         # Make sure that eta and depth are consistent, which may require
         # eta to be transposed.
@@ -1682,7 +1879,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             eta = eta.insert_dimension(-1)
             depth = depth.insert_dimension(-1)
 
-        cls._check_index_term('nsigma', nsigma)
+        cls._check_index_term("nsigma", nsigma)
 
         # ----------------------------------------------------------------
         # Compute the non-parametric coordinates
@@ -1691,55 +1888,58 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         #       for k>nsigma and then overwrite them.
         # ----------------------------------------------------------------
         with bounds_combination_mode(
-            'OR' if zlev.has_bounds() and sigma.has_bounds() else 'AND'
+            "OR" if zlev.has_bounds() and sigma.has_bounds() else "AND"
         ):
             computed = (
-                eta
-                + (depth.where(depth > depth_c, depth_c) + eta) * sigma
+                eta + (depth.where(depth > depth_c, depth_c) + eta) * sigma
             )
 
             nsigma = int(nsigma.data)
             computed[..., nsigma:] = zlev[nsigma:]
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def ocean_double_sigma_coordinate(cls, g, coordinate_reference,
-                                      default_to_zero, strict):
-        '''Compute non-parametric vertical coordinates from
-    ocean_double_sigma_coordinate parametric coordinates.
+    def ocean_double_sigma_coordinate(
+        cls, g, coordinate_reference, default_to_zero, strict
+    ):
+        """Compute non-parametric vertical coordinates from
+        ocean_double_sigma_coordinate parametric coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    .. note:: The vertical axis is the last (rightmost) dimension of
-              the returned computed non-parametric vertical
-              coordinates, if applicable.
+        .. note:: The vertical axis is the last (rightmost) dimension of
+                  the returned computed non-parametric vertical
+                  coordinates, if applicable.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            The coordinate reference construct of the parent field
-            construct that defines the conversion formula.
+            coordinate_reference: `CoordinateReference`
+                The coordinate reference construct of the parent field
+                construct that defines the conversion formula.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        {{Returns formula}}
+            {{Returns formula}}
 
-        '''
-        standard_name = 'ocean_double_sigma_coordinate'
+        """
+        standard_name = "ocean_double_sigma_coordinate"
 
         computed_standard_name = cls._computed_standard_name(
-            g,
-            standard_name,
-            coordinate_reference
+            g, standard_name, coordinate_reference
         )
 
         # ----------------------------------------------------------------
@@ -1747,44 +1947,75 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         # ----------------------------------------------------------------
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
-        sigma, sigma_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'sigma',
-                                                      default_to_zero,
-                                                      strict, True)
+        sigma, sigma_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "sigma",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        depth, depth_key = cls._domain_ancillary_term(g,
-                                                      standard_name,
-                                                      coordinate_conversion,
-                                                      'depth',
-                                                      default_to_zero,
-                                                      strict, False)
+        depth, depth_key = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "depth",
+            default_to_zero,
+            strict,
+            False,
+        )
 
-        z1, _ = cls._domain_ancillary_term(g, standard_name,
-                                           coordinate_conversion,
-                                           'z1', default_to_zero,
-                                           strict, True)
+        z1, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "z1",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        z2, _ = cls._domain_ancillary_term(g, standard_name,
-                                           coordinate_conversion,
-                                           'z2', default_to_zero,
-                                           strict, True)
+        z2, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "z2",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        a, _ = cls._domain_ancillary_term(g, standard_name,
-                                          coordinate_conversion, 'a',
-                                          default_to_zero, strict,
-                                          True)
+        a, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "a",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        href, _ = cls._domain_ancillary_term(g, standard_name,
-                                             coordinate_conversion,
-                                             'href', default_to_zero,
-                                             strict, True)
+        href, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "href",
+            default_to_zero,
+            strict,
+            True,
+        )
 
-        k_c, _ = cls._domain_ancillary_term(g, standard_name,
-                                            coordinate_conversion,
-                                            'k_c', default_to_zero,
-                                            strict, True)
+        k_c, _ = cls._domain_ancillary_term(
+            g,
+            standard_name,
+            coordinate_conversion,
+            "k_c",
+            default_to_zero,
+            strict,
+            True,
+        )
 
         # Get the axes of the non-parametric coordinates, putting the
         # vertical axis in postition -1 (the rightmost position).
@@ -1796,7 +2027,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if k_axis:
             depth = depth.insert_dimension(-1)
 
-        cls._check_index_term('k_c', k_c)
+        cls._check_index_term("k_c", k_c)
 
         # ----------------------------------------------------------------
         # Compute the non-parametric coordinates
@@ -1805,106 +2036,104 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         #       for k<=k_c and then overwrite them.
         # ----------------------------------------------------------------
         # Ensure that a, z1, z2, and href all have the same units as depth
-        a = cls._conform_units('a', a, 'depth', depth.Units)
-        z1 = cls._conform_units('z1', z1, 'depth', depth.Units)
-        z2 = cls._conform_units('z2', z2, 'depth', depth.Units)
-        href = cls._conform_units('href', href, 'depth', depth.Units)
+        a = cls._conform_units("a", a, "depth", depth.Units)
+        z1 = cls._conform_units("z1", z1, "depth", depth.Units)
+        z2 = cls._conform_units("z2", z2, "depth", depth.Units)
+        href = cls._conform_units("href", href, "depth", depth.Units)
 
-        with bounds_combination_mode(
-            'OR' if sigma.has_bounds() else 'AND'
-        ):
-            f = (
-                (z1 + z2) * 0.5
-                + (
-                    0.5
-                    * (z1 - z2)
-                    * (2 * a / (z1 - z2) * (depth - href)).tanh()
-                )
+        with bounds_combination_mode("OR" if sigma.has_bounds() else "AND"):
+            f = (z1 + z2) * 0.5 + (
+                0.5 * (z1 - z2) * (2 * a / (z1 - z2) * (depth - href)).tanh()
             )
 
             computed = f * sigma
 
             k_c1 = int(k_c.data) + 1
 
-            computed[..., k_c1:] = (f
-                                    + (depth - f) * (sigma[k_c1:] - 1))
+            computed[..., k_c1:] = f + (depth - f) * (sigma[k_c1:] - 1)
 
-        return (standard_name, computed_standard_name, computed,
-                computed_axes, k_axis)
+        return (
+            standard_name,
+            computed_standard_name,
+            computed,
+            computed_axes,
+            k_axis,
+        )
 
     @classmethod
-    def formula(cls, f, coordinate_reference, default_to_zero=True,
-                strict=True):
-        '''Compute non-parametric vertical coordinates.
+    def formula(
+        cls, f, coordinate_reference, default_to_zero=True, strict=True
+    ):
+        """Compute non-parametric vertical coordinates.
 
-    {{formula terms links}}
+        {{formula terms links}}
 
-    Dimensional vertical auxiliary coordinate values are computed from
-    parametric vertical coordinate values (usually dimensionless) and
-    associated domain ancillary constructs, as defined by the formula
-    stored in a coordinate reference construct.
+        Dimensional vertical auxiliary coordinate values are computed from
+        parametric vertical coordinate values (usually dimensionless) and
+        associated domain ancillary constructs, as defined by the formula
+        stored in a coordinate reference construct.
 
-    .. versionadded:: 3.8.0
+        .. versionadded:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        f: `Field`
-            The parent field construct.
+            f: `Field`
+                The parent field construct.
 
-        coordinate_reference: `CoordinateReference`
-            A coordinate reference construct of the parent field
-            construct.
+            coordinate_reference: `CoordinateReference`
+                A coordinate reference construct of the parent field
+                construct.
 
-        {{default_to_zero: `bool`, optional}}
+            {{default_to_zero: `bool`, optional}}
 
-        strict: `bool`
-            If False then allow the computation to occur when
+            strict: `bool`
+                If False then allow the computation to occur when
 
-            * A domain ancillary construct has no standard name, but
-              the corresponding term has a standard name that is
-              prescribed
+                * A domain ancillary construct has no standard name, but
+                  the corresponding term has a standard name that is
+                  prescribed
 
-            * When the computed standard name can not be found by
-              inference from the standard names of the domain
-              ancillary constructs, nor from the
-              ``computed_standard_name`` parameter of the relevant
-              coordinate reference construct.
+                * When the computed standard name can not be found by
+                  inference from the standard names of the domain
+                  ancillary constructs, nor from the
+                  ``computed_standard_name`` parameter of the relevant
+                  coordinate reference construct.
 
-            By default an exception is raised in these cases.
+                By default an exception is raised in these cases.
 
-            If a domain ancillary construct does have a standard name,
-            but one that is inconsistent with any prescribed standard
-            names, then an exception is raised regardless of the value
-            of *strict*.
+                If a domain ancillary construct does have a standard name,
+                but one that is inconsistent with any prescribed standard
+                names, then an exception is raised regardless of the value
+                of *strict*.
 
-    :Returns:
+        :Returns:
 
-        5-`tuple`
-            * The standard name of the parametric coordinates.
+            5-`tuple`
+                * The standard name of the parametric coordinates.
 
-            * The standard name of the computed non-parametric
-              coordinates. This may be `None` if a computed standard
-              name could not be found.
+                * The standard name of the computed non-parametric
+                  coordinates. This may be `None` if a computed standard
+                  name could not be found.
 
-            * The computed coordinates in a `DomainAncillary`
-              construct.
+                * The computed coordinates in a `DomainAncillary`
+                  construct.
 
-            * A tuple of the domain axis construct keys for the
-              dimensions of the computed non-parametric coordinates.
+                * A tuple of the domain axis construct keys for the
+                  dimensions of the computed non-parametric coordinates.
 
-            * A tuple containing the construct key of the vertical
-              domain axis. If the vertical axis does not appear in the
-              computed non-parametric coodinates then this an empty
-              tuple, instead.
+                * A tuple containing the construct key of the vertical
+                  domain axis. If the vertical axis does not appear in the
+                  computed non-parametric coodinates then this an empty
+                  tuple, instead.
 
-            If the coordinate reference does not define a conversion
-            from parametric coordinates to nonparametric coordinates
-            then a `None` is returned for all of the tuple elements.
+                If the coordinate reference does not define a conversion
+                from parametric coordinates to nonparametric coordinates
+                then a `None` is returned for all of the tuple elements.
 
-        '''
+        """
         standard_name = (
             coordinate_reference.coordinate_conversion.get_parameter(
-                'standard_name', None
+                "standard_name", None
             )
         )
 
@@ -1917,32 +2146,36 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 # --------------------------------------------------------
                 # Compute the non-parametric vertical coordinates
                 # --------------------------------------------------------
-                (standard_name,
-                 computed_standard_name,
-                 computed,
-                 computed_axes,
-                 k_axis) = (
-                     getattr(cls, standard_name)(f,
-                                                 coordinate_reference,
-                                                 default_to_zero,
-                                                 strict)
-                 )
+                (
+                    standard_name,
+                    computed_standard_name,
+                    computed,
+                    computed_axes,
+                    k_axis,
+                ) = getattr(cls, standard_name)(
+                    f, coordinate_reference, default_to_zero, strict
+                )
 
                 # --------------------------------------------------------
                 # Move the vertical axis of the computed non-parametric
                 # coordinates from its current position as the last
                 # (rightmost) dimension, if applicable.
                 # --------------------------------------------------------
-                computed, computed_axes = cls._conform_computed(f,
-                                                                computed,
-                                                                computed_axes,
-                                                                k_axis)
+                computed, computed_axes = cls._conform_computed(
+                    f, computed, computed_axes, k_axis
+                )
 
-                return (standard_name, computed_standard_name, computed,
-                        computed_axes, k_axis)
+                return (
+                    standard_name,
+                    computed_standard_name,
+                    computed,
+                    computed_axes,
+                    k_axis,
+                )
         # --- End: if
 
         # Still here?
         return (None,) * 5
+
 
 # --- End: class

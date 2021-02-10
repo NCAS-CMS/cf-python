@@ -19,32 +19,32 @@ class File_type(CT.Structure):
         ("word_size", CT.c_int),
     ]
 
+
 # -- End: class
 
 
 def _get_ctypes_array(dtype, size=None):
-    '''Get ctypes corresponding to a numpy array of a given type.
+    """Get ctypes corresponding to a numpy array of a given type.
 
     The size should not be necessary unless the storage for the array
     is allocated in the C code.
 
-    '''
+    """
     kwargs = {
-        'dtype': dtype,
-        'ndim': 1,
-        'flags': ('C_CONTIGUOUS', 'WRITEABLE'),
+        "dtype": dtype,
+        "ndim": 1,
+        "flags": ("C_CONTIGUOUS", "WRITEABLE"),
     }
     if size:
-        kwargs['shape'] = (size,)
+        kwargs["shape"] = (size,)
 
     return numpy.ctypeslib.ndpointer(**kwargs)
 
 
 def _gen_rec_class(int_type, float_type):
     class Rec(CT.Structure):
-        '''ctypes object corresponding to the `Rec` object in the C code.
+        """ctypes object corresponding to the `Rec` object in the C code."""
 
-        '''
         _fields_ = [
             ("int_hdr", _get_ctypes_array(int_type, _len_int_hdr)),
             ("real_hdr", _get_ctypes_array(float_type, _len_real_hdr)),
@@ -63,9 +63,8 @@ Rec64 = _gen_rec_class(numpy.int64, numpy.float64)
 
 def _gen_var_class(rec_class):
     class Var(CT.Structure):
-        '''ctypes object corresponding to the `Var` object in the C code.
+        """ctypes object corresponding to the `Var` object in the C code."""
 
-        '''
         _fields_ = [
             ("recs", CT.POINTER(CT.POINTER(rec_class))),
             ("nz", CT.c_int),
@@ -83,9 +82,8 @@ Var64 = _gen_var_class(Rec64)
 
 def _gen_file_class(var_class):
     class File(CT.Structure):
-        '''ctypes object corresponding to the `File` object in the C code
+        """ctypes object corresponding to the `File` object in the C code"""
 
-        '''
         _fields_ = [
             ("fd", CT.c_int),
             ("file_type", File_type),
@@ -117,41 +115,39 @@ class Enum:
 
         return self.names.index(val)
 
+
 # -- End: class
 
 
-enum_file_format = Enum('PP', 'FF')
-enum_byte_ordering = Enum('little_endian', 'big_endian')
-enum_data_type = Enum('integer', 'real')
+enum_file_format = Enum("PP", "FF")
+enum_byte_ordering = Enum("little_endian", "big_endian")
+enum_data_type = Enum("integer", "real")
 
 
 class CInterface:
-    '''Interface to the C shared library functions.
+    """Interface to the C shared library functions."""
 
-    '''
-    def __init__(self, lib_name='umfile.so'):
-        '''**Initialisation**
+    def __init__(self, lib_name="umfile.so"):
+        """**Initialisation**
 
-    :Parameters:
+        :Parameters:
 
-        lib_name: `str`
-            The name of the C library binary.
+            lib_name: `str`
+                The name of the C library binary.
 
-        '''
-        lib_dir = os.path.join(
-            os.path.dirname(__file__) or '.', 'c-lib'
-        )
+        """
+        lib_dir = os.path.join(os.path.dirname(__file__) or ".", "c-lib")
         lib_path = os.path.join(lib_dir, lib_name)
         self.lib = CT.CDLL(lib_path)
 
     def _is_null_pointer(self, ptr):
-        '''TODO
+        """TODO
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-        '''
+        """
         try:
             ptr.contents
             return False
@@ -159,21 +155,21 @@ class CInterface:
             return True
 
     def detect_file_type(self, fd):
-        '''Auto-detect file type.
+        """Auto-detect file type.
 
-    :Parameters:
+        :Parameters:
 
-        fd: `int`
-            The file descriptor of the open file.
+            fd: `int`
+                The file descriptor of the open file.
 
-    :Returns:
+        :Returns:
 
-        `File_type`
-            A `File_type` ctypes object that can be passed to
-            `file_parse`, or raises an exception if file type cannot
-            be detected.
+            `File_type`
+                A `File_type` ctypes object that can be passed to
+                `file_parse`, or raises an exception if file type cannot
+                be detected.
 
-        '''
+        """
         file_type = File_type()
         rv = self.lib.detect_file_type(fd, CT.pointer(file_type))
         if rv != 0:
@@ -182,66 +178,66 @@ class CInterface:
         return file_type
 
     def file_type_obj_to_dict(self, file_type):
-        '''Converts a `File_type` object returned by `detect_file_type` into a
-    dictionary that include meaningful string values in place of the
-    integers that derive from the C enum statments, specifically:
-    'fmt': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
-    'big_endian' and also 'word_size': 4 or 8
+        """Converts a `File_type` object returned by `detect_file_type` into a
+        dictionary that include meaningful string values in place of the
+        integers that derive from the C enum statments, specifically:
+        'fmt': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
+        'big_endian' and also 'word_size': 4 or 8
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         fmt = enum_file_format.as_name(file_type.fmt)
         byte_ordering = enum_byte_ordering.as_name(file_type.byte_ordering)
         word_size = file_type.word_size
         return {
-            'fmt': fmt,
-            'byte_ordering': byte_ordering,
-            'word_size': word_size
-            }
+            "fmt": fmt,
+            "byte_ordering": byte_ordering,
+            "word_size": word_size,
+        }
 
     def create_file_type(self, fmt, byte_ordering, word_size):
-        '''TODO
+        """TODO
 
-    :Parameters:
+        :Parameters:
 
-        fmt: `str`
-            'PP' or 'FF'
+            fmt: `str`
+                'PP' or 'FF'
 
-        byte_ordering: `str`
-            'little_endian' or 'big_endian'
+            byte_ordering: `str`
+                'little_endian' or 'big_endian'
 
-        word_size: `str`
-            4 or 8
+            word_size: `str`
+                4 or 8
 
-    :Returns:
+        :Returns:
 
-        `File_type`
-            A `File_type` object (ctypes structure containing integer
-            values) that can be passed to `file_parse`.
+            `File_type`
+                A `File_type` object (ctypes structure containing integer
+                values) that can be passed to `file_parse`.
 
-        '''
+        """
         return File_type(
             fmt=enum_file_format.as_index(fmt),
             byte_ordering=enum_byte_ordering.as_index(byte_ordering),
-            word_size=word_size
+            word_size=word_size,
         )
 
     def set_word_size(self, val):
-        '''Sets the word size used to interpret returned pointers from
-    subsequent calls, in particular the pointers to PP headers
-    embedded in the tree of objects returned by `file_parse` and the
-    data array that is populated by `read_record_data`.
+        """Sets the word size used to interpret returned pointers from
+         subsequent calls, in particular the pointers to PP headers
+         embedded in the tree of objects returned by `file_parse` and the
+         data array that is populated by `read_record_data`.
 
-   :Parameters:
+        :Parameters:
 
-        val: `int` or `File_type`
-            Either just the word_size value to use or a `File_type`
-            object from which it is to be extracted.
+             val: `int` or `File_type`
+                 Either just the word_size value to use or a `File_type`
+                 object from which it is to be extracted.
 
-        '''
+        """
         if isinstance(val, File_type):
             word_size = val.word_size
         else:
@@ -265,51 +261,47 @@ class CInterface:
             )
 
     def _get_ctypes_int_array(self, size=None):
-        '''TODO
-
-        '''
+        """TODO"""
         return _get_ctypes_array(self.file_data_int_type, size)
 
     def _get_ctypes_real_array(self, size=None):
-        '''TODO
-
-        '''
+        """TODO"""
         return _get_ctypes_array(self.file_data_real_type, size)
 
     def _get_empty_real_array(self, size):
-        '''Get empty `numpy` real array according to word size previously set
-    with `set_word_size`.
+        """Get empty `numpy` real array according to word size previously set
+        with `set_word_size`.
 
-        '''
+        """
         return numpy.empty(size, dtype=self.file_data_real_type)
 
     def _get_empty_int_array(self, size):
-        '''Get empty `numpy` integer array according to word size previously
-    set with `set_word_size`.
+        """Get empty `numpy` integer array according to word size previously
+        set with `set_word_size`.
 
-        '''
+        """
         return numpy.empty(size, dtype=self.file_data_int_type)
 
     def parse_file(self, fh, file_type):
-        '''Given an open file handle, work out information from the file.
+        """Given an open file handle, work out information from the file.
 
-    :Parameters:
+        :Parameters:
 
-        fh: `int`
-            Low-level file handle.
+            fh: `int`
+                Low-level file handle.
 
-        file_type: `File_type`
-            `File_type` object as returned by `detect_file_type` or
-            `create_file_type`.
+            file_type: `File_type`
+                `File_type` object as returned by `detect_file_type` or
+                `create_file_type`.
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The information from the file. Currently the only key
-            actually implemented is ``'vars'``, containing a list of
-            variables, as that is all that the caller requires.
+            `dict`
+                The information from the file. Currently the only key
+                actually implemented is ``'vars'``, containing a list of
+                variables, as that is all that the caller requires.
 
-        '''
+        """
         func = self.lib.file_parse
         file_p_type = CT.POINTER(self.file_class)
         func.restype = file_p_type
@@ -319,8 +311,8 @@ class CInterface:
             raise umfile.UMFileException("File parsing failed")
 
         file = file_p.contents
-        c_vars = file.vars[:file.nvars]
-        rv = {'vars': list(map(self.c_var_to_py_var, c_vars))}
+        c_vars = file.vars[: file.nvars]
+        rv = {"vars": list(map(self.c_var_to_py_var, c_vars))}
 
         # Now that we have copied all the data into python objects for
         # the caller, free any memory allocated in the C code before
@@ -332,14 +324,14 @@ class CInterface:
         return rv
 
     def c_var_to_py_var(self, c_var_p):
-        '''Create a `umfile.Var` object from a ctypes object corresponding to
-    'Var*' in the C code.
+        """Create a `umfile.Var` object from a ctypes object corresponding to
+         'Var*' in the C code.
 
-   :Returns:
+        :Returns:
 
-       `umfile.Var`
+            `umfile.Var`
 
-        '''
+        """
         c_var = c_var_p.contents
         nz = c_var.nz
         nt = c_var.nt
@@ -355,14 +347,14 @@ class CInterface:
         return umfile.Var(recs, nz, nt, svi)
 
     def c_rec_to_py_rec(self, c_rec_p):
-        '''Create a `umfile.Rec` object from a ctypes object corresponding to
-   'Rec*' in the C code.
+        """Create a `umfile.Rec` object from a ctypes object corresponding to
+        'Rec*' in the C code.
 
-   :Returns:
+        :Returns:
 
-       `umfile.Rec`
+            `umfile.Rec`
 
-        '''
+        """
         c_rec = c_rec_p.contents
 
         # ============================================================
@@ -383,11 +375,13 @@ class CInterface:
         #
         ptr = CT.cast(c_rec.int_hdr, self._int_ptr)
         int_hdr = numpy.array(
-            ptr[:_len_int_hdr], dtype=self.file_data_int_type)
+            ptr[:_len_int_hdr], dtype=self.file_data_int_type
+        )
 
         ptr = CT.cast(c_rec.real_hdr, self._real_ptr)
         real_hdr = numpy.array(
-            ptr[:_len_real_hdr], dtype=self.file_data_real_type)
+            ptr[:_len_real_hdr], dtype=self.file_data_real_type
+        )
         # ============================================================
 
         header_offset = c_rec.header_offset
@@ -398,15 +392,15 @@ class CInterface:
         )
 
     def get_type_and_num_words(self, int_hdr):
-        '''From the integer header, work out data type and number of words to
-    read (`read_record_data` requires this).
+        """From the integer header, work out data type and number of words to
+        read (`read_record_data` requires this).
 
-    :Returns:
+        :Returns:
 
-       `str`, `int`
-           The datatype ('integer' or 'real') and the number of words.
+           `str`, `int`
+               The datatype ('integer' or 'real') and the number of words.
 
-        '''
+        """
         word_size = int_hdr.itemsize
         self.lib.get_type_and_num_words.argtypes = [
             CT.c_int,
@@ -430,15 +424,16 @@ class CInterface:
         return enum_data_type.as_name(data_type.value), num_words.value
 
     def get_extra_data_offset_and_length(
-            self, int_hdr, data_offset, disk_length):
-        '''From the integer header, gets offset and length of extra data.
+        self, int_hdr, data_offset, disk_length
+    ):
+        """From the integer header, gets offset and length of extra data.
 
-    :Returns:
+        :Returns:
 
-        `int`, `int`
-            The offset and length, both in units of BYTES.
+            `int`, `int`
+                The offset and length, both in units of BYTES.
 
-        '''
+        """
         word_size = int_hdr.itemsize
         func = self.lib.get_extra_data_offset_and_length
         func.argtypes = [
@@ -452,8 +447,12 @@ class CInterface:
         extra_data_offset = CT.c_size_t()
         extra_data_length = CT.c_size_t()
         rv = func(
-            word_size, int_hdr, data_offset, disk_length,
-            CT.pointer(extra_data_offset), CT.pointer(extra_data_length)
+            word_size,
+            int_hdr,
+            data_offset,
+            disk_length,
+            CT.pointer(extra_data_offset),
+            CT.pointer(extra_data_length),
         )
         if rv != 0:
             raise umfile.UMFileException(
@@ -463,14 +462,14 @@ class CInterface:
         return extra_data_offset.value, extra_data_length.value
 
     def read_header(self, fd, header_offset, byte_ordering, word_size):
-        '''Reads the header from open file.
+        """Reads the header from open file.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`, `numpy.ndarray`
-            The integer and real parts of the header.
+            `numpy.ndarray`, `numpy.ndarray`
+                The integer and real parts of the header.
 
-        '''
+        """
         self.lib.read_header.argtypes = [
             CT.c_int,
             CT.c_size_t,
@@ -495,9 +494,15 @@ class CInterface:
 
         return int_hdr, real_hdr
 
-    def read_extra_data(self, fd, extra_data_offset,
-                        extra_data_length, byte_ordering, word_size):
-        '''Reads record data from open file
+    def read_extra_data(
+        self,
+        fd,
+        extra_data_offset,
+        extra_data_length,
+        byte_ordering,
+        word_size,
+    ):
+        """Reads record data from open file
 
         inputs:
            fd - integer low-level file descriptor
@@ -507,7 +512,7 @@ class CInterface:
            word_size - 4 or 8
 
         returns: extra data as string
-        '''
+        """
         extra_data = b"\0" * extra_data_length
 
         self.lib.read_extra_data.argtypes = [
@@ -532,10 +537,19 @@ class CInterface:
 
         return extra_data
 
-    def read_record_data(self, fd, data_offset, disk_length,
-                         byte_ordering, word_size, int_hdr, real_hdr,
-                         data_type, nwords):
-        '''Reads record data from open file
+    def read_record_data(
+        self,
+        fd,
+        data_offset,
+        disk_length,
+        byte_ordering,
+        word_size,
+        int_hdr,
+        real_hdr,
+        data_type,
+        nwords,
+    ):
+        """Reads record data from open file
 
         inputs:
            fd - integer low-level file descriptor
@@ -550,11 +564,11 @@ class CInterface:
               type and nwords should have been returned by
               get_type_and_num_words()
 
-        '''
-        if data_type == 'integer':
+        """
+        if data_type == "integer":
             data = self._get_empty_int_array(nwords)
             ctypes_data = self._get_ctypes_int_array()
-        elif data_type == 'real':
+        elif data_type == "real":
             data = self._get_empty_real_array(nwords)
             ctypes_data = self._get_ctypes_real_array()
         else:
@@ -589,6 +603,7 @@ class CInterface:
 
         return data
 
+
 # --- End: class
 
 
@@ -602,7 +617,7 @@ if __name__ == "__main__":
     c.set_word_size(file_type)
     info = c.parse_file(fd, file_type)
 
-    for var in info['vars']:
+    for var in info["vars"]:
         print("nz = %s, nt = %s" % (var.nz, var.nt))
         for rec in var.recs:
             print(rec.hdr_offset)
@@ -622,16 +637,17 @@ if __name__ == "__main__":
                 rec.int_hdr,
                 rec.real_hdr,
                 data_type,
-                nwords
+                nwords,
             )
-            print("data (%s values): %s ... %s" % (
-                len(data), data[:10], data[-10:]))
-            extra_data_offset, extra_data_length = (
-                c.get_extra_data_offset_and_length(
-                    rec.int_hdr,
-                    rec.data_offset,
-                    rec.disk_length
-                )
+            print(
+                "data (%s values): %s ... %s"
+                % (len(data), data[:10], data[-10:])
+            )
+            (
+                extra_data_offset,
+                extra_data_length,
+            ) = c.get_extra_data_offset_and_length(
+                rec.int_hdr, rec.data_offset, rec.disk_length
             )
             print("extra data offset: %s" % extra_data_offset)
             print("extra data length: %s" % extra_data_length)
@@ -640,13 +656,15 @@ if __name__ == "__main__":
                 extra_data_offset,
                 extra_data_length,
                 file_type.byte_ordering,
-                file_type.word_size
+                file_type.word_size,
             )
             print("extra data (%s bytes) read" % (len(extra_data)))
 
-    print(c.read_header(
-        fd,
-        info['vars'][0].recs[0].hdr_offset,
-        file_type.byte_ordering,
-        file_type.word_size
-    ))
+    print(
+        c.read_header(
+            fd,
+            info["vars"][0].recs[0].hdr_offset,
+            file_type.byte_ordering,
+            file_type.word_size,
+        )
+    )

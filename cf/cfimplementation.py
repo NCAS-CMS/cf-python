@@ -34,11 +34,13 @@ from .data import (
 
 
 class CFImplementation(cfdm.CFDMImplementation):
-    '''TODO
+    """TODO
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
+
 #    def set_bounds(self, construct, bounds, copy=True):
 #        '''Set the bounds component of a construct.
 #
@@ -75,7 +77,6 @@ class CFImplementation(cfdm.CFDMImplementation):
 
 _implementation = CFImplementation(
     cf_version=CF(),
-
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
@@ -85,18 +86,15 @@ _implementation = CFImplementation(
     DomainAxis=DomainAxis,
     Field=Field,
     FieldAncillary=FieldAncillary,
-
     Bounds=Bounds,
     InteriorRing=InteriorRing,
     CoordinateConversion=CoordinateConversion,
     Datum=Datum,
-
     List=List,
     Index=Index,
     Count=Count,
     NodeCountProperties=NodeCountProperties,
     PartNodeCountProperties=PartNodeCountProperties,
-
     Data=Data,
     GatheredArray=GatheredArray,
     NetCDFArray=NetCDFArray,
@@ -107,7 +105,7 @@ _implementation = CFImplementation(
 
 
 def implementation():
-    '''Return a container for the CF data model implementation.
+    """Return a container for the CF data model implementation.
 
     .. versionadded:: 3.1.0
 
@@ -149,5 +147,5 @@ def implementation():
      'NodeCountProperties': cf.nodecountproperties.NodeCountProperties,
      'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties}
 
-    '''
+    """
     return _implementation.copy()

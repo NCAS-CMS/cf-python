@@ -1,21 +1,25 @@
 import logging
 
 from operator import __and__ as operator_and
-from operator import __or__  as operator_or
+from operator import __or__ as operator_or
 
-from .functions  import equals  as _equals
-from .functions  import inspect as _inspect
-from .units      import Units
+from .functions import equals as _equals
+from .functions import inspect as _inspect
+from .units import Units
 
 from .data import Data
 
-from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
-                         _DEPRECATION_ERROR_ATTRIBUTE,
-                         _DEPRECATION_ERROR_FUNCTION)
+from .functions import (
+    _DEPRECATION_ERROR_FUNCTION_KWARGS,
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_FUNCTION,
+)
 
-from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity,
-                         _display_or_return)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _manage_log_level_via_verbosity,
+    _display_or_return,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -180,47 +184,49 @@ class Query:
     the value.
 
     '''
+
     isquery = True
 
-    @_deprecated_kwarg_check('exact')
+    @_deprecated_kwarg_check("exact")
     def __init__(self, operator, value, units=None, attr=None, exact=True):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        operator: `str`
-            The query operator.
+            operator: `str`
+                The query operator.
 
-        value:
-            The value of the condition.
+            value:
+                The value of the condition.
 
-        units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            units: `str` or `Units`, optional
+                The units of *value*. By default, the same units as the operand
+                being tested are assumed, if applicable. If *units* is
+                specified and *value* already has units (such as those attached
+                to a `Data` object), then the pair of units must be equivalent.
 
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``. See
-            also the `addattr` method.
+            attr: `str`, optional
+                Apply the condition to the attribute, or nested
+                attributes, of the operand, rather than the operand
+                itself. Nested attributes are specified by separating them
+                with a ``.``. For example, the "month" attribute of the
+                "bounds" attribute is specified as ``'bounds.month'``. See
+                also the `addattr` method.
 
-        exact: deprecated at version 3.0.0.
-            Use `re.compile` objects in *value* instead.
+            exact: deprecated at version 3.0.0.
+                Use `re.compile` objects in *value* instead.
 
-        '''
+        """
         if units is not None:
-            value_units = getattr(value, 'Units', None)
+            value_units = getattr(value, "Units", None)
             if value_units is None:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError(
                     "'{}' and '{}' are not equivalent units therefore the "
                     "query does not make physical sense.".format(
-                        value_units, Units(units))
+                        value_units, Units(units)
+                    )
                 )
         # --- End: if
 
@@ -229,7 +235,7 @@ class Query:
         self._compound = False
 
         if attr:
-            self._attr = tuple(attr.split('.'))
+            self._attr = tuple(attr.split("."))
         else:
             self._attr = ()
 
@@ -238,38 +244,36 @@ class Query:
         self._NotImplemented_RHS_Data_op = True
 
     def __deepcopy__(self, memo):
-        '''Used if copy.deepcopy is called on the variable.
-
-        '''
+        """Used if copy.deepcopy is called on the variable."""
         return self.copy()
 
     def __eq__(self, x):
-        '''The rich comparison operator ``==``
+        """The rich comparison operator ``==``
 
-    x.__eq__(y) <==> x==y
+        x.__eq__(y) <==> x==y
 
-    x.__eq__(y) <==> x.evaluate(y)
+        x.__eq__(y) <==> x.evaluate(y)
 
-        '''
+        """
         return self._evaluate(x, ())
 
     def __ne__(self, x):
-        '''The rich comparison operator ``!=``
+        """The rich comparison operator ``!=``
 
-    x.__ne__(y) <==> x!=y
+        x.__ne__(y) <==> x!=y
 
-    x.__ne__(y) <==> (x==y)==False
+        x.__ne__(y) <==> (x==y)==False
 
-        '''
+        """
         # Note that it is important to use the == operator
         return self._evaluate(x, ()) == False  # ignore PEP8 E712 due to above
 
     def __and__(self, other):
-        '''The binary bitwise operation ``&``
+        """The binary bitwise operation ``&``
 
-    x.__and__(y) <==> x&y
+        x.__and__(y) <==> x&y
 
-        '''
+        """
         Q = type(self)
         new = Q.__new__(Q)
 
@@ -283,19 +287,19 @@ class Query:
         return new
 
     def __iand__(self, other):
-        '''The augmented bitwise assignment ``&=``
+        """The augmented bitwise assignment ``&=``
 
-    x.__iand__(y) <==> x&=y
+        x.__iand__(y) <==> x&=y
 
-        '''
+        """
         return self & other
 
     def __or__(self, other):
-        '''The binary bitwise operation ``|``
+        """The binary bitwise operation ``|``
 
-    x.__or__(y) <==> x|y
+        x.__or__(y) <==> x|y
 
-        '''
+        """
         Q = type(self)
         new = Q.__new__(Q)
 
@@ -309,139 +313,139 @@ class Query:
         return new
 
     def __ior__(self, other):
-        '''The augmented bitwise assignment ``|=``
+        """The augmented bitwise assignment ``|=``
 
-    x.__ior__(y) <==> x|=y
+        x.__ior__(y) <==> x|=y
 
-        '''
+        """
         return self | other
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return '<CF {}: {}>'.format(self.__class__.__name__, self)
+        """
+        return "<CF {}: {}>".format(self.__class__.__name__, self)
 
     def __str__(self):
-        '''Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
-    x.__str__() <==> str(x)
+        x.__str__() <==> str(x)
 
-        '''
-        attr = '.'.join(self._attr)
+        """
+        attr = ".".join(self._attr)
 
         if not self._compound:
-            out = '{}({} {})'.format(attr, self._operator, self._value)
+            out = "{}({} {})".format(attr, self._operator, self._value)
         else:
             bitwise_operator = repr(self._bitwise_operator)
-            if 'and_' in bitwise_operator:
-                bitwise_operator = '&'
-            elif 'or_' in bitwise_operator:
-                bitwise_operator = '|'
+            if "and_" in bitwise_operator:
+                bitwise_operator = "&"
+            elif "or_" in bitwise_operator:
+                bitwise_operator = "|"
 
-            out = '{}[{} {} {}]'.format(attr, self._compound[0],
-                                        bitwise_operator,
-                                        self._compound[1])
+            out = "{}[{} {} {}]".format(
+                attr, self._compound[0], bitwise_operator, self._compound[1]
+            )
 
         return out
 
     @property
     def attr(self):
-        '''TODO
+        """TODO
 
-    **Examples:**
+        **Examples:**
 
-    >>> q = cf.Query('ge', 4)
-    >>> print(q.attr)
-    None
-    >>> q = cf.Query('le', 6, attr='year')
-    >>> q.attr
-    'year'
-    >>> q.addattr('foo')
-    >>> q.attr
-    'year'asdasdas TODO
+        >>> q = cf.Query('ge', 4)
+        >>> print(q.attr)
+        None
+        >>> q = cf.Query('le', 6, attr='year')
+        >>> q.attr
+        'year'
+        >>> q.addattr('foo')
+        >>> q.attr
+        'year'asdasdas TODO
 
-        '''
+        """
         return self._attr
 
     @property
     def operator(self):
-        '''TODO
+        """TODO
 
-    Compound conditions return `None`.
+        Compound conditions return `None`.
 
-    **Examples:**
+        **Examples:**
 
-    >>> q = cf.Query('ge', 4)
-    >>> q.operator
-    'ge'
-    >>> q |= cf.Query('le', 6)
-    >>> print(q.operator)
-    None
+        >>> q = cf.Query('ge', 4)
+        >>> q.operator
+        'ge'
+        >>> q |= cf.Query('le', 6)
+        >>> print(q.operator)
+        None
 
-        '''
+        """
         return self._operator
 
     @property
     def value(self):
-        '''TODO
+        """TODO
 
-    An exception is raised for compound conditions.
+        An exception is raised for compound conditions.
 
-    **Examples:**
+        **Examples:**
 
-    >>> q = cf.Query('ge', 4)
-    >>> q.value
-    4
-    >>> q |= cf.Query('le', 6)
-    >>> q.value
-    AttributeError: Compound query doesn't have attribute 'value'
+        >>> q = cf.Query('ge', 4)
+        >>> q.value
+        4
+        >>> q |= cf.Query('le', 6)
+        >>> q.value
+        AttributeError: Compound query doesn't have attribute 'value'
 
-        '''
+        """
         if not self._compound:
             return self._value
 
         raise AttributeError("Compound query doesn't have attribute 'value'")
 
     def addattr(self, attr):
-        '''Return a `Query` object with a new left hand side operand attribute
-    to be used during evaluation. TODO
+        """Return a `Query` object with a new left hand side operand attribute
+        to be used during evaluation. TODO
 
-    If another attribute has previously been specified, then the new
-    attribute is considered to be an attribute of the existing
-    attribute.
+        If another attribute has previously been specified, then the new
+        attribute is considered to be an attribute of the existing
+        attribute.
 
-    :Parameters:
+        :Parameters:
 
-        attr: `str`
-            The attribute name.
+            attr: `str`
+                The attribute name.
 
-    :Returns:
+        :Returns:
 
-        `Query`
-            The new query object.
+            `Query`
+                The new query object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> q = cf.eq(2001)
-    >>> q
-    <CF Query: (eq 2001)>
-    >>> q = q.addattr('year')
-    >>> q
-    <CF Query: year(eq 2001)>
+        >>> q = cf.eq(2001)
+        >>> q
+        <CF Query: (eq 2001)>
+        >>> q = q.addattr('year')
+        >>> q
+        <CF Query: year(eq 2001)>
 
-    >>> q = cf.lt(2)
-    >>> q = q.addattr('A')
-    >>> q = q.addattr('B')
-    >>> q
-    <CF Query: A.B(lt 2)>
-    >>> q = q.addattr('C')
-    >>> q
-    <CF Query: A.B.C(lt 2)>
+        >>> q = cf.lt(2)
+        >>> q = q.addattr('A')
+        >>> q = q.addattr('B')
+        >>> q
+        <CF Query: A.B(lt 2)>
+        >>> q = q.addattr('C')
+        >>> q
+        <CF Query: A.B.C(lt 2)>
 
-        '''
+        """
         Q = type(self)
         new = Q.__new__(Q)
 
@@ -453,61 +457,61 @@ class Query:
         return new
 
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``q.copy()`` is equivalent to ``copy.deepcopy(q)``.
+        ``q.copy()`` is equivalent to ``copy.deepcopy(q)``.
 
-    :Returns:
+        :Returns:
 
-            The deep copy.
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> r = q.copy()
+        >>> r = q.copy()
 
-        '''
+        """
         return self  # TODO
 
     @_display_or_return
     def dump(self, display=True):
-        '''Return a string containing a full description of the instance.
+        """Return a string containing a full description of the instance.
 
-    :Parameters:
+        :Parameters:
 
-        display: `bool`, optional
+            display: `bool`, optional
 
-            If `False` then return the description as a string. By
-            default the description is printed.
+                If `False` then return the description as a string. By
+                default the description is printed.
 
-    :Returns:
+        :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+            `None` or `str`
+                The description. If *display* is True then the description
+                is printed and `None` is returned. Otherwise the
+                description is returned as a string.
 
-        '''
+        """
         return str(self)
 
-    @_deprecated_kwarg_check('traceback')
+    @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
-        '''TODO
-
-        '''
+        """TODO"""
         if self._compound:
             if not other._compound:
                 logger.info(
                     "{}: Different compound components".format(
-                        self.__class__.__name__)
+                        self.__class__.__name__
+                    )
                 )  # pragma: no cover
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
                 logger.info(
                     "{}: Different compound operators: {!r}, {!r}".format(
-                        self.__class__.__name__, self._bitwise_operator,
-                        other._bitwise_operator
+                        self.__class__.__name__,
+                        self._bitwise_operator,
+                        other._bitwise_operator,
                     )
                 )  # pragma: no cover
                 return False
@@ -516,41 +520,50 @@ class Query:
                 if not self._compound[0].equals(other._compound[1]):
                     logger.info(
                         "{}: Different compound components".format(
-                            self.__class__.__name__)
+                            self.__class__.__name__
+                        )
                     )  # pragma: no cover
                     return False
                 if not self._compound[1].equals(other._compound[0]):
                     logger.info(
                         "{}: Different compound components".format(
-                            self.__class__.__name__)
+                            self.__class__.__name__
+                        )
                     )  # pragma: no cover
                     return False
             elif not self._compound[1].equals(other._compound[1]):
                 logger.info(
                     "{}: Different compound components".format(
-                        self.__class__.__name__)
+                        self.__class__.__name__
+                    )
                 )  # pragma: no cover
                 return False
 
         elif other._compound:
             logger.info(
                 "{}: Different compound components".format(
-                    self.__class__.__name__)
+                    self.__class__.__name__
+                )
             )  # pragma: no cover
             return False
 
-        for attr in ('_NotImplemented_RHS_Data_op',
-                     '_attr',
-                     '_value',
-                     '_operator'):
-            if not _equals(getattr(self, attr, None),
-                           getattr(other, attr, None),
-                           verbose=verbose):
+        for attr in (
+            "_NotImplemented_RHS_Data_op",
+            "_attr",
+            "_value",
+            "_operator",
+        ):
+            if not _equals(
+                getattr(self, attr, None),
+                getattr(other, attr, None),
+                verbose=verbose,
+            ):
                 logger.info(
                     "{}: Different {!r} attributes: {!r}, {!r}".format(
-                        self.__class__.__name__, attr,
+                        self.__class__.__name__,
+                        attr,
                         getattr(self, attr, None),
-                        getattr(other, attr, None)
+                        getattr(other, attr, None),
                     )
                 )  # pragma: no cover
                 return False
@@ -559,55 +572,55 @@ class Query:
         return True
 
     def evaluate(self, x):
-        '''Evaluate the query operation for a given left hand side operand.
+        """Evaluate the query operation for a given left hand side operand.
 
-    Note that for the query object ``q`` and any object, ``x``,
-    ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
-    equivalent to ``q.evaluate(x)==False``.
+        Note that for the query object ``q`` and any object, ``x``,
+        ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
+        equivalent to ``q.evaluate(x)==False``.
 
-    :Parameters:
+        :Parameters:
 
-        x:
-            The object for the left hand side operand of the query.
+            x:
+                The object for the left hand side operand of the query.
 
-    :Returns:
+        :Returns:
 
-            The result of the query. The nature of the result is
-            dependent on the object type of *x*.
+                The result of the query. The nature of the result is
+                dependent on the object type of *x*.
 
-    **Examples:**
+        **Examples:**
 
-    >>> q = cf.Query('lt', 5.5)
-    >>> q.evaluate(6)
-    False
+        >>> q = cf.Query('lt', 5.5)
+        >>> q.evaluate(6)
+        False
 
-    >>> q = cf.Query('wi', (1,2))
-    >>> array = numpy.arange(4)
-    >>> array
-    array([0, 1, 2, 3])
-    >>> q.evaluate(array)
-    array([False,  True,  True, False], dtype=bool)
+        >>> q = cf.Query('wi', (1,2))
+        >>> array = numpy.arange(4)
+        >>> array
+        array([0, 1, 2, 3])
+        >>> q.evaluate(array)
+        array([False,  True,  True, False], dtype=bool)
 
-        '''
+        """
         return self._evaluate(x, ())
 
     def _evaluate(self, x, parent_attr):
-        '''Evaluate the query operation for a given object.
+        """Evaluate the query operation for a given object.
 
-    .. seealso:: `evaluate`
+        .. seealso:: `evaluate`
 
-    :Parameters:
+        :Parameters:
 
-        x:
+            x:
+                See `evaluate`.
+
+            parent_attr: `tuple`
+
+        :Returns:
+
             See `evaluate`.
 
-        parent_attr: `tuple`
-
-    :Returns:
-
-        See `evaluate`.
-
-        '''
+        """
         compound = self._compound
         attr = parent_attr + self._attr
 
@@ -629,7 +642,7 @@ class Query:
         operator = self._operator
         value = self._value
 
-        if operator == 'eq':
+        if operator == "eq":
             try:
                 return bool(value.search(x))
             except AttributeError:
@@ -641,7 +654,7 @@ class Query:
                 )
         # --- End: if
 
-        if operator == 'ne':
+        if operator == "ne":
             try:
                 return not bool(value.search(x))
             except AttributeError:
@@ -653,57 +666,57 @@ class Query:
                 )
         # --- End: if
 
-        if operator == 'lt':
-            _lt = getattr(x, '__query_lt__', None)
+        if operator == "lt":
+            _lt = getattr(x, "__query_lt__", None)
             if _lt is not None:
                 return _lt(value)
 
             return x < value
 
-        if operator == 'le':
-            _le = getattr(x, '__query_le__', None)
+        if operator == "le":
+            _le = getattr(x, "__query_le__", None)
             if _le is not None:
                 return _le(value)
 
             return x <= value
 
-        if operator == 'gt':
-            _gt = getattr(x, '__query_gt__', None)
+        if operator == "gt":
+            _gt = getattr(x, "__query_gt__", None)
             if _gt is not None:
                 return _gt(value)
 
             return x > value
 
-        if operator == 'ge':
-            _ge = getattr(x, '__query_ge_', None)
+        if operator == "ge":
+            _ge = getattr(x, "__query_ge_", None)
             if _ge is not None:
                 return _ge(value)
 
             return x >= value
 
-        if operator == 'wi':
-            _wi = getattr(x, '__query_wi__', None)
+        if operator == "wi":
+            _wi = getattr(x, "__query_wi__", None)
             if _wi is not None:
                 return _wi(value)
 
             return (x >= value[0]) & (x <= value[1])
 
-        if operator == 'wo':
-            _wo = getattr(x, '__query_wo__', None)
+        if operator == "wo":
+            _wo = getattr(x, "__query_wo__", None)
             if _wo is not None:
                 return _wo(value)
 
             return (x < value[0]) | (x > value[1])
 
-#        if operator == 'contains':
-#            _contain = getattr(x, '__query_contains__', None)
-#            if _contain is not None:
-#                return _contain(value)
-#            else:
-#                return x == value
-#        # --- End: if
+        #        if operator == 'contains':
+        #            _contain = getattr(x, '__query_contains__', None)
+        #            if _contain is not None:
+        #                return _contain(value)
+        #            else:
+        #                return x == value
+        #        # --- End: if
 
-        if operator == 'set':
+        if operator == "set":
             if isinstance(x, str):
                 for v in value:
                     try:
@@ -716,29 +729,29 @@ class Query:
 
                 return False
             else:
-                _set = getattr(x, '__query_set__', None)
+                _set = getattr(x, "__query_set__", None)
                 if _set is not None:
                     return _set(value)
 
                 i = iter(value)
                 v = next(i)
-                out = (x == v)
+                out = x == v
                 for v in i:
-                    out |= (x == v)
+                    out |= x == v
 
                 return out
         # --- End: if
 
     def inspect(self):
-        '''Inspect the object for debugging.
+        """Inspect the object for debugging.
 
-    .. seealso:: `cf.inspect`
+        .. seealso:: `cf.inspect`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         print(_inspect(self))  # pragma: no cover
 
     # ----------------------------------------------------------------
@@ -746,18 +759,14 @@ class Query:
     # ----------------------------------------------------------------
     @property
     def exact(self):
-        '''TODO Deprecated at version 3.0.0. Use re.compile objects instead.
-
-        '''
+        """TODO Deprecated at version 3.0.0. Use re.compile objects instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, 'exact', "Use 're.compile' objects instead."
+            self, "exact", "Use 're.compile' objects instead."
         )  # pragma: no cover
 
     def equivalent(self, other, traceback=False):
-        '''Deprecated at version 3.0.0.
-
-        '''
-        _DEPRECATION_ERROR_FUNCTION(self, 'equivalent')
+        """Deprecated at version 3.0.0."""
+        _DEPRECATION_ERROR_FUNCTION(self, "equivalent")
 
 
 # --- End: class
@@ -767,7 +776,7 @@ class Query:
 # Constructor functions
 # --------------------------------------------------------------------
 def lt(value, units=None, attr=None):
-    '''A `Query` object for a "strictly less than" condition.
+    """A `Query` object for a "strictly less than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.set`, `cf.wi`, `cf.wo`
@@ -822,12 +831,12 @@ def lt(value, units=None, attr=None):
     >>> c == numpy.arange(9).reshape(1, 9)
     array([ True, False])
 
-    '''
-    return Query('lt', value, units=units, attr=attr)
+    """
+    return Query("lt", value, units=units, attr=attr)
 
 
 def le(value, units=None, attr=None):
-    '''A `Query` object for a "less than or equal" condition.
+    """A `Query` object for a "less than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
@@ -865,12 +874,12 @@ def le(value, units=None, attr=None):
     >>> q.evaluate(6)
     False
 
-    '''
-    return Query('le', value, units=units, attr=attr)
+    """
+    return Query("le", value, units=units, attr=attr)
 
 
 def gt(value, units=None, attr=None):
-    '''A `Query` object for a "strictly greater than" condition.
+    """A `Query` object for a "strictly greater than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
@@ -909,12 +918,12 @@ def gt(value, units=None, attr=None):
     >>> q.evaluate(5)
     False
 
-    '''
-    return Query('gt', value, units=units, attr=attr)
+    """
+    return Query("gt", value, units=units, attr=attr)
 
 
 def ge(value, units=None, attr=None):
-    '''A `Query` object for a "greater than or equal" condition.
+    """A `Query` object for a "greater than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
@@ -960,12 +969,12 @@ def ge(value, units=None, attr=None):
     >>> cf.ge(2, attr='month')
     <CF Query: month(ge 2)>
 
-    '''
-    return Query('ge', value, units=units, attr=attr)
+    """
+    return Query("ge", value, units=units, attr=attr)
 
 
 def eq(value, units=None, attr=None, exact=True):
-    '''A `Query` object for an "equal" condition.
+    """A `Query` object for an "equal" condition.
 
     .. seealso:: `cf.contains`, `cf.ge`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
@@ -1014,16 +1023,17 @@ def eq(value, units=None, attr=None, exact=True):
     >>> q == 'air_temperature'
     True
 
-    '''
+    """
     if not exact:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'eq', exact=True)  # pragma: no cover
+            "eq", exact=True
+        )  # pragma: no cover
 
-    return Query('eq', value, units=units, attr=attr)
+    return Query("eq", value, units=units, attr=attr)
 
 
 def ne(value, units=None, attr=None, exact=True):
-    '''A `Query` object for a "not equal" condition.
+    """A `Query` object for a "not equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
@@ -1064,16 +1074,17 @@ def ne(value, units=None, attr=None, exact=True):
     >>> q.evaluate(5)
     False
 
-    '''
+    """
     if not exact:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'ne', exact=True)  # pragma: no cover
+            "ne", exact=True
+        )  # pragma: no cover
 
-    return Query('ne', value, units=units, attr=attr)
+    return Query("ne", value, units=units, attr=attr)
 
 
 def wi(value0, value1, units=None, attr=None):
-    '''A `Query` object for a "within a range" condition.
+    """A `Query` object for a "within a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wo`
@@ -1114,12 +1125,12 @@ def wi(value0, value1, units=None, attr=None):
     >>> q.evaluate(4)
     False
 
-    '''
-    return Query('wi', [value0, value1], units=units, attr=attr)
+    """
+    return Query("wi", [value0, value1], units=units, attr=attr)
 
 
 def wo(value0, value1, units=None, attr=None):
-    '''A `Query` object for a "without a range" condition.
+    """A `Query` object for a "without a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wi`
@@ -1160,12 +1171,12 @@ def wo(value0, value1, units=None, attr=None):
     >>> q.evaluate(6)
     False
 
-    '''
-    return Query('wo', [value0, value1], units=units, attr=attr)
+    """
+    return Query("wo", [value0, value1], units=units, attr=attr)
 
 
 def set(values, units=None, attr=None, exact=True):
-    '''A `Query` object for a "member of set" condition.
+    """A `Query` object for a "member of set" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`
@@ -1206,16 +1217,17 @@ def set(values, units=None, attr=None, exact=True):
     >>> c == numpy.array([2, 3, 4, 5])
     array([False  True False  True])
 
-    '''
+    """
     if not exact:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'set', exact=True)  # pragma: no cover
+            "set", exact=True
+        )  # pragma: no cover
 
-    return Query('set', values, units=units, attr=attr)
+    return Query("set", values, units=units, attr=attr)
 
 
 def contains(value, units=None):
-    '''A `Query` object for a "cell contains" condition.
+    """A `Query` object for a "cell contains" condition.
 
     .. versionadded:: 3.0.0
 
@@ -1259,13 +1271,14 @@ def contains(value, units=None):
     >>> print((cf.contains(9999) == c).array)
     [False False False False]
 
-    '''
-    return (Query('le', value, units=units, attr='lower_bounds') &
-            Query('ge', value, units=units, attr='upper_bounds'))
+    """
+    return Query("le", value, units=units, attr="lower_bounds") & Query(
+        "ge", value, units=units, attr="upper_bounds"
+    )
 
 
 def year(value):
-    '''A `Query` object for a "year" condition.
+    """A `Query` object for a "year" condition.
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
@@ -1293,15 +1306,15 @@ def year(value):
     >>> d == cf.year(cf.wi(2003, 2006))
     False
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('year')
+        return value.addattr("year")
     else:
-        return Query('eq', value, attr='year')
+        return Query("eq", value, attr="year")
 
 
 def month(value):
-    '''A `Query` object for a "month of the year" condition.
+    """A `Query` object for a "month of the year" condition.
 
     .. seealso:: `cf.year`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -1329,15 +1342,15 @@ def month(value):
     >>> d == cf.month(cf.wi(1, 6))
     True
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('month')
+        return value.addattr("month")
     else:
-        return Query('eq', value, attr='month')
+        return Query("eq", value, attr="month")
 
 
 def day(value):
-    '''A `Query` object for a "day of the month" condition.
+    """A `Query` object for a "day of the month" condition.
 
     .. seealso:: `cf.year`, `cf.month`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -1365,15 +1378,15 @@ def day(value):
     >>> d == cf.day(cf.wi(1, 21))
     True
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('day')
+        return value.addattr("day")
     else:
-        return Query('eq', value, attr='day')
+        return Query("eq", value, attr="day")
 
 
 def hour(value):
-    '''A `Query` object for a "hour of the day" condition.
+    """A `Query` object for a "hour of the day" condition.
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
@@ -1422,15 +1435,15 @@ def hour(value):
     >>> d == cf.hour(cf.wi(6, 23))
     True
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('hour')
+        return value.addattr("hour")
     else:
-        return Query('eq', value, attr='hour')
+        return Query("eq", value, attr="hour")
 
 
 def minute(value):
-    '''A `Query` object for a "minute of the hour" condition.
+    """A `Query` object for a "minute of the hour" condition.
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -1458,15 +1471,15 @@ def minute(value):
     >>> d == cf.minute(cf.wi(15, 45))
     True
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('minute')
+        return value.addattr("minute")
     else:
-        return Query('eq', value, attr='minute')
+        return Query("eq", value, attr="minute")
 
 
 def second(value):
-    '''A `Query` object for a "second of the minute" condition.
+    """A `Query` object for a "second of the minute" condition.
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -1494,15 +1507,15 @@ def second(value):
     >>> d == cf.second(cf.wi(0, 30))
     True
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('second')
+        return value.addattr("second")
     else:
-        return Query('eq', value, attr='second')
+        return Query("eq", value, attr="second")
 
 
 def cellsize(value, units=None):
-    '''A `Query` object for a "cell size" condition.
+    """A `Query` object for a "cell size" condition.
 
     .. seealso:: `cf.contains`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
                  `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
@@ -1536,15 +1549,15 @@ def cellsize(value, units=None):
     >>> cf.cellsize(5, units='km')
     <CF Query: cellsize(eq <CF Data: 5 km>)>
 
-    '''
+    """
     if isinstance(value, Query):
-        return value.addattr('cellsize')
+        return value.addattr("cellsize")
     else:
-        return Query('eq', value, units=units, attr='cellsize')
+        return Query("eq", value, units=units, attr="cellsize")
 
 
 def cellwi(value0, value1, units=None):
-    '''A `Query` object for a "cell bounds lie within range" condition.
+    """A `Query` object for a "cell bounds lie within range" condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
@@ -1570,13 +1583,14 @@ def cellwi(value0, value1, units=None):
 
     TODO
 
-    '''
-    return (Query('ge', value0, units=units, attr='lower_bounds') &
-            Query('le', value1, units=units, attr='upper_bounds'))
+    """
+    return Query("ge", value0, units=units, attr="lower_bounds") & Query(
+        "le", value1, units=units, attr="upper_bounds"
+    )
 
 
 def cellwo(value0, value1, units=None):
-    '''A `Query` object for a "cell bounds lie without range" condition.
+    """A `Query` object for a "cell bounds lie without range" condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
@@ -1602,13 +1616,14 @@ def cellwo(value0, value1, units=None):
 
     TODO
 
-    '''
-    return (Query('lt', value0, units=units, attr='lower_bounds') &
-            Query('gt', value1, units=units, attr='upper_bounds'))
+    """
+    return Query("lt", value0, units=units, attr="lower_bounds") & Query(
+        "gt", value1, units=units, attr="upper_bounds"
+    )
 
 
 def cellgt(value, units=None):
-    '''A `Query` object for a "cell bounds strictly greater than"
+    """A `Query` object for a "cell bounds strictly greater than"
     condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`
@@ -1635,12 +1650,12 @@ def cellgt(value, units=None):
 
     TODO
 
-    '''
-    return Query('gt', value, units=units, attr='lower_bounds')
+    """
+    return Query("gt", value, units=units, attr="lower_bounds")
 
 
 def cellge(value, units=None):
-    '''A `Query` object for a "cell bounds greater than or equal"
+    """A `Query` object for a "cell bounds greater than or equal"
     condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellgt`,
@@ -1668,12 +1683,12 @@ def cellge(value, units=None):
 
     TODO
 
-    '''
-    return Query('ge', value, units=units, attr='lower_bounds')
+    """
+    return Query("ge", value, units=units, attr="lower_bounds")
 
 
 def celllt(value, units=None):
-    '''A `Query` object for a “cell bounds strictly less than” condition.
+    """A `Query` object for a “cell bounds strictly less than” condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.cellwi`,
@@ -1699,12 +1714,12 @@ def celllt(value, units=None):
 
     TODO
 
-    '''
-    return Query('lt', value, units=units, attr='upper_bounds')
+    """
+    return Query("lt", value, units=units, attr="upper_bounds")
 
 
 def cellle(value, units=None):
-    '''A `Query` object for a "cell bounds less than or equal" condition.
+    """A `Query` object for a "cell bounds less than or equal" condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.celllt`, `cf.cellwi`,
@@ -1730,12 +1745,12 @@ def cellle(value, units=None):
 
     TODO
 
-    '''
-    return Query('le', value, units=units, attr='upper_bounds')
+    """
+    return Query("le", value, units=units, attr="upper_bounds")
 
 
 def jja():
-    '''A `Query` object for a "month of year in June, July or August"
+    """A `Query` object for a "month of year in June, July or August"
     condition.
 
     .. versionadded:: 1.0
@@ -1756,12 +1771,12 @@ def jja():
     >>> f.subspace(time=cf.jja())
     <CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
 
-    '''
-    return Query('wi', (6, 8), attr='month')
+    """
+    return Query("wi", (6, 8), attr="month")
 
 
 def son():
-    '''A `Query` object for a "month of year in September, October,
+    """A `Query` object for a "month of year in September, October,
     November" condition.
 
     .. versionadded:: 1.0
@@ -1782,12 +1797,12 @@ def son():
     >>> f.subspace(time=cf.son())
     <CF Field: air_temperature(time(91), latitude(64), longitude(128)) K>
 
-    '''
-    return Query('wi', (9, 11), attr='month')
+    """
+    return Query("wi", (9, 11), attr="month")
 
 
 def djf():
-    '''A `Query` object for a "month of year in December, January,
+    """A `Query` object for a "month of year in December, January,
     February" condition.
 
     .. versionadded:: 1.0
@@ -1808,13 +1823,13 @@ def djf():
     >>> f.subspace(time=cf.djf())
     <CF Field: air_temperature(time(90), latitude(64), longitude(128)) K>
 
-    '''
-    q = Query('ge', 12) | Query('le', 2)
-    return q.addattr('month')
+    """
+    q = Query("ge", 12) | Query("le", 2)
+    return q.addattr("month")
 
 
 def mam():
-    '''A `Query` object for a "month of year in March, April, May"
+    """A `Query` object for a "month of year in March, April, May"
     condition.
 
     .. versionadded:: 1.0
@@ -1835,12 +1850,12 @@ def mam():
     >>> f.subspace(time=cf.mam())
     <CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
 
-    '''
-    return Query('wi', (3, 5), attr='month')
+    """
+    return Query("wi", (3, 5), attr="month")
 
 
 def seasons(n=4, start=12):
-    '''A customisable list of `Query` objects for "seasons in a year"
+    """A customisable list of `Query` objects for "seasons in a year"
     conditions.
 
     Note that any date-time that lies within a particular season will
@@ -1916,14 +1931,14 @@ def seasons(n=4, start=12):
     >>> cf.seasons(1, 4)
     [<CF Query: month[(ge 4) | (le 3)]>]
 
-    '''
+    """
     if 12 % n:
-        raise ValueError(
-            "Number of seasons must divide into 12. Got %s" % n)
+        raise ValueError("Number of seasons must divide into 12. Got %s" % n)
 
     if not 1 <= start <= 12 or int(start) != start:
         raise ValueError(
-            "Start month must be integer between 1 and 12. Got %s" % start)
+            "Start month must be integer between 1 and 12. Got %s" % start
+        )
 
     out = []
 
@@ -1940,13 +1955,13 @@ def seasons(n=4, start=12):
             m1 = 11
 
         if m0 < m1:
-            q = Query('wi', (m0, m1))
+            q = Query("wi", (m0, m1))
         elif m0 > m1:
-            q = Query('ge', m0) | Query('le', m1)
+            q = Query("ge", m0) | Query("le", m1)
         else:
-            q = Query('eq', m0)
+            q = Query("eq", m0)
 
-        out.append(q.addattr('month'))
+        out.append(q.addattr("month"))
 
         m0 = m1 + 1
         if m0 > 12:
@@ -1960,74 +1975,74 @@ def seasons(n=4, start=12):
 # Deprecated functions
 # --------------------------------------------------------------------
 def dtge(*args, **kwargs):
-    '''Return a `Query` object for a variable being not earlier than a
+    """Return a `Query` object for a variable being not earlier than a
     date-time.
 
     Deprecated at version 3.0.0. Use 'cf.ge' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dtge', "Use 'cf.ge' with a datetime object value instead."
+        "dtge", "Use 'cf.ge' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def dtgt(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.gt' with a datetime object
+    """Deprecated at version 3.0.0. Use 'cf.gt' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dtgt', "Use 'cf.gt' with a datetime object value instead."
+        "dtgt", "Use 'cf.gt' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def dtle(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.le' with a datetime object
+    """Deprecated at version 3.0.0. Use 'cf.le' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dtle', "Use 'cf.le' with a datetime object value instead."
+        "dtle", "Use 'cf.le' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def dtlt(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.lt' with a datetime object
+    """Deprecated at version 3.0.0. Use 'cf.lt' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dtlt', "Use 'cf.lt' with a datetime object value instead."
+        "dtlt", "Use 'cf.lt' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def dteq(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.eq' with a datetime object
+    """Deprecated at version 3.0.0. Use 'cf.eq' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dteq', "Use 'cf.eq' with a datetime object value instead."
+        "dteq", "Use 'cf.eq' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def dtne(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.ne' with a datetime object
+    """Deprecated at version 3.0.0. Use 'cf.ne' with a datetime object
     value instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'dtne', "Use 'cf.ne' with a datetime object value instead."
+        "dtne", "Use 'cf.ne' with a datetime object value instead."
     )  # pragma: no cover
 
 
 def contain(value, units=None, attr=None):
-    '''Return a `Query` object for coordinate cells containing a value.
+    """Return a `Query` object for coordinate cells containing a value.
 
     Deprecated at version 3.0.0. Use function 'cf.contains' instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'cf.contain',
-        "Use function 'cf.contains' instead")  # pragma: no cover
+        "cf.contain", "Use function 'cf.contains' instead"
+    )  # pragma: no cover

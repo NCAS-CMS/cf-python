@@ -7,87 +7,85 @@ from numpy import ndarray as numpy_ndarray
 from copy import deepcopy
 
 from .functions import equals as cf_equals
-from .functions import (atol as cf_atol,
-                        rtol as cf_rtol)
+from .functions import atol as cf_atol, rtol as cf_rtol
 from .functions import inspect as cf_inspect
 
-from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity,
-                         _display_or_return)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _manage_log_level_via_verbosity,
+    _display_or_return,
+)
 
 
 logger = logging.getLogger(__name__)
 
 
 class Flags:
-    '''Self-describing CF flag values.
+    """Self-describing CF flag values.
 
     Stores the flag_values, flag_meanings and flag_masks CF attributes
     in an internally consistent manner.
 
-    '''
+    """
+
     def __init__(self, **kwargs):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        flag_values : optional
-            The flag_values CF property. Sets the `flag_values`
-            attribute.
+            flag_values : optional
+                The flag_values CF property. Sets the `flag_values`
+                attribute.
 
-        flag_meanings : optional
-            The flag_meanings CF property. Sets the `flag_meanings`
-            attribute.
+            flag_meanings : optional
+                The flag_meanings CF property. Sets the `flag_meanings`
+                attribute.
 
-        flag_masks : optional
-            The flag_masks CF property. Sets the `flag_masks`
-            attribute.
+            flag_masks : optional
+                The flag_masks CF property. Sets the `flag_masks`
+                attribute.
 
-        '''
+        """
         for attr, value in kwargs.items():
             if value is not None:
                 setattr(self, attr, value)
 
     def __eq__(self, other):
-        '''x.__eq__(y) <==> x==y <==> x.equals(y)
-
-        '''
+        """x.__eq__(y) <==> x==y <==> x.equals(y)"""
         return self.equals(other)
 
     def __ne__(self, other):
-        '''x.__ne__(y) <==> x!=y <==> not x.equals(y)
-
-        '''
+        """x.__ne__(y) <==> x!=y <==> not x.equals(y)"""
         return not self.equals(other)
 
     def __hash__(self):
-        '''Return the hash value of the flags.
+        """Return the hash value of the flags.
 
-    Note that the flags will be sorted in place.
+        Note that the flags will be sorted in place.
 
-    :Returns:
+        :Returns:
 
-        `int`
-            The hash value.
+            `int`
+                The hash value.
 
-    **Examples:**
+        **Examples:**
 
-    >>> hash(f)
-    -956218661958673979
+        >>> hash(f)
+        -956218661958673979
 
-        '''
+        """
         self.sort()
 
-        x = [tuple(getattr(self, attr, ()))
-             for attr in ('_flag_meanings', '_flag_values', '_flag_masks')]
+        x = [
+            tuple(getattr(self, attr, ()))
+            for attr in ("_flag_meanings", "_flag_values", "_flag_masks")
+        ]
 
         return hash(tuple(x))
 
     def __bool__(self):
-        '''x.__bool__() <==> x!=0
-
-        '''
-        for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
+        """x.__bool__() <==> x!=0"""
+        for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 return True
         # --- End: for
@@ -99,29 +97,30 @@ class Flags:
     # ----------------------------------------------------------------
     @property
     def flag_values(self):
-        '''The flag_values CF attribute.
+        """The flag_values CF attribute.
 
-    Stored as a 1-d numpy array but may be set as any array-like
-    object.
+        Stored as a 1-d numpy array but may be set as any array-like
+        object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.flag_values = ['a', 'b', 'c']
-    >>> f.flag_values
-    array(['a', 'b', 'c'], dtype='|S1')
-    >>> f.flag_values = numpy.arange(4, dtype='int8')
-    >>> f.flag_values
-    array([1, 2, 3, 4], dtype=int8)
-    >>> f.flag_values = 1
-    >>> f.flag_values
-    array([1])
+        >>> f.flag_values = ['a', 'b', 'c']
+        >>> f.flag_values
+        array(['a', 'b', 'c'], dtype='|S1')
+        >>> f.flag_values = numpy.arange(4, dtype='int8')
+        >>> f.flag_values
+        array([1, 2, 3, 4], dtype=int8)
+        >>> f.flag_values = 1
+        >>> f.flag_values
+        array([1])
 
-        '''
+        """
         try:
             return self._flag_values
         except AttributeError:
-            raise AttributeError("'%s' has no attribute 'flag_values'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "'%s' has no attribute 'flag_values'" % self.__class__.__name__
+            )
 
     @flag_values.setter
     def flag_values(self, value):
@@ -134,33 +133,37 @@ class Flags:
         try:
             del self._flag_values
         except AttributeError:
-            raise AttributeError("Can't delete '%s' attribute 'flag_values'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "Can't delete '%s' attribute 'flag_values'"
+                % self.__class__.__name__
+            )
 
     # ----------------------------------------------------------------
     # Property attribute: flag_masks
     # ----------------------------------------------------------------
     @property
     def flag_masks(self):
-        '''The flag_masks CF attribute.
+        """The flag_masks CF attribute.
 
-    Stored as a 1-d numpy array but may be set as array-like object.
+        Stored as a 1-d numpy array but may be set as array-like object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
-    >>> f.flag_masks
-    array([1, 2, 4], dtype=int8)
-    >>> f.flag_masks = 1
-    >>> f.flag_masks
-    array([1])
+        >>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
+        >>> f.flag_masks
+        array([1, 2, 4], dtype=int8)
+        >>> f.flag_masks = 1
+        >>> f.flag_masks
+        array([1])
 
-        '''
+        """
         try:
             return self._flag_masks
         except AttributeError:
-            raise AttributeError("'%s' object has no attribute 'flag_masks'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "'%s' object has no attribute 'flag_masks'"
+                % self.__class__.__name__
+            )
 
     @flag_masks.setter
     def flag_masks(self, value):
@@ -174,42 +177,44 @@ class Flags:
         try:
             del self._flag_masks
         except AttributeError:
-            raise AttributeError("Can't delete '%s' attribute 'flag_masks'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "Can't delete '%s' attribute 'flag_masks'"
+                % self.__class__.__name__
+            )
 
     @property
     def flag_meanings(self):
-        '''The flag_meanings CF attribute.
+        """The flag_meanings CF attribute.
 
-    Stored as a 1-d numpy string array but may be set as a space
-    delimited string or any array-like object.
+        Stored as a 1-d numpy string array but may be set as a space
+        delimited string or any array-like object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.flag_meanings = 'low medium      high'
-    >>> f.flag_meanings
-    array(['low', 'medium', 'high'],
-          dtype='|S6')
-    >>> f.flag_meanings = ['left', 'right']
-    >>> f.flag_meanings
-    array(['left', 'right'],
-          dtype='|S5')
-    >>> f.flag_meanings = 'ok'
-    >>> f.flag_meanings
-    array(['ok'],
-          dtype='|S2')
-    >>> f.flag_meanings = numpy.array(['a', 'b'])
-    >>> f.flag_meanings
-    array(['a', 'b'],
-          dtype='|S1')
+        >>> f.flag_meanings = 'low medium      high'
+        >>> f.flag_meanings
+        array(['low', 'medium', 'high'],
+              dtype='|S6')
+        >>> f.flag_meanings = ['left', 'right']
+        >>> f.flag_meanings
+        array(['left', 'right'],
+              dtype='|S5')
+        >>> f.flag_meanings = 'ok'
+        >>> f.flag_meanings
+        array(['ok'],
+              dtype='|S2')
+        >>> f.flag_meanings = numpy.array(['a', 'b'])
+        >>> f.flag_meanings
+        array(['a', 'b'],
+              dtype='|S1')
 
-        '''
+        """
         try:
             return self._flag_meanings
         except AttributeError:
             raise AttributeError(
-                "'%s' object has no attribute 'flag_meanings'" %
-                self.__class__.__name__
+                "'%s' object has no attribute 'flag_meanings'"
+                % self.__class__.__name__
             )
 
     @flag_meanings.setter
@@ -227,127 +232,132 @@ class Flags:
             del self._flag_meanings
         except AttributeError:
             raise AttributeError(
-                "Can't delete '%s' attribute 'flag_meanings'" %
-                self.__class__.__name__
+                "Can't delete '%s' attribute 'flag_meanings'"
+                % self.__class__.__name__
             )
 
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
+        """x.__repr__() <==> repr(x)"""
         string = []
-        if hasattr(self, 'flag_values'):
-            string.append('flag_values=%s' % str(self.flag_values))
+        if hasattr(self, "flag_values"):
+            string.append("flag_values=%s" % str(self.flag_values))
 
-        if hasattr(self, 'flag_masks'):
-            string.append('flag_masks=%s' % str(self.flag_masks))
+        if hasattr(self, "flag_masks"):
+            string.append("flag_masks=%s" % str(self.flag_masks))
 
-        if hasattr(self, 'flag_meanings'):
-            string.append('flag_meanings=%s' % str(self.flag_meanings))
+        if hasattr(self, "flag_meanings"):
+            string.append("flag_meanings=%s" % str(self.flag_meanings))
 
-        return '<CF %s: %s>' % (self.__class__.__name__,
-                                ', '.join(string))
+        return "<CF %s: %s>" % (self.__class__.__name__, ", ".join(string))
 
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    Equivalent to ``copy.deepcopy(f)``
+        Equivalent to ``copy.deepcopy(f)``
 
-    :Returns:
+        :Returns:
 
-            The deep copy.
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.copy()
+        >>> f.copy()
 
-        '''
+        """
         return deepcopy(self)
 
     @_display_or_return
     def dump(self, display=True, _level=0):
-        '''Return a string containing a full description of the instance.
+        """Return a string containing a full description of the instance.
 
-    :Parameters:
+        :Parameters:
 
-        display : bool, optional
-            If False then return the description as a string. By
-            default the description is printed, i.e. ``f.dump()`` is
-            equivalent to ``print(f.dump(display=False))``.
+            display : bool, optional
+                If False then return the description as a string. By
+                default the description is printed, i.e. ``f.dump()`` is
+                equivalent to ``print(f.dump(display=False))``.
 
-    :Returns:
+        :Returns:
 
-        `None` or `str`
-            A string containing the description.
+            `None` or `str`
+                A string containing the description.
 
-        '''
-        indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
+        """
+        indent0 = "    " * _level
+        indent1 = "    " * (_level + 1)
 
-        string = ['%sFlags:' % indent0]
+        string = ["%sFlags:" % indent0]
 
-        for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
+        for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             value = getattr(self, attr, None)
             if value is not None:
-                string.append('%s%s = %s' % (indent1, attr[1:], list(value)))
+                string.append("%s%s = %s" % (indent1, attr[1:], list(value)))
         # --- End: for
 
-        return '\n'.join(string)
+        return "\n".join(string)
 
-    @_deprecated_kwarg_check('traceback')
+    @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None,
-               ignore_fill_value=False, verbose=None,
-               traceback=False):
-        '''True if two groups of flags are logically equal, False otherwise.
+    def equals(
+        self,
+        other,
+        rtol=None,
+        atol=None,
+        ignore_fill_value=False,
+        verbose=None,
+        traceback=False,
+    ):
+        """True if two groups of flags are logically equal, False otherwise.
 
-    Note that both instances are sorted in place prior to the comparison.
+        Note that both instances are sorted in place prior to the comparison.
 
-    :Parameters:
+        :Parameters:
 
-        other:
-            The object to compare for equality.
+            other:
+                The object to compare for equality.
 
-        atol: float, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
+            atol: float, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
 
-        rtol: float, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
+            rtol: float, optional
+                The relative tolerance for all numerical comparisons, By
+                default the value returned by the `rtol` function is used.
 
-        ignore_fill_value: bool, optional
-            If True then data arrays with different fill values are
-            considered equal. By default they are considered unequal.
+            ignore_fill_value: bool, optional
+                If True then data arrays with different fill values are
+                considered equal. By default they are considered unequal.
 
-        traceback: deprecated at version 3.0.0.
-            Use *verbose* instead.
+            traceback: deprecated at version 3.0.0.
+                Use *verbose* instead.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the two instances are equal.
+            `bool`
+                Whether or not the two instances are equal.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f
-    <CF Flags: flag_values=[1 0 2], flag_masks=[2 0 2], flag_meanings=['medium' 'low' 'high']>
-    >>> g
-    <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
-    >>> f.equals(g)
-    True
-    >>> f
-    <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
-    >>> g
-    <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
+        >>> f
+        <CF Flags: flag_values=[1 0 2], flag_masks=[2 0 2], flag_meanings=['medium' 'low' 'high']>
+        >>> g
+        <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
+        >>> f.equals(g)
+        True
+        >>> f
+        <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
+        >>> g
+        <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
 
-        '''
+        """
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             logger.info(
-                "%s: Different type: %s, %s" % (
+                "%s: Different type: %s, %s"
+                % (
                     self.__class__.__name__,
-                    self.__class__.__name__, other.__class__.__name__
+                    self.__class__.__name__,
+                    other.__class__.__name__,
                 )
             )  # pragma: no cover
             return False
@@ -362,35 +372,36 @@ class Flags:
         if atol is None:
             atol = float(cf_atol())
 
-        for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
+        for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 if not hasattr(other, attr):
                     logger.info(
-                        "%s: Different attributes: %s" %
-                        (self.__class__.__name__, attr[1:])
+                        "%s: Different attributes: %s"
+                        % (self.__class__.__name__, attr[1:])
                     )  # pragma: no cover
                     return False
 
                 x = getattr(self, attr)
                 y = getattr(other, attr)
 
-                if (
-                        x.shape != y.shape
-                        or not cf_equals(x, y,
-                                         rtol=rtol, atol=atol,
-                                         ignore_fill_value=ignore_fill_value,
-                                         verbose=verbose)
+                if x.shape != y.shape or not cf_equals(
+                    x,
+                    y,
+                    rtol=rtol,
+                    atol=atol,
+                    ignore_fill_value=ignore_fill_value,
+                    verbose=verbose,
                 ):
                     print(
-                        "%s: Different '%s': %r, %r" %
-                        (self.__class__.__name__, attr[1:], x, y)
+                        "%s: Different '%s': %r, %r"
+                        % (self.__class__.__name__, attr[1:], x, y)
                     )  # pragma: no cover
                     return False
 
             elif hasattr(other, attr):
                 print(
-                    "%s: Different attributes: %s" %
-                    (self.__class__.__name__, attr[1:])
+                    "%s: Different attributes: %s"
+                    % (self.__class__.__name__, attr[1:])
                 )  # pragma: no cover
                 return False
         # --- End: for
@@ -398,51 +409,52 @@ class Flags:
         return True
 
     def inspect(self):
-        '''Inspect the object for debugging.
+        """Inspect the object for debugging.
 
-    .. seealso:: `cf.inspect`
+        .. seealso:: `cf.inspect`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         print(cf_inspect(self))  # pragma: no cover
 
     def sort(self):
-        '''Sort the flags in place.
+        """Sort the flags in place.
 
-    By default sort by flag values. If flag values are not present
-    then sort by flag meanings. If flag meanings are not present then
-    sort by flag_masks.
+        By default sort by flag values. If flag values are not present
+        then sort by flag meanings. If flag meanings are not present then
+        sort by flag_masks.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f
-    <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
-    >>> f.sort()
-    >>> f
-    <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
+        >>> f
+        <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
+        >>> f.sort()
+        >>> f
+        <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
 
-        '''
+        """
         if not self:
             return
 
         # Sort all three attributes
-        for attr in ('flag_values', '_flag_meanings', '_flag_masks'):
+        for attr in ("flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
                 indices = numpy_argsort(getattr(self, attr))
                 break
         # --- End: for
 
-        for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
+        for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
                 array = getattr(self, attr).view()
                 array[...] = array[indices]
         # --- End: for
+
 
 # --- End: class

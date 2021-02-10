@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class PartNodeCountProperties(mixin.Properties,
-                              cfdm.PartNodeCountProperties):
-    '''Properties for a netCDF part node count variable.
+class PartNodeCountProperties(mixin.Properties, cfdm.PartNodeCountProperties):
+    """Properties for a netCDF part node count variable.
 
     **NetCDF interface**
 
@@ -20,13 +19,15 @@ class PartNodeCountProperties(mixin.Properties,
 
     .. versionadded:: 3.2.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
+
 
 # --- End: class
