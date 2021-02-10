@@ -1,16 +1,16 @@
 import datetime
 from functools import partial
 
-import numpy
+import numpy as np
 
 import cftime
 
-from numpy import around as numpy_around
-from numpy import array as numpy_array
-from numpy import asanyarray as numpy_asanyarray
-from numpy import ndarray as numpy_ndarray
-from numpy import ndim as numpy_ndim
-from numpy import vectorize as numpy_vectorize
+#from numpy import around as numpy_around
+#from numpy import array as numpy_array
+#f#rom numpy import asanyarray as numpy_asanyarray
+#f##rom numpy import ndarray as numpy_ndarray
+#from numpy import ndim as numpy_ndim
+#from numpy import vectorize as numpy_vectorize
 
 from numpy.ma import isMA as numpy_ma_isMA
 from numpy.ma import is_masked as numpy_ma_is_masked
@@ -67,8 +67,6 @@ class Datetime(cftime.datetime):
              "Use function 'cf.dt' to create date-time objects instead."
         )  # pragma: no cover
 
-
-# --- End: class
 
 def elements(x):
     return x.timetuple()[:6]  # + (getattr(x, 'microsecond', 0),)
@@ -158,7 +156,6 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
         if calendar in calendars:
             return datetime_cls(year, month, day, hour, minute,
                                 second, microsecond)
-    # --- End: for
 
     raise ValueError(
         "Can't create date-time object with unknown calendar {!r}".format(
@@ -207,16 +204,16 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
     TODO
 
     '''
-    arg = numpy.array(arg)
-    month = numpy.array(month)
-    day = numpy.array(day)
-    hour = numpy.array(hour)
-    minute = numpy.array(minute)
-    second = numpy.array(second)
-    microsecond = numpy.array(microsecond)
+    arg = np.array(arg)
+    month = np.array(month)
+    day = np.array(day)
+    hour = np.array(hour)
+    minute = np.array(minute)
+    second = np.array(second)
+    microsecond = np.array(microsecond)
 
     ndim = max(
-        map(numpy.ndim, (month, day, hour, minute, second, microsecond))
+        map(np.ndim, (month, day, hour, minute, second, microsecond))
     )
 
     if ndim > 1:
@@ -232,7 +229,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
         )
 
     sizes = set(
-        map(numpy.size, (arg, month, day, hour, minute, second, microsecond))
+        map(np.size, (arg, month, day, hour, minute, second, microsecond))
     )
 
     if len(sizes) == 1 and 1 in sizes:
@@ -243,10 +240,10 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
         if ndim >= 1:
             out = [out]
 
-        out = numpy.array(out)
+        out = np.array(out)
 
         if not out.ndim:
-            out = numpy.expand_dims(out, 0)
+            out = np.expand_dims(out, 0)
 
         return out
 
@@ -275,7 +272,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
                     "At least two of them have different sizes greater than 1"
                 )
 
-            _ = numpy.empty((max(sizes), 7), dtype=int)
+            _ = np.empty((max(sizes), 7), dtype=int)
             _[:, 0] = arg
             _[:, 1] = month
             _[:, 2] = day
@@ -289,10 +286,10 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
     else:
         out = [dt(*args, calendar=calendar) for args in arg]
 
-    out = numpy.array(out)
+    out = np.array(out)
 
     if not out.ndim:
-        out = numpy.expand_dims(out, 0)
+        out = np.expand_dims(out, 0)
 
     return out
 
@@ -322,7 +319,7 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
 
     '''
     func = partial(st2datetime, calendar=units_in._calendar)
-    return numpy_vectorize(func, otypes=[object])(array)
+    return np.vectorize(func, otypes=[object])(array)
 
 
 # def st2datetime(date_string):
@@ -453,7 +450,7 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         # num2date has issues if the mask is nomask
         mask = array.mask
         if mask is numpy_ma_nomask or not numpy_ma_is_masked(array):
-            array = array.view(numpy_ndarray)
+            array = array.view(np.ndarray)
 
     units = units_in.units
     calendar = getattr(units_in, 'calendar', 'standard')
@@ -465,11 +462,11 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
     if mask is not None:
         array = numpy_ma_masked_where(mask, array)
 
-    ndim = numpy_ndim(array)
+    ndim = np.ndim(array)
 
     if mask is None:
         # There is no missing data
-        return numpy_array(array, dtype=object)
+        return np.array(array, dtype=object)
         # return numpy_vectorize(
         #     partial(dt2Dt, calendar=units_in._calendar),
         #     otypes=[object])(array)
@@ -520,9 +517,9 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             An array of numbers with the same shape as *array*.
 
     '''
-    ndim = numpy_ndim(array)
+    ndim = np.ndim(array)
 
-    if not ndim and isinstance(array, numpy_ndarray):
+    if not ndim and isinstance(array, np.ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
@@ -538,11 +535,13 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     array = units_out._utime.date2num(array)
 
     if not ndim:
-        array = numpy_array(array)
+        array = np.array(array)
 
     # Round to the nearest millisecond. This is only necessary whilst
     # netCDF4 time functions have an accuracy of no better than 1
     # millisecond (which is still the case at version 1.2.2).
+    #
+    # TODO review for cftime 1.4.0
     units = units_out._utime.units
     decimals = 3
     month = False
@@ -550,17 +549,17 @@ def dt2rt(array, units_in, units_out, dummy1=None):
 
     day = units in cftime.day_units
     if day:
-        array *= 86400.0
+        array = array * 86400.0
     else:
         sec = units in cftime.sec_units
         if not sec:
             hr = units in cftime.hr_units
             if hr:
-                array *= 3600.0
+                array = array * 3600.0
             else:
                 m = units in cftime.min_units
                 if m:
-                    array *= 60.0
+                    array = array * 60.0
                 else:
                     millisec = units in cftime.millisec_units
                     if millisec:
@@ -572,13 +571,17 @@ def dt2rt(array, units_in, units_out, dummy1=None):
                         else:
                             month = units in ('month', 'months')
                             if month:
-                                array *= (365.242198781 / 12.0) * 86400.0
+                                array = (
+                                    array * (365.242198781 / 12.0) * 86400.0
+                                )
                             else:
                                 year = units in ('year', 'years', 'yr')
                                 if year:
-                                    array *= 365.242198781 * 86400.0
+                                    array = array * 365.242198781 * 86400.0
     # --- End: if
-    array = numpy_around(array, decimals, array)
+
+    array = np.asanyarray(array)
+    array = np.around(array, decimals, array)
 
     if day:
         array /= 86400.0
@@ -594,7 +597,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
         array /= 365.242198781 * 86400.0
 
     if not ndim:
-        array = numpy_asanyarray(array)
+        array = np.asanyarray(array)
 
     return array
 
@@ -621,9 +624,9 @@ def st2rt(array, units_in, units_out, dummy1=None):
     '''
     array = st2dt(array, units_in)
 
-    ndim = numpy_ndim(array)
+    ndim = np.ndim(array)
 
-    if not ndim and isinstance(array, numpy_ndarray):
+    if not ndim and isinstance(array, np.ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
@@ -631,6 +634,6 @@ def st2rt(array, units_in, units_out, dummy1=None):
     array = units_out._utime.date2num(array)
 
     if not ndim:
-        array = numpy_array(array)
+        array = np.array(array)
 
     return array
