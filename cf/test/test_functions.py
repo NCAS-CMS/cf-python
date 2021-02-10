@@ -1,12 +1,10 @@
-import atexit
 import datetime
+import faulthandler
 import os
 import platform
 import sys
 import unittest
 import inspect
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 

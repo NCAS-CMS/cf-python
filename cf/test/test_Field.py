@@ -1,5 +1,6 @@
 import atexit
 import datetime
+import faulthandler
 import inspect
 import itertools
 import os
@@ -17,8 +18,6 @@ try:
 # not 'except ImportError' as that can hide nested errors, catch anything:
 except Exception:
     pass  # test with this dependency will then be skipped by unittest
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 

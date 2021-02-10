@@ -1,11 +1,11 @@
-import datetime
-import tempfile
-import os
-import numpy
-import unittest
 import atexit
-
+import datetime
 import faulthandler
+import os
+import tempfile
+import unittest
+
+import numpy
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
