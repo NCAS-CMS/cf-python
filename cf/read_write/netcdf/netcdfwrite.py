@@ -8,6 +8,7 @@ import numpy
 import cfdm
 
 from ... import DomainAncillary, Coordinate, Bounds
+from ...functions import relpath
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
@@ -400,6 +401,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     if strlen > 1:
                         # Convert to an array of characters
                         array = _character_array(array)
+
                         # Get the netCDF dimension for the string length
                         ncdim_strlen = [
                             _string_length_dimension(strlen, g=None)
@@ -495,7 +497,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     if dtype.kind != "S":
                         attrs["subarray"][
                             "dtype"
-                        ] = _convert_to_netCDF_datatype(dtype)
+                        ] = self._convert_to_netCDF_datatype(dtype)
 
                 # FORMAT:
                 sfmt = attrs.pop("format", None)
@@ -596,11 +598,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         **Examples:**
 
-        >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+        >>> type(_convert_to_builtin_type(numpy.bool_(True)))
         bool
-        >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+        >>> type(_convert_to_builtin_type(numpy.array([1.0])[0]))
         double
-        >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+        >>> type(_convert_to_builtin_type(numpy.array([2])[0]))
         int
 
         """

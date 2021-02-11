@@ -4,7 +4,7 @@ from ..functions import (
     close_one_file,
 )
 
-from .umread.umfile import File, UMFileException
+from .umread.umfile import File
 
 _file_to_UM = _file_to_fh.setdefault("UM", {})
 

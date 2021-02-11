@@ -201,11 +201,11 @@ def _convert_to_builtin_type(x):
 
     **Examples:**
 
-    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+    >>> type(_convert_to_builtin_type(numpy.bool_(True)))
     bool
-    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+    >>> type(_convert_to_builtin_type(numpy.array([1.0])[0]))
     double
-    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+    >>> type(_convert_to_builtin_type(numpy.array([2])[0]))
     int
 
     """

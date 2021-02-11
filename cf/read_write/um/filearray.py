@@ -2,8 +2,6 @@ from numpy.ma import masked_where as numpy_ma_masked_where
 
 from ..constants import _file_to_fh
 from ..functions import (
-    open_files_threshold_exceeded,
-    close_one_file,
     parse_indices,
     get_subspace,
 )

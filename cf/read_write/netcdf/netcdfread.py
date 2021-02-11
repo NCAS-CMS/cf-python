@@ -2,9 +2,13 @@ import json
 
 from ast import literal_eval as ast_literal_eval
 
+from numpy import dtype as numpy_dtype
+
 import cfdm
 
 from ...constants import _file_to_fh
+from ...functions import pathjoin, dirname
+from ...units import Units
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):

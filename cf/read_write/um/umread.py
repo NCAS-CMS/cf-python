@@ -1,6 +1,6 @@
+import itertools
 import logging
 import os
-import netCDF4
 import textwrap
 
 from datetime import datetime
@@ -24,7 +24,6 @@ from numpy import rad2deg as numpy_rad2deg
 from numpy import resize as numpy_resize
 from numpy import result_type as numpy_result_type
 from numpy import sin as numpy_sin
-from numpy import sum as numpy_sum
 from numpy import transpose as numpy_transpose
 from numpy import where as numpy_where
 
@@ -33,14 +32,12 @@ from netCDF4 import date2num as netCDF4_date2num
 import cftime
 import cfdm
 
-from ... import __version__, __Conventions__, __file__
+from ... import __version__, __Conventions__
 from ...decorators import (
     _manage_log_level_via_verbosity,
     _manage_log_level_via_verbose_attr,
 )
 from ...functions import (
-    open_files_threshold_exceeded,
-    close_one_file,
     abspath,
     load_stash2standard_name,
 )
@@ -54,7 +51,6 @@ from ...data.data import Data, Partition, PartitionMatrix
 
 from ...data import UMArray
 from ...data.functions import _open_um_file, _close_um_file
-from ...umread_lib.umfile import UMFileException
 
 
 logger = logging.getLogger(__name__)
@@ -1278,7 +1274,7 @@ class UMField:
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(field, da)
         _axis["z"] = axisZ
 
         # ac = AuxiliaryCoordinate()
@@ -1288,7 +1284,7 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_height_coordinate_ak"
         #        field.insert_aux(ac, axes=[zdim], copy=False)
         self.implementation.set_auxiliary_coordinate(
-            self.field, ac, axes=[_axis["z"]], copy=False
+            field, ac, axes=[_axis["z"]], copy=False
         )
 
         array = numpy_array(
@@ -1308,7 +1304,7 @@ class UMField:
         ac.id = "UM_atmosphere_hybrid_height_coordinate_bk"
         ac.long_name = "atmosphere_hybrid_height_coordinate_bk"
         self.implementation.set_auxiliary_coordinate(
-            self.field, ac, axes=[_axis["z"]], copy=False
+            field, ac, axes=[_axis["z"]], copy=False
         )
 
         return dc
@@ -1367,12 +1363,12 @@ class UMField:
         bk_array = numpy_array(bk_array, dtype=float)
         bk_bounds = numpy_array(bk_bounds, dtype=float)
 
+        field = self.field
+
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(self.field, da)
+        axis_key = self.implementation.set_domain_axis(field, da)
         _axis["z"] = axis_key
-
-        field = self.field
 
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(
@@ -1386,7 +1382,7 @@ class UMField:
         dc = self.coord_names(dc, axiscode)
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["z"]], copy=False
+            field, dc, axes=[_axis["z"]], copy=False
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1395,14 +1391,14 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_sigma_pressure_coordinate_ak"
 
         self.implementation.set_auxiliary_coordinate(
-            self.field, ac, axes=[_axis["z"]], copy=False
+            field, ac, axes=[_axis["z"]], copy=False
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units["1"])
 
         self.implementation.set_auxiliary_coordinate(
-            self.field, ac, axes=[_axis["z"]], copy=False
+            field, ac, axes=[_axis["z"]], copy=False
         )
 
         ac.id = "UM_atmosphere_hybrid_sigma_pressure_coordinate_bk"
@@ -1804,7 +1800,6 @@ class UMField:
             # 1-d or 2-d partition matrix
             # --------------------------------------------------------
             file_data_types = set()
-            word_sizes = set()
 
             # Find the partition matrix shape
             pmshape = [n for n in (nt, nz) if n > 1]
@@ -2032,7 +2027,6 @@ class UMField:
         31.5
 
         """
-        reftime = self.refUnits
         units = self.refunits
         calendar = self.calendar
 
@@ -2195,7 +2189,7 @@ class UMField:
             )
             ac = self.coord_names(ac, axiscode)
 
-            key = self.implementation.set_auxiliary_coordinate(
+            self.implementation.set_auxiliary_coordinate(
                 self.field, ac, axes=axes, copy=False
             )
 
@@ -2658,7 +2652,6 @@ class UMField:
         31.5
 
         """
-        reftime = self.refUnits
         units = self.refunits
         calendar = self.calendar
 
@@ -3340,7 +3333,7 @@ class UMRead(cfdm.read_write.IORead):
         """
         try:
             f = _open_um_file(filename)
-        except Exception as error:
+        except Exception:
             return False
 
         try:
