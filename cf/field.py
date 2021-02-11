@@ -10702,7 +10702,7 @@ class Field(mixin.PropertiesData,
     '''
         def _ddddd(classification, n, lower, upper, increasing, coord,
                    group_by_coords, extra_condition):
-            '''TODO
+            '''Returns configuration for a general collapse.
 
         :Parameter:
 
@@ -10738,7 +10738,7 @@ class Field(mixin.PropertiesData,
         def _time_interval(classification, n, coord, interval, lower,
                            upper, lower_limit, upper_limit, group_by,
                            extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse where the group is a TimeDuration.
 
         :Parameters:
 
@@ -10793,7 +10793,7 @@ class Field(mixin.PropertiesData,
                                 lower, upper, lower_limit,
                                 upper_limit, group_by,
                                 extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse over some TimeDuration.
 
         :Parameters:
 
@@ -10851,7 +10851,7 @@ class Field(mixin.PropertiesData,
                            lower_limit, upper_limit,
                            group_by,
                            extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse where the group is a data interval.
 
         :Returns:
 
@@ -10883,7 +10883,7 @@ class Field(mixin.PropertiesData,
         def _selection(classification, n, coord, selection, parameter,
                        extra_condition=None, group_span=None,
                        within=False):
-            '''TODO
+            '''Processes a group selection.
 
         :Parameters:
 
@@ -10947,7 +10947,7 @@ class Field(mixin.PropertiesData,
             return classification, n
 
         def _discern_runs(classification, within=False):
-            '''TODO
+            '''Processes a group classification.
 
         :Parameters:
 
@@ -10982,7 +10982,8 @@ class Field(mixin.PropertiesData,
             return classification
 
         def _discern_runs_within(classification, coord):
-            '''TODO
+            '''Processes group classification for a 'within' method collapse.
+
             '''
             size = classification.size
             if size < 2:
@@ -11004,12 +11005,13 @@ class Field(mixin.PropertiesData,
             return classification
 
         def _tyu(coord, group_by, time_interval):
-            '''TODO
+            '''Returns bounding values and limits for a general collapse.
 
         :Parameters:
 
             coord: `DimensionCoordinate`
-                TODO
+                The dimension coordinate construct associated with
+                the collapse.
 
             group_by: `str`
                 As for the *group_by* parameter of the `collapse` method.
@@ -11067,9 +11069,7 @@ class Field(mixin.PropertiesData,
             return (lower, upper, lower_limit, upper_limit)
 
         def _group_weights(weights, iaxis, index):
-            '''TODO
-
-        Subspace weights components.
+            '''Subspaces weights components.
 
             :Parameters:
 
@@ -11168,7 +11168,7 @@ class Field(mixin.PropertiesData,
 
         # If group, rolling window, classification, etc, do something
         # special for size one axes - either return unchanged
-        # (possibly mofiying cell methods with , e.g, within_dyas', or
+        # (possibly mofiying cell methods with , e.g, within_days', or
         # raising an exception for 'can't match', I suppose.
 
         classification = None
