@@ -1,11 +1,12 @@
 import datetime
 import unittest
 
+
 import numpy as np
+
 import cftime
 
 import cf
-
 from cf import Units
 
 

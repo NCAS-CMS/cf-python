@@ -64,7 +64,7 @@ class Properties(Container):
         '''Whether two values match.
 
     The definition of "match" depends on the types of *value0* and
-    *value1*. See the code for the details.
+    *value1*.
 
     :Parameters:
 
@@ -75,6 +75,9 @@ class Properties(Container):
             The second value to be matched.
 
         units: `bool`, optional
+            If True then the units must be the same for values to be
+            considered to match. By default, units are ignored in the
+            comparison.
 
     :Returns:
 

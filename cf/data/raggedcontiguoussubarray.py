@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class RaggedContiguousSubarray(abstract.CompressedSubarray):
-    '''TODO
+    '''An underlying contiguous ragged subarray.
 
     '''
     def __getitem__(self, indices):

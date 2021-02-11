@@ -463,7 +463,8 @@ class CellMethod(cfdm.CellMethod):
 
     @property
     def axes(self):
-        '''TODO
+        '''Return the axes of the cell method.
+
         '''
         return self.get_axes(default=AttributeError())
 
@@ -486,7 +487,7 @@ class CellMethod(cfdm.CellMethod):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def expand_intervals(self, inplace=False, i=False):
-        '''TODO
+        '''Expand the cell method interval to cover all of its axes.
 
         '''
         c = _inplace_enabled_define_and_cleanup(self)
@@ -500,7 +501,7 @@ class CellMethod(cfdm.CellMethod):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
-        '''TODO
+        '''Change the axes of the cell method according to a given mapping.
 
     :Parameters:
 
@@ -548,7 +549,23 @@ class CellMethod(cfdm.CellMethod):
 
     **Examples:**
 
-    TODO
+    >>> a = cf.example_field(1)
+    >>> a.cell_methods()
+    <CF Constructs: cell_method(2)>
+    >>> print(a.cell_methods())
+    Constructs:
+    {'cellmethod0': <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <CF CellMethod: domainaxis3: maximum>}
+    >>> c0 = a.cell_method('cellmethod0')
+    >>> c1 = a.cell_method('cellmethod1')
+    >>> c0.equivalent(c0)
+    True
+    >>> c0.equivalent(c1)
+    False
+    >>> c1.equivalent(c0)
+    False
+    >>> c1.equivalent(c1)
+    True
 
         '''
         if self is other:

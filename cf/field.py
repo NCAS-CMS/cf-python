@@ -832,11 +832,11 @@ class Field(mixin.PropertiesData,
         }
 
     def _is_broadcastable(self, shape):
-        '''TODO
+        '''Checks the field's data array is broadcastable to a shape.
 
     :Parameters:
 
-        shape1: sequence of `int`
+        shape: sequence of `int`
 
     :Returns:
 
@@ -2395,7 +2395,7 @@ class Field(mixin.PropertiesData,
         # --- End: for
 
     def _coordinate_reference_axes(self, key):
-        '''TODO
+        '''Returns the field's set of coordinate reference axes for a key.
 
     :Parameters:
 
@@ -2424,7 +2424,7 @@ class Field(mixin.PropertiesData,
         return set(axes)
 
     def _conform_cell_methods(self):
-        '''TODO
+        '''Changes the axes of the field's cell methods so they conform.
 
     :Parameters:
 
@@ -2460,7 +2460,7 @@ class Field(mixin.PropertiesData,
                                           s=None, t=None,
                                           verbose=None,
                                           axis_map=None):
-        '''TODO
+        '''True if coordinate reference constructs are equivalent.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -2849,9 +2849,9 @@ class Field(mixin.PropertiesData,
         return other
 
     def _conform_for_data_broadcasting(self, other):
-        '''TODO
+        '''Conforms the field with another, ready for data broadcasting.
 
-    Note that *other* is not changed in-place.
+    Note that the other field, *other*, is not changed in-place.
 
     :Parameters:
 
@@ -2885,14 +2885,13 @@ class Field(mixin.PropertiesData,
                                    s=None, t=None, atol=None,
                                    rtol=None, verbose=None,
                                    axis_map=None):
-        '''TODO
+        '''True if the field has equivalent construct data to another.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-
 
     :Parameters:
 
@@ -4153,7 +4152,7 @@ class Field(mixin.PropertiesData,
 
     def _weights_data(self, w, comp, weights_axes, axes=None,
                       data=False, components=False, methods=False):
-        '''TODO
+        '''Creates weights for the field construct's data array.
 
     :Parameters:
 
@@ -4226,7 +4225,9 @@ class Field(mixin.PropertiesData,
 
     def _weights_field(self, fields, comp, weights_axes,
                        methods=False):
-        '''TODO'''
+        '''Creates a weights field.
+
+        '''
         s = self.analyse_items()
 
         for w in fields:
@@ -4360,7 +4361,7 @@ class Field(mixin.PropertiesData,
                                auto=False, measure=False, radius=None,
                                great_circle=False, return_areas=False,
                                methods=False):
-        '''TODO
+        '''Creates area weights for polygon geometry cells.
 
     .. versionadded:: 3.2.0
 
@@ -4588,7 +4589,7 @@ class Field(mixin.PropertiesData,
     def _weights_geometry_line(self, domain_axis, comp, weights_axes,
                                auto=False, measure=False, radius=None,
                                great_circle=False, methods=False):
-        '''TODO
+        '''Creates line-length weights for line geometries.
 
     .. versionadded:: 3.2.0
 
@@ -4705,7 +4706,7 @@ class Field(mixin.PropertiesData,
     def _weights_geometry_volume(self, comp, weights_axes, auto=False,
                                  measure=False, radius=None,
                                  great_circle=False, methods=False):
-        '''TODO
+        '''Creates volume weights for polygon geometry cells.
 
     .. versionadded:: 3.2.0
 
@@ -5067,7 +5068,7 @@ class Field(mixin.PropertiesData,
 
     def _weights_yyy(self, domain_axis, geometry_type, methods=False,
                      auto=False):
-        '''TODO
+        '''Checks whether weights can be created for given coordinates.
 
     .. versionadded:: 3.2.0
 
@@ -6058,15 +6059,17 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         fields: `FieldList`
-            TODO
+            The sequence of fields to concatenate.
 
         axis: `int`, optional
-            TODO
+            The axis along which the arrays will be joined. The
+            default is 0. Note that scalar arrays are treated as if
+            they were one dimensional.
 
     :Returns:
 
         `Field`
-            TODO
+            The field generated from the concatenation of input fields.
 
         '''
         if isinstance(fields, cls):
@@ -8227,7 +8230,8 @@ class Field(mixin.PropertiesData,
               ``identity='ncvar%lat_lon'``
 
         construct: optional
-            TODO
+            The coordinate reference construct to remove. This may
+            alternatively be specified via the *identity* parameter.
 
         default: optional
             Return the value of the *default* parameter if the
@@ -8444,7 +8448,7 @@ class Field(mixin.PropertiesData,
 
     def get_coordinate_reference(self, identity=None, key=False,
                                  construct=None, default=ValueError()):
-        '''TODO
+        '''Returns selected coordinate reference constructs.
 
     .. versionadded:: 3.0.2
 
@@ -8526,6 +8530,7 @@ class Field(mixin.PropertiesData,
     **Examples:**
 
     TODO
+
         '''
         if construct is None:
             return self.coordinate_reference(identity=identity,
@@ -10675,7 +10680,10 @@ class Field(mixin.PropertiesData,
                           coordinate=None, measure=False,
                           weights=None, squeeze=None, group_by=None,
                           axis_in=None, verbose=None):
-        '''TODO
+        '''Implements a grouped collapse on a field.
+
+    A grouped collapse is one for which an axis is not collapsed
+    completely to size 1.
 
     :Parameters:
 
@@ -10694,7 +10702,7 @@ class Field(mixin.PropertiesData,
     '''
         def _ddddd(classification, n, lower, upper, increasing, coord,
                    group_by_coords, extra_condition):
-            '''TODO
+            '''Returns configuration for a general collapse.
 
         :Parameter:
 
@@ -10730,7 +10738,7 @@ class Field(mixin.PropertiesData,
         def _time_interval(classification, n, coord, interval, lower,
                            upper, lower_limit, upper_limit, group_by,
                            extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse where the group is a TimeDuration.
 
         :Parameters:
 
@@ -10785,7 +10793,7 @@ class Field(mixin.PropertiesData,
                                 lower, upper, lower_limit,
                                 upper_limit, group_by,
                                 extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse over some TimeDuration.
 
         :Parameters:
 
@@ -10843,7 +10851,7 @@ class Field(mixin.PropertiesData,
                            lower_limit, upper_limit,
                            group_by,
                            extra_condition=None):
-            '''TODO
+            '''Prepares for a collapse where the group is a data interval.
 
         :Returns:
 
@@ -10875,7 +10883,7 @@ class Field(mixin.PropertiesData,
         def _selection(classification, n, coord, selection, parameter,
                        extra_condition=None, group_span=None,
                        within=False):
-            '''TODO
+            '''Processes a group selection.
 
         :Parameters:
 
@@ -10939,7 +10947,7 @@ class Field(mixin.PropertiesData,
             return classification, n
 
         def _discern_runs(classification, within=False):
-            '''TODO
+            '''Processes a group classification.
 
         :Parameters:
 
@@ -10974,7 +10982,8 @@ class Field(mixin.PropertiesData,
             return classification
 
         def _discern_runs_within(classification, coord):
-            '''TODO
+            '''Processes group classification for a 'within' method collapse.
+
             '''
             size = classification.size
             if size < 2:
@@ -10996,12 +11005,13 @@ class Field(mixin.PropertiesData,
             return classification
 
         def _tyu(coord, group_by, time_interval):
-            '''TODO
+            '''Returns bounding values and limits for a general collapse.
 
         :Parameters:
 
             coord: `DimensionCoordinate`
-                TODO
+                The dimension coordinate construct associated with
+                the collapse.
 
             group_by: `str`
                 As for the *group_by* parameter of the `collapse` method.
@@ -11059,9 +11069,7 @@ class Field(mixin.PropertiesData,
             return (lower, upper, lower_limit, upper_limit)
 
         def _group_weights(weights, iaxis, index):
-            '''TODO
-
-        Subspace weights components.
+            '''Subspaces weights components.
 
             :Parameters:
 
@@ -11160,7 +11168,7 @@ class Field(mixin.PropertiesData,
 
         # If group, rolling window, classification, etc, do something
         # special for size one axes - either return unchanged
-        # (possibly mofiying cell methods with , e.g, within_dyas', or
+        # (possibly mofiying cell methods with , e.g, within_days', or
         # raising an exception for 'can't match', I suppose.
 
         classification = None
@@ -12081,9 +12089,9 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         axis:
-            Select the domain axis to, generally defined by that which
-            would be selected by passing the given axis description to
-            a call of the field construct's `domain_axis` method. For
+            Select the domain axis to insert, generally defined by that
+            which would be selected by passing the given axis description
+            to a call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
             returned by ``f.domain_axis('X')`` is selected.
 
@@ -13009,7 +13017,9 @@ class Field(mixin.PropertiesData,
     :Parameters:
 
         kwargs: optional
-            TODO
+            A dictionary of keyword arguments to pass to the `indices`
+            method to define the criteria to meet for a element to be
+            set as `True`.
 
     :Returns:
 
@@ -14758,15 +14768,12 @@ class Field(mixin.PropertiesData,
 
     :Returns:
 
-        `Field`
-            TODO
-
     **Examples:**
 
     >>> g = f.argmax('T')
 
         '''
-        print('not ready')
+        print('This method is not ready for use.')
         return
 
         standard_name = None

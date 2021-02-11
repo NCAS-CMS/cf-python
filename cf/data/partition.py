@@ -644,7 +644,7 @@ class Partition:
 
     @property
     def ndim(self):
-        '''TODO
+        '''Number of array dimensions.
 
         '''
         return len(self.shape)
@@ -665,7 +665,7 @@ class Partition:
 
     @property
     def subarray(self):
-        '''TODO
+        '''The partition's subarray of data.
 
         '''
         return self._subarray

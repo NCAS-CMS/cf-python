@@ -17,6 +17,9 @@ try:
 except Exception:
     pass  # test with this dependency will then be skipped by unittest
 
+import faulthandler
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import cf
 
 

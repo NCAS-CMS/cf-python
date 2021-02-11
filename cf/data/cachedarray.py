@@ -114,14 +114,14 @@ class CachedArray(abstract.FileArray):
     # ----------------------------------------------------------------
     @property
     def _partition_dir(self):
-        '''TODO
+        '''The name of the directory containing the file storing the array.
 
         '''
         return self._get_component('_partition_dir')
 
     @property
     def _partition_file(self):
-        '''TODO
+        '''The name of the file storing the array on disk.
 
         '''
         return self._get_component('_partition_file')

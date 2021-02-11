@@ -15,7 +15,7 @@ from ..constants import masked as cf_masked
 
 
 class FilledArray(abstract.Array):
-    '''TODO
+    '''An underlying filled array.
 
     '''
     def __init__(self, dtype=None, ndim=None, shape=None, size=None,
@@ -105,7 +105,7 @@ class FilledArray(abstract.Array):
 
     @property
     def ndim(self):
-        '''Number of array dimensions
+        '''Number of array dimensions.
 
     **Examples:**
 
@@ -192,21 +192,21 @@ class FilledArray(abstract.Array):
         return self._get_component('size')
 
     def fill_value(self):
-        '''TODO        '''
-        return self._get_component('fill_value')
+        '''Return the data array missing data value.
 
-#    def masked_all(self):
-#        '''TODO        '''
-#        return self._get_component('masked_all')
+        '''
+        return self._get_component('fill_value')
 
     @property
     def array(self):
-        '''TODO
+        '''An independent numpy array containing the data.
+
         '''
         return self[...]
 
     def reshape(self, newshape):
-        '''TODO
+        '''Give a new shape to the array.
+
         '''
         new = self.copy()
         new.shape = newshape
@@ -214,13 +214,15 @@ class FilledArray(abstract.Array):
         return new
 
     def resize(self, newshape):
-        '''TODO
+        '''Change the shape and size of the array in-place.
+
         '''
         self.shape = newshape
         self.ndim = len(newshape)
 
     def view(self):
-        '''TODO
+        '''Return a view of the entire array.
+
         '''
         return self[...]
 

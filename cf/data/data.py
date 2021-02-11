@@ -176,11 +176,13 @@ def _convert_to_builtin_type(x):
     :Parameters:
 
         x:
-            TODO
+            `numpy.bool_` or `numpy.integer` or `numpy.floating`
+                The object of some numpy primitive data type.
 
     :Returns:
 
-            TODO
+            `bool` or `int` or `float`
+                 The object converted to a JSON-encodable type.
 
     **Examples:**
 
@@ -726,6 +728,10 @@ place.
         array: subclass of `Array`
             The array to be inserted.
 
+        check_free_memory: `bool`, optional
+            If True then store the data array on disk if there is
+            is sufficient memory there.
+
     :Returns:
 
         `None`
@@ -786,7 +792,8 @@ place.
             Ignored.
 
         check_free_memory: `bool`, optional
-            TODO
+            If True then store the data array on disk if there is
+            is sufficient memory there.
 
     :Returns:
 
@@ -1022,7 +1029,7 @@ place.
 
     :Parameters:
 
-        array: TODO
+        array:
 
     :Returns:
 
@@ -1032,7 +1039,7 @@ place.
         return isinstance(array, cfdm.Array)
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
-        '''TODO
+        '''Returns the auxiliary masks corresponding to given indices.
 
     :Parameters:
 
@@ -1041,6 +1048,7 @@ place.
     :Returns:
 
         `list` of `Data`
+            The auxiliary masks in a list.
 
     '''
         auxiliary_mask = []
@@ -1192,7 +1200,7 @@ place.
         self._auxiliary_mask = new
 
     def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
-        '''TODO
+        '''Create a new auxiliary mask component of given shape.
 
     :Parameters:
 
@@ -1976,7 +1984,7 @@ place.
         # --- End: if
 
     def _share_lock_files(self, parallelise):
-        '''TODO
+        '''Share the lock files created by each rank for each partition.
 
         '''
         if parallelise:
@@ -1992,11 +2000,10 @@ place.
                 # --- End: if
             # --- End: for
         # --- End: if
-    # --- End: if
 
     @classmethod
     def _share_partitions(cls, processed_partitions, parallelise):
-        '''TODO
+        '''Share the partitions processed on each rank with every other rank.
 
         '''
         # Share the partitions processed on each rank with every other
@@ -2425,7 +2432,10 @@ place.
 
         if bin_units:
             if not bin_units.equivalent(org_units):
-                raise ValueError("non-equiv units TODO")
+                raise ValueError(
+                    "Can't put data into bins that have units that are "
+                    "not equivalent to the units of the data."
+                )
 
             if not bin_units.equals(org_units):
                 bins = bins.copy()
@@ -2575,7 +2585,7 @@ place.
     def median(
             self, axes=None, squeeze=False, mtol=1, inplace=False,
             _preserve_partitions=False):
-        '''TODO
+        '''Compute the median of the values.
 
         '''
 
@@ -2588,7 +2598,10 @@ place.
     def mean_of_upper_decile(
             self, axes=None, include_decile=True, squeeze=False,
             weights=None, mtol=1, inplace=False, _preserve_partitions=False):
-        '''TODO
+        '''Compute the mean the of upper decile.
+
+        Specifically, calculate the mean of the upper group of data
+        values defined by the upper tenth of their distribution.
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2849,7 +2862,24 @@ place.
         return out
 
     def loads(self, j, chunk=True):
-        '''TODO
+        '''Reset the data in place from a string serialization.
+
+    .. seealso:: `dumpd`, `loadd`
+
+    :Parameters:
+
+        j: `str`
+            A JSON document string serialization of a `cf.Data` object.
+
+        chunk: `bool`, optional
+            If True (the default) then the reset data array will be
+            re-partitioned according the current chunk size, as defined
+            by the `cf.chunksize` function.
+
+    :Returns:
+
+        `None`
+
         '''
         d = json_loads(j)
 
@@ -3080,8 +3110,8 @@ place.
 
         chunk: `bool`, optional
             If True (the default) then the reset data array will be
-            re-partitions according the current chunk size, as defined
-            by the `cf.chunksize` function.
+            re-partitioned according the current chunk size, as
+            defined by the `cf.chunksize` function.
 
     :Returns:
 
@@ -3624,7 +3654,8 @@ place.
         return out
 
     def _chunk_add_partitions(self, d, axes):
-        '''TODO
+        '''Create new partitions and add them to `d` in-place.
+
         '''
         for axis in axes[::-1]:
             extra_bounds = d.get(axis)
@@ -3755,7 +3786,7 @@ place.
 
                 if len(d[axis]) + 1 != n_chunks:
                     raise ValueError(
-                        'asdasdasdasds {} {} : {}'.format(
+                        'Bad partition matrix shape: {} {} : {}'.format(
                             len(d[axis]) + 1, n_chunks, d[axis])
                     )
 
@@ -3899,13 +3930,13 @@ place.
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         '''Change the internal representation of data array elements from
-    numeric reference times to datatime-like objects.
+    numeric reference times to datetime-like objects.
 
     If the calendar has not been set then the default CF calendar will
     be used and the units' and the `calendar` attribute will be
     updated accordingly.
 
-    If the internal representations are already datatime-like objects
+    If the internal representations are already datetime-like objects
     then no change occurs.
 
     .. versionadded:: 1.3
@@ -3921,7 +3952,6 @@ place.
     :Returns:
 
         `Data` or `None`
-            TODO
 
     **Examples:**
 
@@ -3957,14 +3987,15 @@ place.
         return d
 
     def _isdatetime(self):
-        '''TODO
+        '''True if the internal representation is a datetime-like object.
+
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
 
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         '''Change the internal representation of data array elements from
-    datatime-like objects to numeric reference times.
+    datetime-like objects to numeric reference times.
 
     If the calendar has not been set then the default CF calendar will
     be used and the units' and the `calendar` attribute will be
@@ -4022,14 +4053,13 @@ place.
         return d
 
     def _combined_units(self, data1, method, inplace):
-        '''TODO
+        '''Combines by given method the data's units with other units.
 
     :Parameters:
 
         data1: `Data`
 
         method: `str`
-            The TODO
 
         {{inplace: `bool`, optional}}
 
@@ -4284,7 +4314,11 @@ place.
                 else:
                     # units1 is defined and is not dimensionless
                     if data0._size > 1:
-                        raise ValueError("kkkkkkkkkjjjjjjjjjjjjjjjj")
+                        raise ValueError(
+                            "Can only raise units to the power of a single "
+                            "value at a time. Asking to raise to the power of "
+                            "{}".format(data0)
+                        )
 
                     if not units0:
                         # Check that the units are not shifted, as
@@ -4357,7 +4391,10 @@ place.
                     # units0 is defined and is not dimensionless
                     if data1._size > 1:
                         raise ValueError(
-                            "kkkkkkkkkjjjjjjjjjjjjjjjj 8888888888888888")
+                            "Can only raise units to the power of a single "
+                            "value at a time. Asking to raise to the power of "
+                            "{}".format(data1)
+                        )
 
                     if not units1:
                         # Check that the units are not shifted, as
@@ -4854,7 +4891,7 @@ place.
             return self
 
     def __query_set__(self, values):
-        '''TODO
+        '''Implements the “member of set” condition.
 
         '''
         i = iter(values)
@@ -4888,7 +4925,8 @@ place.
 #        return new
 
     def __query_wi__(self, value):
-        '''TODO
+        '''Implements the “within a range” condition.
+
         '''
         return (self >= value[0]) & (self <= value[1])
 
@@ -4908,7 +4946,7 @@ place.
 #        return new
 
     def __query_wo__(self, value):
-        '''TODO
+        '''Implements the “without a range” condition.
 
         '''
         return (self < value[0]) | (self > value[1])
@@ -5279,7 +5317,7 @@ place.
         return data0
 
     def _move_flip_to_partitions(self):
-        '''TODO
+        '''Reverses an axis in the sub-array of each partition.
 
     .. note:: This does not change the master array.
 
@@ -5901,7 +5939,7 @@ place.
 
         fpartial: function
 
-        ffinalize: function
+        ffinalise: function
 
         axes: (sequence of) `int`, optional
             The axes to be collapsed. By default flattened input is
@@ -6613,7 +6651,7 @@ dimensions.
     @classmethod
     def _collapse_finalise(cls, ffinalise, out, sub_samples, masked,
                            Nmax, mtol, data, n_non_collapse_axes):
-        '''TODO
+        '''Finalise a collapse over a data array.
 
         '''
         if out is not None:
@@ -6629,7 +6667,7 @@ dimensions.
 
     @staticmethod
     def _collapse_mask(array, masked, N, Nmax, mtol):
-        '''TODO
+        '''Re-masks a masked array to reflect a collapse.
 
     :Parameters:
 
@@ -6660,7 +6698,7 @@ dimensions.
     def _collapse_create_weights(array, indices, master_indices, master_shape,
                                  master_weights, n_non_collapse_axes,
                                  n_collapse_axes):
-        '''TODO
+        '''Collapse weights of an array.
 
     :Parameters:
 
@@ -6772,7 +6810,11 @@ dimensions.
 
             if masked and numpy_ma_isMA(array):
                 if not (array.mask | weights_out.mask == array.mask).all():
-                    raise ValueError("weights mask is duff")
+                    raise ValueError(
+                        "The output weights mask {} is not compatible with "
+                        "the array mask {}.".format(
+                            weights_out.mask, array.mask)
+                    )
         # --- End: if
 
         return weights_out
@@ -6982,7 +7024,7 @@ dimensions.
 
     @property
     def _axes(self):
-        '''Storage for the axis names.
+        '''Storage for the axes names.
 
         '''
         return self._custom['_axes']
@@ -6995,7 +7037,11 @@ dimensions.
 
     @property
     def _all_axes(self):
-        '''Storage for TODO. Must be `None` or `tuple`.
+        '''Storage for the full collection of axes names.
+
+    :Returns:
+
+        `None` or `tuple`.
 
         '''
         return self._custom['_all_axes']
@@ -7353,7 +7399,6 @@ False
     >>> d.ndim
     1
 
-
     >>> d = cf.Data(3)
     >>> d.ndim
     0
@@ -7363,7 +7408,7 @@ False
 
     @property
     def _pmaxes(self):
-        '''TODO
+        '''The axes of the partition matrix.
 
         '''
         return self.partitions.axes
@@ -7822,7 +7867,6 @@ False
     :Returns:
 
         `Data`
-            TODO
 
     **Examples:**
 
@@ -8193,8 +8237,6 @@ False
 #        `Data`
 #
 #    **Examples:**
-#
-#    TODO
 #
 #        '''
 #        return cls(numpy_arctan2(y, x), units=_units_radians)
@@ -9000,9 +9042,13 @@ False
         return out
 
     def get_data(self, default=ValueError()):
-        '''TODO
+        '''Returns the data.
 
     .. versionadded:: 3.0.0
+
+    :Returns:
+
+            `Data`
 
         '''
         return self
@@ -9016,7 +9062,7 @@ False
 
         default: optional
             Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
+            have not been set. If set to an `Exception` instance then
             it will be raised instead.
 
     :Returns:
@@ -9189,8 +9235,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9209,10 +9253,8 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9267,8 +9309,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9287,10 +9327,8 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9496,12 +9534,10 @@ False
     :Parameters:
 
         axes : (sequence of) int, optional
-            TODO
 
-        weights: TODO
+        weights: 
 
         squeeze : bool, optional
-            TODO
 
         {{inplace: `bool`, optional}}
 
@@ -9528,9 +9564,11 @@ False
 
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
                  inplace=False, _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with their integral.
 
-    TODO if no weights => sum
+    If weights are not provided then all non-missing elements are
+    given weighting of one such that the collapse method becomes
+    a `sum`.
 
     :Parameters:
 
@@ -9546,8 +9584,6 @@ False
             broadcast correctly against the original array.
 
         weights: data-like or dict, optional
-            TODO note that the units of the weights matter
-
             Weights associated with values of the array. By default
             all non-missing elements of the array are assumed to have
             a weight equal to one. If *weights* is a data-like object
@@ -9558,6 +9594,11 @@ False
             corresponding data-like value of weights for those
             axes. In this case, the implied weights array is the outer
             product of the dictionary's values.
+
+            Note that the units of the weights matter for an integral
+            collapse, which differs from a weighted sum in that the units
+            of the weights are incorporated into the result.
+
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
@@ -9584,8 +9625,6 @@ False
                  `var`
 
     **Examples:**
-
-    TODO
 
         '''
         if weights is None:
@@ -9614,7 +9653,7 @@ False
     def sample_size(
             self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
             _preserve_partitions=False):
-        '''TODO
+        '''Collapses axes with their sample size.
 
     :Parameters:
 
@@ -9760,7 +9799,7 @@ False
        dtype: data-type, optional
             By default, the data-type is inferred from the input data.
 
-       copy: TODO
+       copy: 
 
     :Returns:
 
@@ -10062,24 +10101,19 @@ False
         return self._size - self.count()
 
     def cyclic(self, axes=None, iscyclic=True):
-        '''TODO
+        '''Returns or sets the axes of the data array which are cyclic.
 
     :Parameters:
 
         axes: (sequence of) `int`, optional
-            TODO
 
         iscyclic: `bool`
-            TODO
 
     :Returns:
 
         `set`
-            TODO
 
     **Examples:**
-
-        TODO
 
         '''
         cyclic_axes = self._cyclic
@@ -10108,7 +10142,7 @@ False
         return old
 
     def _YMDhms(self, attr):
-        '''TODO
+        '''Provides datetime components of the data array elements.
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -10573,8 +10607,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -10615,8 +10647,6 @@ False
         `Data` or `None`
 
     **Examples:**
-
-    TODO
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -11532,8 +11562,6 @@ False
 
     **Examples:**
 
-    TODO
-
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -11623,7 +11651,7 @@ False
 
     @property
     def in_memory(self):
-        '''TODO
+        '''True if the array is retained in memory.
 
     :Returns:
 
@@ -11910,7 +11938,7 @@ False
     :Returns:
 
         `Data`
-            TODO
+            The new data array having all elements masked.
 
     **Examples:**
 
@@ -11950,8 +11978,6 @@ False
             The collapsed array.
 
     **Examples:**
-
-        TODO
 
         '''
         return self._collapse(mid_range_f, mid_range_fpartial,
@@ -12206,12 +12232,7 @@ False
     def root_mean_square(self, axes=None, squeeze=False, mtol=1,
                          weights=None, inplace=False,
                          _preserve_partitions=False):
-        r'''TODO Collapse axes with their weighted mean.
-
-    The weighted mean, :math:`\mu`, for array elements :math:`x_i` and
-    corresponding weights elements :math:`w_i` is
-
-    .. math:: \mu=\frac{\sum w_i x_i}{\sum w_i}
+        '''Collapse axes with their root mean square.
 
     Missing data array elements and their corresponding weights are
     omitted from the calculation.
@@ -12268,7 +12289,6 @@ False
 
     **Examples:**
 
-        TODO
         '''
         return self._collapse(root_mean_square_f,
                               root_mean_square_fpartial,
@@ -12718,8 +12738,6 @@ False
             operation was in-place.
 
     **Examples:**
-
-    TODO
 
         '''
         def _slice_to_partition(data, indices):
@@ -13292,7 +13310,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
-        '''TODO
+        '''Takes the logarithm of the data array.
 
     :Parameters:
 
@@ -13740,7 +13758,7 @@ False
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
              calendar=None, chunk=True):
-        '''Return a new data array of given shape and type, filled with the
+        '''Returns a new data array of given shape and type, filled with the
     given value.
 
     .. seealso:: `empty`, `ones`, `zeros`
@@ -13766,7 +13784,6 @@ False
     :Returns:
 
         `Data`
-            TODO
 
     **Examples:**
 
@@ -13783,7 +13800,7 @@ False
     @classmethod
     def ones(cls, shape, dtype=None, units=None, calendar=None,
              chunk=True):
-        '''TODO
+        '''Returns a new array filled with ones of set shape and type.
 
         '''
         return cls.full(shape, 1, dtype=dtype, units=units,
@@ -13792,7 +13809,7 @@ False
     @classmethod
     def zeros(cls, shape, dtype=None, units=None, calendar=None,
               chunk=True):
-        '''TODO
+        '''Returns a new array filled with zeros of set shape and type.
 
         '''
         return cls.full(shape, 0, dtype=dtype, units=units,
@@ -13824,7 +13841,6 @@ False
     :Returns:
 
         `Data` or `None`
-            TODO
 
     **Examples:**
 
@@ -13929,8 +13945,6 @@ False
 
     **Examples:**
 
-        TODO
-
         '''
         return self._collapse(range_f, range_fpartial,
                               range_ffinalise, axes=axes,
@@ -13940,9 +13954,23 @@ False
 
     @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
-        '''A lot like `numpy.roll`
+        '''Roll array elements along a given axis.
+
+    Equivalent in function to `numpy.roll`.
 
     :Parameters:
+
+        axis: `int`
+            Select the axis over which the elements are to be rolled.
+            removed. The *axis* parameter is an integer that selects
+            the axis corresponding to the given position in the list
+            of axes of the data.
+
+            *Parameter example:*
+              Convolve the second axis: ``axis=1``.
+
+            *Parameter example:*
+              Convolve the last axis: ``axis=-1``.
 
         {{inplace: `bool`, optional}}
 
@@ -13960,9 +13988,12 @@ False
 
             return self.copy()
 
-        iaxes = self._parse_axes(axis)  # , 'roll')
+        iaxes = self._parse_axes(axis)
         if len(iaxes) != 1:
-            raise ValueError("TODO 987345 9087345 ^^ roll ^")
+            raise ValueError(
+                "Must specify a unique domain axis with the 'axis' "
+                "parameter. {!r} specifies axes {!r}".format(axis, iaxes)
+            )
 
         axis = iaxes[0]
 
@@ -14025,8 +14056,6 @@ False
 
     **Examples:**
 
-        TODO
-
         '''
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
                               axes=axes, squeeze=squeeze,
@@ -14083,7 +14112,7 @@ False
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False, i=False,
                        _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with the sum of weights.
 
     Missing data array elements are omitted from the calculation.
 
@@ -14132,7 +14161,7 @@ False
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
                         _preserve_partitions=False):
-        '''TODO
+        '''Collapse axes with the sum of squares of weights.
 
     Missing data array elements are omitted from the calculation.
 
@@ -14357,7 +14386,6 @@ False
 
     **Examples:**
 
-    TODO
         '''
         units = self.Units
         if units:

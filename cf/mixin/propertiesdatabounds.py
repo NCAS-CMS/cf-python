@@ -652,7 +652,28 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def _matching_values(self, value0, value1, units=False):
-        '''TODO
+        '''Whether two values match.
+
+    The definition of "match" depends on the types of *value0* and
+    *value1*.
+
+    :Parameters:
+
+        value0:
+            The first value to be matched.
+
+        value1:
+            The second value to be matched.
+
+        units: `bool`, optional
+            If True then the units must be the same for values to be
+            considered to match. By default, units are ignored in the
+            comparison.
+
+    :Returns:
+
+        `bool`
+            Whether or not the two values match.
 
         '''
         if value1 is None:

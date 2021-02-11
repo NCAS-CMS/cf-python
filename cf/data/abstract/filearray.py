@@ -40,7 +40,7 @@ class FileArray(Array):
 
     @property
     def ndim(self):
-        '''Number of array dimensions
+        '''Number of array dimensions.
 
     **Examples:**
 
@@ -130,11 +130,12 @@ class FileArray(Array):
 
     @property
     def filename(self):
-        '''TODO
+        '''The name of the file containing the array.
 
     **Examples:**
 
-    TODO
+    >>> a.filename()
+    'file.nc'
 
         '''
         return self._get_component('filename')
@@ -170,7 +171,7 @@ class FileArray(Array):
         print(cf_inspect(self))  # pragma: no cover
 
     def get_filename(self):
-        '''The name of the file containing the array.
+        '''Return the name of the file containing the array.
 
     **Examples:**
 

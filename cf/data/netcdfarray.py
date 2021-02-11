@@ -8,6 +8,7 @@ from .functions import _open_netcdf_file, _close_netcdf_file
 class NetCDFArray(cfdm.NetCDFArray,
                   abstract.FileArray):
     '''A sub-array stored in a netCDF file.
+
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
                  group=None, dtype=None, ndim=None, shape=None,
@@ -95,7 +96,7 @@ class NetCDFArray(cfdm.NetCDFArray,
 
     @property
     def file_pointer(self):
-        '''TODO
+        '''The file pointer starting at the position of the netCDF variable.
 
         '''
         offset = getattr(self, 'ncvar', None)

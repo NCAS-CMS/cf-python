@@ -320,7 +320,7 @@ Attribute   Description
         '''
         def _update_p(matrix, location, master_index,
                       part, master_axis_to_position, master_flip):
-            '''TODO
+            '''Create a new partition matrix via an update.
 
         :Parameters:
 
