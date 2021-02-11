@@ -3,6 +3,11 @@ import string
 import numpy
 
 
+def cmp(a, b):
+    """Workaround to get a Python-2-like `cmp` function in Python 3."""
+    return (a > b) - (a < b)
+
+
 _codes = {
     1: ("x", float),
     2: ("y", float),
