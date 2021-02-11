@@ -20,3 +20,12 @@ exclude =
     cf_python.egg-info,
     .pytest_cache,
     docs/build/
+
+# Ignore certain rules for some files (can't do this via comments in the files)
+per-file-ignores =
+    # Ignore unused imports in __init__ modules, as they are there to provide
+    # the project namespace (decide not to use __all__ to contain these, as
+    # suggested in some flake8 discussions e.g. by the core maintainer at
+    # https://stackoverflow.com/questions/59167405/)
+    __init__.py: F401
+    */__init__.py: F401
