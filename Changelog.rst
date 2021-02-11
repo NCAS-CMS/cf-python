@@ -1,3 +1,17 @@
+version 3.9.0
+-------------
+----
+
+**202?-02-??**
+
+* Improved docstrings.
+* Fix for unlimited dimensions read from a netCDF4 sub-group having
+  zero size (https://github.com/NCAS-CMS/cfdm/issues/113)
+* Fixes for changes in behaviour in cftime==1.4.0
+  (https://github.com/NCAS-CMS/cf-python/issues/184)
+* Changed dependency: ``1.8.9.0<=cfdm<1.8.10.0``
+* Changed dependency: ``cftime>=1.4.0``
+
 version 3.8.0
 -------------
 ----

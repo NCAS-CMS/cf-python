@@ -17757,20 +17757,24 @@ class Field(mixin.PropertiesData,
     >>> f.replace_construct('X', new_X_construct)
 
         '''
-        key = self.construct(identity, key=True, default=ValueError('TODO a'))
+        key = self.construct(identity, key=True)
         c = self.constructs[key]
 
         set_axes = True
 
         if not isinstance(construct, c.__class__):
-            raise ValueError('TODO')
+            raise ValueError(
+                "Can't replace a {} construct with a {} construct".format(
+                    c.__class__.__name__, construct.__class__.__name__
+                )
+            )
 
         axes = self.get_data_axes(key, None)
         if axes is not None:
             shape0 = getattr(c, 'shape', None)
             shape1 = getattr(construct, 'shape', None)
             if shape0 != shape1:
-                raise ValueError('TODO')
+                raise ValueError('TODO bb')
         # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)

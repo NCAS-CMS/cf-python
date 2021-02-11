@@ -36,7 +36,7 @@ import cfdm
 from ...                   import __version__, __Conventions__, __file__
 from ...decorators         import (_manage_log_level_via_verbosity,
                                    _manage_log_level_via_verbose_attr)
-from ...functions          import (equals, open_files_threshold_exceeded,
+from ...functions          import (open_files_threshold_exceeded,
                                    close_one_file, abspath,
                                    load_stash2standard_name)
 from ...functions import (atol as cf_atol,
