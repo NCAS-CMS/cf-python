@@ -1,29 +1,33 @@
 import logging
 
 from numpy import argsort as numpy_argsort
-from numpy import dtype   as numpy_dtype
-from numpy import sort    as numpy_sort
+from numpy import dtype as numpy_dtype
+from numpy import sort as numpy_sort
 
 from collections import namedtuple
-from operator    import itemgetter
+from operator import itemgetter
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .domainaxis          import DomainAxis
-from .fieldlist           import FieldList
-from .query               import gt
-from .units               import Units
+from .domainaxis import DomainAxis
+from .fieldlist import FieldList
+from .query import gt
+from .units import Units
 
-from .decorators          import (_manage_log_level_via_verbosity,
-                                  _manage_log_level_via_verbose_attr,
-                                  _reset_log_emergence_level,
-                                  _deprecated_kwarg_check)
+from .decorators import (
+    _manage_log_level_via_verbosity,
+    _manage_log_level_via_verbose_attr,
+    _reset_log_emergence_level,
+    _deprecated_kwarg_check,
+)
 
-from .functions           import (flat,
-                                  hash_array,
-                                  _DEPRECATION_ERROR_FUNCTION_KWARGS,
-                                  _numpy_allclose)
-from .functions           import rtol as cf_rtol, atol as cf_atol
-from .functions           import inspect as cf_inspect
+from .functions import (
+    flat,
+    hash_array,
+    _DEPRECATION_ERROR_FUNCTION_KWARGS,
+    _numpy_allclose,
+)
+from .functions import rtol as cf_rtol, atol as cf_atol
+from .functions import inspect as cf_inspect
 
 from .data.data import Data
 
@@ -49,23 +53,25 @@ _dtype_float = numpy_dtype(float)
 # conventions, without those which are not simple. And less
 # 'long_name'.
 # --------------------------------------------------------------------
-_signature_properties = set((
-    'add_offset',
-    'calendar',
-    'cell_methods',
-    '_FillValue',
-    'flag_masks',
-    'flag_meanings',
-    'flag_values',
-    'missing_value',
-    'scale_factor',
-    'standard_error_multiplier',
-    'standard_name',
-    'units',
-    'valid_max',
-    'valid_min',
-    'valid_range',
-))
+_signature_properties = set(
+    (
+        "add_offset",
+        "calendar",
+        "cell_methods",
+        "_FillValue",
+        "flag_masks",
+        "flag_meanings",
+        "flag_values",
+        "missing_value",
+        "scale_factor",
+        "standard_error_multiplier",
+        "standard_name",
+        "units",
+        "valid_max",
+        "valid_min",
+        "valid_range",
+    )
+)
 
 # _standard_properties = _data_properties.union(_global_properties)
 
@@ -73,10 +79,11 @@ _no_units = Units()
 
 
 class _HFLCache:
-    '''A cache for coordinate and cell measure hashes, first and last
+    """A cache for coordinate and cell measure hashes, first and last
     values and first and last cell bounds.
 
-    '''
+    """
+
     def __init__(self):
         self.hash = {}
         self.fl = {}
@@ -84,19 +91,19 @@ class _HFLCache:
         self.hash_to_array = {}
 
     def inspect(self):
-        '''Inspect the object for debugging.
+        """Inspect the object for debugging.
 
-    .. seealso:: `cf.inspect`
+        .. seealso:: `cf.inspect`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.inspect()
+        >>> f.inspect()
 
-        '''
+        """
         print(cf_inspect(self))
 
 
@@ -104,12 +111,13 @@ class _HFLCache:
 
 
 class _Meta:
-    '''A summary of a field.
+    """A summary of a field.
 
     This object contains everything you need to know in order to
     aggregate the field.
 
-    '''
+    """
+
     #
     _canonical_units = {}
 
@@ -117,28 +125,34 @@ class _Meta:
     _canonical_cell_methods = []
 
     #
-    _structural_signature = namedtuple('signature',
-                                       ('Identity',
-                                        'Units',
-                                        'Cell_methods',
-                                        'Data',
-                                        'Properties',
-                                        'standard_error_multiplier',
-                                        'valid_min',
-                                        'valid_max',
-                                        'valid_range',
-                                        'Flags',
-                                        'Coordinate_references',
-                                        'Axes',
-                                        'dim_coord_index',
-                                        'Nd_coordinates',
-                                        'Cell_measures',
-                                        'Domain_ancillaries',
-                                        'Field_ancillaries'))
+    _structural_signature = namedtuple(
+        "signature",
+        (
+            "Identity",
+            "Units",
+            "Cell_methods",
+            "Data",
+            "Properties",
+            "standard_error_multiplier",
+            "valid_min",
+            "valid_max",
+            "valid_range",
+            "Flags",
+            "Coordinate_references",
+            "Axes",
+            "dim_coord_index",
+            "Nd_coordinates",
+            "Cell_measures",
+            "Domain_ancillaries",
+            "Field_ancillaries",
+        ),
+    )
 
     def __init__(
-        self, f,
-        rtol=None, atol=None,
+        self,
+        f,
+        rtol=None,
+        atol=None,
         verbose=None,
         relaxed_units=False,
         allow_no_identity=False,
@@ -153,33 +167,33 @@ class _Meta:
         ncvar_identities=False,
         field_identity=None,
     ):
-        '''**initialization**
+        """**initialization**
 
-    :Parameters:
+        :Parameters:
 
-        f: `cf.Field`
+            f: `cf.Field`
 
-        verbose: `int` or `str` or `None`, optional
-            See the `aggregate` function for details.
+            verbose: `int` or `str` or `None`, optional
+                See the `aggregate` function for details.
 
-        relaxed_units: `bool`, optional
-            See the `aggregate` function for details.
+            relaxed_units: `bool`, optional
+                See the `aggregate` function for details.
 
-        allow_no_identity: `bool`, optional
-            See the `aggregate` function for details.
+            allow_no_identity: `bool`, optional
+                See the `aggregate` function for details.
 
-        rtol: `float`, optional
-            See the `aggregate` function for details.
+            rtol: `float`, optional
+                See the `aggregate` function for details.
 
-        atol: `float`, optional
-            See the `aggregate` function for details.
+            atol: `float`, optional
+                See the `aggregate` function for details.
 
-        dimension: (sequence of) `str`, optional
-            See the `aggregate` function for details.
+            dimension: (sequence of) `str`, optional
+                See the `aggregate` function for details.
 
-    **Examples:**
+        **Examples:**
 
-        '''
+        """
         self._bool = False
         self.cell_values = False
 
@@ -192,11 +206,13 @@ class _Meta:
         self.all_field_anc_identities = set()
         self.all_domain_anc_identities = set()
 
-        self.message = ''
+        self.message = ""
 
-        strict_identities = not (relaxed_identities or
-                                 ncvar_identities or
-                                 field_identity is not None)
+        strict_identities = not (
+            relaxed_identities
+            or ncvar_identities
+            or field_identity is not None
+        )
 
         self.relaxed_identities = relaxed_identities
         self.strict_identities = strict_identities
@@ -222,9 +238,11 @@ class _Meta:
         # ------------------------------------------------------------
         self.field = f
         self.has_data = f.has_data()
-        self.identity = f.identity(strict=strict_identities,
-                                   relaxed=relaxed_identities,
-                                   nc_only=ncvar_identities)
+        self.identity = f.identity(
+            strict=strict_identities,
+            relaxed=relaxed_identities,
+            nc_only=ncvar_identities,
+        )
 
         if field_identity:
             self.identity = f.get_property(field_identity, None)
@@ -232,7 +250,7 @@ class _Meta:
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
-        signature_override = getattr(f, 'aggregate', None)
+        signature_override = getattr(f, "aggregate", None)
         if signature_override is not None:
             self.signature = signature_override
             self._bool = True
@@ -240,8 +258,9 @@ class _Meta:
 
         if self.identity is None:
             if not allow_no_identity and self.has_data:
-                self.message = ("no identity; consider setting "
-                                "relaxed_identities")
+                self.message = (
+                    "no identity; consider setting " "relaxed_identities"
+                )
                 return
         elif not self.has_data:
             self.message = "no data array"
@@ -259,9 +278,11 @@ class _Meta:
             if value is None:
                 continue
 
-            aux_coord = AuxiliaryCoordinate(properties={'long_name': prop},
-                                            data=Data([value], units=''),
-                                            copy=False)
+            aux_coord = AuxiliaryCoordinate(
+                properties={"long_name": prop},
+                data=Data([value], units=""),
+                copy=False,
+            )
             aux_coord.nc_set_variable(prop)
             aux_coord.id = prop
 
@@ -270,8 +291,9 @@ class _Meta:
 
             f.del_property(prop)  # dch COPY issue?
 
-        self.units = self.canonical_units(f, self.identity,
-                                          relaxed_units=relaxed_units)
+        self.units = self.canonical_units(
+            f, self.identity, relaxed_units=relaxed_units
+        )
 
         # ------------------------------------------------------------
         # Coordinate and cell measure arrays
@@ -315,8 +337,8 @@ class _Meta:
             # 'aux0', 'units': <CF Units: ...>}]
             info_dim = []
 
-#            dim_coord = item(axis)
-            dim_coords = f.dimension_coordinates.filter_by_axis('and', axis)
+            #            dim_coord = item(axis)
+            dim_coords = f.dimension_coordinates.filter_by_axis("and", axis)
             dim_coord = dim_coords.value(None)
             dim_coord_key = dim_coords.key(None)
             dim_identity = None
@@ -332,18 +354,21 @@ class _Meta:
 
                 # Find the canonical units for this dimension
                 # coordinate
-                units = self.canonical_units(dim_coord, dim_identity,
-                                             relaxed_units=relaxed_units)
+                units = self.canonical_units(
+                    dim_coord, dim_identity, relaxed_units=relaxed_units
+                )
 
                 info_dim.append(
-                    {'identity': dim_identity,
-                     'key': dim_coord_key,  # axis,
-                     'units': units,
-                     'hasdata': dim_coord.has_data(),
-                     'hasbounds': dim_coord.has_bounds(),
-                     'coordrefs': self.find_coordrefs(axis)}
+                    {
+                        "identity": dim_identity,
+                        "key": dim_coord_key,  # axis,
+                        "units": units,
+                        "hasdata": dim_coord.has_data(),
+                        "hasbounds": dim_coord.has_bounds(),
+                        "coordrefs": self.find_coordrefs(axis),
+                    }
                 )
-#                     'size'     : None})
+            #                     'size'     : None})
 
             # Find the 1-d auxiliary coordinates which span this axis
             aux_coords = {}
@@ -363,45 +388,50 @@ class _Meta:
                     axes = None
 
                 aux_identity = self.coord_has_identity_and_data(
-                    aux_coord, axes=(dim_identity,))
+                    aux_coord, axes=(dim_identity,)
+                )
                 if aux_identity is None:
                     return
 
                 # Find the canonical units for this 1-d auxiliary
                 # coordinate
-                units = self.canonical_units(aux_coord, aux_identity,
-                                             relaxed_units=relaxed_units)
+                units = self.canonical_units(
+                    aux_coord, aux_identity, relaxed_units=relaxed_units
+                )
 
                 info_aux.append(
-                    {'identity': aux_identity,
-                     'key': key,
-                     'units': units,
-                     'hasdata': aux_coord.has_data(),
-                     'hasbounds': aux_coord.has_bounds(),
-                     'coordrefs': self.find_coordrefs(key)}
+                    {
+                        "identity": aux_identity,
+                        "key": key,
+                        "units": units,
+                        "hasdata": aux_coord.has_data(),
+                        "hasbounds": aux_coord.has_bounds(),
+                        "coordrefs": self.find_coordrefs(key),
+                    }
                 )
-#                     'size'     : None})
+            #                     'size'     : None})
             # --- End: for
 
             # Sort the 1-d auxiliary coordinate information
-            info_aux.sort(key=itemgetter('identity'))
+            info_aux.sort(key=itemgetter("identity"))
 
             # Prepend the dimension coordinate information to the
             # auxiliary coordinate information
             info_1d_coord = info_dim + info_aux
 
-#            if not info_1d_coord:
-#                self.message = ("axis has no one-dimensional nor "
-#                                    "scalar coordinates")
-#                return
+            #            if not info_1d_coord:
+            #                self.message = ("axis has no one-dimensional nor "
+            #                                    "scalar coordinates")
+            #                return
 
             # Find the canonical identity for this axis
             identity = None
             if info_1d_coord:
-                identity = info_1d_coord[0]['identity']
+                identity = info_1d_coord[0]["identity"]
             elif not self.relaxed_identities:
-                self.message = ("axis has no one-dimensional nor "
-                                "scalar coordinates")
+                self.message = (
+                    "axis has no one-dimensional nor " "scalar coordinates"
+                )
                 return
 
             ncdim = False
@@ -414,7 +444,8 @@ class _Meta:
                 if identity is None:
                     self.message = (
                         "axis {0!r} has no netCDF dimension name".format(
-                            f.axis_name(axis))
+                            f.axis_name(axis)
+                        )
                     )  # TODO
                     return
                 else:
@@ -422,13 +453,13 @@ class _Meta:
             # --- End: if
 
             axis_identities = {
-                 'ids': 'identity',
-                 'keys': 'key',
-                 'units': 'units',
-                 'hasdata': 'hasdata',
-                 'hasbounds': 'hasbounds',
-                 'coordrefs': 'coordrefs',
-                 # 'size': None,
+                "ids": "identity",
+                "keys": "key",
+                "units": "units",
+                "hasdata": "hasdata",
+                "hasbounds": "hasbounds",
+                "coordrefs": "coordrefs",
+                # 'size': None,
             }
             self.axis[identity] = {
                 name: tuple(i[idt] for i in info_1d_coord)
@@ -436,15 +467,15 @@ class _Meta:
             }
 
             if info_dim:
-                self.axis[identity]['dim_coord_index'] = 0
+                self.axis[identity]["dim_coord_index"] = 0
             else:
-                self.axis[identity]['dim_coord_index'] = None
+                self.axis[identity]["dim_coord_index"] = None
 
             # Store the axis size if the axis has no 1-d coordinates
             if ncdim:
-                self.axis[identity]['size'] = domain_axis.get_size()
+                self.axis[identity]["size"] = domain_axis.get_size()
             else:
-                self.axis[identity]['size'] = None
+                self.axis[identity]["size"] = None
 
             self.id_to_axis[identity] = axis
             self.axis_to_id[axis] = identity
@@ -459,8 +490,9 @@ class _Meta:
         # N-d auxiliary coordinates
         # ------------------------------------------------------------
         self.nd_aux = {}
-        for key, nd_aux_coord in (
-                f.auxiliary_coordinates.filter_by_naxes(gt(1)).items()):
+        for key, nd_aux_coord in f.auxiliary_coordinates.filter_by_naxes(
+            gt(1)
+        ).items():
 
             # Find axes' canonical identities
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
@@ -468,21 +500,23 @@ class _Meta:
 
             # Find this N-d auxiliary coordinate's identity
             identity = self.coord_has_identity_and_data(
-                nd_aux_coord, axes=axes)
+                nd_aux_coord, axes=axes
+            )
             if identity is None:
                 return
 
             # Find the canonical units
-            units = self.canonical_units(nd_aux_coord, identity,
-                                         relaxed_units=relaxed_units)
+            units = self.canonical_units(
+                nd_aux_coord, identity, relaxed_units=relaxed_units
+            )
 
             self.nd_aux[identity] = {
-                'key': key,
-                'units': units,
-                'axes': axes,
-                'hasdata': nd_aux_coord.has_data(),
-                'hasbounds': nd_aux_coord.has_bounds(),
-                'coordrefs': self.find_coordrefs(key)
+                "key": key,
+                "units": units,
+                "axes": axes,
+                "hasdata": nd_aux_coord.has_data(),
+                "hasbounds": nd_aux_coord.has_bounds(),
+                "coordrefs": self.find_coordrefs(key),
             }
         # --- End: for
 
@@ -503,17 +537,18 @@ class _Meta:
                 return
 
             # Find the canonical units
-            units = self.canonical_units(field_anc, identity,
-                                         relaxed_units=relaxed_units)
+            units = self.canonical_units(
+                field_anc, identity, relaxed_units=relaxed_units
+            )
 
             # Find axes' canonical identities
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
             self.field_anc[identity] = {
-                'key': key,
-                'units': units,
-                'axes': axes
+                "key": key,
+                "units": units,
+                "axes": axes,
             }
 
         # ------------------------------------------------------------
@@ -522,7 +557,8 @@ class _Meta:
         # ancillary keys.)
         # ------------------------------------------------------------
         self.coordref_signatures = self.coordinate_reference_signatures(
-            self.coordrefs)
+            self.coordrefs
+        )
 
         # ------------------------------------------------------------
         # Domain ancillaries
@@ -536,8 +572,10 @@ class _Meta:
         # Firstly process domain ancillaries which are used in
         # coordinate references
         for ref in f.coordinate_references.values():
-            for term, identifier in (
-                    ref.coordinate_conversion.domain_ancillaries().items()):
+            for (
+                term,
+                identifier,
+            ) in ref.coordinate_conversion.domain_ancillaries().items():
                 key = f.domain_ancillaries(identifier).key(None)
                 if key is None:
                     continue
@@ -547,20 +585,22 @@ class _Meta:
                 # Set this domain ancillary's identity
                 identity = (ref.identity(), term)
                 identity = self.domain_ancillary_has_identity_and_data(
-                    anc, identity)
+                    anc, identity
+                )
 
                 # Find the canonical units
-                units = self.canonical_units(anc, identity,
-                                             relaxed_units=relaxed_units)
+                units = self.canonical_units(
+                    anc, identity, relaxed_units=relaxed_units
+                )
 
                 # Find the canonical identities of the axes
                 axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
                 axes = tuple(sorted(axes))
 
                 self.domain_anc[identity] = {
-                    'key': key,
-                    'units': units,
-                    'axes': axes
+                    "key": key,
+                    "units": units,
+                    "axes": axes,
                 }
 
                 self.key_to_identity[key] = identity
@@ -580,17 +620,18 @@ class _Meta:
                 return
 
             # Find the canonical units
-            units = self.canonical_units(anc, identity,
-                                         relaxed_units=relaxed_units)
+            units = self.canonical_units(
+                anc, identity, relaxed_units=relaxed_units
+            )
 
             # Find the canonical identities of the axes
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
             self.domain_anc[identity] = {
-                'key': key,
-                'units': units,
-                'axes': axes,
+                "key": key,
+                "units": units,
+                "axes": axes,
             }
 
             self.key_to_identity[key] = identity
@@ -619,7 +660,8 @@ class _Meta:
                     "pre-aggregation because it is an external variable so it "
                     "is not possible to determine the influence the "
                     "aggregation process should have on it.".format(
-                        msr.identity(), f.identity())
+                        msr.identity(), f.identity()
+                    )
                 )
                 continue
 
@@ -630,10 +672,9 @@ class _Meta:
             units = self.canonical_units(
                 msr,
                 msr.identity(
-                    strict=strict_identities,
-                    nc_only=ncvar_identities
+                    strict=strict_identities, nc_only=ncvar_identities
                 ),
-                relaxed_units=relaxed_units
+                relaxed_units=relaxed_units,
             )
 
             # Find axes' canonical identities
@@ -644,24 +685,23 @@ class _Meta:
                 # Check for ambiguous cell measures, i.e. those which
                 # have the same units and span the same axes.
                 for value in info_msr[units]:
-                    if axes == value['axes']:
+                    if axes == value["axes"]:
                         self.message = "duplicate {0!r}".format(msr)
                         return
             else:
                 info_msr[units] = []
 
-            info_msr[units].append({
-                'key': key,
-                'axes': axes
-            })
+            info_msr[units].append({"key": key, "axes": axes})
         # --- End: for
 
         # For each cell measure's canonical units, sort the
         # information by axis identities.
         for units, value in info_msr.items():
-            value.sort(key=itemgetter('axes'))
-            self.msr[units] = {'keys': tuple([v['key'] for v in value]),
-                               'axes': tuple([v['axes'] for v in value])}
+            value.sort(key=itemgetter("axes"))
+            self.msr[units] = {
+                "keys": tuple([v["key"] for v in value]),
+                "axes": tuple([v["axes"] for v in value]),
+            }
 
         # ------------------------------------------------------------
         # Properties and attributes
@@ -674,8 +714,9 @@ class _Meta:
                 properties.pop(p, None)
 
             if equal:
-                eq = dict([(p, properties[p]) for p in equal
-                           if p in properties])
+                eq = dict(
+                    [(p, properties[p]) for p in equal if p in properties]
+                )
             else:
                 eq = {}
 
@@ -691,24 +732,32 @@ class _Meta:
                 if not equal and not exist:
                     eq_all = properties
                 else:  # None is Falsy (evaluates to False) & "short-circuits"
-                    eq_all = dict([(p, properties[p]) for p in properties
-                                   if (equal and p not in eq) or
-                                   (exist and p not in ex)])
+                    eq_all = dict(
+                        [
+                            (p, properties[p])
+                            for p in properties
+                            if (equal and p not in eq)
+                            or (exist and p not in ex)
+                        ]
+                    )
             elif exist_all:
                 if not equal and not exist:
                     ex_all = list(properties)
                 else:  # None is Falsy (evaluates to False) & "short-circuits"
-                    ex_all = [p for p in properties
-                              if (equal and p not in eq) or
-                              (exist and p not in ex)]
+                    ex_all = [
+                        p
+                        for p in properties
+                        if (equal and p not in eq) or (exist and p not in ex)
+                    ]
             # --- End: if
 
             self.properties = tuple(
-                sorted(ex_all + ex + list(eq_all.items()) + list(eq.items())))
+                sorted(ex_all + ex + list(eq_all.items()) + list(eq.items()))
+            )
         # --- End: if
 
         # Attributes
-        self.attributes = set(('file',))
+        self.attributes = set(("file",))
 
         # ------------------------------------------------------------
         # Still here? Then create the structural signature.
@@ -727,64 +776,60 @@ class _Meta:
         self._bool = True
 
     def __bool__(self):
-        '''x.__bool__() <==> bool(x)
-
-        '''
+        """x.__bool__() <==> bool(x)"""
         return self._bool
 
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        return '<CF {}: {!r}>'.format(self.__class__.__name__,
-                                      getattr(self, 'field', None))
+        """x.__repr__() <==> repr(x)"""
+        return "<CF {}: {!r}>".format(
+            self.__class__.__name__, getattr(self, "field", None)
+        )
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
+        """x.__str__() <==> str(x)"""
         strings = []
         for attr in sorted(self.__dict__):
-            strings.append('{}.{} = {!r}'.format(self.__class__.__name__, attr,
-                                                 getattr(self, attr)))
+            strings.append(
+                "{}.{} = {!r}".format(
+                    self.__class__.__name__, attr, getattr(self, attr)
+                )
+            )
 
-        return '\n'.join(strings)
+        return "\n".join(strings)
 
     def coordinate_values(self):
-        '''Create a report listing all coordinate cell values and bounds.
-        '''
-        string = ['First cell: ' + str(self.first_values)]
-        string.append('Last cell:  ' + str(self.last_values))
-        string.append('First bounds: ' + str(self.first_bounds))
-        string.append('Last bounds:  ' + str(self.last_bounds))
+        """Create a report listing all coordinate cell values and bounds."""
+        string = ["First cell: " + str(self.first_values)]
+        string.append("Last cell:  " + str(self.last_values))
+        string.append("First bounds: " + str(self.first_bounds))
+        string.append("Last bounds:  " + str(self.last_bounds))
 
-        return '\n'.join(string)
+        return "\n".join(string)
 
     def copy(self):
-        '''Replace the field associated with a summary class with a deep copy.
-        '''
+        """Replace the field associated with a summary class with a deep copy."""
         new = _Meta.__new__(_Meta)
         new.__dict__ = self.__dict__.copy()
         new.field = new.field.copy()
         return new
 
     def canonical_units(self, variable, identity, relaxed_units=False):
-        '''Updates the `_canonical_units` attribute.
+        """Updates the `_canonical_units` attribute.
 
-    :Parameters:
+        :Parameters:
 
-        variable: Construct
+            variable: Construct
 
-        identity: `str`
+            identity: `str`
 
-        relaxed_units: `bool`
-            See the `aggregate` function for details.
+            relaxed_units: `bool`
+                See the `aggregate` function for details.
 
-    :Returns:
+        :Returns:
 
-        `Units` or `None`
+            `Units` or `None`
 
-        '''
+        """
         if variable.has_data():
             var_units = variable.Units
         elif variable.has_bounds():
@@ -802,12 +847,12 @@ class _Meta:
                 # Still here?
                 _canonical_units[identity].append(var_units)
 
-            elif relaxed_units or variable.dtype.kind in ('S', 'U'):
+            elif relaxed_units or variable.dtype.kind in ("S", "U"):
                 var_units = _no_units
         else:
             if var_units:
                 _canonical_units[identity] = [var_units]
-            elif relaxed_units or variable.dtype.kind in ('S', 'U'):
+            elif relaxed_units or variable.dtype.kind in ("S", "U"):
                 var_units = _no_units
         # --- End: if
 
@@ -815,23 +860,23 @@ class _Meta:
         return var_units
 
     def canonical_cell_methods(self, rtol=None, atol=None):
-        '''Updates the `_canonical_cell_methods` attribute.
+        """Updates the `_canonical_cell_methods` attribute.
 
-    :Parameters:
+        :Parameters:
 
-        atol: `float`
+            atol: `float`
 
-        rtol: `float`
+            rtol: `float`
 
-    :Returns:
+        :Returns:
 
-        `CellMethods` or `None`
+            `CellMethods` or `None`
 
-        '''
+        """
         _canonical_cell_methods = self._canonical_cell_methods
 
         cell_methods = self.field.cell_methods.ordered()
-#        cms = getattr(self.field, 'CellMethods', None) # TODO
+        #        cms = getattr(self.field, 'CellMethods', None) # TODO
         if not cell_methods:
             return None
 
@@ -866,60 +911,64 @@ class _Meta:
         return cms
 
     def cell_measure_has_data_and_units(self, msr):
-        '''True only if a cell measure has both data and units.
+        """True only if a cell measure has both data and units.
 
-    :Parameters:
+        :Parameters:
 
-        msr: `CellMeasure`
+            msr: `CellMeasure`
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-    '''
+        """
         if not msr.Units:
             self.message = "{0!r} cell measure has no units".format(
-                msr.identity())
+                msr.identity()
+            )
             return
 
         if not msr.has_data():
             self.message = "{0!r} cell measure has no data".format(
-                msr.identity())
+                msr.identity()
+            )
             return
 
         return True
 
     def coord_has_identity_and_data(self, coord, axes=None):
-        '''Return a coordinate construct's identity if it has one and has data.
+        """Return a coordinate construct's identity if it has one and has data.
 
-    :Parameters:
+        :Parameters:
 
-        coord: Coordinate construct
+            coord: Coordinate construct
 
-        axes: sequence of `str`, optional
-            Specifiers for the axes the coordinate must span. By
-            default, axes are not considered when making this check.
+            axes: sequence of `str`, optional
+                Specifiers for the axes the coordinate must span. By
+                default, axes are not considered when making this check.
 
-    :Returns:
+        :Returns:
 
-        `str` or `None`
-            The coordinate construct's identity, or `None` if there is
-            no identity and/or no data.
+            `str` or `None`
+                The coordinate construct's identity, or `None` if there is
+                no identity and/or no data.
 
-        '''
-        identity = coord.identity(strict=self.strict_identities,
-                                  relaxed=self.relaxed_identities,
-                                  nc_only=self.ncvar_identities,
-                                  default=None)
+        """
+        identity = coord.identity(
+            strict=self.strict_identities,
+            relaxed=self.relaxed_identities,
+            nc_only=self.ncvar_identities,
+            default=None,
+        )
 
-#        if self.relaxed_identities and identity is not None:
-#            identity = identity.replace('long_name=', '', 1)
-#            identity = identity.replace('ncvar%', '', 1)
+        #        if self.relaxed_identities and identity is not None:
+        #            identity = identity.replace('long_name=', '', 1)
+        #            identity = identity.replace('ncvar%', '', 1)
 
         if identity is None:
             # Coordinate has no identity, but it may have a recognised
             # axis.
-            for ctype in ('T', 'X', 'Y', 'Z'):
+            for ctype in ("T", "X", "Y", "Z"):
                 if getattr(coord, ctype):
                     identity = ctype
                     break
@@ -927,15 +976,16 @@ class _Meta:
 
         if identity is not None:
             all_coord_identities = self.all_coord_identities.setdefault(
-                axes, set())
+                axes, set()
+            )
 
             if identity in all_coord_identities:
-                self.message = "multiple {0!r} coordinates".format(
-                    identity)
+                self.message = "multiple {0!r} coordinates".format(identity)
                 return None
 
             if coord.has_data() or (
-                    coord.has_bounds() and coord.bounds.has_data()):
+                coord.has_bounds() and coord.bounds.has_data()
+            ):
                 all_coord_identities.add(identity)
                 return identity
         # --- End: if
@@ -946,29 +996,32 @@ class _Meta:
         return None
 
     def field_ancillary_has_identity_and_data(self, anc):
-        '''Return a field ancillary's identity if it has one and has data.
+        """Return a field ancillary's identity if it has one and has data.
 
-    :Parameters:
+        :Parameters:
 
-        coord: `FieldAncillary`
+            coord: `FieldAncillary`
 
-    :Returns:
+        :Returns:
 
-        `str` or `None`
-            The coordinate construct's identity, or `None` if there is
-            no identity and/or no data.
+            `str` or `None`
+                The coordinate construct's identity, or `None` if there is
+                no identity and/or no data.
 
-        '''
-        identity = anc.identity(strict=self.strict_identities,
-                                relaxed=self.relaxed_identities,
-                                nc_only=self.ncvar_identities)
+        """
+        identity = anc.identity(
+            strict=self.strict_identities,
+            relaxed=self.relaxed_identities,
+            nc_only=self.ncvar_identities,
+        )
 
         if identity is not None:
             all_field_anc_identities = self.all_field_anc_identities
 
             if identity in all_field_anc_identities:
                 self.message = "multiple {0!r} field ancillaries".format(
-                    identity)
+                    identity
+                )
 
                 return None
 
@@ -978,28 +1031,30 @@ class _Meta:
         # --- End: if
 
         # Still here?
-        self.message = ("{0!r} field ancillary has no identity or "
-                        "no data".format(anc.identity()))
+        self.message = (
+            "{0!r} field ancillary has no identity or "
+            "no data".format(anc.identity())
+        )
 
         return None
 
     def coordinate_reference_signatures(self, refs):
-        '''List the structural signatures of given coordinate references.
+        """List the structural signatures of given coordinate references.
 
-    :Parameters:
+        :Parameters:
 
-        refs: sequence of `CoordinateReference`
+            refs: sequence of `CoordinateReference`
 
-    :Returns:
+        :Returns:
 
-        `list`
-            A structural signature of each coordinate reference object.
+            `list`
+                A structural signature of each coordinate reference object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> sig = coordinate_reference_signatures(refs)
+        >>> sig = coordinate_reference_signatures(refs)
 
-        '''
+        """
         signatures = []
 
         if not refs:
@@ -1009,10 +1064,12 @@ class _Meta:
 
         for signature in signatures:
             if signature[0] is None:
-                self.messsage = ("{0!r} field can't be aggregated due "
-                                 "to it having an unidentifiable "
-                                 "coordinate "
-                                 "reference".format(self.f.identity()))
+                self.messsage = (
+                    "{0!r} field can't be aggregated due "
+                    "to it having an unidentifiable "
+                    "coordinate "
+                    "reference".format(self.f.identity())
+                )
                 return
         # --- End: for
 
@@ -1021,43 +1078,48 @@ class _Meta:
         return signatures
 
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
-        '''Return a domain ancillary's identity if it has one and has data.
+        """Return a domain ancillary's identity if it has one and has data.
 
-    :Parameters:
+        :Parameters:
 
-        anc: cf.DomainAncillary
+            anc: cf.DomainAncillary
 
-        identity: *optional*
+            identity: *optional*
 
-    :Returns:
+        :Returns:
 
-        `str` or `None`
-            The domain ancillary identity, or None if there is no
-            identity and/or no data.
+            `str` or `None`
+                The domain ancillary identity, or None if there is no
+                identity and/or no data.
 
-        '''
+        """
         if identity is not None:
             anc_identity = identity
         else:
-            anc_identity = anc.identity(strict=self.strict_identities,
-                                        relaxed=self.relaxed_identities,
-                                        nc_only=self.ncvar_identities)
+            anc_identity = anc.identity(
+                strict=self.strict_identities,
+                relaxed=self.relaxed_identities,
+                nc_only=self.ncvar_identities,
+            )
 
         if anc_identity is None:
             self.message = "{0!r} domain ancillary has no identity".format(
-                    anc.identity())
+                anc.identity()
+            )
             return
 
         all_domain_anc_identities = self.all_domain_anc_identities
 
         if anc_identity in all_domain_anc_identities:
             self.message = "multiple {0!r} domain ancillaries".format(
-                anc_identity)
+                anc_identity
+            )
             return
 
         if not anc.has_data():
             self.message = "{0!r} domain ancillary has no data".format(
-                anc.identity())
+                anc.identity()
+            )
             return
 
         all_domain_anc_identities.add(anc_identity)
@@ -1066,49 +1128,51 @@ class _Meta:
 
     @_manage_log_level_via_verbose_attr
     def print_info(self, signature=True):
-        '''Log information on the structural signature and coordinate values.
+        """Log information on the structural signature and coordinate values.
 
-    :Parameters:
+        :Parameters:
 
-        signature: `_Meta`
+            signature: `_Meta`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    '''
+        """
         if signature:
-            logger.detail('STRUCTURAL SIGNATURE:\n' +
-                          self.string_structural_signature())
+            logger.detail(
+                "STRUCTURAL SIGNATURE:\n" + self.string_structural_signature()
+            )
         if self.cell_values:
-            logger.detail('CANONICAL COORDINATES:\n' +
-                          self.coordinate_values())
+            logger.detail(
+                "CANONICAL COORDINATES:\n" + self.coordinate_values()
+            )
 
-        logger.debug('COMPLETE AGGREGATION METADATA:\n{}'.format(self))
+        logger.debug("COMPLETE AGGREGATION METADATA:\n{}".format(self))
 
     def string_structural_signature(self):
-        '''Return a multi-line string giving a field's structual signature.
+        """Return a multi-line string giving a field's structual signature.
 
-    :Returns:
+        :Returns:
 
-        `str`
+            `str`
 
-        '''
+        """
         string = []
 
         for key, value in self.signature._asdict().items():
-            string.append('-> {0}: {1!r}'.format(key, value))
+            string.append("-> {0}: {1!r}".format(key, value))
 
-        return '\n'.join(string)
+        return "\n".join(string)
 
     def structural_signature(self):
-        '''Build the structual signature of a field from its components.
+        """Build the structual signature of a field from its components.
 
-    :Returns:
+        :Returns:
 
-        `tuple`
+            `tuple`
 
-        '''
+        """
         f = self.field
 
         # Initialize the structual signature with:
@@ -1117,129 +1181,164 @@ class _Meta:
         # * the canonical units
         # * the canonical cell methods
         # * whether or not there is a data array
-#        signature = [('Identity'    , self.identity),
-#                     ('Units'       , self.units.formatted(definition=True)),
-#                     ('Cell methods', self.cell_methods),
-#                     ('Data'        , self.has_data)]
+        #        signature = [('Identity'    , self.identity),
+        #                     ('Units'       , self.units.formatted(definition=True)),
+        #                     ('Cell methods', self.cell_methods),
+        #                     ('Data'        , self.has_data)]
         Identity = self.identity
         Units = self.units.formatted(definition=True)
         Cell_methods = self.cell_methods
         Data = self.has_data
-#        signature_append = signature.append
+        #        signature_append = signature.append
 
         # Properties
-#        signature_append(('Properties', self.properties))
+        #        signature_append(('Properties', self.properties))
         Properties = self.properties
 
         # standard_error_multiplier
-#        signature_append(('standard_error_multiplier',
-#                          f.get_property('standard_error_multiplier', None)))
+        #        signature_append(('standard_error_multiplier',
+        #                          f.get_property('standard_error_multiplier', None)))
         standard_error_multiplier = f.get_property(
-            'standard_error_multiplier', None)
+            "standard_error_multiplier", None
+        )
 
         # valid_min, valid_max, valid_range
-#        if self.respect_valid:
-#            signature.extend((f.get_property('valid_min'  , None),
-#                              f.get_property('valid_max'  , None),
-#                              f.get_property('valid_range', None)))
-#        else:
-#            signature.extend((None, None, None))
+        #        if self.respect_valid:
+        #            signature.extend((f.get_property('valid_min'  , None),
+        #                              f.get_property('valid_max'  , None),
+        #                              f.get_property('valid_range', None)))
+        #        else:
+        #            signature.extend((None, None, None))
 
         if self.respect_valid:
-            valid_min = f.get_property('valid_min', None)
-            valid_max = f.get_property('valid_max', None)
-            valid_range = f.get_property('valid_range', None)
+            valid_min = f.get_property("valid_min", None)
+            valid_max = f.get_property("valid_max", None)
+            valid_range = f.get_property("valid_range", None)
         else:
             valid_min = None
             valid_max = None
             valid_range = None
 
         # Flags
-#        signature_append(getattr(f, 'Flags', None))
-        Flags = getattr(f, 'Flags', None)
+        #        signature_append(getattr(f, 'Flags', None))
+        Flags = getattr(f, "Flags", None)
 
         # Coordinate references
-#        coordref_signatures = self.coordref_signatures
-#        if not coordref_signatures:
-#            coordref_signatures = [None]
-#
-#        signature_append(
-#            tuple(['Coordinate references'] + coordref_signatures))
+        #        coordref_signatures = self.coordref_signatures
+        #        if not coordref_signatures:
+        #            coordref_signatures = [None]
+        #
+        #        signature_append(
+        #            tuple(['Coordinate references'] + coordref_signatures))
         Coordinate_references = tuple(self.coordref_signatures)
 
         # 1-d coordinates for each axis. Note that self.axis_ids has
         # already been sorted.
         axis = self.axis
-        x = [(identity,
-              ('ids', axis[identity]['ids']),
-              ('units', tuple([
-                  u.formatted(definition=True) for u in
-                  axis[identity]['units']
-              ])),
-              ('hasdata', axis[identity]['hasdata']),
-              ('hasbounds', axis[identity]['hasbounds']),
-              ('coordrefs', axis[identity]['coordrefs']),
-              ('size', axis[identity]['size']))
-             for identity in self.axis_ids]
-#        signature_append(tuple(['Axes'] + x))
+        x = [
+            (
+                identity,
+                ("ids", axis[identity]["ids"]),
+                (
+                    "units",
+                    tuple(
+                        [
+                            u.formatted(definition=True)
+                            for u in axis[identity]["units"]
+                        ]
+                    ),
+                ),
+                ("hasdata", axis[identity]["hasdata"]),
+                ("hasbounds", axis[identity]["hasbounds"]),
+                ("coordrefs", axis[identity]["coordrefs"]),
+                ("size", axis[identity]["size"]),
+            )
+            for identity in self.axis_ids
+        ]
+        #        signature_append(tuple(['Axes'] + x))
         Axes = tuple(x)
 
         # Whether or not each axis has a dimension coordinate
-        x = [False if axis[identity]['dim_coord_index'] is None else True
-             for identity in self.axis_ids]
-#        signature_append(tuple(x))
+        x = [
+            False if axis[identity]["dim_coord_index"] is None else True
+            for identity in self.axis_ids
+        ]
+        #        signature_append(tuple(x))
         dim_coord_index = tuple(x)
 
         # N-d auxiliary coordinates
         nd_aux = self.nd_aux
-        x = [(identity,
-              ('units', nd_aux[identity]['units'].formatted(definition=True)),
-              ('axes', nd_aux[identity]['axes']),
-              ('hasdata', nd_aux[identity]['hasdata']),
-              ('hasbounds', nd_aux[identity]['hasbounds']),
-              ('coordrefs', nd_aux[identity]['coordrefs']))
-             for identity in sorted(nd_aux)]
-#        if not x:
-#            x = [None]#
-#
-#        signature_append(tuple(['N-d coordinates'] + x))
+        x = [
+            (
+                identity,
+                (
+                    "units",
+                    nd_aux[identity]["units"].formatted(definition=True),
+                ),
+                ("axes", nd_aux[identity]["axes"]),
+                ("hasdata", nd_aux[identity]["hasdata"]),
+                ("hasbounds", nd_aux[identity]["hasbounds"]),
+                ("coordrefs", nd_aux[identity]["coordrefs"]),
+            )
+            for identity in sorted(nd_aux)
+        ]
+        #        if not x:
+        #            x = [None]#
+        #
+        #        signature_append(tuple(['N-d coordinates'] + x))
         Nd_coordinates = tuple(x)
 
         # Cell measures
         msr = self.msr
-        x = [(('units', units.formatted(definition=True)),
-              ('axes', msr[units]['axes']))
-             for units in sorted(msr)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Cell measures'] + x))
+        x = [
+            (
+                ("units", units.formatted(definition=True)),
+                ("axes", msr[units]["axes"]),
+            )
+            for units in sorted(msr)
+        ]
+        #        if not x:
+        #            x = [None]
+        #
+        #        signature_append(tuple(['Cell measures'] + x))
         Cell_measures = tuple(x)
 
         # Domain ancillaries
         domain_anc = self.domain_anc
-        x = [(identity,
-              ('units', domain_anc[identity]['units'].formatted(
-                  definition=True)),
-              ('axes', domain_anc[identity]['axes']))
-             for identity in sorted(domain_anc)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Domain ancillaries'] + x))
+        x = [
+            (
+                identity,
+                (
+                    "units",
+                    domain_anc[identity]["units"].formatted(definition=True),
+                ),
+                ("axes", domain_anc[identity]["axes"]),
+            )
+            for identity in sorted(domain_anc)
+        ]
+        #        if not x:
+        #            x = [None]
+        #
+        #        signature_append(tuple(['Domain ancillaries'] + x))
         Domain_ancillaries = tuple(x)
 
         # Field ancillaries
         field_anc = self.field_anc
-        x = [(identity,
-              ('units', field_anc[identity]['units'].formatted(
-                  definition=True)),
-              ('axes', field_anc[identity]['axes']))
-             for identity in sorted(field_anc)]
-#        if not x:
-#            x = [None]
-#
-#        signature_append(tuple(['Field ancillaries'] + x))
+        x = [
+            (
+                identity,
+                (
+                    "units",
+                    field_anc[identity]["units"].formatted(definition=True),
+                ),
+                ("axes", field_anc[identity]["axes"]),
+            )
+            for identity in sorted(field_anc)
+        ]
+        #        if not x:
+        #            x = [None]
+        #
+        #        signature_append(tuple(['Field ancillaries'] + x))
         Field_ancillaries = tuple(x)
 
         self.signature = self._structural_signature(
@@ -1263,23 +1362,23 @@ class _Meta:
         )
 
     def find_coordrefs(self, key):
-        '''Return all the coordinate references that point to a coordinate.
+        """Return all the coordinate references that point to a coordinate.
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`
-            The key of the coordinate consrtuct.
+            key: `str`
+                The key of the coordinate consrtuct.
 
-    :Returns:
+        :Returns:
 
-        `tuple` or `None`
+            `tuple` or `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> m.find_coordrefs('dim0')
-    >>> m.find_coordrefs('aux1')
+        >>> m.find_coordrefs('dim0')
+        >>> m.find_coordrefs('aux1')
 
-    '''
+        """
         coordrefs = self.coordrefs
 
         if not coordrefs:
@@ -1287,8 +1386,9 @@ class _Meta:
 
         # Select the coordinate references which contain a pointer to
         # this coordinate
-        names = [ref.identity() for ref in coordrefs if
-                 key in ref.coordinates()]
+        names = [
+            ref.identity() for ref in coordrefs if key in ref.coordinates()
+        ]
 
         if not names:
             return None
@@ -1298,35 +1398,37 @@ class _Meta:
 
 # --- End: class
 
+
 @_manage_log_level_via_verbosity
-def aggregate(fields,
-              verbose=None,
-              relaxed_units=False,
-              overlap=True,
-              contiguous=False,
-              relaxed_identities=False,
-              ncvar_identities=False,
-              respect_valid=False,
-              equal_all=False,
-              exist_all=False,
-              equal=None,
-              exist=None,
-              ignore=None,
-              exclude=False,
-              dimension=(),
-              concatenate=True,
-              copy=True,
-              axes=None,
-              donotchecknonaggregatingaxes=False,
-              allow_no_identity=False,
-              atol=None,
-              rtol=None,
-              no_overlap=False,
-              shared_nc_domain=False,
-              field_identity=None,
-              info=False,
-              ):
-    '''Aggregate field constructs into as few field constructs as
+def aggregate(
+    fields,
+    verbose=None,
+    relaxed_units=False,
+    overlap=True,
+    contiguous=False,
+    relaxed_identities=False,
+    ncvar_identities=False,
+    respect_valid=False,
+    equal_all=False,
+    exist_all=False,
+    equal=None,
+    exist=None,
+    ignore=None,
+    exclude=False,
+    dimension=(),
+    concatenate=True,
+    copy=True,
+    axes=None,
+    donotchecknonaggregatingaxes=False,
+    allow_no_identity=False,
+    atol=None,
+    rtol=None,
+    no_overlap=False,
+    shared_nc_domain=False,
+    field_identity=None,
+    info=False,
+):
+    """Aggregate field constructs into as few field constructs as
     possible.
 
     Aggregation is the combination of field constructs to create a new
@@ -1587,15 +1689,18 @@ def aggregate(fields,
     >>> g[0].source
     AttributeError: 'Field' object has no attribute 'source'
 
-    '''
+    """
     if no_overlap is not False:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.aggregate', {'no_overlap': no_overlap},
-            "Use keyword 'overlap' instead.")  # pragma: no cover
+            "cf.aggregate",
+            {"no_overlap": no_overlap},
+            "Use keyword 'overlap' instead.",
+        )  # pragma: no cover
 
     if info is not False:  # catch 'Falsy' entries e.g. standard info=0
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.aggregate', {'info': info},
+            "cf.aggregate",
+            {"info": info},
             "Use keyword 'verbose' instead."
             "\n\n"
             "Note the informational levels have been remapped: "
@@ -1603,7 +1708,7 @@ def aggregate(fields,
             "\ninfo=1 maps to verbose=2"
             "\ninfo=2 maps to verbose=3"
             "\ninfo=3 maps to verbose=-1",
-            version='3.5.0'
+            version="3.5.0",
         )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
@@ -1615,9 +1720,9 @@ def aggregate(fields,
     output_fields_append = output_fields.append
 
     if exclude:
-        exclude = ' NOT'
+        exclude = " NOT"
     else:
-        exclude = ''
+        exclude = ""
 
     if atol is None:
         atol = cf_atol()
@@ -1645,11 +1750,7 @@ def aggregate(fields,
         )
 
     if equal or exist or ignore:
-        properties = {
-            'equal': equal,
-            'exist': exist,
-            'ignore': ignore
-        }
+        properties = {"equal": equal, "exist": exist, "ignore": ignore}
 
         for key, value in properties.items():
             if not value:
@@ -1663,13 +1764,16 @@ def aggregate(fields,
                 try:
                     value[0]
                 except TypeError:
-                    raise TypeError("Bad type of {!r} parameter: {!r}".format(
-                        key, type(value)))
+                    raise TypeError(
+                        "Bad type of {!r} parameter: {!r}".format(
+                            key, type(value)
+                        )
+                    )
         # --- End: for
 
-        equal = properties['equal']
-        exist = properties['exist']
-        ignore = properties['ignore']
+        equal = properties["equal"]
+        exist = properties["exist"]
+        ignore = properties["ignore"]
 
         if equal and exist and set(equal).intersection(exist):
             raise AttributeError(
@@ -1696,27 +1800,34 @@ def aggregate(fields,
         # Create the metadata summary, including the structural
         # signature
         # ------------------------------------------------------------
-        meta = _Meta(f,
-                     verbose=verbose, rtol=rtol, atol=atol,
-                     relaxed_units=relaxed_units,
-                     allow_no_identity=allow_no_identity,
-                     equal_all=equal_all,
-                     exist_all=exist_all,
-                     equal=equal,
-                     exist=exist,
-                     ignore=ignore,
-                     dimension=dimension,
-                     relaxed_identities=relaxed_identities,
-                     ncvar_identities=ncvar_identities,
-                     field_identity=field_identity,
-                     respect_valid=respect_valid)
+        meta = _Meta(
+            f,
+            verbose=verbose,
+            rtol=rtol,
+            atol=atol,
+            relaxed_units=relaxed_units,
+            allow_no_identity=allow_no_identity,
+            equal_all=equal_all,
+            exist_all=exist_all,
+            equal=equal,
+            exist=exist,
+            ignore=ignore,
+            dimension=dimension,
+            relaxed_identities=relaxed_identities,
+            ncvar_identities=ncvar_identities,
+            field_identity=field_identity,
+            respect_valid=respect_valid,
+        )
 
         if not meta:
             unaggregatable = True
             status = 1
 
-            logger.info("Unaggregatable {0!r} has{1} been output: {2}".format(
-                f, exclude, meta.message))
+            logger.info(
+                "Unaggregatable {0!r} has{1} been output: {2}".format(
+                    f, exclude, meta.message
+                )
+            )
 
             if not exclude:
                 # This field does not have a structural signature, so
@@ -1744,23 +1855,23 @@ def aggregate(fields,
     #    of input fields return fields in the same order.
     # ================================================================
 
-#    x = []
-#    for signature in signatures:
-#        x.append(signature)
-#
-#    if len(x) == 2:
-#        logger.info(hash(x[0]))
-#        logger.info(hash(x[1]))
-#        for key, value in x[0]._asdict().items():
-#            if hash(value) != hash(getattr(x[1], key)):
-#                logger.info('{} no equal!'.format(key))
-#            if key == 'Coordinate_references' and value:
-#                for q1, q2 in zip(value, x[1].Coordinate_references):
-#                    for w1, w2 in zip(q1, q2):
-#                        logger.info(w1)
-#                        logger.info(w2)
-#                        logger.info(hash(w1))
-#                        logger.info(hash(w2))
+    #    x = []
+    #    for signature in signatures:
+    #        x.append(signature)
+    #
+    #    if len(x) == 2:
+    #        logger.info(hash(x[0]))
+    #        logger.info(hash(x[1]))
+    #        for key, value in x[0]._asdict().items():
+    #            if hash(value) != hash(getattr(x[1], key)):
+    #                logger.info('{} no equal!'.format(key))
+    #            if key == 'Coordinate_references' and value:
+    #                for q1, q2 in zip(value, x[1].Coordinate_references):
+    #                    for w1, w2 in zip(q1, q2):
+    #                        logger.info(w1)
+    #                        logger.info(w2)
+    #                        logger.info(hash(w1))
+    #                        logger.info(hash(w2))
 
     for signature in signatures:  # sorted(signatures):
         meta = signatures[signature]
@@ -1784,7 +1895,7 @@ def aggregate(fields,
             # if not, decorator would have errored before cf.aggregate ran.
             _reset_log_emergence_level(verbose)
 
-        logger.detail('')
+        logger.detail("")
 
         if len(meta) == 1:
             # --------------------------------------------------------
@@ -1816,7 +1927,8 @@ def aggregate(fields,
             # Aggregation will be over as many axes as possible
             aggregating_axes = meta[0].axis_ids
             _create_hash_and_first_values(
-                meta, None, False, hfl_cache, rtol, atol)
+                meta, None, False, hfl_cache, rtol, atol
+            )
 
         else:
             # Specific aggregation axes have been selected
@@ -1824,24 +1936,34 @@ def aggregate(fields,
             axis_items = meta[0].axis.items()
             for axis in axes:
                 coords = meta[0].field.coordinates.filter_by_identity(
-                    'exact', axis)
+                    "exact", axis
+                )
                 coord = coords.value(default=None)
                 if coord is None:
                     continue
 
-                coord_identity = coord.identity(strict=strict_identities,
-                                                relaxed=relaxed_identities,
-                                                nc_only=ncvar_identities)
+                coord_identity = coord.identity(
+                    strict=strict_identities,
+                    relaxed=relaxed_identities,
+                    nc_only=ncvar_identities,
+                )
                 for identity, value in axis_items:
-                    if (identity not in aggregating_axes and
-                            coord_identity in value['ids']):
+                    if (
+                        identity not in aggregating_axes
+                        and coord_identity in value["ids"]
+                    ):
                         aggregating_axes.append(identity)
                         break
             # --- End: for
 
-            _create_hash_and_first_values(meta, aggregating_axes,
-                                          donotchecknonaggregatingaxes,
-                                          hfl_cache, rtol, atol)
+            _create_hash_and_first_values(
+                meta,
+                aggregating_axes,
+                donotchecknonaggregatingaxes,
+                hfl_cache,
+                rtol,
+                atol,
+            )
 
         # Print useful information
         for m in meta:
@@ -1851,7 +1973,7 @@ def aggregate(fields,
         if verbose is not None:
             _reset_log_emergence_level(verbose)
 
-        logger.detail('')
+        logger.detail("")
 
         # Take a shallow copy in case we abandon and want to output
         # the original, unaggregated fields.
@@ -1881,8 +2003,7 @@ def aggregate(fields,
                 logger.info(
                     "Unaggregatable {0!r} fields have{1} been output: "
                     "{2}".format(
-                          meta[0].field.identity(), exclude,
-                          meta[0].message
+                        meta[0].field.identity(), exclude, meta[0].message
                     )
                 )
 
@@ -1892,8 +2013,7 @@ def aggregate(fields,
             if len(grouped_meta) == number_of_fields:
                 logger.debug(
                     "{0!r} fields can't be aggregated along their "
-                    "{1!r} axis".format(
-                        meta[0].field.identity(), axis)
+                    "{1!r} axis".format(meta[0].field.identity(), axis)
                 )
                 continue
 
@@ -1917,12 +2037,14 @@ def aggregate(fields,
                 # don't overlap, and don't aggregate anything in this
                 # group if any do.
                 # ----------------------------------------------------
-                if not _ok_coordinate_arrays(m, axis, overlap, contiguous,
-                                             verbose):
+                if not _ok_coordinate_arrays(
+                    m, axis, overlap, contiguous, verbose
+                ):
                     logger.info(
                         "Unaggregatable {!r} fields have{} been "
                         "output: {}".format(
-                            m[0].field.identity(), exclude, m[0].message)
+                            m[0].field.identity(), exclude, m[0].message
+                        )
                     )
 
                     unaggregatable = True
@@ -1934,12 +2056,15 @@ def aggregate(fields,
                 m0 = m[0].copy()
 
                 for m1 in m[1:]:
-                    m0 = _aggregate_2_fields(m0, m1,
-                                             rtol=rtol, atol=atol,
-                                             verbose=verbose,
-                                             concatenate=concatenate,
-                                             copy=(copy or not exclude),
-                                             )
+                    m0 = _aggregate_2_fields(
+                        m0,
+                        m1,
+                        rtol=rtol,
+                        atol=atol,
+                        verbose=verbose,
+                        concatenate=concatenate,
+                        copy=(copy or not exclude),
+                    )
 
                     if not m0:
                         # Couldn't aggregate these two fields, so
@@ -1949,7 +2074,8 @@ def aggregate(fields,
                         logger.info(
                             "Unaggregatable {!r} fields have{} been "
                             "output: {}".format(
-                                m1.field.identity(), exclude, m1.message)
+                                m1.field.identity(), exclude, m1.message
+                            )
                         )
 
                         unaggregatable = True
@@ -1987,7 +2113,7 @@ def aggregate(fields,
     aggregate.status = status
 
     if status:
-        logger.info('')
+        logger.info("")
 
     return output_fields
 
@@ -1998,9 +2124,10 @@ def aggregate(fields,
 aggregate.status = 0
 
 
-def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
-                                  hfl_cache, rtol, atol):
-    '''Updates each field's _Meta object.
+def _create_hash_and_first_values(
+    meta, axes, donotchecknonaggregatingaxes, hfl_cache, rtol, atol
+):
+    """Updates each field's _Meta object.
 
     :Parameters:
 
@@ -2014,7 +2141,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 
         `None`
 
-    '''
+    """
     for m in meta:
         field = m.field
 
@@ -2037,9 +2164,12 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # 1-d coordinates
         # --------------------------------------------------------
         for identity in m.axis_ids:
-            if (axes is not None and donotchecknonaggregatingaxes and
-                    identity not in axes):
-                x = [None] * len(m.axis[identity]['keys'])
+            if (
+                axes is not None
+                and donotchecknonaggregatingaxes
+                and identity not in axes
+            ):
+                x = [None] * len(m.axis[identity]["keys"])
                 m_hash_values[identity] = x
                 m_first_values[identity] = x[:]
                 m_last_values[identity] = x[:]
@@ -2052,7 +2182,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
             # If this axis has no 1-d coordinates and is defined only
             # by its netCDF dimension name and its size, then hash the
             # domain axis object
-            axis_size = m_axis_identity['size']
+            axis_size = m_axis_identity["size"]
             if axis_size is not None:
                 m_hash_values[identity] = [hash(field.constructs[axis])]
                 m_first_values[identity] = [None]
@@ -2062,7 +2192,8 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 
             # Still here?
             dim_coord = m.field.dimension_coordinates.filter_by_axis(
-                'and', axis)
+                "and", axis
+            )
 
             # Find the sort indices for this axis ...
             if dim_coord is not None:
@@ -2079,7 +2210,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
             else:
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
-                aux = m_axis_identity['keys'][0]
+                aux = m_axis_identity["keys"][0]
                 sort_indices = numpy_argsort(field.constructs[aux].array)
                 m_sort_keys[axis] = aux
                 null_sort = False
@@ -2090,28 +2221,43 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
             first_values = []
             last_values = []
 
-            for key, canonical_units in zip(m_axis_identity['keys'],
-                                            m_axis_identity['units']):
+            for key, canonical_units in zip(
+                m_axis_identity["keys"], m_axis_identity["units"]
+            ):
                 coord = field.constructs[key]
 
                 # Get the hash of the data array and its first and
                 # last values
                 h, first, last = _get_hfl(
-                    coord, canonical_units, sort_indices, null_sort, True,
-                    False, hfl_cache, rtol, atol
+                    coord,
+                    canonical_units,
+                    sort_indices,
+                    null_sort,
+                    True,
+                    False,
+                    hfl_cache,
+                    rtol,
+                    atol,
                 )
 
                 first_values.append(first)
                 last_values.append(last)
 
                 if coord.has_bounds():
-                    if coord.construct_type == 'dimension_coordinate':
+                    if coord.construct_type == "dimension_coordinate":
                         # Get the hash of the dimension coordinate
                         # bounds data array and its first and last
                         # cell values
                         hb, fb, lb = _get_hfl(
-                            coord.bounds, canonical_units, sort_indices,
-                            null_sort, False, True, hfl_cache, rtol, atol
+                            coord.bounds,
+                            canonical_units,
+                            sort_indices,
+                            null_sort,
+                            False,
+                            True,
+                            hfl_cache,
+                            rtol,
+                            atol,
                         )
                         m.first_bounds[identity] = fb
                         m.last_bounds[identity] = lb
@@ -2119,8 +2265,15 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                         # Get the hash of the auxiliary coordinate
                         # bounds data array
                         hb = _get_hfl(
-                            coord.bounds, canonical_units, sort_indices,
-                            null_sort, False, False, hfl_cache, rtol, atol
+                            coord.bounds,
+                            canonical_units,
+                            sort_indices,
+                            null_sort,
+                            False,
+                            False,
+                            hfl_cache,
+                            rtol,
+                            atol,
                         )
 
                     h = (h, hb)
@@ -2128,54 +2281,54 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                     h = (h,)
 
                 hash_values.append(h)
-#                else:
-#                    coord_units = coord.Units
-#
-#                    # Change the coordinate data type if required
-#                    if coord.dtype.char not in ('d', 'S'):
-#                        coord = coord.copy(_only_Data=True)
-#                        coord.dtype = _dtype_float
-#
-#                    # Change the coordinate's units to the canonical ones
-#                    coord.Units = canonical_units
-#
-#                    # Get the coordinate's data array
-#                    if null_sort:
-#                        array = coord.Data.array
-#                    else:
-#                        array = coord.Data.array[sort_indices]
-#
-#                    hash_value = hash_array(array)
-#
-#                    first_values.append(array.item(0)) #[0])
-#                    last_values.append(array.item(-1)) #[-1])
-#
-#                    if coord._hasbounds:
-#                        if null_sort:
-#                            array = coord.bounds.Data.array
-#                        else:
-#                            array = coord.bounds.Data.array[sort_indices, ...]
-#
-#                        hash_value = (hash_value, hash_array(array))
-#
-#                        if key[:3] == 'dim':  # can do better than this! DCH
-#                            # Record the bounds of the first and last
-#                            # (sorted) cells of a dimension coordinate
-#                            # (don't need to do this for an auxiliary
-#                            # coordinate).
-#                            array0 = array[0, ...].copy()
-#                            array0.sort()
-#                            m.first_bounds[identity] = array0
-#
-#                            array0 = array[-1, ...].copy()
-#                            array0.sort()
-#                            m.last_bounds[identity] = array0
-#                    # --- End: if
-#
-#                    hash_values.append(hash_value)
-#
-#                    # Reinstate the coordinate's original units
-#                    coord.Units = coord_units
+            #                else:
+            #                    coord_units = coord.Units
+            #
+            #                    # Change the coordinate data type if required
+            #                    if coord.dtype.char not in ('d', 'S'):
+            #                        coord = coord.copy(_only_Data=True)
+            #                        coord.dtype = _dtype_float
+            #
+            #                    # Change the coordinate's units to the canonical ones
+            #                    coord.Units = canonical_units
+            #
+            #                    # Get the coordinate's data array
+            #                    if null_sort:
+            #                        array = coord.Data.array
+            #                    else:
+            #                        array = coord.Data.array[sort_indices]
+            #
+            #                    hash_value = hash_array(array)
+            #
+            #                    first_values.append(array.item(0)) #[0])
+            #                    last_values.append(array.item(-1)) #[-1])
+            #
+            #                    if coord._hasbounds:
+            #                        if null_sort:
+            #                            array = coord.bounds.Data.array
+            #                        else:
+            #                            array = coord.bounds.Data.array[sort_indices, ...]
+            #
+            #                        hash_value = (hash_value, hash_array(array))
+            #
+            #                        if key[:3] == 'dim':  # can do better than this! DCH
+            #                            # Record the bounds of the first and last
+            #                            # (sorted) cells of a dimension coordinate
+            #                            # (don't need to do this for an auxiliary
+            #                            # coordinate).
+            #                            array0 = array[0, ...].copy()
+            #                            array0.sort()
+            #                            m.first_bounds[identity] = array0
+            #
+            #                            array0 = array[-1, ...].copy()
+            #                            array0.sort()
+            #                            m.last_bounds[identity] = array0
+            #                    # --- End: if
+            #
+            #                    hash_values.append(hash_value)
+            #
+            #                    # Reinstate the coordinate's original units
+            #                    coord.Units = coord_units
             # --- End: for
 
             m_hash_values[identity] = hash_values
@@ -2188,15 +2341,15 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for aux in m.nd_aux.values():
-                aux['hash_value'] = (None,)
+                aux["hash_value"] = (None,)
         else:
             for aux in m.nd_aux.values():
-                key = aux['key']
-                canonical_units = aux['units']
+                key = aux["key"]
+                canonical_units = aux["units"]
 
                 coord = field.item(key)
 
-                axes = [m_id_to_axis[identity] for identity in aux['axes']]
+                axes = [m_id_to_axis[identity] for identity in aux["axes"]]
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
                     coord = coord.copy()  # _only_Data=True)
@@ -2206,20 +2359,36 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 sort_indices = tuple([m_sort_indices[axis] for axis in axes])
 
                 # Get the hash of the data array
-                h = _get_hfl(coord, canonical_units, sort_indices,
-                             False, False, False, hfl_cache, rtol, atol)
+                h = _get_hfl(
+                    coord,
+                    canonical_units,
+                    sort_indices,
+                    False,
+                    False,
+                    False,
+                    hfl_cache,
+                    rtol,
+                    atol,
+                )
 
                 if coord.has_bounds():
                     # Get the hash of the bounds data array
                     hb = _get_hfl(
-                        coord.bounds, canonical_units, sort_indices,
-                        False, False, False, hfl_cache, rtol, atol
+                        coord.bounds,
+                        canonical_units,
+                        sort_indices,
+                        False,
+                        False,
+                        False,
+                        hfl_cache,
+                        rtol,
+                        atol,
                     )
                     h = (h, hb)
                 else:
                     h = (h,)
 
-                aux['hash_value'] = h
+                aux["hash_value"] = h
         # --- End: if
 
         # ------------------------------------------------------------
@@ -2227,11 +2396,11 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for msr in m.msr.values():
-                msr['hash_values'] = [(None,) * len(msr['keys'])]
+                msr["hash_values"] = [(None,) * len(msr["keys"])]
         else:
             for canonical_units, msr in m.msr.items():
                 hash_values = []
-                for key, axes in zip(msr['keys'], msr['axes']):
+                for key, axes in zip(msr["keys"], msr["axes"]):
                     coord = field.constructs[key]
 
                     axes = tuple([m_id_to_axis[identity] for identity in axes])
@@ -2245,13 +2414,21 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                     sort_indices = [m_sort_indices[axis] for axis in axes]
 
                     # Get the hash of the data array
-                    h = _get_hfl(coord, canonical_units,
-                                 tuple(sort_indices),
-                                 False, False, False, hfl_cache, rtol, atol)
+                    h = _get_hfl(
+                        coord,
+                        canonical_units,
+                        tuple(sort_indices),
+                        False,
+                        False,
+                        False,
+                        hfl_cache,
+                        rtol,
+                        atol,
+                    )
 
                     hash_values.append((h,))
 
-                msr['hash_values'] = hash_values
+                msr["hash_values"] = hash_values
         # --- End: if
 
         # ------------------------------------------------------------
@@ -2259,16 +2436,17 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for anc in m.field_anc.values():
-                anc['hash_value'] = (None,)
+                anc["hash_value"] = (None,)
         else:
             for anc in m.field_anc.values():
-                key = anc['key']
-                canonical_units = anc['units']
+                key = anc["key"]
+                canonical_units = anc["units"]
 
                 field_anc = field.construct(key)
 
                 axes = tuple(
-                    [m_id_to_axis[identity] for identity in anc['axes']])
+                    [m_id_to_axis[identity] for identity in anc["axes"]]
+                )
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
                     field_anc = field_anc.copy()  # _only_Data=True)  # TODO
@@ -2278,10 +2456,19 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 sort_indices = tuple([m_sort_indices[axis] for axis in axes])
 
                 # Get the hash of the data array
-                h = _get_hfl(field_anc, canonical_units, sort_indices,
-                             False, False, False, hfl_cache, rtol, atol)
+                h = _get_hfl(
+                    field_anc,
+                    canonical_units,
+                    sort_indices,
+                    False,
+                    False,
+                    False,
+                    hfl_cache,
+                    rtol,
+                    atol,
+                )
 
-                anc['hash_value'] = (h,)
+                anc["hash_value"] = (h,)
         # --- End: if
 
         # ------------------------------------------------------------
@@ -2289,16 +2476,17 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for anc in m.domain_anc.values():
-                anc['hash_value'] = (None,)
+                anc["hash_value"] = (None,)
         else:
             for anc in m.domain_anc.values():
-                key = anc['key']
-                canonical_units = anc['units']
+                key = anc["key"]
+                canonical_units = anc["units"]
 
                 domain_anc = field.construct(key)
 
                 axes = tuple(
-                    [m_id_to_axis[identity] for identity in anc['axes']])
+                    [m_id_to_axis[identity] for identity in anc["axes"]]
+                )
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
                     domain_anc = domain_anc.copy()  # _only_Data=True)  # TODO
@@ -2308,58 +2496,76 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 sort_indices = tuple([m_sort_indices[axis] for axis in axes])
 
                 # Get the hash of the data array
-                h = _get_hfl(domain_anc, canonical_units,
-                             sort_indices, null_sort=False,
-                             first_and_last_values=False,
-                             first_and_last_bounds=False,
-                             hfl_cache=hfl_cache, rtol=rtol,
-                             atol=atol)
+                h = _get_hfl(
+                    domain_anc,
+                    canonical_units,
+                    sort_indices,
+                    null_sort=False,
+                    first_and_last_values=False,
+                    first_and_last_bounds=False,
+                    hfl_cache=hfl_cache,
+                    rtol=rtol,
+                    atol=atol,
+                )
 
                 if domain_anc.has_bounds():
                     # Get the hash of the bounds data array
-                    hb = _get_hfl(domain_anc.bounds, canonical_units,
-                                  sort_indices, null_sort=False,
-                                  first_and_last_values=False,
-                                  first_and_last_bounds=False,
-                                  hfl_cache=hfl_cache, rtol=rtol,
-                                  atol=atol)
+                    hb = _get_hfl(
+                        domain_anc.bounds,
+                        canonical_units,
+                        sort_indices,
+                        null_sort=False,
+                        first_and_last_values=False,
+                        first_and_last_bounds=False,
+                        hfl_cache=hfl_cache,
+                        rtol=rtol,
+                        atol=atol,
+                    )
                     h = (h, hb)
                 else:
                     h = (h,)
 
-                anc['hash_value'] = h
+                anc["hash_value"] = h
 
-#            for anc in m.domain_anc.values():
-#                key             = anc['key']
-#                canonical_units = anc['units']
-#
-#                field_anc = field.item(key)
-#
-#                axes = tuple(
-#                    [m_id_to_axis[identity] for identity in anc['axes']])
-#                domain_axes = item_axes[key]
-#                if axes != domain_axes:
-#                    field_anc = field_anc.copy()  #_only_Data=True)  # TODO
-#                    iaxes = [domain_axes.index(axis) for axis in axes]
-#                    field_anc.transpose(iaxes, inplace=True)
-#
-#                sort_indices = tuple([m_sort_indices[axis] for axis in axes])
-#
-#                # Get the hash of the data array
-#                h = _get_hfl(field_anc, canonical_units, sort_indices,
-#                             False, False, False, hfl_cache, rtol, atol)
-#
-#                anc['hash_value'] = h
+        #            for anc in m.domain_anc.values():
+        #                key             = anc['key']
+        #                canonical_units = anc['units']
+        #
+        #                field_anc = field.item(key)
+        #
+        #                axes = tuple(
+        #                    [m_id_to_axis[identity] for identity in anc['axes']])
+        #                domain_axes = item_axes[key]
+        #                if axes != domain_axes:
+        #                    field_anc = field_anc.copy()  #_only_Data=True)  # TODO
+        #                    iaxes = [domain_axes.index(axis) for axis in axes]
+        #                    field_anc.transpose(iaxes, inplace=True)
+        #
+        #                sort_indices = tuple([m_sort_indices[axis] for axis in axes])
+        #
+        #                # Get the hash of the data array
+        #                h = _get_hfl(field_anc, canonical_units, sort_indices,
+        #                             False, False, False, hfl_cache, rtol, atol)
+        #
+        #                anc['hash_value'] = h
         # --- End: if
 
         m.cell_values = True
     # --- End: for
 
 
-def _get_hfl(v, canonical_units, sort_indices, null_sort,
-             first_and_last_values, first_and_last_bounds,
-             hfl_cache, rtol, atol):
-    '''Return the hash value, and optionally first and last values or bounds.
+def _get_hfl(
+    v,
+    canonical_units,
+    sort_indices,
+    null_sort,
+    first_and_last_values,
+    first_and_last_bounds,
+    hfl_cache,
+    rtol,
+    atol,
+):
+    """Return the hash value, and optionally first and last values or bounds.
 
     :Parameters:
 
@@ -2371,7 +2577,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
             Hash value for the coordinates and cell measures, in a tuple with
             the first and last cell values or bounds if either is requested.
 
-    '''
+    """
     create_hash = True
     create_fl = first_and_last_values
     create_flb = first_and_last_bounds
@@ -2388,7 +2594,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
     if d._pmsize == 1:
         partition = d.partitions.matrix.item()
         if not partition.part:
-            key = getattr(partition.subarray, 'file_pointer', None)
+            key = getattr(partition.subarray, "file_pointer", None)
             if key is not None:
                 hash_value = hfl_cache.hash.get(key, None)
                 create_hash = hash_value is None
@@ -2404,7 +2610,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 
     if create_hash or create_fl or create_flb:
         # Change the data type if required
-        if d.dtype.char not in ('d', 'S', 'U'):
+        if d.dtype.char not in ("d", "S", "U"):
             d = d.copy()
             d.dtype = _dtype_float
 
@@ -2468,7 +2674,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 
 
 def _group_fields(meta, axis):
-    '''Return a FieldList of the potentially aggregatable fields.
+    """Return a FieldList of the potentially aggregatable fields.
 
     :Parameters:
 
@@ -2481,7 +2687,7 @@ def _group_fields(meta, axis):
 
         `list` of cf.FieldList
 
-    '''
+    """
     axes = meta[0].axis_ids
 
     if axes:
@@ -2495,6 +2701,7 @@ def _group_fields(meta, axis):
 
         def _hash_values(m):
             return sort_by_axis_ids(m.hash_values)
+
         # --- End: def
 
         meta.sort(key=_hash_values)
@@ -2538,8 +2745,10 @@ def _group_fields(meta, axis):
 
             # Check the N-d auxiliary coordinates
             for identity, aux0 in m0.nd_aux.items():
-                if (a_identity not in aux0['axes'] and aux0['hash_value'] !=
-                        m1.nd_aux[identity]['hash_value']):
+                if (
+                    a_identity not in aux0["axes"]
+                    and aux0["hash_value"] != m1.nd_aux[identity]["hash_value"]
+                ):
                     # This matching pair of N-d auxiliary coordinates
                     # does not span the aggregating axis and they have
                     # different data array values
@@ -2555,9 +2764,9 @@ def _group_fields(meta, axis):
             msr0 = m0.msr
             for units in msr0:
                 for axes, hash_value0, hash_value1 in zip(
-                    msr0[units]['axes'],
-                    msr0[units]['hash_values'],
-                    m1.msr[units]['hash_values']
+                    msr0[units]["axes"],
+                    msr0[units]["hash_values"],
+                    m1.msr[units]["hash_values"],
                 ):
 
                     if a_identity not in axes and hash_value0 != hash_value1:
@@ -2587,8 +2796,9 @@ def _group_fields(meta, axis):
             # Zero axes have different 1-d coordinate values, so don't
             # aggregate anything in this entire group.
             # --------------------------------------------------------
-            meta[0].message = ("indistinguishable coordinates or other "
-                               "domain information")
+            meta[0].message = (
+                "indistinguishable coordinates or other " "domain information"
+            )
             return ()
 
         else:
@@ -2604,7 +2814,7 @@ def _group_fields(meta, axis):
 
 
 def _sorted_by_first_values(meta, axis):
-    '''Sort fields inplace.
+    """Sort fields inplace.
 
     :Parameters:
 
@@ -2616,11 +2826,12 @@ def _sorted_by_first_values(meta, axis):
 
         `None`
 
-    '''
+    """
     sort_by_axis_ids = itemgetter(axis)
 
     def _first_values(m):
         return sort_by_axis_ids(m.first_values)
+
     # --- End: def
 
     meta.sort(key=_first_values)
@@ -2628,7 +2839,7 @@ def _sorted_by_first_values(meta, axis):
 
 @_manage_log_level_via_verbosity
 def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
-    '''Return True if the aggregating 1-d coordinates of the aggregating
+    """Return True if the aggregating 1-d coordinates of the aggregating
     axis are all aggregatable.
 
     It is assumed that the input metadata objects have already been
@@ -2659,10 +2870,10 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
     >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False)
     ...     print("Don't aggregate")
 
-    '''
+    """
     m = meta[0]
 
-    dim_coord_index = m.axis[axis]['dim_coord_index']
+    dim_coord_index = m.axis[axis]["dim_coord_index"]
 
     if dim_coord_index is not None:
         # ------------------------------------------------------------
@@ -2673,16 +2884,18 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
         #  TODO 2019-06-21 check that the coords are all increasing, by now?
         for m0, m1 in zip(meta[:-1], meta[1:]):
-            dim_coord_index1 = m1.axis[axis]['dim_coord_index']
-            if (m0.last_values[axis][dim_coord_index0] >=
-                    m1.first_values[axis][dim_coord_index1]):
+            dim_coord_index1 = m1.axis[axis]["dim_coord_index"]
+            if (
+                m0.last_values[axis][dim_coord_index0]
+                >= m1.first_values[axis][dim_coord_index1]
+            ):
                 # Found overlap
-                meta[0].message = (
-                    "{0!r} dimension coordinate values overlap ({1} >= {2})".format(
-                        m.axis[axis]['ids'][dim_coord_index],
-                        m0.last_values[axis][dim_coord_index0],
-                        m1.first_values[axis][dim_coord_index1]
-                    )
+                meta[
+                    0
+                ].message = "{0!r} dimension coordinate values overlap ({1} >= {2})".format(
+                    m.axis[axis]["ids"][dim_coord_index],
+                    m0.last_values[axis][dim_coord_index0],
+                    m1.first_values[axis][dim_coord_index1],
                 )
 
                 return False
@@ -2695,47 +2908,47 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
             # --------------------------------------------------------
             if not overlap:
                 for m0, m1 in zip(meta[:-1], meta[1:]):
-                    if (m1.first_bounds[axis][0] < m0.last_bounds[axis][1]):
+                    if m1.first_bounds[axis][0] < m0.last_bounds[axis][1]:
                         # Do not aggregate anything in this group
                         # because overlapping has been disallowed and
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
-                        meta[0].message = (
-                            "overlap={0} and {1!r} dimension coordinate bounds values overlap ({2} < {3})".format(
-                                m.axis[axis]['ids'][dim_coord_index],
-                                overlap,
-                                m1.first_bounds[axis][0],
-                                m0.last_bounds[axis][1]
-                            )
+                        meta[
+                            0
+                        ].message = "overlap={0} and {1!r} dimension coordinate bounds values overlap ({2} < {3})".format(
+                            m.axis[axis]["ids"][dim_coord_index],
+                            overlap,
+                            m1.first_bounds[axis][0],
+                            m0.last_bounds[axis][1],
                         )
 
                         return
             # --- End: if
 
-#            else:
-#                for m0, m1 in zip(meta[:-1], meta[1:]):
-#                    m0_last_bounds  = m0.last_bounds[axis]
-#                    m1_first_bounds = m1.first_bounds[axis]
-#                    if (m1_first_bounds[0] <= m0_last_bounds[0] or
-#                        m1_first_bounds[1] <= m0_last_bounds[1]):
-#                        # Do not aggregate anything in this group
-#                        # because, even though overlapping has been
-#                        # allowed, the first cell from field1 overlaps
-#                        # in an unreasonable way with the last cell
-#                        # from field0.
-#                        meta[0].message = (
-#                            "{0!r} dimension coordinate bounds values "
-#                            "overlap by too much ({1} <= {2})".format(
-#                                m.axis[axis]['ids'][dim_coord_index],
-#                                m1_first_bounds[0], m0_last_bounds[0],
-#                                m1_first_bounds[1], m0_last_bounds[1]
-#                        )
-#                        return
-#            # --- End: if
+            #            else:
+            #                for m0, m1 in zip(meta[:-1], meta[1:]):
+            #                    m0_last_bounds  = m0.last_bounds[axis]
+            #                    m1_first_bounds = m1.first_bounds[axis]
+            #                    if (m1_first_bounds[0] <= m0_last_bounds[0] or
+            #                        m1_first_bounds[1] <= m0_last_bounds[1]):
+            #                        # Do not aggregate anything in this group
+            #                        # because, even though overlapping has been
+            #                        # allowed, the first cell from field1 overlaps
+            #                        # in an unreasonable way with the last cell
+            #                        # from field0.
+            #                        meta[0].message = (
+            #                            "{0!r} dimension coordinate bounds values "
+            #                            "overlap by too much ({1} <= {2})".format(
+            #                                m.axis[axis]['ids'][dim_coord_index],
+            #                                m1_first_bounds[0], m0_last_bounds[0],
+            #                                m1_first_bounds[1], m0_last_bounds[1]
+            #                        )
+            #                        return
+            #            # --- End: if
 
             if contiguous:
                 for m0, m1 in zip(meta[:-1], meta[1:]):
-                    if (m0.last_bounds[axis][1] < m1.first_bounds[axis][0]):
+                    if m0.last_bounds[axis][1] < m1.first_bounds[axis][0]:
                         # Do not aggregate anything in this group
                         # because contiguous coordinates have been
                         # specified and the first cell from field1 is
@@ -2745,10 +2958,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                             "contiguous={0} and {1!r} dimension "
                             "coordinate cells are not contiguous "
                             "({2} < {3})".format(
-                                m.axis[axis]['ids'][dim_coord_index],
+                                m.axis[axis]["ids"][dim_coord_index],
                                 contiguous,
                                 m0.last_bounds[axis][1],
-                                m1.first_bounds[axis][0])
+                                m1.first_bounds[axis][0],
+                            )
                         )
                         return
             # --- End: if
@@ -2760,16 +2974,18 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
         # but it does have at least one 1-d auxiliary coordinate.
         # ------------------------------------------------------------
         # Check for duplicate auxiliary coordinate values
-        for i, identity in enumerate(meta[0].axis[axis]['ids']):
+        for i, identity in enumerate(meta[0].axis[axis]["ids"]):
             set_of_1d_aux_coord_values = set()
             number_of_1d_aux_coord_values = 0
             for m in meta:
-                aux = m.axis[axis]['keys'][i]
+                aux = m.axis[axis]["keys"][i]
                 array = m.field.item(aux).array
                 set_of_1d_aux_coord_values.update(array)
                 number_of_1d_aux_coord_values += array.size
-                if (len(set_of_1d_aux_coord_values) !=
-                        number_of_1d_aux_coord_values):
+                if (
+                    len(set_of_1d_aux_coord_values)
+                    != number_of_1d_aux_coord_values
+                ):
                     meta[0].message = (
                         "no {0!r} dimension coordinates and {0!r} "
                         "auxiliary coordinates have duplicate "
@@ -2787,12 +3003,10 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
 
 @_manage_log_level_via_verbosity
-def _aggregate_2_fields(m0, m1,
-                        rtol=None, atol=None,
-                        verbose=None,
-                        concatenate=True,
-                        copy=True):
-    '''Aggregate two fields, returning the _Meta object of the aggregated field.
+def _aggregate_2_fields(
+    m0, m1, rtol=None, atol=None, verbose=None, concatenate=True, copy=True
+):
+    """Aggregate two fields, returning the _Meta object of the aggregated field.
 
     :Parameters:
 
@@ -2813,7 +3027,7 @@ def _aggregate_2_fields(m0, m1,
 
         out: `_Meta` or `bool`
 
-    '''
+    """
     a_identity = m0.a_identity
 
     field0 = m0.field
@@ -2854,8 +3068,7 @@ def _aggregate_2_fields(m0, m1,
     spanning_variables = [
         (key0, key1, field0.constructs[key0], field1.constructs[key1])
         for key0, key1 in zip(
-            m0.axis[a_identity]['keys'],
-            m1.axis[a_identity]['keys']
+            m0.axis[a_identity]["keys"], m1.axis[a_identity]["keys"]
         )
     ]
 
@@ -2873,39 +3086,46 @@ def _aggregate_2_fields(m0, m1,
     for identity in m0.nd_aux:
         aux0 = m0.nd_aux[identity]
         aux1 = m1.nd_aux[identity]
-        if a_identity in aux0['axes']:
-            key0 = aux0['key']
-            key1 = aux1['key']
-            spanning_variables.append((key0, key1,
-                                       field0.constructs[key0],
-                                       field1.constructs[key1]))
+        if a_identity in aux0["axes"]:
+            key0 = aux0["key"]
+            key1 = aux1["key"]
+            spanning_variables.append(
+                (key0, key1, field0.constructs[key0], field1.constructs[key1])
+            )
 
-            hash_value0 = aux0['hash_value']
-            hash_value1 = aux1['hash_value']
+            hash_value0 = aux0["hash_value"]
+            hash_value1 = aux1["hash_value"]
 
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
-            aux0['hash_value'] = hash_value0 + hash_value1
+            #            try:
+            #                hash_value0.append(hash_value1)
+            #            except AttributeError:
+            aux0["hash_value"] = hash_value0 + hash_value1
     # --- End: for
 
     # Cell measures
     for units in m0.msr:
-        hash_values0 = m0.msr[units]['hash_values']
-        hash_values1 = m1.msr[units]['hash_values']
-        for i, (axes, key0, key1) in enumerate(zip(
-            m0.msr[units]['axes'],
-            m0.msr[units]['keys'],
-            m1.msr[units]['keys']
-        )):
+        hash_values0 = m0.msr[units]["hash_values"]
+        hash_values1 = m1.msr[units]["hash_values"]
+        for i, (axes, key0, key1) in enumerate(
+            zip(
+                m0.msr[units]["axes"],
+                m0.msr[units]["keys"],
+                m1.msr[units]["keys"],
+            )
+        ):
             if a_identity in axes:
-                spanning_variables.append((key0, key1,
-                                           field0.constructs[key0],
-                                           field1.constructs[key1]))
+                spanning_variables.append(
+                    (
+                        key0,
+                        key1,
+                        field0.constructs[key0],
+                        field1.constructs[key1],
+                    )
+                )
 
-#                try:
-#                    hash_values0[i].append(hash_values1[i])
-#                except AttributeError:
+                #                try:
+                #                    hash_values0[i].append(hash_values1[i])
+                #                except AttributeError:
                 hash_values0[i] = hash_values0[i] + hash_values1[i]
     # --- End: for
 
@@ -2913,40 +3133,38 @@ def _aggregate_2_fields(m0, m1,
     for identity in m0.field_anc:
         anc0 = m0.field_anc[identity]
         anc1 = m1.field_anc[identity]
-        if a_identity in anc0['axes']:
-            key0 = anc0['key']
-            key1 = anc1['key']
-            spanning_variables.append((key0, key1,
-                                       field0.constructs[key0],
-                                       field1.constructs[key1]))
+        if a_identity in anc0["axes"]:
+            key0 = anc0["key"]
+            key1 = anc1["key"]
+            spanning_variables.append(
+                (key0, key1, field0.constructs[key0], field1.constructs[key1])
+            )
 
-            hash_value0 = anc0['hash_value']
-            hash_value1 = anc1['hash_value']
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
-            anc0['hash_value'] = hash_value0 + hash_value1
+            hash_value0 = anc0["hash_value"]
+            hash_value1 = anc1["hash_value"]
+            #            try:
+            #                hash_value0.append(hash_value1)
+            #            except AttributeError:
+            anc0["hash_value"] = hash_value0 + hash_value1
     # --- End: for
 
     # Domain ancillaries
     for identity in m0.domain_anc:
         anc0 = m0.domain_anc[identity]
         anc1 = m1.domain_anc[identity]
-        if a_identity in anc0['axes']:
-            key0 = anc0['key']
-            key1 = anc1['key']
-            spanning_variables.append((
-                key0, key1,
-                field0.constructs[key0],
-                field1.constructs[key1]
-            ))
+        if a_identity in anc0["axes"]:
+            key0 = anc0["key"]
+            key1 = anc1["key"]
+            spanning_variables.append(
+                (key0, key1, field0.constructs[key0], field1.constructs[key1])
+            )
 
-            hash_value0 = anc0['hash_value']
-            hash_value1 = anc1['hash_value']
-#            try:
-#                hash_value0.append(hash_value1)
-#            except AttributeError:
-            anc0['hash_value'] = hash_value0 + hash_value1
+            hash_value0 = anc0["hash_value"]
+            hash_value1 = anc1["hash_value"]
+            #            try:
+            #                hash_value0.append(hash_value1)
+            #            except AttributeError:
+            anc0["hash_value"] = hash_value0 + hash_value1
     # --- End: for
 
     # ----------------------------------------------------------------
@@ -2959,8 +3177,10 @@ def _aggregate_2_fields(m0, m1,
         construct_axes1 = field1.get_data_axes(key1)
 
         # Ensure that the axis orders are the same in both constructs
-        iaxes = [construct_axes1.index(dim0_name_map[axis0]) for axis0 in
-                 construct_axes0]
+        iaxes = [
+            construct_axes1.index(dim0_name_map[axis0])
+            for axis0 in construct_axes0
+        ]
         construct1.transpose(iaxes, inplace=True)
 
         # Find the position of the concatenating axis
@@ -2971,15 +3191,17 @@ def _aggregate_2_fields(m0, m1,
             data = Data.concatenate(
                 (construct0.get_data(), construct1.get_data()),
                 axis,
-                _preserve=False
+                _preserve=False,
             )
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
                 data = Data.concatenate(
-                    (construct0.bounds.get_data(),
-                     construct1.bounds.get_data()),
+                    (
+                        construct0.bounds.get_data(),
+                        construct1.bounds.get_data(),
+                    ),
                     axis,
-                    _preserve=False
+                    _preserve=False,
                 )
                 construct0.bounds.set_data(data, copy=False)
         else:
@@ -2987,15 +3209,17 @@ def _aggregate_2_fields(m0, m1,
             data = Data.concatenate(
                 (construct1.get_data(), construct0.get_data()),
                 axis,
-                _preserve=False
+                _preserve=False,
             )
             construct0.set_data(data)
             if construct0.has_bounds():
                 data = Data.concatenate(
-                    (construct1.bounds.get_data(),
-                     construct0.bounds.get_data()),
+                    (
+                        construct1.bounds.get_data(),
+                        construct0.bounds.get_data(),
+                    ),
                     axis,
-                    _preserve=False
+                    _preserve=False,
                 )
                 construct0.bounds.set_data(data)
     # --- End: for
@@ -3044,16 +3268,12 @@ def _aggregate_2_fields(m0, m1,
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (field0.get_data(), field1.get_data()),
-                axis,
-                _preserve=False
+                (field0.get_data(), field1.get_data()), axis, _preserve=False
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (field1.get_data(), field0.get_data()),
-                axis,
-                _preserve=False
+                (field1.get_data(), field0.get_data()), axis, _preserve=False
             )
 
         # Update the size of the aggregating axis in field0
@@ -3065,28 +3285,29 @@ def _aggregate_2_fields(m0, m1,
     # --- End: if
 
     # Make sure that field0 has a standard_name, if possible.
-    if getattr(field0, 'id', None) is not None:
-        standard_name = field1.get_property('standard_name', None)
+    if getattr(field0, "id", None) is not None:
+        standard_name = field1.get_property("standard_name", None)
         if standard_name is not None:
-            field0.set_property('standard_name', standard_name)
+            field0.set_property("standard_name", standard_name)
             del field0.id
     # --- End: if
 
     # -----------------------------------------------------------------
     # Update the properties in field0
     # -----------------------------------------------------------------
-    for prop in set(
-            field0.properties()).difference(field0._special_properties):
+    for prop in set(field0.properties()).difference(
+        field0._special_properties
+    ):
         value0 = field0.get_property(prop, None)
         value1 = field1.get_property(prop, None)
 
-        if prop in ('valid_min', 'valid_max', 'valid_range'):
+        if prop in ("valid_min", "valid_max", "valid_range"):
             if not m0.respect_valid:
                 field0.del_property(prop, None)
 
             continue
 
-        if prop in ('_FillValue', 'missing_value'):
+        if prop in ("_FillValue", "missing_value"):
             continue
 
         # Still here?
@@ -3097,37 +3318,38 @@ def _aggregate_2_fields(m0, m1,
             if value1 is not None:
                 if value0 is not None:
                     field0.set_property(
-                        prop, '%s :AGGREGATED: %s' % (value0, value1))
+                        prop, "%s :AGGREGATED: %s" % (value0, value1)
+                    )
                 else:
-                    field0.set_property(prop, ' :AGGREGATED: %s' % value1)
+                    field0.set_property(prop, " :AGGREGATED: %s" % value1)
         else:
             if value0 is not None:
                 field0.del_property(prop)
     # --- End: for
 
-#    # ----------------------------------------------------------------
-#    # Update the attributes in field0
-#    # ----------------------------------------------------------------
-#    for attr in m0.attributes | m1.attributes: ppp
-#        value0 = getattr(field0, attr, None)
-#        value1 = getattr(field1, attr, None)
-#        if equals(value0, value1):
-#            continue
-#
-#        if concatenate:
-#            if value1 is not None:
-#                if value0 is not None:
-#                    setattr(
-#                        field0, attr,
-#                        '%s :AGGREGATED: %s' % (value0, value1)
-#                    )
-#                else:
-#                    setattr(field0, attr, ' :AGGREGATED: %s' % value1)
-#        else:
-#            m0.attributes.discard(attr)
-#            if value0 is not None:
-#                delattr(field0, attr)
-#    # --- End: for
+    #    # ----------------------------------------------------------------
+    #    # Update the attributes in field0
+    #    # ----------------------------------------------------------------
+    #    for attr in m0.attributes | m1.attributes: ppp
+    #        value0 = getattr(field0, attr, None)
+    #        value1 = getattr(field1, attr, None)
+    #        if equals(value0, value1):
+    #            continue
+    #
+    #        if concatenate:
+    #            if value1 is not None:
+    #                if value0 is not None:
+    #                    setattr(
+    #                        field0, attr,
+    #                        '%s :AGGREGATED: %s' % (value0, value1)
+    #                    )
+    #                else:
+    #                    setattr(field0, attr, ' :AGGREGATED: %s' % value1)
+    #        else:
+    #            m0.attributes.discard(attr)
+    #            if value0 is not None:
+    #                delattr(field0, attr)
+    #    # --- End: for
 
     # Note that the field in this _Meta object has already been
     # aggregated
