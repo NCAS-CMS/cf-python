@@ -2164,7 +2164,7 @@ class PropertiesDataBounds(PropertiesData):
 
         ok = True
         for name, value0 in properties.items():
-            value1 = self_property.get(name)
+            value1 = self_properties.get(name)
             ok = self._matching_values(value0, value1, units=(name == "units"))
 
             if _or:

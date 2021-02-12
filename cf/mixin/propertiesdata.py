@@ -10,7 +10,6 @@ from ..cfdatetime import dt
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
 from ..functions import default_netCDF_fillvals
-from ..query import Query
 from ..timeduration import TimeDuration
 from ..units import Units
 
@@ -19,6 +18,7 @@ from ..data import Data
 from . import Properties
 
 from ..functions import (
+    _DEPRECATATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_ATTRIBUTE,
 )
@@ -1137,7 +1137,7 @@ class PropertiesData(Properties):
         if not units.isreftime:
             raise AttributeError(
                 "Can't set 'reference_datetime' for non reference date-time "
-                "units".format(self.__class__.__name__)
+                "units {}".format(self.__class__.__name__)
             )
 
         units = units.units.split(" since ")
@@ -4888,7 +4888,7 @@ class PropertiesData(Properties):
         """
         print(cf_inspect(self))  # pragma: no cover
 
-    def iscyclic(self, identity):
+    def iscyclic(self, axis):
         """Whether or a not a given axis is cyclic.
 
         .. versionadded:: 3.5.0
@@ -5525,7 +5525,7 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_ATTRIBUTE(self, "attributes")
 
     @property
-    def Data(self):
+    def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
         """Deprecated at version 3.0.0, use `data` attribute or `get_data`
         method instead.
 
@@ -5535,14 +5535,14 @@ class PropertiesData(Properties):
         )  # pragma: no cover
 
     @data.setter
-    def Data(self, value):
+    def Data(self, value):  # noqa: F811 (see link against same-name setter)
         """Deprecated at version 3.0.0, use `set_data` method instead."""
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'set_data' method instead."
         )  # pragma: no cover
 
     @data.deleter
-    def Data(self):
+    def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
         """Deprecated at version 3.0.0, use `del_data` method instead."""
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'del_data' method instead."

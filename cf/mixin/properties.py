@@ -7,7 +7,12 @@ from ..units import Units
 
 from ..data import Data
 
-from ..functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR
+from ..functions import (
+    _DEPRECATION_ERROR_DICT,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    _DEPRECATION_ERROR,
+)
 
 from ..mixin_container import Container
 
