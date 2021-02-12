@@ -2678,11 +2678,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     m1.first_values[axis][dim_coord_index1]):
                 # Found overlap
                 meta[0].message = (
-                    "{0!r} dimension coordinate values overlap "
-                    "({1} >= {2})".format(
+                    "{0!r} dimension coordinate values overlap ({1} >= {2})".format(
                         m.axis[axis]['ids'][dim_coord_index],
                         m0.last_values[axis][dim_coord_index0],
-                        m1.first_values[axis][dim_coord_index1])
+                        m1.first_values[axis][dim_coord_index1]
+                    )
                 )
 
                 return False
@@ -2701,12 +2701,12 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
                         meta[0].message = (
-                            "overlap={0} and {1!r} dimension coordinate "
-                            "bounds values overlap ({2} < {3})".format(
+                            "overlap={0} and {1!r} dimension coordinate bounds values overlap ({2} < {3})".format(
                                 m.axis[axis]['ids'][dim_coord_index],
                                 overlap,
                                 m1.first_bounds[axis][0],
-                                m0.last_bounds[axis][1])
+                                m0.last_bounds[axis][1]
+                            )
                         )
 
                         return
