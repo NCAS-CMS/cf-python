@@ -4,10 +4,9 @@ import logging
 
 import cfdm
 
-from .mixin_container import Container
-
 from .functions import (
     _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_DICT,

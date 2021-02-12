@@ -12,11 +12,6 @@ import ctypes.util
 import netCDF4
 import warnings
 
-from functools import partial, wraps, update_wrapper
-
-import psutil
-
-import cftime
 
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
@@ -39,6 +34,7 @@ from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA as _numpy_ma_isMA
 from numpy.ma import masked as _numpy_ma_masked
+from numpy.ma import take as _numpy_ma_take
 
 from collections.abc import Iterable  # just 'from collections' in Python <3.4
 from hashlib import md5 as hashlib_md5
@@ -52,11 +48,9 @@ from os.path import dirname as _os_path_dirname
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
 from psutil import virtual_memory, Process
-from sys import executable as _sys_executable
 import urllib.parse
 
 import cfdm
-import cfunits
 
 from . import __version__, __file__
 
@@ -69,7 +63,6 @@ from .constants import (
 
 from .docstring import _docstring_substitution_definitions
 
-from . import mpi_on
 from . import mpi_size
 
 

@@ -17,7 +17,6 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _manage_log_level_via_verbose_attr,
     _reset_log_emergence_level,
-    _deprecated_kwarg_check,
 )
 
 from .functions import (
@@ -265,9 +264,6 @@ class _Meta:
         elif not self.has_data:
             self.message = "no data array"
             return
-
-        constructs = f.constructs
-        construct = f.construct
 
         # ------------------------------------------------------------
         # Promote selected properties to 1-d, size 1 auxiliary
