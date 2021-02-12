@@ -10,7 +10,8 @@ import cf
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all Python '.py' files in the 'cf' directory."""
+    """Test PEP8 compliance on all Python '.py' files in the 'cf'
+    directory."""
 
     def setUp(self):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))

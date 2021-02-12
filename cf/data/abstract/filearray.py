@@ -7,7 +7,7 @@ class FileArray(Array):
     """A sub-array stored in a file.
 
     .. note:: Subclasses must define the following methods:
-              `!__getitem__`, `!__str__`, `!close` and `!open`.
+    `!__getitem__`, `!__str__`, `!close` and `!open`.
 
     """
 

@@ -136,6 +136,7 @@ class FilledArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("ndim")
 
@@ -165,6 +166,7 @@ class FilledArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("shape")
 

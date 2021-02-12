@@ -388,7 +388,7 @@ class TimeDuration:
         return out
 
     def __array__(self, *dtype):
-        """TODO"""
+        """TODO."""
         return self.duration.__array__(*dtype)
 
     def __data__(self):
@@ -396,11 +396,11 @@ class TimeDuration:
         return self.duration
 
     def __deepcopy__(self, memo):
-        """Used if copy.deepcopy is called"""
+        """Used if copy.deepcopy is called."""
         return self.copy()
 
     def __neg__(self):
-        """x.__neg__() <==> -x
+        """x.__neg__() <==> -x.
 
         .. versionadded:: 1.4
 
@@ -699,7 +699,8 @@ class TimeDuration:
         return NotImplemented
 
     def __radd__(self, other):
-        """The binary arithmetic operation ``+`` with reflected operands
+        """The binary arithmetic operation ``+`` with reflected
+        operands.
 
         x.__radd__(y) <==> y+x
 
@@ -707,7 +708,8 @@ class TimeDuration:
         return self + other
 
     def __rmul__(self, other):
-        """The binary arithmetic operation ``*`` with reflected operands
+        """The binary arithmetic operation ``*`` with reflected
+        operands.
 
         x.__rmul__(y) <==> y*x
 
@@ -715,7 +717,8 @@ class TimeDuration:
         return self * other
 
     def __rsub__(self, other):
-        """The binary arithmetic operation ``-`` with reflected operands
+        """The binary arithmetic operation ``-`` with reflected
+        operands.
 
         x.__rsub__(y) <==> y - x
 
@@ -749,7 +752,8 @@ class TimeDuration:
         return NotImplemented
 
     def __rmod__(self, other):
-        """The binary arithmetic operation ``%`` with reflected operands
+        """The binary arithmetic operation ``%`` with reflected
+        operands.
 
         x.__rmod__(y) <==> y % x
 
@@ -763,7 +767,7 @@ class TimeDuration:
     # Private methods
     # ----------------------------------------------------------------
     def _binary_operation(self, other, method, inplace=False):
-        """TODO"""
+        """TODO."""
         if inplace:
             new = self
         else:
@@ -811,7 +815,7 @@ class TimeDuration:
         return new
 
     def _data_binary_operation(self, other, method, inplace=False):
-        """TODO"""
+        """TODO."""
         if inplace:
             new = self
         else:
@@ -820,7 +824,7 @@ class TimeDuration:
         return getattr(self.duration, method)(other)
 
     def _datetime_arithmetic(self, other, op):
-        """TODO
+        """TODO.
 
         .. versionadded:: 1.4
 
@@ -831,7 +835,6 @@ class TimeDuration:
             op: `str`
 
         :Returns:
-
 
         """
 
@@ -899,7 +902,7 @@ class TimeDuration:
             return _dHMS(duration, other, calendar, op)
 
     def _data_arithmetic(self, other, method, inplace=False):
-        """TODO"""
+        """TODO."""
         try:
             dt = other.datetime_array
         except ValueError:
@@ -918,7 +921,7 @@ class TimeDuration:
             return Data(dt, units=other.Units)
 
     def _offset(self, dt):
-        """TODO
+        """TODO.
 
         .. versionadded:: 1.4
 
@@ -944,7 +947,8 @@ class TimeDuration:
     # ----------------------------------------------------------------
     @property
     def iso(self):
-        """Return the time duration as an ISO 8601-like time duration string.
+        """Return the time duration as an ISO 8601-like time duration
+        string.
 
         .. versionadded:: 1.0
 
@@ -1065,8 +1069,8 @@ class TimeDuration:
     def days_in_month(
         cls, year, month, calendar=None, leap_month=2, month_lengths=None
     ):
-        """The number of days in a specific month in a specific year in a
-        specific calendar.
+        """The number of days in a specific month in a specific year in
+        a specific calendar.
 
         .. versionadded:: 1.4
 
@@ -1595,8 +1599,8 @@ class TimeDuration:
             return (dt1, dt0)
 
     def is_day_factor(self):
-        """Return True if an integer multiple of the time duration is equal
-        to one day.
+        """Return True if an integer multiple of the time duration is
+        equal to one day.
 
         .. versionadded:: 1.0
 

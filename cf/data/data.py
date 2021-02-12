@@ -1765,8 +1765,8 @@ class Data(Container, cfdm.Data):
         """
 
         def _mirror_slice(index, size):
-            """Return a slice object which creates the reverse of the input
-            slice.
+            """Return a slice object which creates the reverse of the
+            input slice.
 
             The step of the input slice must have a step of `.
 
@@ -2083,7 +2083,8 @@ class Data(Container, cfdm.Data):
         # --- End: if
 
     def _share_lock_files(self, parallelise):
-        """Share the lock files created by each rank for each partition."""
+        """Share the lock files created by each rank for each
+        partition."""
         if parallelise:
             # Only gather the lock files if the subarrays have been
             # gathered between procesors, otherwise this will result
@@ -2100,7 +2101,8 @@ class Data(Container, cfdm.Data):
 
     @classmethod
     def _share_partitions(cls, processed_partitions, parallelise):
-        """Share the partitions processed on each rank with every other rank."""
+        """Share the partitions processed on each rank with every other
+        rank."""
         # Share the partitions processed on each rank with every other
         # rank. If parallelise is False then there is nothing to be done
         if parallelise:
@@ -3491,8 +3493,8 @@ class Data(Container, cfdm.Data):
         origin=0,
         inplace=False,
     ):
-        """Return the data convolved along the given axis with the specified
-        filter.
+        """Return the data convolved along the given axis with the
+        specified filter.
 
         The magnitude of the integral of the filter (i.e. the sum of the
         weights defined by the *weights* parameter) affects the convolved
@@ -4099,8 +4101,8 @@ class Data(Container, cfdm.Data):
 
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
-        """Change the internal representation of data array elements from
-        numeric reference times to datetime-like objects.
+        """Change the internal representation of data array elements
+        from numeric reference times to datetime-like objects.
 
         If the calendar has not been set then the default CF calendar will
         be used and the units' and the `calendar` attribute will be
@@ -4159,13 +4161,14 @@ class Data(Container, cfdm.Data):
         return d
 
     def _isdatetime(self):
-        """True if the internal representation is a datetime-like object."""
+        """True if the internal representation is a datetime-like
+        object."""
         return self.dtype.kind == "O" and self.Units.isreftime
 
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
-        """Change the internal representation of data array elements from
-        datetime-like objects to numeric reference times.
+        """Change the internal representation of data array elements
+        from datetime-like objects to numeric reference times.
 
         If the calendar has not been set then the default CF calendar will
         be used and the units' and the `calendar` attribute will be
@@ -4617,8 +4620,8 @@ class Data(Container, cfdm.Data):
         )
 
     def _binary_operation(self, other, method):
-        """Implement binary arithmetic and comparison operations with the
-        numpy broadcasting rules.
+        """Implement binary arithmetic and comparison operations with
+        the numpy broadcasting rules.
 
         It is called by the binary arithmetic and comparison
         methods, such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
@@ -5644,7 +5647,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__iadd__")
 
     def __radd__(self, other):
-        """The binary arithmetic operation ``+`` with reflected operands
+        """The binary arithmetic operation ``+`` with reflected
+        operands.
 
         x.__radd__(y) <==> y+x
 
@@ -5668,7 +5672,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__isub__")
 
     def __rsub__(self, other):
-        """The binary arithmetic operation ``-`` with reflected operands
+        """The binary arithmetic operation ``-`` with reflected
+        operands.
 
         x.__rsub__(y) <==> y-x
 
@@ -5692,7 +5697,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__imul__")
 
     def __rmul__(self, other):
-        """The binary arithmetic operation ``*`` with reflected operands
+        """The binary arithmetic operation ``*`` with reflected
+        operands.
 
         x.__rmul__(y) <==> y*x
 
@@ -5716,7 +5722,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__idiv__")
 
     def __rdiv__(self, other):
-        """The binary arithmetic operation ``/`` with reflected operands
+        """The binary arithmetic operation ``/`` with reflected
+        operands.
 
         x.__rdiv__(y) <==> y/x
 
@@ -5740,7 +5747,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__ifloordiv__")
 
     def __rfloordiv__(self, other):
-        """The binary arithmetic operation ``//`` with reflected operands
+        """The binary arithmetic operation ``//`` with reflected
+        operands.
 
         x.__rfloordiv__(y) <==> y//x
 
@@ -5765,7 +5773,7 @@ class Data(Container, cfdm.Data):
 
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
-        reflected operands
+        reflected operands.
 
         x.__rtruediv__(y) <==> y/x
 
@@ -5804,7 +5812,7 @@ class Data(Container, cfdm.Data):
 
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
-        reflected operands
+        reflected operands.
 
         x.__rpow__(y) <==> y**x
 
@@ -5835,7 +5843,8 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__imod__")
 
     def __rmod__(self, other):
-        """The binary arithmetic operation ``%`` with reflected operands
+        """The binary arithmetic operation ``%`` with reflected
+        operands.
 
         x.__rmod__(y) <==> y % x
 
@@ -5907,7 +5916,7 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__iand__")
 
     def __rand__(self, other):
-        """The binary bitwise operation ``&`` with reflected operands
+        """The binary bitwise operation ``&`` with reflected operands.
 
         x.__rand__(y) <==> y&x
 
@@ -5931,7 +5940,7 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__ior__")
 
     def __ror__(self, other):
-        """The binary bitwise operation ``|`` with reflected operands
+        """The binary bitwise operation ``|`` with reflected operands.
 
         x.__ror__(y) <==> y|x
 
@@ -5955,7 +5964,7 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(other, "__ixor__")
 
     def __rxor__(self, other):
-        """The binary bitwise operation ``^`` with reflected operands
+        """The binary bitwise operation ``^`` with reflected operands.
 
         x.__rxor__(y) <==> y^x
 
@@ -5979,7 +5988,7 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(y, "__ilshift__")
 
     def __rlshift__(self, y):
-        """The binary bitwise operation ``<<`` with reflected operands
+        """The binary bitwise operation ``<<`` with reflected operands.
 
         x.__rlshift__(y) <==> y<<x
 
@@ -6003,7 +6012,7 @@ class Data(Container, cfdm.Data):
         return self._binary_operation(y, "__irshift__")
 
     def __rrshift__(self, y):
-        """The binary bitwise operation ``>>`` with reflected operands
+        """The binary bitwise operation ``>>`` with reflected operands.
 
         x.__rrshift__(y) <==> y>>x
 
@@ -6043,7 +6052,8 @@ class Data(Container, cfdm.Data):
         return self._unary_operation("__pos__")
 
     def _all_axis_names(self):
-        """Return a set of all the dimension names in use by the data array.
+        """Return a set of all the dimension names in use by the data
+        array.
 
         Note that the output set includes dimensions of individual
         partitions which are not dimensions of the master data array.
@@ -6073,9 +6083,9 @@ class Data(Container, cfdm.Data):
     def _change_axis_names(self, axis_map):
         """Change the axis names.
 
-        The axis names are arbitrary, so mapping them to another arbitrary
-        collection does not change the data array values, units, nor axis
-        order.
+        The axis names are arbitrary, so mapping them to another
+        arbitrary collection does not change the data array values,
+        units, nor axis order.
 
         """
         # Find any axis names which are not mapped. If there are any,
@@ -6539,9 +6549,7 @@ class Data(Container, cfdm.Data):
         _parallelise_collapse_subspace=True,
         **kwargs
     ):
-        """
-
-        Collapse a subspace of a data array.
+        """Collapse a subspace of a data array.
 
         If set, *weights* and *kwargs* are passed to the function call. If
         there is a *weights* keyword argument then this should either evaluate
@@ -6578,6 +6586,7 @@ class Data(Container, cfdm.Data):
             `list`
 
         **Examples:**
+
         """
 
         ndim = self._ndim
@@ -7216,7 +7225,7 @@ class Data(Container, cfdm.Data):
 
     @property
     def _cyclic(self):
-        """Storage for axis cyclicity"""
+        """Storage for axis cyclicity."""
         return self._custom["_cyclic"]
 
     @_cyclic.setter
@@ -7242,7 +7251,11 @@ class Data(Container, cfdm.Data):
 
     @property
     def _HDF_chunks(self):
-        """The HDF chunksizes. DO NOT CHANGE IN PLACE."""
+        """The HDF chunksizes.
+
+        DO NOT CHANGE IN PLACE.
+
+        """
         return self._custom["_HDF_chunks"]
 
     @_HDF_chunks.setter
@@ -7268,7 +7281,7 @@ class Data(Container, cfdm.Data):
 
     @property
     def _ndim(self):
-        """Storage for the number of dimensions"""
+        """Storage for the number of dimensions."""
         return self._custom["_ndim"]
 
     @_ndim.setter
@@ -8452,7 +8465,8 @@ class Data(Container, cfdm.Data):
     # `arctan2`, AT2 seealso
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
-        """Take the trigonometric inverse tangent of the data element-wise.
+        """Take the trigonometric inverse tangent of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of radians.
 
@@ -8685,7 +8699,8 @@ class Data(Container, cfdm.Data):
 
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
-        """Take the trigonometric inverse cosine of the data element-wise.
+        """Take the trigonometric inverse cosine of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of radians.
 
@@ -8863,8 +8878,8 @@ class Data(Container, cfdm.Data):
         return True
 
     def allclose(self, y, rtol=None, atol=None):
-        """Returns True if two broadcastable arrays have equal values, False
-        otherwise.
+        """Returns True if two broadcastable arrays have equal values,
+        False otherwise.
 
         Two real numbers ``x`` and ``y`` are considered equal if
         ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -9165,10 +9180,10 @@ class Data(Container, cfdm.Data):
 
     @classmethod
     def concatenate_data(cls, data_list, axis):
-        """Concatenates a list of Data objects into a single Data object along
-        the specified access (see cf.Data.concatenate for details). In the
-        case that the list contains only one element, that element is
-        simply returned.
+        """Concatenates a list of Data objects into a single Data object
+        along the specified access (see cf.Data.concatenate for
+        details). In the case that the list contains only one element,
+        that element is simply returned.
 
         :Parameters:
 
@@ -9196,10 +9211,10 @@ class Data(Container, cfdm.Data):
 
     @classmethod
     def reconstruct_sectioned_data(cls, sections, cyclic=(), hardmask=None):
-        """Expects a dictionary of Data objects with ordering information as
-        keys, as output by the section method when called with a Data
-        object. Returns a reconstructed cf.Data object with the sections
-        in the original order.
+        """Expects a dictionary of Data objects with ordering
+        information as keys, as output by the section method when called
+        with a Data object. Returns a reconstructed cf.Data object with
+        the sections in the original order.
 
         :Parameters:
 
@@ -10468,6 +10483,7 @@ class Data(Container, cfdm.Data):
         [0 4 4]
         >>> print(d.count((0, 1))
         8
+
         """
         config = self.partition_configuration(readonly=True)
 
@@ -10570,7 +10586,7 @@ class Data(Container, cfdm.Data):
         """Provides datetime components of the data array elements.
 
         .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
-                     `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
+        `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
 
         """
 
@@ -10849,7 +10865,8 @@ class Data(Container, cfdm.Data):
 
     @_display_or_return
     def dump(self, display=True, prefix=None):
-        """Return a string containing a full description of the instance.
+        """Return a string containing a full description of the
+        instance.
 
         :Parameters:
 
@@ -11671,7 +11688,7 @@ class Data(Container, cfdm.Data):
                     yield cf_masked
 
     def flatten(self, axes=None, inplace=False):
-        """Flatten axes of the data
+        """Flatten axes of the data.
 
         Any subset of the axes may be flattened.
 
@@ -12077,8 +12094,8 @@ class Data(Container, cfdm.Data):
                 partition.close()
 
     def to_memory(self, regardless=False, parallelise=False):
-        """Store each partition's data in memory in place if the
-        master array is smaller than the chunk size.
+        """Store each partition's data in memory in place if the master
+        array is smaller than the chunk size.
 
         There is no change to partitions with data that are already in memory.
 
@@ -12144,7 +12161,8 @@ class Data(Container, cfdm.Data):
         return True
 
     def partition_boundaries(self):
-        """Return the partition boundaries for each partition matrix dimension.
+        """Return the partition boundaries for each partition matrix
+        dimension.
 
         :Returns:
 
@@ -12180,7 +12198,8 @@ class Data(Container, cfdm.Data):
         return config
 
     def datum(self, *index):
-        """Return an element of the data array as a standard Python scalar.
+        """Return an element of the data array as a standard Python
+        scalar.
 
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
@@ -12398,8 +12417,8 @@ class Data(Container, cfdm.Data):
 
     @classmethod
     def masked_all(cls, shape, dtype=None, units=None, chunk=True):
-        """Return a new data array of given shape and type with all elements
-        masked.
+        """Return a new data array of given shape and type with all
+        elements masked.
 
         .. seealso:: `empty`, `ones`, `zeros`
 
@@ -12445,8 +12464,8 @@ class Data(Container, cfdm.Data):
         _preserve_partitions=False,
         i=False,
     ):
-        """Collapse axes with the unweighted average of their maximum and
-        minimum values.
+        """Collapse axes with the unweighted average of their maximum
+        and minimum values.
 
         Missing data array elements are omitted from the calculation.
 
@@ -12621,8 +12640,8 @@ class Data(Container, cfdm.Data):
         print(cf_inspect(self))  # pragma: no cover
 
     def isclose(self, y, rtol=None, atol=None):
-        """Return where data are element-wise equal to other, broadcastable
-        data.
+        """Return where data are element-wise equal to other,
+        broadcastable data.
 
         {{equals tolerance}}
 
@@ -12805,9 +12824,8 @@ class Data(Container, cfdm.Data):
 
     @_deprecated_kwarg_check("i")
     def round(self, decimals=0, inplace=False, i=False):
-        """Evenly round elements of the data array to the given number of
-        decimals.
-
+        """Evenly round elements of the data array to the given number
+        of decimals.
 
         Values exactly halfway between rounded decimal values are rounded
         to the nearest even value. Thus 1.5 and 2.5 round to 2.0, -0.5 and
@@ -13113,16 +13131,19 @@ class Data(Container, cfdm.Data):
         return d
 
     def save_to_disk(self, itemsize=None):
-        """cf.Data.save_to_disk is dead. Use not cf.Data.fits_in_memory
-        instead."""
+        """cf.Data.save_to_disk is dead.
+
+        Use not cf.Data.fits_in_memory instead.
+
+        """
         raise NotImplementedError(
             "cf.Data.save_to_disk is dead. Use not "
             "cf.Data.fits_in_memory instead."
         )
 
     def fits_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be retained in
-        memory.
+        """Return True if the master array is small enough to be
+        retained in memory.
 
         :Parameters:
 
@@ -13146,8 +13167,8 @@ class Data(Container, cfdm.Data):
         return self._size * (itemsize + 1) <= free_memory() - cf_fm_threshold()
 
     def fits_in_one_chunk_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be retained in
-        memory.
+        """Return True if the master array is small enough to be
+        retained in memory.
 
         :Parameters:
 
@@ -13307,8 +13328,8 @@ class Data(Container, cfdm.Data):
         # --- End: def
 
         def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
-            """Check that the data1 is broadcastable to data0 and
-            return data1, as a python scalar if possible.
+            """Check that the data1 is broadcastable to data0 and return
+            data1, as a python scalar if possible.
 
             .. note:: The input lists are updated inplace.
 
@@ -14329,8 +14350,8 @@ class Data(Container, cfdm.Data):
         calendar=None,
         chunk=True,
     ):
-        """Returns a new data array of given shape and type, filled with the
-        given value.
+        """Returns a new data array of given shape and type, filled with
+        the given value.
 
         .. seealso:: `empty`, `ones`, `zeros`
 
@@ -14373,14 +14394,16 @@ class Data(Container, cfdm.Data):
 
     @classmethod
     def ones(cls, shape, dtype=None, units=None, calendar=None, chunk=True):
-        """Returns a new array filled with ones of set shape and type."""
+        """Returns a new array filled with ones of set shape and
+        type."""
         return cls.full(
             shape, 1, dtype=dtype, units=units, calendar=calendar, chunk=chunk
         )
 
     @classmethod
     def zeros(cls, shape, dtype=None, units=None, calendar=None, chunk=True):
-        """Returns a new array filled with zeros of set shape and type."""
+        """Returns a new array filled with zeros of set shape and
+        type."""
         return cls.full(
             shape, 0, dtype=dtype, units=units, calendar=calendar, chunk=chunk
         )
@@ -14508,8 +14531,8 @@ class Data(Container, cfdm.Data):
         _preserve_partitions=False,
         i=False,
     ):
-        """Collapse axes with the absolute difference between their maximum
-        and minimum values.
+        """Collapse axes with the absolute difference between their
+        maximum and minimum values.
 
         Missing data array elements are omitted from the calculation.
 
@@ -15076,13 +15099,13 @@ class Data(Container, cfdm.Data):
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
-        """Return a dictionary of Data objects, which are the m dimensional
-        sections of this n dimensional Data object, where m <= n. The keys
-        of the dictionary are the indices of the sections in the original
-        Data object. The m dimensions that are not sliced are marked with
-        None as a placeholder making it possible to reconstruct the
-        original data object. The corresponding values are the resulting
-        sections of type `Data`.
+        """Return a dictionary of Data objects, which are the m
+        dimensional sections of this n dimensional Data object, where m
+        <= n. The keys of the dictionary are the indices of the sections
+        in the original Data object. The m dimensions that are not
+        sliced are marked with None as a placeholder making it possible
+        to reconstruct the original data object. The corresponding
+        values are the resulting sections of type `Data`.
 
         :Parameters:
 
@@ -15234,7 +15257,8 @@ class Data(Container, cfdm.Data):
         _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -15244,13 +15268,15 @@ class Data(Container, cfdm.Data):
 
     @property
     def unsafe_array(self):
-        """Deprecated at version 3.0.0, use `array` attribute instead."""
+        """Deprecated at version 3.0.0, use `array` attribute
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "unsafe_array", "Use 'array' attribute instead."
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        """Deprecated at version 3.0.0, use method `insert_dimension` instead."""
+        """Deprecated at version 3.0.0, use method `insert_dimension`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "expand_dims",
@@ -15449,14 +15475,14 @@ def _broadcast(a, shape):
 
 
 class AuxiliaryMask:
-    """TODO"""
+    """TODO."""
 
     def __init__(self):
-        """TODO"""
+        """TODO."""
         self._mask = []
 
     def __getitem__(self, indices):
-        """TODO"""
+        """TODO."""
         new = type(self)()
 
         for mask in self._mask:
@@ -15473,19 +15499,19 @@ class AuxiliaryMask:
     # ----------------------------------------------------------------
     @property
     def ndim(self):
-        """TODO"""
+        """TODO."""
         return self._mask[0].ndim
 
     @property
     def dtype(self):
-        """TODO"""
+        """TODO."""
         return self._mask[0].dtype
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def append(self, mask):
-        """TODO"""
+        """TODO."""
         self._mask.append(mask)
 
 

@@ -89,7 +89,8 @@ class DimensionCoordinate(
         return ((mx // period) * period).squeeze()
 
     def _infer_direction(self):
-        """Return True if a coordinate is increasing, otherwise return False.
+        """Return True if a coordinate is increasing, otherwise return
+        False.
 
         A dimension coordinate construct is considered to be increasing if
         its data array values are increasing in index space, or if it has
@@ -201,7 +202,8 @@ class DimensionCoordinate(
 
     @property
     def decreasing(self):
-        """True if the dimension coordinate is decreasing, otherwise False.
+        """True if the dimension coordinate is decreasing, otherwise
+        False.
 
         A dimension coordinate is increasing if its coordinate values are
         increasing in index space.
@@ -229,7 +231,8 @@ class DimensionCoordinate(
 
     @property
     def increasing(self):
-        """`True` for dimension coordinate constructs, `False` otherwise.
+        """`True` for dimension coordinate constructs, `False`
+        otherwise.
 
         A dimension coordinate is increasing if its coordinate values are
         increasing in index space.
@@ -319,8 +322,8 @@ class DimensionCoordinate(
     #        return data[..., i].squeeze(1)
 
     def direction(self):
-        """Return True if the dimension coordinate values are increasing,
-        otherwise return False.
+        """Return True if the dimension coordinate values are
+        increasing, otherwise return False.
 
         Dimension coordinates values are increasing if its coordinate
         values are increasing in index space.
@@ -685,7 +688,8 @@ class DimensionCoordinate(
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
-        """Flips the dimension coordinate, that is reverses its direction."""
+        """Flips the dimension coordinate, that is reverses its
+        direction."""
         d = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
 
@@ -890,9 +894,7 @@ class DimensionCoordinate(
     @property
     def role(self):
         """Deprecated at version 3.0.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "role", "Use attribute 'construct_type' instead"
         )  # pragma: no cover

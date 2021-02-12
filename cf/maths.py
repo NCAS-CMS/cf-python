@@ -7,7 +7,8 @@ from .data.data import Data
 def relative_vorticity(
     u, v, wrap=None, one_sided_at_boundary=False, radius=6371229.0, cyclic=None
 ):
-    """Calculate the relative vorticity using centred finite differences.
+    """Calculate the relative vorticity using centred finite
+    differences.
 
     The relative vorticity of wind defined on a Cartesian domain (such
     as a plane projection) is defined as

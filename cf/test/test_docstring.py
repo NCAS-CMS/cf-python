@@ -10,7 +10,8 @@ import cfdm
 
 
 def _recurse_on_subclasses(klass):
-    """Return as a set all subclasses in a classes' subclass hierarchy."""
+    """Return as a set all subclasses in a classes' subclass
+    hierarchy."""
     return set(klass.__subclasses__()).union(
         [
             sub
@@ -21,11 +22,14 @@ def _recurse_on_subclasses(klass):
 
 
 def _get_all_abbrev_subclasses(klass):
-    """Return set of all subclasses in class hierarchy, filtering some out.
+    """Return set of all subclasses in class hierarchy, filtering some
+    out.
 
-    Filter out cf.mixin.properties*.Properties* (by means of there not being
-    any abbreviated cf.Properties* classes) plus any cfdm classes, since
-    this function needs to take cf subclasses from cfdm classes as well.
+    Filter out cf.mixin.properties*.Properties* (by means of there not
+    being any abbreviated cf.Properties* classes) plus any cfdm classes,
+    since this function needs to take cf subclasses from cfdm classes as
+    well.
+
     """
     return tuple(
         [

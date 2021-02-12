@@ -12,10 +12,12 @@ import cf
 def randomise_test_order(*_args):
     """Return a random choice from 1 or -1.
 
-    When set as the test loader method for standard (merge)sort comparison
-    to order all methods in a test case (see 'sortTestMethodsUsing'), ensures
-    they run in a random order, meaning implicit reliance on setup or state,
-    i.e. test dependencies, become evident over repeated runs.
+    When set as the test loader method for standard (merge)sort
+    comparison to order all methods in a test case (see
+    'sortTestMethodsUsing'), ensures they run in a random order, meaning
+    implicit reliance on setup or state, i.e. test dependencies, become
+    evident over repeated runs.
+
     """
     return choice([1, -1])
 

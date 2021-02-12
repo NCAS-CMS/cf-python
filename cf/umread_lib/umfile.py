@@ -13,10 +13,8 @@ class UMFileException(Exception):
 
 
 class File:
-    """A class for a UM file that gives a view of the file including sets
-    of PP records combined into variables.
-
-    """
+    """A class for a UM file that gives a view of the file including
+    sets of PP records combined into variables."""
 
     def __init__(
         self, path, byte_ordering=None, word_size=None, fmt=None, parse=True
@@ -117,7 +115,7 @@ class File:
         self.fd = None
 
     def _detect_file_type(self):
-        """TODO
+        """TODO.
 
         :Returns:
 
@@ -137,8 +135,8 @@ class File:
         self.word_size = d["word_size"]
 
     def _add_back_refs(self):
-        """Add file attribute to `Var` objects, and both `!file` and `!var`
-        attributes to `Rec` objects.
+        """Add file attribute to `Var` objects, and both `!file` and
+        `!var` attributes to `Rec` objects.
 
         The important one is the file attribute in the `Rec` object, as
         this is used when reading data. The others are provided for extra
@@ -188,7 +186,7 @@ class Var:
             return -1
 
     def _compare_recs_by_extra_data(self, a, b):
-        """TODO
+        """TODO.
 
         :Returns:
 
@@ -198,7 +196,7 @@ class Var:
         return self._compare(a.get_extra_data(), b.get_extra_data())
 
     def _compare_recs_by_orig_order(self, a, b):
-        """TODO
+        """TODO.
 
         :Returns:
 
@@ -208,10 +206,10 @@ class Var:
         return self._compare(self.recs.index(a), self.recs.index(b))
 
     def group_records_by_extra_data(self):
-        """Returns a list of (sub)lists of records where each records within
-        each sublist has matching extra data (if any), so if the whole
-        variable has consistent extra data then the return value will be
-        of length 1.
+        """Returns a list of (sub)lists of records where each records
+        within each sublist has matching extra data (if any), so if the
+        whole variable has consistent extra data then the return value
+        will be of length 1.
 
         Within each group, the ordering of returned records is the same as
         in the `!recs` attribute.
@@ -290,8 +288,8 @@ class Rec:
 
     @classmethod
     def from_file_and_offsets(cls, file, hdr_offset, data_offset, disk_length):
-        """Instantiate a `Rec` object from the `File` object and the header
-         and data offsets.
+        """Instantiate a `Rec` object from the `File` object and the
+        header and data offsets.
 
          The headers are read in, and also the record object is ready for
          calling `get_data`.
@@ -358,8 +356,8 @@ class Rec:
         return edu.get_data()
 
     def get_extra_data(self):
-        """Get extra data associated with the record, either by reading or
-        using cached read.
+        """Get extra data associated with the record, either by reading
+        or using cached read.
 
         :Returns:
 

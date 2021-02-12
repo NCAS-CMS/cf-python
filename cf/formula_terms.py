@@ -46,8 +46,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     )
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -67,7 +67,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -87,7 +88,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         strict,
         bounds,
     ):
-        """Find a domain ancillary construct corresponding to a formula term.
+        """Find a domain ancillary construct corresponding to a formula
+        term.
 
         .. versionadded:: 3.8.0
 
@@ -233,8 +235,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _computed_standard_name(f, standard_name, coordinate_reference):
-        """Find the standard name of the computed non-parametric vertical
-        coordinates.
+        """Find the standard name of the computed non-parametric
+        vertical coordinates.
 
         {{formula terms links}}
 
@@ -336,8 +338,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _vertical_axis(f, keys):
-        """Find the vertical axis corresponding to the parametric vertical
-        coordinates.
+        """Find the vertical axis corresponding to the parametric
+        vertical coordinates.
 
         .. versionadded:: 3.8.0
 
@@ -373,8 +375,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _conform_eta(f, eta, eta_key, depth, depth_key):
-        """Transform the 'eta' term so that broadcasting will work with the
-        'depth' term.
+        """Transform the 'eta' term so that broadcasting will work with
+        the 'depth' term.
 
         This entails making sure that the trailing dimensions of 'eta' are
         the same as all of the dimensions of 'depth'.
@@ -442,9 +444,9 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _conform_computed(f, computed, computed_axes, k_axis):
-        """Move the vertical axis of the computed non-parametric vertical
-        coordinates from its current position as the last (rightmost)
-        dimension, if applicable.
+        """Move the vertical axis of the computed non-parametric
+        vertical coordinates from its current position as the last
+        (rightmost) dimension, if applicable.
 
         **Note:**
 
@@ -513,8 +515,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
     @staticmethod
     def _conform_units(term, var, ref_term2, ref_units):
-        """Make sure that the units of a variable of the formula are the same
-        as the units of another formula term.
+        """Make sure that the units of a variable of the formula are the
+        same as the units of another formula term.
 
         .. versionadded:: 3.8.0
 
@@ -871,7 +873,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         cls, g, coordinate_reference, default_to_zero, strict
     ):
         """Compute non-parametric vertical coordinates from
-        atmosphere_hybrid_sigma_pressure_coordinate parametric coordinates.
+        atmosphere_hybrid_sigma_pressure_coordinate parametric
+        coordinates.
 
         {{formula terms links}}
 
@@ -1255,7 +1258,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         cls, g, coordinate_reference, default_to_zero, strict
     ):
         """Compute non-parametric vertical coordinates from
-        ocean_sigma_coordinate parametric coordinates
+        ocean_sigma_coordinate parametric coordinates.
 
         {{formula terms links}}
 
@@ -1359,8 +1362,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     def ocean_s_coordinate(
         cls, g, coordinate_reference, default_to_zero, strict
     ):
-        """Compute non-parametric vertical coordinates from ocean_s_coordinate
-        parametric coordinates.
+        """Compute non-parametric vertical coordinates from
+        ocean_s_coordinate parametric coordinates.
 
         {{formula terms links}}
 

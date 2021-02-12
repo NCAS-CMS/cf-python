@@ -26,8 +26,8 @@ class File_type(CT.Structure):
 def _get_ctypes_array(dtype, size=None):
     """Get ctypes corresponding to a numpy array of a given type.
 
-    The size should not be necessary unless the storage for the array
-    is allocated in the C code.
+    The size should not be necessary unless the storage for the array is
+    allocated in the C code.
 
     """
     kwargs = {
@@ -43,7 +43,8 @@ def _get_ctypes_array(dtype, size=None):
 
 def _gen_rec_class(int_type, float_type):
     class Rec(CT.Structure):
-        """ctypes object corresponding to the `Rec` object in the C code."""
+        """ctypes object corresponding to the `Rec` object in the C
+        code."""
 
         _fields_ = [
             ("int_hdr", _get_ctypes_array(int_type, _len_int_hdr)),
@@ -63,7 +64,8 @@ Rec64 = _gen_rec_class(numpy.int64, numpy.float64)
 
 def _gen_var_class(rec_class):
     class Var(CT.Structure):
-        """ctypes object corresponding to the `Var` object in the C code."""
+        """ctypes object corresponding to the `Var` object in the C
+        code."""
 
         _fields_ = [
             ("recs", CT.POINTER(CT.POINTER(rec_class))),
@@ -82,7 +84,8 @@ Var64 = _gen_var_class(Rec64)
 
 def _gen_file_class(var_class):
     class File(CT.Structure):
-        """ctypes object corresponding to the `File` object in the C code"""
+        """ctypes object corresponding to the `File` object in the C
+        code."""
 
         _fields_ = [
             ("fd", CT.c_int),
@@ -141,7 +144,7 @@ class CInterface:
         self.lib = CT.CDLL(lib_path)
 
     def _is_null_pointer(self, ptr):
-        """TODO
+        """TODO.
 
         :Returns:
 
@@ -199,7 +202,7 @@ class CInterface:
         }
 
     def create_file_type(self, fmt, byte_ordering, word_size):
-        """TODO
+        """TODO.
 
         :Parameters:
 
@@ -227,9 +230,9 @@ class CInterface:
 
     def set_word_size(self, val):
         """Sets the word size used to interpret returned pointers from
-         subsequent calls, in particular the pointers to PP headers
-         embedded in the tree of objects returned by `file_parse` and the
-         data array that is populated by `read_record_data`.
+        subsequent calls, in particular the pointers to PP headers
+        embedded in the tree of objects returned by `file_parse` and the
+        data array that is populated by `read_record_data`.
 
         :Parameters:
 
@@ -261,29 +264,26 @@ class CInterface:
             )
 
     def _get_ctypes_int_array(self, size=None):
-        """TODO"""
+        """TODO."""
         return _get_ctypes_array(self.file_data_int_type, size)
 
     def _get_ctypes_real_array(self, size=None):
-        """TODO"""
+        """TODO."""
         return _get_ctypes_array(self.file_data_real_type, size)
 
     def _get_empty_real_array(self, size):
-        """Get empty `numpy` real array according to word size previously set
-        with `set_word_size`.
-
-        """
+        """Get empty `numpy` real array according to word size
+        previously set with `set_word_size`."""
         return numpy.empty(size, dtype=self.file_data_real_type)
 
     def _get_empty_int_array(self, size):
-        """Get empty `numpy` integer array according to word size previously
-        set with `set_word_size`.
-
-        """
+        """Get empty `numpy` integer array according to word size
+        previously set with `set_word_size`."""
         return numpy.empty(size, dtype=self.file_data_int_type)
 
     def parse_file(self, fh, file_type):
-        """Given an open file handle, work out information from the file.
+        """Given an open file handle, work out information from the
+        file.
 
         :Parameters:
 
@@ -324,8 +324,8 @@ class CInterface:
         return rv
 
     def c_var_to_py_var(self, c_var_p):
-        """Create a `umfile.Var` object from a ctypes object corresponding to
-         'Var*' in the C code.
+        """Create a `umfile.Var` object from a ctypes object
+        corresponding to 'Var*' in the C code.
 
         :Returns:
 
@@ -347,8 +347,8 @@ class CInterface:
         return umfile.Var(recs, nz, nt, svi)
 
     def c_rec_to_py_rec(self, c_rec_p):
-        """Create a `umfile.Rec` object from a ctypes object corresponding to
-        'Rec*' in the C code.
+        """Create a `umfile.Rec` object from a ctypes object
+        corresponding to 'Rec*' in the C code.
 
         :Returns:
 
@@ -392,8 +392,8 @@ class CInterface:
         )
 
     def get_type_and_num_words(self, int_hdr):
-        """From the integer header, work out data type and number of words to
-        read (`read_record_data` requires this).
+        """From the integer header, work out data type and number of
+        words to read (`read_record_data` requires this).
 
         :Returns:
 
@@ -426,7 +426,8 @@ class CInterface:
     def get_extra_data_offset_and_length(
         self, int_hdr, data_offset, disk_length
     ):
-        """From the integer header, gets offset and length of extra data.
+        """From the integer header, gets offset and length of extra
+        data.
 
         :Returns:
 
@@ -502,7 +503,7 @@ class CInterface:
         byte_ordering,
         word_size,
     ):
-        """Reads record data from open file
+        """Reads record data from open file.
 
         inputs:
            fd - integer low-level file descriptor
@@ -512,6 +513,7 @@ class CInterface:
            word_size - 4 or 8
 
         returns: extra data as string
+
         """
         extra_data = b"\0" * extra_data_length
 
@@ -549,7 +551,7 @@ class CInterface:
         data_type,
         nwords,
     ):
-        """Reads record data from open file
+        """Reads record data from open file.
 
         inputs:
            fd - integer low-level file descriptor

@@ -100,9 +100,11 @@ class DomainAxis(cfdm.DomainAxis):
         return new
 
     def __radd__(self, other):
-        """The binary arithmetic operation ``+`` with reflected operands.
+        """The binary arithmetic operation ``+`` with reflected
+        operands.
 
         x.__radd__(y) <==> y+x
+
         """
         return self + other
 

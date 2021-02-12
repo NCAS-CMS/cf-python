@@ -15,8 +15,8 @@ class Container:
     """
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -36,7 +36,8 @@ class Container:
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 

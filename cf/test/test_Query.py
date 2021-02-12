@@ -130,7 +130,8 @@ class QueryTest(unittest.TestCase):
             )
 
     def test_Query_as_where_condition(self):
-        """Check queries work correctly as conditions in 'where' method."""
+        """Check queries work correctly as conditions in 'where'
+        method."""
         # TODO: extend test; added as-is to capture a specific bug (now fixed)
 
         s_data = cf.Data([30, 60, 90], "second")

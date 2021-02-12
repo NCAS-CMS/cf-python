@@ -8,10 +8,8 @@ import cf
 
 
 def _formula_terms(standard_name):
-    """Return a field construct with a vertical CRS, its computed
-    non-parametric coordinates, and the computed standard name.
-
-    """
+    """Return a field construct with a vertical CRS, its computed non-
+    parametric coordinates, and the computed standard name."""
     # field: air_temperature
     field = cf.Field()
     field.set_properties({"standard_name": "air_temperature", "units": "K"})

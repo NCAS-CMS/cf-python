@@ -303,7 +303,8 @@ def max_fpartial(out, out1=None, group=False):
 
 
 def max_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the maximum of an array.
+    """Apply any logic to finalise the collapse to the maximum of an
+    array.
 
     Here mask out any values derived from a too-small sample size.
 
@@ -376,7 +377,8 @@ def min_fpartial(out, out1=None, group=False):
 
 
 def min_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the minimum of an array.
+    """Apply any logic to finalise the collapse to the minimum of an
+    array.
 
     Here mask out any values derived from a too-small sample size.
 
@@ -505,8 +507,8 @@ def mean_f(a, axis=None, weights=None, masked=False):
 
 
 def mean_fpartial(out, out1=None, group=False):
-    """Return the partial sample size, the partial sum and partial sum of
-    the weights.
+    """Return the partial sample size, the partial sum and partial sum
+    of the weights.
 
     :Parameters:
 
@@ -575,8 +577,8 @@ def mean_ffinalise(out, sub_samples=None):
 # mean_absolute_value
 # --------------------------------------------------------------------
 def mean_abs_f(a, axis=None, weights=None, masked=False):
-    """Return the mean of the absolute array, or the means of the absolute
-    array along an axis.
+    """Return the mean of the absolute array, or the means of the
+    absolute array along an axis.
 
     :Parameters:
 
@@ -733,7 +735,8 @@ def mid_range_fpartial(out, out1=None, group=False):
 
 
 def mid_range_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the array mid-range value.
+    """Apply any logic to finalise the collapse to the array mid-range
+    value.
 
     Also mask out any values derived from a too-small sample size.
 
@@ -1262,7 +1265,8 @@ def var_fpartial(out, out1=None, group=False):
 
 
 def var_ffinalise(out, sub_samples=None):
-    """Calculate the variance of the array and return it with the sample size.
+    """Calculate the variance of the array and return it with the sample
+    size.
 
     Also mask out any values derived from a too-small sample size.
 
@@ -1343,7 +1347,8 @@ sd_fpartial = var_fpartial
 
 
 def sd_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the standard deviation.
+    """Apply any logic to finalise the collapse to the standard
+    deviation.
 
     :Parameters:
 

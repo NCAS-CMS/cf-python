@@ -131,7 +131,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__iadd__")
 
     def __radd__(self, y):
-        """The binary arithmetic operation ``+`` with reflected operands
+        """The binary arithmetic operation ``+`` with reflected
+        operands.
 
         x.__radd__(y) <==> y+x
 
@@ -155,7 +156,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__isub__")
 
     def __rsub__(self, y):
-        """The binary arithmetic operation ``-`` with reflected operands
+        """The binary arithmetic operation ``-`` with reflected
+        operands.
 
         x.__rsub__(y) <==> y-x
 
@@ -179,7 +181,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__imul__")
 
     def __rmul__(self, y):
-        """The binary arithmetic operation ``*`` with reflected operands
+        """The binary arithmetic operation ``*`` with reflected
+        operands.
 
         x.__rmul__(y) <==> y*x
 
@@ -203,7 +206,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__idiv__")
 
     def __rdiv__(self, y):
-        """The binary arithmetic operation ``/`` with reflected operands
+        """The binary arithmetic operation ``/`` with reflected
+        operands.
 
         x.__rdiv__(y) <==> y/x
 
@@ -227,7 +231,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__ifloordiv__")
 
     def __rfloordiv__(self, y):
-        """The binary arithmetic operation ``//`` with reflected operands
+        """The binary arithmetic operation ``//`` with reflected
+        operands.
 
         x.__rfloordiv__(y) <==> y//x
 
@@ -252,7 +257,7 @@ class PropertiesData(Properties):
 
     def __rtruediv__(self, y):
         """The binary arithmetic operation ``/`` (true division) with
-        reflected operands
+        reflected operands.
 
         x.__rtruediv__(y) <==> y/x
 
@@ -288,8 +293,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__ipow__")
 
     def __rpow__(self, y, modulo=None):
-        """The binary arithmetic operations ``**`` and ``pow`` with reflected
-        operands
+        """The binary arithmetic operations ``**`` and ``pow`` with
+        reflected operands.
 
         x.__rpow__(y) <==> y**x
 
@@ -323,7 +328,8 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__imod__")
 
     def __rmod__(self, y):
-        """The binary arithmetic operation ``%`` with reflected operands
+        """The binary arithmetic operation ``%`` with reflected
+        operands.
 
         x.__rmod__(y) <==> y % x
 
@@ -397,7 +403,7 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__iand__")
 
     def __rand__(self, y):
-        """The binary bitwise operation ``&`` with reflected operands
+        """The binary bitwise operation ``&`` with reflected operands.
 
         x.__rand__(y) <==> y&x
 
@@ -421,7 +427,7 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__ior__")
 
     def __ror__(self, y):
-        """The binary bitwise operation ``|`` with reflected operands
+        """The binary bitwise operation ``|`` with reflected operands.
 
         x.__ror__(y) <==> y|x
 
@@ -445,7 +451,7 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__ixor__")
 
     def __rxor__(self, y):
-        """The binary bitwise operation ``^`` with reflected operands
+        """The binary bitwise operation ``^`` with reflected operands.
 
         x.__rxor__(y) <==> y^x
 
@@ -469,7 +475,7 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__ilshift__")
 
     def __rlshift__(self, y):
-        """The binary bitwise operation ``<<`` with reflected operands
+        """The binary bitwise operation ``<<`` with reflected operands.
 
         x.__rlshift__(y) <==> y<<x
 
@@ -493,7 +499,7 @@ class PropertiesData(Properties):
         return self._binary_operation(y, "__irshift__")
 
     def __rrshift__(self, y):
-        """The binary bitwise operation ``>>`` with reflected operands
+        """The binary bitwise operation ``>>`` with reflected operands.
 
         x.__rrshift__(y) <==> y>>x
 
@@ -692,12 +698,12 @@ class PropertiesData(Properties):
     #            data.change_axis_names(dim_name_map)
 
     def _conform_for_assignment(self, other):
-        """TODO"""
+        """TODO."""
         return other
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, atol=None, rtol=None, verbose=None):
-        """TODO
+        """TODO.
 
         Two real numbers ``x`` and ``y`` are considered equal if
         ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -824,7 +830,7 @@ class PropertiesData(Properties):
     #        return matches
 
     def __query_set__(self, values):
-        """TODO"""
+        """TODO."""
         new = self.copy()
         new.set_data(self.data.__query_set__(values), copy=False)
         return new
@@ -846,13 +852,13 @@ class PropertiesData(Properties):
     #        return new
 
     def __query_wi__(self, value):
-        """TODO"""
+        """TODO."""
         new = self.copy()
         new.set_data(self.data.__query_wi__(value), copy=False)
         return new
 
     def __query_wo__(self, value):
-        """TODO"""
+        """TODO."""
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
         return new
@@ -905,7 +911,7 @@ class PropertiesData(Properties):
         return new
 
     def _YMDhms(self, attr):
-        """TODO"""
+        """TODO."""
         data = self.get_data(None)
         if data is None:
             raise ValueError(
@@ -984,7 +990,8 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     @property
     def T(self):
-        """`True` if and only if the data are coordinates for a CF 'T' axis.
+        """`True` if and only if the data are coordinates for a CF 'T'
+        axis.
 
         CF 'T' axis coordinates are defined by having units of reference
         time
@@ -1089,7 +1096,7 @@ class PropertiesData(Properties):
 
     @property
     def isperiodic(self):
-        """TODO
+        """TODO.
 
         .. versionadded:: 2.0
 
@@ -1897,8 +1904,8 @@ class PropertiesData(Properties):
         return old
 
     def range(self):
-        """The absolute difference between the maximum and minimum of the data
-        array.
+        """The absolute difference between the maximum and minimum of
+        the data array.
 
         .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`,
                      `sample_size`, `standard_deviation`, `sum`,
@@ -2821,7 +2828,8 @@ class PropertiesData(Properties):
         return data.cyclic(axes, iscyclic)
 
     def datum(self, *index):
-        """Return an element of the data array as a standard Python scalar.
+        """Return an element of the data array as a standard Python
+        scalar.
 
         The first and last elements are always returned with
         ``f.datum(0)`` and ``f.datum(-1)`` respectively, even if the data
@@ -3245,7 +3253,7 @@ class PropertiesData(Properties):
         """
 
         def _convert_reftime_units(value, units, reftime):  # , calendar):
-            """sads
+            """sads.
 
             :Parameters:
 
@@ -3335,7 +3343,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
-        """Flatten axes of the data
+        """Flatten axes of the data.
 
         Any subset of the axes may be flattened.
 
@@ -3969,7 +3977,8 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
-        """Take the trigonometric inverse tangent of the data element-wise.
+        """Take the trigonometric inverse tangent of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
@@ -4183,7 +4192,8 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
-        """Take the trigonometric inverse cosine of the data element-wise.
+        """Take the trigonometric inverse cosine of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
@@ -5525,24 +5535,24 @@ class PropertiesData(Properties):
 
     @property
     def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
-        """Deprecated at version 3.0.0, use `data` attribute or `get_data`
-        method instead.
-
-        """
+        """Deprecated at version 3.0.0, use `data` attribute or
+        `get_data` method instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'get_data' method instead."
         )  # pragma: no cover
 
     @data.setter
     def Data(self, value):  # noqa: F811 (see link against same-name setter)
-        """Deprecated at version 3.0.0, use `set_data` method instead."""
+        """Deprecated at version 3.0.0, use `set_data` method
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'set_data' method instead."
         )  # pragma: no cover
 
     @data.deleter
     def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
-        """Deprecated at version 3.0.0, use `del_data` method instead."""
+        """Deprecated at version 3.0.0, use `del_data` method
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'del_data' method instead."
         )  # pragma: no cover
@@ -5554,14 +5564,16 @@ class PropertiesData(Properties):
 
     @property
     def hasbounds(self):
-        """Deprecated at version 3.0.0, use `has_bounds` method instead."""
+        """Deprecated at version 3.0.0, use `has_bounds` method
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "hasbounds", "Use 'has_bounds' method instead"
         )
 
     @property
     def hasdata(self):
-        """Deprecated at version 3.0.0, use `has_data` method instead."""
+        """Deprecated at version 3.0.0, use `has_data` method
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "hasdata", "Use 'has_data' method instead"
         )
@@ -5569,9 +5581,7 @@ class PropertiesData(Properties):
     @property
     def isauxiliary(self):
         """Deprecated at version 3.7.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "isauxiliary",
@@ -5582,9 +5592,7 @@ class PropertiesData(Properties):
     @property
     def isdimension(self):
         """Deprecated at version 3.7.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "isdimension",
@@ -5595,9 +5603,7 @@ class PropertiesData(Properties):
     @property
     def isdomainancillary(self):
         """Deprecated at version 3.7.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "isdomainancillary",
@@ -5608,9 +5614,7 @@ class PropertiesData(Properties):
     @property
     def isfieldancillary(self):
         """Deprecated at version 3.7.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "isfieldancillary",
@@ -5620,9 +5624,7 @@ class PropertiesData(Properties):
     @property
     def ismeasure(self):
         """Deprecated at version 3.7.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "ismeasure",
@@ -5632,7 +5634,8 @@ class PropertiesData(Properties):
 
     @property
     def unsafe_array(self):
-        """Deprecated at version 3.0.0, use `array` attribute instead."""
+        """Deprecated at version 3.0.0, use `array` attribute
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "unsafe_array",
@@ -5649,13 +5652,15 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_METHOD(self, "asreftime")  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
-        """Deprecated at version 3.0.0, use `insert_dimension` method instead."""
+        """Deprecated at version 3.0.0, use `insert_dimension` method
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "expand_dims", "Use method 'insert_dimension' instead."
         )  # pragma: no cover
 
     def insert_data(self, data, copy=True):
-        """Deprecated at version 3.0.0, use `set_data` method instead."""
+        """Deprecated at version 3.0.0, use `set_data` method
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "insert_data", "Use method 'set_data' instead."
         )  # pragma: no cover
@@ -5663,13 +5668,15 @@ class PropertiesData(Properties):
     def name(
         self, default=None, identity=False, ncvar=False, relaxed_identity=None
     ):
-        """Deprecated at version 3.0.0, use method 'identity' instead."""
+        """Deprecated at version 3.0.0, use method 'identity'
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "name", "Use method 'identity' instead"
         )  # pragma: no cover
 
     def remove_data(self):
-        """Deprecated at version 3.0.0, use method `del_data` instead."""
+        """Deprecated at version 3.0.0, use method `del_data`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "remove_data", "Use method 'del_data' instead."
         )  # pragma: no cover
@@ -5683,7 +5690,7 @@ class PropertiesData(Properties):
 
 
 class Subspace:
-    """TODO"""
+    """TODO."""
 
     __slots__ = ("variable",)
 

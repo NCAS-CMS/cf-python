@@ -446,8 +446,8 @@ class Partition:
         self._add_to_file_counter(1)
 
     def _decrement_file_counter(self):
-        """Subtract 1 from the Partition.file_counter if self._subarray is an
-        instance of FileArray and not a temporary FileArray.
+        """Subtract 1 from the Partition.file_counter if self._subarray
+        is an instance of FileArray and not a temporary FileArray.
 
         :Returns:
 
@@ -607,12 +607,13 @@ class Partition:
 
     @property
     def dtype(self):
-        """The data type of the master array"""
+        """The data type of the master array."""
         return self.config["dtype"]
 
     @property
     def isscalar(self):
-        """True if and only if the partition's data array is a scalar array.
+        """True if and only if the partition's data array is a scalar
+        array.
 
         **Examples:**
 
@@ -633,8 +634,9 @@ class Partition:
     def nbytes(self):
         """The size in bytes of the subarray.
 
-        The size takes into account the datatype and assumes that there is
-        a boolean mask, unless it can be ascertained that there isn't one.
+        The size takes into account the datatype and assumes that there
+        is a boolean mask, unless it can be ascertained that there isn't
+        one.
 
         """
         dtype = self.config["dtype"]
@@ -656,7 +658,8 @@ class Partition:
 
     @property
     def size(self):
-        """Number of elements in the partition's data array (not its subarray).
+        """Number of elements in the partition's data array (not its
+        subarray).
 
         **Examples:**
 
@@ -1368,8 +1371,8 @@ class Partition:
         )  # TODO check
 
     def new_part(self, indices, master_axis_to_position, master_flip):
-        """Update the `!part` attribute in-place for new indices of the master
-        array.
+        """Update the `!part` attribute in-place for new indices of the
+        master array.
 
         :Parameters:
 
@@ -1654,7 +1657,8 @@ class Partition:
         return config
 
     def overlaps(self, indices):
-        """Return True if the subarray overlaps a subspace of the master array.
+        """Return True if the subarray overlaps a subspace of the master
+        array.
 
         :Parameters:
 
@@ -1837,8 +1841,8 @@ class Partition:
     #        return True
 
     def revert(self):
-        """Completely update the partition with another partition's attributes
-        in place.
+        """Completely update the partition with another partition's
+        attributes in place.
 
         The updated partition is always dependent of the other partition.
 
@@ -1905,10 +1909,8 @@ class Partition:
     #     self.__dict__ = other.__dict__
 
     def _register_temporary_file(self):
-        """Register a temporary file on this rank that has been created on
-        another rank
-
-        """
+        """Register a temporary file on this rank that has been created
+        on another rank."""
         _partition_file = self._subarray._partition_file
         _partition_dir = self._subarray._partition_dir
         if _partition_file not in _temporary_files:
@@ -1927,10 +1929,8 @@ class Partition:
         return _lock_file
 
     def _update_lock_files(self, lock_files):
-        """Add the lock files listed in lock_files to the list of lock files
-        managed by other ranks
-
-        """
+        """Add the lock files listed in lock_files to the list of lock
+        files managed by other ranks."""
         _, _lock_file, _other_lock_files = _temporary_files[
             self._subarray._partition_file
         ]
