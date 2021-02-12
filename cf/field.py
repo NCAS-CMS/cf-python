@@ -18,13 +18,12 @@ from numpy import array_equal as numpy_array_equal
 from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
 from numpy import diff as numpy_diff
+from numpy import delete as numpy_delete
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
-from numpy import isnan as numpy_isnan
 from numpy import nan as numpy_nan
 from numpy import ndarray as numpy_ndarray
-from numpy import ndim as numpy_ndim
 from numpy import pi as numpy_pi
 from numpy import prod as numpy_prod
 from numpy import reshape as numpy_reshape
@@ -40,20 +39,16 @@ from numpy.ma import isMA as numpy_ma_isMA
 
 from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import where as numpy_ma_where
-from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 
 import cfdm
 
 from . import AuxiliaryCoordinate
 from . import Bounds
-from . import CellMeasure
 from . import CellMethod
-from . import CoordinateReference
 from . import DimensionCoordinate
 from . import Domain
 from . import DomainAncillary
 from . import DomainAxis
-from . import FieldAncillary
 from . import Flags
 from . import Constructs
 from . import FieldList
@@ -64,7 +59,7 @@ from . import List
 
 from .constants import masked as cf_masked
 
-from .functions import parse_indices, chunksize, equals, _section
+from .functions import parse_indices, chunksize, _section
 from .functions import relaxed_identities as cf_relaxed_identities
 from .query import Query, ge, gt, le, lt, eq
 from .regrid import Regrid
@@ -628,7 +623,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         else:
             if data is None:
                 raise ValueError(
-                    "Can't assign to a {} from a {!r} with no data}".format(
+                    "Can't assign to a {} from a {!r} with no data".format(
                         self.__class__.__name__, value.__class__.__name__
                     )
                 )
@@ -707,8 +702,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         }
 
         """
-        a = {}
-
         # ------------------------------------------------------------
         # Map each axis identity to its identifier, if such a mapping
         # exists.
@@ -965,7 +958,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             raise ValueError(
                 "Can't combine {!r} with {!r} due to incompatible data "
-                "shapes: {}, {})".format(
+                "shapes: {}, {}".format(
                     self.__class__.__name__,
                     other.__class__.__name__,
                     self.shape,
@@ -4645,7 +4638,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             raise ValueError(
                 "No polygon geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domin_axis)
+                    self.constructs.domain_axis_identity(domain_axis)
                 )
             )
 
@@ -4894,7 +4887,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             raise ValueError(
                 "No line geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domin_axis)
+                    self.constructs.domain_axis_identity(domain_axis)
                 )
             )
 
@@ -10845,7 +10838,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             elif (
                 within is not None or over is not None
             ) and group_by == "coords":
-                raise valueError(
+                raise ValueError(
                     "Can't collapse: group_by parameter can't be "
                     "'coords' for a climatological time collapse."
                 )
