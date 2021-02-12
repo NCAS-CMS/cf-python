@@ -18,7 +18,6 @@ from ..data import Data
 from . import Properties
 
 from ..functions import (
-    _DEPRECATATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_ATTRIBUTE,
 )

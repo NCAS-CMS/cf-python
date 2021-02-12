@@ -4,7 +4,7 @@ from functools import reduce
 from operator import mul
 from sys import getrefcount
 
-from .functions import inspect as cf_inspect
+from ...functions import inspect as cf_inspect
 
 
 class CompressedSubarray(abc.ABC):

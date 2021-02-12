@@ -36,10 +36,10 @@ from numpy import cumsum as numpy_cumsum
 from numpy import diff as numpy_diff
 from numpy import digitize as numpy_digitize
 from numpy import dtype as numpy_dtype
-from numpy import e as numpy_e
 from numpy import empty as numpy_empty
 from numpy import errstate as numpy_errstate
 from numpy import exp as numpy_exp
+from numpy import expand_dims as numpy_expand_dims
 from numpy import floor as numpy_floor
 from numpy import finfo as numpy_finfo
 from numpy import isnan as numpy_isnan
@@ -92,7 +92,6 @@ from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 from numpy.ma import masked_where as numpy_ma_masked_where
 from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import nomask as numpy_ma_nomask
-from numpy.ma import var as numpy_ma_var
 from numpy.ma import where as numpy_ma_where
 
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
@@ -137,13 +136,62 @@ from ..decorators import (
     _display_or_return,
 )
 
-from .abstract import Array
-
 #                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
-from .collapse_functions import *
+
+# TODO SB post-186: decide how best to import these whilst avoiding 'import *'
+from .collapse_functions import (
+    max_f,
+    max_fpartial,
+    max_ffinalise,
+    min_f,
+    min_fpartial,
+    min_ffinalise,
+    max_abs_f,
+    max_abs_fpartial,
+    max_abs_ffinalise,
+    min_abs_f,
+    min_abs_fpartial,
+    min_abs_ffinalise,
+    mean_f,
+    mean_fpartial,
+    mean_ffinalise,
+    mean_abs_f,
+    mean_abs_fpartial,
+    mean_abs_ffinalise,
+    root_mean_square_f,
+    root_mean_square_fpartial,
+    root_mean_square_ffinalise,
+    mid_range_f,
+    mid_range_fpartial,
+    mid_range_ffinalise,
+    range_f,
+    range_fpartial,
+    range_ffinalise,
+    sample_size_f,
+    sample_size_fpartial,
+    sample_size_ffinalise,
+    sum_f,
+    sum_fpartial,
+    sum_ffinalise,
+    sum_of_squares_f,
+    sum_of_squares_fpartial,
+    sum_of_squares_ffinalise,
+    sw_f,
+    sw_fpartial,
+    sw_ffinalise,
+    sw2_f,
+    sw2_fpartial,
+    sw2_ffinalise,
+    var_f,
+    var_fpartial,
+    var_ffinalise,
+    sd_f,
+    sd_fpartial,
+    sd_ffinalise,
+)
 
 from . import (
     NetCDFArray,
