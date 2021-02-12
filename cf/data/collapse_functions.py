@@ -1,15 +1,12 @@
 from functools import partial as functools_partial
 
 from numpy import abs as numpy_abs
-from numpy import allclose as numpy_allclose
 from numpy import amax as numpy_amax
 from numpy import amin as numpy_amin
-from numpy import any as numpy_any
 from numpy import array as numpy_array
 from numpy import asanyarray as numpy_asanyarray
 from numpy import average as numpy_average
 from numpy import bool_ as numpy_bool_
-from numpy import copy as numpy_copy
 from numpy import empty as numpy_empty
 from numpy import expand_dims as numpy_expand_dims
 from numpy import integer as numpy_integer
@@ -17,17 +14,11 @@ from numpy import maximum as numpy_maximum
 from numpy import minimum as numpy_minimum
 from numpy import ndim as numpy_ndim
 from numpy import sum as numpy_sum
-from numpy import where as numpy_where
-from numpy import zeros as numpy_zeros
-import numpy
 
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import average as numpy_ma_average
 from numpy.ma import expand_dims as numpy_ma_expand_dims
 from numpy.ma import isMA as numpy_ma_isMA
-from numpy.ma import masked as numpy_ma_masked
-from numpy.ma import masked_less as numpy_ma_masked_less
-from numpy.ma import masked_where as numpy_ma_masked_where
 from numpy.ma import nomask as numpy_ma_nomask
 from numpy.ma import where as numpy_ma_where
 

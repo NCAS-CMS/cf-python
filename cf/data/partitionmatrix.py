@@ -1,7 +1,5 @@
 import numpy
 
-from numpy import array as numpy_array
-from numpy import asscalar as numpy_asscalar
 from numpy import ndenumerate as numpy_ndenumerate
 from numpy import empty as numpy_empty
 from numpy import expand_dims as numpy_expand_dims
@@ -12,7 +10,7 @@ from copy import deepcopy
 
 from .partition import Partition
 
-from ..functions import _DEPRECATION_WARNING_METHOD, _DEPRECATION_ERROR_METHOD
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 

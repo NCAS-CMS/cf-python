@@ -15,7 +15,6 @@ from tempfile import mkstemp
 from numpy import array as numpy_array
 from numpy import bool_ as numpy_bool_
 from numpy import dtype as numpy_dtype
-from numpy import expand_dims as numpy_expand_dims
 from numpy import ndarray as numpy_ndarray
 from numpy import number as numpy_number
 from numpy import transpose as numpy_transpose
@@ -27,14 +26,11 @@ from numpy.ma import masked_all as numpy_ma_masked_all
 from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import nomask as numpy_ma_nomask
 
-from numpy.ma.core import MaskedConstant as numpy_ma_core_MaskedConstant
-
 # from cfunits import Units
 
 from ..units import Units
 from ..functions import get_subspace, free_memory
 from ..functions import inspect as cf_inspect, fm_threshold as cf_fm_threshold
-from ..constants import CONSTANTS
 
 # from .filearray import  (_TempFileArray #, SharedMemoryArray,
 #                          _shared_memory_array,FileArray)

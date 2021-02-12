@@ -1,6 +1,5 @@
 import numpy
 
-from ..constants import _file_to_fh
 from ..functions import parse_indices, get_subspace
 from .functions import _open_um_file, _close_um_file
 

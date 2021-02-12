@@ -9,8 +9,6 @@ from numpy import save as numpy_save
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import is_masked as numpy_ma_is_masked
 
-import cfdm
-
 from . import abstract
 
 from ..functions import parse_indices, get_subspace

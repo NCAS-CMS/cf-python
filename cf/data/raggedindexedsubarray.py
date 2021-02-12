@@ -26,7 +26,6 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
         # data everywhere
         uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
 
-        r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim
 
         compression = self.compression
