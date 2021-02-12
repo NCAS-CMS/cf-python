@@ -7,40 +7,49 @@ import cftime
 from .functions import _DEPRECATION_ERROR_CLASS
 
 
-_default_calendar = 'gregorian'
+_default_calendar = "gregorian"
 
 # --------------------------------------------------------------------
 # Mapping of CF calendars to cftime date-time objects
 # --------------------------------------------------------------------
 _datetime_object = {
-     ('',): partial(cftime.datetime, calendar=''),
-     (None, 'gregorian', 'standard', 'none'): cftime.DatetimeGregorian,
-     ('proleptic_gregorian',): cftime.DatetimeProlepticGregorian,
-     ('360_day',): cftime.Datetime360Day,
-     ('noleap', '365_day'): cftime.DatetimeNoLeap,
-     ('all_leap', '366_day'): cftime.DatetimeAllLeap,
-     ('julian',): cftime.DatetimeJulian,
+    ("",): partial(cftime.datetime, calendar=""),
+    (None, "gregorian", "standard", "none"): cftime.DatetimeGregorian,
+    ("proleptic_gregorian",): cftime.DatetimeProlepticGregorian,
+    ("360_day",): cftime.Datetime360Day,
+    ("noleap", "365_day"): cftime.DatetimeNoLeap,
+    ("all_leap", "366_day"): cftime.DatetimeAllLeap,
+    ("julian",): cftime.DatetimeJulian,
 }
 
-_calendar_map = {
-    None: 'gregorian'
-}
+_calendar_map = {None: "gregorian"}
 
 
 class Datetime(cftime.datetime):
-    '''A date-time object which supports CF calendars.
+    """A date-time object which supports CF calendars.
 
     Deprecated at version 3.0.0. Use function 'cf.dt' to create
     date-time objects instead.
 
-    '''
-    def __init__(self, year, month=1, day=1, hour=0, minute=0, second=0,
-                 microsecond=0, dayofwk=-1, dayofyr=1, calendar=None):
-        '''
-        '''
+    """
+
+    def __init__(
+        self,
+        year,
+        month=1,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        dayofwk=-1,
+        dayofyr=1,
+        calendar=None,
+    ):
+        """"""
         _DEPRECATION_ERROR_CLASS(
-             'Datetime',
-             "Use function 'cf.dt' to create date-time objects instead."
+            "Datetime",
+            "Use function 'cf.dt' to create date-time objects instead.",
         )  # pragma: no cover
 
 
@@ -48,9 +57,10 @@ def elements(x):
     return x.timetuple()[:6]
 
 
-def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
-       microsecond=0, calendar=''):
-    '''Return a date-time object for a date and time according to a
+def dt(
+    arg, month=1, day=1, hour=0, minute=0, second=0, microsecond=0, calendar=""
+):
+    """Return a date-time object for a date and time according to a
     calendar.
 
     .. seealso:: `cf.dt_vector`
@@ -106,45 +116,53 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
     >>> d.year, d.month, d.day, d.hour, d.minute, d.second
     (2003, 4, 5, 12, 30, 15)
 
-    '''
+    """
     if isinstance(arg, str):
         (year, month, day, hour, minute, second, microsecond) = st2elements(
-            arg)
+            arg
+        )
 
     elif isinstance(arg, cftime.datetime):
         (year, month, day, hour, minute, second, microsecond) = (
-            arg.year, arg.month, arg.day, arg.hour, arg.minute, arg.second,
-            arg.microsecond)
-        if calendar == '':
+            arg.year,
+            arg.month,
+            arg.day,
+            arg.hour,
+            arg.minute,
+            arg.second,
+            arg.microsecond,
+        )
+        if calendar == "":
             calendar = arg.calendar
 
     elif isinstance(arg, datetime.datetime):
         (year, month, day, hour, minute, second) = arg.timetuple()[:6]
         microsecond = arg.microsecond
-        if calendar == '':
+        if calendar == "":
             calendar = _default_calendar
 
     else:
         year = arg
 
-#    calendar=_calendar_map.get(calendar, calendar)
-#
-#    return cftime.datetime(year, month, day, hour, minute, second,
-#                           microsecond, calendar=calendar)
+    #    calendar=_calendar_map.get(calendar, calendar)
+    #
+    #    return cftime.datetime(year, month, day, hour, minute, second,
+    #                           microsecond, calendar=calendar)
 
     for calendars, datetime_cls in _datetime_object.items():
         if calendar in calendars:
-            return datetime_cls(year, month, day, hour, minute,
-                                second, microsecond)
-
+            return datetime_cls(
+                year, month, day, hour, minute, second, microsecond
+            )
     raise ValueError(
         f"Can't create date-time object with unknown calendar {calendar!r}"
     )
 
 
-def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
-              microsecond=0, calendar=''):
-    '''Return a 1-d array of date-time objects.
+def dt_vector(
+    arg, month=1, day=1, hour=0, minute=0, second=0, microsecond=0, calendar=""
+):
+    """Return a 1-d array of date-time objects.
 
     .. seealso:: `cf.dt`
 
@@ -183,7 +201,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
 
     TODO
 
-    '''
+    """
     arg = np.array(arg)
     month = np.array(month)
     day = np.array(day)
@@ -192,9 +210,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
     second = np.array(second)
     microsecond = np.array(microsecond)
 
-    ndim = max(
-        map(np.ndim, (month, day, hour, minute, second, microsecond))
-    )
+    ndim = max(map(np.ndim, (month, day, hour, minute, second, microsecond)))
 
     if ndim > 1:
         raise ValueError(
@@ -204,8 +220,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
 
     if arg.ndim > 2:
         raise ValueError(
-            "The 'arg' parameter must be scalar, 1-d or 2-d. "
-            f"Got: {arg!r}"
+            "The 'arg' parameter must be scalar, 1-d or 2-d. " f"Got: {arg!r}"
         )
 
     sizes = set(
@@ -214,9 +229,16 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
 
     if len(sizes) == 1 and 1 in sizes:
         # All arguments are scalars or size 1
-        out = dt(arg.item(), month.item(), day.item(), hour.item(),
-                 minute.item(), second.item(), microsecond.item(),
-                 calendar=calendar)
+        out = dt(
+            arg.item(),
+            month.item(),
+            day.item(),
+            hour.item(),
+            minute.item(),
+            second.item(),
+            microsecond.item(),
+            calendar=calendar,
+        )
         if ndim >= 1:
             out = [out]
 
@@ -235,7 +257,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
         )
 
     if arg.ndim == 1:
-        if arg.dtype.kind in 'UOS':
+        if arg.dtype.kind in "UOS":
             out = [dt(a, calendar=calendar) for a in arg]
         else:
             if len(sizes) > 2:
@@ -275,7 +297,7 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
 
 
 def st2dt(array, units_in=None, dummy0=None, dummy1=None):
-    '''The returned array is always independent.
+    """The returned array is always independent.
 
     :Parameters:
 
@@ -297,13 +319,13 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
 
     **Examples:**
 
-    '''
+    """
     func = partial(st2datetime, calendar=units_in._calendar)
     return np.vectorize(func, otypes=[object])(array)
 
 
 def st2datetime(date_string, calendar=None):
-    '''Parse an ISO 8601 date-time string into a `cftime` object.
+    """Parse an ISO 8601 date-time string into a `cftime` object.
 
     :Parameters:
 
@@ -313,8 +335,8 @@ def st2datetime(date_string, calendar=None):
 
         `cftime.datetime`
 
-    '''
-    if date_string.count('-') != 2:
+    """
+    if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "
             "and a day"
@@ -330,12 +352,14 @@ def st2datetime(date_string, calendar=None):
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
-    return dt(year, month, day, hour, minute, second, microsecond,
-              calendar=calendar)
+    #    return Datetime(year, month, day, hour, minute, second)
+    return dt(
+        year, month, day, hour, minute, second, microsecond, calendar=calendar
+    )
 
 
 def st2elements(date_string):
-    '''Parse an ISO 8601 date-time string into a `cftime` object.
+    """Parse an ISO 8601 date-time string into a `cftime` object.
 
     :Parameters:
 
@@ -345,8 +369,8 @@ def st2elements(date_string):
 
         `tuple`
 
-    '''
-    if date_string.count('-') != 2:
+    """
+    if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "
             "and a day"
@@ -362,12 +386,19 @@ def st2elements(date_string):
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
-    return (year, month, day, hour, minute,
-            second, microsecond)
+    return (
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+    )
 
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
-    '''Convert reference times  to date-time objects
+    """Convert reference times  to date-time objects
 
     The returned array is always independent.
 
@@ -389,7 +420,7 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
             An array of `cftime.datetime` objects with the same shape
             as *array*.
 
-    '''
+    """
     ndim = np.ndim(array)
     if not ndim and np.ma.is_masked(array):
         # num2date has issues with scalar masked arrays with a True
@@ -397,26 +428,24 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         return np.ma.masked_all((), dtype=object)
 
     units = units_in.units
-    calendar = getattr(units_in, 'calendar', 'standard')
+    calendar = getattr(units_in, "calendar", "standard")
 
-    array = cftime.num2date(array, units, calendar,
-                            only_use_cftime_datetimes=True)
+    array = cftime.num2date(
+        array, units, calendar, only_use_cftime_datetimes=True
+    )
 
     return array
 
 
 def dt2Dt(x, calendar=None):
-    '''Convert a datetime.datetime object to a cftime.datetime object
-
-    '''
+    """Convert a datetime.datetime object to a cf.Datetime object"""
     if not x:
         return False
-
     return dt(x, calendar=calendar)
 
 
 def dt2rt(array, units_in, units_out, dummy1=None):
-    '''Round to the nearest millisecond. This is only necessary whilst
+    """Round to the nearest millisecond. This is only necessary whilst
     netCDF4 time functions have an accuracy of no better than 1
     millisecond (which is still the case at version 1.2.2).
 
@@ -439,7 +468,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
         `numpy.ndarray`
             An array of numbers with the same shape as *array*.
 
-    '''
+    """
     ndim = np.ndim(array)
 
     array = units_out._utime.date2num(array)
@@ -451,7 +480,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
 
 
 def st2rt(array, units_in, units_out, dummy1=None):
-    '''The returned array is always independent.
+    """The returned array is always independent.
 
     :Parameters:
 
@@ -469,7 +498,7 @@ def st2rt(array, units_in, units_out, dummy1=None):
         `numpy.ndarray`
             An array of floats with the same shape as *array*.
 
-    '''
+    """
     array = st2dt(array, units_in)
     array = units_out._utime.date2num(array)
 

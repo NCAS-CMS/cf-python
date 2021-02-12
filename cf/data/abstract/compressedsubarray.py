@@ -1,27 +1,28 @@
 import abc
 
 from functools import reduce
-from operator  import mul
-from sys       import getrefcount
+from operator import mul
+from sys import getrefcount
+
+from ...functions import inspect as cf_inspect
 
 
 class CompressedSubarray(abc.ABC):
-    '''Abstract base class for a compressed sub-array container.
+    """Abstract base class for a compressed sub-array container."""
 
-    '''
     def __init__(self, array, shape, compression):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        array:
+            array:
 
-        shape: `tuple`
-            The shape of the uncompressed array
+            shape: `tuple`
+                The shape of the uncompressed array
 
-        compression: `dict`
+            compression: `dict`
 
-        '''
+        """
         # DO NOT CHANGE IN PLACE
         self.array = array
 
@@ -39,23 +40,22 @@ class CompressedSubarray(abc.ABC):
 
     @abc.abstractmethod
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        """x.__getitem__(indices) <==> x[indices]
 
-    Returns a numpy array.
+        Returns a numpy array.
 
-        '''
+        """
         raise NotImplementedError()  # pragma: no cover
 
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
+        """x.__repr__() <==> repr(x)"""
         array = self.array
         shape = str(array.shape)
-        shape = shape.replace(',)', ')')
+        shape = shape.replace(",)", ")")
 
         return "<CF {}{}: {}>".format(
-            self.__class__.__name__, shape, str(array))
+            self.__class__.__name__, shape, str(array)
+        )
 
     @property
     def dtype(self):
@@ -63,69 +63,65 @@ class CompressedSubarray(abc.ABC):
 
     @property
     def file(self):
-        '''The file on disk which contains the compressed array, or `None` of
-    the array is in memory.
+        """The file on disk which contains the compressed array, or `None` of
+         the array is in memory.
 
-   **Examples:**
+        **Examples:**
 
-    >>> self.file
-    '/home/foo/bar.nc'
+         >>> self.file
+         '/home/foo/bar.nc'
 
-        '''
-        return getattr(self.array, 'file', None)
+        """
+        return getattr(self.array, "file", None)
 
     def close(self):
-        '''Close all referenced open files.
+        """Close all referenced open files.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.close()
+        >>> f.close()
 
-        '''
+        """
         if self.on_disk():
             self.array.close()
 
     def copy(self):
-        '''Replace the abstract base class with a deep copy.
-
-        '''
+        """Replace the abstract base class with a deep copy."""
         C = self.__class__
         new = C.__new__(C)
         new.__dict__ = self.__dict__.copy()
         return new
 
     def inspect(self):
-        '''Inspect the object for debugging.
+        """Inspect the object for debugging.
 
-    .. seealso:: `cf.inspect`
+        .. seealso:: `cf.inspect`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         print(cf_inspect(self))
 
     def on_disk(self):
-        '''True if and only if the compressed array is on disk as opposed to
-    in memory.
+        """True if and only if the compressed array is on disk as opposed to
+        in memory.
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.on_disk()
-    True
+        >>> a.on_disk()
+        True
 
-        '''
-        return not hasattr(self.array, '__array_interface__')
+        """
+        return not hasattr(self.array, "__array_interface__")
 
     def unique(self):
-        '''True if there is only one permanent reference to the array instance.
-
-        '''
+        """True if there is only one permanent reference to the array instance."""
         # Note, from the Python docs for sys.getrefcount:
         # "The count returned is generally one higher than you might expect,
         # because it includes the (temporary) reference as an argument to

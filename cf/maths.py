@@ -4,9 +4,10 @@ from . import Units
 from .data.data import Data
 
 
-def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
-                       radius=6371229.0, cyclic=None):
-    '''Calculate the relative vorticity using centred finite differences.
+def relative_vorticity(
+    u, v, wrap=None, one_sided_at_boundary=False, radius=6371229.0, cyclic=None
+):
+    """Calculate the relative vorticity using centred finite differences.
 
     The relative vorticity of wind defined on a Cartesian domain (such
     as a plane projection) is defined as
@@ -79,16 +80,17 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
             The relative vorticity calculated with centred finite
             differences.
 
-    '''
+    """
     if cyclic:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'relative_vorticity', {'cyclic': cyclic},
-            "Use the 'wrap' keyword instead"
+            "relative_vorticity",
+            {"cyclic": cyclic},
+            "Use the 'wrap' keyword instead",
         )  # pragma: no cover
 
     # Get the standard names of u and v
-    u_std_name = u.get_property('standard_name', None)
-    v_std_name = v.get_property('standard_name', None)
+    u_std_name = u.get_property("standard_name", None)
+    v_std_name = v.get_property("standard_name", None)
 
     # Copy u and v
     u = u.copy()
@@ -96,16 +98,19 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
 
     # Get the X and Y coordinates
     (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords(
-        'u', ('X', 'Y'))
+        "u", ("X", "Y")
+    )
     (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords(
-        'v', ('X', 'Y'))
+        "v", ("X", "Y")
+    )
 
     if not u_x.equals(v_x) or not u_y.equals(v_y):
-        raise ValueError('u and v must be on the same grid.')
+        raise ValueError("u and v must be on the same grid.")
 
     # Check for lat/long
-    is_latlong = ((u_x.Units.islongitude and u_y.Units.islatitude) or
-                  (u_x.units == 'degrees' and u_y.units == 'degrees'))
+    is_latlong = (u_x.Units.islongitude and u_y.Units.islatitude) or (
+        u_x.units == "degrees" and u_y.units == "degrees"
+    )
 
     # Check for cyclicity
     if wrap is None:
@@ -122,10 +127,10 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
         y_units = u_y.Units
 
         # Change the units of the lat/longs to radians
-        u_x.Units = Units('radians')
-        u_y.Units = Units('radians')
-        v_x.Units = Units('radians')
-        v_y.Units = Units('radians')
+        u_x.Units = Units("radians")
+        u_y.Units = Units("radians")
+        v_x.Units = Units("radians")
+        v_y.Units = Units("radians")
 
         # Find cos and tan of latitude
         cos_lat = u_y.cos()
@@ -145,11 +150,16 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
         corr *= tan_lat.array.reshape(u_shape)
 
         # Calculate the derivatives
-        v.derivative(v_x_key, wrap=wrap,
-                     one_sided_at_boundary=one_sided_at_boundary, inplace=True)
+        v.derivative(
+            v_x_key,
+            wrap=wrap,
+            one_sided_at_boundary=one_sided_at_boundary,
+            inplace=True,
+        )
         v.data /= cos_lat.array.reshape(v_shape)
-        u.derivative(u_y_key, one_sided_at_boundary=one_sided_at_boundary,
-                     inplace=True)
+        u.derivative(
+            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
+        )
 
         radius = Data.asdata(radius).squeeze()
         radius.dtype = float
@@ -157,10 +167,11 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
             raise ValueError("Multiple radii: radius={!r}".format(radius))
 
         if not radius.Units:
-            radius.override_units(Units('metres'), inplace=True)
-        elif not radius.Units.equivalent(Units('metres')):
+            radius.override_units(Units("metres"), inplace=True)
+        elif not radius.Units.equivalent(Units("metres")):
             raise ValueError(
-                "Invalid units for radius: {!r}".format(radius.Units))
+                "Invalid units for radius: {!r}".format(radius.Units)
+            )
 
         # Calculate the relative vorticity. Do v-(u-corr) rather than
         # v-u+corr to be nice with coordinate reference corner cases.
@@ -168,34 +179,37 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
         rv.data /= radius
 
         # Convert the units of latitude and longitude to canonical units
-        rv.dim('X').Units = x_units
-        rv.dim('Y').Units = y_units
+        rv.dim("X").Units = x_units
+        rv.dim("Y").Units = y_units
 
     else:
         v.derivative(
-            v_x_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
+            v_x_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
+        )
         u.derivative(
-            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
+            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
+        )
 
         rv = v - u
 
     # Convert the units of relative vorticity to canonical units
-    rv.Units = Units('s-1')
+    rv.Units = Units("s-1")
 
     # Set the standard name if appropriate and delete the long_name
-    if ((u_std_name == 'eastward_wind' and v_std_name == 'northward_wind') or
-            (u_std_name == 'x_wind' and v_std_name == 'y_wind')):
-        rv.standard_name = 'atmosphere_relative_vorticity'
+    if (u_std_name == "eastward_wind" and v_std_name == "northward_wind") or (
+        u_std_name == "x_wind" and v_std_name == "y_wind"
+    ):
+        rv.standard_name = "atmosphere_relative_vorticity"
     else:
-        rv.del_property('standard_name', None)
+        rv.del_property("standard_name", None)
 
-    rv.del_property('long_name', None)
+    rv.del_property("long_name", None)
 
     return rv
 
 
 def histogram(*digitized):
-    '''Return the distribution of a set of variables in the form of an
+    """Return the distribution of a set of variables in the form of an
     N-dimensional histogram.
 
     The number of dimensions of the histogram is equal to the number
@@ -357,12 +371,13 @@ def histogram(*digitized):
     >>> h.sum()
     <CF Data(): 40 1>
 
-    '''
+    """
     if not digitized:
         raise ValueError(
-            "Must provide at least one 'digitized' field construct")
+            "Must provide at least one 'digitized' field construct"
+        )
 
     f = digitized[0].copy()
     f.clear_properties()
 
-    return f.bin('sample_size', digitized=digitized)
+    return f.bin("sample_size", digitized=digitized)

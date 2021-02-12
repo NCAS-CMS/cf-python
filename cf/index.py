@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class Index(mixin.PropertiesData,
-            cfdm.Index):
-    '''An index variable required to uncompress a ragged array.
+class Index(mixin.PropertiesData, cfdm.Index):
+    """An index variable required to uncompress a ragged array.
 
     A collection of features stored using an indexed ragged array
     combines all features along a single dimension (the sample
@@ -45,14 +44,15 @@ class Index(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

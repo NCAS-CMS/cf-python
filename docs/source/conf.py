@@ -20,8 +20,8 @@ import cf
 
 import cfdm
 
-print('\ncf environment:')
-print('-----------------')
+print("\ncf environment:")
+print("-----------------")
 cf.environment()
 print()
 
@@ -29,43 +29,40 @@ cfdm_version = cfdm.__version__
 
 
 def _read(fname):
-    """Returns content of a file.
-
-    """
+    """Returns content of a file."""
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
-    with open(fpath, 'r') as file_:
+    with open(fpath, "r") as file_:
         return file_.read()
 
 
 def _get_version():
-    """Returns library version by inspecting core/__init__.py file.
-
-    """
-    return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("../../cf/__init__.py"),
-                     re.MULTILINE).group(1)
+    """Returns library version by inspecting core/__init__.py file."""
+    return re.search(
+        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+        _read("../../cf/__init__.py"),
+        re.MULTILINE,
+    ).group(1)
 
 
 def _get_cf_version():
-    """Returns CF version by inspecting core/__init__.py file.
+    """Returns CF version by inspecting core/__init__.py file."""
+    return (
+        cf.__cf_version__
+    )  # re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
 
-    """
-    return cf.__cf_version__  # re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+
 #                     _read("../../cf/__init__.py"),
 #                     re.MULTILINE).group(1)
 
 
 def _get_year():
-    '''
-    '''
+    """"""
     return str(datetime.datetime.now().year)
 
 
 def _get_date():
-    '''Get the current calendar year.
-
-    '''
+    """Get the current calendar year."""
     return str(datetime.date.today())
 
 
@@ -73,13 +70,13 @@ def _get_date():
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
 # it absolute, like shown here.  sys.path.insert(0,os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath("../.."))
 
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '2.3.1'
+needs_sphinx = "2.3.1"
 
 # rst_prolog = """
 # .. |CF| replace:: """+_get_cf_version()+"""
@@ -89,27 +86,27 @@ needs_sphinx = '2.3.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     # 'sphinx.ext.viewcode',
-    'sphinx.ext.linkcode',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.graphviz',
+    "sphinx.ext.linkcode",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.graphviz",
     # 'sphinx.ext.inheritance_diagram',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.doctest',
-    'sphinx.ext.githubpages',
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.doctest",
+    "sphinx.ext.githubpages",
     # 'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
-    'sphinx_copybutton',
-    'sphinx_toggleprompt',
-    'sphinxcontrib.spelling',
+    "sphinx_copybutton",
+    "sphinx_toggleprompt",
+    "sphinxcontrib.spelling",
 ]
 
 
 # Spelling extension configuration: set British English and false positives
-spelling_lang = 'en_GB'
-tokenizer_lang = 'en_GB'
-spelling_word_list_filename = 'spelling_false_positives.txt'
+spelling_lang = "en_GB"
+tokenizer_lang = "en_GB"
+spelling_word_list_filename = "spelling_false_positives.txt"
 
 # Boolean indicating whether to scan all found documents for
 # autosummary directives, and to generate stub pages for each
@@ -118,7 +115,7 @@ autosummary_generate = True
 
 # Both the class’ and the __init__ method’s docstring are concatenated
 # and inserted.
-autoclass_content = 'both'
+autoclass_content = "both"
 
 # inheritance_graph_attrs = {'rankdir': "TB",
 #                           'clusterrank': 'local'}
@@ -126,29 +123,32 @@ autoclass_content = 'both'
 
 # This value selects how automatically documented members are sorted
 # (http://sphinx-doc.org/latest/ext/autodoc.html)
-autodoc_member_order = 'groupwise'
+autodoc_member_order = "groupwise"
 
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
 # directives. (http://sphinx-doc.org/latest/ext/autodoc.html)
 autodoc_default_flags = [
-    'members', 'inherited-members', 'show-inheritance']  # v1.8.5
+    "members",
+    "inherited-members",
+    "show-inheritance",
+]  # v1.8.5
 # autodoc_default_options = {'members'          : True,  # v2
 #                           'inherited-members': True,
 #                           'show-inheritance' : True,}
 
-intersphinx_cache_limit = 5     # days to keep the cached inventories
+intersphinx_cache_limit = 5  # days to keep the cached inventories
 intersphinx_mapping = {
-    'sphinx': ('https://www.sphinx-doc.org/en/master/',  None),
-    'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://numpy.org/doc/stable', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     # 'netCDF4': ('https://unidata.github.io/netcdf4-python', None),
-    'cftime': ('https://unidata.github.io/cftime', None),
-    'cfunits': ('https://ncas-cms.github.io/cfunits', None),
-    'cfdm': ('https://ncas-cms.github.io/cfdm', None),
-    'cfplot': ('https://ajheaps.github.io/cf-plot', None),
-    }
+    "cftime": ("https://unidata.github.io/cftime", None),
+    "cfunits": ("https://ncas-cms.github.io/cfunits", None),
+    "cfdm": ("https://ncas-cms.github.io/cfdm", None),
+    "cfplot": ("https://ajheaps.github.io/cf-plot", None),
+}
 
 # This extension is meant to help with the common pattern of having
 # many external links that point to URLs on one and the same site,
@@ -167,20 +167,20 @@ intersphinx_mapping = {
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['../_templates', '../../_templates']
-templates_path = ['../_templates']
+templates_path = ["../_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'Python cf package'
-copyright = _get_year()+', NCAS | Page built on '+_get_date()
+project = "Python cf package"
+copyright = _get_year() + ", NCAS | Page built on " + _get_date()
 author = "David Hassell, Sadie Bartholomew"
 
 # The version info for the project you're documenting, acts as
@@ -225,7 +225,7 @@ show_authors = False
 # pygments_style = 'sphinx'
 
 # The default language to highlight source code
-highlight_language = 'python'
+highlight_language = "python"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -235,7 +235,7 @@ highlight_language = 'python'
 # The theme to use for HTML and HTML Help pages.  See the
 # documentation for a list of builtin themes.
 # html_theme = 'nature'
-html_theme = 'alabaster'  # 'default' #'haiku' #'default'
+html_theme = "alabaster"  # 'default' #'haiku' #'default'
 
 # body_min_width (int or str): Minimal width of the document
 # body. This can be an int, which is interpreted as pixels or a valid
@@ -266,26 +266,26 @@ html_theme = 'alabaster'  # 'default' #'haiku' #'default'
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-    'show_related': 'true',
-    'sidebar_collapse': 'false',
-    'fixed_sidebar': 'true',
-    'page_width': '85%',
-    'seealso_bg': 'transparent',
-    'seealso_border': 'transparent',
-    'shadow': 'false',
-    'show_powered_by': 'true',
-    'font_size': '13pt',
-    'code_font_size': '10pt',
-    'font_family': 'Arial',
-    'head_font_family': 'Arial',
-    'link_hover': '#6b0000',
-    'github_button': 'true',
-    'github_type': 'star',
-    'github_repo': 'cf-python',
-    'github_user': 'NCAS-CMS',
-    'pre_bg': '#ecf2f9',
-    'code_bg': '#ecf2f9',
-    'description': 'A CF-compliant earth science data analysis library',
+    "show_related": "true",
+    "sidebar_collapse": "false",
+    "fixed_sidebar": "true",
+    "page_width": "85%",
+    "seealso_bg": "transparent",
+    "seealso_border": "transparent",
+    "shadow": "false",
+    "show_powered_by": "true",
+    "font_size": "13pt",
+    "code_font_size": "10pt",
+    "font_family": "Arial",
+    "head_font_family": "Arial",
+    "link_hover": "#6b0000",
+    "github_button": "true",
+    "github_type": "star",
+    "github_repo": "cf-python",
+    "github_user": "NCAS-CMS",
+    "pre_bg": "#ecf2f9",
+    "code_bg": "#ecf2f9",
+    "description": "A CF-compliant earth science data analysis library",
 }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -309,16 +309,16 @@ html_title = "Documentation"
 # sheets) here, relative to this directory. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite
 # the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Paths (filenames) here must be relative to (under) html_static_path as above:
 html_css_files = [
-    'customise-alabaster.css',
+    "customise-alabaster.css",
 ]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
-html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = "%b %d, %Y"
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -326,12 +326,13 @@ html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 # html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
-html_sidebars = {'**': [
-    'about.html',
-    'searchbox.html',
-    'globaltoc.html',
-    'relations.html',
-    # 'sourcelink.html',
+html_sidebars = {
+    "**": [
+        "about.html",
+        "searchbox.html",
+        "globaltoc.html",
+        "relations.html",
+        # 'sourcelink.html',
     ]
 }
 
@@ -368,7 +369,7 @@ html_show_sourcelink = False
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'cfdoc'
+htmlhelp_basename = "cfdoc"
 
 
 # -- Options for LaTeX output -------------------------------------------------
@@ -383,9 +384,8 @@ htmlhelp_basename = 'cfdoc'
 # start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'cf.tex', 'cf-python Documentation',
-     'NCAS', 'manual'),
-    ]
+    ("index", "cf.tex", "cf-python Documentation", "NCAS", "manual"),
+]
 
 # The name of an image file (relative to this directory) to place at
 # the top of the title page.
@@ -399,7 +399,7 @@ latex_use_parts = True
 latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = 'footnote'
+latex_show_urls = "footnote"
 
 # Additional stuff for the LaTeX preamble.
 # latex_preamble = ''
@@ -412,16 +412,13 @@ latex_domain_indices = True
 
 # A dictionary that contains LaTeX snippets that override those Sphinx
 # usually puts into the generated .tex files.
-latex_elements = {'papersize': 'a4paper'}
+latex_elements = {"papersize": "a4paper"}
 
 # -- Options for manual page output -------------------------------------------
 
 # One entry per manual page. List of tuples (source start file, name,
 # description, authors, manual section).
-man_pages = [
-    ('index', 'cf', 'cf Documentation',
-     'NCAS', 1)
-    ]
+man_pages = [("index", "cf", "cf Documentation", "NCAS", 1)]
 
 
 # Configure copybutton
@@ -429,7 +426,7 @@ man_pages = [
 # Python prompts as those can be included or excluded in copied code via the
 # toggle button (sphinx-toggleprompt). So we skip console prompts which we
 # also have in the docs as the second most-common case.
-copybutton_prompt_text = "$ "   # prompt to skip automatically on copying
+copybutton_prompt_text = "$ "  # prompt to skip automatically on copying
 
 # Configure toggleprompt
 toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
@@ -442,7 +439,7 @@ import inspect
 import cf
 from os.path import relpath, dirname
 
-link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
+link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
@@ -456,20 +453,20 @@ def linkcode_resolve(domain, info):
 
     online_source_code = True
 
-    if domain != 'py':
+    if domain != "py":
         return None
-    if not info['module']:
+    if not info["module"]:
         return None
 
-    modname = info['module']
-    fullname = info['fullname']
+    modname = info["module"]
+    fullname = info["fullname"]
 
     submod = sys.modules.get(modname, None)
     if submod is None:
         return None
 
     obj = submod
-    for part in fullname.split('.'):
+    for part in fullname.split("."):
         try:
             obj = getattr(obj, part)
         except AttributeError:
@@ -509,17 +506,19 @@ def linkcode_resolve(domain, info):
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
     if online_source_code:
-        if 'cfdm/' in fn:
+        if "cfdm/" in fn:
             # Point to on-line cfdm
             # code. E.g. https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/field.py#L619
-            fn = re.sub('^.*(cfdm/.*)', '\\1', fn)
+            fn = re.sub("^.*(cfdm/.*)", "\\1", fn)
             url = "https://github.com/NCAS-CMS/cfdm/blob/v{0}/{1}{2}".format(
-                cfdm_version, fn, linespec)
+                cfdm_version, fn, linespec
+            )
         else:
             # Point to on-line cf
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
             url = "https://github.com/NCAS-CMS/cf-python/blob/v{0}/cf/{1}{2}".format(
-                link_release, fn, linespec)
+                link_release, fn, linespec
+            )
 
         print(url)
         return url

@@ -1,9 +1,7 @@
 import datetime
+import faulthandler
 import unittest
 
-import numpy
-
-import faulthandler
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -17,11 +15,12 @@ class DomainAncillaryTest(unittest.TestCase):
         _ = str(f)
         _ = f.dump(display=False)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

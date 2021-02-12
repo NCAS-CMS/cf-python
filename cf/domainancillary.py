@@ -5,9 +5,8 @@ from . import Bounds
 from . import mixin
 
 
-class DomainAncillary(mixin.PropertiesDataBounds,
-                      cfdm.DomainAncillary):
-    '''A domain ancillary construct of the CF data model.
+class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
+    """A domain ancillary construct of the CF data model.
 
     A domain ancillary construct provides information which is needed
     for computing the location of cells in an alternative coordinate
@@ -28,20 +27,21 @@ class DomainAncillary(mixin.PropertiesDataBounds,
 
     {{netcdf variable}}
 
-    '''
+    """
+
     def __new__(cls, *args, **kwargs):
-        '''
-        '''
+        """"""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
+
 
 # --- End: class

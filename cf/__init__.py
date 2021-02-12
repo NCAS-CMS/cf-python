@@ -1,4 +1,4 @@
-'''The Python `cf` package is an Earth Science data analysis library
+"""The Python `cf` package is an Earth Science data analysis library
 that is built on a complete implementation of the CF data model.
 
 The `cf` package implements the CF data model for its internal data
@@ -78,23 +78,25 @@ along with with `cf`.
 See the :ref:`cf-python home page <cf-python-home>` for documentation,
 installation and source code.
 
-'''
-__Conventions__ = 'CF-1.8'
-__author__ = 'David Hassell'
-__date__ = '2020-12-18'
-__version__ = '3.9.0'
+"""
+
+__Conventions__ = "CF-1.8"
+__author__ = "David Hassell"
+__date__ = "2020-12-18"
+__version__ = "3.9.0"
 
 _requires = (
-    'numpy',
-    'netCDF4',
-    'cftime',
-    'cfunits',
-    'cfdm',
-    'psutil',
+    "numpy",
+    "netCDF4",
+    "cftime",
+    "cfunits",
+    "cfdm",
+    "psutil",
 )
 
 _error0 = "cf v{} requires the modules {}. ".format(
-    __version__, ', '.join(_requires))
+    __version__, ", ".join(_requires)
+)
 
 try:
     import cfdm
@@ -108,17 +110,18 @@ import importlib.util
 import platform
 
 # Check the version of Python
-_minimum_vn = '3.6.0'
+_minimum_vn = "3.6.0"
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad python version: cf requires python version {} or later. "
         "Got {}".format(_minimum_vn, platform.python_version())
     )
 
-_found_ESMF = bool(importlib.util.find_spec('ESMF'))
+_found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
-if importlib.util.find_spec('mpi4py'):
+if importlib.util.find_spec("mpi4py"):
     from mpi4py import MPI
+
     mpi_comm = MPI.COMM_WORLD
     mpi_size = mpi_comm.Get_size()
     mpi_rank = mpi_comm.Get_rank()
@@ -126,10 +129,10 @@ if importlib.util.find_spec('mpi4py'):
     if mpi_size > 1:
         mpi_on = True
         if mpi_rank == 0:
-            print('===============================================')
-            print('WARNING: MPI support is an experimental feature')
-            print('  and is not recommended for operational use.')
-            print('===============================================')
+            print("===============================================")
+            print("WARNING: MPI support is an experimental feature")
+            print("  and is not recommended for operational use.")
+            print("===============================================")
     else:
         mpi_on = False
 else:
@@ -162,16 +165,15 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 # Check the version of psutil
-_minimum_vn = '0.6.0'
+_minimum_vn = "0.6.0"
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad psutil version: cf requires psutil>={}. "
-        "Got {} at {}".format(
-            _minimum_vn, psutil.__version__, psutil.__file__)
+        "Got {} at {}".format(_minimum_vn, psutil.__version__, psutil.__file__)
     )
 
 # Check the version of netCDF4
-_minimum_vn = '1.5.3'
+_minimum_vn = "1.5.3"
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad netCDF4 version: cf requires netCDF4>={}. Got {} "
@@ -179,16 +181,15 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = '1.4.0'
+_minimum_vn = "1.4.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
-        "Got {} at {}".format(
-            _minimum_vn, cftime.__version__, cftime.__file__)
+        "Got {} at {}".format(_minimum_vn, cftime.__version__, cftime.__file__)
     )
 
 # Check the version of numpy
-_minimum_vn = '1.15'
+_minimum_vn = "1.15"
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad numpy version: cf requires numpy>={}. Got {} "
@@ -196,7 +197,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.3.1'
+_minimum_vn = "3.3.1"
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cfunits version: cf requires cfunits>={}. Got {} "
@@ -204,74 +205,106 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.9.0'
-_maximum_vn = '1.8.10.0'
+_minimum_vn = "1.8.9.0"
+_maximum_vn = "1.8.10.0"
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
         "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
-        "at {}".format(_minimum_vn, _maximum_vn,
-                       _cfdm_version, cfdm.__file__))
+        "at {}".format(_minimum_vn, _maximum_vn, _cfdm_version, cfdm.__file__)
+    )
 
 from .constructs import Constructs
 
 # from .abstract import Coordinate
 from .mixin import Coordinate
 
-from .count                   import Count
-from .index                   import Index
-from .list                    import List
-from .nodecountproperties     import NodeCountProperties
+from .count import Count
+from .index import Index
+from .list import List
+from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
-from .interiorring            import InteriorRing
+from .interiorring import InteriorRing
 
-from .bounds               import Bounds
-from .domain               import Domain
-from .datum                import Datum
+from .bounds import Bounds
+from .domain import Domain
+from .datum import Datum
 from .coordinateconversion import CoordinateConversion
 
-from .cfdatetime   import dt, dt_vector
-from .flags        import Flags
+from .cfdatetime import dt, dt_vector
+from .flags import Flags
 from .timeduration import TimeDuration, Y, M, D, h, m, s
-from .units        import Units
+from .units import Units
 
 from .fieldlist import FieldList
 
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .coordinatereference import CoordinateReference
-from .cellmethod          import CellMethod
-from .cellmeasure         import CellMeasure
-from .domainancillary     import DomainAncillary
-from .domainaxis          import DomainAxis
-from .fieldancillary      import FieldAncillary
-from .field               import Field
-from .data                import (Data,
-                                  FilledArray,
-                                  GatheredArray,
-                                  NetCDFArray,
-                                  RaggedContiguousArray,
-                                  RaggedIndexedArray,
-                                  RaggedIndexedContiguousArray)
+from .cellmethod import CellMethod
+from .cellmeasure import CellMeasure
+from .domainancillary import DomainAncillary
+from .domainaxis import DomainAxis
+from .fieldancillary import FieldAncillary
+from .field import Field
+from .data import (
+    Data,
+    FilledArray,
+    GatheredArray,
+    NetCDFArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+)
 
-from .aggregate    import aggregate
-from .query        import (Query, lt, le, gt, ge, eq, ne, contain, contains,
-                           wi, wo, set, year, month, day, hour,
-                           minute, second, dtlt, dtle, dtgt, dtge,
-                           dteq, dtne, cellsize, cellge, cellgt,
-                           cellle, celllt, cellwi, cellwo, djf, mam,
-                           jja, son, seasons)
-from .constants    import *
-from .functions    import *
-from .maths        import relative_vorticity, histogram
+from .aggregate import aggregate
+from .query import (
+    Query,
+    lt,
+    le,
+    gt,
+    ge,
+    eq,
+    ne,
+    contain,
+    contains,
+    wi,
+    wo,
+    set,
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second,
+    dtlt,
+    dtle,
+    dtgt,
+    dtge,
+    dteq,
+    dtne,
+    cellsize,
+    cellge,
+    cellgt,
+    cellle,
+    celllt,
+    cellwi,
+    cellwo,
+    djf,
+    mam,
+    jja,
+    son,
+    seasons,
+)
+from .constants import *  # noqa: F403
+from .functions import *  # noqa: F403
+from .maths import relative_vorticity, histogram
 from .examplefield import example_field
 
 
-from .cfimplementation import (CFImplementation,
-                               implementation)
+from .cfimplementation import CFImplementation, implementation
 
-from .read_write import (read,
-                         write)
+from .read_write import read, write
 
 
 # Set up basic logging for the full project with a root logger
@@ -281,15 +314,15 @@ import sys
 # Configure the root logger which all module loggers inherit from:
 logging.basicConfig(
     stream=sys.stdout,
-    style='{',              # default is old style ('%') string formatting
-    format='{message}',     # no module names or datetimes etc. for basic case
+    style="{",  # default is old style ('%') string formatting
+    format="{message}",  # no module names or datetimes etc. for basic case
     level=logging.WARNING,  # default but change level via log_level()
 )
 
 # And create custom level inbetween 'INFO' & 'DEBUG', to understand value see:
 # https://docs.python.org/3.8/howto/logging.html#logging-levels
 logging.DETAIL = 15  # set value as an attribute as done for built-in levels
-logging.addLevelName(logging.DETAIL, 'DETAIL')
+logging.addLevelName(logging.DETAIL, "DETAIL")
 
 
 def detail(self, message, *args, **kwargs):
@@ -308,7 +341,7 @@ logging.Logger.detail = detail
 # manipulate the cf root logger directly via a built-in method, i.e call:
 #     cf.logging.getLogger().setLevel('PARTITIONING')
 logging.PARTITIONING = 5
-logging.addLevelName(logging.PARTITIONING, 'PARTITIONING')
+logging.addLevelName(logging.PARTITIONING, "PARTITIONING")
 
 
 def partitioning(self, message, *args, **kwargs):

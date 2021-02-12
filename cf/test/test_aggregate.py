@@ -1,9 +1,9 @@
 import datetime
+import faulthandler
 import os
 import unittest
 import warnings
 
-import faulthandler
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -15,11 +15,12 @@ logger = cf.logging.getLogger(log_name)
 
 class aggregateTest(unittest.TestCase):
     filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-    file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'file.nc')
+        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+    )
+    file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "file.nc")
     file2 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'file2.nc')
+        os.path.dirname(os.path.abspath(__file__)), "file2.nc"
+    )
 
     chunk_sizes = (100000, 300, 34)
     original_chunksize = cf.chunksize()
@@ -53,73 +54,74 @@ class aggregateTest(unittest.TestCase):
                 # It seems like this warning arises from NumPy comparisons
                 # done at some point in (only) some aggregate calls (see e.g:
                 # https://github.com/numpy/numpy/issues/6784).
-                warnings.filterwarnings('ignore', category=FutureWarning)
+                warnings.filterwarnings("ignore", category=FutureWarning)
                 h = cf.aggregate(g, verbose=2)
 
             self.assertEqual(len(h), 1)
 
             self.assertEqual(
-                h[0].shape, (10, 9),
-                'h[0].shape = ' + repr(h[0].shape) + ' != (10, 9)'
+                h[0].shape,
+                (10, 9),
+                "h[0].shape = " + repr(h[0].shape) + " != (10, 9)",
             )
 
             self.assertTrue(
-                g.equals(g0, verbose=2),
-                'g != itself after aggregation'
+                g.equals(g0, verbose=2), "g != itself after aggregation"
             )
 
-            self.assertTrue(h[0].equals(f, verbose=2), 'h[0] != f')
+            self.assertTrue(h[0].equals(f, verbose=2), "h[0] != f")
 
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=FutureWarning)
                 i = cf.aggregate(g, verbose=2)
 
             self.assertTrue(
-                i.equals(h, verbose=2),
-                'The second aggregation != the first'
+                i.equals(h, verbose=2), "The second aggregation != the first"
             )
 
             self.assertTrue(
                 g.equals(g0, verbose=2),
-                'g != itself after the second aggregation'
+                "g != itself after the second aggregation",
             )
 
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=FutureWarning)
-                i = cf.aggregate(g, verbose=2, axes='grid_latitude')
+                i = cf.aggregate(g, verbose=2, axes="grid_latitude")
 
             self.assertTrue(
-                i.equals(h, verbose=2),
-                'The third aggregation != the first'
+                i.equals(h, verbose=2), "The third aggregation != the first"
             )
 
             self.assertTrue(
                 g.equals(g0, verbose=2),
-                'g !=itself after the third aggregation'
+                "g !=itself after the third aggregation",
             )
 
-            self.assertEqual(i[0].shape, (10, 9),
-                             'i[0].shape is ' + repr(i[0].shape))
+            self.assertEqual(
+                i[0].shape, (10, 9), "i[0].shape is " + repr(i[0].shape)
+            )
 
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=FutureWarning)
                 i = cf.aggregate(
-                    g, verbose=2, axes='grid_latitude',
-                    donotchecknonaggregatingaxes=1
+                    g,
+                    verbose=2,
+                    axes="grid_latitude",
+                    donotchecknonaggregatingaxes=1,
                 )
 
             self.assertTrue(
-                i.equals(h, verbose=2),
-                'The fourth aggregation != the first'
+                i.equals(h, verbose=2), "The fourth aggregation != the first"
             )
 
             self.assertTrue(
                 g.equals(g0, verbose=2),
-                'g != itself after the fourth aggregation'
+                "g != itself after the fourth aggregation",
             )
 
-            self.assertEqual(i[0].shape, (10, 9),
-                             'i[0].shape is ' + repr(i[0].shape))
+            self.assertEqual(
+                i[0].shape, (10, 9), "i[0].shape is " + repr(i[0].shape)
+            )
 
             q, t = cf.read(self.file)
             c = cf.read(self.file2)[0]
@@ -132,12 +134,11 @@ class aggregateTest(unittest.TestCase):
             self.assertEqual(d[0].shape, (3,) + t.shape)
             self.assertTrue(d[0].equals(e[0], verbose=2))
 
-            x = cf.read(['file.nc', 'file2.nc'], aggregate=False)
+            x = cf.read(["file.nc", "file2.nc"], aggregate=False)
             self.assertEqual(len(x), 3)
 
             x = cf.read(
-                ['file.nc', 'file2.nc'],
-                aggregate={'relaxed_identities': True}
+                ["file.nc", "file2.nc"], aggregate={"relaxed_identities": True}
             )
             self.assertEqual(len(x), 2)
 
@@ -146,9 +147,9 @@ class aggregateTest(unittest.TestCase):
             x = cf.aggregate([c, t])
             self.assertEqual(len(x), 2)
 
-            t.long_name = 'qwerty'
-            c.long_name = 'qwerty'
-            x = cf.aggregate([c, t], field_identity='long_name')
+            t.long_name = "qwerty"
+            c.long_name = "qwerty"
+            x = cf.aggregate([c, t], field_identity="long_name")
             self.assertEqual(len(x), 1)
 
         cf.chunksize(self.original_chunksize)
@@ -180,36 +181,42 @@ class aggregateTest(unittest.TestCase):
             f1 = cf.example_field(1)
 
             detail_header = "DETAIL:cf.aggregate:STRUCTURAL SIGNATURE:"
-            debug_header = (
-                "DEBUG:cf.aggregate:COMPLETE AGGREGATION METADATA:")
+            debug_header = "DEBUG:cf.aggregate:COMPLETE AGGREGATION METADATA:"
 
             # 'DEBUG' (-1) verbosity should output both log message headers...
-            with self.assertLogs(level='NOTSET') as catch:
+            with self.assertLogs(level="NOTSET") as catch:
                 cf.aggregate([f0, f1], verbose=-1)
                 for header in (detail_header, debug_header):
                     self.assertTrue(
-                        any(log_item.startswith(header)
-                            for log_item in catch.output),
-                        "No log entry begins with '{}'".format(header)
+                        any(
+                            log_item.startswith(header)
+                            for log_item in catch.output
+                        ),
+                        "No log entry begins with '{}'".format(header),
                     )
 
             # ...but with 'DETAIL' (3), should get only the detail-level one.
-            with self.assertLogs(level='NOTSET') as catch:
+            with self.assertLogs(level="NOTSET") as catch:
                 cf.aggregate([f0, f1], verbose=3)
                 self.assertTrue(
-                    any(log_item.startswith(detail_header)
-                        for log_item in catch.output),
-                    "No log entry begins with '{}'".format(detail_header)
+                    any(
+                        log_item.startswith(detail_header)
+                        for log_item in catch.output
+                    ),
+                    "No log entry begins with '{}'".format(detail_header),
                 )
                 self.assertFalse(
-                    any(log_item.startswith(debug_header)
-                        for log_item in catch.output),
+                    any(
+                        log_item.startswith(debug_header)
+                        for log_item in catch.output
+                    ),
                     "A log entry begins with '{}' but should not".format(
-                        debug_header)
+                        debug_header
+                    ),
                 )
 
             # and neither should emerge at the 'WARNING' (1) level.
-            with self.assertLogs(level='NOTSET') as catch:
+            with self.assertLogs(level="NOTSET") as catch:
                 logger.warning(
                     "Dummy message to log something at warning level so that "
                     "'assertLog' does not error when no logs messages emerge."
@@ -220,17 +227,21 @@ class aggregateTest(unittest.TestCase):
                 cf.aggregate([f0, f1], verbose=1)
                 for header in (detail_header, debug_header):
                     self.assertFalse(
-                        any(log_item.startswith(header)
-                            for log_item in catch.output),
+                        any(
+                            log_item.startswith(header)
+                            for log_item in catch.output
+                        ),
                         "A log entry begins with '{}' but should not".format(
-                            header)
+                            header
+                        ),
                     )
+
 
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

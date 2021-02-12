@@ -13,46 +13,48 @@ class UMFileException(Exception):
 
 
 class File:
-    '''A class for a UM file that gives a view of the file including sets
+    """A class for a UM file that gives a view of the file including sets
     of PP records combined into variables.
 
-    '''
-    def __init__(self, path, byte_ordering=None, word_size=None,
-                 fmt=None, parse=True):
-        '''Open andparse a UM file.
+    """
 
-    The optional *byte_ordering*, *word_size* and *fmt* arguments
-    specify the file type. If all three are set, then this forces the
-    file type; otherwise, the file type is autodetected and any of
-    them that are set are ignored.
+    def __init__(
+        self, path, byte_ordering=None, word_size=None, fmt=None, parse=True
+    ):
+        """Open andparse a UM file.
 
-    :Parameters:
+        The optional *byte_ordering*, *word_size* and *fmt* arguments
+        specify the file type. If all three are set, then this forces the
+        file type; otherwise, the file type is autodetected and any of
+        them that are set are ignored.
 
-        path: `str`
-            The name of the UM file.
+        :Parameters:
 
-        byte_ordering: `str`, optional
-            'little_endian' or 'big_endian'
+            path: `str`
+                The name of the UM file.
 
-        word_size: `int`, optional
-            4 or 8
+            byte_ordering: `str`, optional
+                'little_endian' or 'big_endian'
 
-        fmt: `str`, optional
-            'FF' or 'PP'
+            word_size: `int`, optional
+                4 or 8
 
-        parse: `bool`, optional
-            The default action is to open the file, store the file
-            type from the arguments or autodetection as described
-            above, and then parse the contents, giving a tree of
-            variables and records under the `File` object. However, if
-            *parse* is False, then an object is returned in which the
-            last step is omitted, so only the file type is stored, and
-            there are no variables under it. Such an object can be
-            passed when instantiating Rec objects, and contains
-            sufficient info about the file type to ensure that the
-            `get_data` method of those `Rec` objects will work.
+            fmt: `str`, optional
+                'FF' or 'PP'
 
-        '''
+            parse: `bool`, optional
+                The default action is to open the file, store the file
+                type from the arguments or autodetection as described
+                above, and then parse the contents, giving a tree of
+                variables and records under the `File` object. However, if
+                *parse* is False, then an object is returned in which the
+                last step is omitted, so only the file type is stored, and
+                there are no variables under it. Such an object can be
+                passed when instantiating Rec objects, and contains
+                sufficient info about the file type to ensure that the
+                `get_data` method of those `Rec` objects will work.
+
+        """
         c = cInterface.CInterface()
         self._c_interface = c
 
@@ -88,40 +90,40 @@ class File:
             self._add_back_refs()
 
     def open_fd(self):
-        '''(Re)open the low-level file descriptor.
+        """(Re)open the low-level file descriptor.
 
-    :Returns:
+        :Returns:
 
-        `int`
-            The file descriptor.
+            `int`
+                The file descriptor.
 
-        '''
+        """
         if self.fd is None:
             self.fd = os.open(self.path, os.O_RDONLY)
 
         return self.fd
 
     def close_fd(self):
-        '''Close the low-level file descriptor.
+        """Close the low-level file descriptor.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         if self.fd:
             os.close(self.fd)
 
         self.fd = None
 
     def _detect_file_type(self):
-        '''TODO
+        """TODO
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         c = self._c_interface
         try:
             file_type_obj = c.detect_file_type(self.fd)
@@ -130,36 +132,36 @@ class File:
             raise IOError("File {} has unsupported format".format(self.path))
 
         d = c.file_type_obj_to_dict(file_type_obj)
-        self.fmt = d['fmt']
+        self.fmt = d["fmt"]
         self.byte_ordering = d["byte_ordering"]
         self.word_size = d["word_size"]
 
     def _add_back_refs(self):
-        '''Add file attribute to `Var` objects, and both `!file` and `!var`
-    attributes to `Rec` objects.
+        """Add file attribute to `Var` objects, and both `!file` and `!var`
+        attributes to `Rec` objects.
 
-    The important one is the file attribute in the `Rec` object, as
-    this is used when reading data. The others are provided for extra
-    convenience.
+        The important one is the file attribute in the `Rec` object, as
+        this is used when reading data. The others are provided for extra
+        convenience.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         for var in self.vars:
             var.file = self
             for rec in var.recs:
                 rec.var = var
                 rec.file = self
 
+
 # --- End: class
 
 
 class Var:
-    '''Container for some information about variables.
+    """Container for some information about variables."""
 
-    '''
     def __init__(self, recs, nz, nt, supervar_index=None):
         self.recs = recs
         self.nz = nz
@@ -168,16 +170,16 @@ class Var:
 
     @staticmethod
     def _compare(x, y):
-        '''Method equivalent to the Python 2 'cmp'.
+        """Method equivalent to the Python 2 'cmp'.
 
-    Note that (x > y) - (x < y) is equivalent but not as performant
-    since it would not short-circuit.
+        Note that (x > y) - (x < y) is equivalent but not as performant
+        since it would not short-circuit.
 
-    :Returns:
+        :Returns:
 
-        `int`
+            `int`
 
-        '''
+        """
         if x == y:
             return 0
         elif x > y:
@@ -186,39 +188,39 @@ class Var:
             return -1
 
     def _compare_recs_by_extra_data(self, a, b):
-        '''TODO
+        """TODO
 
-    :Returns:
+        :Returns:
 
-        `int`
+            `int`
 
-        '''
+        """
         return self._compare(a.get_extra_data(), b.get_extra_data())
 
     def _compare_recs_by_orig_order(self, a, b):
-        '''TODO
+        """TODO
 
-    :Returns:
+        :Returns:
 
-        `int`
+            `int`
 
-        '''
+        """
         return self._compare(self.recs.index(a), self.recs.index(b))
 
     def group_records_by_extra_data(self):
-        '''Returns a list of (sub)lists of records where each records within
-    each sublist has matching extra data (if any), so if the whole
-    variable has consistent extra data then the return value will be
-    of length 1.
+        """Returns a list of (sub)lists of records where each records within
+        each sublist has matching extra data (if any), so if the whole
+        variable has consistent extra data then the return value will be
+        of length 1.
 
-    Within each group, the ordering of returned records is the same as
-    in the `!recs` attribute.
+        Within each group, the ordering of returned records is the same as
+        in the `!recs` attribute.
 
-    :Returns:
+        :Returns:
 
-        `list`
+            `list`
 
-        '''
+        """
         compare = self._compare_recs_by_extra_data
         recs = self.recs[:]
         n = len(recs)
@@ -226,7 +228,7 @@ class Var:
             # shouldn't have a var without records, but...
             return []
 
-#        recs.sort(compare) #python2
+        #        recs.sort(compare) #python2
         recs.sort(key=cmp_to_key(compare))
 
         # optimise simple case - if two ends of a sorted list match,
@@ -246,30 +248,37 @@ class Var:
 
         return groups
 
+
 # --- End: class
 
 
 class Rec:
-    '''Container for some information about records.
+    """Container for some information about records."""
 
-    '''
-    def __init__(self, int_hdr, real_hdr, hdr_offset, data_offset, disk_length,
-                 file=None):
-        '''Default instantiation, which stores the supplied headers and
-    offsets.
+    def __init__(
+        self,
+        int_hdr,
+        real_hdr,
+        hdr_offset,
+        data_offset,
+        disk_length,
+        file=None,
+    ):
+        """Default instantiation, which stores the supplied headers and
+        offsets.
 
-    :Parameters:
+        :Parameters:
 
-        file: `File`, optional
-            Used to set the `!file` attribute. Does not need to be
-            supplied, but if it is not then it will have to be set on
-            the returned `Rec` object before calling `get_data` will
-            work. If set it should be set to the `File` object that
-            contains the returned `Rec` object. Normally this would be
-            done by the calling code instantiating via `File` rather
-            than directly.
+            file: `File`, optional
+                Used to set the `!file` attribute. Does not need to be
+                supplied, but if it is not then it will have to be set on
+                the returned `Rec` object before calling `get_data` will
+                work. If set it should be set to the `File` object that
+                contains the returned `Rec` object. Normally this would be
+                done by the calling code instantiating via `File` rather
+                than directly.
 
-        '''
+        """
         self.int_hdr = int_hdr
         self.real_hdr = real_hdr
         self.hdr_offset = hdr_offset
@@ -280,64 +289,58 @@ class Rec:
             self.file = file
 
     @classmethod
-    def from_file_and_offsets(cls, file, hdr_offset, data_offset,
-                              disk_length):
-        '''Instantiate a `Rec` object from the `File` object and the header
-    and data offsets.
+    def from_file_and_offsets(cls, file, hdr_offset, data_offset, disk_length):
+        """Instantiate a `Rec` object from the `File` object and the header
+         and data offsets.
 
-    The headers are read in, and also the record object is ready for
-    calling `get_data`.
+         The headers are read in, and also the record object is ready for
+         calling `get_data`.
 
-    :Parameters:
+         :Parameters:
 
-        file: `File`
-            A view of a file including sets of PP records combined
-            into variables.
+             file: `File`
+                 A view of a file including sets of PP records combined
+                 into variables.
 
-        hdr_offset: `int`
-            The start word in the file of the header.
+             hdr_offset: `int`
+                 The start word in the file of the header.
 
-        data_offset: `int`
-            The start word in the file of the data.
+             data_offset: `int`
+                 The start word in the file of the data.
 
-        disk_length: `int`
-            The length in words of the data in the file.
+             disk_length: `int`
+                 The length in words of the data in the file.
 
-   :Returns:
+        :Returns:
 
-        `Rec`
+             `Rec`
 
-        '''
+        """
         c = file._c_interface
         int_hdr, real_hdr = c.read_header(
-            file.fd,
-            hdr_offset,
-            file.byte_ordering,
-            file.word_size
+            file.fd, hdr_offset, file.byte_ordering, file.word_size
         )
 
         return cls(
-            int_hdr, real_hdr, hdr_offset, data_offset, disk_length,
-            file=file
+            int_hdr, real_hdr, hdr_offset, data_offset, disk_length, file=file
         )
 
     def read_extra_data(self):
-        '''Read the extra data associated with the record.
+        """Read the extra data associated with the record.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
+            `numpy.ndarray`
 
-        '''
+        """
         c = self.file._c_interface
         file = self.file
 
-        extra_data_offset, extra_data_length = (
-            c.get_extra_data_offset_and_length(
-                self.int_hdr,
-                self.data_offset,
-                self.disk_length
-            )
+        (
+            extra_data_offset,
+            extra_data_length,
+        ) = c.get_extra_data_offset_and_length(
+            self.int_hdr, self.data_offset, self.disk_length
         )
 
         raw_extra_data = c.read_extra_data(
@@ -345,56 +348,54 @@ class Rec:
             extra_data_offset,
             extra_data_length,
             file.byte_ordering,
-            file.word_size
+            file.word_size,
         )
 
         edu = ExtraDataUnpacker(
-            raw_extra_data,
-            file.word_size,
-            file.byte_ordering
+            raw_extra_data, file.word_size, file.byte_ordering
         )
 
         return edu.get_data()
 
     def get_extra_data(self):
-        '''Get extra data associated with the record, either by reading or
-    using cached read.
+        """Get extra data associated with the record, either by reading or
+        using cached read.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
+            `numpy.ndarray`
 
-        '''
+        """
         if self._extra_data is None:
             self._extra_data = self.read_extra_data()
 
         return self._extra_data
 
     def get_type_and_num_words(self):
-        '''Get the data type (as numpy type) and number of words.
+        """Get the data type (as numpy type) and number of words.
 
-    :Returns:
+        :Returns:
 
-        `numpy.dtype`, `int`
+            `numpy.dtype`, `int`
 
-        '''
+        """
         c = self.file._c_interface
         ntype, num_words = c.get_type_and_num_words(self.int_hdr)
-        if ntype == 'integer':
+        if ntype == "integer":
             dtype = numpy.dtype(c.file_data_int_type)
-        elif ntype == 'real':
+        elif ntype == "real":
             dtype = numpy.dtype(c.file_data_real_type)
 
         return dtype, num_words
 
     def get_data(self):
-        '''Get the data array associated with the record.
+        """Get the data array associated with the record.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
+            `numpy.ndarray`
 
-        '''
+        """
         c = self.file._c_interface
         file = self.file
         data_type, nwords = c.get_type_and_num_words(self.int_hdr)
@@ -408,13 +409,14 @@ class Rec:
             self.int_hdr,
             self.real_hdr,
             data_type,
-            nwords
+            nwords,
         )
+
 
 # --- End: class
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
 
     path = sys.argv[1]
@@ -440,8 +442,9 @@ if __name__ == '__main__':
             print("-----------------------")
 
         print("all records", var.recs)
-        print("records grouped by extra data ",
-              var.group_records_by_extra_data())
+        print(
+            "records grouped by extra data ", var.group_records_by_extra_data()
+        )
         print("===============================")
 
     f.close_fd()
@@ -457,18 +460,19 @@ if __name__ == '__main__':
         data_offset = myrec.data_offset
         disk_length = myrec.disk_length
 
-        del(f)
+        del f
 
         fnew = File(
             path,
             fmt=fmt,
             byte_ordering=byte_ordering,
             word_size=word_size,
-            parse=False
+            parse=False,
         )
 
         rnew = Rec.from_file_and_offsets(
-            fnew, hdr_offset, data_offset, disk_length)
+            fnew, hdr_offset, data_offset, disk_length
+        )
         print("record read using saved file type and offsets:")
         print("int hdr: %s" % rnew.int_hdr)
         print("real hdr: %s" % rnew.real_hdr)

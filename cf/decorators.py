@@ -22,9 +22,10 @@ _display_or_return = cfdm._display_or_return
 
 # @_deprecated_kwarg_check('i') -> example usage for decorating, using i kwarg
 def _deprecated_kwarg_check(*depr_kwargs):
-    '''A wrapper for provision of positional arguments to the decorator.'''
+    """A wrapper for provision of positional arguments to the decorator."""
+
     def deprecated_kwarg_check_decorator(operation_method):
-        '''A decorator for a deprecation check on given kwargs.
+        """A decorator for a deprecation check on given kwargs.
 
         To specify deprecated kwargs, supply them as string arguments, e.g:
 
@@ -36,7 +37,8 @@ def _deprecated_kwarg_check(*depr_kwargs):
         and if so, call _DEPRECATION_ERROR_KWARGS on them, optionally
         providing a custom message to raise inside it.
 
-        '''
+        """
+
         @wraps(operation_method)
         def precede_with_kwarg_deprecation_check(self, *args, **kwargs):
 
@@ -64,6 +66,7 @@ def _deprecated_kwarg_check(*depr_kwargs):
             return operation_method_result
 
         return precede_with_kwarg_deprecation_check
+
     return deprecated_kwarg_check_decorator
 
 
@@ -72,7 +75,7 @@ def _deprecated_kwarg_check(*depr_kwargs):
 # most methods of the class (any that contain log calls should have it).
 # But this (explicit) approach may be better?
 def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
-    '''A decorator for managing log message filtering by verbose attribute.
+    """A decorator for managing log message filtering by verbose attribute.
 
     Note this has identical purpose to _manage_log_level_via_verbosity except
     it adapts the log level based on a verbose attribute of the class
@@ -96,7 +99,8 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
     completion of decorated functions that are called inside other decorated
     functions (see comments in 'finally' statement for further explanation).
     Note (when it is of concern) that this approach may not be thread-safe.
-    '''
+    """
+
     @wraps(method_using_verbose_attr)
     def verbose_override_wrapper(self, *args, **kwargs):
         # Increment indicates that one decorated function has started execution
@@ -107,8 +111,15 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
             "Accepted values are integers corresponding in positive"
             "cases to increasing verbosity (namely {}), or None, "
             "to configure the verbosity according to the global "
-            "log_level setting.".format(self.verbose, ", ".join(
-                [val.name + " = " + str(val.value) for val in ValidLogLevels]))
+            "log_level setting.".format(
+                self.verbose,
+                ", ".join(
+                    [
+                        val.name + " = " + str(val.value)
+                        for val in ValidLogLevels
+                    ]
+                ),
+            )
         )
         # Convert Boolean cases for backwards compatibility. Need 'is' identity
         # rather than '==' (value) equivalency test, since 1 == True, etc.
@@ -137,8 +148,8 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
 
         # First need to (temporarily) re-enable global logging if disabled
         # in the cases where you do not want to disable it anyway:
-        if (log_level() == 'DISABLE' and verbose_attr not in (0, None)):
-            _disable_logging(at_level='NOTSET')  # enables all logging again
+        if log_level() == "DISABLE" and verbose_attr not in (0, None):
+            _disable_logging(at_level="NOTSET")  # enables all logging again
 
         # After method completes, re-set any changes to log level or enabling
         try:
@@ -155,11 +166,12 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
             # in the outer function would undesirably regain the global level):
             if calls[0] == 0:
                 if verbose_attr == 0:
-                    _disable_logging(at_level='NOTSET')  # lift deactivation
-                elif (verbose_attr is not None and
-                      _is_valid_log_level_int(verbose_attr)):
+                    _disable_logging(at_level="NOTSET")  # lift deactivation
+                elif verbose_attr is not None and _is_valid_log_level_int(
+                    verbose_attr
+                ):
                     _reset_log_emergence_level(log_level())
-                if log_level() == 'DISABLE' and verbose_attr != 0:
+                if log_level() == "DISABLE" and verbose_attr != 0:
                     _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper

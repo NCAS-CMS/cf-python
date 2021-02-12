@@ -7,66 +7,62 @@ import re
 import resource
 import sys
 import ctypes.util
+
 # import cPickle
 import netCDF4
 import warnings
 
-from functools import partial, wraps, update_wrapper
 
-import psutil
-
-import cftime
-
-from numpy import __file__          as _numpy__file__
-from numpy import __version__       as _numpy__version__
-from numpy import all               as _numpy_all
-from numpy import allclose          as _x_numpy_allclose
-from numpy import array             as _numpy_array
+from numpy import __file__ as _numpy__file__
+from numpy import __version__ as _numpy__version__
+from numpy import all as _numpy_all
+from numpy import allclose as _x_numpy_allclose
+from numpy import array as _numpy_array
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
-from numpy import integer           as _numpy_integer
-from numpy import isclose           as _x_numpy_isclose
-from numpy import ndim              as _numpy_ndim
-from numpy import shape             as _numpy_shape
-from numpy import sign              as _numpy_sign
-from numpy import size              as _numpy_size
-from numpy import take              as _numpy_take
-from numpy import tile              as _numpy_tile
-from numpy import where             as _numpy_where
+from numpy import integer as _numpy_integer
+from numpy import isclose as _x_numpy_isclose
+from numpy import ndim as _numpy_ndim
+from numpy import shape as _numpy_shape
+from numpy import sign as _numpy_sign
+from numpy import size as _numpy_size
+from numpy import take as _numpy_take
+from numpy import tile as _numpy_tile
+from numpy import where as _numpy_where
 
-from numpy.ma import all       as _numpy_ma_all
-from numpy.ma import allclose  as _numpy_ma_allclose
+from numpy.ma import all as _numpy_ma_all
+from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
-from numpy.ma import isMA      as _numpy_ma_isMA
-from numpy.ma import masked    as _numpy_ma_masked
+from numpy.ma import isMA as _numpy_ma_isMA
+from numpy.ma import masked as _numpy_ma_masked
+from numpy.ma import take as _numpy_ma_take
 
 from collections.abc import Iterable  # just 'from collections' in Python <3.4
-from hashlib         import md5 as hashlib_md5
-from marshal         import dumps as marshal_dumps
-from math            import ceil as math_ceil
-from os              import getpid, listdir, mkdir
-from os.path         import abspath      as _os_path_abspath
-from os.path         import expanduser   as _os_path_expanduser
-from os.path         import expandvars   as _os_path_expandvars
-from os.path         import dirname      as _os_path_dirname
-from os.path         import join         as _os_path_join
-from os.path         import relpath      as _os_path_relpath
-from psutil          import virtual_memory, Process
-from sys             import executable as _sys_executable
+from hashlib import md5 as hashlib_md5
+from marshal import dumps as marshal_dumps
+from math import ceil as math_ceil
+from os import getpid, listdir, mkdir
+from os.path import abspath as _os_path_abspath
+from os.path import expanduser as _os_path_expanduser
+from os.path import expandvars as _os_path_expandvars
+from os.path import dirname as _os_path_dirname
+from os.path import join as _os_path_join
+from os.path import relpath as _os_path_relpath
+from psutil import virtual_memory, Process
 import urllib.parse
 
 import cfdm
-import cfunits
 
 from . import __version__, __file__
 
-from .constants import (CONSTANTS,
-                        _file_to_fh,
-                        _stash2standard_name,
-                        OperandBoundsCombination)
+from .constants import (
+    CONSTANTS,
+    _file_to_fh,
+    _stash2standard_name,
+    OperandBoundsCombination,
+)
 
 from .docstring import _docstring_substitution_definitions
 
-from . import mpi_on
 from . import mpi_size
 
 
@@ -92,10 +88,8 @@ class Constant(cfdm.Constant):
         return 0
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """Called by the `repr` built-in function."""
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 class DeprecationError(Exception):
@@ -115,11 +109,11 @@ KWARGS_MESSAGE_MAP = {
         "Use keyword 'verbose' instead. Note the informational levels "
         "have been remapped: V = I + 1 maps info=I to verbose=V inputs, "
         "excluding I >= 3 which maps to V = -1 (and V = 0 disables messages)"
-    )
+    ),
 }
 
 # Are we running on GNU/Linux?
-_linux = (platform.system() == 'Linux')
+_linux = platform.system() == "Linux"
 
 if _linux:
     # ----------------------------------------------------------------
@@ -130,26 +124,26 @@ if _linux:
     # Debian-based systems, which otherwise throw an error that there
     # is no such file or directory when run on multiple PEs.
     # ----------------------------------------------------------------
-    _meminfo_fields = set(('SReclaimable:', 'Cached:', 'Buffers:', 'MemFree:'))
-    _meminfo_file = open('/proc/meminfo', 'r', 1)
+    _meminfo_fields = set(("SReclaimable:", "Cached:", "Buffers:", "MemFree:"))
+    _meminfo_file = open("/proc/meminfo", "r", 1)
 
     def _free_memory():
-        '''The amount of available physical memory on GNU/Linux.
+        """The amount of available physical memory on GNU/Linux.
 
-    This amount includes any memory which is still allocated but is no
-    longer required.
+        This amount includes any memory which is still allocated but is no
+        longer required.
 
-    :Returns:
+        :Returns:
 
-        `float`
-            The amount of available physical memory in bytes.
+            `float`
+                The amount of available physical memory in bytes.
 
-    **Examples:**
+        **Examples:**
 
-    >>> _free_memory()
-    96496240.0
+        >>> _free_memory()
+        96496240.0
 
-        '''
+        """
         # https://github.com/giampaolo/psutil/blob/master/psutil/_pslinux.py
 
         # ----------------------------------------------------------------
@@ -185,19 +179,19 @@ else:
     # NOT GNU/LINUX
     # ----------------------------------------------------------------
     def _free_memory():
-        '''The amount of available physical memory.
+        """The amount of available physical memory.
 
-    :Returns:
+        :Returns:
 
-        `float`
-            The amount of available physical memory in bytes.
+            `float`
+                The amount of available physical memory in bytes.
 
-    **Examples:**
+        **Examples:**
 
-    >>> _free_memory()
-    96496240.0
+        >>> _free_memory()
+        96496240.0
 
-        '''
+        """
         return float(virtual_memory().available)
 
 
@@ -205,19 +199,19 @@ else:
 
 
 def configuration(
-        atol=None,
-        rtol=None,
-        tempdir=None,
-        of_fraction=None,
-        chunksize=None,
-        collapse_parallel_mode=None,
-        free_memory_factor=None,
-        log_level=None,
-        regrid_logging=None,
-        relaxed_identities=None,
-        bounds_combination_mode=None,
+    atol=None,
+    rtol=None,
+    tempdir=None,
+    of_fraction=None,
+    chunksize=None,
+    collapse_parallel_mode=None,
+    free_memory_factor=None,
+    log_level=None,
+    regrid_logging=None,
+    relaxed_identities=None,
+    bounds_combination_mode=None,
 ):
-    '''View or set any number of constants in the project-wide
+    """View or set any number of constants in the project-wide
     configuration.
 
     The full list of global constants that can be set in any
@@ -411,7 +405,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
 
-    '''
+    """
     return _configuration(
         Configuration,
         new_atol=atol,
@@ -429,7 +423,7 @@ def configuration(
 
 
 def _configuration(_Configuration, **kwargs):
-    '''Internal helper function to provide the logic for `cf.configuration`.
+    """Internal helper function to provide the logic for `cf.configuration`.
 
     We delegate from the user-facing `cf.configuration` for two main reasons:
 
@@ -453,15 +447,18 @@ def _configuration(_Configuration, **kwargs):
             to the change, or the current names and values if no new
             values are specified.
 
-    '''
+    """
     # Filter out WORKSPACE_FACTOR_{1,2} constants which are only used
     # externally and not exposed to the user:
-    old = {name.lower(): val for name, val in CONSTANTS.items() if
-           not name.startswith('WORKSPACE_FACTOR_')}
+    old = {
+        name.lower(): val
+        for name, val in CONSTANTS.items()
+        if not name.startswith("WORKSPACE_FACTOR_")
+    }
 
-    old.pop('total_memory', None)
-    old.pop('min_total_memory', None)
-    old.pop('fm_threshold', None)
+    old.pop("total_memory", None)
+    old.pop("min_total_memory", None)
+    old.pop("fm_threshold", None)
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -470,17 +467,17 @@ def _configuration(_Configuration, **kwargs):
 
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
-        'new_atol': atol,
-        'new_rtol': rtol,
-        'new_tempdir': tempdir,
-        'new_of_fraction': of_fraction,
-        'new_chunksize': chunksize,
-        'new_collapse_parallel_mode': collapse_parallel_mode,
-        'new_free_memory_factor': free_memory_factor,
-        'new_log_level': log_level,
-        'new_regrid_logging': regrid_logging,
-        'new_relaxed_identities': relaxed_identities,
-        'bounds_combination_mode': bounds_combination_mode,
+        "new_atol": atol,
+        "new_rtol": rtol,
+        "new_tempdir": tempdir,
+        "new_of_fraction": of_fraction,
+        "new_chunksize": chunksize,
+        "new_collapse_parallel_mode": collapse_parallel_mode,
+        "new_free_memory_factor": free_memory_factor,
+        "new_log_level": log_level,
+        "new_regrid_logging": regrid_logging,
+        "new_relaxed_identities": relaxed_identities,
+        "bounds_combination_mode": bounds_combination_mode,
     }
 
     old_values = {}
@@ -489,7 +486,7 @@ def _configuration(_Configuration, **kwargs):
         # Run the corresponding func for all input kwargs
         for setting_alias, new_value in kwargs.items():
             reset_mapping[setting_alias](new_value)
-            setting = setting_alias.replace('new_', '', 1)
+            setting = setting_alias.replace("new_", "", 1)
             old_values[setting_alias] = old[setting]
     except ValueError:
         # Reset any constants that were changed prior to the exception
@@ -507,9 +504,7 @@ def _configuration(_Configuration, **kwargs):
 # --------------------------------------------------------------------
 class Configuration(cfdm.Configuration):
     def __new__(cls, *args, **kwargs):
-        '''Must override this method in subclasses.
-
-        '''
+        """Must override this method in subclasses."""
         instance = super().__new__(cls)
         instance._func = configuration
         return instance
@@ -521,14 +516,12 @@ class Configuration(cfdm.Configuration):
         return 0
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """Called by the `repr` built-in function."""
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 def free_memory():
-    '''The available physical memory.
+    """The available physical memory.
 
     :Returns:
 
@@ -547,18 +540,17 @@ def free_memory():
     >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
     Free memory = 88.2727928162 GiB
 
-    '''
+    """
     return _free_memory()
 
 
 def FREE_MEMORY(*new_free_memory):
-    '''Alias for `cf.free_memory`.
-    '''
+    """Alias for `cf.free_memory`."""
     return free_memory(*new_free_memory)
 
 
 def _WORKSPACE_FACTOR_1():
-    '''The value of workspace factor 1 used in calculating the upper limit
+    """The value of workspace factor 1 used in calculating the upper limit
     to the chunksize given the free memory factor.
 
     :Returns:
@@ -566,12 +558,12 @@ def _WORKSPACE_FACTOR_1():
         `float`
             workspace factor 1
 
-    '''
-    return CONSTANTS['WORKSPACE_FACTOR_1']
+    """
+    return CONSTANTS["WORKSPACE_FACTOR_1"]
 
 
 def _WORKSPACE_FACTOR_2():
-    '''The value of workspace factor 2 used in calculating the upper limit
+    """The value of workspace factor 2 used in calculating the upper limit
     to the chunksize given the free memory factor.
 
     :Returns:
@@ -579,18 +571,18 @@ def _WORKSPACE_FACTOR_2():
         `float`
             workspace factor 2
 
-    '''
-    return CONSTANTS['WORKSPACE_FACTOR_2']
+    """
+    return CONSTANTS["WORKSPACE_FACTOR_2"]
 
 
 def _cf_free_memory_factor(*new_free_memory_factor):
-    '''Internal alias for `cf.free_memory_factor`.
+    """Internal alias for `cf.free_memory_factor`.
 
     Used in this module to prevent a name clash with a function keyword
     argument (corresponding to 'import X as cf_X' etc. in other modules).
     Note we don't use FREE_MEMORY_FACTOR() as it will likely be deprecated
     in future.
-    '''
+    """
     return free_memory_factor(*new_free_memory_factor)
 
 
@@ -633,7 +625,7 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class regrid_logging(ConstantAccess):
-    '''Whether or not to enable ESMPy regridding logging.
+    """Whether or not to enable ESMPy regridding logging.
 
     If it is logging is performed after every call to ESMPy.
 
@@ -659,33 +651,34 @@ class regrid_logging(ConstantAccess):
     >>> cf.regrid_logging()
     True
 
-    '''
-    _name = 'REGRID_LOGGING'
+    """
+
+    _name = "REGRID_LOGGING"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         return bool(arg)
 
 
 class collapse_parallel_mode(ConstantAccess):
-    '''Which mode to use when collapse is run in parallel. There are three
+    """Which mode to use when collapse is run in parallel. There are three
     possible modes:
 
     0.  This attempts to maximise parallelism, possibly at the expense
@@ -723,28 +716,29 @@ class collapse_parallel_mode(ConstantAccess):
     >>> cf.collapse_parallel_mode()
     1
 
-    '''
-    _name = 'COLLAPSE_PARALLEL_MODE'
+    """
+
+    _name = "COLLAPSE_PARALLEL_MODE"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         allowed_values = (0, 1, 2)
         if arg not in allowed_values:
             raise ValueError(
@@ -756,7 +750,7 @@ class collapse_parallel_mode(ConstantAccess):
 
 
 class relaxed_identities(ConstantAccess):
-    '''Use 'relaxed' mode when getting a construct identity.
+    """Use 'relaxed' mode when getting a construct identity.
 
     If set to True, sets ``relaxed=True`` as the default in calls to a
     construct's `identity` method (e.g. `cf.Field.identity`).
@@ -788,33 +782,34 @@ class relaxed_identities(ConstantAccess):
     >>> cf.relaxed_identities()
     False
 
-    '''
-    _name = 'RELAXED_IDENTITIES'
+    """
+
+    _name = "RELAXED_IDENTITIES"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         return bool(arg)
 
 
 class chunksize(ConstantAccess):
-    '''Set the chunksize used by LAMA for partitioning the data
+    """Set the chunksize used by LAMA for partitioning the data
     array.
 
 
@@ -844,31 +839,32 @@ class chunksize(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    '''
-    _name = 'CHUNKSIZE'
+    """
+
+    _name = "CHUNKSIZE"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
-        upper_chunksize = ((free_memory_factor() * min_total_memory())
-                           / ((mpi_size * _WORKSPACE_FACTOR_1()) +
-                              _WORKSPACE_FACTOR_2()))
+        """
+        upper_chunksize = (free_memory_factor() * min_total_memory()) / (
+            (mpi_size * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
+        )
 
         arg = float(arg)
         if arg > upper_chunksize and mpi_size > 1:
@@ -877,15 +873,13 @@ class chunksize(ConstantAccess):
                 "free memory factor ({})".format(arg, upper_chunksize)
             )
         elif arg <= 0:
-            raise ValueError(
-                "Chunk size ({}) must be positive".format(arg)
-            )
+            raise ValueError("Chunk size ({}) must be positive".format(arg))
 
         return arg
 
 
 class tempdir(ConstantAccess):
-    '''The directory for internally generated temporary files.
+    """The directory for internally generated temporary files.
 
     When setting the directory, it is created if the specified path
     does not exist.
@@ -918,28 +912,29 @@ class tempdir(ConstantAccess):
     >>> cf.tempdir()
     '/tmp'
 
-    '''
-    _name = 'TEMPDIR'
+    """
+
+    _name = "TEMPDIR"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         arg = _os_path_expanduser(_os_path_expandvars(arg))
 
         # Create the directory if it does not exist.
@@ -952,7 +947,7 @@ class tempdir(ConstantAccess):
 
 
 class of_fraction(ConstantAccess):
-    '''The amount of concurrently open files above which files containing
+    """The amount of concurrently open files above which files containing
     data arrays may be automatically closed.
 
     The amount is expressed as a fraction of the maximum possible
@@ -996,34 +991,33 @@ class of_fraction(ConstantAccess):
     >>> max_open_files, threshold
     (1024, 768)
 
-    '''
-    _name = 'OF_FRACTION'
+    """
+
+    _name = "OF_FRACTION"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         try:
             arg = float(arg)
         except (ValueError, TypeError):
-            raise ValueError(
-                "Fraction must be a float. Got {!r}".format(arg)
-            )
+            raise ValueError("Fraction must be a float. Got {!r}".format(arg))
 
         if arg <= 0.0 or arg >= 1.0:
             raise ValueError(
@@ -1035,7 +1029,7 @@ class of_fraction(ConstantAccess):
 
 
 class free_memory_factor(ConstantAccess):
-    '''Set the fraction of memory kept free as a temporary
+    """Set the fraction of memory kept free as a temporary
     workspace.
 
     Users should set the free memory factor through cf.set_performance
@@ -1055,28 +1049,29 @@ class free_memory_factor(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    '''
-    _name = 'FREE_MEMORY_FACTOR'
+    """
+
+    _name = "FREE_MEMORY_FACTOR"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         try:
             arg = float(arg)
         except (ValueError, TypeError):
@@ -1090,13 +1085,13 @@ class free_memory_factor(ConstantAccess):
                 "not inclusive"
             )
 
-        CONSTANTS['FM_THRESHOLD'] = arg * total_memory()
+        CONSTANTS["FM_THRESHOLD"] = arg * total_memory()
 
         return arg
 
 
 class bounds_combination_mode(ConstantAccess):
-    '''Determine how to deal with cell bounds in binary operations.
+    """Determine how to deal with cell bounds in binary operations.
 
     The flag returned by ``cf.bounds_combination_mode()`` is used to
     influence whether or not the result of a binary operation "op(x,
@@ -1207,28 +1202,29 @@ class bounds_combination_mode(ConstantAccess):
     >>> print(cf.bounds_combination_mode())
     AND
 
-    '''
-    _name = 'BOUNDS_COMBINATION_MODE'
+    """
+
+    _name = "BOUNDS_COMBINATION_MODE"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: 3.8.0
+        .. versionaddedd:: 3.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         try:
             valid = hasattr(OperandBoundsCombination, arg)
         except (AttributeError, TypeError):
@@ -1238,8 +1234,9 @@ class bounds_combination_mode(ConstantAccess):
             raise ValueError(
                 "{!r} is not one of the valid values: {}".format(
                     arg,
-                    ', '.join([repr(val.name)
-                               for val in OperandBoundsCombination]),
+                    ", ".join(
+                        [repr(val.name) for val in OperandBoundsCombination]
+                    ),
                 )
             )
 
@@ -1247,12 +1244,11 @@ class bounds_combination_mode(ConstantAccess):
 
 
 def CF():
-    '''
-    '''
+    """"""
     return cfdm.CF()
 
 
-CF.__doc__ = cfdm.CF.__doc__.replace('cfdm.', 'cf.')
+CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
 
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other
@@ -1262,17 +1258,17 @@ _cf_rtol = rtol
 
 
 def _cf_chunksize(*new_chunksize):
-    '''Internal alias for `cf.chunksize`.
+    """Internal alias for `cf.chunksize`.
 
     Used in this module to prevent a name clash with a function keyword
     argument (corresponding to 'import X as cf_X' etc. in other modules).
     Note we don't use CHUNKSIZE() as it will likely be deprecated in future.
-    '''
+    """
     return chunksize(*new_chunksize)
 
 
 def fm_threshold():
-    '''The amount of memory which is kept free as a temporary work space.
+    """The amount of memory which is kept free as a temporary work space.
 
     :Returns:
 
@@ -1284,12 +1280,12 @@ def fm_threshold():
     >>> cf.fm_threshold()
     10000000000.0
 
-    '''
-    return CONSTANTS['FM_THRESHOLD']
+    """
+    return CONSTANTS["FM_THRESHOLD"]
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
-    '''Tune performance of parallelisation by setting chunksize and free
+    """Tune performance of parallelisation by setting chunksize and free
     memory factor. By just providing the chunksize it can be changed
     to a smaller value than an upper limit, which is determined by the
     existing free memory factor. If just the free memory factor is
@@ -1318,7 +1314,7 @@ def set_performance(chunksize=None, free_memory_factor=None):
         `tuple`
             A tuple of the previous chunksize and free_memory_factor.
 
-    '''
+    """
     old = _cf_chunksize(), _cf_free_memory_factor()
     if free_memory_factor is None:
         if chunksize is not None:
@@ -1336,115 +1332,85 @@ def set_performance(chunksize=None, free_memory_factor=None):
 
 
 def min_total_memory():
-    '''The minimum total memory across nodes.
-
-    '''
-    return CONSTANTS['MIN_TOTAL_MEMORY']
+    """The minimum total memory across nodes."""
+    return CONSTANTS["MIN_TOTAL_MEMORY"]
 
 
 def total_memory():
-    '''TODO
-
-    '''
-    return CONSTANTS['TOTAL_MEMORY']
+    """TODO"""
+    return CONSTANTS["TOTAL_MEMORY"]
 
 
 # --------------------------------------------------------------------
 # Aliases (for back-compatibility etc.):
 # --------------------------------------------------------------------
 def ATOL(*new_atol):
-    '''Alias for `cf.atol`.
-
-    '''
+    """Alias for `cf.atol`."""
     return atol(*new_atol)
 
 
 def RTOL(*new_rtol):
-    '''Alias for `cf.rtol`.
-
-    '''
+    """Alias for `cf.rtol`."""
     return rtol(*new_rtol)
 
 
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
-    '''Alias for `cf.free_memory_factor`.
-
-    '''
+    """Alias for `cf.free_memory_factor`."""
     return free_memory_factor(*new_free_memory_factor)
 
 
 def LOG_LEVEL(*new_log_level):
-    '''Alias for `cf.log_level`.
-    '''
+    """Alias for `cf.log_level`."""
     return log_level(*new_log_level)
 
 
 def CHUNKSIZE(*new_chunksize):
-    '''Alias for `cf.chunksize`.
-    '''
+    """Alias for `cf.chunksize`."""
     return chunksize(*new_chunksize)
 
 
 def SET_PERFORMANCE(*new_set_performance):
-    '''Alias for `cf.set_performance`.
-
-    '''
+    """Alias for `cf.set_performance`."""
     return set_performance(*new_set_performance)
 
 
 def OF_FRACTION(*new_of_fraction):
-    '''Alias for `cf.of_fraction`.
-
-    '''
+    """Alias for `cf.of_fraction`."""
     return of_fraction(*new_of_fraction)
 
 
 def REGRID_LOGGING(*new_regrid_logging):
-    '''Alias for `cf.regrid_logging`.
-
-    '''
+    """Alias for `cf.regrid_logging`."""
     return regrid_logging(*new_regrid_logging)
 
 
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
-    '''Alias for `cf.collapse_parallel_mode`.
-
-    '''
+    """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)
 
 
 def RELAXED_IDENTITIES(*new_relaxed_identities):
-    '''Alias for `cf.relaxed_identities`.
-
-    '''
+    """Alias for `cf.relaxed_identities`."""
     return relaxed_identities(*new_relaxed_identities)
 
 
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
-    '''Alias for `cf.min_total_memory`.
-
-    '''
+    """Alias for `cf.min_total_memory`."""
     return min_total_memory(*new_min_total_memory)
 
 
 def TEMPDIR(*new_tempdir):
-    '''Alias for `cf.tempdir`.
-
-    '''
+    """Alias for `cf.tempdir`."""
     return tempdir(*new_tempdir)
 
 
 def TOTAL_MEMORY(*new_total_memory):
-    '''Alias for `cf.total_memory`.
-
-    '''
+    """Alias for `cf.total_memory`."""
     return total_memory(*new_total_memory)
 
 
 def FM_THRESHOLD(*new_fm_threshold):
-    '''Alias for `cf.fm_threshold`.
-
-    '''
+    """Alias for `cf.fm_threshold`."""
     return fm_threshold(*new_fm_threshold)
 
 
@@ -1484,7 +1450,7 @@ def FM_THRESHOLD(*new_fm_threshold):
 
 
 def dump(x, **kwargs):
-    '''Print a description of an object.
+    """Print a description of an object.
 
     If the object has a `!dump` method then this is used to create the
     output, so that ``cf.dump(f)`` is equivalent to ``print
@@ -1514,8 +1480,8 @@ def dump(x, **kwargs):
     >>> cf.dump(f)
     >>> cf.dump(f, complete=True)
 
-    '''
-    if hasattr(x, 'dump') and callable(x.dump):
+    """
+    if hasattr(x, "dump") and callable(x.dump):
         print(x.dump(**kwargs))
     else:
         print(x)
@@ -1530,41 +1496,42 @@ if _linux:
 
     # Directory containing a symbolic link for each file opened by the
     # current python session
-    _fd_dir = '/proc/'+str(getpid())+'/fd'
+    _fd_dir = "/proc/" + str(getpid()) + "/fd"
 
     def open_files_threshold_exceeded():
-        '''Return True if the total number of open files is greater than the
-    current threshold. GNU/LINUX.
+        """Return True if the total number of open files is greater than the
+        current threshold. GNU/LINUX.
 
-    The threshold is defined as a fraction of the maximum possible number
-    of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `of_fraction` function.
+        The threshold is defined as a fraction of the maximum possible number
+        of concurrently open files (an operating system dependent amount). The
+        fraction is retrieved and set with the `of_fraction` function.
 
-    .. seealso:: `cf.close_files`, `cf.close_one_file`,
-                 `cf.open_files`
+        .. seealso:: `cf.close_files`, `cf.close_one_file`,
+                     `cf.open_files`
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the number of open files exceeds the
-            threshold.
+            `bool`
+                Whether or not the number of open files exceeds the
+                threshold.
 
-    **Examples:**
+        **Examples:**
 
-    In this example, the number of open files is 75% of the maximum
-    possible number of concurrently open files:
+        In this example, the number of open files is 75% of the maximum
+        possible number of concurrently open files:
 
-    >>> cf.of_fraction()
-    0.5
-    >>> cf.open_files_threshold_exceeded()
-    True
-    >>> cf.of_fraction(0.9)
-    >>> cf.open_files_threshold_exceeded()
-    False
+        >>> cf.of_fraction()
+        0.5
+        >>> cf.open_files_threshold_exceeded()
+        True
+        >>> cf.of_fraction(0.9)
+        >>> cf.open_files_threshold_exceeded()
+        False
 
-        '''
-        return (len(listdir(_fd_dir)) >
-                _max_number_of_open_files * of_fraction())
+        """
+        return (
+            len(listdir(_fd_dir)) > _max_number_of_open_files * of_fraction()
+        )
 
 
 else:
@@ -1574,44 +1541,47 @@ else:
     _process = Process(getpid())
 
     def open_files_threshold_exceeded():
-        '''Return True if the total number of open files is greater than the
-    current threshold.
+        """Return True if the total number of open files is greater than the
+        current threshold.
 
-    The threshold is defined as a fraction of the maximum possible number
-    of concurrently open files (an operating system dependent amount). The
-    fraction is retrieved and set with the `of_fraction` function.
+        The threshold is defined as a fraction of the maximum possible number
+        of concurrently open files (an operating system dependent amount). The
+        fraction is retrieved and set with the `of_fraction` function.
 
-    .. seealso:: `cf.close_files`, `cf.close_one_file`,
-                 `cf.open_files`
+        .. seealso:: `cf.close_files`, `cf.close_one_file`,
+                     `cf.open_files`
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the number of open files exceeds the
-            threshold.
+            `bool`
+                Whether or not the number of open files exceeds the
+                threshold.
 
-    **Examples:**
+        **Examples:**
 
-    In this example, the number of open files is 75% of the maximum
-    possible number of concurrently open files:
+        In this example, the number of open files is 75% of the maximum
+        possible number of concurrently open files:
 
-    >>> cf.of_fraction()
-    0.5
-    >>> cf.open_files_threshold_exceeded()
-    True
-    >>> cf.of_fraction(0.9)
-    >>> cf.open_files_threshold_exceeded()
-    False
+        >>> cf.of_fraction()
+        0.5
+        >>> cf.open_files_threshold_exceeded()
+        True
+        >>> cf.of_fraction(0.9)
+        >>> cf.open_files_threshold_exceeded()
+        False
 
-        '''
-        return (len(_process.open_files()) >
-                _max_number_of_open_files * of_fraction())
+        """
+        return (
+            len(_process.open_files())
+            > _max_number_of_open_files * of_fraction()
+        )
 
 
 # --- End: if
 
+
 def close_files(file_format=None):
-    '''Close open files containing sub-arrays of data arrays.
+    """Close open files containing sub-arrays of data arrays.
 
     By default all such files are closed, but this may be restricted
     to files of a particular format.
@@ -1641,7 +1611,7 @@ def close_files(file_format=None):
     >>> cf.close_files('netCDF')
     >>> cf.close_files('PP')
 
-    '''
+    """
     if file_format is not None:
         if file_format in _file_to_fh:
             for fh in _file_to_fh[file_format].values():
@@ -1658,7 +1628,7 @@ def close_files(file_format=None):
 
 
 def close_one_file(file_format=None):
-    '''Close an arbitrary open file containing a sub-array of a data
+    """Close an arbitrary open file containing a sub-array of a data
     array.
 
     By default a file of arbitrary format is closed, but the choice
@@ -1698,7 +1668,7 @@ def close_one_file(file_format=None):
     {'netCDF': {'file1.nc': <netCDF4.Dataset at 0x181bcd0>,
                 'file3.nc': <netCDF4.Dataset at 0x1d185e9>}}
 
-    '''
+    """
     if file_format is not None:
         if file_format in _file_to_fh and _file_to_fh[file_format]:
             filename, fh = next(iter(_file_to_fh[file_format].items()))
@@ -1715,7 +1685,7 @@ def close_one_file(file_format=None):
 
 
 def open_files(file_format=None):
-    '''Return the open files containing sub-arrays of master data arrays.
+    """Return the open files containing sub-arrays of master data arrays.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1749,7 +1719,7 @@ def open_files(file_format=None):
     >>> cf.open_files('PP')
     {}
 
-    '''
+    """
     if file_format is not None:
         if file_format in _file_to_fh:
             return _file_to_fh[file_format].copy()
@@ -1764,7 +1734,7 @@ def open_files(file_format=None):
 
 
 def ufunc(name, x, *args, **kwargs):
-    '''The variable must have a `!copy` method and a method called
+    """The variable must have a `!copy` method and a method called
     *name*. Any optional positional and keyword arguments are passed
     unchanged to the variable's *name* method.
 
@@ -1782,14 +1752,14 @@ def ufunc(name, x, *args, **kwargs):
             A new variable with size 1 axes inserted into the data
             array.
 
-    '''
+    """
     x = x.copy()
     getattr(x, name)(*args, **kwargs)
     return x
 
 
 def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
-    '''Returns True if two broadcastable arrays have equal values to
+    """Returns True if two broadcastable arrays have equal values to
     within numerical tolerance, False otherwise.
 
     The tolerance values are positive, typically very small numbers. The
@@ -1833,7 +1803,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
     >>> cf._numpy_allclose(a, b)
     True
 
-    '''
+    """
     # TODO: we want to use @_manage_log_level_via_verbosity on this function
     # but we cannot, since importing it to this module would lead to a
     # circular import dependency with the decorators module. Tentative plan
@@ -1853,20 +1823,20 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():
                 if verbose:
-                    print('Different masks (A)')
+                    print("Different masks (A)")
 
                 return False
         else:
             if _numpy_ma_is_masked(a) or _numpy_ma_is_masked(b):
                 if verbose:
-                    print('Different masks (B)')
+                    print("Different masks (B)")
 
                 return False
 
-#            if verbose:
-#                print('Different masks 4')
-#
-#            return False
+        #            if verbose:
+        #                print('Different masks 4')
+        #
+        #            return False
 
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
@@ -1879,7 +1849,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
 
 def _numpy_isclose(a, b, rtol=None, atol=None):
-    '''Returns a boolean array where two broadcastable arrays are
+    """Returns a boolean array where two broadcastable arrays are
     element-wise equal within a tolerance.
 
     The tolerance values are positive, typically very small numbers. The
@@ -1904,16 +1874,17 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 
         `numpy.ndarray`
 
-    '''
+    """
     try:
         return _x_numpy_isclose(a, b, rtol=rtol, atol=atol)
     except (IndexError, NotImplementedError, TypeError):
         return a == b
 
 
-def parse_indices(shape, indices, cyclic=False, reverse=False,
-                  envelope=False, mask=False):
-    '''TODO
+def parse_indices(
+    shape, indices, cyclic=False, reverse=False, envelope=False, mask=False
+):
+    """TODO
 
     :Parameters:
 
@@ -1932,7 +1903,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     >>> cf.parse_indices((5, 8), ([2, 4, 6],))
     [slice(2, 7, 2), slice(0, 8, 1)]
 
-    '''
+    """
     parsed_indices = []
     roll = {}
     flip = []
@@ -1944,7 +1915,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
 
     if mask and indices:
         arg0 = indices[0]
-        if isinstance(arg0, str) and arg0 == 'mask':
+        if isinstance(arg0, str) and arg0 == "mask":
             mask_indices = indices[1]
             indices = indices[2:]
     # --- End: if
@@ -1956,7 +1927,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     ndim = n
     for index in indices:
         if index is Ellipsis:
-            m = n-length+1
+            m = n - length + 1
             parsed_indices.extend([slice(None)] * m)
             n -= m
         else:
@@ -1970,11 +1941,12 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
             "Invalid indices {} for array with shape {}".format(
-                parsed_indices, shape)
+                parsed_indices, shape
+            )
         )
 
     if len_parsed_indices < ndim:
-        parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
+        parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
 
     if not ndim and parsed_indices:
         # # If data is scalar then allow it to be indexed with an
@@ -2014,7 +1986,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     # 6:1:1 => -4:1:1
                     # 6:3:1 => -4:3:1
                     # 6:6:1 => -4:6:1
-                    start = size-start
+                    start = size - start
                 elif -size <= start < 0 and -size <= stop <= start:
                     # -4:-10:1  => -4:1:1
                     # -4:-9:1   => -4:1:1
@@ -2037,7 +2009,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     stop -= size
             # --- End: if
 
-            if step > 0 and -size <= start < 0 and 0 <= stop <= size+start:
+            if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # -1:0:1  => [9]
                 # -1:1:1  => [9, 0]
@@ -2051,12 +2023,12 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
                 # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 if cyclic:
-                    index = slice(0, stop-start, step)
+                    index = slice(0, stop - start, step)
                     roll[i] = -start
                 else:
                     index = slice(start, stop, step)
 
-            elif step < 0 and 0 <= start < size and start-size <= stop < 0:
+            elif step < 0 and 0 <= start < size and start - size <= stop < 0:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # 0:-4:-1  => [0, 9, 8, 7]
                 # 6:-1:-1  => [6, 5, 4, 3, 2, 1, 0]
@@ -2065,19 +2037,22 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # 0:-2:-1  => [0, 9]
                 # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
                 if cyclic:
-                    index = slice(start-stop-1, None, step)
+                    index = slice(start - stop - 1, None, step)
                     roll[i] = -1 - stop
                 else:
                     index = slice(start, stop, step)
 
             else:
                 start, stop, step = index.indices(size)
-                if (start == stop or
-                        (start < stop and step < 0) or
-                        (start > stop and step > 0)):
+                if (
+                    start == stop
+                    or (start < stop and step < 0)
+                    or (start > stop and step > 0)
+                ):
                     raise IndexError(
                         "Invalid indices dimension with size {}: {}".format(
-                            size, index)
+                            size, index
+                        )
                     )
 
                 if step < 0 and stop < 0:
@@ -2091,12 +2066,13 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             if index < 0:
                 index += size
 
-            index = slice(index, index+1, 1)
+            index = slice(index, index + 1, 1)
             is_slice = True
         else:
             convert2positve = True
-            if (getattr(getattr(index, 'dtype', None), 'kind', None) == 'b' or
-                    isinstance(index[0], bool)):
+            if getattr(
+                getattr(index, "dtype", None), "kind", None
+            ) == "b" or isinstance(index[0], bool):
                 # ----------------------------------------------------
                 # Index is a sequence of booleans
                 # ----------------------------------------------------
@@ -2107,7 +2083,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     raise IndexError(
                         "Incorrect number ({}) of boolean indices for "
                         "dimension with size {}: {}".format(
-                            _numpy_size(index), size, index)
+                            _numpy_size(index), size, index
+                        )
                     )
 
                 index = _numpy_where(index)[0]
@@ -2117,7 +2094,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 if index < 0:
                     index += size
 
-                index = slice(index, index+1, 1)
+                index = slice(index, index + 1, 1)
                 is_slice = True
             else:
                 len_index = len(index)
@@ -2126,22 +2103,22 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     if index < 0:
                         index += size
 
-                    index = slice(index, index+1, 1)
+                    index = slice(index, index + 1, 1)
                     is_slice = True
                 elif len_index:
                     if convert2positve:
                         # Convert to non-negative integer numpy array
                         index = _numpy_array(index)
-                        index = _numpy_where(index < 0, index+size, index)
+                        index = _numpy_where(index < 0, index + size, index)
 
                     steps = index[1:] - index[:-1]
                     step = steps[0]
                     if step and not (steps - step).any():
                         # Replace the numpy array index with a slice
                         if step > 0:
-                            start, stop = index[0], index[-1]+1
+                            start, stop = index[0], index[-1] + 1
                         elif step < 0:
-                            start, stop = index[0], index[-1]-1
+                            start, stop = index[0], index[-1] - 1
 
                         if stop < 0:
                             stop = None
@@ -2149,9 +2126,11 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                         index = slice(start, stop, step)
                         is_slice = True
                     else:
-                        if ((step > 0 and (steps <= 0).any()) or
-                                (step < 0 and (steps >= 0).any()) or
-                                not step):
+                        if (
+                            (step > 0 and (steps <= 0).any())
+                            or (step < 0 and (steps >= 0).any())
+                            or not step
+                        ):
                             raise ValueError(
                                 "Bad index (not strictly monotonic): "
                                 "{}".format(index)
@@ -2185,7 +2164,9 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 else:
                     raise IndexError(
                         "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape))
+                            parsed_indices, shape
+                        )
+                    )
             # --- End: if
         # --- End: if
 
@@ -2210,8 +2191,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # True
                 start, stop, step = index.indices(size)
                 step *= -1
-                div, mod = divmod(start-stop-1, step)
-                div_step = div*step
+                div, mod = divmod(start - stop - 1, step)
+                div_step = div * step
                 start -= div_step
                 stop = start + div_step + 1
 
@@ -2223,8 +2204,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             # index.stop isn't bigger than it needs to be
             if cyclic and index.step > 1:
                 start, stop, step = index.indices(size)
-                div, mod = divmod(stop-start-1, step)
-                stop = start + div*step + 1
+                div, mod = divmod(stop - start - 1, step)
+                stop = start + div * step + 1
                 index = slice(start, stop, step)
             # --- End: if
 
@@ -2234,7 +2215,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # index of a numpy array of integers
                 compressed_indices.append(index)
                 index = slice(
-                    start, stop, (1 if reverse else _numpy_sign(step)))
+                    start, stop, (1 if reverse else _numpy_sign(step))
+                )
         # --- End: if
 
         parsed_indices[i] = index
@@ -2261,7 +2243,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
 
 
 def get_subspace(array, indices):
-    '''TODO
+    """TODO
 
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
@@ -2283,7 +2265,7 @@ def get_subspace(array, indices):
 
         indices: `list`
 
-    '''
+    """
     gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
     len_gg = len(gg)
 
@@ -2318,23 +2300,21 @@ def get_subspace(array, indices):
 _equals = cfdm.Data()._equals
 
 
-def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
-           **kwargs):
-    '''
-    '''
+def equals(x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs):
+    """"""
     if rtol is None:
         rtol = _cf_rtol()
 
     if atol is None:
         atol = _cf_atol()
 
-    return _equals(x, y, rtol=rtol, atol=atol,
-                   ignore_data_type=ignore_data_type,
-                   **kwargs)
+    return _equals(
+        x, y, rtol=rtol, atol=atol, ignore_data_type=ignore_data_type, **kwargs
+    )
 
 
 def equivalent(x, y, rtol=None, atol=None, traceback=False):
-    '''True if and only if two objects are logically equivalent.
+    """True if and only if two objects are logically equivalent.
 
     If the first argument, *x*, has an `!equivalent` method then it is
     used, and in this case ``equivalent(x, y)`` is the same as
@@ -2387,7 +2367,7 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     >>> cf.equivalent(f, f.transpose())
     True
 
-    '''
+    """
 
     if rtol is None:
         rtol = _cf_rtol()
@@ -2398,22 +2378,23 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     atol = float(atol)
     rtol = float(rtol)
 
-    eq = getattr(x, 'equivalent', None)
+    eq = getattr(x, "equivalent", None)
     if callable(eq):
         # x has a callable equivalent method
         return eq(y, rtol=rtol, atol=atol, traceback=traceback)
 
-    eq = getattr(y, 'equivalent', None)
+    eq = getattr(y, "equivalent", None)
     if callable(eq):
         # y has a callable equivalent method
         return eq(x, rtol=rtol, atol=atol, traceback=traceback)
 
-    return equals(x, y, rtol=rtol, atol=atol, ignore_fill_value=True,
-                  traceback=traceback)
+    return equals(
+        x, y, rtol=rtol, atol=atol, ignore_fill_value=True, traceback=traceback
+    )
 
 
-def load_stash2standard_name(table=None, delimiter='!', merge=True):
-    '''Load a STASH to standard name conversion table from a file.
+def load_stash2standard_name(table=None, delimiter="!", merge=True):
+    """Load a STASH to standard name conversion table from a file.
 
     This used when reading PP and UM fields files.
 
@@ -2480,7 +2461,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     >>> cf.load_stash2standard_name('my_table3.txt', merge=True)
     >>> cf.load_stash2standard_name('my_table4.txt', merge=False)
 
-    '''
+    """
     # 0  Model
     # 1  STASH code
     # 2  STASH name
@@ -2492,20 +2473,21 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     # 8  PP extra info
 
     # Number matching regular expression
-    number_regex = '([-+]?\d*\.?\d+(e[-+]?\d+)?)'
+    number_regex = "([-+]?\d*\.?\d+(e[-+]?\d+)?)"
 
     if table is None:
         # Use default conversion table
         merge = False
         package_path = os.path.dirname(__file__)
-        table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
+        table = os.path.join(package_path, "etc/STASH_to_CF.txt")
     else:
         # User supplied table
         table = abspath(os.path.expanduser(os.path.expandvars(table)))
 
-    with open(table, 'r') as open_table:
-        lines = csv.reader(open_table, delimiter=delimiter,
-                           skipinitialspace=True)
+    with open(table, "r") as open_table:
+        lines = csv.reader(
+            open_table, delimiter=delimiter, skipinitialspace=True
+        )
         lines = list(lines)
 
     raw_list = []
@@ -2513,7 +2495,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
     # Get rid of comments
     for line in raw_list[:]:
-        if line[0].startswith('#'):
+        if line[0].startswith("#"):
             raw_list.pop(0)
             continue
 
@@ -2521,10 +2503,17 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
     # Convert to a dictionary which is keyed by (submodel, STASHcode)
     # tuples
-    (model, stash, name,
-     units,
-     valid_from, valid_to,
-     standard_name, cf, pp) = list(range(9))
+    (
+        model,
+        stash,
+        name,
+        units,
+        valid_from,
+        valid_to,
+        standard_name,
+        cf,
+        pp,
+    ) = list(range(9))
 
     stash2sn = {}
     for x in raw_list:
@@ -2537,22 +2526,24 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
             cf_info = {}
             if x[cf]:
                 for d in x[7].split():
-                    if d.startswith('height='):
-                        cf_info['height'] = re.split(number_regex, d,
-                                                     re.IGNORECASE)[1:4:2]
-                        if cf_info['height'] == '':
-                            cf_info['height'][1] = '1'
+                    if d.startswith("height="):
+                        cf_info["height"] = re.split(
+                            number_regex, d, re.IGNORECASE
+                        )[1:4:2]
+                        if cf_info["height"] == "":
+                            cf_info["height"][1] = "1"
 
-                    if d.startswith('below_'):
-                        cf_info['below'] = re.split(number_regex, d,
-                                                    re.IGNORECASE)[1:4:2]
-                        if cf_info['below'] == '':
-                            cf_info['below'][1] = '1'
+                    if d.startswith("below_"):
+                        cf_info["below"] = re.split(
+                            number_regex, d, re.IGNORECASE
+                        )[1:4:2]
+                        if cf_info["below"] == "":
+                            cf_info["below"][1] = "1"
 
-                    if d.startswith('where_'):
-                        cf_info['where'] = d.replace('where_', 'where ', 1)
-                    if d.startswith('over_'):
-                        cf_info['over'] = d.replace('over_', 'over ', 1)
+                    if d.startswith("where_"):
+                        cf_info["where"] = d.replace("where_", "where ", 1)
+                    if d.startswith("over_"):
+                        cf_info["over"] = d.replace("over_", "over ", 1)
 
             x[cf] = cf_info
         except IndexError:
@@ -2585,19 +2576,19 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
 
 def stash2standard_name():
-    '''Return a copy of the loaded STASH to standard name conversion
+    """Return a copy of the loaded STASH to standard name conversion
     table.
 
     .. versionadded:: 3.8.0
 
     .. seealso:: `load_stash2standard_name`
 
-    '''
+    """
     return _stash2standard_name.copy()
 
 
 def flat(x):
-    '''Return an iterator over an arbitrarily nested sequence.
+    """Return an iterator over an arbitrarily nested sequence.
 
     :Parameters:
 
@@ -2665,7 +2656,7 @@ def flat(x):
      <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
      <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>]
 
-    '''
+    """
     if not isinstance(x, Iterable) or isinstance(x, str):
         x = (x,)
 
@@ -2679,7 +2670,7 @@ def flat(x):
 
 
 def abspath(filename):
-    '''Return a normalized absolute version of a file name.
+    """Return a normalized absolute version of a file name.
 
     If `None` or a string containing URL is provided then it is
     returned unchanged.
@@ -2710,19 +2701,19 @@ def abspath(filename):
     >>> cf.abspath('http://data/archive/file.nc')
     'http://data/archive/file.nc'
 
-    '''
+    """
     if filename is None:
         return
 
     u = urllib.parse.urlparse(filename)
-    if u.scheme != '':
+    if u.scheme != "":
         return filename
 
     return _os_path_abspath(filename)
 
 
 def relpath(filename, start=None):
-    '''Return a relative filepath to a file.
+    """Return a relative filepath to a file.
 
     The filepath is relative either from the current directory or from
     an optional start point.
@@ -2754,9 +2745,9 @@ def relpath(filename, start=None):
     >>> cf.relpath('http://data/archive/file.nc')
     'http://data/archive/file.nc'
 
-    '''
+    """
     u = urllib.parse.urlparse(filename)
-    if u.scheme != '':
+    if u.scheme != "":
         return filename
 
     if start is not None:
@@ -2766,7 +2757,7 @@ def relpath(filename, start=None):
 
 
 def dirname(filename):
-    '''Return the directory name of a file.
+    """Return the directory name of a file.
 
     If a string containing URL is provided then everything up to, but
     not including, the last slash (/) is returned.
@@ -2792,16 +2783,16 @@ def dirname(filename):
     >>> cf.dirname('http://data/archive/file.nc')
     'http://data/archive'
 
-    '''
+    """
     u = urllib.parse.urlparse(filename)
-    if u.scheme != '':
-        return filename.rpartition('/')[0]
+    if u.scheme != "":
+        return filename.rpartition("/")[0]
 
     return _os_path_dirname(filename)
 
 
 def pathjoin(path1, path2):
-    '''Join two file path components intelligently.
+    """Join two file path components intelligently.
 
     If either of the paths is a URL then a URL will be returned
 
@@ -2831,16 +2822,16 @@ def pathjoin(path1, path2):
     >>> cf.pathjoin('http://data', 'archive/file.nc')
     'http://data/archive/file.nc'
 
-    '''
+    """
     u = urllib.parse.urlparse(path1)
-    if u.scheme != '':
+    if u.scheme != "":
         return urllib.parse.urljoin(path1, path2)
 
     return _os_path_join(path1, path2)
 
 
 def hash_array(array):
-    '''Return the hash value of a numpy array.
+    """Return the hash value of a numpy array.
 
     The hash value is dependent on the data type, shape of the data
     array. If the array is a masked array then the hash value is
@@ -2887,7 +2878,7 @@ def hash_array(array):
     >>> cf.hash_array(array)
     -4816859207969696442
 
-    '''
+    """
     h = hashlib_md5()
 
     h_update = h.update
@@ -2919,25 +2910,25 @@ def hash_array(array):
 
 
 def inspect(self):
-    '''Inspect the attributes of an object.
+    """Inspect the attributes of an object.
 
     :Returns:
 
         `None`
 
-    '''
+    """
     name = repr(self)
-    out = [name, ''.ljust(len(name), '-')]
+    out = [name, "".ljust(len(name), "-")]
 
-    if hasattr(self, '__dict__'):
+    if hasattr(self, "__dict__"):
         for key, value in sorted(self.__dict__.items()):
-            out.append('{}: {!r}'.format(key, value))
+            out.append("{}: {!r}".format(key, value))
 
-    print('\n'.join(out))
+    print("\n".join(out))
 
 
 def broadcast_array(array, shape):
-    '''Broadcast an array to a given shape.
+    """Broadcast an array to a given shape.
 
     It is assumed that ``numpy.ndim(array) <= len(shape)`` and that
     the array is broadcastable to the shape by the normal numpy
@@ -3003,20 +2994,19 @@ def broadcast_array(array, shape):
      [[0 1 2 3]
       [4 5 6 --]]]
 
-    '''
+    """
     a_shape = _numpy_shape(array)
     if a_shape == shape:
         return array
 
-    tile = [(m if n == 1 else 1)
-            for n, m in zip(a_shape[::-1], shape[::-1])]
-    tile = shape[0:len(shape)-len(a_shape)] + tuple(tile[::-1])
+    tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
+    tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
     return _numpy_tile(array, tile)
 
 
 def allclose(x, y, rtol=None, atol=None):
-    '''Returns True if two broadcastable arrays have equal values to
+    """Returns True if two broadcastable arrays have equal values to
     within numerical tolerance, False otherwise.
 
     The tolerance values are positive, typically very small
@@ -3044,7 +3034,7 @@ def allclose(x, y, rtol=None, atol=None):
 
     **Examples:**
 
-    '''
+    """
     if rtol is None:
         rtol = _cf_rtol()
 
@@ -3054,12 +3044,12 @@ def allclose(x, y, rtol=None, atol=None):
     atol = float(atol)
     rtol = float(rtol)
 
-    allclose = getattr(x, 'allclose', None)
+    allclose = getattr(x, "allclose", None)
     if callable(allclose):
         # x has a callable allclose method
         return allclose(y, rtol=rtol, atol=atol)
 
-    allclose = getattr(y, 'allclose', None)
+    allclose = getattr(y, "allclose", None)
     if callable(allclose):
         # y has a callable allclose method
         return allclose(x, rtol=rtol, atol=atol)
@@ -3068,9 +3058,10 @@ def allclose(x, y, rtol=None, atol=None):
     return _numpy_allclose(x, y, rtol=rtol, atol=atol)
 
 
-def _section(x, axes=None, data=False, stop=None, chunks=False,
-             min_step=1, **kwargs):
-    '''Return a list of m dimensional sections of a Field of n dimensions
+def _section(
+    x, axes=None, data=False, stop=None, chunks=False, min_step=1, **kwargs
+):
+    """Return a list of m dimensional sections of a Field of n dimensions
     or a dictionary of m dimensional sections of a Data object of n
     dimensions, where m <= n.
 
@@ -3141,9 +3132,10 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
 
     >>> _section(f, ['latitude', 'longitude'], exact=True)
 
-    '''
+    """
+
     def loop_over_index(x, current_index, axis_indices, indices):
-        '''Expects an index to loop over in the list indices. If this is less
+        """Expects an index to loop over in the list indices. If this is less
         than 0 the horizontal slice defined by indices is appended to
         the FieldList fl, if it is the specified axis indices the
         value in indices is left as slice(None) and it calls itself
@@ -3153,14 +3145,14 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         taken is greater than or equal to stop it returns before
         taking any more slices.
 
-        '''
+        """
         if current_index < 0:
             if data:
                 d[tuple([x.start for x in indices])] = x[tuple(indices)]
             else:
                 fl.append(x[tuple(indices)])
 
-            nl_vars['count'] += 1
+            nl_vars["count"] += 1
             return
 
         if current_index in axis_indices:
@@ -3168,11 +3160,12 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
             return
 
         for i in range(0, sizes[current_index], steps[current_index]):
-            if stop is not None and nl_vars['count'] >= stop:
+            if stop is not None and nl_vars["count"] >= stop:
                 return
 
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(x, current_index - 1, axis_indices, indices)
+
     # --- End: def
 
     # Retrieve the index of each axis defining the sections
@@ -3205,7 +3198,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
         # array.
         #
         # I.e. factor = 1/(the number of words per chunk)
-        factor = (x.dtype.itemsize + 1.0)/chunksize()
+        factor = (x.dtype.itemsize + 1.0) / chunksize()
 
         # n_chunks = number of equal sized bits the partition needs to
         #            be split up into so that each bit's size is less
@@ -3217,16 +3210,19 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
                 # Do not attempt to "chunk" non-sectioned axes
                 continue
 
-            if int(math_ceil(float(axis_size)/min_step)) <= n_chunks:
-                n_chunks = int(math_ceil(n_chunks/float(axis_size)*min_step))
+            if int(math_ceil(float(axis_size) / min_step)) <= n_chunks:
+                n_chunks = int(
+                    math_ceil(n_chunks / float(axis_size) * min_step)
+                )
                 steps[index] = min_step
 
             else:
-                steps[index] = int(axis_size/n_chunks)
+                steps[index] = int(axis_size / n_chunks)
                 break
     else:
-        steps = [size if i in axis_indices else 1 for i, size in
-                 enumerate(sizes)]
+        steps = [
+            size if i in axis_indices else 1 for i, size in enumerate(sizes)
+        ]
 
     # Use recursion to slice out each section
     if data:
@@ -3236,7 +3232,7 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
 
     indices = [slice(None)] * len(sizes)
 
-    nl_vars = {'count': 0}
+    nl_vars = {"count": 0}
 
     current_index = len(sizes) - 1
     loop_over_index(x, current_index, axis_indices, indices)
@@ -3248,21 +3244,21 @@ def _section(x, axes=None, data=False, stop=None, chunks=False,
 
 
 def _get_module_info(module, try_except=False):
-    '''Helper function for processing modules for cf.environment'''
+    """Helper function for processing modules for cf.environment"""
     if try_except:
         try:
             importlib.import_module(module)
         except ImportError:
-            return ('not available', '')
+            return ("not available", "")
 
     return (
         importlib.import_module(module).__version__,
-        importlib.util.find_spec(module).origin
+        importlib.util.find_spec(module).origin,
     )
 
 
 def environment(display=True, paths=True):
-    '''Return the names and versions of the cf package and its
+    """Return the names and versions of the cf package and its
     dependencies.
 
     :Parameters:
@@ -3319,41 +3315,43 @@ def environment(display=True, paths=True):
     cfplot: 3.0.38
     cf: 3.8.0
 
-    '''
+    """
     dependency_version_paths_mapping = {
-        'Platform': (platform.platform(), ''),
-        'HDF5 library': (netCDF4.__hdf5libversion__, ''),
-        'netcdf library': (netCDF4.__netcdf4libversion__, ''),
-        'udunits2 library': (ctypes.util.find_library('udunits2'), ''),
-        'Python': (platform.python_version(), sys.executable),
-        'netCDF4': _get_module_info('netCDF4'),
-        'cftime': _get_module_info('cftime'),
-        'numpy': (_numpy__version__, _os_path_abspath(_numpy__file__)),
-        'psutil': _get_module_info('psutil'),
-        'scipy': _get_module_info('scipy', try_except=True),
-        'matplotlib': _get_module_info('matplotlib', try_except=True),
-        'ESMF': _get_module_info('ESMF', try_except=True),
-        'cfdm': _get_module_info('cfdm'),
-        'cfunits': _get_module_info('cfunits'),
-        'cfplot': _get_module_info('cfplot', try_except=True),
-        'cf': (__version__, _os_path_abspath(__file__)),
+        "Platform": (platform.platform(), ""),
+        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
+        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
+        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
+        "Python": (platform.python_version(), sys.executable),
+        "netCDF4": _get_module_info("netCDF4"),
+        "cftime": _get_module_info("cftime"),
+        "numpy": (_numpy__version__, _os_path_abspath(_numpy__file__)),
+        "psutil": _get_module_info("psutil"),
+        "scipy": _get_module_info("scipy", try_except=True),
+        "matplotlib": _get_module_info("matplotlib", try_except=True),
+        "ESMF": _get_module_info("ESMF", try_except=True),
+        "cfdm": _get_module_info("cfdm"),
+        "cfunits": _get_module_info("cfunits"),
+        "cfplot": _get_module_info("cfplot", try_except=True),
+        "cf": (__version__, _os_path_abspath(__file__)),
     }
-    string = '{0}: {1!s}'
+    string = "{0}: {1!s}"
     if paths:  # include path information, else exclude, when unpacking tuple
-        string += ' {2!s}'
-    out = [string.format(dep, *info)
-           for dep, info in dependency_version_paths_mapping.items()]
+        string += " {2!s}"
+    out = [
+        string.format(dep, *info)
+        for dep, info in dependency_version_paths_mapping.items()
+    ]
 
-    out = '\n'.join(out)
+    out = "\n".join(out)
 
     if display:
         print(out)  # pragma: no cover
     else:
-        return(out)
+        return out
 
 
 def default_netCDF_fillvals():
-    '''Default data array fill values for each data type.
+    """Default data array fill values for each data type.
 
     :Returns:
 
@@ -3375,37 +3373,39 @@ def default_netCDF_fillvals():
      'f4': 9.969209968386869e+36,
      'f8': 9.969209968386869e+36}
 
-    '''
+    """
     return netCDF4.default_fillvals
 
 
-def _DEPRECATION_ERROR(message='', version='3.0.0'):
+def _DEPRECATION_ERROR(message="", version="3.0.0"):
     raise DeprecationError("{}".format(message))
 
 
-def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
+def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
         "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
         "{4} and is no longer available. {3}".format(
-            instance.__class__.__name__,
-            method,
-            arg,
-            message,
-            version
+            instance.__class__.__name__, method, arg, message, version
         )
     )
 
 
-def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
-                                       exact=False, traceback=False,
-                                       info=False, version='3.0.0'):
+def _DEPRECATION_ERROR_FUNCTION_KWARGS(
+    func,
+    kwargs=None,
+    message="",
+    exact=False,
+    traceback=False,
+    info=False,
+    version="3.0.0",
+):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
 
     for kwarg, msg in KWARGS_MESSAGE_MAP.items():
         # This eval is safe as the kwarg is not a user input
-        if kwarg in ('exact', 'traceback') and eval(kwarg):
+        if kwarg in ("exact", "traceback") and eval(kwarg):
             kwargs = {kwarg: None}
             message = msg
 
@@ -3413,18 +3413,24 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
         raise DeprecationError(
             "Keyword {1!r} of function '{0}' has been deprecated at version "
             "{3} and is no longer available. {2}".format(
-                func,
-                key,
-                message,
-                version
+                func, key, message, version
             )
         )
 
 
-def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
-                              i=False, traceback=False, axes=False,
-                              exact=False, relaxed_identity=False,
-                              info=False, version='3.0.0'):
+def _DEPRECATION_ERROR_KWARGS(
+    instance,
+    method,
+    kwargs=None,
+    message="",
+    i=False,
+    traceback=False,
+    axes=False,
+    exact=False,
+    relaxed_identity=False,
+    info=False,
+    version="3.0.0",
+):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
@@ -3438,108 +3444,80 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
         raise DeprecationError(
             "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
             "version {4} and is no longer available. {3}".format(
-                instance.__class__.__name__,
-                method,
-                key,
-                message,
-                version
+                instance.__class__.__name__, method, key, message, version
             )
         )
 
 
 def _DEPRECATION_ERROR_KWARG_VALUE(
-        instance, method, kwarg, value, message='', version='3.0.0'):
+    instance, method, kwarg, value, message="", version="3.0.0"
+):
     raise DeprecationError(
         "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
         "version {} and is no longer available. {}".format(
-            value,
-            kwarg,
-            method,
-            instance.__class__.__name__,
-            version,
-            message
+            value, kwarg, method, instance.__class__.__name__, version, message
         )
     )
 
 
-def _DEPRECATION_ERROR_METHOD(instance, method, message='', version='3.0.0'):
+def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
         "{} method {!r} has been deprecated at version {} and is no longer "
         "available. {}".format(
-            instance.__class__.__name__,
-            method,
-            version,
-            message
+            instance.__class__.__name__, method, version, message
         )
     )
 
 
 def _DEPRECATION_ERROR_ATTRIBUTE(
-        instance, attribute, message='', version='3.0.0'):
+    instance, attribute, message="", version="3.0.0"
+):
     raise DeprecationError(
         "{} attribute {!r} has been deprecate at version {} and is no longer "
         "available. {}".format(
-            instance.__class__.__name__,
-            attribute,
-            version,
-            message
+            instance.__class__.__name__, attribute, version, message
         )
     )
 
 
-def _DEPRECATION_ERROR_FUNCTION(func, message='', version='3.0.0'):
+def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
         "Function {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(
-            func,
-            version,
-            message
-        )
+        "available. {}".format(func, version, message)
     )
 
 
-def _DEPRECATION_ERROR_CLASS(cls, message='', version='3.0.0'):
+def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
         "Class {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(
-            cls,
-            version,
-            message
-        )
+        "available. {}".format(cls, version, message)
     )
 
 
 def _DEPRECATION_WARNING_METHOD(
-        instance, method, message='', new=None, version='3.0.0'):
+    instance, method, message="", new=None, version="3.0.0"
+):
     warnings.warn(
         "{} method {!r} has been deprecated at version {} and will be "
         "removed in a future version. {}".format(
-            instance.__class__.__name__,
-            method,
-            version,
-            message),
-        DeprecationWarning
+            instance.__class__.__name__, method, version, message
+        ),
+        DeprecationWarning,
     )
 
 
-def _DEPRECATION_ERROR_DICT(message='', version='3.0.0'):
+def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available. {}".format(
-            version,
-            message
-        )
+        "version {} and is no longer available. {}".format(version, message)
     )
 
 
-def _DEPRECATION_ERROR_SEQUENCE(instance, version='3.0.0'):
+def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated at version "
         "{} and is no longer available. Use the * operator to unpack the "
-        "arguments instead.".format(
-            instance.__class__.__name__,
-            version
-        )
+        "arguments instead.".format(instance.__class__.__name__, version)
     )
 
 
@@ -3547,21 +3525,21 @@ def _DEPRECATION_ERROR_SEQUENCE(instance, version='3.0.0'):
 # Deprecated functions
 # --------------------------------------------------------------------
 def default_fillvals():
-    '''Default data array fill values for each data type.
+    """Default data array fill values for each data type.
 
     Deprecated at version 3.0.2 and is no longer available. Use
     function `cf.default_netCDF_fillvals` instead.
 
-    '''
+    """
     _DEPRECATION_ERROR_FUNCTION(
-        'default_fillvals',
+        "default_fillvals",
         "Use function 'cf.default_netCDF_fillvals' instead.",
-        version='3.0.2')  # pragma: no cover
+        version="3.0.2",
+    )  # pragma: no cover
 
 
-def set_equals(x, y, rtol=None, atol=None, ignore_fill_value=False,
-               traceback=False):
-    '''Deprecated at version 3.0.0.
-
-    '''
-    _DEPRECATION_ERROR_FUNCTION('cf.set_equals')  # pragma: no cover
+def set_equals(
+    x, y, rtol=None, atol=None, ignore_fill_value=False, traceback=False
+):
+    """Deprecated at version 3.0.0."""
+    _DEPRECATION_ERROR_FUNCTION("cf.set_equals")  # pragma: no cover

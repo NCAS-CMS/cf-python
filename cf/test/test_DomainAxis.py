@@ -1,7 +1,7 @@
 import datetime
+import faulthandler
 import unittest
 
-import faulthandler
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -10,18 +10,18 @@ import cf
 class DomainAxisTest(unittest.TestCase):
     def test_DomainAxis__repr__str(self):
         x = cf.DomainAxis(size=56)
-        x.nc_set_dimension('tas')
+        x.nc_set_dimension("tas")
 
         _ = repr(x)
         _ = str(x)
 
     def test_DomainAxis(self):
         x = cf.DomainAxis(size=111)
-        x.nc_set_dimension('tas')
+        x.nc_set_dimension("tas")
 
         self.assertEqual(x.size, 111)
         del x.size
-        self.assertIsNone(getattr(x, 'size', None))
+        self.assertIsNone(getattr(x, "size", None))
         x.size = 56
         self.assertEqual(x.size, 56)
         self.assertEqual(x, 56)
@@ -47,11 +47,12 @@ class DomainAxisTest(unittest.TestCase):
 
         _ = hash(x)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)
