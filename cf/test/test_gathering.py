@@ -22,7 +22,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)

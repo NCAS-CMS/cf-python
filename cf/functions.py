@@ -423,7 +423,8 @@ def configuration(
 
 
 def _configuration(_Configuration, **kwargs):
-    """Internal helper function to provide the logic for `cf.configuration`.
+    """Internal helper function to provide the logic for
+    `cf.configuration`.
 
     We delegate from the user-facing `cf.configuration` for two main reasons:
 
@@ -550,8 +551,8 @@ def FREE_MEMORY(*new_free_memory):
 
 
 def _WORKSPACE_FACTOR_1():
-    """The value of workspace factor 1 used in calculating the upper limit
-    to the chunksize given the free memory factor.
+    """The value of workspace factor 1 used in calculating the upper
+    limit to the chunksize given the free memory factor.
 
     :Returns:
 
@@ -563,8 +564,8 @@ def _WORKSPACE_FACTOR_1():
 
 
 def _WORKSPACE_FACTOR_2():
-    """The value of workspace factor 2 used in calculating the upper limit
-    to the chunksize given the free memory factor.
+    """The value of workspace factor 2 used in calculating the upper
+    limit to the chunksize given the free memory factor.
 
     :Returns:
 
@@ -579,9 +580,10 @@ def _cf_free_memory_factor(*new_free_memory_factor):
     """Internal alias for `cf.free_memory_factor`.
 
     Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other modules).
-    Note we don't use FREE_MEMORY_FACTOR() as it will likely be deprecated
-    in future.
+    argument (corresponding to 'import X as cf_X' etc. in other
+    modules). Note we don't use FREE_MEMORY_FACTOR() as it will likely
+    be deprecated in future.
+
     """
     return free_memory_factor(*new_free_memory_factor)
 
@@ -678,8 +680,8 @@ class regrid_logging(ConstantAccess):
 
 
 class collapse_parallel_mode(ConstantAccess):
-    """Which mode to use when collapse is run in parallel. There are three
-    possible modes:
+    """Which mode to use when collapse is run in parallel. There are
+    three possible modes:
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
@@ -809,9 +811,7 @@ class relaxed_identities(ConstantAccess):
 
 
 class chunksize(ConstantAccess):
-    """Set the chunksize used by LAMA for partitioning the data
-    array.
-
+    """Set the chunksize used by LAMA for partitioning the data array.
 
     This must be smaller than an upper limit determined by the free
     memory factor, which is the fraction of memory kept free as a
@@ -947,8 +947,8 @@ class tempdir(ConstantAccess):
 
 
 class of_fraction(ConstantAccess):
-    """The amount of concurrently open files above which files containing
-    data arrays may be automatically closed.
+    """The amount of concurrently open files above which files
+    containing data arrays may be automatically closed.
 
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
@@ -1029,8 +1029,7 @@ class of_fraction(ConstantAccess):
 
 
 class free_memory_factor(ConstantAccess):
-    """Set the fraction of memory kept free as a temporary
-    workspace.
+    """Set the fraction of memory kept free as a temporary workspace.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -1261,14 +1260,17 @@ def _cf_chunksize(*new_chunksize):
     """Internal alias for `cf.chunksize`.
 
     Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other modules).
-    Note we don't use CHUNKSIZE() as it will likely be deprecated in future.
+    argument (corresponding to 'import X as cf_X' etc. in other
+    modules). Note we don't use CHUNKSIZE() as it will likely be
+    deprecated in future.
+
     """
     return chunksize(*new_chunksize)
 
 
 def fm_threshold():
-    """The amount of memory which is kept free as a temporary work space.
+    """The amount of memory which is kept free as a temporary work
+    space.
 
     :Returns:
 
@@ -1286,18 +1288,18 @@ def fm_threshold():
 
 def set_performance(chunksize=None, free_memory_factor=None):
     """Tune performance of parallelisation by setting chunksize and free
-    memory factor. By just providing the chunksize it can be changed
-    to a smaller value than an upper limit, which is determined by the
+    memory factor. By just providing the chunksize it can be changed to
+    a smaller value than an upper limit, which is determined by the
     existing free memory factor. If just the free memory factor is
-    provided then the chunksize is set to the corresponding upper
-    limit. Note that the free memory factor is the fraction of memory
-    kept free as a temporary workspace and must be a sensible value
-    between zero and one. If both arguments are provided then the free
-    memory factor is changed first and then the chunksize is set
-    provided it is consistent with the new free memory value. If any
-    of the arguments is invalid then an error is raised and no
-    parameters are changed. When called with no arguments the existing
-    values of the parameters are returned in a tuple.
+    provided then the chunksize is set to the corresponding upper limit.
+    Note that the free memory factor is the fraction of memory kept free
+    as a temporary workspace and must be a sensible value between zero
+    and one. If both arguments are provided then the free memory factor
+    is changed first and then the chunksize is set provided it is
+    consistent with the new free memory value. If any of the arguments
+    is invalid then an error is raised and no parameters are changed.
+    When called with no arguments the existing values of the parameters
+    are returned in a tuple.
 
     :Parameters:
 
@@ -1337,7 +1339,7 @@ def min_total_memory():
 
 
 def total_memory():
-    """TODO"""
+    """TODO."""
     return CONSTANTS["TOTAL_MEMORY"]
 
 
@@ -1499,8 +1501,8 @@ if _linux:
     _fd_dir = "/proc/" + str(getpid()) + "/fd"
 
     def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than the
-        current threshold. GNU/LINUX.
+        """Return True if the total number of open files is greater than
+        the current threshold. GNU/LINUX.
 
         The threshold is defined as a fraction of the maximum possible number
         of concurrently open files (an operating system dependent amount). The
@@ -1541,8 +1543,8 @@ else:
     _process = Process(getpid())
 
     def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than the
-        current threshold.
+        """Return True if the total number of open files is greater than
+        the current threshold.
 
         The threshold is defined as a fraction of the maximum possible number
         of concurrently open files (an operating system dependent amount). The
@@ -1685,7 +1687,8 @@ def close_one_file(file_format=None):
 
 
 def open_files(file_format=None):
-    """Return the open files containing sub-arrays of master data arrays.
+    """Return the open files containing sub-arrays of master data
+    arrays.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1734,7 +1737,8 @@ def open_files(file_format=None):
 
 
 def ufunc(name, x, *args, **kwargs):
-    """The variable must have a `!copy` method and a method called
+    """The variable must have a `!copy` method and a method called.
+
     *name*. Any optional positional and keyword arguments are passed
     unchanged to the variable's *name* method.
 
@@ -1884,7 +1888,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 def parse_indices(
     shape, indices, cyclic=False, reverse=False, envelope=False, mask=False
 ):
-    """TODO
+    """TODO.
 
     :Parameters:
 
@@ -2243,7 +2247,7 @@ def parse_indices(
 
 
 def get_subspace(array, indices):
-    """TODO
+    """TODO.
 
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
@@ -3061,9 +3065,9 @@ def allclose(x, y, rtol=None, atol=None):
 def _section(
     x, axes=None, data=False, stop=None, chunks=False, min_step=1, **kwargs
 ):
-    """Return a list of m dimensional sections of a Field of n dimensions
-    or a dictionary of m dimensional sections of a Data object of n
-    dimensions, where m <= n.
+    """Return a list of m dimensional sections of a Field of n
+    dimensions or a dictionary of m dimensional sections of a Data
+    object of n dimensions, where m <= n.
 
     In the case of a `Data` object, the keys of the dictionary are the
     indices of the sections in the original Data object. The m
@@ -3135,15 +3139,16 @@ def _section(
     """
 
     def loop_over_index(x, current_index, axis_indices, indices):
-        """Expects an index to loop over in the list indices. If this is less
-        than 0 the horizontal slice defined by indices is appended to
-        the FieldList fl, if it is the specified axis indices the
-        value in indices is left as slice(None) and it calls itself
-        recursively with the next index, otherwise each index is
-        looped over. In this loop the routine is called recursively
-        with the next index. If the count of the number of slices
-        taken is greater than or equal to stop it returns before
-        taking any more slices.
+        """Expects an index to loop over in the list indices.
+
+        If this is less than 0 the horizontal slice defined by indices
+        is appended to the FieldList fl, if it is the specified axis
+        indices the value in indices is left as slice(None) and it calls
+        itself recursively with the next index, otherwise each index is
+        looped over. In this loop the routine is called recursively with
+        the next index. If the count of the number of slices taken is
+        greater than or equal to stop it returns before taking any more
+        slices.
 
         """
         if current_index < 0:
@@ -3244,7 +3249,7 @@ def _section(
 
 
 def _get_module_info(module, try_except=False):
-    """Helper function for processing modules for cf.environment"""
+    """Helper function for processing modules for cf.environment."""
     if try_except:
         try:
             importlib.import_module(module)
@@ -3527,8 +3532,8 @@ def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
 def default_fillvals():
     """Default data array fill values for each data type.
 
-    Deprecated at version 3.0.2 and is no longer available. Use
-    function `cf.default_netCDF_fillvals` instead.
+    Deprecated at version 3.0.2 and is no longer available. Use function
+    `cf.default_netCDF_fillvals` instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(

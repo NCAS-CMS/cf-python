@@ -939,7 +939,7 @@ def _make_geometry_1_file(filename):
 
 
 def _make_geometry_2_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -1019,7 +1019,7 @@ def _make_geometry_2_file(filename):
 
 
 def _make_geometry_3_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -1363,7 +1363,7 @@ def _make_interior_ring_file_2(filename):
 
 
 def _make_string_char_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF4")
 
     n.Conventions = "CF-" + VN

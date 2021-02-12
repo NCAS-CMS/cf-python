@@ -22,7 +22,8 @@ _display_or_return = cfdm._display_or_return
 
 # @_deprecated_kwarg_check('i') -> example usage for decorating, using i kwarg
 def _deprecated_kwarg_check(*depr_kwargs):
-    """A wrapper for provision of positional arguments to the decorator."""
+    """A wrapper for provision of positional arguments to the
+    decorator."""
 
     def deprecated_kwarg_check_decorator(operation_method):
         """A decorator for a deprecation check on given kwargs.
@@ -75,7 +76,8 @@ def _deprecated_kwarg_check(*depr_kwargs):
 # most methods of the class (any that contain log calls should have it).
 # But this (explicit) approach may be better?
 def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
-    """A decorator for managing log message filtering by verbose attribute.
+    """A decorator for managing log message filtering by verbose
+    attribute.
 
     Note this has identical purpose to _manage_log_level_via_verbosity except
     it adapts the log level based on a verbose attribute of the class
@@ -99,6 +101,7 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
     completion of decorated functions that are called inside other decorated
     functions (see comments in 'finally' statement for further explanation).
     Note (when it is of concern) that this approach may not be thread-safe.
+
     """
 
     @wraps(method_using_verbose_attr)

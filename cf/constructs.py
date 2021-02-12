@@ -46,7 +46,8 @@ class Constructs(cfdm.Constructs):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def _matching_values(self, value0, construct, value1):
-        """Whether two values match according to equality on a given construct.
+        """Whether two values match according to equality on a given
+        construct.
 
         The definition of "match" depends on the types of *value0* and
         *value1*.
@@ -67,6 +68,7 @@ class Constructs(cfdm.Constructs):
 
             `bool`
                 Whether or not the two values match.
+
         """
         if isinstance(value0, Query):
             return value0.evaluate(value1)

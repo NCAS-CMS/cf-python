@@ -111,7 +111,8 @@ class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):
 
     @property
     def file_pointer(self):
-        """The file pointer starting at the position of the netCDF variable."""
+        """The file pointer starting at the position of the netCDF
+        variable."""
         offset = getattr(self, "ncvar", None)
         if offset is None:
             offset = self.varid
@@ -135,8 +136,8 @@ class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):
         _close_netcdf_file(self.get_filename())
 
     def open(self):
-        """Return a `netCDF4.Dataset` object for the file containing the data
-        array.
+        """Return a `netCDF4.Dataset` object for the file containing the
+        data array.
 
         :Returns:
 

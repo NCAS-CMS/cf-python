@@ -28,8 +28,8 @@ _calendar_map = {None: "gregorian"}
 class Datetime(cftime.datetime):
     """A date-time object which supports CF calendars.
 
-    Deprecated at version 3.0.0. Use function 'cf.dt' to create
-    date-time objects instead.
+    Deprecated at version 3.0.0. Use function 'cf.dt' to create date-
+    time objects instead.
 
     """
 
@@ -398,7 +398,7 @@ def st2elements(date_string):
 
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
-    """Convert reference times  to date-time objects
+    """Convert reference times  to date-time objects.
 
     The returned array is always independent.
 
@@ -438,7 +438,7 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
 
 
 def dt2Dt(x, calendar=None):
-    """Convert a datetime.datetime object to a cf.Datetime object"""
+    """Convert a datetime.datetime object to a cf.Datetime object."""
     if not x:
         return False
     return dt(x, calendar=calendar)

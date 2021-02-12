@@ -84,7 +84,7 @@ class Flags:
         return hash(tuple(x))
 
     def __bool__(self):
-        """x.__bool__() <==> x!=0"""
+        """x.__bool__() <==> x!=0."""
         for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 return True
@@ -268,7 +268,8 @@ class Flags:
 
     @_display_or_return
     def dump(self, display=True, _level=0):
-        """Return a string containing a full description of the instance.
+        """Return a string containing a full description of the
+        instance.
 
         :Parameters:
 
@@ -307,7 +308,8 @@ class Flags:
         verbose=None,
         traceback=False,
     ):
-        """True if two groups of flags are logically equal, False otherwise.
+        """True if two groups of flags are logically equal, False
+        otherwise.
 
         Note that both instances are sorted in place prior to the comparison.
 

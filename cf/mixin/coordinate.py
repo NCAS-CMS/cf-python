@@ -44,7 +44,8 @@ class Coordinate:
 
     @property
     def T(self):
-        """True if and only if the data are coordinates for a CF 'T' axis.
+        """True if and only if the data are coordinates for a CF 'T'
+        axis.
 
         CF 'T' axis coordinates are defined by having one or more of the
         following:
@@ -78,7 +79,8 @@ class Coordinate:
 
     @property
     def X(self):
-        """True if and only if the data are coordinates for a CF 'X' axis.
+        """True if and only if the data are coordinates for a CF 'X'
+        axis.
 
         CF 'X' axis coordinates are defined by having one or more of the
         following:
@@ -142,7 +144,8 @@ class Coordinate:
 
     @property
     def Y(self):
-        """True if and only if the data are coordinates for a CF 'Y' axis.
+        """True if and only if the data are coordinates for a CF 'Y'
+        axis.
 
         CF 'Y' axis coordinates are defined by having one or more of the
         following:
@@ -193,7 +196,8 @@ class Coordinate:
 
     @property
     def Z(self):
-        """True if and only if the data are coordinates for a CF 'Z' axis.
+        """True if and only if the data are coordinates for a CF 'Z'
+        axis.
 
         CF 'Z' axis coordinates are defined by having one or more of the
         following:

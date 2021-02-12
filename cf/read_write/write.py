@@ -55,7 +55,6 @@ def write(
 ):
     """Write field constructs to a netCDF file.
 
-
     **File format**
 
     See the *fmt* parameter for details on which output netCDF file

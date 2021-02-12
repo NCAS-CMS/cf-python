@@ -275,7 +275,7 @@ class FieldList(list, cfdm.Container):
             f.close()
 
     def count(self, value):
-        """Return number of occurrences of value
+        """Return number of occurrences of value.
 
         Each field in the field list is compared with the field's
         `~cf.Field.equals` method, as opposed to the ``==`` operator.
@@ -992,7 +992,8 @@ class FieldList(list, cfdm.Container):
         return type(self)(f for f in self if f.match_by_naxes(*naxes))
 
     def select_by_rank(self, *ranks):
-        """Select field constructs by the number of domain axis constructs.
+        """Select field constructs by the number of domain axis
+        constructs.
 
         .. versionadded:: 3.0.0
 
@@ -1029,6 +1030,7 @@ class FieldList(list, cfdm.Container):
         **Examples:**
 
             TODO
+
         """
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
@@ -1390,8 +1392,9 @@ class FieldList(list, cfdm.Container):
         ignore_type=False,
         traceback=False,
     ):
-        """Deprecated at version 3.0.0. Use method 'equals' with
-        unordered=True instead.
+        """Deprecated at version 3.0.0.
+
+        Use method 'equals' with unordered=True instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -1401,7 +1404,11 @@ class FieldList(list, cfdm.Container):
         )  # pragma: no cover
 
     def select1(self, *args, **kwargs):
-        """Deprecated at version 3.0.0. Use method 'fl.select_field' instead."""
+        """Deprecated at version 3.0.0.
+
+        Use method 'fl.select_field' instead.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self, "select1", "Use method 'fl.select_field' instead."
         )  # pragma: no cover

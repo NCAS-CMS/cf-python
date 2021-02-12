@@ -12,10 +12,10 @@ from ...functions import relpath
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
-    """TODO"""
+    """TODO."""
 
     def _write_as_cfa(self, cfvar):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -42,7 +42,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return True
 
     def _customize_createVariable(self, cfvar, kwargs):
-        """Customise keyword arguments for `netCDF4.Dataset.createVariable`.
+        """Customise keyword arguments for
+        `netCDF4.Dataset.createVariable`.
 
         .. versionadded:: 3.0.0
 
@@ -77,7 +78,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         compressed=False,
         attributes={},
     ):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -156,7 +157,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _write_dimension_coordinate(
         self, f, key, coord, ncdim=None, coordinates=None
     ):
-        """Write a coordinate variable and its bound variable to the file.
+        """Write a coordinate variable and its bound variable to the
+        file.
 
         This also writes a new netCDF dimension to the file and, if
         required, a new netCDF dimension for the bounds.
@@ -273,7 +275,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
 
     def _change_reference_datetime(self, coord):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -572,8 +574,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return "".join(random.choice(hexdigits) for i in range(size))
 
     def _convert_to_builtin_type(self, x):
-        """Convert a non-JSON-encodable object to a JSON-encodable built-in
-        type.
+        """Convert a non-JSON-encodable object to a JSON-encodable
+        built-in type.
 
         Possible conversions are:
 

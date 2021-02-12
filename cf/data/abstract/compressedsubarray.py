@@ -63,8 +63,8 @@ class CompressedSubarray(abc.ABC):
 
     @property
     def file(self):
-        """The file on disk which contains the compressed array, or `None` of
-         the array is in memory.
+        """The file on disk which contains the compressed array, or
+        `None` of the array is in memory.
 
         **Examples:**
 
@@ -109,8 +109,8 @@ class CompressedSubarray(abc.ABC):
         print(cf_inspect(self))
 
     def on_disk(self):
-        """True if and only if the compressed array is on disk as opposed to
-        in memory.
+        """True if and only if the compressed array is on disk as
+        opposed to in memory.
 
         **Examples:**
 
@@ -121,7 +121,8 @@ class CompressedSubarray(abc.ABC):
         return not hasattr(self.array, "__array_interface__")
 
     def unique(self):
-        """True if there is only one permanent reference to the array instance."""
+        """True if there is only one permanent reference to the array
+        instance."""
         # Note, from the Python docs for sys.getrefcount:
         # "The count returned is generally one higher than you might expect,
         # because it includes the (temporary) reference as an argument to

@@ -29,9 +29,9 @@ class Properties(Container):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        .. note:: If a child class requires a different component classes
-                  than the ones defined here, then they must be redefined
-                  in the child class.
+        .. note:: If a child class requires a different component
+        classes           than the ones defined here, then they must be
+        redefined           in the child class.
 
         """
         instance = super().__new__(cls)
@@ -43,8 +43,8 @@ class Properties(Container):
     # ----------------------------------------------------------------
     @property
     def _atol(self):
-        """Return the tolerance on absolute differences between real numbers,
-        as returned by the `cf.atol` function.
+        """Return the tolerance on absolute differences between real
+        numbers, as returned by the `cf.atol` function.
 
         This is used by, for example, the `_equals` method.
 
@@ -53,8 +53,8 @@ class Properties(Container):
 
     @property
     def _rtol(self):
-        """Return the tolerance on relative differences between real numbers,
-        as returned by the `cf.rtol` function.
+        """Return the tolerance on relative differences between real
+        numbers, as returned by the `cf.rtol` function.
 
         This is used by, for example, the `_equals` method.
 
@@ -1145,25 +1145,29 @@ class Properties(Container):
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
     def setprop(self, *args, **kwargs):
-        """Deprecated at version 3.0.0, use method `set_property` instead."""
+        """Deprecated at version 3.0.0, use method `set_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "setprop", "Use method 'set_property' instead"
         )  # pragma: no cover
 
     def delprop(self, prop):
-        """Deprecated at version 3.0.0, use method `del_property` instead."""
+        """Deprecated at version 3.0.0, use method `del_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "delprop", "Use method 'del_property' instead"
         )  # pragma: no cover
 
     def hasprop(self, prop):
-        """Deprecated at version 3.0.0, use method `has_property` instead."""
+        """Deprecated at version 3.0.0, use method `has_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "hasprop", "Use method 'has_property' instead"
         )  # pragma: no cover
 
     def getprop(self, prop):
-        """Deprecated at version 3.0.0, use method `get_property` instead."""
+        """Deprecated at version 3.0.0, use method `get_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "getprop", "Use method 'get_property' instead"
         )  # pragma: no cover

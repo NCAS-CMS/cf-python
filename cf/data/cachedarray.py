@@ -114,7 +114,8 @@ class CachedArray(abstract.FileArray):
     # ----------------------------------------------------------------
     @property
     def _partition_dir(self):
-        """The name of the directory containing the file storing the array."""
+        """The name of the directory containing the file storing the
+        array."""
         return self._get_component("_partition_dir")
 
     @property

@@ -54,10 +54,8 @@ package_data = etc_files + umread_files + test_files
 
 
 class build_umread(build):
-    """Adpated from
-    https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
-
-    """
+    """Adpated from https://github.com/Turbo87/py-
+    xcsoar/blob/master/setup.py."""
 
     def run(self):
         # Run original build code

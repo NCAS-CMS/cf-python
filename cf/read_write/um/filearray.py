@@ -68,7 +68,7 @@ class UMFileArray(FileArray):
     """
 
     def __getitem__(self, indices):
-        """Implement indexing
+        """Implement indexing.
 
         x.__getitem__(indices) <==> x[indices]
 
@@ -158,7 +158,7 @@ class UMFileArray(FileArray):
 
     @property
     def file_pointer(self):
-        """TODO"""
+        """TODO."""
         return (self.file, self.header_offset)
 
     def close(self):

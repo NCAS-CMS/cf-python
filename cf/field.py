@@ -601,7 +601,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def __setitem__(self, indices, value):
-        """Called to implement assignment to x[indices]=value
+        """Called to implement assignment to x[indices]=value.
 
         x.__setitem__(indices, value) <==> x[indices]=value
 
@@ -900,8 +900,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return True
 
     def _binary_operation_old(self, other, method):
-        """Implement binary arithmetic and comparison operations on the master
-        data array with metadata-aware broadcasting.
+        """Implement binary arithmetic and comparison operations on the
+        master data array with metadata-aware broadcasting.
 
         It is intended to be called by the binary arithmetic and
         comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
@@ -1882,8 +1882,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return field0
 
     def _binary_operation(self, other, method):
-        """Implement binary arithmetic and comparison operations on the master
-        data array with metadata-aware broadcasting.
+        """Implement binary arithmetic and comparison operations on the
+        master data array with metadata-aware broadcasting.
 
         It is intended to be called by the binary arithmetic and
         comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
@@ -2444,8 +2444,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return field0
 
     def _conform_coordinate_references(self, key, coordref=None):
-        """Where possible replace the content of coordiante refence construct
-        coordinates with coordinate construct keys.
+        """Where possible replace the content of coordiante refence
+        construct coordinates with coordinate construct keys.
 
         .. versionadded:: 3.0.0
 
@@ -2484,7 +2484,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # --- End: for
 
     def _coordinate_reference_axes(self, key):
-        """Returns the field's set of coordinate reference axes for a key.
+        """Returns the field's set of coordinate reference axes for a
+        key.
 
         :Parameters:
 
@@ -3145,9 +3146,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
     # Worker functions for regridding
     # ----------------------------------------------------------------
     def _regrid_get_latlong(self, name, axes=None):
-        """Retrieve the latitude and longitude coordinates of this field and
-        associated information. If 1D lat/long coordinates are found then
-        these are returned. Otherwise, 2D lat/long coordinates are
+        """Retrieve the latitude and longitude coordinates of this field
+        and associated information. If 1D lat/long coordinates are found
+        then these are returned. Otherwise, 2D lat/long coordinates are
         searched for and if found returned.
 
         :Parameters:
@@ -3396,8 +3397,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return axis_keys, axis_sizes, coord_keys, coords, coords_2D
 
     def _regrid_get_cartesian_coords(self, name, axes):
-        """Retrieve the specified cartesian dimension coordinates of the field
-        and their corresponding keys.
+        """Retrieve the specified cartesian dimension coordinates of the
+        field and their corresponding keys.
 
         :Parameters:
 
@@ -3485,7 +3486,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return axis_indices, order
 
     def _regrid_get_coord_order(self, axis_keys, coord_keys):
-        """Get the ordering of the axes for each N-D auxiliary coordinate.
+        """Get the ordering of the axes for each N-D auxiliary
+        coordinate.
 
         :Parameters:
 
@@ -3542,8 +3544,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def _regrid_check_bounds(
         cls, src_coords, dst_coords, method, ext_coords=None
     ):
-        """Check the bounds of the coordinates for regridding and reassign the
-        regridding method if auto is selected.
+        """Check the bounds of the coordinates for regridding and
+        reassign the regridding method if auto is selected.
 
         :Parameters:
 
@@ -3651,9 +3653,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def _regrid_get_reordered_sections(
         self, axis_order, regrid_axes, regrid_axis_indices
     ):
-        """Get a dictionary of the data sections for regridding and a list of
-        its keys reordered if necessary so that they will be looped over
-        in the order specified in axis_order.
+        """Get a dictionary of the data sections for regridding and a
+        list of its keys reordered if necessary so that they will be
+        looped over in the order specified in axis_order.
 
         :Parameters:
 
@@ -3769,8 +3771,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return dst_mask
 
     def _regrid_fill_fields(self, src_data, srcfield, dstfield):
-        """Fill the source field with data and the destination field with fill
-        values.
+        """Fill the source field with data and the destination field
+        with fill values.
 
         :Parameters:
 
@@ -3800,8 +3802,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         dstgrid,
         dstfield,
     ):
-        """Compute the field mass for conservative regridding. The mass should
-        be the same before and after regridding.
+        """Compute the field mass for conservative regridding. The mass
+        should be the same before and after regridding.
 
         :Parameters:
 
@@ -3855,8 +3857,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def _regrid_get_regridded_data(
         self, method, fracfield, dstfield, dstfracfield
     ):
-        """Get the regridded data of frac field as a numpy array from the
-        ESMPy fields.
+        """Get the regridded data of frac field as a numpy array from
+        the ESMPy fields.
 
         :Parameters:
 
@@ -3907,7 +3909,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         src_cyclic=False,
         dst_cyclic=False,
     ):
-        """Update the coordinate references of the new field after regridding.
+        """Update the coordinate references of the new field after
+        regridding.
 
         :Parameters:
 
@@ -4022,8 +4025,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # --- End: for
 
     def _regrid_copy_coordinate_references(self, dst, dst_axis_keys):
-        """Copy coordinate references from the destination field to the new,
-        regridded field.
+        """Copy coordinate references from the destination field to the
+        new, regridded field.
 
         :Parameters:
 
@@ -4050,8 +4053,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @classmethod
     def _regrid_use_bounds(cls, method):
-        """Returns whether to use the bounds or not in regridding. This is
-        only the case for conservative regridding.
+        """Returns whether to use the bounds or not in regridding. This
+        is only the case for conservative regridding.
 
         :Parameters:
 
@@ -5113,8 +5116,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return True
 
     def _weights_interior_angle(self, data_lambda, data_phi):
-        """Find the interior angle between each adjacent pair of geometry
-        nodes defined on a sphere.
+        """Find the interior angle between each adjacent pair of
+        geometry nodes defined on a sphere.
 
         The interior angle of two points on the sphere is calculated with
         a special case of the Vincenty formula
@@ -5273,7 +5276,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def _weights_measure(
         self, measure, comp, weights_axes, methods=False, auto=False
     ):
-        """Cell measure weights
+        """Cell measure weights.
 
         :Parameters:
 
@@ -6160,8 +6163,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return w
 
     def radius(self, default=None):
-        """Return the radius used for calculating cell areas in spherical
-        polar coordinates.
+        """Return the radius used for calculating cell areas in
+        spherical polar coordinates.
 
         The radius is taken from the datums of any coordinate reference
         constucts, but if and only if this is not possible then a default
@@ -6267,8 +6270,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return r
 
     def map_axes(self, other):
-        """Map the axis identifiers of the field to their equivalent axis
-        identifiers of another.
+        """Map the axis identifiers of the field to their equivalent
+        axis identifiers of another.
 
         :Parameters:
 
@@ -11315,7 +11318,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             group_by,
             extra_condition=None,
         ):
-            """Prepares for a collapse where the group is a TimeDuration.
+            """Prepares for a collapse where the group is a
+            TimeDuration.
 
             :Parameters:
 
@@ -11471,7 +11475,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             group_by,
             extra_condition=None,
         ):
-            """Prepares for a collapse where the group is a data interval.
+            """Prepares for a collapse where the group is a data
+            interval.
 
             :Returns:
 
@@ -11626,7 +11631,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return classification
 
         def _discern_runs_within(classification, coord):
-            """Processes group classification for a 'within' collapse."""
+            """Processes group classification for a 'within'
+            collapse."""
             size = classification.size
             if size < 2:
                 return classification
@@ -11647,7 +11653,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return classification
 
         def _tyu(coord, group_by, time_interval):
-            """Returns bounding values and limits for a general collapse.
+            """Returns bounding values and limits for a general
+            collapse.
 
             :Parameters:
 
@@ -12812,7 +12819,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return True
 
     def directions(self):
-        """Return a dictionary mapping all domain axes to their directions.
+        """Return a dictionary mapping all domain axes to their
+        directions.
 
         .. seealso:: `direction`
 
@@ -15305,6 +15313,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         >>> g = f.cumsum('latitude', masked_as_zero=True)
         >>> g = f.cumsum('latitude', coordinate='mid_range')
         >>> f.cumsum('latitude', inplace=True)
+
         """
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
@@ -17790,8 +17799,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return out
 
     def get_data_axes(self, identity=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of a metadata construct.
 
         .. versionadded:: 3.0.0
 
@@ -19763,7 +19772,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         i=False,
         _compute_field_mass=None,
     ):
-        """Return the field regridded onto a new latitude-longitude grid.
+        """Return the field regridded onto a new latitude-longitude
+        grid.
 
         Regridding, also called remapping or interpolation, is the process
         of changing the grid underneath field data values while preserving
@@ -21647,19 +21657,24 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @property
     def Items(self):
-        """Deprecated at version 3.0.0. Use attribute `constructs` instead."""
+        """Deprecated at version 3.0.0.
+
+        Use attribute `constructs` instead.
+
+        """
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Items", "Use 'constructs' attribute instead."
         )  # pragma: no cover
 
     def CM(self, xxx):
-        """Deprecated at version 3.0.0"""
+        """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_METHOD(self, "CM")  # pragma: no cover
 
     def axis_name(self, *args, **kwargs):
         """Return the canonical name for an axis.
 
-        Deprecated at version 3.0.0. Use `domain_axis_identity` method instead.
+        Deprecated at version 3.0.0. Use `domain_axis_identity` method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -21704,7 +21719,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def expand_dims(self, position=0, axes=None, i=False, **kwargs):
         """Insert a size 1 axis into the data array.
 
-        Deprecated at version 3.0.0. Use `insert_dimension` method instead.
+        Deprecated at version 3.0.0. Use `insert_dimension` method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -21735,7 +21751,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def HDF_chunks(self, *chunksizes):
-        """Deprecated at version 3.0.0. Use methods 'Data.nc_hdf5_chunksizes',
+        """Deprecated at version 3.0.0.
+
+        Use methods 'Data.nc_hdf5_chunksizes',
         'Data.nc_set_hdf5_chunksizes', 'Data.nc_clear_hdf5_chunksizes'
         instead.
 
@@ -21818,6 +21836,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """Insert a domain ancillary object into the field.
 
         Deprecated at version 3.0.0. Use method 'set_construct' instead.
+
         """
         _DEPRECATION_ERROR_METHOD(
             self, "insert_domain_anc", "Use method 'set_construct' instead."
@@ -21838,7 +21857,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     ):
         """Insert a field ancillary object into the field.
 
-        Deprecated at version 3.0.0. Use method 'set_construct' instead.g
+        Deprecated at version 3.0.0. Use method 'set_construct'
+        instead.g
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -21875,7 +21895,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     ):
         """Return the axes of a domain item of the field.
 
-        Deprecated at version 3.0.0. Use the 'get_data_axes' method instead.
+        Deprecated at version 3.0.0. Use the 'get_data_axes' method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -22015,9 +22036,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def unlimited(self, *args):
-        """Deprecated at version 3.0.0. Use methods
-        `DomainAxis.nc_is_unlimited`, and `DomainAxis.nc_set_unlimited`
-        instead.
+        """Deprecated at version 3.0.0.
+
+        Use methods `DomainAxis.nc_is_unlimited`, and
+        `DomainAxis.nc_set_unlimited` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
