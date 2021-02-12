@@ -1,17 +1,14 @@
 import re
 
 from ast import literal_eval as ast_literal_eval
-from copy import deepcopy
 
 import logging
 
 import cfdm
 
-from .data import Data
+from .data.data import Data
 
 from .functions import inspect as cf_inspect
-
-from .data.data import Data
 
 from .functions import _DEPRECATION_ERROR_METHOD
 
@@ -679,7 +676,7 @@ class CellMethod(cfdm.CellMethod):
         # Unsafe to set mutable '{}' as default in the func signature.
         if axis_map is None:  # distinguish from falsy '{}'
             axis_map = {}
-        _DEPRECATED_ERROR_METHOD(
+        _DEPRECATION_ERROR_METHOD(
             self, "write", "Use 'str(cell_method)' instead."
         )  # pragma: no cover
 

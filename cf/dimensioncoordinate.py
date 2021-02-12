@@ -579,7 +579,6 @@ class DimensionCoordinate(
                 bounds = numpy_empty((size, 2), dtype=object)
 
                 cellsize_bounds = cellsize.bounds
-                calendar = getattr(self, "calendar", None)
                 direction = bool(self.direction())
 
                 for c, b in zip(self.datetime_array, bounds):

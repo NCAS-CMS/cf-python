@@ -6,9 +6,6 @@ from psutil import virtual_memory
 from tempfile import gettempdir
 
 from numpy.ma import masked as numpy_ma_masked
-from numpy.ma import nomask as numpy_ma_nomask
-
-import cfdm
 
 from . import mpi_on
 from . import mpi_size

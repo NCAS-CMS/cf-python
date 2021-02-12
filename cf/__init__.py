@@ -296,8 +296,8 @@ from .query import (
     son,
     seasons,
 )
-from .constants import *
-from .functions import *
+from .constants import *  # noqa: F403
+from .functions import *  # noqa: F403
 from .maths import relative_vorticity, histogram
 from .examplefield import example_field
 

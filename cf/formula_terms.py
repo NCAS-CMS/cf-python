@@ -555,7 +555,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             if not units.equivalent(ref_units):
                 raise ValueError(
                     "Terms {!r} and {!r} have incompatible units: "
-                    "{!r}, {!r} ".format(ref_term, term, ref_units, units)
+                    "{!r}, {!r} ".format(ref_term2, term, ref_units, units)
                 )
 
             var = var.copy()
