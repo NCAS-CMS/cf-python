@@ -22,9 +22,7 @@ _datetime_object = {
     ("julian",): cftime.DatetimeJulian,
 }
 
-_calendar_map = {
-    None: 'gregorian'
-}
+_calendar_map = {None: "gregorian"}
 
 
 class Datetime(cftime.datetime):
@@ -146,10 +144,10 @@ def dt(
     else:
         year = arg
 
-#    calendar=_calendar_map.get(calendar, calendar)
-#
-#    return cftime.datetime(year, month, day, hour, minute, second,
-#                           microsecond, calendar=calendar)
+    #    calendar=_calendar_map.get(calendar, calendar)
+    #
+    #    return cftime.datetime(year, month, day, hour, minute, second,
+    #                           microsecond, calendar=calendar)
 
     for calendars, datetime_cls in _datetime_object.items():
         if calendar in calendars:
@@ -212,9 +210,7 @@ def dt_vector(
     second = np.array(second)
     microsecond = np.array(microsecond)
 
-    ndim = max(
-        map(np.ndim, (month, day, hour, minute, second, microsecond))
-    )
+    ndim = max(map(np.ndim, (month, day, hour, minute, second, microsecond)))
 
     if ndim > 1:
         raise ValueError(
@@ -224,8 +220,7 @@ def dt_vector(
 
     if arg.ndim > 2:
         raise ValueError(
-            "The 'arg' parameter must be scalar, 1-d or 2-d. "
-            f"Got: {arg!r}"
+            "The 'arg' parameter must be scalar, 1-d or 2-d. " f"Got: {arg!r}"
         )
 
     sizes = set(
@@ -362,6 +357,7 @@ def st2datetime(date_string, calendar=None):
         year, month, day, hour, minute, second, microsecond, calendar=calendar
     )
 
+
 def st2elements(date_string):
     """Parse an ISO 8601 date-time string into a `cftime` object.
 
@@ -434,8 +430,9 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
-    array = cftime.num2date(array, units, calendar,
-                            only_use_cftime_datetimes=True)
+    array = cftime.num2date(
+        array, units, calendar, only_use_cftime_datetimes=True
+    )
 
     return array
 

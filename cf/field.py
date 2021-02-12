@@ -11721,32 +11721,32 @@ class Field(mixin.PropertiesData, cfdm.Field):
         def _group_weights(weights, iaxis, index):
             """Subspaces weights components.
 
-                :Parameters:
+            :Parameters:
 
-                    weights: `dict` or `None`
+                weights: `dict` or `None`
 
-                    iaxis: `int`
+                iaxis: `int`
 
-                    index: `list`
+                index: `list`
 
-                :Returns:
+            :Returns:
 
-                    `dict` or `None`
+                `dict` or `None`
 
-                **Examples:**
+            **Examples:**
 
-                >>> print(weights)
-                None
-                >>> print(_group_weights(weights, 2, [2, 3, 40]))
-                None
-                >>> print(_group_weights(weights, 1, slice(2, 56)))
-                None
+            >>> print(weights)
+            None
+            >>> print(_group_weights(weights, 2, [2, 3, 40]))
+            None
+            >>> print(_group_weights(weights, 1, slice(2, 56)))
+            None
 
-                >>> weights
+            >>> weights
 
-                >>> _group_weights(weights, 2, [2, 3, 40])
+            >>> _group_weights(weights, 2, [2, 3, 40])
 
-                >>> _group_weights(weights, 1, slice(2, 56))
+            >>> _group_weights(weights, 1, slice(2, 56))
 
             """
             if not isinstance(weights, dict):
@@ -15660,7 +15660,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         >>> g = f.argmax('T')
 
         """
-        print('This method is not ready for use.')
+        print("This method is not ready for use.")
         return
 
         standard_name = None
@@ -18750,7 +18750,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             shape0 = getattr(c, "shape", None)
             shape1 = getattr(construct, "shape", None)
             if shape0 != shape1:
-                raise ValueError('TODO bb')
+                raise ValueError("TODO bb")
         # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)
