@@ -438,7 +438,7 @@ class _Meta:
                 if identity is None:
                     self.message = (
                         "axis {0!r} has no netCDF dimension name".format(
-                            f.axis_name(axis)
+                            f.constructs.domain_axis_identity(axis)
                         )
                     )  # TODO
                     return
