@@ -3648,7 +3648,7 @@ class Data(Container, cfdm.Data):
         if len(iaxis) != 1:
             raise ValueError(
                 "Must specify a unique domain axis with the 'axis' "
-                "parameter. {!r} specifies axes {!r}".format(axis, iaxes)
+                "parameter. {!r} specifies axes {!r}".format(axis, iaxis)
             )
 
         iaxis = iaxis[0]

@@ -1035,7 +1035,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if identity in matching_ids:
                 raise ValueError(
                     "Can't combine fields: {!r} axis defined by auxiliary "
-                    "in only 1 field".format(standard_name)
+                    "in only 1 field".format(identity)
                 )  # TODO ~WRONG
         # --- End: for
 
@@ -2134,7 +2134,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Make sure that both data arrays have the same number of
         # dimensions
         if squeeze1:
-            field1.squeeze(squeeze, inplace=True)
+            field1.squeeze(squeeze1, inplace=True)
 
         for axis1 in insert0:
             new_axis0 = field0.set_construct(self._DomainAxis(1))
@@ -3691,7 +3691,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             for axis in axis_order:
                 # axis_key = self.dim(axis, key=True)
                 axis_key = self.dimension_coordinates.filter_by_axis(
-                    "exact", axis_key
+                    "exact", axis
                 ).key(None)
                 if axis_key is not None:
                     if axis_key in regrid_axes:
@@ -4835,7 +4835,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 else:
                     raise ValueError(
                         "Bad value of Z coordinate 'positive' "
-                        "property: {!r}.".format(positve)
+                        "property: {!r}.".format(positive)
                     )
             # --- End: if
 
@@ -15724,7 +15724,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if c_bounds_data is not None:
                 bounds = Data.empty(
                     indices.shape + (c_bounds_data.shape[-1],),
-                    dtype=c_bounds.dtype,
+                    dtype=c_bounds_data.dtype,
                 )
                 for x in indices.ndindex():
                     bounds[x] = c_bounds_data[indices[x]]

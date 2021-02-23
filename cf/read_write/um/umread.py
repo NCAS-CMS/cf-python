@@ -3003,6 +3003,7 @@ class UMField:
         )
 
         LBVC = self.lbvc
+        atol = self.atol
 
         key = (axiscode, LBVC, array)
         dc = _cached_z_reference_coordinate.get(key, None)
