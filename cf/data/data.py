@@ -3762,7 +3762,7 @@ class Data(Container, cfdm.Data):
         [[--  1  3  6]
          [ 4 -- 10 17]
          [-- -- 10 21]]
-         >>> print(d.cumsum(axis=1).array)
+        >>> print(d.cumsum(axis=1).array)
         [[--  1  3  6]
          [ 4 -- 10 17]
          [-- -- 10 21]]
