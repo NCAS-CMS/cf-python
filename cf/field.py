@@ -859,7 +859,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     # Private methods
     # ----------------------------------------------------------------
     def _domain_axis_identity_from_index(self, index, default=None):
-        """TODO"""
+        """TODO."""
         try:
             return self.get_data_axes(default=None)[index]
         except TypeError:
@@ -4408,12 +4408,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "{!r} axis".format(ycoord.identity())
                 )
 
+            y_identity = ycoord.identity()
+
             if ycoord.Units.equivalent(Units("radians")):
                 ycoord = ycoord.clip(-90, 90, units=Units("degrees"))
                 ycoord.sin(inplace=True)
 
                 if methods:
-                    comp[(yaxis,)] = "linear sine " + ycoord.identity()
+                    comp[(yaxis,)] = "linear sine " + y_identity
                 else:
                     cells = ycoord.cellsize
                     if measure:
@@ -4422,14 +4424,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     comp[(yaxis,)] = cells
             else:
                 if methods:
-                    comp[(yaxis,)] = "linear " + ycoord.identity()
+                    comp[(yaxis,)] = "linear " + y_identity
                 else:
                     cells = ycoord.cellsize
                     comp[(yaxis,)] = cells
-            # --- End: if
 
             weights_axes.add(yaxis)
-        # --- End: if
 
         return True
 
@@ -15299,8 +15299,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return out
 
     def get_data_axes(self, identity=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of a metadata construct.
 
         .. versionadded:: 3.0.0
 
@@ -18810,19 +18810,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @property
     def Items(self):
-        """Deprecated at version 3.0.0. Use attribute `constructs` instead."""
+        """Deprecated at version 3.0.0.
+
+        Use attribute `constructs` instead.
+
+        """
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Items", "Use 'constructs' attribute instead."
         )  # pragma: no cover
 
     def CM(self, xxx):
-        """Deprecated at version 3.0.0"""
+        """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_METHOD(self, "CM")  # pragma: no cover
 
     def axis_name(self, *args, **kwargs):
         """Return the canonical name for an axis.
 
-        Deprecated at version 3.0.0. Use `domain_axis_identity` method instead.
+        Deprecated at version 3.0.0. Use `domain_axis_identity` method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -18867,7 +18872,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def expand_dims(self, position=0, axes=None, i=False, **kwargs):
         """Insert a size 1 axis into the data array.
 
-        Deprecated at version 3.0.0. Use `insert_dimension` method instead.
+        Deprecated at version 3.0.0. Use `insert_dimension` method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -18898,7 +18904,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def HDF_chunks(self, *chunksizes):
-        """Deprecated at version 3.0.0. Use methods 'Data.nc_hdf5_chunksizes',
+        """Deprecated at version 3.0.0.
+
+        Use methods 'Data.nc_hdf5_chunksizes',
         'Data.nc_set_hdf5_chunksizes', 'Data.nc_clear_hdf5_chunksizes'
         instead.
 
@@ -18981,6 +18989,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Insert a domain ancillary object into the field.
 
         Deprecated at version 3.0.0. Use method 'set_construct' instead.
+
         """
         _DEPRECATION_ERROR_METHOD(
             self, "insert_domain_anc", "Use method 'set_construct' instead."
@@ -19001,7 +19010,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Insert a field ancillary object into the field.
 
-        Deprecated at version 3.0.0. Use method 'set_construct' instead.g
+        Deprecated at version 3.0.0. Use method 'set_construct'
+        instead.g
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -19038,7 +19048,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Return the axes of a domain item of the field.
 
-        Deprecated at version 3.0.0. Use the 'get_data_axes' method instead.
+        Deprecated at version 3.0.0. Use the 'get_data_axes' method
+        instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -19178,9 +19189,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def unlimited(self, *args):
-        """Deprecated at version 3.0.0. Use methods
-        `DomainAxis.nc_is_unlimited`, and `DomainAxis.nc_set_unlimited`
-        instead.
+        """Deprecated at version 3.0.0.
+
+        Use methods `DomainAxis.nc_is_unlimited`, and
+        `DomainAxis.nc_set_unlimited` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
