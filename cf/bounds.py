@@ -8,10 +8,8 @@ from . import mixin
 from .decorators import _deprecated_kwarg_check
 
 
-class Bounds(mixin.Coordinate,
-             mixin.PropertiesData,
-             cfdm.Bounds):
-    '''A cell bounds component of a coordinate or domain ancillary
+class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
+    """A cell bounds component of a coordinate or domain ancillary
     construct of the CF data model.
 
     An array of cell bounds spans the same domain axes as its
@@ -37,89 +35,89 @@ class Bounds(mixin.Coordinate,
     with the `nc_set_dimension`, `nc_get_dimension`,
     `nc_del_dimension` and `nc_has_dimension` methods.
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
-    def contiguous(self, overlap=True, direction=None, period=None,
-                   verbose=1):
-        '''Return True if the bounds are contiguous.
+    def contiguous(self, overlap=True, direction=None, period=None, verbose=1):
+        """Return True if the bounds are contiguous.
 
-    Bounds are contiguous if the cell boundaries match up, or overlap,
-    with the boundaries of adjacent cells.
+         Bounds are contiguous if the cell boundaries match up, or overlap,
+         with the boundaries of adjacent cells.
 
-    In general, it is only possible for 1 or 0 variable dimensional
-    variables with bounds to be contiguous, but size 1 variables with
-    any number of dimensions are always contiguous.
+         In general, it is only possible for 1 or 0 variable dimensional
+         variables with bounds to be contiguous, but size 1 variables with
+         any number of dimensions are always contiguous.
 
-    An exception is raised if the variable is multidimensional and has
-    more than one element.
+         An exception is raised if the variable is multidimensional and has
+         more than one element.
 
-    .. versionadded:: 2.0
+         .. versionadded:: 2.0
 
-   :Parameters:
+        :Parameters:
 
-        overlap: `bool`, optional
-            If False then 1-d cells with two bounds vertices are not
-            considered contiguous if any adjacent cells overlap each
-            other. By default such cells are considered contiguous.
+             overlap: `bool`, optional
+                 If False then 1-d cells with two bounds vertices are not
+                 considered contiguous if any adjacent cells overlap each
+                 other. By default such cells are considered contiguous.
 
-        direction:
-            Specify the direction of 1-d coordinates with two bounds
-            vertices. Either True for increasing coordinates, or False
-            for descreasing coordinates. By default the direction is
-            inferred from whether the first bound of the first cell is
-            less than its second bound (direction is True), or not
-            (direction is False).
+             direction:
+                 Specify the direction of 1-d coordinates with two bounds
+                 vertices. Either True for increasing coordinates, or False
+                 for descreasing coordinates. By default the direction is
+                 inferred from whether the first bound of the first cell is
+                 less than its second bound (direction is True), or not
+                 (direction is False).
 
-        period: optional
-            Define the period of cyclic values so that the test for
-            contiguousness can be carried out with modulo
-            arithmetic. By default the data are assumed to be
-            non-cyclic, unless the bounds have units of longitude (or
-            have units of ``'degrees'``), in which case a period of
-            360 degrees is assumed.
+             period: optional
+                 Define the period of cyclic values so that the test for
+                 contiguousness can be carried out with modulo
+                 arithmetic. By default the data are assumed to be
+                 non-cyclic, unless the bounds have units of longitude (or
+                 have units of ``'degrees'``), in which case a period of
+                 360 degrees is assumed.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+             verbose: `int` or `str` or `None`, optional
+                 If an integer from ``-1`` to ``3``, or an equivalent string
+                 equal ignoring case to one of:
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+                 * ``'DISABLE'`` (``0``)
+                 * ``'WARNING'`` (``1``)
+                 * ``'INFO'`` (``2``)
+                 * ``'DETAIL'`` (``3``)
+                 * ``'DEBUG'`` (``-1``)
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cf.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+                 set for the duration of the method call only as the minimum
+                 cut-off for the verboseness level of displayed output (log)
+                 messages, regardless of the globally-configured `cf.log_level`.
+                 Note that increasing numerical value corresponds to increasing
+                 verbosity, with the exception of ``-1`` as a special case of
+                 maximal and extreme verbosity.
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cf.log_level` setting.
+                 Otherwise, if `None` (the default value), output messages will
+                 be shown according to the value of the `cf.log_level` setting.
 
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about the test for contiguity.
+                 Overall, the higher a non-negative integer or equivalent string
+                 that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                 increasing verbosity, the more description that is printed to
+                 convey information about the test for contiguity.
 
-    :Returns:
+         :Returns:
 
-        `bool`
-            Whether or not the cells are contiguous.
+             `bool`
+                 Whether or not the cells are contiguous.
 
-    **Examples:**
+         **Examples:**
 
-    TODO
+         TODO
 
-        '''
+        """
         data = self.get_data(None)
         if data is None:
             return False
@@ -132,24 +130,26 @@ class Bounds(mixin.Coordinate,
 
         if period is None:
             if self.Units.islongitude:
-                period = Data(360.0, 'degrees_east')
-            elif self.Units.equals(Units('degrees')):
-                period = Data(360.0, 'degrees')
+                period = Data(360.0, "degrees_east")
+            elif self.Units.equals(Units("degrees")):
+                period = Data(360.0, "degrees")
         # --- End: if
         if verbose >= 2:
             print("Period = {!r}".format(period))
 
         if ndim == 2:
             if nbounds != 4:
-                raise ValueError("Can't tell if {}-d cells with {} vertices "
-                                 "are contiguous".format(ndim, nbounds))
+                raise ValueError(
+                    "Can't tell if {}-d cells with {} vertices "
+                    "are contiguous".format(ndim, nbounds)
+                )
 
             # --------------------------------------------------------
             # 2-d coordinates with 4 vertices per cell
             # --------------------------------------------------------
-#            if overlap:
-#                raise ValueError(
-#                    "overlap=True and can't tell if 2-d bounds are contiguous")
+            #            if overlap:
+            #                raise ValueError(
+            #                    "overlap=True and can't tell if 2-d bounds are contiguous")
 
             # Check cells (j, i) and cells (j, i+1) are contiguous
             diff = data[:, :-1, 1] - data[:, 1:, 0]
@@ -181,30 +181,32 @@ class Bounds(mixin.Coordinate,
             if diff.any():
                 return False
 
-
-#            bnd = data.array
-#            for j in range(data.shape[0] - 1):
-#                for i in range(data.shape[1] - 1):
-#
-#                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
-#                        bnd[j, i, 2] != bnd[j, i+1, 3]):
-#                        return False
-#
-#                    # Check cells (j, i) and (j+1, i) are contiguous
-#                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
-#                            bnd[j, i, 2] != bnd[j+1, i, 1]):
-#                        return False
-#            # --- End: for
+            #            bnd = data.array
+            #            for j in range(data.shape[0] - 1):
+            #                for i in range(data.shape[1] - 1):
+            #
+            #                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
+            #                        bnd[j, i, 2] != bnd[j, i+1, 3]):
+            #                        return False
+            #
+            #                    # Check cells (j, i) and (j+1, i) are contiguous
+            #                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
+            #                            bnd[j, i, 2] != bnd[j+1, i, 1]):
+            #                        return False
+            #            # --- End: for
 
             return True
 
         if ndim > 2:
-            raise ValueError("Can't tell if {}-d cells "
-                             "are contiguous".format(ndim))
+            raise ValueError(
+                "Can't tell if {}-d cells " "are contiguous".format(ndim)
+            )
 
         if nbounds != 2:
-            raise ValueError("Can't tell if {}-d cells with {} vertices "
-                             "are contiguous".format(ndim, nbounds))
+            raise ValueError(
+                "Can't tell if {}-d cells with {} vertices "
+                "are contiguous".format(ndim, nbounds)
+            )
 
         if not overlap:
             diff = data[1:, 0] - data[:-1, 1]
@@ -212,74 +214,82 @@ class Bounds(mixin.Coordinate,
                 diff = diff % period
 
             return not diff.any()
-#            return data[1:, 0].equals(data[:-1, 1])
+        #            return data[1:, 0].equals(data[:-1, 1])
         else:
             if direction is None:
                 b = data[(0,) * ndim].array
-                direction = b.item(0,) < b.item(1,)
+                direction = b.item(0,) < b.item(
+                    1,
+                )
 
             if direction:
                 return (data[1:, 0] <= data[:-1, 1]).all()
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
 
-    @_deprecated_kwarg_check('relaxed_identity')
-    def identity(self, default='', strict=False, relaxed=False,
-                 nc_only=False, relaxed_identity=None):
-        '''Return the canonical identity.
+    @_deprecated_kwarg_check("relaxed_identity")
+    def identity(
+        self,
+        default="",
+        strict=False,
+        relaxed=False,
+        nc_only=False,
+        relaxed_identity=None,
+    ):
+        """Return the canonical identity.
 
-    By default the identity is the first found of the following:
+        By default the identity is the first found of the following:
 
-    1. The "standard_name" property.
-    2. The "cf_role" property, preceded by ``'cf_role='``.
-    3. The "long_name" property, preceded by ``'long_name='``.
-    4. The netCDF variable name, preceded by ``'ncvar%'``.
-    5. The value of the *default* parameter.
+        1. The "standard_name" property.
+        2. The "cf_role" property, preceded by ``'cf_role='``.
+        3. The "long_name" property, preceded by ``'long_name='``.
+        4. The netCDF variable name, preceded by ``'ncvar%'``.
+        5. The value of the *default* parameter.
 
-    Properties include any inherited properties.
+        Properties include any inherited properties.
 
-    .. versionadded:: 3.0.6
+        .. versionadded:: 3.0.6
 
-    .. seealso:: `identities`
+        .. seealso:: `identities`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            If no identity can be found then return the value of the
-            default parameter.
+            default: optional
+                If no identity can be found then return the value of the
+                default parameter.
 
-        strict: `bool`, optional
-            If True then the identity is the first found of only the
-            "standard_name" property or the "id" attribute.
+            strict: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property or the "id" attribute.
 
-        relaxed: `bool`, optional
-            If True then the identity is the first found of only the
-            "standard_name" property, the "id" attribute, the
-            "long_name" property or the netCDF variable name.
+            relaxed: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property, the "id" attribute, the
+                "long_name" property or the netCDF variable name.
 
-        nc_only: `bool`, optional
-            If True then only take the identity from the netCDF
-            variable name.
+            nc_only: `bool`, optional
+                If True then only take the identity from the netCDF
+                variable name.
 
-    :Returns:
+        :Returns:
 
-            The identity.
+                The identity.
 
-    **Examples:**
+        **Examples:**
 
-    >>> b.inherited_properties()
-    {'foo': 'bar',
-     'long_name': 'Longitude'}
-    >>> b.properties()
-    {'long_name': 'A different long name'}
-    >>> b.identity()
-    'long_name=A different long name'
-    >>> b.del_property('long_name')
-    'A different long name'
-    >>> b.identity()
-    'long_name=Longitude'
+        >>> b.inherited_properties()
+        {'foo': 'bar',
+         'long_name': 'Longitude'}
+        >>> b.properties()
+        {'long_name': 'A different long name'}
+        >>> b.identity()
+        'long_name=A different long name'
+        >>> b.del_property('long_name')
+        'A different long name'
+        >>> b.identity()
+        'long_name=Longitude'
 
-        '''
+        """
         inherited_properties = self.inherited_properties()
         if inherited_properties:
             bounds = self.copy()
@@ -288,8 +298,9 @@ class Bounds(mixin.Coordinate,
             bounds.set_properties(properties)
             self = bounds
 
-        return super().identity(default=default, strict=strict,
-                                relaxed=relaxed, nc_only=nc_only)
+        return super().identity(
+            default=default, strict=strict, relaxed=relaxed, nc_only=nc_only
+        )
 
 
 # --- End: class

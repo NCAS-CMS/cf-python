@@ -8,38 +8,40 @@ from .docstring import _docstring_substitution_definitions
 
 
 class Container:
-    '''Mixin class for storing components.
+    """Mixin class for storing components.
 
     .. versionadded:: 3.7.0
 
-    '''
+    """
+
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionadded:: 3.7.0
+        .. versionadded:: 3.7.0
 
-    .. seealso:: `_docstring_substitutions`
+        .. seealso:: `_docstring_substitutions`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-        '''
+        """
         return 0
+
 
 # --- End: class

@@ -5,10 +5,10 @@ from . import Bounds
 from . import mixin
 
 
-class AuxiliaryCoordinate(mixin.Coordinate,
-                          mixin.PropertiesDataBounds,
-                          cfdm.AuxiliaryCoordinate):
-    '''An auxiliary coordinate construct of the CF data model.
+class AuxiliaryCoordinate(
+    mixin.Coordinate, mixin.PropertiesDataBounds, cfdm.AuxiliaryCoordinate
+):
+    """An auxiliary coordinate construct of the CF data model.
 
     An auxiliary coordinate construct provides information which
     locate the cells of the domain and which depend on a subset of the
@@ -42,20 +42,21 @@ class AuxiliaryCoordinate(mixin.Coordinate,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    '''
+    """
+
     def __new__(cls, *args, **kwargs):
-        '''
-        '''
+        """"""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
+
 
 # --- End: class

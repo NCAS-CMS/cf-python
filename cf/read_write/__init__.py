@@ -1,2 +1,2 @@
-from .read  import read
+from .read import read
 from .write import write

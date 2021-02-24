@@ -8,14 +8,13 @@ import atexit
 import cf
 
 
-tmpfile = tempfile.mkstemp('.nc')[1]
-tmpfile2 = tempfile.mkstemp('.nca')[1]
-tmpfiles = [tmpfile, tmpfile2, 'delme.nc', 'delme.nca']
+tmpfile = tempfile.mkstemp(".nc")[1]
+tmpfile2 = tempfile.mkstemp(".nca")[1]
+tmpfiles = [tmpfile, tmpfile2, "delme.nc", "delme.nca"]
 
 
 def _remove_tmpfiles():
-    '''
-    '''
+    """"""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -28,8 +27,9 @@ atexit.register(_remove_tmpfiles)
 
 class generalTest(unittest.TestCase):
     def setUp(self):
-        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'test_file.nc')
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
         self.f = cf.read(filename)[0]
 
     def test_GENERAL(self):
@@ -43,7 +43,7 @@ class generalTest(unittest.TestCase):
 
         c = cf.set([0, 3, 4, 5])
 
-        a = (f == c)
+        a = f == c
 
         # +, -, *, /, **
         h = g.copy()
@@ -52,17 +52,17 @@ class generalTest(unittest.TestCase):
         h.standard_name = g.standard_name
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
         h *= 10
-        h /= 10.
+        h /= 10.0
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
         h += 1
         h -= 1
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
-        h = h ** 2.
+        h = h ** 2.0
         h = h ** 0.5
         h.standard_name = g.standard_name
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
         h = h * 10
-        h = h / 10.
+        h = h / 10.0
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
         h = h + 1
         h = h - 1
@@ -79,8 +79,8 @@ class generalTest(unittest.TestCase):
 
         # Access the field's data as a numpy array
         a = g.array
-        a = g.item('latitude').array
-        a = g.item('longitude').array
+        a = g.item("latitude").array
+        a = g.item("longitude").array
 
         # Subspace the field
         g[..., 2:5].array
@@ -93,14 +93,16 @@ class generalTest(unittest.TestCase):
         f.indices()
         f.indices(grid_latitude=cf.lt(5), grid_longitude=27)
         f.indices(
-            grid_latitude=cf.lt(5), grid_longitude=27,
-            atmosphere_hybrid_height_coordinate=1.5
+            grid_latitude=cf.lt(5),
+            grid_longitude=27,
+            atmosphere_hybrid_height_coordinate=1.5,
         )
 
         # Subspace the field
         g.subspace(
-            grid_latitude=cf.lt(5), grid_longitude=27,
-            atmosphere_hybrid_height_coordinate=1.5
+            grid_latitude=cf.lt(5),
+            grid_longitude=27,
+            atmosphere_hybrid_height_coordinate=1.5,
         )
 
         # Create list of fields
@@ -129,7 +131,7 @@ class generalTest(unittest.TestCase):
         x = fl[-1].array
 
         # Changing units
-        fl[-1].units = 'mm.s-1'
+        fl[-1].units = "mm.s-1"
         x = fl[-1].array
 
         # Combine fields not in place
@@ -137,7 +139,7 @@ class generalTest(unittest.TestCase):
         x = g.array
 
         # Combine field with a size 1 Data object
-        g += cf.Data([[[[[1.5]]]]], 'cm.s-1')
+        g += cf.Data([[[[[1.5]]]]], "cm.s-1")
         x = g.array
 
         # Setting of (un)masked elements with where()
@@ -191,10 +193,10 @@ class generalTest(unittest.TestCase):
         f.transpose(inplace=True)
         f.flip(inplace=True)
 
-        cf.write(f, 'delme.nc')
-        f = cf.read('delme.nc')[0]
-        cf.write(f, 'delme.nca', fmt='CFA4')
-        g = cf.read('delme.nca')[0]
+        cf.write(f, "delme.nc")
+        f = cf.read("delme.nc")[0]
+        cf.write(f, "delme.nca", fmt="CFA4")
+        g = cf.read("delme.nca")[0]
 
         b = f[:, 0:6, :]
         c = f[:, 6:, :]
@@ -209,7 +211,7 @@ class generalTest(unittest.TestCase):
 # --- End: class
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

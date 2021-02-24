@@ -11,7 +11,8 @@ import cf
 
 class FieldTest(unittest.TestCase):
     filename2 = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
+        os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
+    )
 
     f2 = cf.read(filename2)
 
@@ -216,7 +217,7 @@ class FieldTest(unittest.TestCase):
 
         h = self.f2.copy()
         for x in h:
-            x.standard_name = 'eastward_wind'
+            x.standard_name = "eastward_wind"
 
         f.extend(h)
         self.assertTrue(f.equals(f, verbose=2))
@@ -284,7 +285,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f, cf.FieldList)
 
         with self.assertRaises(Exception):
-            f.remove(f[0]*-99)
+            f.remove(f[0] * -99)
 
         f.remove(f[0].copy())
         self.assertEqual(len(f), 0)
@@ -315,65 +316,64 @@ class FieldTest(unittest.TestCase):
 
         f = cf.FieldList(self.x)
 
-        g = f('not this one')
+        g = f("not this one")
         self.assertIsInstance(g, cf.FieldList)
         self.assertEqual(len(g), 0)
 
-        g = f('air_temperature')
+        g = f("air_temperature")
         self.assertIsInstance(g, cf.FieldList)
         self.assertEqual(len(g), 1, len(g))
 
-        g = f(re.compile('^air'))
+        g = f(re.compile("^air"))
         self.assertIsInstance(g, cf.FieldList)
         self.assertEqual(len(g), 1, len(g))
 
         f *= 9
         f[4] = f[0].copy()
-        f[4].standard_name = 'this one'
+        f[4].standard_name = "this one"
         f[6] = f[0].copy()
-        f[6].standard_name = 'this one'
+        f[6].standard_name = "this one"
 
-        g = f(re.compile('^air'))
+        g = f(re.compile("^air"))
         self.assertIsInstance(g, cf.FieldList)
         self.assertEqual(len(g), 7, len(g))
 
-        g = f('this one')
+        g = f("this one")
         self.assertIsInstance(g, cf.FieldList)
         self.assertEqual(len(g), 2)
 
         # select_by_Units
-        f[1] = f[1].override_units(cf.Units('watt'))
-        f[3] = f[3].override_units(cf.Units('K @ 273.15'))
+        f[1] = f[1].override_units(cf.Units("watt"))
+        f[3] = f[3].override_units(cf.Units("K @ 273.15"))
 
         self.assertEqual(len(f.select_by_units()), 9)
-        self.assertEqual(len(f.select_by_units(cf.Units('K'))), 7)
-        self.assertEqual(
-            len(f.select_by_units(cf.Units('K'), exact=False)), 8)
-        self.assertEqual(len(f.select_by_units('K')), 7)
-        self.assertEqual(len(f.select_by_units('K', exact=False)), 8)
-        self.assertEqual(len(f.select_by_units(re.compile('^K @|watt'))), 2)
+        self.assertEqual(len(f.select_by_units(cf.Units("K"))), 7)
+        self.assertEqual(len(f.select_by_units(cf.Units("K"), exact=False)), 8)
+        self.assertEqual(len(f.select_by_units("K")), 7)
+        self.assertEqual(len(f.select_by_units("K", exact=False)), 8)
+        self.assertEqual(len(f.select_by_units(re.compile("^K @|watt"))), 2)
 
-        self.assertEqual(len(f.select_by_units('long_name=qwery:asd')), 0)
+        self.assertEqual(len(f.select_by_units("long_name=qwery:asd")), 0)
 
         # select_by_ncvar
         for a in f:
-            a.nc_set_variable('ta')
+            a.nc_set_variable("ta")
 
-        f[1].nc_set_variable('qwerty')
-        f[4].nc_set_variable('ta2')
+        f[1].nc_set_variable("qwerty")
+        f[4].nc_set_variable("ta2")
 
         self.assertEqual(len(f.select_by_ncvar()), 9)
-        self.assertEqual(len(f.select_by_ncvar('qwerty')), 1)
-        self.assertEqual(len(f.select_by_ncvar('ta')), 7)
-        self.assertEqual(len(f.select_by_ncvar('ta2')), 1)
-        self.assertEqual(len(f.select_by_ncvar(re.compile('^ta'))), 8)
+        self.assertEqual(len(f.select_by_ncvar("qwerty")), 1)
+        self.assertEqual(len(f.select_by_ncvar("ta")), 7)
+        self.assertEqual(len(f.select_by_ncvar("ta2")), 1)
+        self.assertEqual(len(f.select_by_ncvar(re.compile("^ta"))), 8)
 
     def test_FieldList_select_by_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         x = self.x.copy()
-        x.del_construct('time')
+        x.del_construct("time")
 
         f = cf.FieldList(x)
         f.extend(self.f2.copy())
@@ -381,82 +381,95 @@ class FieldTest(unittest.TestCase):
         g = f.select_by_construct()
         self.assertEqual(len(g), 2)
 
-        g = f.select_by_construct('latitude')
+        g = f.select_by_construct("latitude")
         self.assertEqual(len(g), 2)
 
-        g = f.select_by_construct('latitude', 'longitude')
+        g = f.select_by_construct("latitude", "longitude")
         self.assertEqual(len(g), 2)
 
-        g = f.select_by_construct('latitude', 'time')
+        g = f.select_by_construct("latitude", "time")
         self.assertEqual(len(g), 1)
 
-        g = f.select_by_construct('latitude', 'time', OR=False)
+        g = f.select_by_construct("latitude", "time", OR=False)
         self.assertEqual(len(g), 1)
 
-        g = f.select_by_construct('latitude', 'time', OR=True)
+        g = f.select_by_construct("latitude", "time", OR=True)
         self.assertEqual(len(g), 2)
 
         g = f.select_by_construct(longitude=cf.gt(0))
         self.assertEqual(len(g), 2)
 
         g = f.select_by_construct(
-            longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')))
-        self.assertEqual(len(g), 1)
-
-        g = f.select_by_construct(
-            longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
-        self.assertEqual(len(g), 2)
-
-        g = f.select_by_construct(
-            'longitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')),
-            OR=True
-        )
-        self.assertEqual(len(g), 2)
-
-        g = f.select_by_construct(
-            'latitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')),
-            OR=True
-        )
-        self.assertEqual(len(g), 2)
-
-        g = f.select_by_construct(
-            'time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')),
-            OR=True
-        )
-        self.assertEqual(len(g), 2)
-
-        g = f.select_by_construct(
-            'time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')),
-            OR=False
+            longitude=cf.gt(0), time=cf.le(cf.dt("2008-12-01"))
         )
         self.assertEqual(len(g), 1)
 
         g = f.select_by_construct(
-            'time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')),
-            OR=False
+            longitude=cf.gt(0), time=cf.le(cf.dt("2008-12-01")), OR=True
+        )
+        self.assertEqual(len(g), 2)
+
+        g = f.select_by_construct(
+            "longitude",
+            longitude=cf.gt(0),
+            time=cf.le(cf.dt("2008-12-01")),
+            OR=True,
+        )
+        self.assertEqual(len(g), 2)
+
+        g = f.select_by_construct(
+            "latitude",
+            longitude=cf.gt(0),
+            time=cf.le(cf.dt("2008-12-01")),
+            OR=True,
+        )
+        self.assertEqual(len(g), 2)
+
+        g = f.select_by_construct(
+            "time",
+            longitude=cf.gt(0),
+            time=cf.le(cf.dt("2008-12-01")),
+            OR=True,
+        )
+        self.assertEqual(len(g), 2)
+
+        g = f.select_by_construct(
+            "time",
+            longitude=cf.gt(0),
+            time=cf.le(cf.dt("2008-12-01")),
+            OR=False,
         )
         self.assertEqual(len(g), 1)
 
-        g = f.select_by_construct('qwerty')
+        g = f.select_by_construct(
+            "time",
+            longitude=cf.gt(0),
+            time=cf.le(cf.dt("2008-12-01")),
+            OR=False,
+        )
+        self.assertEqual(len(g), 1)
+
+        g = f.select_by_construct("qwerty")
         self.assertEqual(len(g), 0)
 
-        g = f.select_by_construct('qwerty', 'latitude')
+        g = f.select_by_construct("qwerty", "latitude")
         self.assertEqual(len(g), 0)
 
-        g = f.select_by_construct('qwerty', 'latitude', OR=True)
+        g = f.select_by_construct("qwerty", "latitude", OR=True)
         self.assertEqual(len(g), 2)
 
-        g = f.select_by_construct('qwerty', 'time', 'longitude')
+        g = f.select_by_construct("qwerty", "time", "longitude")
         self.assertEqual(len(g), 0)
 
-        g = f.select_by_construct('qwerty', 'time', 'longitude', OR=True)
+        g = f.select_by_construct("qwerty", "time", "longitude", OR=True)
         self.assertEqual(len(g), 2)
 
         g = f.select_by_construct(longitude=cf.gt(7.6))
         self.assertEqual(len(g), 1)
 
         g = f.select_by_construct(
-            longitude=cf.gt(0), time=cf.le(cf.dt('1999-12-01')))
+            longitude=cf.gt(0), time=cf.le(cf.dt("1999-12-01"))
+        )
         self.assertEqual(len(g), 0)
 
     def test_FieldList_select_field(self):
@@ -466,18 +479,18 @@ class FieldTest(unittest.TestCase):
         f = cf.FieldList(self.x)
 
         with self.assertRaises(Exception):
-            _ = f.select_field('not this one')
+            _ = f.select_field("not this one")
 
-        self.assertIsNone(f.select_field('not this one', None))
+        self.assertIsNone(f.select_field("not this one", None))
 
-        g = f.select_field('air_temperature')
+        g = f.select_field("air_temperature")
         self.assertIsInstance(g, cf.Field)
 
-        g = f.select_field(re.compile('^air_temp'))
+        g = f.select_field(re.compile("^air_temp"))
         self.assertIsInstance(g, cf.Field)
 
         with self.assertRaises(Exception):
-            g = f.select_field(re.compile('^QWERTY'))
+            g = f.select_field(re.compile("^QWERTY"))
 
     def test_FieldList_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -522,11 +535,12 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = g.index(a, start=1)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

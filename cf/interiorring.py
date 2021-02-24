@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class InteriorRing(mixin.PropertiesData,
-                   cfdm.InteriorRing):
-    '''An interior ring array with properties.
+class InteriorRing(mixin.PropertiesData, cfdm.InteriorRing):
+    """An interior ring array with properties.
 
     If a cell is composed of multiple polygon parts, an individual
     polygon may define an "interior ring", i.e. a region that is to be
@@ -35,13 +34,15 @@ class InteriorRing(mixin.PropertiesData,
 
     .. versionadded:: 3.2.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
+
 
 # --- End: class

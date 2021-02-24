@@ -9,16 +9,30 @@ import cf
 
 class AuxiliaryCoordinateTest(unittest.TestCase):
     filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-#    f = cf.read(filename)[0]
+        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+    )
+    #    f = cf.read(filename)[0]
 
     aux1 = cf.AuxiliaryCoordinate()
-    aux1.standard_name = 'latitude'
+    aux1.standard_name = "latitude"
     a = numpy.array(
-        [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7,
-         11.30003, 17.8678678, 23.5, 30]
+        [
+            -30,
+            -23.5,
+            -17.8123,
+            -11.3345,
+            -0.7,
+            -0.2,
+            0,
+            0.2,
+            0.7,
+            11.30003,
+            17.8678678,
+            23.5,
+            30,
+        ]
     )
-    aux1.set_data(cf.Data(a, 'degrees_north'))
+    aux1.set_data(cf.Data(a, "degrees_north"))
     bounds = cf.Bounds()
     b = numpy.empty(a.shape + (2,))
     b[:, 0] = a - 0.1
@@ -43,7 +57,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
         f = cf.read(self.filename)[0]
-        x = f.auxiliary_coordinates('latitude').value()
+        x = f.auxiliary_coordinates("latitude").value()
 
         _ = repr(x)
         _ = str(x)
@@ -51,7 +65,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
-        d = f.dimension_coordinates('X').value()
+        d = f.dimension_coordinates("X").value()
         x = cf.AuxiliaryCoordinate(source=d)
 
         _ = x.upper_bounds
@@ -59,24 +73,24 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate_properties(self):
         f = cf.read(self.filename)[0]
-        x = f.auxiliary_coordinates('latitude').value()
+        x = f.auxiliary_coordinates("latitude").value()
 
-        x.positive = 'up'
-        self.assertEqual(x.positive, 'up')
+        x.positive = "up"
+        self.assertEqual(x.positive, "up")
         del x.positive
-        self.assertIsNone(getattr(x, 'positive', None))
+        self.assertIsNone(getattr(x, "positive", None))
 
-        x.axis = 'Z'
-        self.assertEqual(x.axis, 'Z')
+        x.axis = "Z"
+        self.assertEqual(x.axis, "Z")
         del x.axis
-        self.assertIsNone(getattr(x, 'axis', None))
+        self.assertIsNone(getattr(x, "axis", None))
 
-        d = f.dimension_coordinates('X').value()
+        d = f.dimension_coordinates("X").value()
         x = cf.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
-        d = f.dimension_coordinates('X').value()
+        d = f.dimension_coordinates("X").value()
         x = cf.AuxiliaryCoordinate(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -92,10 +106,11 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate_transpose(self):
         f = cf.read(self.filename)[0]
-        x = f.auxiliary_coordinates('longitude').value()
+        x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cf.Bounds(
-            data=cf.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
+            data=cf.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+        )
         x.set_bounds(bounds)
 
         self.assertEqual(x.shape, (9, 10))
@@ -111,10 +126,11 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate_squeeze(self):
         f = cf.read(self.filename)[0]
-        x = f.auxiliary_coordinates('longitude').value()
+        x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cf.Bounds(
-            data=cf.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
+            data=cf.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+        )
         x.set_bounds(bounds)
         x.insert_dimension(1, inplace=True)
         x.insert_dimension(0, inplace=True)
@@ -138,14 +154,16 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.assertTrue((aux.floor().array == numpy.floor(a)).all())
         self.assertTrue((aux.floor().bounds.array == numpy.floor(b)).all())
-        self.assertTrue((
-            aux.floor(bounds=False).array == numpy.floor(a)).all())
+        self.assertTrue(
+            (aux.floor(bounds=False).array == numpy.floor(a)).all()
+        )
         self.assertTrue((aux.floor(bounds=False).bounds.array == b).all())
 
         aux.del_bounds()
         self.assertTrue((aux.floor().array == numpy.floor(a)).all())
-        self.assertTrue((
-            aux.floor(bounds=False).array == numpy.floor(a)).all())
+        self.assertTrue(
+            (aux.floor(bounds=False).array == numpy.floor(a)).all()
+        )
 
         self.assertIsNone(aux.floor(inplace=True))
         self.assertTrue((aux.array == numpy.floor(a)).all())
@@ -176,14 +194,16 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.assertTrue((aux.trunc().array == numpy.trunc(a)).all())
         self.assertTrue((aux.trunc().bounds.array == numpy.trunc(b)).all())
-        self.assertTrue((
-            aux.trunc(bounds=False).array == numpy.trunc(a)).all())
+        self.assertTrue(
+            (aux.trunc(bounds=False).array == numpy.trunc(a)).all()
+        )
         self.assertTrue((aux.trunc(bounds=False).bounds.array == b).all())
 
         aux.del_bounds()
         self.assertTrue((aux.trunc().array == numpy.trunc(a)).all())
-        self.assertTrue((
-            aux.trunc(bounds=False).array == numpy.trunc(a)).all())
+        self.assertTrue(
+            (aux.trunc(bounds=False).array == numpy.trunc(a)).all()
+        )
 
         self.assertIsNone(aux.trunc(inplace=True))
         self.assertTrue((aux.array == numpy.trunc(a)).all())
@@ -266,25 +286,35 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         for decimals in (0, 1, 2, 3, 4, 5):
             aux = self.aux1.copy()
 
-            self.assertTrue((
-                aux.round(decimals).array == numpy.round(a, decimals)).all())
-            self.assertTrue((
-                aux.round(decimals).bounds.array == numpy.round(b, decimals)
-            ).all())
-            self.assertTrue((
-                aux.round(decimals, bounds=False).array ==
-                numpy.round(a, decimals)
-            ).all())
-            self.assertTrue((
-                aux.round(decimals, bounds=False).bounds.array == b).all())
+            self.assertTrue(
+                (aux.round(decimals).array == numpy.round(a, decimals)).all()
+            )
+            self.assertTrue(
+                (
+                    aux.round(decimals).bounds.array
+                    == numpy.round(b, decimals)
+                ).all()
+            )
+            self.assertTrue(
+                (
+                    aux.round(decimals, bounds=False).array
+                    == numpy.round(a, decimals)
+                ).all()
+            )
+            self.assertTrue(
+                (aux.round(decimals, bounds=False).bounds.array == b).all()
+            )
 
             aux.del_bounds()
-            self.assertTrue((
-                aux.round(decimals).array == numpy.round(a, decimals)).all())
-            self.assertTrue((
-                aux.round(decimals, bounds=False).array ==
-                numpy.round(a, decimals)
-            ).all())
+            self.assertTrue(
+                (aux.round(decimals).array == numpy.round(a, decimals)).all()
+            )
+            self.assertTrue(
+                (
+                    aux.round(decimals, bounds=False).array
+                    == numpy.round(a, decimals)
+                ).all()
+            )
 
             self.assertIsNone(aux.round(decimals, inplace=True))
             self.assertTrue((aux.array == numpy.round(a, decimals)).all())
@@ -295,31 +325,39 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         a = aux.array
         b = aux.bounds.array
 
-        self.assertTrue((
-            aux.clip(-15, 25).array == numpy.clip(a, -15, 25)).all())
-        self.assertTrue((
-            aux.clip(-15, 25).bounds.array == numpy.clip(b, -15, 25)).all())
-        self.assertTrue((
-            aux.clip(-15, 25, bounds=False).array == numpy.clip(a, -15, 25)
-        ).all())
-        self.assertTrue((
-            aux.clip(-15, 25, bounds=False).bounds.array == b
-        ).all())
+        self.assertTrue(
+            (aux.clip(-15, 25).array == numpy.clip(a, -15, 25)).all()
+        )
+        self.assertTrue(
+            (aux.clip(-15, 25).bounds.array == numpy.clip(b, -15, 25)).all()
+        )
+        self.assertTrue(
+            (
+                aux.clip(-15, 25, bounds=False).array == numpy.clip(a, -15, 25)
+            ).all()
+        )
+        self.assertTrue(
+            (aux.clip(-15, 25, bounds=False).bounds.array == b).all()
+        )
 
         aux.del_bounds()
-        self.assertTrue((
-            aux.clip(-15, 25).array == numpy.clip(a, -15, 25)).all())
-        self.assertTrue((
-            aux.clip(-15, 25, bounds=False).array == numpy.clip(a, -15, 25)
-        ).all())
+        self.assertTrue(
+            (aux.clip(-15, 25).array == numpy.clip(a, -15, 25)).all()
+        )
+        self.assertTrue(
+            (
+                aux.clip(-15, 25, bounds=False).array == numpy.clip(a, -15, 25)
+            ).all()
+        )
 
         self.assertIsNone(aux.clip(-15, 25, inplace=True))
+
 
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

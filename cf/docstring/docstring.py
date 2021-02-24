@@ -1,4 +1,4 @@
-'''Define docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -25,21 +25,15 @@ Keys must be `str` or `re.Pattern` objects:
 
 .. versionadded:: 3.7.0
 
-'''
+"""
 _docstring_substitution_definitions = {
-    '{{repr}}':
-    'CF ',
-
+    "{{repr}}": "CF ",
     # i
-    '{{i: deprecated at version 3.0.0}}':
-    """i: deprecated at version 3.0.0
+    "{{i: deprecated at version 3.0.0}}": """i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.""",
-
     # List comparison
-    '{{List comparison}}':
-    '''Each construct in the list is compared with its `!equals` method,
-    rather than the ``==`` operator.''',
-
+    "{{List comparison}}": """Each construct in the list is compared with its `!equals` method,
+    rather than the ``==`` operator.""",
     # {{construct identities}}
     "{{construct identities}}": """A construct has a number of string-valued identities defined by its
             `!identities` method, and is selected if any of them match
@@ -83,5 +77,4 @@ _docstring_substitution_definitions = {
 
             A construct may also be selected by it's construct
             identifier, with or without the ``key%`` prefix.""",
-
 }

@@ -38,7 +38,7 @@ class FieldDomain:
     .. versionadded:: 3.TODO.0
 
     """
-    
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -64,7 +64,7 @@ class FieldDomain:
 
             auxiliary_mask: `bool`
                 Whether or not to create an auxiliary mask. See
-                `indices` for details. 
+                `indices` for details.
 
             kwargs: *optional*
                 See the **kwargs** parameters of `indices` for
@@ -400,7 +400,7 @@ class FieldDomain:
                             else:
                                 contains = False
                                 break
-                        
+
                         v = self._Data.asdata(v)
                         if v.Units:
                             v.Units = construct.Units
@@ -446,7 +446,7 @@ class FieldDomain:
                 mask_shape = []
                 masked_subspace_size = 1
                 ind = np.array(ind)
-                
+
                 logger.debug("  ind = {ind}")  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(
@@ -482,9 +482,7 @@ class FieldDomain:
                     masked_subspace_size *= size
                     ind[i] -= start
 
-                create_mask = (
-                    data_axes and ind.shape[1] < masked_subspace_size
-                )
+                create_mask = data_axes and ind.shape[1] < masked_subspace_size
             else:
                 create_mask = False
 
@@ -494,13 +492,11 @@ class FieldDomain:
             #             we have an auxiliary mask, then by
             #             definition we do _not_ have a list(s) of
             #             integers
-            
+
             # --------------------------------------------------------
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
-            logger.debug(
-                f"  create_mask  = {create_mask}"
-            )  # pragma: no cover
+            logger.debug(f"  create_mask  = {create_mask}")  # pragma: no cover
 
             if create_mask:
                 mask = _create_auxiliary_mask_component(
@@ -601,12 +597,12 @@ class FieldDomain:
             if not c_axes:
                 # This construct does not span the roll axes
                 continue
-            
+
             # TODODASK - remove these two lines when multiaxis rolls
             #            are allowed at v4.0.0
             c_axes = c_axes[0]
             c_shifts = c_shifts[0]
-            
+
             construct.roll(c_axes, shift=c_shifts, inplace=True)
 
         return shift
@@ -737,7 +733,7 @@ class FieldDomain:
 
         axis_in = axis
         axis = self._parse_axes(axis_in)
-                
+
         if len(axis) != 1:
             raise ValueError(
                 f"Can't anchor {self.__class.__.__name__}. "
@@ -883,7 +879,7 @@ class FieldDomain:
             self.cyclic(key, iscyclic=False)
             logger.debug(4)  # pragma: no cover
             return False
-        
+
         self.cyclic(key, iscyclic=True, period=period)
         logger.debug(5)  # pragma: no cover
 
@@ -2314,7 +2310,7 @@ class FieldDomain:
         .. versionadded:: 3.TODO:0
 
         :Parameters:
-        
+
             axes:
                 One or more axis specifications.
 
@@ -2322,7 +2318,7 @@ class FieldDomain:
                 are in the same order.
 
         :Returns:
-        
+
             `list`
                 The domain axis identifiers.
 
@@ -2409,7 +2405,7 @@ class FieldDomain:
                 f"({constructs.__class__.__name__}) "
                 "is not compatible with the original construct type "
                 f"({c.__class__.__name__})"
-        )
+            )
 
         axes = self.get_data_axes(key, None)
         if axes is not None:
@@ -2803,11 +2799,11 @@ class FieldDomain:
 
 def _create_auxiliary_mask_component(mask_shape, ind, compress):
     """Create an auxiliary mask component
-    
+
     .. versionadded:: 3.TODO.0
-    
+
     :Parameters:
-    
+
         mask_shape: `tuple`
             The shape of the mask component to be created.
 

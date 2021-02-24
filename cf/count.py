@@ -3,9 +3,8 @@ import cfdm
 from . import mixin
 
 
-class Count(mixin.PropertiesData,
-            cfdm.Count):
-    '''A count variable required to uncompress a ragged array.
+class Count(mixin.PropertiesData, cfdm.Count):
+    """A count variable required to uncompress a ragged array.
 
     A collection of features stored using a contiguous ragged array
     combines all features along a single dimension (the sample
@@ -35,14 +34,15 @@ class Count(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

@@ -2,7 +2,7 @@ import cfdm
 
 
 class Datum(cfdm.Datum):
-    '''A datum component of a coordinate reference construct of the CF
+    """A datum component of a coordinate reference construct of the CF
     data model.
 
     A datum is a complete or partial definition of the zeroes of the
@@ -21,14 +21,15 @@ class Datum(cfdm.Datum):
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

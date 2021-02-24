@@ -1,11 +1,11 @@
 import logging
 import os
 
-from glob        import glob
-from os.path     import isdir
+from glob import glob
+from os.path import isdir
 
 from .netcdf import NetCDFRead
-from .um     import UMRead
+from .um import UMRead
 
 from ..cfimplementation import implementation
 
@@ -31,14 +31,32 @@ logger = logging.getLogger(__name__)
 
 
 @_manage_log_level_via_verbosity
-def read(files, external=None, verbose=None, warnings=False,
-         ignore_read_error=False, aggregate=True, nfields=None,
-         squeeze=False, unsqueeze=False, fmt=None, select=None,
-         extra=None, recursive=False, followlinks=False, um=None,
-         chunk=True, field=None, height_at_top_of_model=None,
-         select_options=None, follow_symlinks=False, mask=True,
-         warn_valid=False, domain=False):
-    '''Read field constructs from netCDF, CDL, PP or UM fields datasets.
+def read(
+    files,
+    external=None,
+    verbose=None,
+    warnings=False,
+    ignore_read_error=False,
+    aggregate=True,
+    nfields=None,
+    squeeze=False,
+    unsqueeze=False,
+    fmt=None,
+    select=None,
+    extra=None,
+    recursive=False,
+    followlinks=False,
+    um=None,
+    chunk=True,
+    field=None,
+    height_at_top_of_model=None,
+    select_options=None,
+    follow_symlinks=False,
+    mask=True,
+    warn_valid=False,
+    domain=False,
+):
+    """Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
     Input datasets are mapped to field constructs in memory which are
     returned as elements of a `FieldList`.
@@ -539,27 +557,29 @@ def read(files, external=None, verbose=None, warnings=False,
     >>> cf.read('file*.nc', select='ncvar%ta')
     <CF Field: temperature(17, 30, 24)>
 
-    '''
+    """
     if field:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.read', {'field': field}, "Use keyword 'extra' instead"
+            "cf.read", {"field": field}, "Use keyword 'extra' instead"
         )  # pragma: no cover
 
     if select_options:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.read', {'select_options': select_options}
+            "cf.read", {"select_options": select_options}
         )  # pragma: no cover
 
     if follow_symlinks:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.read', {'follow_symlinks': follow_symlinks},
-            "Use keyword 'followlink' instead."
+            "cf.read",
+            {"follow_symlinks": follow_symlinks},
+            "Use keyword 'followlink' instead.",
         )  # pragma: no cover
 
     if height_at_top_of_model is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.read', {'height_at_top_of_model': height_at_top_of_model},
-            "Use keyword 'um' instead."
+            "cf.read",
+            {"height_at_top_of_model": height_at_top_of_model},
+            "Use keyword 'um' instead.",
         )  # pragma: no cover
 
     # Parse select
@@ -572,7 +592,9 @@ def read(files, external=None, verbose=None, warnings=False,
     if follow_symlinks and not recursive:
         raise ValueError(
             "Can't set follow_symlinks={0} when recursive={1}".format(
-                follow_symlinks, recursive))
+                follow_symlinks, recursive
+            )
+        )
 
     # Initialize the output list of fields
     field_list = FieldList()
@@ -583,7 +605,7 @@ def read(files, external=None, verbose=None, warnings=False,
     else:
         aggregate_options = {}
 
-    aggregate_options['copy'] = False
+    aggregate_options["copy"] = False
 
     # Parse the extra parameter
     if extra is None:
@@ -602,7 +624,7 @@ def read(files, external=None, verbose=None, warnings=False,
         # Expand variables
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
-        if file_glob.startswith('http://'):
+        if file_glob.startswith("http://"):
             # Do not glob a URL
             files2 = (file_glob,)
         else:
@@ -610,14 +632,15 @@ def read(files, external=None, verbose=None, warnings=False,
             files2 = glob(file_glob)
 
             if not files2 and not ignore_read_error:
-                open(file_glob, 'rb')
+                open(file_glob, "rb")
 
             files3 = []
             for x in files2:
                 if isdir(x):
                     # Walk through directories, possibly recursively
                     for path, subdirs, filenames in os.walk(
-                            x, followlinks=followlinks):
+                        x, followlinks=followlinks
+                    ):
                         files3.extend(os.path.join(path, f) for f in filenames)
                         if not recursive:
                             break
@@ -628,10 +651,10 @@ def read(files, external=None, verbose=None, warnings=False,
             files2 = files3
 
         for filename in files2:
-            logger.info('File: {0}'.format(filename))  # pragma: no cover
+            logger.info("File: {0}".format(filename))  # pragma: no cover
 
             if um:
-                ftype = 'UM'
+                ftype = "UM"
             else:
                 try:
                     ftype = file_type(filename)
@@ -639,23 +662,24 @@ def read(files, external=None, verbose=None, warnings=False,
                     if not ignore_read_error:
                         message = error
 
-#                        if not find_library("umfile"):
-#                            message += ("\n\n"
-#                                "Note: Unable to detect the UM read C library needed "
-#                                "to recognise and read PP and UM fields files. "
-#                                "This indicates a compilation problem during the "
-#                                "cf installation (though note it does not affect "
-#                                "any other cf functionality, notably netCDF file "
-#                                "processing). If processing of PP and FF files is "
-#                                "required, ensure 'GNU make' is available and "
-#                                "reinstall cf-python to try to build the library. "
-#                                "Note a warning will be given if the build fails."
-#                            )
+                        #                        if not find_library("umfile"):
+                        #                            message += ("\n\n"
+                        #                                "Note: Unable to detect the UM read C library needed "
+                        #                                "to recognise and read PP and UM fields files. "
+                        #                                "This indicates a compilation problem during the "
+                        #                                "cf installation (though note it does not affect "
+                        #                                "any other cf functionality, notably netCDF file "
+                        #                                "processing). If processing of PP and FF files is "
+                        #                                "required, ensure 'GNU make' is available and "
+                        #                                "reinstall cf-python to try to build the library. "
+                        #                                "Note a warning will be given if the build fails."
+                        #                            )
 
                         raise ValueError(message)
 
                     logger.warning(
-                        'WARNING: {}'.format(error))  # pragma: no cover
+                        "WARNING: {}".format(error)
+                    )  # pragma: no cover
 
                     continue
             # --- End: if
@@ -666,13 +690,16 @@ def read(files, external=None, verbose=None, warnings=False,
             # Read the file into fields
             # --------------------------------------------------------
             fields = _read_a_file(
-                filename, ftype=ftype,
+                filename,
+                ftype=ftype,
                 external=external,
                 ignore_read_error=ignore_read_error,
-                verbose=verbose, warnings=warnings,
+                verbose=verbose,
+                warnings=warnings,
                 aggregate=aggregate,
                 aggregate_options=aggregate_options,
-                selected_fmt=fmt, um=um,
+                selected_fmt=fmt,
+                um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
                 chunk=chunk,
@@ -684,7 +711,7 @@ def read(files, external=None, verbose=None, warnings=False,
             # --------------------------------------------------------
             # Select matching fields (not from UM files)
             # --------------------------------------------------------
-            if select and ftype != 'UM':
+            if select and ftype != "UM":
                 fields = fields.select_by_identity(*select)
 
             # --------------------------------------------------------
@@ -700,8 +727,10 @@ def read(files, external=None, verbose=None, warnings=False,
 
     logger.info(
         "Read {0} field{1} from {2} file{3}".format(
-            field_counter, _plural(field_counter), file_counter,
-            _plural(file_counter)
+            field_counter,
+            _plural(field_counter),
+            file_counter,
+            _plural(file_counter),
         )
     )  # pragma: no cover
 
@@ -714,8 +743,10 @@ def read(files, external=None, verbose=None, warnings=False,
         field_list = cf_aggregate(field_list, **aggregate_options)
 
         n = len(field_list)  # pragma: no cover
-        logger.info('{0} input field{1} aggregated into {2} field{3}'.format(
-            org_len, _plural(org_len), n, _plural(n))
+        logger.info(
+            "{0} input field{1} aggregated into {2} field{3}".format(
+                org_len, _plural(org_len), n, _plural(n)
+            )
         )  # pragma: no cover
     # --- End: if
 
@@ -723,23 +754,23 @@ def read(files, external=None, verbose=None, warnings=False,
     # Sort by netCDF variable name
     # ----------------------------------------------------------------
     if len(field_list) > 1:
-        field_list.sort(key=lambda f: f.nc_get_variable(''))
+        field_list.sort(key=lambda f: f.nc_get_variable(""))
 
     # ----------------------------------------------------------------
     # Add standard names to UM/PP fields (post aggregation)
     # ----------------------------------------------------------------
     for f in field_list:
-        standard_name = f._custom.get('standard_name', None)
+        standard_name = f._custom.get("standard_name", None)
         if standard_name is not None:
-            f.set_property('standard_name', standard_name)
-            del f._custom['standard_name']
+            f.set_property("standard_name", standard_name)
+            del f._custom["standard_name"]
     # --- End: for
 
     # ----------------------------------------------------------------
     # Select matching fields from UM/PP fields (post setting of
     # standard names)
     # ----------------------------------------------------------------
-    if select and 'UM' in ftypes:
+    if select and "UM" in ftypes:
         field_list = field_list.select_by_identity(*select)
 
     # ----------------------------------------------------------------
@@ -764,8 +795,10 @@ def read(files, external=None, verbose=None, warnings=False,
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
             "{} field{} requested but {} fields found in file{}".format(
-                nfields, _plural(nfields), len(field_list),
-                _plural(file_counter)
+                nfields,
+                _plural(nfields),
+                len(field_list),
+                _plural(file_counter),
             )
         )
 
@@ -773,20 +806,30 @@ def read(files, external=None, verbose=None, warnings=False,
 
 
 def _plural(n):  # pragma: no cover
-    '''Return a suffix which reflects a word's plural.
-
-    '''
-    return 's' if n != 1 else ''  # pragma: no cover
+    """Return a suffix which reflects a word's plural."""
+    return "s" if n != 1 else ""  # pragma: no cover
 
 
 @_manage_log_level_via_verbosity
-def _read_a_file(filename, ftype=None, aggregate=True,
-                 aggregate_options=None, ignore_read_error=False,
-                 verbose=None, warnings=False, external=None,
-                 selected_fmt=None, um=None, extra=None,
-                 height_at_top_of_model=None, chunk=True, mask=True,
-                 warn_valid=False, domain=False):
-    '''Read the contents of a single file into a field list.
+def _read_a_file(
+    filename,
+    ftype=None,
+    aggregate=True,
+    aggregate_options=None,
+    ignore_read_error=False,
+    verbose=None,
+    warnings=False,
+    external=None,
+    selected_fmt=None,
+    um=None,
+    extra=None,
+    height_at_top_of_model=None,
+    chunk=True,
+    mask=True,
+    warn_valid=False,
+    domain=False,
+):
+    """Read the contents of a single file into a field list.
 
     :Parameters:
 
@@ -816,7 +859,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
         `FieldList` or `list` of `Domain`
             The field or domain constructs in the dataset.
 
-    '''
+    """
     if aggregate_options is None:
         aggregate_options = {}
 
@@ -829,12 +872,12 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 
     if um:
         # ftype = 'UM'
-        fmt = um.get('fmt')
-        word_size = um.get('word_size')
-        endian = um.get('endian')
-        umversion = um.get('version')
-        height_at_top_of_model = um.get('height_at_top_of_model')
-        if fmt in ('PP', 'pp', 'pP', 'Pp'):
+        fmt = um.get("fmt")
+        word_size = um.get("word_size")
+        endian = um.get("endian")
+        umversion = um.get("version")
+        height_at_top_of_model = um.get("height_at_top_of_model")
+        if fmt in ("PP", "pp", "pP", "Pp"):
             fmt = fmt.upper()
             # For PP format, there is a default word size and
             # endian-ness
@@ -842,43 +885,43 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                 word_size = 4
 
             if endian is None:
-                endian = 'big'
+                endian = "big"
         # --- End: if
 
         if umversion is not None:
-            umversion = float(str(umversion).replace('.', '0', 1))
-#    else:
-#        try:
-#            ftype = file_type(filename)
-#        except Exception as error:
-#            if not ignore_read_error:
-#                raise Exception(error)
-#
-#            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
-#
-#            return FieldList()
+            umversion = float(str(umversion).replace(".", "0", 1))
+    #    else:
+    #        try:
+    #            ftype = file_type(filename)
+    #        except Exception as error:
+    #            if not ignore_read_error:
+    #                raise Exception(error)
+    #
+    #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
+    #
+    #            return FieldList()
     # --- End: if
 
     extra_read_vars = {
-        'chunk': chunk,
-        'fmt': selected_fmt,
-        'ignore_read_error': ignore_read_error,
+        "chunk": chunk,
+        "fmt": selected_fmt,
+        "ignore_read_error": ignore_read_error,
         # 'cfa' defaults to False. If the file has
         # "CFA" in its Conventions global attribute
         # then 'cfa' will be changed to True in
         # netcdf.read
-        'cfa': False,
+        "cfa": False,
     }
 
     # ----------------------------------------------------------------
     # Still here? Read the file into fields or domains.
     # ----------------------------------------------------------------
-    if ftype == 'CDL':
+    if ftype == "CDL":
         # Create a temporary netCDF file from input CDL
-        ftype = 'netCDF'
+        ftype = "netCDF"
         cdl_filename = filename
         filename = netcdf.cdl_to_netcdf(filename)
-        extra_read_vars['fmt'] = 'NETCDF'
+        extra_read_vars["fmt"] = "NETCDF"
 
         if not netcdf.is_netcdf_file(filename):
             if ignore_read_error:
@@ -895,30 +938,43 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                 )
     # --- End: if
 
-    if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
-        out = netcdf.read(filename, external=external, extra=extra,
-                          verbose=verbose, warnings=warnings,
-                          extra_read_vars=extra_read_vars, mask=mask,
-                          warn_valid=warn_valid, domain=domain)
+    if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
+        out = netcdf.read(
+            filename,
+            external=external,
+            extra=extra,
+            verbose=verbose,
+            warnings=warnings,
+            extra_read_vars=extra_read_vars,
+            mask=mask,
+            warn_valid=warn_valid,
+            domain=domain,
+        )
 
-    elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
+    elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
         if domain:
             raise ValueError(
                 "Can't set domain=True when reading UM or PP datasets"
             )
 
-        out = UM.read(filename, um_version=umversion, verbose=verbose,
-                      set_standard_name=False,
-                      height_at_top_of_model=height_at_top_of_model,
-                      fmt=fmt, word_size=word_size, endian=endian,
-                      chunk=chunk)
+        out = UM.read(
+            filename,
+            um_version=umversion,
+            verbose=verbose,
+            set_standard_name=False,
+            height_at_top_of_model=height_at_top_of_model,
+            fmt=fmt,
+            word_size=word_size,
+            endian=endian,
+            chunk=chunk,
+        )
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
         if aggregate:
             # For PP fields, the default is strict_units=False
-            if 'strict_units' not in aggregate_options:
-                aggregate_options['relaxed_units'] = True
+            if "strict_units" not in aggregate_options:
+                aggregate_options["relaxed_units"] = True
     else:
         out = []
 
@@ -938,7 +994,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 
 
 def file_type(filename):
-    '''Return the file format.
+    """Return the file format.
 
     :Parameters:
 
@@ -956,24 +1012,24 @@ def file_type(filename):
     >>> file_type(filename)
     'netCDF'
 
-    '''
+    """
     # ----------------------------------------------------------------
     # NetCDF
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
-        return 'netCDF'
+        return "netCDF"
 
     # ----------------------------------------------------------------
     # PP or FF
     # ----------------------------------------------------------------
     if UM.is_um_file(filename):
-        return 'UM'
+        return "UM"
 
     # ----------------------------------------------------------------
     # CDL
     # ----------------------------------------------------------------
     if netcdf.is_cdl_file(filename):
-        return 'CDL'
+        return "CDL"
 
     # Still here?
     raise IOError("Can't determine format of file {}".format(filename))

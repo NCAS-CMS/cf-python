@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class Constructs(cfdm.Constructs):
-    '''A container for metadata constructs.
+    """A container for metadata constructs.
 
     The following metadata constructs can be included:
 
@@ -42,44 +42,42 @@ class Constructs(cfdm.Constructs):
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     def _matching_values(self, value0, construct, value1):
-        '''TODO
-
-        '''
+        """TODO"""
         if isinstance(value0, Query):
             return value0.evaluate(value1)
 
         return super()._matching_values(value0, construct, value1)
 
     def _flip(self, axes):
-        '''Flip (reverse the direction of) axes of the constructs in-place.
+        """Flip (reverse the direction of) axes of the constructs in-place.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    :Parameters:
+        :Parameters:
 
-        axes: sequence of `str`
-            Select the domain axes to flip, defined by the domain axis
-            identifiers. The sequence may be empty.
+            axes: sequence of `str`
+                Select the domain axes to flip, defined by the domain axis
+                identifiers. The sequence may be empty.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         data_axes = self.data_axes()
 
         # Flip any constructs which span the given axes
@@ -87,106 +85,107 @@ class Constructs(cfdm.Constructs):
             construct_axes = data_axes[key]
             construct_flip_axes = axes.intersection(construct_axes)
             if construct_flip_axes:
-                iaxes = [construct_axes.index(axis) for axis in
-                         construct_flip_axes]
+                iaxes = [
+                    construct_axes.index(axis) for axis in construct_flip_axes
+                ]
                 construct.flip(iaxes, inplace=True)
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def close(self):
-        '''Close all files referenced by the metadata constructs.
+        """Close all files referenced by the metadata constructs.
 
-    Note that a closed file will be automatically reopened if its
-    contents are subsequently required.
+        Note that a closed file will be automatically reopened if its
+        contents are subsequently required.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> c.close()
+        >>> c.close()
 
-        '''
+        """
         # TODODASK - is this method still needed?
-        
+
         for construct in self.filter_by_data().values():
             construct.close()
 
     def filter_by_identity(self, *identities):
-        '''Select metadata constructs by identity.
+        """Select metadata constructs by identity.
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
-                 `filter_by_measure`, `filter_by_method`,
-                 `filter_by_naxes`, `filter_by_ncdim`,
-                 `filter_by_ncvar`, `filter_by_property`,
-                 `filter_by_size`, `filter_by_type`,
-                 `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+                     `filter_by_measure`, `filter_by_method`,
+                     `filter_by_naxes`, `filter_by_ncdim`,
+                     `filter_by_ncvar`, `filter_by_property`,
+                     `filter_by_size`, `filter_by_type`,
+                     `filters_applied`, `inverse_filter`, `unfilter`
 
-    :Parameters:
+        :Parameters:
 
-        identities: optional
-            Identify the metadata constructs by one or more of
+            identities: optional
+                Identify the metadata constructs by one or more of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``'T'
+                *Parameter example:*
+                  ``'T'
 
-            *Parameter example:*
-              ``'latitude'``
+                *Parameter example:*
+                  ``'latitude'``
 
-            *Parameter example:*
-              ``'long_name=Cell Area'``
+                *Parameter example:*
+                  ``'long_name=Cell Area'``
 
-            *Parameter example:*
-              ``'cellmeasure1'``
+                *Parameter example:*
+                  ``'cellmeasure1'``
 
-            *Parameter example:*
-              ``'measure:area'``
+                *Parameter example:*
+                  ``'measure:area'``
 
-            *Parameter example:*
-              ``cf.eq('time')'``
+                *Parameter example:*
+                  ``cf.eq('time')'``
 
-            *Parameter example:*
-              ``re.compile('^lat')``
+                *Parameter example:*
+                  ``re.compile('^lat')``
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The selected constructs and their construct keys.
+            `Constructs`
+                The selected constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    Select constructs that have a "standard_name" property of
-    'latitude':
+        Select constructs that have a "standard_name" property of
+        'latitude':
 
-    >>> d = c.filter_by_identity('latitude')
+        >>> d = c.filter_by_identity('latitude')
 
-    Select constructs that have a "long_name" property of 'Height':
+        Select constructs that have a "long_name" property of 'Height':
 
-    >>> d = c.filter_by_identity('long_name=Height')
+        >>> d = c.filter_by_identity('long_name=Height')
 
-    Select constructs that have a "standard_name" property of
-    'latitude' or a "foo" property of 'bar':
+        Select constructs that have a "standard_name" property of
+        'latitude' or a "foo" property of 'bar':
 
-    >>> d = c.filter_by_identity('latitude', 'foo=bar')
+        >>> d = c.filter_by_identity('latitude', 'foo=bar')
 
-    Select constructs that have a netCDF variable name of 'time':
+        Select constructs that have a netCDF variable name of 'time':
 
-    >>> d = c.filter_by_identity('ncvar%time')
+        >>> d = c.filter_by_identity('ncvar%time')
 
-        '''
+        """
         # Allow keys without the 'key%' prefix
         identities = list(identities)
         for n, identity in enumerate(identities):
@@ -194,4 +193,3 @@ class Constructs(cfdm.Constructs):
                 identities[n] = f"key%{identity}"
 
         return super().filter_by_identity(*identities)
-

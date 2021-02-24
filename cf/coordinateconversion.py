@@ -2,7 +2,7 @@ import cfdm
 
 
 class CoordinateConversion(cfdm.CoordinateConversion):
-    '''A coordinate conversion component of a coordinate reference
+    """A coordinate conversion component of a coordinate reference
     construct of the CF data model.
 
     A coordinate conversion formula converting coordinate values taken
@@ -18,14 +18,15 @@ class CoordinateConversion(cfdm.CoordinateConversion):
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
 
 # --- End: class

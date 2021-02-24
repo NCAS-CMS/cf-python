@@ -1,123 +1,118 @@
 import numpy
 
-from numpy import array       as numpy_array
-from numpy import asscalar    as numpy_asscalar
+from numpy import array as numpy_array
+from numpy import asscalar as numpy_asscalar
 from numpy import ndenumerate as numpy_ndenumerate
-from numpy import empty       as numpy_empty
+from numpy import empty as numpy_empty
 from numpy import expand_dims as numpy_expand_dims
-from numpy import squeeze     as numpy_squeeze
+from numpy import squeeze as numpy_squeeze
 
 from copy import deepcopy
 
 
 from .partition import Partition
 
-from ..functions import (_DEPRECATION_WARNING_METHOD,
-                         _DEPRECATION_ERROR_METHOD)
+from ..functions import _DEPRECATION_WARNING_METHOD, _DEPRECATION_ERROR_METHOD
 
-from ..decorators import (_inplace_enabled,
-                          _inplace_enabled_define_and_cleanup)
+from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
 
 _empty_matrix = numpy_empty((), dtype=object)
 
 
 class PartitionMatrix:
-    '''
+    """
 
-A hyperrectangular partition matrix of a master data array.
+    A hyperrectangular partition matrix of a master data array.
 
-Each of elements (called partitions) span all or part of exactly one
-sub-array of the master data array.
+    Each of elements (called partitions) span all or part of exactly one
+    sub-array of the master data array.
 
-Normal numpy basic and advanced indexing is supported, but size 1
-dimensions are always removed from the output array, i.e. a partition
-rather than a partition matrix is returned if the output array has
-size 1.
+    Normal numpy basic and advanced indexing is supported, but size 1
+    dimensions are always removed from the output array, i.e. a partition
+    rather than a partition matrix is returned if the output array has
+    size 1.
 
 
-**Attributes**
+    **Attributes**
 
-==========  ===========================================================
-Attribute   Description
-==========  ===========================================================
-`!axes`
-`!matrix`
-`!ndim`     The number of partition dimensions in the partition matrix.
-`!shape`    List of the partition matrix's dimension sizes.
-`!size`     The number of partitions in the partition matrix.
-==========  ===========================================================
-
-'''
+    ==========  ===========================================================
+    Attribute   Description
+    ==========  ===========================================================
+    `!axes`
+    `!matrix`
+    `!ndim`     The number of partition dimensions in the partition matrix.
+    `!shape`    List of the partition matrix's dimension sizes.
+    `!size`     The number of partitions in the partition matrix.
+    ==========  ===========================================================
+    """
 
     def __init__(self, matrix, axes):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        matrix: `numpy.ndarray`
-            An array of Partition objects.
+            matrix: `numpy.ndarray`
+                An array of Partition objects.
 
-        axes: `list`
-            The identities of the partition axes of the partition
-            array. If the partition matrix is a scalar array then it
-            is an empty list. DO NOT UPDATE INPLACE.
+            axes: `list`
+                The identities of the partition axes of the partition
+                array. If the partition matrix is a scalar array then it
+                is an empty list. DO NOT UPDATE INPLACE.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm = PartitionMatrix(
-    ...          numpy.array(Partition(
-    ...              location = [(0, 1), (2, 4)],
-    ...              shape = [1, 2],
-    ...              _dimensions = ['dim2', 'dim0'],
-    ...              Units = cf.Units('m'),
-    ...              part = [],
-    ...              data = numpy.array([[5, 6], [7, 8]])
-    ...          ), dtype=object),
-    ...          axes=[]
-    ...      )
+        >>> pm = PartitionMatrix(
+        ...          numpy.array(Partition(
+        ...              location = [(0, 1), (2, 4)],
+        ...              shape = [1, 2],
+        ...              _dimensions = ['dim2', 'dim0'],
+        ...              Units = cf.Units('m'),
+        ...              part = [],
+        ...              data = numpy.array([[5, 6], [7, 8]])
+        ...          ), dtype=object),
+        ...          axes=[]
+        ...      )
 
-        '''
+        """
         self.matrix = matrix
         self.axes = axes
 
     def __deepcopy__(self, memo):
-        '''Used if copy.deepcopy is called on the variable.
-
-        '''
+        """Used if copy.deepcopy is called on the variable."""
         return self.copy()
 
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        """x.__getitem__(indices) <==> x[indices]
 
-    Normal numpy basic and advanced indexing is supported, but size 1
-    dimensions are always removed from the output array, i.e. a
-    partition rather than a partition matrix is returned if the output
-    array has size 1.
+        Normal numpy basic and advanced indexing is supported, but size 1
+        dimensions are always removed from the output array, i.e. a
+        partition rather than a partition matrix is returned if the output
+        array has size 1.
 
-    Returns either a partition or a partition matrix.
+        Returns either a partition or a partition matrix.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (5, 3)
-    >>> pm[0, 1]
-    <cf.data.partition.Partition at 0x1934c80>
-    >>> pm[:, 1]
-    <CF PartitionMatrix: 1 partition dimensions>
-    >>> pm[:, 1].shape
-    (5,)
-    >>> pm[1:4, slice(2, 0, -1)].shape
-    (3, 2)
+        >>> pm.shape
+        (5, 3)
+        >>> pm[0, 1]
+        <cf.data.partition.Partition at 0x1934c80>
+        >>> pm[:, 1]
+        <CF PartitionMatrix: 1 partition dimensions>
+        >>> pm[:, 1].shape
+        (5,)
+        >>> pm[1:4, slice(2, 0, -1)].shape
+        (3, 2)
 
-    >>> pm.shape
-    ()
-    >>> pm[()]
-    <cf.data.partition.Partition at 0x1934c80>
-    >>> pm[...]
-    <cf.data.partition.Partition at 0x1934c80>
+        >>> pm.shape
+        ()
+        >>> pm[()]
+        <cf.data.partition.Partition at 0x1934c80>
+        >>> pm[...]
+        <cf.data.partition.Partition at 0x1934c80>
 
-        '''
+        """
         out = self.matrix[indices]
 
         if isinstance(out, Partition):
@@ -131,67 +126,63 @@ Attribute   Description
         return type(self)(numpy_squeeze(out), axes)
 
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        return '<CF %s: %s>' % (self.__class__.__name__, self.shape)
+        """x.__repr__() <==> repr(x)"""
+        return "<CF %s: %s>" % (self.__class__.__name__, self.shape)
 
     def __setitem__(self, indices, value):
-        '''x.__setitem__(indices, y) <==> x[indices]=y
+        """x.__setitem__(indices, y) <==> x[indices]=y
 
-    Indices must be an integer, a slice object or a tuple. If a slice
-    object is given then the value being assigned must be an
-    iterable. If a tuple of integers (or slices equivalent to an
-    integer) is given then there must be one index per partition
-    matrix dimension.
+        Indices must be an integer, a slice object or a tuple. If a slice
+        object is given then the value being assigned must be an
+        iterable. If a tuple of integers (or slices equivalent to an
+        integer) is given then there must be one index per partition
+        matrix dimension.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (3,)
-    >>> pm[2] = p1
-    >>> pm[:] = [p1, p2, p3]
+        >>> pm.shape
+        (3,)
+        >>> pm[2] = p1
+        >>> pm[:] = [p1, p2, p3]
 
-    >>> pm.shape
-    (2, 3)
-    >>> pm[0, 2] = p1
+        >>> pm.shape
+        (2, 3)
+        >>> pm[0, 2] = p1
 
 
-    >>> pm.shape
-    ()
-    >>> pm[()] = p1
-    >>> pm[...] = p1
+        >>> pm.shape
+        ()
+        >>> pm[()] = p1
+        >>> pm[...] = p1
 
-        '''
+        """
         self.matrix[indices] = value
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
+        """x.__str__() <==> str(x)"""
         return str(self.matrix)
         out = []
         for partition in self.matrix.flat:
             out.append(str(partition))
 
-        return '\n'.join(out)
+        return "\n".join(out)
 
     def change_axis_names(self, axis_map):
-        '''Change the axis names.
+        """Change the axis names.
 
-    The axis names are arbitrary, so mapping them to another arbitrary
-    collection does not change the data array values, units, nor axis
-    order.
+        The axis names are arbitrary, so mapping them to another arbitrary
+        collection does not change the data array values, units, nor axis
+        order.
 
-    :Parameters:
+        :Parameters:
 
-        axis_map: `dict`
+            axis_map: `dict`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         # Partition dimensions
         axes = self.axes
         self.axes = [axis_map[axis] for axis in axes]
@@ -207,140 +198,147 @@ Attribute   Description
     # ----------------------------------------------------------------
     @property
     def flat(self):
-        '''A flat iterator over the partitions in the partition matrix.
+        """A flat iterator over the partitions in the partition matrix.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    [2, 2]
-    >>> for partition in pm.flat:
-    ...     print(repr(partition.Units))
-    ...
-    <CF Units: m s-1>
-    <CF Units: km hr-1>
-    <CF Units: miles day-1>
-    <CF Units: mm minute-1>
+        >>> pm.shape
+        [2, 2]
+        >>> for partition in pm.flat:
+        ...     print(repr(partition.Units))
+        ...
+        <CF Units: m s-1>
+        <CF Units: km hr-1>
+        <CF Units: miles day-1>
+        <CF Units: mm minute-1>
 
-    >>> pm.flat
-    <numpy.flatiter at 0x1e14840>
+        >>> pm.flat
+        <numpy.flatiter at 0x1e14840>
 
-    >>> flat = pm.flat
-    >>> next(flat)
-    <Partition at 0x1934c80>
-    >>> next(flat)
-    <Partition at 0x784b347>
+        >>> flat = pm.flat
+        >>> next(flat)
+        <Partition at 0x1934c80>
+        >>> next(flat)
+        <Partition at 0x784b347>
 
-        '''
+        """
         return self.matrix.flat
 
     @property
     def ndim(self):
-        '''The number of partition dimensions in the partition matrix.
+        """The number of partition dimensions in the partition matrix.
 
-    Not to be confused with the number of dimensions of the master
-    data array.
+        Not to be confused with the number of dimensions of the master
+        data array.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (8, 4)
-    >>> pm.ndim
-    2
+        >>> pm.shape
+        (8, 4)
+        >>> pm.ndim
+        2
 
-    >>> pm.shape
-    ()
-    >>> pm.ndim
-    0
+        >>> pm.shape
+        ()
+        >>> pm.ndim
+        0
 
-        '''
+        """
         return self.matrix.ndim
 
     @property
     def shape(self):
-        '''List of the partition matrix's dimension sizes.
+        """List of the partition matrix's dimension sizes.
 
-    Not to be confused with the sizes of the master data array's
-    dimensions.
+        Not to be confused with the sizes of the master data array's
+        dimensions.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.ndim
-    2
-    >>> pm.size
-    32
-    >>> pm.shape
-    (8, 4)
+        >>> pm.ndim
+        2
+        >>> pm.size
+        32
+        >>> pm.shape
+        (8, 4)
 
-    >>> pm.ndim
-    0
-    >>> pm.shape
-    ()
+        >>> pm.ndim
+        0
+        >>> pm.shape
+        ()
 
-        '''
+        """
         return self.matrix.shape
 
     @property
     def size(self):
-        '''The number of partitions in the partition matrix.
+        """The number of partitions in the partition matrix.
 
-    Not to be confused with the number of elements in the master data
-    array.
+        Not to be confused with the number of elements in the master data
+        array.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (8, 4)
-    >>> pm.size
-    32
+        >>> pm.shape
+        (8, 4)
+        >>> pm.size
+        32
 
-    >>> pm.shape
-    ()
-    >>> pm.size
-    1
+        >>> pm.shape
+        ()
+        >>> pm.size
+        1
 
-        '''
+        """
         return self.matrix.size
 
     def add_partitions(self, adimensions, master_flip, extra_boundaries, axis):
-        '''Add partition boundaries.
-
-    :Parameters:
-
-        adimensions: `list`
-            The ordered axis names of the master array.
-
-        master_flip: `list`
-
-        extra_boundaries: `list` of `int`
-            The boundaries of the new partitions.
-
-        axis: `str`
-            The name of the axis to have the new partitions.
-
-        '''
-        def _update_p(matrix, location, master_index,
-                      part, master_axis_to_position, master_flip):
-            '''TODO
+        """Add partition boundaries.
 
         :Parameters:
 
-            matrix: numpy array of `Partition` objects
-
-            location: `list`
-
-            master_index: `int`
-
-            part: `list`
-
-            master_axis_to_position: `dict`
+            adimensions: `list`
+                The ordered axis names of the master array.
 
             master_flip: `list`
 
-        :Returns:
+            extra_boundaries: `list` of `int`
+                The boundaries of the new partitions.
 
-            numpy array of `Partition` objects
+            axis: `str`
+                The name of the axis to have the new partitions.
 
-            '''
+        """
+
+        def _update_p(
+            matrix,
+            location,
+            master_index,
+            part,
+            master_axis_to_position,
+            master_flip,
+        ):
+            """TODO
+
+            :Parameters:
+
+                matrix: numpy array of `Partition` objects
+
+                location: `list`
+
+                master_index: `int`
+
+                part: `list`
+
+                master_axis_to_position: `dict`
+
+                master_flip: `list`
+
+            :Returns:
+
+                numpy array of `Partition` objects
+
+            """
             for partition in matrix.flat:
                 partition.location = partition.location[:]
                 partition.shape = partition.shape[:]
@@ -348,9 +346,7 @@ Attribute   Description
                 partition.location[master_index] = location
                 partition.shape[master_index] = shape
 
-                partition.new_part(part,
-                                   master_axis_to_position,
-                                   master_flip)
+                partition.new_part(part, master_axis_to_position, master_flip)
             # --- End: for
 
             return matrix
@@ -390,20 +386,23 @@ Attribute   Description
         x = extra_boundaries.pop(0)
 
         for i in range(shape[index]):
-            indices[index] = slice(i, i+1)
+            indices[index] = slice(i, i + 1)
             sub_matrix = matrix[tuple(indices)]
-#            (r0, r1) = next(sub_matrix.flat).location[master_index]
-            (r0, r1) = sub_matrix.item(0,).location[master_index]
+            #            (r0, r1) = next(sub_matrix.flat).location[master_index]
+            (r0, r1) = sub_matrix.item(
+                0,
+            ).location[master_index]
 
-# Could do better, perhaps, by assigning in blocks
+            # Could do better, perhaps, by assigning in blocks
             if not r0 < x < r1:
                 # This new boundary is *not* within the span of this
                 # sub-matrix. Therefore, just copy the sub-matrix
                 # straight into the new matrix
                 new_matrix[tuple(new_indices)] = sub_matrix
-#                new_indices[index] += 1
+                #                new_indices[index] += 1
                 new_indices[index] = slice(
-                    new_indices[index].start+1, new_indices[index].stop+1)
+                    new_indices[index].start + 1, new_indices[index].stop + 1
+                )
                 continue
 
             # --------------------------------------------------------
@@ -419,11 +418,17 @@ Attribute   Description
             # Create new partition(s) in place of the original ones(s)
             # and set the location, shape and part attributes
             new_matrix[tuple(new_indices)] = _update_p(
-                deepcopy(sub_matrix), location, master_index, part,
-                master_axis_to_position, master_flip)
-#            new_indices[index] += 1
+                deepcopy(sub_matrix),
+                location,
+                master_index,
+                part,
+                master_axis_to_position,
+                master_flip,
+            )
+            #            new_indices[index] += 1
             new_indices[index] = slice(
-                new_indices[index].start+1, new_indices[index].stop+1)
+                new_indices[index].start + 1, new_indices[index].stop + 1
+            )
 
             while x < r1:
                 # Find the extent of the new partition(s)
@@ -447,22 +452,26 @@ Attribute   Description
                 # Create the new partition(s) and set the
                 # location, shape and part attributes
                 new_matrix[tuple(new_indices)] = _update_p(
-                    deepcopy(sub_matrix), location, master_index, part,
-                    master_axis_to_position, master_flip
+                    deepcopy(sub_matrix),
+                    location,
+                    master_index,
+                    part,
+                    master_axis_to_position,
+                    master_flip,
                 )
 
                 new_indices[index] = slice(
-                    new_indices[index].start+1, new_indices[index].stop+1)
-#                new_indices[index] += 1
+                    new_indices[index].start + 1, new_indices[index].stop + 1
+                )
+                #                new_indices[index] += 1
 
                 if not extra_boundaries:
                     # There are no more extra boundaries, so we can
                     # return now.
                     #  new_indices[index] = slice(new_indices[index],
                     #  None)
-                    new_indices[index] = slice(new_indices[index].start,
-                                               None)
-                    indices[index] = slice(i+1, None)
+                    new_indices[index] = slice(new_indices[index].start, None)
+                    indices[index] = slice(i + 1, None)
 
                     new_matrix[tuple(new_indices)] = matrix[tuple(indices)]
                     self.matrix = new_matrix
@@ -477,19 +486,19 @@ Attribute   Description
         self.matrix = new_matrix
 
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``pm.copy()`` is equivalent to ``copy.deepcopy(pm)``.
+        ``pm.copy()`` is equivalent to ``copy.deepcopy(pm)``.
 
-    :Returns:
+        :Returns:
 
-            The deep copy.
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.copy()
+        >>> pm.copy()
 
-        '''
+        """
         # ------------------------------------------------------------
         # NOTE: 15 May 2013. It is necesary to treat
         #       self.matrix.ndim==0 as a special case since there is a
@@ -511,31 +520,31 @@ Attribute   Description
     # 0
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, inplace=False):
-        '''Insert a new size 1 axis in place.
+        """Insert a new size 1 axis in place.
 
-    The new axis is always inserted at position 0, i.e. it becomes the
-    new slowest varying axis.
+        The new axis is always inserted at position 0, i.e. it becomes the
+        new slowest varying axis.
 
-    .. seealso:: `flip`, `squeezes`, `swapaxes`, `transpose`
+        .. seealso:: `flip`, `squeezes`, `swapaxes`, `transpose`
 
-    :Parameters:
+        :Parameters:
 
-        axis: `str`
-            The internal identity of the new axis.
+            axis: `str`
+                The internal identity of the new axis.
 
-    :Returns:
+        :Returns:
 
-        `PartitionMatrix`
+            `PartitionMatrix`
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (2, 3)
-    >>> pm.insert_dimension('dim2')
-    >>> pm.shape
-    (1, 2, 3)
+        >>> pm.shape
+        (2, 3)
+        >>> pm.insert_dimension('dim2')
+        >>> pm.shape
+        (1, 2, 3)
 
-        '''
+        """
         p = _inplace_enabled_define_and_cleanup(self)
 
         p.matrix = numpy_expand_dims(p.matrix, 0)
@@ -544,43 +553,43 @@ Attribute   Description
         return p
 
     def ndenumerate(self):
-        '''Return an iterator yielding pairs of array indices and values.
+        """Return an iterator yielding pairs of array indices and values.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndenumerate`
-            An iterator over the array coordinates and values.
+            `numpy.ndenumerate`
+                An iterator over the array coordinates and values.
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (2, 3)
-    >>> for i, partition in pm.ndenumerate():
-    ...     print(i, repr(partition))
-    ...
-    (0, 0) <cf.data.partition.Partition object at 0x13a4490>
-    (0, 1) <cf.data.partition.Partition object at 0x24a4650>
-    (0, 2) <cf.data.partition.Partition object at 0x35a4590>
-    (1, 0) <cf.data.partition.Partition object at 0x46a4789>
-    (1, 1) <cf.data.partition.Partition object at 0x57a3456>
-    (1, 2) <cf.data.partition.Partition object at 0x68a9872>
+        >>> pm.shape
+        (2, 3)
+        >>> for i, partition in pm.ndenumerate():
+        ...     print(i, repr(partition))
+        ...
+        (0, 0) <cf.data.partition.Partition object at 0x13a4490>
+        (0, 1) <cf.data.partition.Partition object at 0x24a4650>
+        (0, 2) <cf.data.partition.Partition object at 0x35a4590>
+        (1, 0) <cf.data.partition.Partition object at 0x46a4789>
+        (1, 1) <cf.data.partition.Partition object at 0x57a3456>
+        (1, 2) <cf.data.partition.Partition object at 0x68a9872>
 
-        '''
+        """
         return numpy_ndenumerate(self.matrix)
 
     # 0
     def partition_boundaries(self, data_axes):
-        '''Return the partition boundaries for each dimension.
+        """Return the partition boundaries for each dimension.
 
-    :Parameters:
+        :Parameters:
 
-        data_axes: sequence
+            data_axes: sequence
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         boundaries = {}
 
         matrix = self.matrix
@@ -609,34 +618,34 @@ Attribute   Description
     # 0
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False):
-        '''Swap the positions of two axes.
+        """Swap the positions of two axes.
 
-    Note that this does not change the master data array.
+        Note that this does not change the master data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+        .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
 
-    :Parameters:
+        :Parameters:
 
-        axis0, axis1: `int`, `int`
-            Select the axes to swap. Each axis is identified by its
-            original integer position.
+            axis0, axis1: `int`, `int`
+                Select the axes to swap. Each axis is identified by its
+                original integer position.
 
-    :Returns:
+        :Returns:
 
-        `PartitionMatrix`
+            `PartitionMatrix`
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (2, 3, 4, 5)
-    >>> pm.swapaxes(1, 2)
-    >>> pm.shape
-    (2, 4, 3, 5)
-    >>> pm.swapaxes(1, -1)
-    >>> pm.shape
-    (2, 5, 3, 4)
+        >>> pm.shape
+        (2, 3, 4, 5)
+        >>> pm.swapaxes(1, 2)
+        >>> pm.shape
+        (2, 4, 3, 5)
+        >>> pm.swapaxes(1, -1)
+        >>> pm.shape
+        (2, 5, 3, 4)
 
-        '''
+        """
         p = _inplace_enabled_define_and_cleanup(self)
 
         if axis0 != axis1:
@@ -648,26 +657,26 @@ Attribute   Description
 
     # 0
     def set_location_map(self, data_axes, ns=None):
-        '''Set the `!location` attribute of each partition of the partition
-    matrix in place.
+        """Set the `!location` attribute of each partition of the partition
+        matrix in place.
 
-    :Parameters:
+        :Parameters:
 
-        data_axes: sequence
-            The axes of the master data array.
+            data_axes: sequence
+                The axes of the master data array.
 
-        ns: sequence of `int`, optional
+            ns: sequence of `int`, optional
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.set_location_map(['dim1', 'dim0'])
-    >>> pm.set_location_map([])
+        >>> pm.set_location_map(['dim1', 'dim0'])
+        >>> pm.set_location_map([])
 
-        '''
+        """
         matrix = self.matrix
 
         shape = matrix.shape
@@ -693,7 +702,7 @@ Attribute   Description
                 m = axes.index(axis)
                 start = 0
                 for i in range(shape[m]):
-                    indices[m] = slice(i, i+1)  # i
+                    indices[m] = slice(i, i + 1)  # i
                     flat = matrix[tuple(indices)].flat
 
                     partition = next(flat)
@@ -726,34 +735,34 @@ Attribute   Description
     # 0
     @_inplace_enabled(default=False)
     def squeeze(self, inplace=False):
-        '''Remove all size 1 axes.
+        """Remove all size 1 axes.
 
-    Note that this does not change the master data array.
+        Note that this does not change the master data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+        .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
-    :Returns:
+        :Returns:
 
-        `PartitionMatrix`
+            `PartitionMatrix`
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.shape
-    (1, 2, 1, 2)
-    >>> pm.squeeze()
-    >>> pm.shape
-    (2, 2)
+        >>> pm.shape
+        (1, 2, 1, 2)
+        >>> pm.squeeze()
+        >>> pm.shape
+        (2, 2)
 
-    >>> pm.shape
-    (1,)
-    >>> pm.squeeze()
-    >>> pm.shape
-    ()
-    >>> pm.squeeze()
-    >>> pm.shape
-    ()
+        >>> pm.shape
+        (1,)
+        >>> pm.squeeze()
+        >>> pm.shape
+        ()
+        >>> pm.squeeze()
+        >>> pm.shape
+        ()
 
-        '''
+        """
         p = _inplace_enabled_define_and_cleanup(self)
 
         matrix = p.matrix
@@ -769,28 +778,28 @@ Attribute   Description
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
-        '''Permute the partition dimensions of the partition matrix in place.
+        """Permute the partition dimensions of the partition matrix in place.
 
-    Note that this does not change the master data array.
+        Note that this does not change the master data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `swapaxes`
+        .. seealso:: `insert_dimension`, `flip`, `squeeze`, `swapaxes`
 
-    :Parameters:
+        :Parameters:
 
-        axes: sequence of `int`
-            Permute the axes according to the values given.
+            axes: sequence of `int`
+                Permute the axes according to the values given.
 
-    :Returns:
+        :Returns:
 
-        `PartitionMatrix`
+            `PartitionMatrix`
 
-    **Examples:**
+        **Examples:**
 
-    >>> pm.ndim
-    3
-    >>> pm.transpose((2, 0, 1))
+        >>> pm.ndim
+        3
+        >>> pm.transpose((2, 0, 1))
 
-        '''
+        """
         p = _inplace_enabled_define_and_cleanup(self)
 
         matrix = p.matrix
@@ -805,14 +814,14 @@ Attribute   Description
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
     def expand_dims(self, axis, inplace=False):
-        '''Insert a new size 1 axis in place.
+        """Insert a new size 1 axis in place.
 
-    Deprecated at version 3.0.0. Use method 'insert_dimension'
-    instead.
+        Deprecated at version 3.0.0. Use method 'insert_dimension'
+        instead.
 
-        '''
+        """
         _DEPRECATION_ERROR_METHOD(
-            self, 'expand_dims', "Use method 'insert_dimension' instead."
+            self, "expand_dims", "Use method 'insert_dimension' instead."
         )  # pragma: no cover
 
 

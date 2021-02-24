@@ -9,8 +9,11 @@ import cfdm
 def _recurse_on_subclasses(klass):
     """Return as a set all subclasses in a classes' subclass hierarchy."""
     return set(klass.__subclasses__()).union(
-        [sub for cls in klass.__subclasses__() for sub in
-         _recurse_on_subclasses(cls)]
+        [
+            sub
+            for cls in klass.__subclasses__()
+            for sub in _recurse_on_subclasses(cls)
+        ]
     )
 
 
@@ -21,39 +24,47 @@ def _get_all_abbrev_subclasses(klass):
     any abbreviated cf.Properties* classes) plus any cfdm classes, since
     this function needs to take cf subclasses from cfdm classes as well.
     """
-    return tuple([
-        sub for sub in _recurse_on_subclasses(klass) if
-        hasattr(cf, sub.__name__) and
-        sub.__module__.split('.')[0] == 'cf'  # i.e. not 'cfdm'
-    ])
+    return tuple(
+        [
+            sub
+            for sub in _recurse_on_subclasses(klass)
+            if hasattr(cf, sub.__name__)
+            and sub.__module__.split(".")[0] == "cf"  # i.e. not 'cfdm'
+        ]
+    )
 
 
 class DocstringTest(unittest.TestCase):
     def setUp(self):
-        self.package = 'cf'
-        self.repr = 'CF '
+        self.package = "cf"
+        self.repr = "CF "
 
         self.subclasses_of_Container = tuple(
-            set(_get_all_abbrev_subclasses(
-                cf.mixin_container.Container)).union(
-                set(_get_all_abbrev_subclasses(
-                    cfdm.data.abstract.array.Array)),
-                [   # other key classes not in subclass hierarchy above
+            set(
+                _get_all_abbrev_subclasses(cf.mixin_container.Container)
+            ).union(
+                set(
+                    _get_all_abbrev_subclasses(cfdm.data.abstract.array.Array)
+                ),
+                [  # other key classes not in subclass hierarchy above
                     cf.coordinatereference.CoordinateReference,
                     cf.cellmethod.CellMethod,
                     cf.domainaxis.DomainAxis,
-                ]
+                ],
             )
         )
 
         self.subclasses_of_Properties = _get_all_abbrev_subclasses(
-            cf.mixin.properties.Properties)
+            cf.mixin.properties.Properties
+        )
 
         self.subclasses_of_PropertiesData = _get_all_abbrev_subclasses(
-            cf.mixin.propertiesdata.PropertiesData)
+            cf.mixin.propertiesdata.PropertiesData
+        )
 
         self.subclasses_of_PropertiesDataBounds = _get_all_abbrev_subclasses(
-            cf.mixin.propertiesdatabounds.PropertiesDataBounds)
+            cf.mixin.propertiesdatabounds.PropertiesDataBounds
+        )
 
     def test_docstring(self):
         # Test that all {{ occurrences have been substituted
@@ -62,40 +73,48 @@ class DocstringTest(unittest.TestCase):
                 for name in dir(x):
                     f = getattr(klass, name, None)
 
-                    if f is None or not hasattr(f, '__doc__'):
+                    if f is None or not hasattr(f, "__doc__"):
                         continue
 
-                    if name.startswith('__') and not inspect.isfunction(f):
+                    if name.startswith("__") and not inspect.isfunction(f):
                         continue
 
                     self.assertIsNotNone(
                         f.__doc__,
-                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(
-                            klass, name, f, f.__doc__))
+                        "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}".format(
+                            klass, name, f, f.__doc__
+                        ),
+                    )
 
                     self.assertNotIn(
-                        '{{', f.__doc__,
-                        '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
-                            klass, name, f))
+                        "{{",
+                        f.__doc__,
+                        "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
+                            klass, name, f
+                        ),
+                    )
 
     def test_docstring_package(self):
-        string = '>>> f = {}.'.format(self.package)
+        string = ">>> f = {}.".format(self.package)
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 f = x._has_component
                 self.assertIn(
-                    string, f.__doc__,
-                    '\nCLASS: {}\nMETHOD NAME: {}'.format(
-                        klass, '_has_component'))
+                    string,
+                    f.__doc__,
+                    "\nCLASS: {}\nMETHOD NAME: {}".format(
+                        klass, "_has_component"
+                    ),
+                )
 
-        string = '>>> f = {}.'.format(self.package)
+        string = ">>> f = {}.".format(self.package)
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
     def test_docstring_class(self):
         for klass in self.subclasses_of_Properties:
-            string = '>>> f = {}.{}'.format(self.package, klass.__name__)
+            string = ">>> f = {}.{}".format(self.package, klass.__name__)
             for x in (klass, klass()):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
@@ -105,49 +124,56 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.copy.__doc__, klass)
 
         for klass in self.subclasses_of_PropertiesDataBounds:
-            string = '{}'.format(klass.__name__)
+            string = "{}".format(klass.__name__)
             for x in (klass, klass()):
                 self.assertIn(
-                    string, x.insert_dimension.__doc__,
-                    '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
-                        klass, klass.__name__, 'insert_dimension'))
+                    string,
+                    x.insert_dimension.__doc__,
+                    "\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
+                        klass, klass.__name__, "insert_dimension"
+                    ),
+                )
 
                 self.assertIn(
-                    string, x.swapaxes.__doc__,
-                    '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
-                        klass, klass.__name__, 'swapaxes'))
+                    string,
+                    x.swapaxes.__doc__,
+                    "\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
+                        klass, klass.__name__, "swapaxes"
+                    ),
+                )
 
     def test_docstring_repr(self):
-        string = '<{}Data'.format(self.repr)
+        string = "<{}Data".format(self.repr)
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(
-                    string, x.has_data.__doc__,
-                    '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
-                        klass, 'has_data', x.has_data))
+                    string,
+                    x.has_data.__doc__,
+                    "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
+                        klass, "has_data", x.has_data
+                    ),
+                )
 
     def test_docstring_default(self):
-        string = 'Return the value of the *default* parameter'
+        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
-        string = 'Return the value of the *default* parameter'
+        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
-                x._test_docstring_substitution_staticmethod(1, 2),
-                (1, 2)
+                x._test_docstring_substitution_staticmethod(1, 2), (1, 2)
             )
 
     def test_docstring_classmethod(self):
-        string = 'Return the value of the *default* parameter'
+        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(
-                    x._test_docstring_substitution_classmethod(1, 2),
-                    (1, 2)
+                    x._test_docstring_substitution_classmethod(1, 2), (1, 2)
                 )
 
     def test_docstring_docstring_substitutions(self):
@@ -155,16 +181,14 @@ class DocstringTest(unittest.TestCase):
             for x in (klass,):
                 d = x._docstring_substitutions(klass)
                 self.assertIsInstance(d, dict)
-                self.assertIn(
-                    '{{repr}}', d,
-                    '\nCLASS: {}'.format(
-                        klass))
+                self.assertIn("{{repr}}", d, "\nCLASS: {}".format(klass))
+
 
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cf.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

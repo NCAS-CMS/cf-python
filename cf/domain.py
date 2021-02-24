@@ -14,18 +14,19 @@ from .data import Data
 
 from .functions import parse_indices
 
-from .decorators import (_inplace_enabled,
-                         _inplace_enabled_define_and_cleanup,
-                         _manage_log_level_via_verbosity)
+from .decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 logger = logging.getLogger(__name__)
 
 _empty_set = set()
 
-class Domain(mixin.FieldDomain,
-             mixin.Properties,
-             cfdm.Domain):
-    '''A domain construct of the CF data model.
+
+class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
+    """A domain construct of the CF data model.
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
@@ -38,51 +39,51 @@ class Domain(mixin.FieldDomain,
     reference, and domain ancillary constructs; as well as properties
     to describe the domain.
 
-    '''
+    """
+
     def __new__(cls, *args, **kwargs):
-        '''
-        '''
+        """"""
         instance = super().__new__(cls)
         instance._Data = Data
         instance._Constructs = Constructs
         return instance
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
-        return super().__repr__().replace('<', '<CF ', 1)
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------
     @property
     def _cyclic(self):
-        '''Storage for axis cyclicity. Do not change the value in-place.'''
-        return self._custom.get('_cyclic', _empty_set)
+        """Storage for axis cyclicity. Do not change the value in-place."""
+        return self._custom.get("_cyclic", _empty_set)
 
     @_cyclic.setter
     def _cyclic(self, value):
-        '''value must be a set. Do not change the value in-place.'''
-        self._custom['_cyclic'] = value
+        """value must be a set. Do not change the value in-place."""
+        self._custom["_cyclic"] = value
 
     @_cyclic.deleter
     def _cyclic(self):
-        self._custom['_cyclic'] = _empty_set
+        self._custom["_cyclic"] = _empty_set
 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def size(self):
-        '''The number of locations in the domain.
+        """The number of locations in the domain.
 
-    If there are no domain axis constructs, or any domain axis
-    construct has a size of 0, then the size is 0.
+        If there are no domain axis constructs, or any domain axis
+        construct has a size of 0, then the size is 0.
 
-        '''
+        """
         domain_axes = self.domain_axes
         if not domain_axes:
             return 0
@@ -90,93 +91,93 @@ class Domain(mixin.FieldDomain,
         return reduce(
             operator_mul,
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()],
-            1
+            1,
         )
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def close(self):
-        '''Close all files referenced by the domain construct.
+        """Close all files referenced by the domain construct.
 
-    Note that a closed file will be automatically reopened if its
-    contents are subsequently required.
+        Note that a closed file will be automatically reopened if its
+        contents are subsequently required.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.close()
+        >>> d.close()
 
-        '''
+        """
         # TODODASK - is this still needed?
-        
+
         self.constructs.close()
 
     def cyclic(self, identity=None, iscyclic=True, period=None):
-        '''Set the cyclicity of an axis.
+        """Set the cyclicity of an axis.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
+        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct.
+            identity: optional
+                Select the domain axis construct.
 
-            {{domain axis selection}}
+                {{domain axis selection}}
 
-            If *identity is `None` (the default) then the unique
-            domain axis construct is selected when there is only one
-            of them.
+                If *identity is `None` (the default) then the unique
+                domain axis construct is selected when there is only one
+                of them.
 
-            *Parameter example:*
-              ``identity='time'``
+                *Parameter example:*
+                  ``identity='time'``
 
-            *Parameter example:*
-              ``identity='domainaxis2'``
+                *Parameter example:*
+                  ``identity='domainaxis2'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-        iscyclic: `bool`, optional
-            If False then the axis is set to be non-cyclic. By
-            default the selected axis is set to be cyclic.
+            iscyclic: `bool`, optional
+                If False then the axis is set to be non-cyclic. By
+                default the selected axis is set to be cyclic.
 
-        period: optional
-            The period for a dimension coordinate construct which
-            spans the selected axis. May be any numeric scalar object
-            that can be converted to a `Data` object (which includes
-            numpy array and `Data` objects). The absolute value of
-            *period* is used. If *period* has units then they must be
-            compatible with those of the dimension coordinates,
-            otherwise it is assumed to have the same units as the
-            dimension coordinates.
+            period: optional
+                The period for a dimension coordinate construct which
+                spans the selected axis. May be any numeric scalar object
+                that can be converted to a `Data` object (which includes
+                numpy array and `Data` objects). The absolute value of
+                *period* is used. If *period* has units then they must be
+                compatible with those of the dimension coordinates,
+                otherwise it is assumed to have the same units as the
+                dimension coordinates.
 
-    :Returns:
+        :Returns:
 
-        `set`
-            The construct keys of the domain axes which were cyclic
-            prior to the new setting, or the current cyclic domain
-            axes if no axis was specified.
+            `set`
+                The construct keys of the domain axes which were cyclic
+                prior to the new setting, or the current cyclic domain
+                axes if no axis was specified.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.cyclic()
-    set()
-    >>> f.cyclic('X', period=360)
-    set()
-    >>> f.cyclic()
-    {'domainaxis2'}
-    >>> f.cyclic('X', iscyclic=False)
-    {'domainaxis2'}
-    >>> f.cyclic()
-    set()
+        >>> f.cyclic()
+        set()
+        >>> f.cyclic('X', period=360)
+        set()
+        >>> f.cyclic()
+        {'domainaxis2'}
+        >>> f.cyclic('X', iscyclic=False)
+        {'domainaxis2'}
+        >>> f.cyclic()
+        set()
 
-        '''
+        """
         cyclic = self._cyclic
         old = cyclic.copy()
 
@@ -201,55 +202,54 @@ class Domain(mixin.FieldDomain,
 
         return old
 
-    def domain_axis(self, identity=None, key=False,
-                    default=ValueError()):
-        '''Return a domain axis construct, or its key.
+    def domain_axis(self, identity=None, key=False, default=ValueError()):
+        """Return a domain axis construct, or its key.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                 `cell_method`, `coordinate`, `coordinate_reference`,
-                 `dimension_coordinate`, `domain_ancillary`,
-                 `domain_axes`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                     `cell_method`, `coordinate`, `coordinate_reference`,
+                     `dimension_coordinate`, `domain_ancillary`,
+                     `domain_axes`, `field_ancillary`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct.
+            identity: optional
+                Select the domain axis construct.
 
-            {{domain axis selection}}
+                {{domain axis selection}}
 
-            If *identity is `None` (the default) then the unique
-            domain axis construct is selected when there is only one
-            of them.
+                If *identity is `None` (the default) then the unique
+                domain axis construct is selected when there is only one
+                of them.
 
-            *Parameter example:*
-              ``identity='time'``
+                *Parameter example:*
+                  ``identity='time'``
 
-            *Parameter example:*
-              ``identity='domainaxis2'``
+                *Parameter example:*
+                  ``identity='domainaxis2'``
 
-            *Parameter example:*
-              ``identity='ncdim%y'``
+                *Parameter example:*
+                  ``identity='ncdim%y'``
 
-        key: `bool`, optional
-            If True then return the selected construct key. By
-            default the construct itself is returned.
+            key: `bool`, optional
+                If True then return the selected construct key. By
+                default the construct itself is returned.
 
-        default: optional
-            Return the value of the *default* parameter if a construct
-            can not be found.
+            default: optional
+                Return the value of the *default* parameter if a construct
+                can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `DomainAxis` or `str`
-            The selected domain axis construct, or its key.
+            `DomainAxis` or `str`
+                The selected domain axis construct, or its key.
 
-    **Examples:**
+        **Examples:**
 
-        '''
+        """
         domain_axes = self.domain_axes(identity)
 
         n_domain_axes = len(domain_axes)
@@ -264,7 +264,7 @@ class Domain(mixin.FieldDomain,
             return self._default(
                 default,
                 message="Mulitple domain axes found from identity "
-                f"{identity!r}"
+                f"{identity!r}",
             )
 
         # identity is not a unique domain axis construct identity
@@ -272,7 +272,7 @@ class Domain(mixin.FieldDomain,
         if da_key is None:
             return self._default(
                 default,
-                message=f"No domain axis found from identity {identity!r}"
+                message=f"No domain axis found from identity {identity!r}",
             )
 
         if key:
@@ -282,55 +282,55 @@ class Domain(mixin.FieldDomain,
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):
-        '''Flip (reverse the direction of) domain axes.
+        """Flip (reverse the direction of) domain axes.
 
-    .. seealso:: `domain_axis`, `transpose`
+        .. seealso:: `domain_axis`, `transpose`
 
-    :Parameters:
+        :Parameters:
 
-        axes: (sequence of) `str` , optional
-            Select the domain axes to flip.
+            axes: (sequence of) `str` , optional
+                Select the domain axes to flip.
 
-            A domain axis is identified by that which would be
-            selected by passing a given axis description to a call of
-            the `domain_axis` method. For example, a value of ``'X'``
-            would select the domain axis construct returned by
-            ``f.domain_axis('X')``.
+                A domain axis is identified by that which would be
+                selected by passing a given axis description to a call of
+                the `domain_axis` method. For example, a value of ``'X'``
+                would select the domain axis construct returned by
+                ``f.domain_axis('X')``.
 
-            If no axes are provided then all axes are flipped.
+                If no axes are provided then all axes are flipped.
 
-        {{inplace: `bool`, optional}}
+            {{inplace: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        `Domain` or `None`
-            The domain with flipped axes, or `None` if the operation
-            was in-place.
+            `Domain` or `None`
+                The domain with flipped axes, or `None` if the operation
+                was in-place.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = cf.example_field(0).domain
-    >>> print(d)
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> d = cf.example_field(0).domain
+        >>> print(d)
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> print(d.flip('X'))
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [337.5, ..., 22.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> print(d.flip('X'))
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [337.5, ..., 22.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> print(d.flip(['T', 'Y']))
-    Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> print(d.flip(['T', 'Y']))
+        Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> print(d.flip())
-    Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
-                    : longitude(8) = [337.5, ..., 22.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> print(d.flip())
+        Dimension coords: latitude(5) = [75.0, ..., -75.0] degrees_north
+                        : longitude(8) = [337.5, ..., 22.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-        '''
+        """
         d = _inplace_enabled_define_and_cleanup(self)
 
         if axes is None:
@@ -340,171 +340,170 @@ class Domain(mixin.FieldDomain,
             axes = self._parse_axes(axes)
 
         axes = set(axes)
-            
+
         # Flip constructs with data
         d.constructs._flip(axes)
 
         return d
 
     def get_data_axes(self, identity, default=ValueError()):
-        '''Return the keys of the domain axis constructs spanned by the data
-    of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the data
+        of a metadata construct.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
+        .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the metadata
+                  construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``identity='T'
+                *Parameter example:*
+                  ``identity='T'
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity='long_name=Cell Area'``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity='cellmeasure1'``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity='measure:area'``
 
-            *Parameter example:*
-              ``identity=cf.eq('time')'``
+                *Parameter example:*
+                  ``identity=cf.eq('time')'``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile('^lat')``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The keys of the domain axis constructs spanned by the data.
+            `tuple`
+                The keys of the domain axis constructs spanned by the data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = cf.example_field(7).domain
-    >>> print(d)
-    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
-                    : air_pressure(1) = [850.0] hPa
-                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
-                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
-    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
-                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
-    Coord references: grid_mapping_name:rotated_latitude_longitude
-    >>> print(d.constructs)
-    Constructs:
-    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(4, 5) degrees_north>,
-     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(4, 5) degrees_east>,
-     'coordinatereference0': <CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
-     'dimensioncoordinate0': <CF DimensionCoordinate: time(3) days since 1979-1-1 gregorian>,
-     'dimensioncoordinate1': <CF DimensionCoordinate: air_pressure(1) hPa>,
-     'dimensioncoordinate2': <CF DimensionCoordinate: grid_latitude(4) degrees>,
-     'dimensioncoordinate3': <CF DimensionCoordinate: grid_longitude(5) degrees>,
-     'domainaxis0': <CF DomainAxis: size(3)>,
-     'domainaxis1': <CF DomainAxis: size(1)>,
-     'domainaxis2': <CF DomainAxis: size(4)>,
-     'domainaxis3': <CF DomainAxis: size(5)>}
-    >>> d.get_data_axes('grid_latitude')
-    ('domainaxis2',)
-    >>> d.get_data_axes('latitude')
-    ('domainaxis2', 'domainaxis3')
+        >>> d = cf.example_field(7).domain
+        >>> print(d)
+        Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                        : air_pressure(1) = [850.0] hPa
+                        : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                        : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+        Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                        : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+        >>> print(d.constructs)
+        Constructs:
+        {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(4, 5) degrees_north>,
+         'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(4, 5) degrees_east>,
+         'coordinatereference0': <CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+         'dimensioncoordinate0': <CF DimensionCoordinate: time(3) days since 1979-1-1 gregorian>,
+         'dimensioncoordinate1': <CF DimensionCoordinate: air_pressure(1) hPa>,
+         'dimensioncoordinate2': <CF DimensionCoordinate: grid_latitude(4) degrees>,
+         'dimensioncoordinate3': <CF DimensionCoordinate: grid_longitude(5) degrees>,
+         'domainaxis0': <CF DomainAxis: size(3)>,
+         'domainaxis1': <CF DomainAxis: size(1)>,
+         'domainaxis2': <CF DomainAxis: size(4)>,
+         'domainaxis3': <CF DomainAxis: size(5)>}
+        >>> d.get_data_axes('grid_latitude')
+        ('domainaxis2',)
+        >>> d.get_data_axes('latitude')
+        ('domainaxis2', 'domainaxis3')
 
-        '''
+        """
         key = self.construct(identity, key=True, default=None)
         if key is None:
             return self.construct_key(identity, default=default)
 
         return super().get_data_axes(key=key, default=default)
 
-    def identity(self, default='', strict=False, relaxed=False,
-                 nc_only=False):
-        '''Return the canonical identity.
+    def identity(self, default="", strict=False, relaxed=False, nc_only=False):
+        """Return the canonical identity.
 
-    By default the identity is the first found of the following:
+            By default the identity is the first found of the following:
 
-    * The "id" attribute, preceded by ``'id%'``.
-    * The "cf_role" property, preceded by ``'cf_role='``.
-    * The "long_name" property, preceded by ``'long_name='``.
-    * The netCDF variable name, preceded by ``'ncvar%'``.
-    * The value of the *default* parameter.
+            * The "id" attribute, preceded by ``'id%'``.
+            * The "cf_role" property, preceded by ``'cf_role='``.
+            * The "long_name" property, preceded by ``'long_name='``.
+            * The netCDF variable name, preceded by ``'ncvar%'``.
+            * The value of the *default* parameter.
 
-    .. versionadded:: 3.TODO.
+            .. versionadded:: 3.TODO.
 
-    .. seealso:: `id`, `identities`
+            .. seealso:: `id`, `identities`
 
-    :Parameters:
+            :Parameters:
 
-        default: optional
-            If no identity can be found then return the value of the
-            default parameter.
+                default: optional
+                    If no identity can be found then return the value of the
+                    default parameter.
 
-        strict: `bool`, optional
-            If True then the identity is the first found of only the
-            "standard_name" property or the "id" attribute.
+                strict: `bool`, optional
+                    If True then the identity is the first found of only the
+                    "standard_name" property or the "id" attribute.
 
-        relaxed: `bool`, optional
-            If True then the identity is the first found of only the
-            "standard_name" property, the "id" attribute, the
-            "long_name" property or the netCDF variable name.
+                relaxed: `bool`, optional
+                    If True then the identity is the first found of only the
+                    "standard_name" property, the "id" attribute, the
+                    "long_name" property or the netCDF variable name.
 
-        nc_only: `bool`, optional
-            If True then only take the identity from the netCDF
-            variable name.
+                nc_only: `bool`, optional
+                    If True then only take the identity from the netCDF
+                    variable name.
 
-    :Returns:
+            :Returns:
 
-            The identity.
+                    The identity.
 
-    **Examples:**
+            **Examples:**
 
-TODO
-    >>> f.properties()
-    {'foo': 'bar',
-     'long_name': 'Air Temperature',
-     'standard_name': 'air_temperature'}
-    >>> f.nc_get_variable()
-    'tas'
-    >>> f.identity()
-    'air_temperature'
-    >>> f.del_property('standard_name')
-    'air_temperature'
-    >>> f.identity(default='no identity')
-    'air_temperature'
-    >>> f.identity()
-    'long_name=Air Temperature'
-    >>> f.del_property('long_name')
-    >>> f.identity()
-    'ncvar%tas'
-    >>> f.nc_del_variable()
-    'tas'
-    >>> f.identity()
-    'ncvar%tas'
-    >>> f.identity()
-    ''
-    >>> f.identity(default='no identity')
-    'no identity'
+        TODO
+            >>> f.properties()
+            {'foo': 'bar',
+             'long_name': 'Air Temperature',
+             'standard_name': 'air_temperature'}
+            >>> f.nc_get_variable()
+            'tas'
+            >>> f.identity()
+            'air_temperature'
+            >>> f.del_property('standard_name')
+            'air_temperature'
+            >>> f.identity(default='no identity')
+            'air_temperature'
+            >>> f.identity()
+            'long_name=Air Temperature'
+            >>> f.del_property('long_name')
+            >>> f.identity()
+            'ncvar%tas'
+            >>> f.nc_del_variable()
+            'tas'
+            >>> f.identity()
+            'ncvar%tas'
+            >>> f.identity()
+            ''
+            >>> f.identity(default='no identity')
+            'no identity'
 
-        '''
+        """
         if nc_only:
             if strict:
                 raise ValueError(
@@ -522,12 +521,12 @@ TODO
 
             return default
 
-        n = getattr(self, 'id', None)
+        n = getattr(self, "id", None)
         if n is not None:
             return f"id%{n}"
 
         if relaxed:
-            n = self.get_property('long_name', None)
+            n = self.get_property("long_name", None)
             if n is not None:
                 return f"long_name={n}"
 
@@ -540,7 +539,7 @@ TODO
         if strict:
             return default
 
-        for prop in ('cf_role', 'long_name'):
+        for prop in ("cf_role", "long_name"):
             n = self.get_property(prop, None)
             if n is not None:
                 return f"{prop}={n}"
@@ -552,39 +551,39 @@ TODO
         return default
 
     def identities(self):
-        '''Return all possible identities.
+        """Return all possible identities.
 
-    The identities comprise:
+        The identities comprise:
 
-    * The "id" attribute, preceded by ``'id%'``.
-    * The ``cf_role`` property, preceeded by ``'cf_role='``.
-    * The ``long_name`` property, preceeded by ``'long_name='``.
-    * All other properties, preceeded by the property name and a
-      equals e.g. ``'foo=bar'``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The ``cf_role`` property, preceeded by ``'cf_role='``.
+        * The ``long_name`` property, preceeded by ``'long_name='``.
+        * All other properties, preceeded by the property name and a
+          equals e.g. ``'foo=bar'``.
+        * The netCDF variable name, preceeded by ``'ncvar%'``.
 
-    .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.9.0.0
 
-    .. seealso:: `identity`
+        .. seealso:: `identity`
 
-    :Returns:
+        :Returns:
 
-        `list`
-            The identities.
+            `list`
+                The identities.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.Domain()
-    >>> d.set_properties({'foo': 'bar',
-    ...                   'long_name': 'Domain for model'})
-    >>> d.nc_set_variable('dom1')
-    >>> d.identities()
-    ['long_name=Domain for model', 'foo=bar', 'ncvar%dom1']
+        >>> d = {{package}}.Domain()
+        >>> d.set_properties({'foo': 'bar',
+        ...                   'long_name': 'Domain for model'})
+        >>> d.nc_set_variable('dom1')
+        >>> d.identities()
+        ['long_name=Domain for model', 'foo=bar', 'ncvar%dom1']
 
-        '''
+        """
         out = super().identities()
 
-        i = getattr(self, 'id', None)
+        i = getattr(self, "id", None)
         if i is not None:
             # Insert id attribute
             i = f"id%{i}"
@@ -596,133 +595,131 @@ TODO
         return out
 
     def indices(self, *mode, **kwargs):
-        '''Create indices that define a subspace of the domain construct.
+        """Create indices that define a subspace of the domain construct.
 
-    The indices returned by this method be used to create the subspace
-    by passing them to the `subspace` method of the original domain
-    construct.
+        The indices returned by this method be used to create the subspace
+        by passing them to the `subspace` method of the original domain
+        construct.
 
-    The subspace is defined by identifying indices based on the
-    metadata constructs.
+        The subspace is defined by identifying indices based on the
+        metadata constructs.
 
-    Metadata constructs are selected conditions are specified on their
-    data. Indices for subspacing are then automatically inferred from
-    where the conditions are met.
+        Metadata constructs are selected conditions are specified on their
+        data. Indices for subspacing are then automatically inferred from
+        where the conditions are met.
 
-    Metadata constructs and the conditions on their data are defined
-    by keyword parameters.
+        Metadata constructs and the conditions on their data are defined
+        by keyword parameters.
 
-    * Any domain axes that have not been identified remain unchanged.
+        * Any domain axes that have not been identified remain unchanged.
 
-    * Multiple domain axes may be subspaced simultaneously, and it
-      doesn't matter which order they are specified in.
+        * Multiple domain axes may be subspaced simultaneously, and it
+          doesn't matter which order they are specified in.
 
-    * Explicit indices may also be assigned to a domain axis
-      identified by a metadata construct, with either a Python `slice`
-      object, or a sequence of integers or booleans.
+        * Explicit indices may also be assigned to a domain axis
+          identified by a metadata construct, with either a Python `slice`
+          object, or a sequence of integers or booleans.
 
-    * For a dimension that is cyclic, a subspace defined by a slice or
-      by a `Query` instance is assumed to "wrap" around the edges of
-      the data.
+        * For a dimension that is cyclic, a subspace defined by a slice or
+          by a `Query` instance is assumed to "wrap" around the edges of
+          the data.
 
-    * Conditions may also be applied to multi-dimensional metadata
-      constructs. The "compress" mode is still the default mode (see
-      the positional arguments), but because the indices may not be
-      acting along orthogonal dimensions, some missing data may still
-      need to be inserted into the field construct's data.
+        * Conditions may also be applied to multi-dimensional metadata
+          constructs. The "compress" mode is still the default mode (see
+          the positional arguments), but because the indices may not be
+          acting along orthogonal dimensions, some missing data may still
+          need to be inserted into the field construct's data.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
+        .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
 
-    :Parameters:
+        :Parameters:
 
-        mode: `str`, *optional*
-            There are two modes of operation, each of which provides
-            indices for a different type of subspace:
+            mode: `str`, *optional*
+                There are two modes of operation, each of which provides
+                indices for a different type of subspace:
 
-            ==============  ==========================================
-            *mode*          Description
-            ==============  ==========================================
-            ``'compress'``  Return indices that identify only the
-                            requested locations.
+                ==============  ==========================================
+                *mode*          Description
+                ==============  ==========================================
+                ``'compress'``  Return indices that identify only the
+                                requested locations.
 
-                            This is the default mode.
+                                This is the default mode.
 
-                            Note that if a multi-dimensional metadata
-                            construct is being used to define the
-                            indices then some unrequested locations
-                            may also be selected.
+                                Note that if a multi-dimensional metadata
+                                construct is being used to define the
+                                indices then some unrequested locations
+                                may also be selected.
 
-            ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the requested locations.
-            ==============  ==========================================
+                ``'envelope'``  The returned subspace is the smallest that
+                                contains all of the requested locations.
+                ==============  ==========================================
 
-        kwargs: *optional*
-            A keyword name is an identity of a metadata construct, and
-            the keyword value provides a condition for inferring
-            indices that apply to the dimension (or dimensions)
-            spanned by the metadata construct's data. Indices are
-            created that select every location for which the metadata
-            construct's data satisfies the condition.
+            kwargs: *optional*
+                A keyword name is an identity of a metadata construct, and
+                the keyword value provides a condition for inferring
+                indices that apply to the dimension (or dimensions)
+                spanned by the metadata construct's data. Indices are
+                created that select every location for which the metadata
+                construct's data satisfies the condition.
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            A dictionary of indices, keyed by the domain axis
-            construct identifiers to which they apply.
+            `dict`
+                A dictionary of indices, keyed by the domain axis
+                construct identifiers to which they apply.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = cf.example_field(0).domain
-    >>> print(d)
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> indices = d.indices(X=112.5)
-    >>> indices
-    {'domainaxis0': slice(0, 5, 1),
-     'domainaxis1': slice(2, 3, 1),
-     'domainaxis2': slice(0, 1, 1)}
-    >>> print(d.subspace(**indices))
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(1) = [112.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    
-    >>> indices = d.indices(X=112.5, Y=cf.wi(-60, 30))
-    >>> indices
-    {'domainaxis0': slice(1, 3, 1),
-     'domainaxis1': slice(2, 3, 1),
-     'domainaxis2': slice(0, 1, 1)}
-    >>> print(d.subspace(**indices))
-    Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
-                    : longitude(1) = [112.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> d = cf.example_field(0).domain
+        >>> print(d)
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> indices = d.indices(X=112.5)
+        >>> indices
+        {'domainaxis0': slice(0, 5, 1),
+         'domainaxis1': slice(2, 3, 1),
+         'domainaxis2': slice(0, 1, 1)}
+        >>> print(d.subspace(**indices))
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> d.indices(X=[-1, 0], Y=slice(1, -1))
-    {'domainaxis0': slice(1, 4, 1),
-     'domainaxis1': slice(7, None, -7),
-     'domainaxis2': slice(0, 1, 1)}
-    >>> print(print(d.subspace(**indices)))
-    Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
-                    : longitude(2) = [337.5, 22.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> indices = d.indices(X=112.5, Y=cf.wi(-60, 30))
+        >>> indices
+        {'domainaxis0': slice(1, 3, 1),
+         'domainaxis1': slice(2, 3, 1),
+         'domainaxis2': slice(0, 1, 1)}
+        >>> print(d.subspace(**indices))
+        Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-        '''
+        >>> d.indices(X=[-1, 0], Y=slice(1, -1))
+        {'domainaxis0': slice(1, 4, 1),
+         'domainaxis1': slice(7, None, -7),
+         'domainaxis2': slice(0, 1, 1)}
+        >>> print(print(d.subspace(**indices)))
+        Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
+                        : longitude(2) = [337.5, 22.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        """
         if len(mode) > 1:
             raise ValueError(
                 "Can't provide more than one positional argument. "
                 f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
-        if not mode or 'compress' in mode:
-            mode = 'compress'
-        elif 'envelope' in mode:
-            mode = 'envelope'
+        if not mode or "compress" in mode:
+            mode = "compress"
+        elif "envelope" in mode:
+            mode = "envelope"
         else:
-            raise ValueError(
-                f"Invalid value for 'mode' argument: {mode[0]!r}"
-            )
+            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
 
         # ------------------------------------------------------------
         # Get the indices for every domain axis in the domain, without
@@ -733,132 +730,137 @@ TODO
         # ------------------------------------------------------------
         # Return the indices
         # ------------------------------------------------------------
-        return domain_indices['indices']
+        return domain_indices["indices"]
 
-    def match_by_construct(self, *identities, OR=False,
-                           **conditions):
-        '''Whether or not there are particular metadata constructs.
+    def match_by_construct(self, *identities, OR=False, **conditions):
+        """Whether or not there are particular metadata constructs.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
-                 `match_by_identity`, `match_by_ncvar`
+        .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                     `match_by_identity`, `match_by_ncvar`
 
-    :Parameters:
+        :Parameters:
 
-        identities: optional
-            Identify the metadata constructs by one or more of
+            identities: optional
+                Identify the metadata constructs by one or more of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct
 
-            If a cell method construct identity is given (such as
-            ``'method:mean'``) then it will only be compared with the
-            most recently applied cell method operation.
+                If a cell method construct identity is given (such as
+                ``'method:mean'``) then it will only be compared with the
+                most recently applied cell method operation.
 
-            Alternatively, one or more cell method constucts may be
-            identified in a single string with a CF-netCDF cell
-            methods-like syntax for describing both the collapse
-            dimensions, the collapse method, and any cell method
-            construct qualifiers. If N cell methods are described in
-            this way then they will collectively identify the N most
-            recently applied cell method operations. For example,
-            ``'T: maximum within years T: mean over years'`` will be
-            compared with the most two most recently applied cell
-            method operations.
+                Alternatively, one or more cell method constucts may be
+                identified in a single string with a CF-netCDF cell
+                methods-like syntax for describing both the collapse
+                dimensions, the collapse method, and any cell method
+                construct qualifiers. If N cell methods are described in
+                this way then they will collectively identify the N most
+                recently applied cell method operations. For example,
+                ``'T: maximum within years T: mean over years'`` will be
+                compared with the most two most recently applied cell
+                method operations.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity='latitude'``
 
-            *Parameter example:*
-              ``'T'
+                *Parameter example:*
+                  ``'T'
 
-            *Parameter example:*
-              ``'latitude'``
+                *Parameter example:*
+                  ``'latitude'``
 
-            *Parameter example:*
-              ``'long_name=Cell Area'``
+                *Parameter example:*
+                  ``'long_name=Cell Area'``
 
-            *Parameter example:*
-              ``'cellmeasure1'``
+                *Parameter example:*
+                  ``'cellmeasure1'``
 
-            *Parameter example:*
-              ``'measure:area'``
+                *Parameter example:*
+                  ``'measure:area'``
 
-            *Parameter example:*
-              ``cf.eq('time')'``
+                *Parameter example:*
+                  ``cf.eq('time')'``
 
-            *Parameter example:*
-              ``re.compile('^lat')``
+                *Parameter example:*
+                  ``re.compile('^lat')``
 
-            *Parameter example:*
-              ``'domainancillary2', 'longitude'``
+                *Parameter example:*
+                  ``'domainancillary2', 'longitude'``
 
-            *Parameter example:*
-              ``'area: mean T: maximum'``
+                *Parameter example:*
+                  ``'area: mean T: maximum'``
 
-            *Parameter example:*
-              ``'grid_latitude', 'area: mean T: maximum'``
+                *Parameter example:*
+                  ``'grid_latitude', 'area: mean T: maximum'``
 
-        conditions: optional
-            Identify the metadata constructs that have any of the
-            given identities or construct keys, and whose data satisfy
-            conditions.
+            conditions: optional
+                Identify the metadata constructs that have any of the
+                given identities or construct keys, and whose data satisfy
+                conditions.
 
-            A construct identity or construct key (as defined by the
-            *identities* parameter) is given as a keyword name and a
-            condition on its data is given as the keyword value.
+                A construct identity or construct key (as defined by the
+                *identities* parameter) is given as a keyword name and a
+                condition on its data is given as the keyword value.
 
-            The condition is satisfied if any of its data values
-            equals the value provided.
+                The condition is satisfied if any of its data values
+                equals the value provided.
 
-            *Parameter example:*
-              ``longitude=180.0``
+                *Parameter example:*
+                  ``longitude=180.0``
 
-            *Parameter example:*
-              ``time=cf.dt('1959-12-16')``
+                *Parameter example:*
+                  ``time=cf.dt('1959-12-16')``
 
-            *Parameter example:*
-              ``latitude=cf.ge(0)``
+                *Parameter example:*
+                  ``latitude=cf.ge(0)``
 
-            *Parameter example:*
-              ``latitude=cf.ge(0), air_pressure=500``
+                *Parameter example:*
+                  ``latitude=cf.ge(0), air_pressure=500``
 
-            *Parameter example:*
-              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
+                *Parameter example:*
+                  ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
 
-        OR: `bool`, optional
-            If True then return `True` if at least one metadata
-            construct matches at least one of the criteria given by
-            the *identities* or *conditions* arguments. By default
-            `True` is only returned if the field constructs matches
-            each of the given criteria.
+            OR: `bool`, optional
+                If True then return `True` if at least one metadata
+                construct matches at least one of the criteria given by
+                the *identities* or *conditions* arguments. By default
+                `True` is only returned if the field constructs matches
+                each of the given criteria.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the domain construct contains the specfied
-            metadata constructs.
+            `bool`
+                Whether or not the domain construct contains the specfied
+                metadata constructs.
 
-    **Examples:**
+        **Examples:**
 
-        TODO
+            TODO
 
-        '''
+        """
         if identities:
-            if identities[0] == 'or':
+            if identities[0] == "or":
                 _DEPRECATION_ERROR_ARG(
-                    self, 'match_by_construct', 'or',
-                    message="Use 'OR=True' instead.", version='3.1.0'
+                    self,
+                    "match_by_construct",
+                    "or",
+                    message="Use 'OR=True' instead.",
+                    version="3.1.0",
                 )  # pragma: no cover
 
-            if identities[0] == 'and':
+            if identities[0] == "and":
                 _DEPRECATION_ERROR_ARG(
-                    self, 'match_by_construct', 'and',
-                    message="Use 'OR=False' instead.", version='3.1.0'
+                    self,
+                    "match_by_construct",
+                    "and",
+                    message="Use 'OR=False' instead.",
+                    version="3.1.0",
                 )  # pragma: no cover
 
         if not identities and not conditions:
@@ -880,7 +882,7 @@ TODO
 
         if conditions:
             for identity, value in conditions.items():
-                if self.subspace('test', **{identity: value}):
+                if self.subspace("test", **{identity: value}):
                     n += 1
                 elif not OR:
                     return False
@@ -893,53 +895,54 @@ TODO
 
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False):
-        '''Roll the field along a cyclic axis.
+        """Roll the field along a cyclic axis.
 
-    A unique axis is selected with the axes and kwargs parameters.
+        A unique axis is selected with the axes and kwargs parameters.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `anchor`, `axis`, `cyclic`, `iscyclic`, `period`
+        .. seealso:: `anchor`, `axis`, `cyclic`, `iscyclic`, `period`
 
-    :Parameters:
+        :Parameters:
 
-        axis:
-            The cyclic axis to be rolled, defined by that which would
-            be selected by passing the given axis description to a
-            call of the field construct's `domain_axis` method. For
-            example, for a value of ``'X'``, the domain axis construct
-            returned by ``f.domain_axis('X')`` is selected.
+            axis:
+                The cyclic axis to be rolled, defined by that which would
+                be selected by passing the given axis description to a
+                call of the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis construct
+                returned by ``f.domain_axis('X')`` is selected.
 
-        shift: `int`
-            The number of places by which the selected cyclic axis is
-            to be rolled.
+            shift: `int`
+                The number of places by which the selected cyclic axis is
+                to be rolled.
 
-        {{inplace: `bool`, optional}}
+            {{inplace: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        `Field`
-            The rolled field.
+            `Field`
+                The rolled field.
 
-    **Examples:**
+        **Examples:**
 
-    Roll the data of the "X" axis one elements to the right:
+        Roll the data of the "X" axis one elements to the right:
 
-    >>> f.roll('X', 1)
+        >>> f.roll('X', 1)
 
-    Roll the data of the "X" axis three elements to the left:
+        Roll the data of the "X" axis three elements to the left:
 
-    >>> f.roll('X', -3)
+        >>> f.roll('X', -3)
 
-        '''
+        """
         # TODODASK - allow multiple roll axes
-        
+
         axis = self.domain_axis(
-            axis, key=True,
+            axis,
+            key=True,
             default=ValueError(
                 f"Can't roll {self.__class__.__name__}. "
                 f"Bad axis specification: {axis!r}"
-            )
+            ),
         )
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -951,126 +954,124 @@ TODO
         return d
 
     def subspace(self, *mode, **kwargs):
-        '''Create indices that define a subspace of the domain construct.
+        """Create indices that define a subspace of the domain construct.
 
-    The indices returned by this method be used to create the subspace
-    by passing them to the `subspace` method of the original domain
-    construct.
+        The indices returned by this method be used to create the subspace
+        by passing them to the `subspace` method of the original domain
+        construct.
 
-    The subspace is defined by identifying indices based on the
-    metadata constructs.
+        The subspace is defined by identifying indices based on the
+        metadata constructs.
 
-    Metadata constructs are selected conditions are specified on their
-    data. Indices for subspacing are then automatically inferred from
-    where the conditions are met.
+        Metadata constructs are selected conditions are specified on their
+        data. Indices for subspacing are then automatically inferred from
+        where the conditions are met.
 
-    Metadata constructs and the conditions on their data are defined
-    by keyword parameters.
+        Metadata constructs and the conditions on their data are defined
+        by keyword parameters.
 
-    * Any domain axes that have not been identified remain unchanged.
+        * Any domain axes that have not been identified remain unchanged.
 
-    * Multiple domain axes may be subspaced simultaneously, and it
-      doesn't matter which order they are specified in.
+        * Multiple domain axes may be subspaced simultaneously, and it
+          doesn't matter which order they are specified in.
 
-    * Explicit indices may also be assigned to a domain axis
-      identified by a metadata construct, with either a Python `slice`
-      object, or a sequence of integers or booleans.
+        * Explicit indices may also be assigned to a domain axis
+          identified by a metadata construct, with either a Python `slice`
+          object, or a sequence of integers or booleans.
 
-    * For a dimension that is cyclic, a subspace defined by a slice or
-      by a `Query` instance is assumed to "wrap" around the edges of
-      the data.
+        * For a dimension that is cyclic, a subspace defined by a slice or
+          by a `Query` instance is assumed to "wrap" around the edges of
+          the data.
 
-    * Conditions may also be applied to multi-dimensional metadata
-      constructs. The "compress" mode is still the default mode (see
-      the positional arguments), but because the indices may not be
-      acting along orthogonal dimensions, some missing data may still
-      need to be inserted into the field construct's data.
+        * Conditions may also be applied to multi-dimensional metadata
+          constructs. The "compress" mode is still the default mode (see
+          the positional arguments), but because the indices may not be
+          acting along orthogonal dimensions, some missing data may still
+          need to be inserted into the field construct's data.
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `indices`
+        .. seealso:: `indices`
 
-    :Parameters:
+        :Parameters:
 
-        mode: `str`, *optional*
-            There are two modes of operation, each of which provides
-            indices for a different type of subspace:
+            mode: `str`, *optional*
+                There are two modes of operation, each of which provides
+                indices for a different type of subspace:
 
-            ==============  ==========================================
-            *mode*          Description
-            ==============  ==========================================
-            ``'compress'``  Return indices that identify only the
-                            requested locations.
+                ==============  ==========================================
+                *mode*          Description
+                ==============  ==========================================
+                ``'compress'``  Return indices that identify only the
+                                requested locations.
 
-                            This is the default mode.
+                                This is the default mode.
 
-                            Note that if a multi-dimensional metadata
-                            construct is being used to define the
-                            indices then some unrequested locations
-                            may also be selected.
+                                Note that if a multi-dimensional metadata
+                                construct is being used to define the
+                                indices then some unrequested locations
+                                may also be selected.
 
-            ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the requested locations.
+                ``'envelope'``  The returned subspace is the smallest that
+                                contains all of the requested locations.
 
-            ``'test'``      May be used on its own or in addition to
-                            one of the other positional arguments. Do
-                            not create a subspace, but return `True`
-                            or `False` depending on whether or not it
-                            is possible to create the specified
-                            subspace.
-            ==============  ==========================================
+                ``'test'``      May be used on its own or in addition to
+                                one of the other positional arguments. Do
+                                not create a subspace, but return `True`
+                                or `False` depending on whether or not it
+                                is possible to create the specified
+                                subspace.
+                ==============  ==========================================
 
-        kwargs: *optional*
-            A keyword name is an identity of a metadata construct, and
-            the keyword value provides a condition for inferring
-            indices that apply to the dimension (or dimensions)
-            spanned by the metadata construct's data. Indices are
-            created that select every location for which the metadata
-            construct's data satisfies the condition.
+            kwargs: *optional*
+                A keyword name is an identity of a metadata construct, and
+                the keyword value provides a condition for inferring
+                indices that apply to the dimension (or dimensions)
+                spanned by the metadata construct's data. Indices are
+                created that select every location for which the metadata
+                construct's data satisfies the condition.
 
-    :Returns:
+        :Returns:
 
-        `Domain` or `bool`
-            An independent domain construct containing the subspace of
-            the original domain. If the ``'test'`` positional argument
-            has been set then return `True` or `False` depending on
-            whether or not it is possible to create specified
-            subspace.
+            `Domain` or `bool`
+                An independent domain construct containing the subspace of
+                the original domain. If the ``'test'`` positional argument
+                has been set then return `True` or `False` depending on
+                whether or not it is possible to create specified
+                subspace.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = cf.example_field(0).domain
-    >>> print(d)
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> print(d.subspace(X=112.5))
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(1) = [112.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    
-    >>> print(d.indices(X=112.5, Y=cf.wi(-60, 30)))
-    Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
-                    : longitude(1) = [112.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
+        >>> d = cf.example_field(0).domain
+        >>> print(d)
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> print(d.subspace(X=112.5))
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-    >>> print(d.indices(X=[-1, 0], Y=slice(1, -1))
-    Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
-                   : longitude(2) = [337.5, 22.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]
+        >>> print(d.indices(X=112.5, Y=cf.wi(-60, 30)))
+        Dimension coords: latitude(2) = [-45.0, 0.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
-        '''
+        >>> print(d.indices(X=[-1, 0], Y=slice(1, -1))
+        Dimension coords: latitude(3) = [-45.0, 0.0, 45.0] degrees_north
+                       : longitude(2) = [337.5, 22.5] degrees_east
+                       : time(1) = [2019-01-01 00:00:00]
+
+        """
         logger.debug(
             "{}.subspace\n"
-            "  input kwargs = {}".format(
-                self.__class__.__name__, kwargs
-            )
+            "  input kwargs = {}".format(self.__class__.__name__, kwargs)
         )  # pragma: no cover
 
         test = False
-        if 'test' in mode:
+        if "test" in mode:
             mode = list(mode)
-            mode.remove('test')
+            mode.remove("test")
             test = True
 
         if not mode and not kwargs:
@@ -1100,8 +1101,9 @@ TODO
             shape.append(domain_axes[a].get_size())
             indices2.append(b)
 
-        indices, roll = parse_indices(tuple(shape), tuple(indices2),
-                                      cyclic=True)
+        indices, roll = parse_indices(
+            tuple(shape), tuple(indices2), cyclic=True
+        )
 
         logger.debug(
             "  axes           = {!r}\n"
@@ -1154,77 +1156,81 @@ TODO
             dice = [indices[axes.index(axis)] for axis in construct_axes]
 
             # Replace existing construct with its subspace
-            new.set_construct(construct[tuple(dice)], key=key,
-                              axes=construct_axes, copy=False)
+            new.set_construct(
+                construct[tuple(dice)],
+                key=key,
+                axes=construct_axes,
+                copy=False,
+            )
 
         return new
 
     @_inplace_enabled(default=False)
     def transpose(self, axes, inplace=False):
-        '''Permute the data axes of the metadata constructs.
+        """Permute the data axes of the metadata constructs.
 
-    Each metadata construct has its data axis order changed to the
-    relative ordering defined by the *axes* parameter. For instance,
-    if the given *axes* are ``['X', 'Z', 'Y']`` then a metadata
-    construct whose data axis order is ('Y', 'X') will be tranposed to
-    have data order ('X', 'Y').
+        Each metadata construct has its data axis order changed to the
+        relative ordering defined by the *axes* parameter. For instance,
+        if the given *axes* are ``['X', 'Z', 'Y']`` then a metadata
+        construct whose data axis order is ('Y', 'X') will be tranposed to
+        have data order ('X', 'Y').
 
-    .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.TODO.0
 
-    .. seealso:: `domain_axis`, `flip`
+        .. seealso:: `domain_axis`, `flip`
 
-    :Parameters:
+        :Parameters:
 
-        axes: sequence of `str`
-            Define the new domain axis order.
+            axes: sequence of `str`
+                Define the new domain axis order.
 
-            A domain axis is identified by that which would be
-            selected by passing a given axis description to a call of
-            the `domain_axis` method. For example, a value of ``'X'``
-            would select the domain axis construct returned by
-            ``f.domain_axis('X')``.
+                A domain axis is identified by that which would be
+                selected by passing a given axis description to a call of
+                the `domain_axis` method. For example, a value of ``'X'``
+                would select the domain axis construct returned by
+                ``f.domain_axis('X')``.
 
-            Each domain axis of the domain construct data must be
-            specified.
+                Each domain axis of the domain construct data must be
+                specified.
 
-        constructs: `bool`, optional
-            If True then metadata constructs are also transposed so
-            that their axes are in the same relative order as in the
-            transposed data array of the field. By default metadata
-            constructs are not altered.
+            constructs: `bool`, optional
+                If True then metadata constructs are also transposed so
+                that their axes are in the same relative order as in the
+                transposed data array of the field. By default metadata
+                constructs are not altered.
 
-        {{inplace: `bool`, optional}}
+            {{inplace: `bool`, optional}}
 
-    :Returns:
+        :Returns:
 
-        `Domain` or `None`
-            The domain construct with transposed constructs, or `None`
-            if the operation was in-place.
+            `Domain` or `None`
+                The domain construct with transposed constructs, or `None`
+                if the operation was in-place.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = cf.example_field(7).domain
-    >>> print(d)
-    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
-                    : air_pressure(1) = [850.0] hPa
-                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
-                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
-    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
-                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
-    Coord references: grid_mapping_name:rotated_latitude_longitude
+        >>> d = cf.example_field(7).domain
+        >>> print(d)
+        Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                        : air_pressure(1) = [850.0] hPa
+                        : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                        : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+        Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                        : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+        Coord references: grid_mapping_name:rotated_latitude_longitude
 
 
-    >>> print(d.transpose(['X', 'T', 'Y', 'Z']))
-    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
-                    : air_pressure(1) = [850.0] hPa
-                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
-                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
-    Auxiliary coords: latitude(grid_longitude(5), grid_latitude(4)) = [[52.4243, ..., 51.1163]] degrees_north
-                    : longitude(grid_longitude(5), grid_latitude(4)) = [[8.0648, ..., 10.9238]] degrees_east
-    Coord references: grid_mapping_name:rotated_latitude_longitude
+        >>> print(d.transpose(['X', 'T', 'Y', 'Z']))
+        Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                        : air_pressure(1) = [850.0] hPa
+                        : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                        : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+        Auxiliary coords: latitude(grid_longitude(5), grid_latitude(4)) = [[52.4243, ..., 51.1163]] degrees_north
+                        : longitude(grid_longitude(5), grid_latitude(4)) = [[8.0648, ..., 10.9238]] degrees_east
+        Coord references: grid_mapping_name:rotated_latitude_longitude
 
-        '''
-        d = _inplace_enabled_define_and_cleanup(self)        
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse the axes
         if axes is None:
@@ -1234,7 +1240,7 @@ TODO
             )
 
         axes = d._parse_axes(axes)
-        
+
         if len(set(axes)) != len(d.domain_axes):
             raise ValueError(
                 f"Can't transpose {self.__class__.__name__}. "
@@ -1250,13 +1256,14 @@ TODO
                 # No need to transpose 1-d constructs
                 continue
 
-            # Transpose the construct            
-            iaxes = [construct_axes.index(a)
-                     for a in axes if a in construct_axes]
+            # Transpose the construct
+            iaxes = [
+                construct_axes.index(a) for a in axes if a in construct_axes
+            ]
             construct.transpose(iaxes, inplace=True)
 
             # Update the axis order
-            new_axes = [construct_axes[i] for i in iaxes]            
+            new_axes = [construct_axes[i] for i in iaxes]
             d.set_data_axes(axes=new_axes, key=key)
-            
+
         return d

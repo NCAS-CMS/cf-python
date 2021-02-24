@@ -1,10 +1,12 @@
 from numpy.ma import masked_where as numpy_ma_masked_where
 
 from ..constants import _file_to_fh
-from ..functions import (open_files_threshold_exceeded,
-                         close_one_file,
-                         parse_indices,
-                         get_subspace)
+from ..functions import (
+    open_files_threshold_exceeded,
+    close_one_file,
+    parse_indices,
+    get_subspace,
+)
 
 from ..data.filearray import FileArray
 
@@ -12,11 +14,11 @@ from .functions import _open_um_file, _close_um_file
 
 from .umread.umfile import Rec
 
-_filename_to_file = _file_to_fh.setdefault('UM', {})
+_filename_to_file = _file_to_fh.setdefault("UM", {})
 
 
 class UMFileArray(FileArray):
-    '''A sub-array stored in a PP or UM fields file.
+    """A sub-array stored in a PP or UM fields file.
 
     **Initialization**
 
@@ -65,32 +67,41 @@ class UMFileArray(FileArray):
     ...                 shape=(30, 24), size=720, ndim=2,
     ...                 disk_length=423)
 
-    '''
+    """
+
     def __getitem__(self, indices):
-        '''Implement indexing
+        """Implement indexing
 
-    x.__getitem__(indices) <==> x[indices]
+        x.__getitem__(indices) <==> x[indices]
 
-    Returns a numpy array.
+        Returns a numpy array.
 
-        '''
+        """
         f = self.open()
 
-        rec = Rec.from_file_and_offsets(f,
-                                        self.header_offset,
-                                        self.data_offset,
-                                        self.disk_length)
+        rec = Rec.from_file_and_offsets(
+            f, self.header_offset, self.data_offset, self.disk_length
+        )
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
-        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
+        array = rec.get_data().reshape(
+            int_hdr.item(
+                17,
+            ),
+            int_hdr.item(
+                18,
+            ),
+        )
 
         if indices is not Ellipsis:
             indices = parse_indices(array.shape, indices)
             array = get_subspace(array, indices)
 
-        LBUSER2 = int_hdr.item(38,)
+        LBUSER2 = int_hdr.item(
+            38,
+        )
 
         if LBUSER2 == 3:
             # Return the numpy array now if it is a boolean array
@@ -102,7 +113,9 @@ class UMFileArray(FileArray):
         # Convert to a masked array
         # ------------------------------------------------------------
         # Set the fill_value from BMDI
-        fill_value = real_hdr.item(17,)
+        fill_value = real_hdr.item(
+            17,
+        )
         if fill_value != -1.0e30:
             # -1.0e30 is the flag for no missing data
             if integer_array:
@@ -111,7 +124,7 @@ class UMFileArray(FileArray):
                 fill_value = int(fill_value)
 
             # Mask any missing values
-            mask = (array == fill_value)
+            mask = array == fill_value
             if mask.any():
                 array = numpy_ma_masked_where(mask, array, copy=False)
         # --- End: if
@@ -121,14 +134,18 @@ class UMFileArray(FileArray):
         # either is available
         # ------------------------------------------------------------
         # Treat BMKS as a scale_factor if it is neither 0 nor 1
-        scale_factor = real_hdr.item(18,)
+        scale_factor = real_hdr.item(
+            18,
+        )
         if scale_factor != 1.0 and scale_factor != 0.0:
             if integer_array:
                 scale_factor = int(scale_factor)
             array *= scale_factor
 
         # Treat BDATUM as an add_offset if it is not 0
-        add_offset = real_hdr.item(4,)
+        add_offset = real_hdr.item(
+            4,
+        )
         if add_offset != 0.0:
             if integer_array:
                 add_offset = int(add_offset)
@@ -138,50 +155,48 @@ class UMFileArray(FileArray):
         return array
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
+        """x.__str__() <==> str(x)"""
         return "%s%s in %s" % (self.header_offset, self.shape, self.file)
 
     @property
     def file_pointer(self):
-        '''TODO
-
-        '''
+        """TODO"""
         return (self.file, self.header_offset)
 
     def close(self):
-        '''Close the file containing the data array.
+        """Close the file containing the data array.
 
-    If the file is not open then no action is taken.
+        If the file is not open then no action is taken.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.close()
+        >>> f.close()
 
-        '''
+        """
         _close_um_file(self.file)
 
     def open(self):
-        '''Open the file containing the data array.
+        """Open the file containing the data array.
 
-    :Returns:
+        :Returns:
 
-        `um.umread.umfile.File`
+            `um.umread.umfile.File`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.open()
+        >>> f.open()
 
-        '''
+        """
         return _open_um_file(
-            self.file, fmt=getattr(self, 'fmt', None),
-            word_size=getattr(self, 'word_size', None),
-            byte_ordering=getattr(self, 'byte_ordering', None)
+            self.file,
+            fmt=getattr(self, "fmt", None),
+            word_size=getattr(self, "word_size", None),
+            byte_ordering=getattr(self, "byte_ordering", None),
         )
+
 
 # --- End: class

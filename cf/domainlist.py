@@ -2,9 +2,8 @@ from . import mixin
 from . import ConstructList
 
 
-class DomainList(mixin.FieldDomainList,
-                 ConstructList):
-    '''An ordered sequence of TODO
+class DomainList(mixin.FieldDomainList, ConstructList):
+    """An ordered sequence of TODO
 
     Each element of a domain list is a domain construct.
 
@@ -18,20 +17,22 @@ class DomainList(mixin.FieldDomainList,
 
     .. versionadded:: 3.TODO.0
 
-    '''
+    """
+
     def __init__(self, domains=None):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        domains: (sequence of) `Domain`, optional
-             Create a new list with these domain constructs.
+            domains: (sequence of) `Domain`, optional
+                 Create a new list with these domain constructs.
 
-        '''
+        """
         super().__init__(constructs=domains)
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+
 
 # --- End: class

@@ -2,7 +2,7 @@ import cfdm
 
 
 class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
-    '''An underlying indexed contiguous ragged array.
+    """An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)
     profiles, stored using an indexed contiguous ragged array combines
@@ -18,5 +18,7 @@ class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
+
 # --- End: class

@@ -23,16 +23,37 @@ netcdf = NetCDFWrite(implementation())
 
 
 @_manage_log_level_via_verbosity
-def write(fields, filename, fmt='NETCDF4', overwrite=True,
-          global_attributes=None, file_descriptors=None,
-          external=None, Conventions=None, datatype=None,
-          least_significant_digit=None, endian='native', compress=0,
-          fletcher32=False, shuffle=True, reference_datetime=None,
-          verbose=None, cfa_options=None, mode='w', single=None,
-          double=None, variable_attributes=None, string=True,
-          warn_valid=True, group=True, coordinates=False,
-          HDF_chunksizes=None, no_shuffle=None, unlimited=None):
-    '''Write field constructs to a netCDF file.
+def write(
+    fields,
+    filename,
+    fmt="NETCDF4",
+    overwrite=True,
+    global_attributes=None,
+    file_descriptors=None,
+    external=None,
+    Conventions=None,
+    datatype=None,
+    least_significant_digit=None,
+    endian="native",
+    compress=0,
+    fletcher32=False,
+    shuffle=True,
+    reference_datetime=None,
+    verbose=None,
+    cfa_options=None,
+    mode="w",
+    single=None,
+    double=None,
+    variable_attributes=None,
+    string=True,
+    warn_valid=True,
+    group=True,
+    coordinates=False,
+    HDF_chunksizes=None,
+    no_shuffle=None,
+    unlimited=None,
+):
+    """Write field constructs to a netCDF file.
 
 
     **File format**
@@ -552,24 +573,27 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
     >>> cf.write(f, 'file.nc', Conventions='CMIP-6.2')
 
-    '''
+    """
     if unlimited is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.write', {'unlimited': unlimited},
-            "Use method 'DomainAxis.nc_set_unlimited' instead."
+            "cf.write",
+            {"unlimited": unlimited},
+            "Use method 'DomainAxis.nc_set_unlimited' instead.",
         )  # pragma: no cover
 
     if no_shuffle is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.write', {'no_shuffle': no_shuffle},
-            "Use keyword 'shuffle' instead."
+            "cf.write",
+            {"no_shuffle": no_shuffle},
+            "Use keyword 'shuffle' instead.",
         )  # pragma: no cover
 
     if HDF_chunksizes is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.write', {'HDF_chunksizes': HDF_chunksizes},
+            "cf.write",
+            {"HDF_chunksizes": HDF_chunksizes},
             "HDF chunk sizes may be set for individual field constructs "
-            "prior to writing, instead."
+            "prior to writing, instead.",
         )  # pragma: no cover
 
     # Flatten the sequence of intput fields
@@ -606,8 +630,9 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         # --- End: if
 
         if single is not None and double is not None:
-            raise ValueError("Can't set both the single and double "
-                             "parameters")
+            raise ValueError(
+                "Can't set both the single and double " "parameters"
+            )
 
         if single is not None and not single:
             double = True
@@ -616,55 +641,69 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             single = True
 
         if single:
-            datatype = {numpy.dtype(float): numpy.dtype('float32'),
-                        numpy.dtype(int): numpy.dtype('int32')}
+            datatype = {
+                numpy.dtype(float): numpy.dtype("float32"),
+                numpy.dtype(int): numpy.dtype("int32"),
+            }
 
         if double:
-            datatype = {numpy.dtype('float32'): numpy.dtype(float),
-                        numpy.dtype('int32'): numpy.dtype(int)}
+            datatype = {
+                numpy.dtype("float32"): numpy.dtype(float),
+                numpy.dtype("int32"): numpy.dtype(int),
+            }
 
         extra_write_vars = {
-            'cfa': False,
-            'cfa_options': {},
-            'reference_datetime': reference_datetime,
+            "cfa": False,
+            "cfa_options": {},
+            "reference_datetime": reference_datetime,
         }
 
         # CFA options
-        if fmt in ('CFA', 'CFA4'):
-            extra_write_vars['cfa'] = True
-            fmt = 'NETCDF4'
+        if fmt in ("CFA", "CFA4"):
+            extra_write_vars["cfa"] = True
+            fmt = "NETCDF4"
             if cfa_options:
-                extra_write_vars['cfa_options'] = cfa_options
-        elif fmt == 'CFA3':
-            extra_write_vars['cfa'] = True
-            fmt = 'NETCDF3_CLASSIC'
+                extra_write_vars["cfa_options"] = cfa_options
+        elif fmt == "CFA3":
+            extra_write_vars["cfa"] = True
+            fmt = "NETCDF3_CLASSIC"
             if cfa_options:
-                extra_write_vars['cfa_options'] = cfa_options
+                extra_write_vars["cfa_options"] = cfa_options
         # --- End: if
 
-        if extra_write_vars['cfa']:
+        if extra_write_vars["cfa"]:
             if Conventions:
                 if isinstance(Conventions, str):
                     Conventions = (Conventions,)
 
-                Conventions = tuple(Conventions) + ('CFA',)
+                Conventions = tuple(Conventions) + ("CFA",)
             else:
-                Conventions = 'CFA'
+                Conventions = "CFA"
         # --- End: if
 
-        netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
-                     global_attributes=global_attributes,
-                     variable_attributes=variable_attributes,
-                     file_descriptors=file_descriptors,
-                     external=external, Conventions=Conventions,
-                     datatype=datatype,
-                     least_significant_digit=least_significant_digit,
-                     endian=endian, compress=compress,
-                     shuffle=shuffle, fletcher32=fletcher32,
-                     verbose=verbose, string=string,
-                     warn_valid=warn_valid, group=group,
-                     coordinates=coordinates,
-                     extra_write_vars=extra_write_vars)
+        netcdf.write(
+            fields,
+            filename,
+            fmt=fmt,
+            overwrite=overwrite,
+            global_attributes=global_attributes,
+            variable_attributes=variable_attributes,
+            file_descriptors=file_descriptors,
+            external=external,
+            Conventions=Conventions,
+            datatype=datatype,
+            least_significant_digit=least_significant_digit,
+            endian=endian,
+            compress=compress,
+            shuffle=shuffle,
+            fletcher32=fletcher32,
+            verbose=verbose,
+            string=string,
+            warn_valid=warn_valid,
+            group=group,
+            coordinates=coordinates,
+            extra_write_vars=extra_write_vars,
+        )
     # --- End: if
 
     if mpi_on and write_only_on_pe0:

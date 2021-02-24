@@ -1,15 +1,18 @@
 from ..constants import _file_to_fh
-from ..functions import (open_files_threshold_exceeded,  # abspath
-                         close_one_file)
+from ..functions import (
+    open_files_threshold_exceeded,  # abspath
+    close_one_file,
+)
 
 from .umread.umfile import File, UMFileException
 
-_file_to_UM = _file_to_fh.setdefault('UM', {})
+_file_to_UM = _file_to_fh.setdefault("UM", {})
 
 
-def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
-                  byte_ordering=None):
-    '''Open a UM fields file or PP file and read it into a
+def _open_um_file(
+    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
+):
+    """Open a UM fields file or PP file and read it into a
     `umread.umfile.File` object.
 
     If there is already a `umread.umfile.File` object for the file
@@ -27,8 +30,8 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
     **Examples:**
 
-    '''
-#    filename = abspath(filename)
+    """
+    #    filename = abspath(filename)
 
     f = _file_to_UM.get(filename)
 
@@ -49,10 +52,9 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
         close_one_file()
 
     try:
-        f = File(filename,
-                 byte_ordering=byte_ordering,
-                 word_size=word_size,
-                 fmt=fmt)
+        f = File(
+            filename, byte_ordering=byte_ordering, word_size=word_size, fmt=fmt
+        )
     except Exception as error:
         try:
             f.close_fd()
@@ -71,7 +73,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
 
 
 def _close_um_file(filename):
-    '''Close a PP or UM fields file.
+    """Close a PP or UM fields file.
 
     Does nothing if the file is already closed.
 
@@ -86,7 +88,7 @@ def _close_um_file(filename):
 
     **Examples:**
 
-    '''
+    """
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()

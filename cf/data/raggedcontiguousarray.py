@@ -2,7 +2,7 @@ import cfdm
 
 
 class RaggedContiguousArray(cfdm.RaggedContiguousArray):
-    '''An underlying contiguous ragged array.
+    """An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array
     combines all features along a single dimension (the "sample
@@ -14,5 +14,7 @@ class RaggedContiguousArray(cfdm.RaggedContiguousArray):
 
     .. versionadded:: 3.0.0
 
-    '''
+    """
+
+
 # --- End: class

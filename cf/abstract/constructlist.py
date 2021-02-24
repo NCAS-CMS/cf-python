@@ -6,22 +6,24 @@ import cfdm
 
 from ..mixin_container import Container
 
-from ..functions import (_DEPRECATION_ERROR,
-                         _DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_ERROR_METHOD,
-                         _DEPRECATION_ERROR_DICT)
+from ..functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    _DEPRECATION_ERROR_DICT,
+)
 
-from ..decorators import (_deprecated_kwarg_check,
-                          _manage_log_level_via_verbosity)
+from ..decorators import (
+    _deprecated_kwarg_check,
+    _manage_log_level_via_verbosity,
+)
 
 
 logger = logging.getLogger(__name__)
 
 
-class ConstructList(list,
-                    Container,
-                    cfdm.Container):
-    '''An ordered sequence of constructs
+class ConstructList(list, Container, cfdm.Container):
+    """An ordered sequence of constructs
 
     The elements of the list are construct of the same type.
 
@@ -48,102 +50,99 @@ class ConstructList(list,
     is that when an element needs to be assesed for equality its
     `!equals` method is used, rather than the ``==`` operator.
 
-    '''
+    """
+
     def __init__(self, constructs=None):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        constructs: (sequence of) constructs
-             Create a new list with these constructs.
+            constructs: (sequence of) constructs
+                 Create a new list with these constructs.
 
-        '''
+        """
         super(cfdm.Container, self).__init__()
 
         if constructs is not None:
-            if getattr(fields, 'construct_type', None) is not None:
+            if getattr(fields, "construct_type", None) is not None:
                 self.append(constructs)
             else:
                 self.extend(constructs)
 
     def __call__(self, *identities):
-        '''Alias for `cf.{{class}}.select_by_identity`.
-
-        '''
+        """Alias for `cf.{{class}}.select_by_identity`."""
         return self.select_by_identity(*identities)
 
     def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` standard library function.
-
-        '''
+        """Called by the `copy.deepcopy` standard library function."""
         return self.copy()
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-        '''
+        """
         out = [repr(f) for f in self]
-        out = ',\n '.join(out)
-        return '['+out+']'
+        out = ",\n ".join(out)
+        return "[" + out + "]"
 
     def __str__(self):
-        '''Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
-    x.__str__() <==> str(x)
+        x.__str__() <==> str(x)
 
-        '''
+        """
         return repr(self)
 
     def __docstring_method_exclusions__(self):
-        '''Return the names of methods to exclude from docstring
-    substitutions.
+        """Return the names of methods to exclude from docstring
+        substitutions.
 
-    See `_docstring_method_exclusions` for details.
+        See `_docstring_method_exclusions` for details.
 
-        '''
+        """
         return (
-            'append',
-            'extend',
-            'insert',
-            'pop',
-            'reverse',
-            'clear',
+            "append",
+            "extend",
+            "insert",
+            "pop",
+            "reverse",
+            "clear",
         )
 
     # ----------------------------------------------------------------
     # Overloaded list methods
     # ----------------------------------------------------------------
     def __add__(self, x):
-        '''The binary arithmetic operation ``+``
+        """The binary arithmetic operation ``+``
 
-    f.__add__(x) <==> f + x
+        f.__add__(x) <==> f + x
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The concatenation of the list and another sequence.
+            `{{class}}`
+                The concatenation of the list and another sequence.
 
-    **Examples:**
+        **Examples:**
 
-    >>> h = f + g
-    >>> f += g
+        >>> h = f + g
+        >>> f += g
 
-        '''
+        """
         return type(self)(list.__add__(self, x))
 
     def __contains__(self, y):
-        '''Called to implement membership test operators.
+        """Called to implement membership test operators.
 
-    x.__contains__(y) <==> y in x
+        x.__contains__(y) <==> y in x
 
-    {{List comparison}}
+        {{List comparison}}
 
-    Note that ``x in fl`` is equivalent to
-    ``any(f.equals(x) for f in fl)``.
+        Note that ``x in fl`` is equivalent to
+        ``any(f.equals(x) for f in fl)``.
 
-        '''
+        """
         for f in self:
             if f.equals(y):
                 return True
@@ -152,77 +151,77 @@ class ConstructList(list,
         return False
 
     def __mul__(self, n):
-        '''The binary arithmetic operation ``*``
+        """The binary arithmetic operation ``*``
 
-    f.__mul__(n) <==> f * n
+        f.__mul__(n) <==> f * n
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The list added to itself *n* times.
+            `{{class}}`
+                The list added to itself *n* times.
 
-    **Examples:**
+        **Examples:**
 
-    >>> h = f * 2
-    >>> f *= 2
+        >>> h = f * 2
+        >>> f *= 2
 
-        '''
+        """
         return type(self)(list.__mul__(self, n))
 
     def __eq__(self, other):
-        '''The rich comparison operator ``==``
+        """The rich comparison operator ``==``
 
-    f.__eq__(x) <==> f == x
+        f.__eq__(x) <==> f == x
 
-    {{List comparison}}
+        {{List comparison}}
 
-    Note that ``f == x`` is equivalent to ``not f.equals(x)``.
+        Note that ``f == x`` is equivalent to ``not f.equals(x)``.
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-        '''
+        """
         return self.equals(other)
 
     def __getslice__(self, i, j):
-        '''Called to implement evaluation of f[i:j]
+        """Called to implement evaluation of f[i:j]
 
-    f.__getslice__(i, j) <==> f[i:j]
+        f.__getslice__(i, j) <==> f[i:j]
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            Slice of the list from *i* to *j*.
+            `{{class}}`
+                Slice of the list from *i* to *j*.
 
-    **Examples:**
+        **Examples:**
 
-    >>> g = f[0:1]
-    >>> g = f[1:-4]
-    >>> g = f[:1]
-    >>> g = f[1:]
+        >>> g = f[0:1]
+        >>> g = f[1:-4]
+        >>> g = f[:1]
+        >>> g = f[1:]
 
-        '''
+        """
         return type(self)(list.__getslice__(self, i, j))
 
     def __getitem__(self, index):
-        '''Called to implement evaluation of f[index]
+        """Called to implement evaluation of f[index]
 
-    f.__getitem_(index) <==> f[index]
+        f.__getitem_(index) <==> f[index]
 
-    :Returns:
+        :Returns:
 
-            If *index* is an integer then the corresponding list
-            element is returned. If *index* is a slice then a new
-            {{class}} is returned, which may be empty.
+                If *index* is an integer then the corresponding list
+                element is returned. If *index* is a slice then a new
+                {{class}} is returned, which may be empty.
 
-    **Examples:**
+        **Examples:**
 
-    >>> g = f[0]
-    >>> g = f[-1:-4:-1]
-    >>> g = f[2:2:2]
+        >>> g = f[0]
+        >>> g = f[-1:-4:-1]
+        >>> g = f[2:2:2]
 
-        '''
+        """
         out = list.__getitem__(self, index)
 
         if isinstance(out, list):
@@ -231,19 +230,19 @@ class ConstructList(list,
         return out
 
     def __ne__(self, other):
-        '''The rich comparison operator ``!=``
+        """The rich comparison operator ``!=``
 
-    f.__ne__(x) <==> f != x
+        f.__ne__(x) <==> f != x
 
-    {{List comparison}}
+        {{List comparison}}
 
-    Note that ``f != x`` is equivalent to ``not f.equals(x)``.
+        Note that ``f != x`` is equivalent to ``not f.equals(x)``.
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-        '''
+        """
         return not self.equals(other)
 
     # ???
@@ -260,56 +259,56 @@ class ConstructList(list,
     # Methods
     # ----------------------------------------------------------------
     def close(self):
-        '''Close all files referenced by each construct in the list.
+        """Close all files referenced by each construct in the list.
 
-    Note that a closed file will be automatically reopened if its
-    contents are subsequently required.
+        Note that a closed file will be automatically reopened if its
+        contents are subsequently required.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.close()
+        >>> f.close()
 
-        '''
+        """
         for f in self:
             f.close()
 
     def count(self, value):
-        '''Return the number of occurrences of value.
+        """Return the number of occurrences of value.
 
-    {{List comparison}}
+        {{List comparison}}
 
-    Note that ``fl.count(value)`` is equivalent to
-    ``sum(f.equals(value) for f in fl)``.
+        Note that ``fl.count(value)`` is equivalent to
+        ``sum(f.equals(value) for f in fl)``.
 
-    .. seealso:: `list.count`
+        .. seealso:: `list.count`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = cf.{{class}}([a, b, c, a])
-    >>> f.count(a)
-    2
-    >>> f.count(b)
-    1
-    >>> f.count('a string')
-    0
+        >>> f = cf.{{class}}([a, b, c, a])
+        >>> f.count(a)
+        2
+        >>> f.count(b)
+        1
+        >>> f.count('a string')
+        0
 
-        '''
+        """
         return len([None for f in self if f.equals(value)])
 
     def index(self, value, start=0, stop=None):
-        '''Return first index of value.
+        """Return first index of value.
 
-    {{List comparison}}
+        {{List comparison}}
 
-    An exception is raised if there is no such construct.
+        An exception is raised if there is no such construct.
 
-    .. seealso:: `list.index`
+        .. seealso:: `list.index`
 
-        '''
+        """
         if start < 0:
             start = len(self) + start
 
@@ -324,16 +323,17 @@ class ConstructList(list,
         # --- End: for
 
         raise ValueError(
-            "{0!r} is not in {1}".format(value, self.__class__.__name__))
+            "{0!r} is not in {1}".format(value, self.__class__.__name__)
+        )
 
     def remove(self, value):
-        '''Remove first occurrence of value.
+        """Remove first occurrence of value.
 
-    {{List comparison}}
+        {{List comparison}}
 
-    .. seealso:: `list.remove`
+        .. seealso:: `list.remove`
 
-        '''
+        """
         for i, f in enumerate(self):
             if f.equals(value):
                 del self[i]
@@ -341,158 +341,171 @@ class ConstructList(list,
         # --- End: for
 
         raise ValueError(
-            "{0}.remove(x): x not in {0}".format(self.__class__.__name__))
+            "{0}.remove(x): x not in {0}".format(self.__class__.__name__)
+        )
 
     def sort(self, key=None, reverse=False):
-        '''Sort of the list in place.
+        """Sort of the list in place.
 
-    By default the list is sorted by the identities of its constructs,
-    but any sort criteria cna be specified with the *key* parameter.
+        By default the list is sorted by the identities of its constructs,
+        but any sort criteria cna be specified with the *key* parameter.
 
-    The sort is stable.
+        The sort is stable.
 
-    .. versionadded:: 1.0.4
+        .. versionadded:: 1.0.4
 
-    .. seealso:: `reverse`
+        .. seealso:: `reverse`
 
-    :Parameters:
+        :Parameters:
 
-        key: function, optional
-            Specify a function of one argument that is used to extract
-            a comparison key from each construct. By default the list
-            is sorted by construct identity, i.e. the default value of
-            *key* is ``lambda x: x.identity()``.
+            key: function, optional
+                Specify a function of one argument that is used to extract
+                a comparison key from each construct. By default the list
+                is sorted by construct identity, i.e. the default value of
+                *key* is ``lambda x: x.identity()``.
 
-        reverse: `bool`, optional
-            If set to `True`, then the list elements are sorted as if
-            each comparison were reversed.
+            reverse: `bool`, optional
+                If set to `True`, then the list elements are sorted as if
+                each comparison were reversed.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         if key is None:
             key = lambda f: f.identity()
 
         return super().sort(key=key, reverse=reverse)
 
     def copy(self, data=True):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    :Returns:
+        :Returns:
 
-            The deep copy.
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> g = f.copy()
-    >>> g is f
-    False
-    >>> f.equals(g)
-    True
-    >>> import copy
-    >>> h = copy.deepcopy(f)
-    >>> h is f
-    False
-    >>> f.equals(g)
-    True
+        >>> g = f.copy()
+        >>> g is f
+        False
+        >>> f.equals(g)
+        True
+        >>> import copy
+        >>> h = copy.deepcopy(f)
+        >>> h is f
+        False
+        >>> f.equals(g)
+        True
 
-        '''
+        """
         return type(self)([f.copy(data=data) for f in self])
 
-    @_deprecated_kwarg_check('traceback')
+    @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=False,
-               ignore_type=False, ignore=(), traceback=False,
-               unordered=False):
-        '''Whether two lists are the same.
+    def equals(
+        self,
+        other,
+        rtol=None,
+        atol=None,
+        verbose=None,
+        ignore_data_type=False,
+        ignore_fill_value=False,
+        ignore_properties=(),
+        ignore_compression=False,
+        ignore_type=False,
+        ignore=(),
+        traceback=False,
+        unordered=False,
+    ):
+        """Whether two lists are the same.
 
-    Equality requires the two lists to have the same length and for
-    the construct elements to be equal pair-wise, using their
-    `!equals` methods.
+        Equality requires the two lists to have the same length and for
+        the construct elements to be equal pair-wise, using their
+        `!equals` methods.
 
-    Any type of object may be tested but, in general, equality is only
-    possible with another {{class}}, or a subclass of one. See the
-    *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is only
+        possible with another {{class}}, or a subclass of one. See the
+        *ignore_type* parameter.
 
-    Equality is between the constructs is strict by default. This
-    means that for two constructs to be considered equal they must
-    have corresponding metadata constructs and for each pair of
-    constructs:
+        Equality is between the constructs is strict by default. This
+        means that for two constructs to be considered equal they must
+        have corresponding metadata constructs and for each pair of
+        constructs:
 
-    * the same descriptive properties must be present, with the same
-      values and data types, and vector-valued properties must also
-      have same the size and be element-wise equal (see the
-      *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the same
+          values and data types, and vector-valued properties must also
+          have same the size and be element-wise equal (see the
+          *ignore_properties* and *ignore_data_type* parameters), and
 
-    ..
+        ..
 
-    * if there are data arrays then they must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see
-      the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and data
+          type, the same missing data mask, and be element-wise equal (see
+          the *ignore_data_type* parameter).
 
-    {{equals tolerance}}
+        {{equals tolerance}}
 
-    If data arrays are compressed then the compression type and the
-    underlying compressed arrays must be the same, as well as the
-    arrays in their uncompressed forms. See the *ignore_compression*
-    parameter.
+        If data arrays are compressed then the compression type and the
+        underlying compressed arrays must be the same, as well as the
+        arrays in their uncompressed forms. See the *ignore_compression*
+        parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked on
-    any construct.
+        NetCDF elements, such as netCDF variable and dimension names, do
+        not constitute part of the CF data model and so are not checked on
+        any construct.
 
-    :Parameters:
-        other:
-            The object to compare for equality.
+        :Parameters:
+            other:
+                The object to compare for equality.
 
-        {{atol: number, optional}}
+            {{atol: number, optional}}
 
-        {{rtol: number, optional}}
+            {{rtol: number, optional}}
 
-        {{ignore_fill_value: `bool`, optional}}
+            {{ignore_fill_value: `bool`, optional}}
 
-        {{verbose: `int` or `str` or `None`, optional}}
+            {{verbose: `int` or `str` or `None`, optional}}
 
-        ignore_properties: sequence of `str`, optional
-            The names of properties of the field construct (not the TODO
-            metadata constructs) to omit from the comparison. Note
-            that the "Conventions" property is always omitted by
-            default.
+            ignore_properties: sequence of `str`, optional
+                The names of properties of the field construct (not the TODO
+                metadata constructs) to omit from the comparison. Note
+                that the "Conventions" property is always omitted by
+                default.
 
-        {{ignore_data_type: `bool`, optional}}
+            {{ignore_data_type: `bool`, optional}}
 
-        {{ignore_compression: `bool`, optional}}
+            {{ignore_compression: `bool`, optional}}
 
-        unordered: `bool`, optional
-            TODO
+            unordered: `bool`, optional
+                TODO
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether the two lists are equal.
+            `bool`
+                Whether the two lists are equal.
 
-    **Examples:**
+        **Examples:**
 
-    >>> fl.equals(fl)
-    True
-    >>> fl.equals(fl.copy())
-    True
-    >>> fl.equals(fl[:])
-    True
-    >>> fl.equals('a string')
-    False
+        >>> fl.equals(fl)
+        True
+        >>> fl.equals(fl.copy())
+        True
+        >>> fl.equals(fl[:])
+        True
+        >>> fl.equals('a string')
+        False
 
-        '''
+        """
         if ignore:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'equals', {'ignore': ignore},
-                "Use keyword 'ignore_properties' instead."
+                self,
+                "equals",
+                {"ignore": ignore},
+                "Use keyword 'ignore_properties' instead.",
             )  # pragma: no cover
 
         # Check for object identity
@@ -506,7 +519,8 @@ class ConstructList(list,
         elif not isinstance(other, self.__class__):
             logger.info(
                 "{0}: Incompatible type: {1}".format(
-                    self.__class__.__name__, other.__class__.__name__)
+                    self.__class__.__name__, other.__class__.__name__
+                )
             )  # pragma: no cover
             return False
 
@@ -516,8 +530,8 @@ class ConstructList(list,
             logger.info(
                 "{0}: Different numbers of constructs: "
                 "{1}, {2}".format(
-                    self.__class__.__name__,
-                    len_self, len(other))
+                    self.__class__.__name__, len_self, len(other)
+                )
             )  # pragma: no cover
             return False
 
@@ -526,17 +540,20 @@ class ConstructList(list,
             # Check the lists pair-wise
             # ----------------------------------------------------
             for i, (f, g) in enumerate(zip(self, other)):
-                if not f.equals(g, rtol=rtol, atol=atol,
-                                ignore_fill_value=ignore_fill_value,
-                                ignore_properties=ignore_properties,
-                                ignore_compression=ignore_compression,
-                                ignore_data_type=ignore_data_type,
-                                ignore_type=ignore_type,
-                                verbose=verbose):
+                if not f.equals(
+                    g,
+                    rtol=rtol,
+                    atol=atol,
+                    ignore_fill_value=ignore_fill_value,
+                    ignore_properties=ignore_properties,
+                    ignore_compression=ignore_compression,
+                    ignore_data_type=ignore_data_type,
+                    ignore_type=ignore_type,
+                    verbose=verbose,
+                ):
                     logger.info(
                         "{0}: Different constructs at element {1}: "
-                        "{2!r}, {3!r}".format(
-                            self.__class__.__name__, i, f, g)
+                        "{2!r}, {3!r}".format(self.__class__.__name__, i, f, g)
                     )  # pragma: no cover
                     return False
         else:
@@ -554,10 +571,13 @@ class ConstructList(list,
 
             # Check that there are the same identities
             if set(self_identity) != set(other_identity):
-                logger.info("{}: Different sets of identities: {}, {}".format(
-                    self.__class__.__name__,
-                    set(self_identity),
-                    set(other_identity)))  # pragma: no cover
+                logger.info(
+                    "{}: Different sets of identities: {}, {}".format(
+                        self.__class__.__name__,
+                        set(self_identity),
+                        set(other_identity),
+                    )
+                )  # pragma: no cover
                 return False
 
             # Check that there are the same number of variables
@@ -571,7 +591,8 @@ class ConstructList(list,
                             self.__class__.__name__,
                             identity,
                             fl[0].__class__.__name__,
-                            len(fl), len(gl)
+                            len(fl),
+                            len(gl),
                         )
                     )  # pragma: no cover
                     return False
@@ -585,13 +606,17 @@ class ConstructList(list,
                 for f in fl:
                     found_match = False
                     for i, g in enumerate(gl):
-                        if f.equals(g, rtol=rtol, atol=atol,
-                                    ignore_fill_value=ignore_fill_value,
-                                    ignore_properties=ignore_properties,
-                                    ignore_compression=ignore_compression,
-                                    ignore_data_type=ignore_data_type,
-                                    ignore_type=ignore_type,
-                                    verbose=verbose):
+                        if f.equals(
+                            g,
+                            rtol=rtol,
+                            atol=atol,
+                            ignore_fill_value=ignore_fill_value,
+                            ignore_properties=ignore_properties,
+                            ignore_compression=ignore_compression,
+                            ignore_data_type=ignore_data_type,
+                            ignore_type=ignore_type,
+                            verbose=verbose,
+                        ):
                             found_match = True
                             del gl[i]
                             break
@@ -600,8 +625,8 @@ class ConstructList(list,
                 if not found_match:
                     logger.info(
                         "{0}: No {1} equal to: {2!r}".format(
-                            self.__class__.__name__,
-                            g.__class__.__name__, f)
+                            self.__class__.__name__, g.__class__.__name__, f
+                        )
                     )  # pragma: no cover
                     return False
         # --- End: if
@@ -612,88 +637,91 @@ class ConstructList(list,
         return True
 
     def select_by_identity(self, *identities):
-        '''Select list elements by identity.
+        """Select list elements by identity.
 
-    To find the inverse of the selection, use a list comprehension
-    with the `!match_by_identity` method of the constuct elements. For
-    example, to select all constructs whose identity is *not*
-    ``'air_temperature'``:
+        To find the inverse of the selection, use a list comprehension
+        with the `!match_by_identity` method of the constuct elements. For
+        example, to select all constructs whose identity is *not*
+        ``'air_temperature'``:
 
-       >>> gl = cf.{{class}}(
-       ...     x for x in fl if not f.match_by_identity('air_temperature')
-       ... )
+           >>> gl = cf.{{class}}(
+           ...     x for x in fl if not f.match_by_identity('air_temperature')
+           ... )
 
-    .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-    .. seealso:: `select`, `__call__`, `select_by_ncvar`,
-                 `select_by_property`,
-                 `{{package}}.{{class}}.match_by_identity`
+        .. seealso:: `select`, `__call__`, `select_by_ncvar`,
+                     `select_by_property`,
+                     `{{package}}.{{class}}.match_by_identity`
 
-    :Parameters:
+        :Parameters:
 
-        identities: optional
-            Select constructs from the list. By default all constructs
-            are selected. May be one or more of:
+            identities: optional
+                Select constructs from the list. By default all constructs
+                are selected. May be one or more of:
 
-            * A construct identity.
+                * A construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            If no identities are provided then all list elements are
-            selected.
+                If no identities are provided then all list elements are
+                selected.
 
-            *Parameter example:*
-              ``'latitude'``
+                *Parameter example:*
+                  ``'latitude'``
 
-            *Parameter example:*
-              ``'long_name=Air Temperature'``
+                *Parameter example:*
+                  ``'long_name=Air Temperature'``
 
-            *Parameter example:*
-              ``'air_pressure', 'longitude'``
+                *Parameter example:*
+                  ``'air_pressure', 'longitude'``
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The matching constructs.
+            `{{class}}`
+                The matching constructs.
 
-    **Examples:**
+        **Examples:**
 
-    See `{{package}}.{{class}}.match_by_identity`
+        See `{{package}}.{{class}}.match_by_identity`
 
-        '''
+        """
         return type(self)(f for f in self if f.match_by_identity(*identities))
 
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
     def select(self, *identities, **kwargs):
-        '''Alias of `cf.{{class}}.select_by_identity`.
+        """Alias of `cf.{{class}}.select_by_identity`.
 
-    To find the inverse of the selection, use a list comprehension
-    with the `!match_by_identity` method of the constuct elements. For
-    example, to select all constructs whose identity is *not*
-    ``'air_temperature'``:
+        To find the inverse of the selection, use a list comprehension
+        with the `!match_by_identity` method of the constuct elements. For
+        example, to select all constructs whose identity is *not*
+        ``'air_temperature'``:
 
-       >>> gl = cf.{{class}}(
-       ...     f for f in fl if not f.match_by_identity('air_temperature')
-       ... )
+           >>> gl = cf.{{class}}(
+           ...     f for f in fl if not f.match_by_identity('air_temperature')
+           ... )
 
-    .. seealso:: `select_by_identity`, `__call__`
+        .. seealso:: `select_by_identity`, `__call__`
 
-        '''
+        """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, 'select', kwargs,
+                self,
+                "select",
+                kwargs,
                 "Use methods 'select_by_units', 'select_by_construct', "
                 "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
-                "instead."
+                "instead.",
             )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
                 "Use of a {!r} for identities has been deprecated. Use the "
                 "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__)
+                    identities[0].__class__.__name__
+                )
             )  # pragma: no cover
 
         for i in identities:
@@ -704,21 +732,23 @@ class ConstructList(list,
                     "'select_by_rank' instead."
                 )  # pragma: no cover
 
-            if isinstance(i, str) and ':' in i:
+            if isinstance(i, str) and ":" in i:
                 error = True
-                if '=' in i:
-                    index0 = i.index('=')
-                    index1 = i.index(':')
+                if "=" in i:
+                    index0 = i.index("=")
+                    index1 = i.index(":")
                     error = index0 > index1
 
                 if error:
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))
+                            i, i.replace(":", "=", 1)
+                        )
                     )  # pragma: no cover
         # --- End: for
 
         return self.select_by_identity(*identities)
+
 
 # --- End: class

@@ -9,12 +9,13 @@ import cf
 
 class CellMeasureTest(unittest.TestCase):
     filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-#    f = cf.read(filename)[0]
+        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+    )
+    #    f = cf.read(filename)[0]
 
     def test_CellMeasure__repr__str__dump(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures('measure:area').value()
+        x = f.cell_measures("measure:area").value()
 
         _ = repr(x)
         _ = str(x)
@@ -22,29 +23,30 @@ class CellMeasureTest(unittest.TestCase):
 
     def test_CellMeasure_measure(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures('measure:area').value()
+        x = f.cell_measures("measure:area").value()
 
-        self.assertEqual(x.measure, 'area')
+        self.assertEqual(x.measure, "area")
         del x.measure
-        self.assertIsNone(getattr(x, 'measure', None))
-        x.measure = 'qwerty'
-        self.assertEqual(x.measure, 'qwerty')
+        self.assertIsNone(getattr(x, "measure", None))
+        x.measure = "qwerty"
+        self.assertEqual(x.measure, "qwerty")
 
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures('measure:area').value()
+        x = f.cell_measures("measure:area").value()
 
-        self.assertEqual(x.identity(), 'measure:area')
+        self.assertEqual(x.identity(), "measure:area")
         del x.measure
-        self.assertEqual(x.identity(), 'ncvar%cell_measure', x.identity())
+        self.assertEqual(x.identity(), "ncvar%cell_measure", x.identity())
         x.nc_del_variable()
-        self.assertEqual(x.identity(), '')
+        self.assertEqual(x.identity(), "")
+
 
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)

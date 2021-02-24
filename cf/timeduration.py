@@ -8,47 +8,56 @@ import numpy
 
 from .cfdatetime import elements
 from .cfdatetime import dt as cf_dt
-from .functions  import inspect as cf_inspect
-from .units      import Units
+from .functions import inspect as cf_inspect
+from .units import Units
 
 from .data.data import Data
 
-from .decorators import (_deprecated_kwarg_check,
-                         _manage_log_level_via_verbosity)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _manage_log_level_via_verbosity,
+)
 
 
 logger = logging.getLogger(__name__)
 
 # Define some useful units
-_calendar_years = Units('calendar_years')
-_calendar_months = Units('calendar_months')
-_days = Units('days')
-_hours = Units('hours')
-_minutes = Units('minutes')
-_seconds = Units('seconds')
+_calendar_years = Units("calendar_years")
+_calendar_months = Units("calendar_months")
+_days = Units("days")
+_hours = Units("hours")
+_minutes = Units("minutes")
+_seconds = Units("seconds")
 
 # Define some useful constants
-_one_year = Data(1, 'calendar_years')
-_one_day = Data(1, 'day')
-_one_hour = Data(1, 'hour')
-_one_minute = Data(1, 'minute')
-_one_second = Data(1, 'second')
+_one_year = Data(1, "calendar_years")
+_one_day = Data(1, "day")
+_one_hour = Data(1, "hour")
+_one_minute = Data(1, "minute")
+_one_second = Data(1, "second")
 
 # Default month lengths in days
 _default_month_lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-_default_calendar = 'gregorian'
+_default_calendar = "gregorian"
 
-Offset = namedtuple('offset', ('year', 'month', 'day', 'hour',
-                               'minute', 'second', 'microsecond'))
+Offset = namedtuple(
+    "offset",
+    ("year", "month", "day", "hour", "minute", "second", "microsecond"),
+)
 
-_relational_methods = ('__eq__', '__ne__',
-                       '__lt__', '__le__',
-                       '__gt__', '__ge__')
+_relational_methods = (
+    "__eq__",
+    "__ne__",
+    "__lt__",
+    "__le__",
+    "__gt__",
+    "__ge__",
+)
 
 
 class TimeDuration:
-    '''A duration of time.
+    """A duration of time.
 
     The duration of time is a number of either calendar years,
     calendar months, days, hours, minutes or seconds.
@@ -236,85 +245,87 @@ class TimeDuration:
 
     .. seealso:: `cf.dt`, `cf.Data`, `cf.Datetime`
 
-    '''
-    def __init__(self, duration, units=None, month=1, day=1, hour=0,
-                 minute=0, second=0):
-        '''**Initialization**
+    """
 
-    :Parameters:
+    def __init__(
+        self, duration, units=None, month=1, day=1, hour=0, minute=0, second=0
+    ):
+        """**Initialization**
 
-        duration: data-like
-            The length of the time duration.
+        :Parameters:
 
-            A data-like object is any object containing array-like or
-            scalar data which could be used to create a `cf.Data`
-            object.
+            duration: data-like
+                The length of the time duration.
 
-            *Parameter example:*
-              Instances, ``x``, of following types are all examples of
-              data-like objects (because ``cf.Data(x)`` creates a
-              valid `cf.Data` object), `int`, `float`, `str`, `tuple`,
-              `list`, `numpy.ndarray`, `cf.Data`, `cf.Coordinate`,
-              `cf.Field`.
+                A data-like object is any object containing array-like or
+                scalar data which could be used to create a `cf.Data`
+                object.
 
-        units: `str` or `cf.Units`, optional
-            The units of the time duration. Required if, and only if,
-            *duration* is not a `cf.Data` object which already
-            contains the units. Units must be one of calendar years,
-            calendar months, days, hours, minutes or seconds.
+                *Parameter example:*
+                  Instances, ``x``, of following types are all examples of
+                  data-like objects (because ``cf.Data(x)`` creates a
+                  valid `cf.Data` object), `int`, `float`, `str`, `tuple`,
+                  `list`, `numpy.ndarray`, `cf.Data`, `cf.Coordinate`,
+                  `cf.Field`.
 
-            *Parameter example:*
-              ``units='calendar_months'``
+            units: `str` or `cf.Units`, optional
+                The units of the time duration. Required if, and only if,
+                *duration* is not a `cf.Data` object which already
+                contains the units. Units must be one of calendar years,
+                calendar months, days, hours, minutes or seconds.
 
-            *Parameter example:*
-              ``units='days'``
+                *Parameter example:*
+                  ``units='calendar_months'``
 
-            *Parameter example:*
-              ``units=cf.Units('calendar_years')``
+                *Parameter example:*
+                  ``units='days'``
 
-         month, day, hour, minute, second: `int` or `None`, optional
-            The offset used when creating, with the `bounds` method, a
-            time interval containing a given date-time.
+                *Parameter example:*
+                  ``units=cf.Units('calendar_years')``
 
-            .. note:: The offset element *month* is ignored unless the
-                      time duration is at least 1 calendar year.
+             month, day, hour, minute, second: `int` or `None`, optional
+                The offset used when creating, with the `bounds` method, a
+                time interval containing a given date-time.
 
-                      The offset element *day* is ignored unless the
-                      time duration is at least 1 calendar month.
+                .. note:: The offset element *month* is ignored unless the
+                          time duration is at least 1 calendar year.
 
-                      The offset element *hour* is ignored unless the
-                      time duration is at least 1 day
+                          The offset element *day* is ignored unless the
+                          time duration is at least 1 calendar month.
 
-                      The offset element *minute* is ignored unless
-                      the time duration is at least 1 hour.
+                          The offset element *hour* is ignored unless the
+                          time duration is at least 1 day
 
-                      The offset element *second* is ignored unless
-                      the time duration is at least 1 minute
+                          The offset element *minute* is ignored unless
+                          the time duration is at least 1 hour.
 
-            *Parameter example:*
-              >>> cf.TimeDuration(1, 'calendar_month').bounds(
-              ...     cf.dt('2000-1-8'))
-              (cftime.DatetimeGregorian(2000-01-01 00:00:00),
-               cftime.DatetimeGregorian(2000-02-01 00:00:00))
-              >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(
-              ...     cf.dt('2000-1-8'))
-              (cftime.DatetimeGregorian(1999-12-15 00:00:00),
-               cftime.DatetimeGregorian(2000-01-15 00:00:00))
-              >>> cf.TimeDuration(
-              ...     1, 'calendar_month', month=4, day=30).bounds(
-              ...         cf.dt('2000-1-8'))
-              (cftime.DatetimeGregorian(1999-12-30 00:00:00),
-               cftime.DatetimeGregorian(2000-01-30 00:00:00))
+                          The offset element *second* is ignored unless
+                          the time duration is at least 1 minute
 
-    **Examples:**
+                *Parameter example:*
+                  >>> cf.TimeDuration(1, 'calendar_month').bounds(
+                  ...     cf.dt('2000-1-8'))
+                  (cftime.DatetimeGregorian(2000-01-01 00:00:00),
+                   cftime.DatetimeGregorian(2000-02-01 00:00:00))
+                  >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(
+                  ...     cf.dt('2000-1-8'))
+                  (cftime.DatetimeGregorian(1999-12-15 00:00:00),
+                   cftime.DatetimeGregorian(2000-01-15 00:00:00))
+                  >>> cf.TimeDuration(
+                  ...     1, 'calendar_month', month=4, day=30).bounds(
+                  ...         cf.dt('2000-1-8'))
+                  (cftime.DatetimeGregorian(1999-12-30 00:00:00),
+                   cftime.DatetimeGregorian(2000-01-30 00:00:00))
 
-    >>> t = cf.TimeDuration(cf.Data(3 , 'calendar_years'))
-    >>> t = cf.TimeDuration(cf.Data(12 , 'hours'))
-    >>> t = cf.TimeDuration(18 , 'calendar_months')
-    >>> t = cf.TimeDuration(30 , 'days')
-    >>> t = cf.TimeDuration(1 , 'day', hour=6)
+        **Examples:**
 
-        '''
+        >>> t = cf.TimeDuration(cf.Data(3 , 'calendar_years'))
+        >>> t = cf.TimeDuration(cf.Data(12 , 'hours'))
+        >>> t = cf.TimeDuration(18 , 'calendar_months')
+        >>> t = cf.TimeDuration(30 , 'days')
+        >>> t = cf.TimeDuration(1 , 'day', hour=6)
+
+        """
         if units is not None:
             units = Units(units)
             self.duration = Data(abs(duration))
@@ -332,7 +343,8 @@ class TimeDuration:
         if not (units.iscalendartime or units.istime):
             raise ValueError(
                 "Can't create {0} of {1}".format(
-                    self.__class__.__name__, self.duration)
+                    self.__class__.__name__, self.duration
+                )
             )
 
         duration = self.duration
@@ -350,186 +362,176 @@ class TimeDuration:
                     offset[4] = None
                     if duration < _one_minute:
                         offset[5] = None
-#            if units <= _hours and duration < _one_day:
-#                offset[3] = None
-#                if units <= _minutes and duration < _one_hour:
-#                    offset[4] = None
-#                    if units <= _seconds and duration < _one_minute:
-#                        offset[5] = None
+        #            if units <= _hours and duration < _one_day:
+        #                offset[3] = None
+        #                if units <= _minutes and duration < _one_hour:
+        #                    offset[4] = None
+        #                    if units <= _seconds and duration < _one_minute:
+        #                        offset[5] = None
         # --- End: if
         self.offset = Offset(*offset)
 
-# TODO should offset be None for all "higher" units
+        # TODO should offset be None for all "higher" units
 
         self._compound = False
 
         self._NotImplemented_RHS_Data_op = True
 
     def __abs__(self):
-        '''x.__abs__() <==> abs(x)
+        """x.__abs__() <==> abs(x)
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-        '''
+        """
         out = self.copy()
         out.duration = abs(self.duration)
         return out
 
     def __array__(self, *dtype):
-        '''TODO
-        '''
+        """TODO"""
         return self.duration.__array__(*dtype)
 
     def __data__(self):
-        '''Returns a new reference to the `!duration` attribute.
-
-        '''
+        """Returns a new reference to the `!duration` attribute."""
         return self.duration
 
     def __deepcopy__(self, memo):
-        '''Used if copy.deepcopy is called
-
-        '''
+        """Used if copy.deepcopy is called"""
         return self.copy()
 
     def __neg__(self):
-        '''x.__neg__() <==> -x
+        """x.__neg__() <==> -x
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-        '''
+        """
         out = self.copy()
         out.duration *= -1
         return out
 
     def __bool__(self):
-        '''Truth value testing and the built-in operation `bool`
+        """Truth value testing and the built-in operation `bool`
 
-    x.__bool__() <==> bool(x)
+        x.__bool__() <==> bool(x)
 
-        '''
+        """
         return bool(self.duration)
 
     def __int__(self):
-        '''x.__int__() <==> int(x)
-
-        '''
+        """x.__int__() <==> int(x)"""
         return int(self.duration)
 
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        return '<CF {0}: {1}>'.format(self.__class__.__name__, str(self))
+        """x.__repr__() <==> repr(x)"""
+        return "<CF {0}: {1}>".format(self.__class__.__name__, str(self))
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
+        """x.__str__() <==> str(x)"""
+        yyy = [
+            x if y is None else "{0:0>2}".format(y)
+            for x, y in zip(("Y", "M", "D", "h", "m", "s"), self.offset)
+        ]
 
-        '''
-        yyy = [x if y is None else '{0:0>2}'.format(y)
-               for x, y in zip(('Y', 'M', 'D', 'h', 'm', 's'),
-                               self.offset)]
-
-        return '{0} ({1}-{2}-{3} {4}:{5}:{6})'.format(self.iso, *yyy)
+        return "{0} ({1}-{2}-{3} {4}:{5}:{6})".format(self.iso, *yyy)
 
     def __ge__(self, other):
-        '''The rich comparison operator ``>=``
+        """The rich comparison operator ``>=``
 
-    x.__ge__(y) <==> x>=y
+        x.__ge__(y) <==> x>=y
 
-        '''
+        """
 
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__ge__'))
+            return bool(self._binary_operation(other, "__ge__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__ge__')
+            return self._data_binary_operation(other, "__ge__")
 
         return NotImplemented
 
     def __gt__(self, other):
-        '''The rich comparison operator ``>``
+        """The rich comparison operator ``>``
 
-    x.__gt__(y) <==> x>y
+        x.__gt__(y) <==> x>y
 
-        '''
+        """
 
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__gt__'))
+            return bool(self._binary_operation(other, "__gt__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__gt__')
+            return self._data_binary_operation(other, "__gt__")
 
         return NotImplemented
 
     def __le__(self, other):
-        '''The rich comparison operator ``<=``
+        """The rich comparison operator ``<=``
 
-    x.__le__(y) <==> x<=y
+        x.__le__(y) <==> x<=y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__le__'))
+            return bool(self._binary_operation(other, "__le__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__le__')
+            return self._data_binary_operation(other, "__le__")
 
         return NotImplemented
 
     def __lt__(self, other):
-        '''The rich comparison operator ``<``
+        """The rich comparison operator ``<``
 
-    x.__lt__(y) <==> x<y
+        x.__lt__(y) <==> x<y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__lt__'))
+            return bool(self._binary_operation(other, "__lt__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__lt__')
+            return self._data_binary_operation(other, "__lt__")
 
         return NotImplemented
 
     def __eq__(self, other):
-        '''The rich comparison operator ``==``
+        """The rich comparison operator ``==``
 
-    x.__eq__(y) <==> x==y
+        x.__eq__(y) <==> x==y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__eq__'))
+            return bool(self._binary_operation(other, "__eq__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__eq__')
+            return self._data_binary_operation(other, "__eq__")
 
         return NotImplemented
 
     def __ne__(self, other):
-        '''The rich comparison operator ``!=``
+        """The rich comparison operator ``!=``
 
-    x.__ne__(y) <==> x!=y
+        x.__ne__(y) <==> x!=y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, '__ne__'))
+            return bool(self._binary_operation(other, "__ne__"))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__ne__')
+            return self._data_binary_operation(other, "__ne__")
 
         return NotImplemented
 
     def __add__(self, other):
-        '''The binary arithmetic operation ``+``
+        """The binary arithmetic operation ``+``
 
-    x.__add__(y) <==> x + y
+        x.__add__(y) <==> x + y
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__add__')
+            return self._binary_operation(other, "__add__")
 
-        if hasattr(other, 'timetuple'):
+        if hasattr(other, "timetuple"):
             # other is a date-time object
             try:
                 return self._datetime_arithmetic(other, __add__)
@@ -537,193 +539,193 @@ class TimeDuration:
                 return NotImplemented
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__add__')
+            return self._data_arithmetic(other, "__add__")
 
         return NotImplemented
 
     def __sub__(self, other):
-        '''The binary arithmetic operation ``-``
+        """The binary arithmetic operation ``-``
 
-    x.__sub__(y) <==> x - y
+        x.__sub__(y) <==> x - y
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__sub__')
+            return self._binary_operation(other, "__sub__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__sub__')
+            return self._data_arithmetic(other, "__sub__")
 
         return NotImplemented
 
     def __mul__(self, other):
-        '''The binary arithmetic operation ``*``
+        """The binary arithmetic operation ``*``
 
-    x.__mul__(y) <==> x*y
+        x.__mul__(y) <==> x*y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__mul__')
+            return self._binary_operation(other, "__mul__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__mul__')
+            return self._data_arithmetic(other, "__mul__")
 
         return NotImplemented
 
     def __div__(self, other):
-        '''The binary arithmetic operation ``/``
+        """The binary arithmetic operation ``/``
 
-    x.__div__(y) <==> x/y
+        x.__div__(y) <==> x/y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__div__')
+            return self._binary_operation(other, "__div__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__div__')
+            return self._data_arithmetic(other, "__div__")
 
         return NotImplemented
 
     def __floordiv__(self, other):
-        '''The binary arithmetic operation ``//``
+        """The binary arithmetic operation ``//``
 
-    x.__floordiv__(y) <==> x//y
+        x.__floordiv__(y) <==> x//y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__floordiv__')
+            return self._binary_operation(other, "__floordiv__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__floordiv__')
+            return self._data_arithmetic(other, "__floordiv__")
 
         return NotImplemented
 
     def __truediv__(self, other):
-        '''The binary arithmetic operation ``/`` (true division)
+        """The binary arithmetic operation ``/`` (true division)
 
-    x.__truediv__(y) <==> x/y
+        x.__truediv__(y) <==> x/y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__truediv__')
+            return self._binary_operation(other, "__truediv__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__truediv__')
+            return self._data_arithmetic(other, "__truediv__")
 
         return NotImplemented
 
     def __iadd__(self, other):
-        '''The augmented arithmetic assignment ``+=``
+        """The augmented arithmetic assignment ``+=``
 
-    x.__iadd__(y) <==> x+=y
+        x.__iadd__(y) <==> x+=y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__iadd__', True)
+            return self._binary_operation(other, "__iadd__", True)
 
         return NotImplemented
 
     def __idiv__(self, other):
-        '''The augmented arithmetic assignment ``/=``
+        """The augmented arithmetic assignment ``/=``
 
-    x.__idiv__(y) <==> x /= y
+        x.__idiv__(y) <==> x /= y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__idiv__', True)
+            return self._binary_operation(other, "__idiv__", True)
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__idiv__', True)
+            return self._data_binary_operation(other, "__idiv__", True)
 
         return NotImplemented
 
     def __itruediv__(self, other):
-        '''The augmented arithmetic assignment ``/=`` (true division)
+        """The augmented arithmetic assignment ``/=`` (true division)
 
-    x.__truediv__(y) <==> x/y
+        x.__truediv__(y) <==> x/y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__itruediv__', True)
+            return self._binary_operation(other, "__itruediv__", True)
 
         return NotImplemented
 
     def __ifloordiv__(self, other):
-        '''The augmented arithmetic assignment ``//=``
+        """The augmented arithmetic assignment ``//=``
 
-    x.__ifloordiv__(y) <==> x//=y
+        x.__ifloordiv__(y) <==> x//=y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__ifloordiv__', True)
+            return self._binary_operation(other, "__ifloordiv__", True)
 
         return NotImplemented
 
     def __imul__(self, other):
-        '''The augmented arithmetic assignment ``*=``
+        """The augmented arithmetic assignment ``*=``
 
-    x.__imul__(y) <==> x *= y
+        x.__imul__(y) <==> x *= y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__imul__', True)
+            return self._binary_operation(other, "__imul__", True)
 
         return NotImplemented
 
     def __isub__(self, other):
-        '''The augmented arithmetic assignment ``-=``
+        """The augmented arithmetic assignment ``-=``
 
-    x.__isub__(y) <==> x -= y
+        x.__isub__(y) <==> x -= y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__isub__', True)
+            return self._binary_operation(other, "__isub__", True)
 
         return NotImplemented
 
     def __imod__(self, other):
-        '''The augmented arithmetic assignment ``%=``
+        """The augmented arithmetic assignment ``%=``
 
-    x.__imod__(y) <==> x%=y
+        x.__imod__(y) <==> x%=y
 
-        '''
+        """
         if isinstance(other, (int, float)):
-            return self._binary_operation(other, '__imod__', True)
+            return self._binary_operation(other, "__imod__", True)
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, '__imod__', True)
+            return self._data_binary_operation(other, "__imod__", True)
 
         return NotImplemented
 
     def __radd__(self, other):
-        '''The binary arithmetic operation ``+`` with reflected operands
+        """The binary arithmetic operation ``+`` with reflected operands
 
-    x.__radd__(y) <==> y+x
+        x.__radd__(y) <==> y+x
 
-        '''
+        """
         return self + other
 
     def __rmul__(self, other):
-        '''The binary arithmetic operation ``*`` with reflected operands
+        """The binary arithmetic operation ``*`` with reflected operands
 
-    x.__rmul__(y) <==> y*x
+        x.__rmul__(y) <==> y*x
 
-        '''
+        """
         return self * other
 
     def __rsub__(self, other):
-        '''The binary arithmetic operation ``-`` with reflected operands
+        """The binary arithmetic operation ``-`` with reflected operands
 
-    x.__rsub__(y) <==> y - x
+        x.__rsub__(y) <==> y - x
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__rsub__')
+            return self._binary_operation(other, "__rsub__")
 
-        if hasattr(other, 'timetuple'):
+        if hasattr(other, "timetuple"):
             # other is a date-time object
             try:
                 return self._datetime_arithmetic(other, __sub__)
@@ -733,27 +735,27 @@ class TimeDuration:
         return NotImplemented
 
     def __mod__(self, other):
-        '''The binary arithmetic operation ``%``
+        """The binary arithmetic operation ``%``
 
-    x.__mod__(y) <==> x % y
+        x.__mod__(y) <==> x % y
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__mod__')
+            return self._binary_operation(other, "__mod__")
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, '__mod__')
+            return self._data_arithmetic(other, "__mod__")
 
         return NotImplemented
 
     def __rmod__(self, other):
-        '''The binary arithmetic operation ``%`` with reflected operands
+        """The binary arithmetic operation ``%`` with reflected operands
 
-    x.__rmod__(y) <==> y % x
+        x.__rmod__(y) <==> y % x
 
-        '''
+        """
         if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, '__rmod__')
+            return self._binary_operation(other, "__rmod__")
 
         return NotImplemented
 
@@ -761,9 +763,7 @@ class TimeDuration:
     # Private methods
     # ----------------------------------------------------------------
     def _binary_operation(self, other, method, inplace=False):
-        '''TODO
-
-        '''
+        """TODO"""
         if inplace:
             new = self
         else:
@@ -771,7 +771,7 @@ class TimeDuration:
 
         self_units = self.duration.Units
 
-        other = getattr(other, 'duration', other)
+        other = getattr(other, "duration", other)
 
         duration = getattr(new.duration, method)(other)
 
@@ -780,18 +780,27 @@ class TimeDuration:
         if duration.size != 1:
             raise ValueError(
                 "Can't create {} with more than one value: {!r}".format(
-                    self.__class__.__name__, duration))
+                    self.__class__.__name__, duration
+                )
+            )
 
         if duration < 0:
             raise ValueError(
                 "Can't create {} with with negative duration {!r}".format(
-                    self.__class__.__name__, duration))
+                    self.__class__.__name__, duration
+                )
+            )
 
-        if (not duration.Units.equals(self.duration.Units) and
-                method not in _relational_methods):
+        if (
+            not duration.Units.equals(self.duration.Units)
+            and method not in _relational_methods
+        ):
             # Operator is not one of ==, !=, >=, >, <=, <
-            raise ValueError("Can't create {} of {!r}".format(
-                self.__class__.__name__, duration.Units))
+            raise ValueError(
+                "Can't create {} of {!r}".format(
+                    self.__class__.__name__, duration.Units
+                )
+            )
 
         if method not in _relational_methods:
             # Operator is not one of ==, !=, >=, >, <=, <
@@ -802,9 +811,7 @@ class TimeDuration:
         return new
 
     def _data_binary_operation(self, other, method, inplace=False):
-        '''TODO
-
-        '''
+        """TODO"""
         if inplace:
             new = self
         else:
@@ -813,25 +820,28 @@ class TimeDuration:
         return getattr(self.duration, method)(other)
 
     def _datetime_arithmetic(self, other, op):
-        '''TODO
+        """TODO
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-    :Parameters:
+        :Parameters:
 
-        other: any object with a `timetuple` method
+            other: any object with a `timetuple` method
 
-        op: `str`
+            op: `str`
 
-    :Returns:
+        :Returns:
 
 
-        '''
+        """
+
         def _dHMS(duration, other, calendar, op):
             units = Units(
-                '{0} since {1}'.format(duration.Units.units, other), calendar)
+                "{0} since {1}".format(duration.Units.units, other), calendar
+            )
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
+
         # --- End: def
 
         duration = self.duration
@@ -856,9 +866,9 @@ class TimeDuration:
         else:
             months = None
 
-        calendar = getattr(other, 'calendar', None)
-#        if calendar == '':
-#            calendar = None
+        calendar = getattr(other, "calendar", None)
+        #        if calendar == '':
+        #            calendar = None
 
         if months is not None:
             y, m = divmod(op(other.month, months), 12)
@@ -869,14 +879,14 @@ class TimeDuration:
             y = other.year + y
 
             d = other.day
-            if calendar != '':
+            if calendar != "":
                 max_days = self.days_in_month(y, m, calendar)
                 if d > max_days:
                     d = max_days
             # --- End: if
 
             # TODO When cftime==1.1.4 is ready use this one line:
-#            return other.replace(year=y, month=m, day=d)
+            #            return other.replace(year=y, month=m, day=d)
             # Instead of these try ... except ... lines:
             try:
                 return other.replace(year=y, month=m, day=d, calendar=calendar)
@@ -889,9 +899,7 @@ class TimeDuration:
             return _dHMS(duration, other, calendar, op)
 
     def _data_arithmetic(self, other, method, inplace=False):
-        '''TODO
-
-        '''
+        """TODO"""
         try:
             dt = other.datetime_array
         except ValueError:
@@ -910,82 +918,87 @@ class TimeDuration:
             return Data(dt, units=other.Units)
 
     def _offset(self, dt):
-        '''TODO
+        """TODO
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-    :Parameters:
+        :Parameters:
 
-        dt: `cf.Datetime` TODO
+            dt: `cf.Datetime` TODO
 
-    :Returns:
+        :Returns:
 
-        `Datetime` TODO
+            `Datetime` TODO
 
-        '''
-        return cf_dt(*[(i if j is None else j)
-                       for i, j in zip(elements(dt), self.offset)],
-                     calendar=getattr(dt, 'calendar', None))
+        """
+        return cf_dt(
+            *[
+                (i if j is None else j)
+                for i, j in zip(elements(dt), self.offset)
+            ],
+            calendar=getattr(dt, "calendar", None)
+        )
 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def iso(self):
-        '''Return the time duration as an ISO 8601-like time duration string.
+        """Return the time duration as an ISO 8601-like time duration string.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> cf.TimeDuration(45, 'days').iso
-    'P45D'
-    >>> cf.TimeDuration(10, 'calendar_years').iso
-    'P10Y'
-    >>> cf.s(5.67).iso
-    'PT5.67S'
-    >>> cf.M(18.5).iso
-    'P18.5M'
+        >>> cf.TimeDuration(45, 'days').iso
+        'P45D'
+        >>> cf.TimeDuration(10, 'calendar_years').iso
+        'P10Y'
+        >>> cf.s(5.67).iso
+        'PT5.67S'
+        >>> cf.M(18.5).iso
+        'P18.5M'
 
-        '''
+        """
         duration = self.duration
         units = duration.Units
 
         if units.equals(_calendar_months):
-            return 'P{0}M'.format(duration.datum())
+            return "P{0}M".format(duration.datum())
         if units.equals(_calendar_years):
-            return 'P{0}Y'.format(duration.datum())
+            return "P{0}Y".format(duration.datum())
         if units.equals(_days):
-            return 'P{0}D'.format(duration.datum())
+            return "P{0}D".format(duration.datum())
         if units.equals(_hours):
-            return 'PT{0}H'.format(duration.datum())
+            return "PT{0}H".format(duration.datum())
         if units.equals(_minutes):
-            return 'PT{0}M'.format(duration.datum())
+            return "PT{0}M".format(duration.datum())
         if units.equals(_seconds):
-            return 'PT{0}S'.format(duration.datum())
+            return "PT{0}S".format(duration.datum())
 
         raise ValueError(
-            "Bad {0} units: {1!r}".format(self.__class__.__name__, units))
+            "Bad {0} units: {1!r}".format(self.__class__.__name__, units)
+        )
 
     @property
     def isint(self):
-        '''True if the time duration is a whole number.
+        """True if the time duration is a whole number.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> cf.TimeDuration(2, 'hours').isint
-    True
-    >>> cf.TimeDuration(2.0, 'hours').isint
-    True
-    >>> cf.TimeDuration(2.5, 'hours').isint
-    False
+        >>> cf.TimeDuration(2, 'hours').isint
+        True
+        >>> cf.TimeDuration(2.0, 'hours').isint
+        True
+        >>> cf.TimeDuration(2.5, 'hours').isint
+        False
 
-        '''
+        """
         duration = self.duration
 
-        if duration.dtype.kind == 'i':
+        if duration.dtype.kind == "i":
             return True
 
         duration = duration.datum()
@@ -993,33 +1006,34 @@ class TimeDuration:
 
     @property
     def Units(self):
-        '''The units of the time duration.
+        """The units of the time duration.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> cf.TimeDuration(3, 'days').Units
-    <CF Units: days>
+        >>> cf.TimeDuration(3, 'days').Units
+        <CF Units: days>
 
-    >>> t = cf.TimeDuration(cf.Data(12, 'calendar_months'))
-    >>> t.Units
-    <CF Units: calendar_months>
-    >>> t.Units = cf.Units('calendar_years')
-    >>> t.Units
-    <CF Units: calendar_years>
-    >>> t
-    <CF TimeDuration: 1.0 calendar_years (from Y-01-01 00:00:00)>
+        >>> t = cf.TimeDuration(cf.Data(12, 'calendar_months'))
+        >>> t.Units
+        <CF Units: calendar_months>
+        >>> t.Units = cf.Units('calendar_years')
+        >>> t.Units
+        <CF Units: calendar_years>
+        >>> t
+        <CF TimeDuration: 1.0 calendar_years (from Y-01-01 00:00:00)>
 
-        '''
+        """
         return self.duration.Units
 
     @Units.setter
     def Units(self, value):
-        duration = getattr(self, 'duration', None)
+        duration = getattr(self, "duration", None)
         if duration is None:
             raise AttributeError(
-                "Can't set units when there is no duration attribute")
+                "Can't set units when there is no duration attribute"
+            )
 
         self.duration.Units = Units(value)
 
@@ -1027,137 +1041,144 @@ class TimeDuration:
     # Methods
     # ----------------------------------------------------------------
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``t.copy()`` is equivalent to ``copy.deepcopy(t)``.
+        ``t.copy()`` is equivalent to ``copy.deepcopy(t)``.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    :Returns:
+        :Returns:
 
-            The deep copy.
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> u = t.copy()
+        >>> u = t.copy()
 
-        '''
+        """
         new = TimeDuration.__new__(TimeDuration)
         new.__dict__ = self.__dict__.copy()
         new.duration = self.duration.copy()
         return new
 
     @classmethod
-    def days_in_month(cls, year, month, calendar=None, leap_month=2,
-                      month_lengths=None):
-        '''The number of days in a specific month in a specific year in a
-    specific calendar.
+    def days_in_month(
+        cls, year, month, calendar=None, leap_month=2, month_lengths=None
+    ):
+        """The number of days in a specific month in a specific year in a
+        specific calendar.
 
-    .. versionadded:: 1.4
+        .. versionadded:: 1.4
 
-    :Parameters:
+        :Parameters:
 
-        year: `int`
-            TODO
+            year: `int`
+                TODO
 
-        month: `int`
-            TODO
+            month: `int`
+                TODO
 
-        calendar: `str`, optional
-            By default, calendar is the mixed Gregorian/Julian
-            calendar as defined by Udunits.
+            calendar: `str`, optional
+                By default, calendar is the mixed Gregorian/Julian
+                calendar as defined by Udunits.
 
-        leap_month: `int`, optional
-            The leap month. By default the leap month is 2, i.e. the
-            second month of the year.
+            leap_month: `int`, optional
+                The leap month. By default the leap month is 2, i.e. the
+                second month of the year.
 
-        month_lengths: sequence of `int`, optional
-            By default, *month_lengths* is ``[31, 28, 31, 30, 31, 30,
-            31, 31, 30, 31, 30, 31]``.
+            month_lengths: sequence of `int`, optional
+                By default, *month_lengths* is ``[31, 28, 31, 30, 31, 30,
+                31, 31, 30, 31, 30, 31]``.
 
-    :Returns:
+        :Returns:
 
-        `int`
-            The number of days in the specified month.
+            `int`
+                The number of days in the specified month.
 
-    **Examples:**
+        **Examples:**
 
-    >>> cf.TimeDuration.days_in_month(2004, 2, calendar='360_day')
-    30
+        >>> cf.TimeDuration.days_in_month(2004, 2, calendar='360_day')
+        30
 
-        '''
+        """
         if month_lengths is None:
             month_lengths = _default_month_lengths
         elif len(month_lengths) != 12:
-            raise ValueError(
-                "month_lengths must be a sequence of 12 elements")
+            raise ValueError("month_lengths must be a sequence of 12 elements")
 
         month1 = month - 1
 
         if calendar in [
-                None, 'standard', 'gregorian', 'proleptic_gregorian', '']:
+            None,
+            "standard",
+            "gregorian",
+            "proleptic_gregorian",
+            "",
+        ]:
             length = month_lengths[month1]
-            if (month == leap_month and
-                    (year % 400 == 0 or (year % 100 != 0 and year % 4 == 0))):
+            if month == leap_month and (
+                year % 400 == 0 or (year % 100 != 0 and year % 4 == 0)
+            ):
                 length += 1
-        elif calendar == '360_day':
+        elif calendar == "360_day":
             length = 30
-        elif calendar in ('noleap', '365_day'):
+        elif calendar in ("noleap", "365_day"):
             length = month_lengths[month1]
-        elif calendar in ('all_leap', '366_day'):
+        elif calendar in ("all_leap", "366_day"):
             length = month_lengths[month1]
             if month == leap_month:
                 length += 1
-        elif calendar == 'julian':
+        elif calendar == "julian":
             length = month_lengths[month1]
             if month == leap_month and year % 4 == 0:
                 length += 1
 
         return length
 
-    @_deprecated_kwarg_check('traceback')
+    @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               traceback=False):
-        '''True if two time durations are equal.
+    def equals(
+        self, other, rtol=None, atol=None, verbose=None, traceback=False
+    ):
+        """True if two time durations are equal.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `equivalent`
+        .. seealso:: `equivalent`
 
-    :Parameters:
+        :Parameters:
 
-        other:
-            The object to compare for equality.
+            other:
+                The object to compare for equality.
 
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
 
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
+            rtol: `float`, optional
+                The relative tolerance for all numerical comparisons, By
+                default the value returned by the `rtol` function is used.
 
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            instances differ.
+            traceback: `bool`, optional
+                If True then print a traceback highlighting where the two
+                instances differ.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the two instances are equal.
+            `bool`
+                Whether or not the two instances are equal.
 
-    **Examples:**
+        **Examples:**
 
-    >>> t = cf.TimeDuration(36, 'calendar_months')
-    >>> u = cf.TimeDuration(3, 'calendar_years')
-    >>> t == u
-    True
-    >>> t.equals(u, traceback=True)
-    TimeDuration: Different durations: <CF Data: 36 calendar_months>, <CF Data: 3 calendar_years>
-    False
+        >>> t = cf.TimeDuration(36, 'calendar_months')
+        >>> u = cf.TimeDuration(3, 'calendar_years')
+        >>> t == u
+        True
+        >>> t.equals(u, traceback=True)
+        TimeDuration: Different durations: <CF Data: 36 calendar_months>, <CF Data: 3 calendar_years>
+        False
 
-        '''
+        """
         # Check each instance's id
         if self is other:
             return True
@@ -1165,79 +1186,80 @@ class TimeDuration:
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             logger.info(
-                "%s: Different type: %s" % (
-                    self.__class__.__name__, other.__class__.__name__)
+                "%s: Different type: %s"
+                % (self.__class__.__name__, other.__class__.__name__)
             )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
         other__dict__ = other.__dict__.copy()
 
-        d0 = self__dict__.pop('duration', None)
-        d1 = other__dict__.pop('duration', None)
+        d0 = self__dict__.pop("duration", None)
+        d1 = other__dict__.pop("duration", None)
 
         if not d0.equals(d1):
             logger.info(
-                "%s: Different durations: %r, %r" % (
-                    self.__class__.__name__, d0, d1)
+                "%s: Different durations: %r, %r"
+                % (self.__class__.__name__, d0, d1)
             )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
             logger.info(
                 "%s: Different default date-time elements: "
-                "%r != %r" % (
-                    self.__class__.__name__, self__dict__, other__dict__)
+                "%r != %r"
+                % (self.__class__.__name__, self__dict__, other__dict__)
             )  # pragma: no cover
             return False
 
         return True
 
-    @_deprecated_kwarg_check('traceback')
+    @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
-    def equivalent(self, other, rtol=None, atol=None, verbose=None,
-                   traceback=False):
-        '''True if two time durations are logically equivalent.
+    def equivalent(
+        self, other, rtol=None, atol=None, verbose=None, traceback=False
+    ):
+        """True if two time durations are logically equivalent.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `equals`
+        .. seealso:: `equals`
 
-    :Parameters:
+        :Parameters:
 
-        other:
-            The object to compare for equivalence.
+            other:
+                The object to compare for equivalence.
 
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
 
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
+            rtol: `float`, optional
+                The relative tolerance for all numerical comparisons, By
+                default the value returned by the `rtol` function is used.
 
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            instances differ.
+            traceback: `bool`, optional
+                If True then print a traceback highlighting where the two
+                instances differ.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not the two instances logically equivalent.
+            `bool`
+                Whether or not the two instances logically equivalent.
 
-    **Examples:**
+        **Examples:**
 
-    >>> t = cf.TimeDuration(36, 'calendar_months')
-    >>> u = cf.TimeDuration(3, 'calendar_years')
-    >>> t == u
-    True
-    >>> t.equivalent(u)
-    True
-    >>> t.equals(u, traceback=True)
-    TimeDuration: Different durations: <CF Data: 12 calendar_months>, <CF Data: 1 calendar_years>
-    False
+        >>> t = cf.TimeDuration(36, 'calendar_months')
+        >>> u = cf.TimeDuration(3, 'calendar_years')
+        >>> t == u
+        True
+        >>> t.equivalent(u)
+        True
+        >>> t.equals(u, traceback=True)
+        TimeDuration: Different durations: <CF Data: 12 calendar_months>, <CF Data: 1 calendar_years>
+        False
 
-        '''
+        """
         # Check each instance's id
         if self is other:
             return True
@@ -1245,158 +1267,160 @@ class TimeDuration:
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             logger.info(
-                "%s: Different type: %s" % (
-                    self.__class__.__name__, other.__class__.__name__)
+                "%s: Different type: %s"
+                % (self.__class__.__name__, other.__class__.__name__)
             )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
         other__dict__ = other.__dict__.copy()
 
-        d0 = self__dict__.pop('duration', None)
-        d1 = other__dict__.pop('duration', None)
+        d0 = self__dict__.pop("duration", None)
+        d1 = other__dict__.pop("duration", None)
         if d0 != d0:
             logger.info(
-                "%s: Non-equivalent durations: %r, %r" % (
-                    self.__class__.__name__, d0, d1)
+                "%s: Non-equivalent durations: %r, %r"
+                % (self.__class__.__name__, d0, d1)
             )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
             logger.info(
                 "%s: Non-equivalent default date-time elements: "
-                "%r != %r" % (
-                    self.__class__.__name__, self__dict__, other__dict__)
+                "%r != %r"
+                % (self.__class__.__name__, self__dict__, other__dict__)
             )  # pragma: no cover
             return False
 
         return True
 
     def inspect(self):
-        '''Inspect the attributes.
+        """Inspect the attributes.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `cf.inspect`
+        .. seealso:: `cf.inspect`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         print(cf_inspect(self))  # pragma: no cover
 
     def interval(self, dt, end=False, iso=None):  # calendar=None,
-        '''Return a time interval of exactly the time duration.
+        """Return a time interval of exactly the time duration.
 
-    The start (or end, if the *end* parameter is True) date-time of
-    the time interval is determined by the date-time given by the *dt*
-    parameter.
+        The start (or end, if the *end* parameter is True) date-time of
+        the time interval is determined by the date-time given by the *dt*
+        parameter.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    .. seealso:: `bounds`
+        .. seealso:: `bounds`
 
-    :Parameters:
+        :Parameters:
 
-        dt:
-            The date-time. One of:
+            dt:
+                The date-time. One of:
 
-            * A `str` specifying an ISO 8601-like date-time string (in
-              which non-Gregorian calendar dates are allowed).
+                * A `str` specifying an ISO 8601-like date-time string (in
+                  which non-Gregorian calendar dates are allowed).
 
-            * `datetime.datetime or subclass `cftime.datetime` (such
-              as `Datetime360Day`).
+                * `datetime.datetime or subclass `cftime.datetime` (such
+                  as `Datetime360Day`).
 
-        end: `bool`, optional
-            If True then the date-time given by the *year*, *month*,
-            *day*, *hour*, *minute* and *second* parameters defines
-            the end of the time interval. By default it defines the
-            start of the time interval.
+            end: `bool`, optional
+                If True then the date-time given by the *year*, *month*,
+                *day*, *hour*, *minute* and *second* parameters defines
+                the end of the time interval. By default it defines the
+                start of the time interval.
 
-        iso: `str`, optional
-            Return the time interval as an ISO 8601 time interval
-            string rather than the default of a tuple of date-time
-            objects. Valid values are (with example outputs for the
-            time interval "3 years from 2007-03-01 13:00:00"):
+            iso: `str`, optional
+                Return the time interval as an ISO 8601 time interval
+                string rather than the default of a tuple of date-time
+                objects. Valid values are (with example outputs for the
+                time interval "3 years from 2007-03-01 13:00:00"):
 
-              ========================  =============================================
-              iso                       Example output
-              ========================  =============================================
-              ``'start and end'``       ``'2007-03-01 13:00:00/2010-03-01 13:00:00'``
-              ``'start and duration'``  ``'2007-03-01 13:00:00/P3Y'``
-              ``'duration and end'``    ``'P3Y/2010-03-01 13:00:00'``
-              ========================  =============================================
+                  ========================  =============================================
+                  iso                       Example output
+                  ========================  =============================================
+                  ``'start and end'``       ``'2007-03-01 13:00:00/2010-03-01 13:00:00'``
+                  ``'start and duration'``  ``'2007-03-01 13:00:00/P3Y'``
+                  ``'duration and end'``    ``'P3Y/2010-03-01 13:00:00'``
+                  ========================  =============================================
 
-    :Returns:
+        :Returns:
 
-            The date-times at each end of the time interval. The first
-            date-time is always earlier than or equal to the second
-            date-time. If *iso* has been set then an ISO 8601 time
-            interval string is returned instead of a tuple.
+                The date-times at each end of the time interval. The first
+                date-time is always earlier than or equal to the second
+                date-time. If *iso* has been set then an ISO 8601 time
+                interval string is returned instead of a tuple.
 
-    **Examples:**
+        **Examples:**
 
-    >>> t = cf.TimeDuration(6, 'calendar_months')
-    >>> t
-    <CF TimeDuration: P6M (Y-M-01 00:00:00)>
-    >>> t.interval(cf.dt(1999, 12))
-    (cftime.DatetimeGregorian(1999-12-01 00:00:00),
-     cftime.DatetimeGregorian(2000-06-01 00:00:00))
+        >>> t = cf.TimeDuration(6, 'calendar_months')
+        >>> t
+        <CF TimeDuration: P6M (Y-M-01 00:00:00)>
+        >>> t.interval(cf.dt(1999, 12))
+        (cftime.DatetimeGregorian(1999-12-01 00:00:00),
+         cftime.DatetimeGregorian(2000-06-01 00:00:00))
 
-    >>> t = cf.TimeDuration(5, 'days', hour=6)
-    >>> t
-    <CF TimeDuration: P5D (Y-M-D 06:00:00)>
-    >>> t.interval(cf.dt(2004, 3, 2), end=True)
-    (cftime.DatetimeGregorian(2004-02-26 00:00:00),
-     cftime.DatetimeGregorian(2004-03-02 00:00:00))
-    >>> t.interval(cf.dt(2004, 3, 2, calendar='noleap'), end=True)
-    (cftime.DatetimeNoLeap(2004-02-25 00:00:00),
-     cftime.DatetimeNoLeap(2004-03-02 00:00:00))
-    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
-    (cftime.Datetime360Day(2004-02-27 00:00:00),
-     cftime.Datetime360Day(2004-03-02 00:00:00))
-    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'),
-    ...            end=True, iso='start and duration')
-    '2004-02-27 00:00:00/P5D'
+        >>> t = cf.TimeDuration(5, 'days', hour=6)
+        >>> t
+        <CF TimeDuration: P5D (Y-M-D 06:00:00)>
+        >>> t.interval(cf.dt(2004, 3, 2), end=True)
+        (cftime.DatetimeGregorian(2004-02-26 00:00:00),
+         cftime.DatetimeGregorian(2004-03-02 00:00:00))
+        >>> t.interval(cf.dt(2004, 3, 2, calendar='noleap'), end=True)
+        (cftime.DatetimeNoLeap(2004-02-25 00:00:00),
+         cftime.DatetimeNoLeap(2004-03-02 00:00:00))
+        >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
+        (cftime.Datetime360Day(2004-02-27 00:00:00),
+         cftime.Datetime360Day(2004-03-02 00:00:00))
+        >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'),
+        ...            end=True, iso='start and duration')
+        '2004-02-27 00:00:00/P5D'
 
-    Create `cf.Query` objects for a time interval - one including both
-    bounds and one which excludes the upper bound:
+        Create `cf.Query` objects for a time interval - one including both
+        bounds and one which excludes the upper bound:
 
-    >>> t = cf.TimeDuration(2, 'calendar_years')
-    >>> interval = t.interval(cf.dt(1999, 12))
-    >>> c = cf.wi(*interval)
-    >>> c
-    <CF Query: (wi [cftime.DatetimeGregorian(1999-12-01 00:00:00), cftime.DatetimeGregorian(2001-12-01 00:00:00)])>
-    >>> c == cf.dt('2001-1-1', calendar='gregorian')
-    True
+        >>> t = cf.TimeDuration(2, 'calendar_years')
+        >>> interval = t.interval(cf.dt(1999, 12))
+        >>> c = cf.wi(*interval)
+        >>> c
+        <CF Query: (wi [cftime.DatetimeGregorian(1999-12-01 00:00:00), cftime.DatetimeGregorian(2001-12-01 00:00:00)])>
+        >>> c == cf.dt('2001-1-1', calendar='gregorian')
+        True
 
-    Create a `cf.Query` object which may be used to test where a time
-    coordinate object's bounds lie inside a time interval:
+        Create a `cf.Query` object which may be used to test where a time
+        coordinate object's bounds lie inside a time interval:
 
-    >>> t = cf.TimeDuration(1, 'calendar_months')
-    >>> c = cf.cellwi(*t.interval(cf.dt(2000, 1), end=True))
-    >>> c
-    <CF Query: [lower_bounds(ge 1999-12-01 00:00:00) & upper_bounds(le 2000-01-01 00:00:00)]>
+        >>> t = cf.TimeDuration(1, 'calendar_months')
+        >>> c = cf.cellwi(*t.interval(cf.dt(2000, 1), end=True))
+        >>> c
+        <CF Query: [lower_bounds(ge 1999-12-01 00:00:00) & upper_bounds(le 2000-01-01 00:00:00)]>
 
-    Create ISO 8601 time interval strings:
+        Create ISO 8601 time interval strings:
 
-    >>> t = cf.TimeDuration(6, 'calendar_years')
-    >>> t.interval(cf.dt(1999, 12), end=True, iso='start and end')
-    '1993-12-01 00:00:00/1999-12-01 00:00:00'
-    >>> t.interval(cf.dt(1999, 12), end=True, iso='start and duration')
-    '1993-12-01 00:00:00/P6Y'
-    >>> t.interval(cf.dt(1999, 12), end=True, iso='duration and end')
-    'P6Y/1999-12-01 00:00:00'
+        >>> t = cf.TimeDuration(6, 'calendar_years')
+        >>> t.interval(cf.dt(1999, 12), end=True, iso='start and end')
+        '1993-12-01 00:00:00/1999-12-01 00:00:00'
+        >>> t.interval(cf.dt(1999, 12), end=True, iso='start and duration')
+        '1993-12-01 00:00:00/P6Y'
+        >>> t.interval(cf.dt(1999, 12), end=True, iso='duration and end')
+        'P6Y/1999-12-01 00:00:00'
 
-        '''
+        """
+
         def _dHMS(duration, dt, end):
             calendar = dt.calendar
             if not calendar:
                 calendar = None
 
-            units = Units('{0} since {1}'.format(duration.Units.units, dt),
-                          calendar)
+            units = Units(
+                "{0} since {1}".format(duration.Units.units, dt), calendar
+            )
             dt1 = Data(0.0, units)
 
             if not end:
@@ -1410,10 +1434,11 @@ class TimeDuration:
                 return dt, dt1  # dt.copy(), dt1
             else:
                 return dt1, dt  # dt1, dt.copy()
+
         # --- End: def
 
-        calendar = getattr(dt, 'calendar', _default_calendar)
-        if calendar == '':
+        calendar = getattr(dt, "calendar", _default_calendar)
+        if calendar == "":
             calendar = _default_calendar
 
         dt = cf_dt(dt, calendar=calendar)
@@ -1480,78 +1505,78 @@ class TimeDuration:
         if not iso:
             return dt0, dt1
 
-        if iso == 'start and end':
-            return '{0}/{1}'.format(dt0, dt1)
-        if iso == 'start and duration':
-            return '{0}/{1}'.format(dt0, self.iso)
-        if iso == 'duration and end':
-            return '{0}/{1}'.format(self.iso, dt1)
+        if iso == "start and end":
+            return "{0}/{1}".format(dt0, dt1)
+        if iso == "start and duration":
+            return "{0}/{1}".format(dt0, self.iso)
+        if iso == "duration and end":
+            return "{0}/{1}".format(self.iso, dt1)
 
     def bounds(self, dt, direction=True):
-        '''Return a time interval containing a date-time.
+        """Return a time interval containing a date-time.
 
-    The interval spans the time duration and starts and ends at
-    date-times consistent with the time duration's offset.
+        The interval spans the time duration and starts and ends at
+        date-times consistent with the time duration's offset.
 
-    The offset of the time duration is used to modify the bounds.
+        The offset of the time duration is used to modify the bounds.
 
-    .. versionadded:: 1.2.3
+        .. versionadded:: 1.2.3
 
-    .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
+        .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
 
-    :Parameters:
+        :Parameters:
 
-        dt: date-time-like
-            The date-time to be contained by the interval. *dt* may be
-            any date-time-like object, such as `cf.Datetime`,
-            `datetime.datetime`, `netCDF4.netcdftime.datetime`, etc.
+            dt: date-time-like
+                The date-time to be contained by the interval. *dt* may be
+                any date-time-like object, such as `cf.Datetime`,
+                `datetime.datetime`, `netCDF4.netcdftime.datetime`, etc.
 
-            *Parameter example:*
-              To find bounds around 1999-16-1 in the Gregorian
-              calendar you could use ``dt=cf.dt(1999, 1, 16)`` or
-              ``dt=datetime.datetime(1999, 1, 16)`` (See `cf.dt` for
-              details).
+                *Parameter example:*
+                  To find bounds around 1999-16-1 in the Gregorian
+                  calendar you could use ``dt=cf.dt(1999, 1, 16)`` or
+                  ``dt=datetime.datetime(1999, 1, 16)`` (See `cf.dt` for
+                  details).
 
-        direction: `bool`, optional
-            If `False` then the bounds are decreasing. By default the
-            bounds are increasing. Note that ``t.bounds(dt,
-            direction=False)`` is equivalent to
-            ``t.bounds(dt)[::-1]``.
+            direction: `bool`, optional
+                If `False` then the bounds are decreasing. By default the
+                bounds are increasing. Note that ``t.bounds(dt,
+                direction=False)`` is equivalent to
+                ``t.bounds(dt)[::-1]``.
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The two bounds.
+            `tuple`
+                The two bounds.
 
-    **Examples:**
+        **Examples:**
 
-    TODO
+        TODO
 
-    >>> t = cf.M()
-    >>> t.bounds(cf.dt(2000, 1, 1))
-    (cftime.DatetimeGregorian(2000-01-01 00:00:00),
-     cftime.DatetimeGregorian(2000-02-01 00:00:00))
+        >>> t = cf.M()
+        >>> t.bounds(cf.dt(2000, 1, 1))
+        (cftime.DatetimeGregorian(2000-01-01 00:00:00),
+         cftime.DatetimeGregorian(2000-02-01 00:00:00))
 
-    >>> t = cf.M(1)
-    >>> t.bounds(cf.dt(2000, 3, 1))
-    (cftime.DatetimeGregorian(2000-03-01 00:00:00),
-     cftime.DatetimeGregorian(2000-04-01 00:00:00))
+        >>> t = cf.M(1)
+        >>> t.bounds(cf.dt(2000, 3, 1))
+        (cftime.DatetimeGregorian(2000-03-01 00:00:00),
+         cftime.DatetimeGregorian(2000-04-01 00:00:00))
 
-    >>> t = cf.M(1, day=15)
-    >>> t.bounds(cf.dt(2000, 3, 1))
-    (cftime.DatetimeGregorian(2000-02-15 00:00:00),
-     cftime.DatetimeGregorian(2000-03-15 00:00:00))
+        >>> t = cf.M(1, day=15)
+        >>> t.bounds(cf.dt(2000, 3, 1))
+        (cftime.DatetimeGregorian(2000-02-15 00:00:00),
+         cftime.DatetimeGregorian(2000-03-15 00:00:00))
 
-    >>> t = cf.M(2, day=15)
-    >>> t.bounds(cf.dt(2000, 3, 1), direction=False)
-    (cftime.DatetimeGregorian(2000-03-15 00:00:00),
-     cftime.DatetimeGregorian(2000-01-15 00:00:00))
+        >>> t = cf.M(2, day=15)
+        >>> t.bounds(cf.dt(2000, 3, 1), direction=False)
+        (cftime.DatetimeGregorian(2000-03-15 00:00:00),
+         cftime.DatetimeGregorian(2000-01-15 00:00:00))
 
-        '''
+        """
         abs_self = abs(self)
 
-        calendar = getattr(dt, 'calendar', _default_calendar)
-        if calendar == '':
+        calendar = getattr(dt, "calendar", _default_calendar)
+        if calendar == "":
             calendar = _default_calendar
 
         dt = cf_dt(dt, calendar=calendar)
@@ -1570,64 +1595,64 @@ class TimeDuration:
             return (dt1, dt0)
 
     def is_day_factor(self):
-        '''Return True if an integer multiple of the time duration is equal
-    to one day.
+        """Return True if an integer multiple of the time duration is equal
+        to one day.
 
-    .. versionadded:: 1.0
+        .. versionadded:: 1.0
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-    **Examples:**
+        **Examples:**
 
-    >>> cf.TimeDuration(0.5, 'days').is_day_factor()
-    True
+        >>> cf.TimeDuration(0.5, 'days').is_day_factor()
+        True
 
-    >>> cf.TimeDuration(1, 'days').is_day_factor()
-    True
-    >>> cf.TimeDuration(0.25, 'days').is_day_factor()
-    True
-    >>> cf.TimeDuration(0.3, 'days').is_day_factor()
-    False
-    >>> cf.TimeDuration(2, 'days').is_day_factor()
-    False
+        >>> cf.TimeDuration(1, 'days').is_day_factor()
+        True
+        >>> cf.TimeDuration(0.25, 'days').is_day_factor()
+        True
+        >>> cf.TimeDuration(0.3, 'days').is_day_factor()
+        False
+        >>> cf.TimeDuration(2, 'days').is_day_factor()
+        False
 
-    >>> cf.TimeDuration(24, 'hours').is_day_factor()
-    True
-    >>> cf.TimeDuration(6, 'hours').is_day_factor()
-    True
-    >>> cf.TimeDuration(7, 'hours').is_day_factor()
-    False
-    >>> cf.TimeDuration(27, 'hours').is_day_factor()
-    False
+        >>> cf.TimeDuration(24, 'hours').is_day_factor()
+        True
+        >>> cf.TimeDuration(6, 'hours').is_day_factor()
+        True
+        >>> cf.TimeDuration(7, 'hours').is_day_factor()
+        False
+        >>> cf.TimeDuration(27, 'hours').is_day_factor()
+        False
 
-    >>> cf.TimeDuration(1440, 'minutes').is_day_factor()
-    True
-    >>> cf.TimeDuration(15, 'minutes').is_day_factor()
-    True
-    >>> cf.TimeDuration(17, 'minutes').is_day_factor()
-    False
-    >>> cf.TimeDuration(2007, 'minutes').is_day_factor()
-    False
+        >>> cf.TimeDuration(1440, 'minutes').is_day_factor()
+        True
+        >>> cf.TimeDuration(15, 'minutes').is_day_factor()
+        True
+        >>> cf.TimeDuration(17, 'minutes').is_day_factor()
+        False
+        >>> cf.TimeDuration(2007, 'minutes').is_day_factor()
+        False
 
-    >>> cf.TimeDuration(86400, 'seconds').is_day_factor()
-    True
-    >>> cf.TimeDuration(45, 'seconds').is_day_factor()
-    True
-    >>> cf.TimeDuration(47, 'seconds').is_day_factor()
-    False
-    >>> cf.TimeDuration(86401, 'seconds').is_day_factor()
-    False
+        >>> cf.TimeDuration(86400, 'seconds').is_day_factor()
+        True
+        >>> cf.TimeDuration(45, 'seconds').is_day_factor()
+        True
+        >>> cf.TimeDuration(47, 'seconds').is_day_factor()
+        False
+        >>> cf.TimeDuration(86401, 'seconds').is_day_factor()
+        False
 
-    >>> cf.TimeDuration(1, 'calendar_months').is_day_factor()
-    False
-    >>> cf.TimeDuration(1, 'calendar_years').is_day_factor()
-    False
+        >>> cf.TimeDuration(1, 'calendar_months').is_day_factor()
+        False
+        >>> cf.TimeDuration(1, 'calendar_years').is_day_factor()
+        False
 
-        '''
+        """
         try:
-            return not Data(1, 'day') % self.duration
+            return not Data(1, "day") % self.duration
         except ValueError:
             return False
 
@@ -1636,7 +1661,7 @@ class TimeDuration:
 
 
 def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of calendar years in a `cf.TimeDuration`
+    """Return a time duration of calendar years in a `cf.TimeDuration`
     object.
 
     ``cf.Y()`` is equivalent to ``cf.TimeDuration(1,
@@ -1680,14 +1705,20 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.Y(0)
     <CF TimeDuration: P0Y (Y-M-01 00:00:00)>
 
-    '''
-    return TimeDuration(duration, 'calendar_years', month=month,
-                        day=day, hour=hour, minute=minute,
-                        second=second)
+    """
+    return TimeDuration(
+        duration,
+        "calendar_years",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 def M(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of calendar months in a `cf.TimeDuration`
+    """Return a time duration of calendar months in a `cf.TimeDuration`
     object.
 
     ``cf.M()`` is equivalent to ``cf.TimeDuration(1, 'calendar_month')``.
@@ -1727,13 +1758,20 @@ def M(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.M(0)
     <CF TimeDuration: P0M (Y-M-01 00:00:00)>
 
-    '''
-    return TimeDuration(duration, 'calendar_months', month=month, day=day,
-                        hour=hour, minute=minute, second=second)
+    """
+    return TimeDuration(
+        duration,
+        "calendar_months",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of days in a `cf.TimeDuration` object.
+    """Return a time duration of days in a `cf.TimeDuration` object.
 
     ``cf.D()`` is equivalent to ``cf.TimeDuration(1, 'day')``.
 
@@ -1773,13 +1811,20 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.D(0)
     <CF TimeDuration: P0D (Y-M-D 00:00:00)>
 
-    '''
-    return TimeDuration(duration, 'days', month=month, day=day,
-                        hour=hour, minute=minute, second=second)
+    """
+    return TimeDuration(
+        duration,
+        "days",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of hours in a `cf.TimeDuration` object.
+    """Return a time duration of hours in a `cf.TimeDuration` object.
 
     ``cf.h()`` is equivalent to ``cf.TimeDuration(1, 'hour')``.
 
@@ -1820,13 +1865,20 @@ def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.h(0)
     <CF TimeDuration: PT0H (Y-M-D h:00:00)>
 
-    '''
-    return TimeDuration(duration, 'hours', month=month, day=day,
-                        hour=hour, minute=minute, second=second)
+    """
+    return TimeDuration(
+        duration,
+        "hours",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of minutes in a `cf.TimeDuration` object.
+    """Return a time duration of minutes in a `cf.TimeDuration` object.
 
     ``cf.m()`` is equivalent to ``cf.TimeDuration(1, 'minute')``.
 
@@ -1867,13 +1919,20 @@ def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.m(0)
     <CF TimeDuration: PT0M (Y-M-D h:m:00)>
 
-    '''
-    return TimeDuration(duration, 'minutes', month=month, day=day,
-                        hour=hour, minute=minute, second=second)
+    """
+    return TimeDuration(
+        duration,
+        "minutes",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
-    '''Return a time duration of seconds in a `cf.TimeDuration` object.
+    """Return a time duration of seconds in a `cf.TimeDuration` object.
 
     ``cf.s()`` is equivalent to ``cf.TimeDuration(1, 'second')``.
 
@@ -1920,6 +1979,13 @@ def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     >>> cf.s(0)
     <CF TimeDuration: PT0S (Y-M-D h:m:s)>
 
-    '''
-    return TimeDuration(duration, 'seconds', month=month, day=day,
-                        hour=hour, minute=minute, second=second)
+    """
+    return TimeDuration(
+        duration,
+        "seconds",
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )

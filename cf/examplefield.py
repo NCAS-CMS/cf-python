@@ -10,17 +10,17 @@ def example_field(n, _implementation=_implementation):
     return cfdm.example_field(n, _implementation=_implementation)
 
 
-example_field.__doc__ = cfdm.example_field.__doc__.replace('cfdm.', 'cf.')
+example_field.__doc__ = cfdm.example_field.__doc__.replace("cfdm.", "cf.")
 
 
 def example_fields(*n, _func=example_field):
     return cfdm.example_fields(*n, _func=_func)
 
 
-example_fields.__doc__ = cfdm.example_fields.__doc__.replace('cfdm.', 'cf.')
+example_fields.__doc__ = cfdm.example_fields.__doc__.replace("cfdm.", "cf.")
 example_fields.__doc__ = example_fields.__doc__.replace(
-    '<Field:', '<CF Field:'
+    "<Field:", "<CF Field:"
 )
 example_fields.__doc__ = example_fields.__doc__.replace(
-    '`list`', '`FieldList`'
+    "`list`", "`FieldList`"
 )

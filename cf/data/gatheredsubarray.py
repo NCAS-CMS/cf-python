@@ -1,5 +1,5 @@
 from functools import reduce
-from operator  import mul
+from operator import mul
 
 import numpy
 
@@ -9,15 +9,14 @@ from . import abstract
 
 
 class GatheredSubarray(abstract.CompressedSubarray):
-    '''TODO
+    """TODO"""
 
-    '''
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        """x.__getitem__(indices) <==> x[indices]
 
-    Returns a numpy array.
+        Returns a numpy array.
 
-        '''
+        """
         # The compressed array
         compressed_array = self.array
 
@@ -26,19 +25,21 @@ class GatheredSubarray(abstract.CompressedSubarray):
         uarray = numpy.ma.masked_all(self.shape, dtype=compressed_array.dtype)
 
         compression = self.compression
-        compressed_dimension = compression['compressed_dimension']
-        compressed_axes = compression['compressed_axes']
-        compressed_part = compression['compressed_part']
-        list_array = compression['indices']
+        compressed_dimension = compression["compressed_dimension"]
+        compressed_axes = compression["compressed_axes"]
+        compressed_part = compression["compressed_part"]
+        list_array = compression["indices"]
 
         # Initialise the uncomprssed array
         n_compressed_axes = len(compressed_axes)
 
         uncompressed_shape = self.shape
         partial_uncompressed_shapes = [
-            reduce(mul, [uncompressed_shape[i]
-                         for i in compressed_axes[j:]], 1)
-            for j in range(1, n_compressed_axes)]
+            reduce(
+                mul, [uncompressed_shape[i] for i in compressed_axes[j:]], 1
+            )
+            for j in range(1, n_compressed_axes)
+        ]
 
         sample_indices = list(compressed_part)
         u_indices = [slice(None)] * self.ndim
@@ -48,12 +49,12 @@ class GatheredSubarray(abstract.CompressedSubarray):
         zeros = [0] * n_compressed_axes
         for j, b in enumerate(list_array):
             # print('b=', b, end=", ")
-            sample_indices[compressed_dimension] = slice(j, j+1)
+            sample_indices[compressed_dimension] = slice(j, j + 1)
 
             # Note that it is important for indices a and b to be
             # integers (rather than the slices a:a+1 and b:b+1) so
             # that these dimensions are dropped from uarray[u_indices]
-            u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
+            u_indices[compressed_axes[0] : compressed_axes[-1] + 1] = zeros
             for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                 if b >= z:
                     (a, b) = divmod(b, z)
@@ -74,5 +75,6 @@ class GatheredSubarray(abstract.CompressedSubarray):
         else:
             indices = parse_indices(self.shape, indices)
             return get_subspace(uarray, indices)
+
 
 # --- End: class
