@@ -8,13 +8,14 @@ import numpy
 import cfdm
 
 from ... import DomainAncillary, Coordinate, Bounds
+from ...functions import relpath
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
-    """TODO"""
+    """TODO."""
 
     def _write_as_cfa(self, cfvar):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -41,9 +42,16 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return True
 
     def _customize_createVariable(self, cfvar, kwargs):
-        """TODO
+        """Customise keyword arguments for
+        `netCDF4.Dataset.createVariable`.
 
         .. versionadded:: 3.0.0
+
+        :Parameters:
+
+            cfvar: cf instance that contains data
+
+            kwargs: `dict`
 
         :Returns:
 
@@ -70,7 +78,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         compressed=False,
         attributes={},
     ):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -149,7 +157,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _write_dimension_coordinate(
         self, f, key, coord, ncdim=None, coordinates=None
     ):
-        """Write a coordinate variable and its bound variable to the file.
+        """Write a coordinate variable and its bound variable to the
+        file.
 
         This also writes a new netCDF dimension to the file and, if
         required, a new netCDF dimension for the bounds.
@@ -266,7 +275,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
 
     def _change_reference_datetime(self, coord):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -393,10 +402,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     strlen = array.dtype.itemsize
                     if strlen > 1:
                         # Convert to an array of characters
-                        array = _character_array(array)
+                        array = self._character_array(array)
+
                         # Get the netCDF dimension for the string length
                         ncdim_strlen = [
-                            _string_length_dimension(strlen, g=None)
+                            self._string_length_dimension(strlen, g=None)
                         ]
                 # --- End: if
 
@@ -489,7 +499,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     if dtype.kind != "S":
                         attrs["subarray"][
                             "dtype"
-                        ] = _convert_to_netCDF_datatype(dtype)
+                        ] = self._convert_to_netCDF_datatype(dtype)
 
                 # FORMAT:
                 sfmt = attrs.pop("format", None)
@@ -564,8 +574,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return "".join(random.choice(hexdigits) for i in range(size))
 
     def _convert_to_builtin_type(self, x):
-        """Convert a non-JSON-encodable object to a JSON-encodable built-in
-        type.
+        """Convert a non-JSON-encodable object to a JSON-encodable
+        built-in type.
 
         Possible conversions are:
 
@@ -590,11 +600,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         **Examples:**
 
-        >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+        >>> type(_convert_to_builtin_type(numpy.bool_(True)))
         bool
-        >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+        >>> type(_convert_to_builtin_type(numpy.array([1.0])[0]))
         double
-        >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+        >>> type(_convert_to_builtin_type(numpy.array([2])[0]))
         int
 
         """
@@ -611,6 +621,3 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             "{!r} object can't be converted to a JSON serializable type: "
             "{!r}".format(type(x), x)
         )
-
-
-# --- End: class

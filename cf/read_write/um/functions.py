@@ -1,10 +1,10 @@
-from ..constants import _file_to_fh
-from ..functions import (
+from ...constants import _file_to_fh
+from ...functions import (
     open_files_threshold_exceeded,  # abspath
     close_one_file,
 )
 
-from .umread.umfile import File, UMFileException
+from ...umread_lib.umfile import File
 
 _file_to_UM = _file_to_fh.setdefault("UM", {})
 

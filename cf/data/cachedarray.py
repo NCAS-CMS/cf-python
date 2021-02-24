@@ -9,8 +9,6 @@ from numpy import save as numpy_save
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import is_masked as numpy_ma_is_masked
 
-import cfdm
-
 from . import abstract
 
 from ..functions import parse_indices, get_subspace
@@ -116,13 +114,11 @@ class CachedArray(abstract.FileArray):
     # ----------------------------------------------------------------
     @property
     def _partition_dir(self):
-        """TODO"""
+        """The name of the directory containing the file storing the
+        array."""
         return self._get_component("_partition_dir")
 
     @property
     def _partition_file(self):
-        """TODO"""
+        """The name of the file storing the array on disk."""
         return self._get_component("_partition_file")
-
-
-# --- End: class

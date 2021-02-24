@@ -12,7 +12,6 @@ def example_field(n, _implementation=_implementation):
 
 example_field.__doc__ = cfdm.example_field.__doc__.replace("cfdm.", "cf.")
 
-
 def example_fields(*n, _func=example_field):
     return cfdm.example_fields(*n, _func=_func)
 

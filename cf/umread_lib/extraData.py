@@ -3,6 +3,11 @@ import string
 import numpy
 
 
+def cmp(a, b):
+    """Workaround to get a Python-2-like `cmp` function in Python 3."""
+    return (a > b) - (a < b)
+
+
 _codes = {
     1: ("x", float),
     2: ("y", float),
@@ -22,10 +27,8 @@ _codes = {
 
 
 class ExtraData(dict):
-    """
-    Extends dictionary class with a comparison method between extra
-    data for different records.
-    """
+    """Extends dictionary class with a comparison method between extra
+    data for different records."""
 
     _key_to_type = dict([(key, typ) for key, typ in _codes.values()])
 
@@ -62,7 +65,7 @@ class ExtraData(dict):
         return 0
 
     def __cmp__(self, other):
-        """Compare two extra data dictionaries returned by unpacker"""
+        """Compare two extra data dictionaries returned by unpacker."""
         if other is None:
             return 1
         ka = self.sorted_keys()
@@ -100,10 +103,8 @@ class ExtraDataUnpacker:
         self.is_swapped = not byte_ordering.startswith(sys.byteorder)
 
     def next_words(self, n):
-        """
-        return next n words as raw data string, and pop them off the
-        front of the string
-        """
+        """return next n words as raw data string, and pop them off the
+        front of the string."""
         pos = n * self.ws
         rv = self.rdata[:pos]
         assert len(rv) == pos
@@ -111,9 +112,7 @@ class ExtraDataUnpacker:
         return rv
 
     def tweak_string(self, st):
-        """
-        undo byte-swapping of string and remove trailing NULs
-        """
+        """undo byte-swapping of string and remove trailing NULs."""
         if self.is_swapped:
             # concatenate backwards substrings
             st = string.join(
@@ -128,9 +127,7 @@ class ExtraDataUnpacker:
         return st
 
     def get_data(self):
-        """
-        get list of (key, value) for extra data
-        """
+        """get list of (key, value) for extra data."""
         d = {}
         while self.rdata:
             i = numpy.fromstring(self.next_words(1), self.itype)[0]

@@ -37,8 +37,8 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package at versions 3.0.0 or later works only for Python 3.6 or
-later. (Versions 2.x of cf work only for Python 2.7.)
+The cf package is only Python 3.6 or later. (Versions 2.x of cf work
+only for Python 2.7.)
 
 ----
 
@@ -118,7 +118,7 @@ To install from source:
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.2.0``):
+   you want to install, e.g. ``3.9.0``):
 
    .. code-block:: console
 
@@ -185,13 +185,13 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.2.1 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.4.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.6.0 or up to,
-  but not including, 1.8.7.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.9.0 or up to,
+  but not including, 1.8.10.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.0 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.1 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

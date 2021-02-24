@@ -1,7 +1,8 @@
 import datetime
+import faulthandler
 import unittest
 
-import numpy
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -13,9 +14,6 @@ class DomainAncillaryTest(unittest.TestCase):
         _ = repr(f)
         _ = str(f)
         _ = f.dump(display=False)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

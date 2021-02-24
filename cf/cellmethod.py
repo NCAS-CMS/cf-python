@@ -1,17 +1,14 @@
 import re
 
 from ast import literal_eval as ast_literal_eval
-from copy import deepcopy
 
 import logging
 
 import cfdm
 
-from .data import Data
+from .data.data import Data
 
 from .functions import inspect as cf_inspect
-
-from .data.data import Data
 
 from .functions import _DEPRECATION_ERROR_METHOD
 
@@ -228,19 +225,15 @@ class CellMethod(cfdm.CellMethod):
         return out
 
     def __hash__(self):
-        """
-
-        x.__hash__() <==> hash(x)
-
-        """
+        """x.__hash__() <==> hash(x)"""
         return hash(str(self))
 
     def __eq__(self, y):
-        """x.__eq__(y) <==> x==y"""
+        """x.__eq__(y) <==> x==y."""
         return self.equals(y)
 
     def __ne__(self, other):
-        """x.__ne__(y) <==> x!=y"""
+        """x.__ne__(y) <==> x!=y."""
         return not self.__eq__(other)
 
     @property
@@ -476,7 +469,7 @@ class CellMethod(cfdm.CellMethod):
 
     @property
     def axes(self):
-        """TODO"""
+        """Return the axes of the cell method."""
         return self.get_axes(default=AttributeError())
 
     @axes.setter
@@ -500,7 +493,7 @@ class CellMethod(cfdm.CellMethod):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def expand_intervals(self, inplace=False, i=False):
-        """TODO"""
+        """Expand the cell method interval to cover all of its axes."""
         c = _inplace_enabled_define_and_cleanup(self)
         n_axes = len(c.get_axes(()))
         intervals = c.get_qualifier("interval", ())
@@ -512,7 +505,8 @@ class CellMethod(cfdm.CellMethod):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
-        """TODO
+        """Change the axes of the cell method according to a given
+        mapping.
 
         :Parameters:
 
@@ -561,7 +555,23 @@ class CellMethod(cfdm.CellMethod):
 
         **Examples:**
 
-        TODO
+        >>> a = cf.example_field(1)
+        >>> a.cell_methods()
+        <CF Constructs: cell_method(2)>
+        >>> print(a.cell_methods())
+        Constructs:
+        {'cellmethod0': <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+         'cellmethod1': <CF CellMethod: domainaxis3: maximum>}
+        >>> c0 = a.cell_method('cellmethod0')
+        >>> c1 = a.cell_method('cellmethod1')
+        >>> c0.equivalent(c0)
+        True
+        >>> c0.equivalent(c1)
+        False
+        >>> c1.equivalent(c0)
+        False
+        >>> c1.equivalent(c1)
+        True
 
         """
         if self is other:
@@ -663,12 +673,16 @@ class CellMethod(cfdm.CellMethod):
         # Unsafe to set mutable '{}' as default in the func signature.
         if axis_map is None:  # distinguish from falsy '{}'
             axis_map = {}
-        _DEPRECATED_ERROR_METHOD(
+        _DEPRECATION_ERROR_METHOD(
             self, "write", "Use 'str(cell_method)' instead."
         )  # pragma: no cover
 
     def remove_axes(self, axes):
-        '''Deprecated at version 3.0.0. Use method 'del_axes' instead."'''
+        """Deprecated at version 3.0.0.
+
+        Use method 'del_axes' instead."
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self, "remove_axes", "Use method 'del_axes' instead."
         )  # pragma: no cover

@@ -1,13 +1,17 @@
 import datetime
+import faulthandler
 import inspect
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 import cfdm
 
 
 def _recurse_on_subclasses(klass):
-    """Return as a set all subclasses in a classes' subclass hierarchy."""
+    """Return as a set all subclasses in a classes' subclass
+    hierarchy."""
     return set(klass.__subclasses__()).union(
         [
             sub
@@ -18,11 +22,14 @@ def _recurse_on_subclasses(klass):
 
 
 def _get_all_abbrev_subclasses(klass):
-    """Return set of all subclasses in class hierarchy, filtering some out.
+    """Return set of all subclasses in class hierarchy, filtering some
+    out.
 
-    Filter out cf.mixin.properties*.Properties* (by means of there not being
-    any abbreviated cf.Properties* classes) plus any cfdm classes, since
-    this function needs to take cf subclasses from cfdm classes as well.
+    Filter out cf.mixin.properties*.Properties* (by means of there not
+    being any abbreviated cf.Properties* classes) plus any cfdm classes,
+    since this function needs to take cf subclasses from cfdm classes as
+    well.
+
     """
     return tuple(
         [
@@ -155,13 +162,13 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_default(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
@@ -169,7 +176,7 @@ class DocstringTest(unittest.TestCase):
             )
 
     def test_docstring_classmethod(self):
-        string = "Return the value of the *default* parameter"
+        string = "Return the value of the *default* parameter"  # noqa: F841
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(

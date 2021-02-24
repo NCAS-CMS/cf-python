@@ -1,5 +1,8 @@
 import datetime
+import faulthandler
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -27,9 +30,6 @@ class IndexTest(unittest.TestCase):
         _ = repr(index)
         _ = str(index)
         self.assertIsInstance(index.dump(display=False), str)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

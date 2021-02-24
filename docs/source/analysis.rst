@@ -10,6 +10,9 @@
 
 Version |release| for version |version| of the CF conventions.
 
+All of the Python code in this tutorial is available in an executable
+script (:download:`download <../source/field_analysis.py>`, 8kB).
+
 Note that this page is duplicated in the :ref:`tutorial <Tutorial>`.
 
 .. important:: **This version of cf is for Python 3 only** and there are

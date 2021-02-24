@@ -1,11 +1,14 @@
 import atexit
 import datetime
+import faulthandler
 import inspect
 import os
 import tempfile
 import unittest
 
 import numpy
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -18,7 +21,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -356,9 +359,6 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(
             (z.data.get_count().data.array == numpy.array([2, 3])).all()
         )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -1,7 +1,10 @@
 import datetime
+import faulthandler
 import inspect
 import os
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -18,9 +21,6 @@ class PartitionTest(unittest.TestCase):
     def test_Partition(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

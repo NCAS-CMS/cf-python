@@ -91,7 +91,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return instance
 
     def __getitem__(self, key):
-        """Return a parameter value of the datum or the coordinate conversion.
+        """Return a parameter value of the datum or the coordinate
+        conversion.
 
         x.__getitem__(key) <==> x[key]
 
@@ -149,7 +150,23 @@ class CoordinateReference(cfdm.CoordinateReference):
     # Private methods
     # ----------------------------------------------------------------
     def _matching_values(self, value0, value1):
-        """TODO"""
+        """Whether two coordinate reference construct identity values
+        match.
+
+        :Parameters:
+
+            value0:
+                The first value to be matched.
+
+            value1:
+                The second value to be matched.
+
+        :Returns:
+
+            `bool`
+                Whether or not the two values match.
+
+        """
         if isinstance(value0, Query):
             return bool(value0.evaluate(value1))  # TODO vectors
 
@@ -164,7 +181,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     # ----------------------------------------------------------------
     @property
     def _coordinate_identities(self):
-        """TODO
+        """Return the identity for the coordinate reference construct.
 
         .. versionadded:: 3.0.0
 
@@ -172,8 +189,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return cr_coordinates.get(self.identity(), ())
 
     def has_bounds(self):
-        """Returns False since coordinate reference constructs do not have
-        cell bounds.
+        """Returns False since coordinate reference constructs do not
+        have cell bounds.
 
         **Examples:**
 
@@ -216,8 +233,8 @@ class CoordinateReference(cfdm.CoordinateReference):
 
     @classmethod
     def canonical_units(cls, term):
-        """Return the canonical units for a standard CF coordinate conversion
-        term.
+        """Return the canonical units for a standard CF coordinate
+        conversion term.
 
         :Parameters:
 
@@ -240,7 +257,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return cr_canonical_units.get(term, None)
 
     def close(self):
-        """Close all files referenced by coordinate conversion term values.
+        """Close all files referenced by coordinate conversion term
+        values.
 
         :Returns:
 
@@ -306,7 +324,18 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         **Examples:**
 
-        TODO
+        >>> a = cf.example_field(6)
+        >>> b = cf.example_field(7)
+        >>> r = a.coordinate_reference('coordinatereference0')
+        >>> s = b.coordinate_reference('coordinatereference0')
+        >>> r.equivalent(r)
+        True
+        >>> r.equivalent(s)
+        False
+        >>> s.equivalent(r)
+        False
+        >>> s.equivalent(s)
+        True
 
         """
         if self is other:
@@ -424,7 +453,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return True
 
     def get(self, key, default=None):
-        """Return a parameter value of the datum or the coordinate conversion.
+        """Return a parameter value of the datum or the coordinate
+        conversion.
 
         .. versionadded:: 3.0.0
 
@@ -433,9 +463,13 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         :Parameters:
 
-            key: `str` TODO
+            key: `str`
+                Coordinate reference construct key.
 
-            default: optional TODO
+            default: optional
+                Return the value of the *default* parameter if the
+                specified key has not been set. If set to
+                an `Exception` instance then it will be raised instead.
 
         :Returns:
 
@@ -468,7 +502,30 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         :Parameters:
 
-            TODO
+            identities: optional
+                Define one or more conditions on the identities.
+
+                A construct identity is specified by a string
+                (e.g. ``'latitude'``, ``'long_name=time', ``'ncvar%lat'``,
+                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
+                a compiled regular expression
+                (e.g. ``re.compile('^atmosphere')``) that is compared with
+                the construct's identities via `re.search`.
+
+                A construct has a number of identities, and the condition
+                is satisfied if any of the construct's identities, as
+                returned by the `identities` method, equals the condition
+                value. A construct's identities are those returned by its
+                `!identities` method. In the following example, the
+                construct ``x`` has six identities:
+
+                   >>> x.identities()
+                   ['time',
+                    'long_name=Time',
+                    'foo=bar',
+                    'standard_name=time',
+                    'ncvar%t',
+                    'T']
 
         :Returns:
 
@@ -478,7 +535,13 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         **Examples:**
 
-        TODO
+        >>> c.match_by_identity('time')
+
+        >>> c.match_by_identity(re.compile('^air'))
+
+        >>> c.match_by_identity('air_pressure', 'air_temperature')
+
+        >>> c.match_by_identity('ncvar%t')
 
         """
         if not identities:
@@ -523,7 +586,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         inplace=False,
         i=False,
     ):
-        """Change the TODO
+        """Change the identifiers of a coordinate reference from a
+        mapping.
 
         If an identifier is not in the provided mapping then it is
         set to `None` and thus effectively removed from the coordinate
@@ -596,11 +660,12 @@ class CoordinateReference(cfdm.CoordinateReference):
         return r
 
     def structural_signature(self, rtol=None, atol=None):
-        """TODO
+        """Return the structural signature of a coordinate reference.
 
         :Return:
 
             `tuple`
+
         """
         if rtol is None:
             rtol = float(cf_rtol())
@@ -699,8 +764,9 @@ class CoordinateReference(cfdm.CoordinateReference):
 
     @property
     def conversion(self):
-        """Deprecated at version 3.0.0. Use attribute 'coordinate_conversion'
-        instead.
+        """Deprecated at version 3.0.0.
+
+        Use attribute 'coordinate_conversion' instead.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -722,8 +788,10 @@ class CoordinateReference(cfdm.CoordinateReference):
 
     @property
     def ancillaries(self):
-        """Deprecated at version 3.0.0. Use the
-        'coordinate_conversion.domain_ancillaries' method instead.
+        """Deprecated at version 3.0.0.
+
+        Use the 'coordinate_conversion.domain_ancillaries' method
+        instead.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -735,8 +803,10 @@ class CoordinateReference(cfdm.CoordinateReference):
 
     @property
     def parameters(self):
-        """Deprecated at version 3.0.0. Use methods
-        'coordinate_conversion.parameters' and 'datum.parameters' instead.
+        """Deprecated at version 3.0.0.
+
+        Use methods 'coordinate_conversion.parameters' and
+        'datum.parameters' instead.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -747,8 +817,10 @@ class CoordinateReference(cfdm.CoordinateReference):
         )  # pragma: no cover
 
     def clear(self, coordinates=True, parameters=True, ancillaries=True):
-        """Deprecated at version 3.0.0. Use methods
-        'coordinate_conversion.parameters' and 'datum.parameters' instead.
+        """Deprecated at version 3.0.0.
+
+        Use methods 'coordinate_conversion.parameters' and
+        'datum.parameters' instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -762,6 +834,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Return a name.
 
         Deprecated at version 3.0.0. Use the 'identity' method instead.
+
         """
         _DEPRECATION_ERROR_METHOD(
             self, "name", "Use the 'identity' method instead."
@@ -772,7 +845,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         _DEPRECATION_ERROR_METHOD(self, "all_identifiers")  # pragma: no cover
 
     def set_term(self, term_type, term, value):
-        """Deprecated at version 3.0.0. Use method 'datum.set_parameter',
+        """Deprecated at version 3.0.0.
+
+        Use method 'datum.set_parameter',
         'coordinate_conversion.set_parameter' or
         'coordinate_conversion.set_domain_ancillary' instead.
 

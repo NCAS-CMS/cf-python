@@ -1,5 +1,9 @@
 import datetime
+import faulthandler
+import inspect
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -12,9 +16,8 @@ logger = cf.logging.getLogger(log_name)
 
 
 class dummyClass:
-    """Dummy class acting as container to test methods as proper instance
-    methods, mirroring their context in the codebase.
-    """
+    """Dummy class acting as container to test methods as proper
+    instance methods, mirroring their context in the codebase."""
 
     def __init__(self, verbose=None):
         self.verbose = verbose
@@ -25,9 +28,9 @@ class dummyClass:
         self.warning_message = "Best pay attention to this!"
 
     def func_2(self, good_kwarg=True, traceback=False, bad_kwarg=False):
-        """Dummy function, otherwise trivial, where a True boolean passed as
-        a traceback keyword argument will ultimately raise an error.
-        """
+        """Dummy function, otherwise trivial, where a True boolean
+        passed as a traceback keyword argument will ultimately raise an
+        error."""
         if traceback:
             cf.functions._DEPRECATION_ERROR_KWARGS(
                 self, "another_func", traceback=True
@@ -36,9 +39,9 @@ class dummyClass:
 
     @cf.decorators._deprecated_kwarg_check("traceback")
     def decorated_func_2(self, good_kwarg=True, traceback=False):
-        """Dummy function equivalent to 'func_2', but a decorator manages the
-        logic to raise the error on use of a deprecated keyword argument.
-        """
+        """Dummy function equivalent to 'func_2', but a decorator
+        manages the logic to raise the error on use of a deprecated
+        keyword argument."""
         return good_kwarg
 
     # Not testing 'bad_kwarg' here other than to the extent that it does not
@@ -47,16 +50,18 @@ class dummyClass:
     def multikwarg_decorated_func_2(
         self, good_kwarg=True, traceback=False, bad_kwarg=False
     ):
-        """Dummy function equivalent to 'func_2', but a decorator manages the
-        logic to raise the error on use of a deprecated keyword argument.
-        """
+        """Dummy function equivalent to 'func_2', but a decorator
+        manages the logic to raise the error on use of a deprecated
+        keyword argument."""
         return good_kwarg
 
     @cf.decorators._manage_log_level_via_verbose_attr
     def decorated_logging_func(self):
         """Dummy method to test _manage_log_level_via_verbose_attr.
 
-        In particular, to test it interfaces with self.verbose correctly.
+        In particular, to test it interfaces with self.verbose
+        correctly.
+
         """
         logger.debug(self.debug_message)
         logger.detail(self.detail_message)
@@ -71,9 +76,10 @@ class DecoratorsTest(unittest.TestCase):
     """Test decorators module.
 
     These are unit tests on the self-contained decorators applied to an
-    artificial, trivial & not cf-python specific class, so for the cases where
-    decorators are imported directly from cf, there is no need to duplicate
-    such tests which are already in the cf test suite.
+    artificial, trivial & not cf-python specific class, so for the cases
+    where decorators are imported directly from cf, there is no need to
+    duplicate such tests which are already in the cf test suite.
+
     """
 
     def setUp(self):
@@ -90,7 +96,7 @@ class DecoratorsTest(unittest.TestCase):
         res_2 = test_class.decorated_func_2(good_kwarg="good")
         res_3 = test_class.func_2(good_kwarg="good", traceback=False)
         res_4 = test_class.decorated_func_2(good_kwarg="good", traceback=False)
-        res_5 = test_class.multikwarg_decorated_func_2(
+        _ = test_class.multikwarg_decorated_func_2(
             good_kwarg="good", traceback=False
         )
         self.assertEqual(res_1, res_2)

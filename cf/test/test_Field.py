@@ -1,5 +1,6 @@
 import atexit
 import datetime
+import faulthandler
 import inspect
 import itertools
 import os
@@ -18,8 +19,9 @@ try:
 except Exception:
     pass  # test with this dependency will then be skipped by unittest
 
-import cf
+faulthandler.enable()  # to debug seg faults and timeouts
 
+import cf
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -30,7 +32,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -71,8 +73,6 @@ class FieldTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)),
         "DSG_timeSeriesProfile_indexed_contiguous.nc",
     )
-
-    #    f = cf.read(filename)[0]
 
     chunk_sizes = (100000, 300, 34, 17)
     original_chunksize = cf.chunksize()
@@ -439,27 +439,25 @@ class FieldTest(unittest.TestCase):
                     if components:
                         d = False
 
-                    y = f.weights(w, components=components, measure=m, data=d)
-                    y = f.weights(
+                    f.weights(w, components=components, measure=m, data=d)
+                    f.weights(
                         w.transpose(), components=components, measure=m, data=d
                     )
-                    y = f.weights(
-                        w.data, components=components, measure=m, data=d
-                    )
-                    y = f.weights(
+                    f.weights(w.data, components=components, measure=m, data=d)
+                    f.weights(
                         f.data.squeeze(),
                         components=components,
                         measure=m,
                         data=d,
                     )
-                    y = f.weights(components=components, measure=m, data=d)
-                    y = f.weights(
+                    f.weights(components=components, measure=m, data=d)
+                    f.weights(
                         "grid_longitude",
                         components=components,
                         measure=m,
                         data=d,
                     )
-                    y = f.weights(
+                    f.weights(
                         ["grid_longitude"],
                         components=components,
                         measure=m,
@@ -755,7 +753,7 @@ class FieldTest(unittest.TestCase):
             ):
                 message = "method={!r}".format(method)
 
-                i = f.indices(method, time=query1)
+                f.indices(method, time=query1)
 
                 g = f.subspace(method, time=query1)
                 t = g.coordinate("time")
@@ -1103,6 +1101,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.flip("X", inplace=True))
         self.assertTrue(f.equals(g, verbose=1))
 
+    """
     def test_Field_close(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1113,6 +1112,7 @@ class FieldTest(unittest.TestCase):
         _ = repr(f.data)
         for c in f.constructs.filter_by_data().values():
             _ = repr(c.data)
+    """
 
     def test_Field_anchor(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1146,21 +1146,10 @@ class FieldTest(unittest.TestCase):
                 g = f.anchor("grid_longitude", anchor)
                 x0 = g.coordinate("grid_longitude").datum(-1) - period
                 x1 = g.coordinate("grid_longitude").datum(0)
-
-                self.assertGreater(
-                    anchor,
-                    x0,
-                    "INCREASING period={}, x0={}, anchor={}".format(
-                        period, x0, anchor
-                    ),
-                )
-
-                self.assertLessEqual(
-                    anchor,
-                    x1,
-                    "INCREASING period={}, x1={}, anchor={}".format(
-                        period, x1, anchor
-                    ),
+                self.assertTrue(
+                    x0 < anchor <= x1,
+                    "INCREASING period=%s, x0=%s, anchor=%s, x1=%s"
+                    % (period, x0, anchor, x1),
                 )
 
             # Decreasing dimension coordinate
@@ -1169,20 +1158,10 @@ class FieldTest(unittest.TestCase):
                 g = flipped_f.anchor("grid_longitude", anchor)
                 x1 = g.coordinate("grid_longitude").datum(-1) + period
                 x0 = g.coordinate("grid_longitude").datum(0)
-
-                self.assertLess(
-                    anchor,
-                    x1,
-                    "INCREASING period={}, x1={}, anchor={}".format(
-                        period, x1, anchor
-                    ),
-                )
-
-                self.assertGreaterEqual(
-                    anchor,
-                    x0,
-                    "INCREASING period={}, x0={}, anchor={}".format(
-                        period, x0, anchor
+                self.assertTrue(
+                    x1 > anchor >= x0,
+                    "DECREASING period={}, x0={}, anchor={}, x1={}".format(
+                        period, x1, anchor, x0
                     ),
                 )
         # --- End: for
@@ -1358,10 +1337,10 @@ class FieldTest(unittest.TestCase):
         g = cf.Field()
         #        with self.assertRaises(Exception):
         #            g.set_data(cf.Data(list(range(9))))
-        a = g.set_construct(cf.DomainAxis(9))
-        b = g.set_construct(cf.DomainAxis(9))
-        c = g.set_construct(cf.DomainAxis(10))
-        d = g.set_construct(cf.DomainAxis(8))
+        g.set_construct(cf.DomainAxis(9))
+        g.set_construct(cf.DomainAxis(9))
+        g.set_construct(cf.DomainAxis(10))
+        g.set_construct(cf.DomainAxis(8))
         with self.assertRaises(Exception):
             g.set_data(cf.Data(numpy.arange(81).reshape(9, 9)))
         with self.assertRaises(Exception):
@@ -1708,7 +1687,6 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(
                     g.construct("grid_longitude").array, 40
                 )  # TODO
-        # --- End: for
 
         for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, grid_latitude=cf.contains(3))
@@ -1722,7 +1700,6 @@ class FieldTest(unittest.TestCase):
 
             if mode != "full":
                 self.assertEqual(g.construct("grid_latitude").array, 3)
-        # --- End: for
 
         for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, longitude=cf.contains(83))
@@ -1736,11 +1713,10 @@ class FieldTest(unittest.TestCase):
 
             if mode != "full":
                 self.assertEqual(g.construct("longitude").array, 83)
-        # --- End: for
 
         # Calls that should fail
         with self.assertRaises(Exception):
-            f.indices(grid_longitudecf.gt(23), grid_longitude=cf.wi(92, 134))
+            f.indices(longitude=cf.gt(23), grid_longitude=cf.wi(92, 134))
         with self.assertRaises(Exception):
             f.indices(grid_longitude=cf.gt(23), longitude=cf.wi(92, 134))
         with self.assertRaises(Exception):
@@ -2173,7 +2149,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
 
         self.assertIsNone(f.squeeze(inplace=True))
-        g = f.copy()
+
         h = f.copy()
         h.squeeze(inplace=True)
         self.assertTrue(f.equals(h))
@@ -2600,7 +2576,6 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        a = f.array
 
         f = self.f.copy()
         f0 = f.copy()
@@ -2648,7 +2623,6 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        g = f.mask_invalid()
         self.assertIsNone(f.mask_invalid(inplace=True))
 
     def test_Field_del_domain_axis(self):

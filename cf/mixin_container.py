@@ -1,10 +1,10 @@
+""".. note:: This class is not in the cf.mixin package because it
+             needs to be imported by cf.Data, and some of the other
+             mixin classes in cf.mixin themsleves import cf.Data,
+             which would lead to a circular import situation.
+
+"""
 from .docstring import _docstring_substitution_definitions
-
-
-# Note: This class is not in the cf.mixin package because it needs to
-#       be imported by cf.Data, and some of the other mixin classes in
-#       cf.mixin themsleves import cf.Data, which would lead to a
-#       circular import situation.
 
 
 class Container:
@@ -15,8 +15,8 @@ class Container:
     """
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -36,12 +36,10 @@ class Container:
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
         """
         return 0
-
-
-# --- End: class

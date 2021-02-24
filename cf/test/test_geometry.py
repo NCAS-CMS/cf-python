@@ -1,12 +1,11 @@
 import datetime
+import faulthandler
 import inspect
 import os
 import tempfile
 import unittest
 
-
-import numpy
-import netCDF4
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 

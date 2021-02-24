@@ -1,9 +1,12 @@
 import datetime
+import faulthandler
 import inspect
 import os
 import unittest
 
 import numpy
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -306,7 +309,7 @@ class Field_collapseTest(unittest.TestCase):
             for i, year in enumerate(
                 f.subspace(T=cf.month(m)).coord("T").year.unique()
             ):
-                q = cf.month(m) & cf.year(year)
+                _ = cf.month(m) & cf.year(year)
                 x = f.subspace(T=cf.month(m) & cf.year(year))
                 x.data.mean(axes=0, inplace=True)
                 a[i] = x.array

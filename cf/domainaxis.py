@@ -32,7 +32,7 @@ class DomainAxis(cfdm.DomainAxis):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def __hash__(self):
-        """TODO"""
+        """Returns the hash value of the domain axis."""
         return hash(
             (
                 self.__class__.__name__,
@@ -42,7 +42,7 @@ class DomainAxis(cfdm.DomainAxis):
         )
 
     def __eq__(self, other):
-        """The rich comparison operator ``==``
+        """The rich comparison operator ``==``.
 
         x.__eq__(y) <==> x.size==y
 
@@ -50,7 +50,7 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() == int(other)
 
     def __ne__(self, other):
-        """The rich comparison operator ``!=``
+        """The rich comparison operator ``!=``.
 
         x.__ne__(y) <==> x.size!=y
 
@@ -58,7 +58,7 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() != int(other)
 
     def __gt__(self, other):
-        """The rich comparison operator ``>``
+        """The rich comparison operator ``>``.
 
         x.__gt__(y) <==> x.size>y
 
@@ -66,7 +66,7 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() > int(other)
 
     def __ge__(self, other):
-        """The rich comparison operator ``>=``
+        """The rich comparison operator ``>=``.
 
         x.__ge__(y) <==> x.size>=y
 
@@ -74,7 +74,7 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() >= int(other)
 
     def __lt__(self, other):
-        """The rich comparison operator ``<``
+        """The rich comparison operator ``<``.
 
         x.__lt__(y) <==> x.size<y
 
@@ -82,7 +82,7 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() < int(other)
 
     def __le__(self, other):
-        """The rich comparison operator ``<=``
+        """The rich comparison operator ``<=``.
 
         x.__le__(y) <==> x.size<=y
 
@@ -90,35 +90,57 @@ class DomainAxis(cfdm.DomainAxis):
         return self.get_size() <= int(other)
 
     def __add__(self, other):
-        """TODO"""
+        """The binary arithmetic operation ``+``.
+
+        x.__add__(y) <==> x+y
+
+        """
         new = self.copy()
         new.set_size(self.get_size() + int(other))
         return new
 
     def __radd__(self, other):
-        """TODO"""
+        """The binary arithmetic operation ``+`` with reflected
+        operands.
+
+        x.__radd__(y) <==> y+x
+
+        """
         return self + other
 
     def __iadd__(self, other):
-        """TODO"""
+        """The augmented arithmetic assignment ``+=``.
+
+        x.__iadd__(y) <==> x+=y
+
+        """
         self.set_size(self.get_size() + int(other))
         return self
 
     def __sub__(self, other):
-        """TODO"""
+        """The binary arithmetic operation ``-``.
+
+        x.__sub__(y) <==> x - y
+
+        """
         new = self.copy()
         new.set_size(self.get_size() - int(other))
         return new
 
     def __isub__(self, other):
-        """TODO"""
+        """The augmented arithmetic assignment ``-=``.
+
+        x.__isub__(y) <==> x -= y
+
+        """
         self.set_size(self.get_size() - int(other))
         return self
 
     def __int__(self):
-        """TODO
+        """Implements the built-in function `int`.
 
         x.__int__() <==> int(x)
+
         """
         return self.get_size()
 

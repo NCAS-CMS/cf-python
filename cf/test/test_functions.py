@@ -1,10 +1,12 @@
-import atexit
 import datetime
+import faulthandler
 import os
 import platform
 import sys
 import unittest
 import inspect
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -70,8 +72,10 @@ class functionTest(unittest.TestCase):
 
         # Check all keys that should be there are, with correct value type:
         self.assertEqual(len(org), 11)  # update expected len if add new key(s)
-        # Floats expected as values for most keys. Store these for later as
-        # floats need assertAlmostEqual rather than assertEqual tests:
+
+        # Floats expected as values for most keys. Store these for
+        # later as floats need assertAlmostEqual rather than
+        # assertEqual tests:
         keys_with_float_values = [
             "atol",
             "rtol",

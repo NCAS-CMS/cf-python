@@ -7,7 +7,12 @@ from ..units import Units
 
 from ..data import Data
 
-from ..functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR
+from ..functions import (
+    _DEPRECATION_ERROR_DICT,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    _DEPRECATION_ERROR,
+)
 
 from ..mixin_container import Container
 
@@ -38,8 +43,8 @@ class Properties(Container):
     # ----------------------------------------------------------------
     @property
     def _atol(self):
-        """Return the tolerance on absolute differences between real numbers,
-        as returned by the `cf.atol` function.
+        """Return the tolerance on absolute differences between real
+        numbers, as returned by the `cf.atol` function.
 
         This is used by, for example, the `_equals` method.
 
@@ -48,8 +53,8 @@ class Properties(Container):
 
     @property
     def _rtol(self):
-        """Return the tolerance on relative differences between real numbers,
-        as returned by the `cf.rtol` function.
+        """Return the tolerance on relative differences between real
+        numbers, as returned by the `cf.rtol` function.
 
         This is used by, for example, the `_equals` method.
 
@@ -63,7 +68,7 @@ class Properties(Container):
         """Whether two values match.
 
         The definition of "match" depends on the types of *value0* and
-        *value1*. See the code for the details.
+        *value1*.
 
         :Parameters:
 
@@ -74,6 +79,9 @@ class Properties(Container):
                 The second value to be matched.
 
             units: `bool`, optional
+                If True then the units must be the same for values to be
+                considered to match. By default, units are ignored in the
+                comparison.
 
         :Returns:
 
@@ -1145,25 +1153,29 @@ class Properties(Container):
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
     def setprop(self, *args, **kwargs):
-        """Deprecated at version 3.0.0, use method `set_property` instead."""
+        """Deprecated at version 3.0.0, use method `set_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "setprop", "Use method 'set_property' instead"
         )  # pragma: no cover
 
     def delprop(self, prop):
-        """Deprecated at version 3.0.0, use method `del_property` instead."""
+        """Deprecated at version 3.0.0, use method `del_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "delprop", "Use method 'del_property' instead"
         )  # pragma: no cover
 
     def hasprop(self, prop):
-        """Deprecated at version 3.0.0, use method `has_property` instead."""
+        """Deprecated at version 3.0.0, use method `has_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "hasprop", "Use method 'has_property' instead"
         )  # pragma: no cover
 
     def getprop(self, prop):
-        """Deprecated at version 3.0.0, use method `get_property` instead."""
+        """Deprecated at version 3.0.0, use method `get_property`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "getprop", "Use method 'get_property' instead"
         )  # pragma: no cover

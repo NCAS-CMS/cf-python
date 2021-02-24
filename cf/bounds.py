@@ -70,7 +70,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
              direction:
                  Specify the direction of 1-d coordinates with two bounds
                  vertices. Either True for increasing coordinates, or False
-                 for descreasing coordinates. By default the direction is
+                 for decreasing coordinates. By default the direction is
                  inferred from whether the first bound of the first cell is
                  less than its second bound (direction is True), or not
                  (direction is False).
@@ -115,7 +115,26 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
 
          **Examples:**
 
-         TODO
+         >>> c.has_bounds()
+         False
+         >>> c.contiguous()
+         False
+
+         >>> print(c.bounds[:, 0])
+         [  0.5   1.5   2.5   3.5 ]
+         >>> print(c.bounds[:, 1])
+         [  1.5   2.5   3.5   4.5 ]
+         >>> c.contiuous()
+         True
+
+         >>> print(c.bounds[:, 0])
+         [  0.5   1.5   2.5   3.5 ]
+         >>> print(c.bounds[:, 1])
+         [  2.5   3.5   4.5   5.5 ]
+         >>> c.contiuous()
+         True
+         >>> c.contiuous(overlap=False)
+         False
 
         """
         data = self.get_data(None)

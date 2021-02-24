@@ -47,9 +47,9 @@ mkdir -p $dir/_downloads
 
 make html $dir
 
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
+cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
-for download_file in cf_tutorial_files.zip tutorial.py
+for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py
 do
   # Remove the hash string component added by GitHub to the link
   # where the resources are hosted (GH changes it to something like
@@ -85,6 +85,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _static \
 	  _downloads/cf_tutorial_files.zip \
 	  _downloads/tutorial.py \
+	  _downloads/field_analysis.py \
 	  _images/*.png
 
   git commit -a -m "v$version $2 documentation"

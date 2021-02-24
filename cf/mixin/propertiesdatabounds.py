@@ -1,6 +1,6 @@
 import logging
 
-from numpy import size as numpy_size
+import numpy as np
 
 from . import PropertiesData
 
@@ -36,9 +36,7 @@ logger = logging.getLogger(__name__)
 
 class PropertiesDataBounds(PropertiesData):
     """Mixin class for a data array with descriptive properties and cell
-    bounds.
-
-    """
+    bounds."""
 
     def __getitem__(self, indices):
         """Return a subspace of the field construct defined by indices.
@@ -270,7 +268,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._binary_operation(other, "__iand__", False)
 
     def __rand__(self, other):
-        """The binary bitwise operation ``&`` with reflected operands
+        """The binary bitwise operation ``&`` with reflected operands.
 
         x.__rand__(y) <==> y&x
 
@@ -294,7 +292,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._binary_operation(other, "__ior__", False)
 
     def __ror__(self, other):
-        """The binary bitwise operation ``|`` with reflected operands
+        """The binary bitwise operation ``|`` with reflected operands.
 
         x.__ror__(y) <==> y|x
 
@@ -318,7 +316,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._binary_operation(other, "__ixor__", False)
 
     def __rxor__(self, other):
-        """The binary bitwise operation ``^`` with reflected operands
+        """The binary bitwise operation ``^`` with reflected operands.
 
         x.__rxor__(y) <==> y^x
 
@@ -342,7 +340,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._binary_operation(y, "__ilshift__", False)
 
     def __rlshift__(self, y):
-        """The binary bitwise operation ``<<`` with reflected operands
+        """The binary bitwise operation ``<<`` with reflected operands.
 
         x.__rlshift__(y) <==> y<<x
 
@@ -366,7 +364,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._binary_operation(y, "__irshift__", False)
 
     def __rrshift__(self, y):
-        """The binary bitwise operation ``>>`` with reflected operands
+        """The binary bitwise operation ``>>`` with reflected operands.
 
         x.__rrshift__(y) <==> y>>x
 
@@ -494,7 +492,7 @@ class PropertiesDataBounds(PropertiesData):
 
         has_bounds = self.has_bounds()
 
-        if has_bounds and inplace and other is self:
+        if bounds and has_bounds and inplace and other is self:
             other = other.copy()
 
         try:
@@ -553,12 +551,12 @@ class PropertiesDataBounds(PropertiesData):
             # Only self has bounds, so combine the self bounds with
             # the other values.
             # --------------------------------------------------------
-            if numpy_size(other) > 1:
+            if np.size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
                     try:
                         other = other.insert_dimension(-1)
                     except AttributeError:
-                        other = numpy_expand_dims(other, -1)
+                        other = np.expand_dims(other, -1)
             # --- End: if
 
             new_bounds = self.bounds._binary_operation(other, method)
@@ -592,7 +590,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None, verbose=None):
-        """TODO
+        """TODO.
 
         Two real numbers ``x`` and ``y`` are considered equal if
         ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -666,13 +664,36 @@ class PropertiesDataBounds(PropertiesData):
         return True
 
     def _YMDhms(self, attr):
-        """TODO"""
+        """TODO."""
         out = super()._YMDhms(attr)
         out.del_bounds(None)
         return out
 
     def _matching_values(self, value0, value1, units=False):
-        """TODO"""
+        """Whether two values match.
+
+        The definition of "match" depends on the types of *value0* and
+        *value1*.
+
+        :Parameters:
+
+            value0:
+                The first value to be matched.
+
+            value1:
+                The second value to be matched.
+
+            units: `bool`, optional
+                If True then the units must be the same for values to be
+                considered to match. By default, units are ignored in the
+                comparison.
+
+        :Returns:
+
+            `bool`
+                Whether or not the two values match.
+
+        """
         if value1 is None:
             return False
 
@@ -754,7 +775,8 @@ class PropertiesDataBounds(PropertiesData):
         return v
 
     def _unary_operation(self, method, bounds=True):
-        """Implement unary arithmetic operations on the data array and bounds.
+        """Implement unary arithmetic operations on the data array and
+        bounds.
 
         :Parameters:
 
@@ -872,7 +894,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @property
     def isperiodic(self):
-        """TODO
+        """TODO.
 
         .. versionadded:: 2.0
 
@@ -1386,6 +1408,7 @@ class PropertiesDataBounds(PropertiesData):
         :Returns:
 
             TODO
+
         """
         variable0 = variables[0]
 
@@ -1973,7 +1996,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
-        """Flatten axes of the data
+        """Flatten axes of the data.
 
         Any subset of the axes may be flattened.
 
@@ -2085,8 +2108,8 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     def direction(self):
-        """Return `None`, indicating that it is not specified whether the
-        values are increasing or decreasing.
+        """Return `None`, indicating that it is not specified whether
+        the values are increasing or decreasing.
 
         .. versionadded:: 2.0
 
@@ -2141,7 +2164,7 @@ class PropertiesDataBounds(PropertiesData):
 
         ok = True
         for name, value0 in properties.items():
-            value1 = self_property.get(name)
+            value1 = self_properties.get(name)
             ok = self._matching_values(value0, value1, units=(name == "units"))
 
             if _or:
@@ -2175,7 +2198,7 @@ class PropertiesDataBounds(PropertiesData):
         if not identities:
             return True
 
-        identities = self.identities()
+        self_identities = self.identities()
 
         ok = False
         for value0 in identities:
@@ -2183,11 +2206,9 @@ class PropertiesDataBounds(PropertiesData):
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            # --- End: for
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -2622,7 +2643,8 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None and bounds.shape[: data.ndim] != data.shape:
             # Check shape
             raise ValueError(
-                "Can't set bounds: Incorrect shape: {0})".format(bounds.shape)
+                "Can't set bounds: Incorrect bounds shape {} "
+                "for data shape {}".format(bounds.shape, data.shape)
             )
 
         if copy:
@@ -2721,7 +2743,8 @@ class PropertiesDataBounds(PropertiesData):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arctan(self, bounds=True, inplace=False):
-        """Take the trigonometric inverse tangent of the data element-wise.
+        """Take the trigonometric inverse tangent of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of radians.
 
@@ -2924,7 +2947,8 @@ class PropertiesDataBounds(PropertiesData):
 
     @_inplace_enabled(default=False)
     def arccos(self, bounds=True, inplace=False):
-        """Take the trigonometric inverse cosine of the data element-wise.
+        """Take the trigonometric inverse cosine of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of radians.
 
@@ -3829,28 +3853,25 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     @property
     def hasbounds(self):
-        """Deprecated at version 3.0.0, use method `has_bounds` instead."""
+        """Deprecated at version 3.0.0, use method `has_bounds`
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "hasbounds", "Use method 'has_bounds' instead."
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self, "expand_dims", "Use method 'insert_dimension' instead."
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "expand_dims",
             "Use method 'get_filenames' instead.",
             version="3.4.0",
         )  # pragma: no cover
-
-
-# --- End: class

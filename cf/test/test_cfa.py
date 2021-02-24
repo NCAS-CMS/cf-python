@@ -1,9 +1,12 @@
 import datetime
-import unittest
+import faulthandler
 import inspect
 import os
 import stat
 import subprocess
+import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -48,9 +51,7 @@ class cfaTest(unittest.TestCase):
             )
         # else: (passes by default)
 
-
-# --- End: class
-
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

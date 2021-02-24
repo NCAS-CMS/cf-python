@@ -35,7 +35,7 @@ from .data import (
 
 
 class CFImplementation(cfdm.CFDMImplementation):
-    """TODO
+    """TODO.
 
     .. versionadded:: 3.0.0
 

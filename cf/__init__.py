@@ -82,7 +82,7 @@ installation and source code.
 __Conventions__ = "CF-1.9"
 __author__ = "David Hassell"
 __date__ = "2021-??-??"
-__version__ = "3.9.0"
+__version__ = "3.10.0"
 
 _requires = (
     "numpy",
@@ -180,7 +180,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.3.0"
+_minimum_vn = "1.4.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad cftime version: cf requires cftime>={}. "
@@ -297,11 +297,11 @@ from .query import (
     son,
     seasons,
 )
-from .constants import *
-from .functions import *
+
+from .constants import *  # noqa: F403
+from .functions import *  # noqa: F403
 from .maths import relative_vorticity, histogram
 from .examplefield import example_field, example_fields
-
 
 from .cfimplementation import CFImplementation, implementation
 

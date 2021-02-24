@@ -1,8 +1,12 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
+
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import netCDF4
 
 import cf
@@ -16,10 +20,10 @@ def _make_contiguous_file(filename):
     n.Conventions = "CF-" + VN
     n.featureType = "timeSeries"
 
-    station = n.createDimension("station", 4)
-    obs = n.createDimension("obs", 24)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("station", 4)
+    n.createDimension("obs", 24)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -107,10 +111,10 @@ def _make_indexed_file(filename):
     n.Conventions = "CF-" + VN
     n.featureType = "timeSeries"
 
-    station = n.createDimension("station", 4)
-    obs = n.createDimension("obs", None)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("station", 4)
+    n.createDimension("obs", None)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -240,12 +244,12 @@ def _make_indexed_contiguous_file(filename):
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
-    station = n.createDimension("station", 3)
+    n.createDimension("station", 3)
     # 58 profiles spreadover 4 stations, each at a different time
     profile = n.createDimension("profile", 58)
-    obs = n.createDimension("obs", None)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("obs", None)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -869,9 +873,9 @@ def _make_geometry_1_file(filename):
         "which has a corresponding auxiliary coordinate variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
 
     t = n.createVariable("time", "i4", ("time",))
     t.units = "seconds since 2016-11-07 20:00 UTC"
@@ -935,7 +939,7 @@ def _make_geometry_1_file(filename):
 
 
 def _make_geometry_2_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -945,9 +949,9 @@ def _make_geometry_2_file(filename):
         "which have a corresponding auxiliary coordinate variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
 
     t = n.createVariable("time", "i4", ("time",))
     t.units = "seconds since 2016-11-07 20:00 UTC"
@@ -1015,7 +1019,7 @@ def _make_geometry_2_file(filename):
 
 
 def _make_geometry_3_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -1026,8 +1030,8 @@ def _make_geometry_3_file(filename):
         "auxiliary coordinate variables. There is no node count variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 3)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 3)
 
     t = n.createVariable("time", "i4", ("time",))
     t.units = "seconds since 2016-11-07 20:00 UTC"
@@ -1101,10 +1105,10 @@ def _make_geometry_4_file(filename):
         "have a corresponding auxiliary coordinate variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1169,11 +1173,11 @@ def _make_interior_ring_file(filename):
     n.comment = "TODO"
 
     # Dimensions
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 13)
-    part = n.createDimension("part", 4)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 13)
+    n.createDimension("part", 4)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1269,11 +1273,11 @@ def _make_interior_ring_file_2(filename):
     n.comment = "TODO"
 
     # Dimensions
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 13)
-    part = n.createDimension("part", 4)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 13)
+    n.createDimension("part", 4)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1359,20 +1363,20 @@ def _make_interior_ring_file_2(filename):
 
 
 def _make_string_char_file(filename):
-    """See n.comment for details"""
+    """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF4")
 
     n.Conventions = "CF-" + VN
     n.comment = "A netCDF file with variables of string and char data types"
 
-    dim1 = n.createDimension("dim1", 1)
-    time = n.createDimension("time", 4)
-    lat = n.createDimension("lat", 2)
-    lon = n.createDimension("lon", 3)
-    strlen8 = n.createDimension("strlen8", 8)
-    strlen7 = n.createDimension("strlen7", 7)
-    strlen5 = n.createDimension("strlen5", 5)
-    strlen3 = n.createDimension("strlen3", 3)
+    n.createDimension("dim1", 1)
+    n.createDimension("time", 4)
+    n.createDimension("lat", 2)
+    n.createDimension("lon", 3)
+    n.createDimension("strlen8", 8)
+    n.createDimension("strlen7", 7)
+    n.createDimension("strlen5", 5)
+    n.createDimension("strlen3", 3)
 
     months = numpy.array(["January", "February", "March", "April"], dtype="S8")
 
@@ -1431,6 +1435,72 @@ def _make_string_char_file(filename):
     return filename
 
 
+def _make_broken_bounds_cdl(filename):
+    with open(filename, mode="w") as f:
+        f.write(
+            """netcdf broken_bounds {
+dimensions:
+      lat = 180 ;
+      bnds = 2 ;
+      lon = 288 ;
+      time = UNLIMITED ; // (1825 currently)
+variables:
+      double lat(lat) ;
+           lat:long_name = "latitude" ;
+           lat:units = "degrees_north" ;
+           lat:axis = "Y" ;
+           lat:bounds = "lat_bnds" ;
+           lat:standard_name = "latitude" ;
+           lat:cell_methods = "time: point" ;
+      double lat_bnds(lat, bnds) ;
+           lat_bnds:long_name = "latitude bounds" ;
+           lat_bnds:units = "degrees_north" ;
+           lat_bnds:axis = "Y" ;
+      double lon(lon) ;
+           lon:long_name = "longitude" ;
+           lon:units = "degrees_east" ;
+           lon:axis = "X" ;
+           lon:bounds = "lon_bnds" ;
+           lon:standard_name = "longitude" ;
+           lon:cell_methods = "time: point" ;
+      double lon_bnds(lon, bnds) ;
+           lon_bnds:long_name = "longitude bounds" ;
+           lon_bnds:units = "m" ;
+           lon_bnds:axis = "X" ;
+      float pr(time, lat, lon) ;
+           pr:long_name = "Precipitation" ;
+           pr:units = "kg m-2 s-1" ;
+           pr:missing_value = 1.e+20f ;
+           pr:_FillValue = 1.e+20f ;
+           pr:cell_methods = "area: time: mean" ;
+           pr:cell_measures = "area: areacella" ;
+           pr:standard_name = "precipitation_flux" ;
+           pr:interp_method = "conserve_order1" ;
+           pr:original_name = "pr" ;
+      double time(time) ;
+           time:long_name = "time" ;
+           time:units = "days since 1850-01-01 00:00:00" ;
+           time:axis = "T" ;
+           time:calendar_type = "noleap" ;
+           time:calendar = "noleap" ;
+           time:bounds = "time_bnds" ;
+           time:standard_name = "time" ;
+           time:description = "Temporal mean" ;
+      double time_bnds(time, bnds) ;
+           time_bnds:long_name = "time axis boundaries" ;
+           time_bnds:units = "days since 1850-01-01 00:00:00" ;
+
+// global attributes:
+           :external_variables = "areacella" ;
+           :Conventions = "CF-"""
+            + VN
+            + """" ;
+           :source = "model" ;
+           :comment = "Bounds variable has incompatible units to its parent coordinate variable" ;
+}
+"""
+        )
+
 contiguous_file = _make_contiguous_file("DSG_timeSeries_contiguous.nc")
 indexed_file = _make_indexed_file("DSG_timeSeries_indexed.nc")
 indexed_contiguous_file = _make_indexed_contiguous_file(
@@ -1457,6 +1527,7 @@ gathered = _make_gathered_file("gathered.nc")
 
 string_char_file = _make_string_char_file("string_char.nc")
 
+broken_bounds_file = _make_broken_bounds_cdl("broken_bounds.cdl")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

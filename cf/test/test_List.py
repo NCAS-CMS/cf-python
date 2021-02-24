@@ -1,5 +1,8 @@
 import datetime
+import faulthandler
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -28,10 +31,7 @@ class ListTest(unittest.TestCase):
         _ = str(list_)
         self.assertIsInstance(list_.dump(display=False), str)
 
-
-# --- End: class
-
-
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

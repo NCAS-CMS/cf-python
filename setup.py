@@ -1,8 +1,7 @@
-from distutils.core import setup, Extension
+from distutils.core import setup
 from distutils.command.build import build
 import os
 import fnmatch
-import sys
 import re
 import subprocess
 
@@ -10,76 +9,72 @@ import subprocess
 def find_package_data_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
-            if fnmatch.fnmatch(basename, '*'):
+            if fnmatch.fnmatch(basename, "*"):
                 filename = os.path.join(root, basename)
-                yield filename.replace('cf/', '', 1)
+                yield filename.replace("cf/", "", 1)
 
 
 def find_test_files():
-    '''Yield the data files in cf/test/
-
-    '''
-    for filename in os.listdir('cf/test'):
+    """Yield the data files in cf/test/"""
+    for filename in os.listdir("cf/test"):
         if (
-                fnmatch.fnmatch(filename, '*.sh')
-                or fnmatch.fnmatch(filename, '*.nc')
-                or fnmatch.fnmatch(filename, '*.pp')
-                or fnmatch.fnmatch(filename, '*.cdl')
+            fnmatch.fnmatch(filename, "*.sh")
+            or fnmatch.fnmatch(filename, "*.nc")
+            or fnmatch.fnmatch(filename, "*.pp")
+            or fnmatch.fnmatch(filename, "*.cdl")
         ):
-            filename = os.path.join('test', filename)
+            filename = os.path.join("test", filename)
             yield filename
 
 
 def _read(fname):
-    '''Returns content of a file.
-
-    '''
+    """Returns content of a file."""
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
-    with open(fpath, 'r') as file_:
+    with open(fpath, "r") as file_:
         return file_.read()
 
 
 def _get_version():
-    '''Returns library version by inspecting __init__.py file.
-
-    '''
-    return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("cf/__init__.py"),
-                     re.MULTILINE).group(1)
+    """Returns library version by inspecting __init__.py file."""
+    return re.search(
+        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+        _read("cf/__init__.py"),
+        re.MULTILINE,
+    ).group(1)
 
 
 version = _get_version()
-packages = ['cf']
-etc_files = [f for f in find_package_data_files('cf/etc')]
-umread_files = [f for f in find_package_data_files('cf/umread_lib/c-lib')]
+packages = ["cf"]
+etc_files = [f for f in find_package_data_files("cf/etc")]
+umread_files = [f for f in find_package_data_files("cf/umread_lib/c-lib")]
 test_files = [f for f in find_test_files()]
 
 package_data = etc_files + umread_files + test_files
 
 
 class build_umread(build):
-    '''Adpated from
-    https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
+    """Adpated from https://github.com/Turbo87/py-
+    xcsoar/blob/master/setup.py."""
 
-    '''
     def run(self):
         # Run original build code
         build.run(self)
 
         # Build umread
-        print('Running build_umread')
+        print("Running build_umread")
 
         build_dir = os.path.join(
-            os.path.abspath(self.build_lib), 'cf/umread_lib/c-lib')
+            os.path.abspath(self.build_lib), "cf/umread_lib/c-lib"
+        )
 
-        cmd = ['make', '-C', build_dir]
+        cmd = ["make", "-C", build_dir]
 
-#        rc = subprocess.call(cmd)
+        #        rc = subprocess.call(cmd)
 
         def compile():
-            print('*' * 80)
-            print('Running:', ' '.join(cmd), '\n')
+            print("*" * 80)
+            print("Running:", " ".join(cmd), "\n")
 
             try:
                 rc = subprocess.call(cmd)
@@ -87,30 +82,30 @@ class build_umread(build):
                 print(error)
                 rc = 40
 
-            print('\n', '-' * 80)
+            print("\n", "-" * 80)
             if not rc:
-                print('SUCCESSFULLY built UM read C library')
+                print("SUCCESSFULLY built UM read C library")
             else:
-                print('WARNING: Failed to build the UM read C library.')
+                print("WARNING: Failed to build the UM read C library.")
                 print(
-                    '         Attempting to read UKMO PP and UM format files '
-                    'will result in failure.'
+                    "         Attempting to read UKMO PP and UM format files "
+                    "will result in failure."
                 )
                 print(
-                    '         This will not affect any other cf functionality.'
+                    "         This will not affect any other cf functionality."
                 )
                 print(
-                    '         In particular, netCDF file processing is '
-                    'unaffected.'
+                    "         In particular, netCDF file processing is "
+                    "unaffected."
                 )
 
-            print('-' * 80)
-            print('\n', '*' * 80)
+            print("-" * 80)
+            print("\n", "*" * 80)
             print()
             print("cf build successful")
             print()
 
-        self.execute(compile, [], 'compiling umread')
+        self.execute(compile, [], "compiling umread")
 
     # --- End: class
 
@@ -229,7 +224,7 @@ Tests are run from within the ``cf/test`` directory:
 """
 
 # Get dependencies
-requirements = open('requirements.txt', 'r')
+requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
 setup(
@@ -244,8 +239,14 @@ setup(
     url="https://ncas-cms.github.io/cf-python",
     platforms=["Linux", "MacOS"],
     keywords=[
-        'cf', 'netcdf', 'UM', 'data', 'science', 'oceanography',
-        'meteorology', 'climate'
+        "cf",
+        "netcdf",
+        "UM",
+        "data",
+        "science",
+        "oceanography",
+        "meteorology",
+        "climate",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -256,24 +257,23 @@ setup(
         "Topic :: Scientific/Engineering :: Atmospheric Science",
         "Topic :: Utilities",
         "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS"
+        "Operating System :: MacOS",
     ],
     packages=[
-        'cf',
-        'cf.abstract',
-        'cf.mixin',
-        'cf.data',
-        'cf.data.abstract',
-        'cf.docstring',
-        'cf.read_write',
-        'cf.read_write.um',
-        'cf.read_write.netcdf',
-        'cf.umread_lib',
-        'cf.test'
+        "cf",
+        "cf.mixin",
+        "cf.data",
+        "cf.data.abstract",
+        "cf.docstring",
+        "cf.read_write",
+        "cf.read_write.um",
+        "cf.read_write.netcdf",
+        "cf.umread_lib",
+        "cf.test",
     ],
-    package_data={'cf': package_data},
-    scripts=['scripts/cfa'],
-    python_requires='>=3.6',
+    package_data={"cf": package_data},
+    scripts=["scripts/cfa"],
+    python_requires=">=3.6",
     install_requires=install_requires,
     # install_requires=[
     #     'netCDF4>=1.5.3',
@@ -290,5 +290,5 @@ setup(
     # ],
     #
     # https://docs.python.org/2/distutils/apiref.html:
-    cmdclass={'build': build_umread},
+    cmdclass={"build": build_umread},
 )

@@ -7,7 +7,7 @@ class FileArray(Array):
     """A sub-array stored in a file.
 
     .. note:: Subclasses must define the following methods:
-              `!__getitem__`, `!__str__`, `!close` and `!open`.
+    `!__getitem__`, `!__str__`, `!close` and `!open`.
 
     """
 
@@ -38,7 +38,7 @@ class FileArray(Array):
 
     @property
     def ndim(self):
-        """Number of array dimensions
+        """Number of array dimensions.
 
         **Examples:**
 
@@ -128,11 +128,12 @@ class FileArray(Array):
 
     @property
     def filename(self):
-        """TODO
+        """The name of the file containing the array.
 
         **Examples:**
 
-        TODO
+        >>> a.filename()
+        'file.nc'
 
         """
         return self._get_component("filename")
@@ -168,7 +169,7 @@ class FileArray(Array):
         print(cf_inspect(self))  # pragma: no cover
 
     def get_filename(self):
-        """The name of the file containing the array.
+        """Return the name of the file containing the array.
 
         **Examples:**
 
@@ -183,8 +184,3 @@ class FileArray(Array):
 
     def open(self):
         pass
-
-
-# --- End: class
-
-# Array.register(FileArray)

@@ -1,10 +1,11 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
-import numpy
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -69,8 +70,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.f = cf.read(self.filename)[0]
 
     def test_CoordinateReference__repr__str__dump(self):
-        f = self.f.copy()
-
         coordinate_conversion = cf.CoordinateConversion(
             parameters={
                 "standard_name": "atmosphere_hybrid_height_coordinate"
@@ -100,8 +99,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = str(coordinate_conversion)
 
     def test_CoordinateReference_equals(self):
-        f = self.f.copy()
-
         # Create a vertical grid mapping coordinate reference
         t = cf.CoordinateReference(
             coordinates=("coord1",),

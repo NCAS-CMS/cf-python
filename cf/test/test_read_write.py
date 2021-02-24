@@ -1,13 +1,16 @@
-import datetime
-import tempfile
-import os
-import unittest
 import atexit
+import datetime
+import faulthandler
 import inspect
+import os
 import shutil
 import subprocess
+import tempfile
+import unittest
 
 import numpy
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -28,13 +31,12 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)
         except OSError:
             pass
-    # --- End: for
 
 
 atexit.register(_remove_tmpfiles)
@@ -58,12 +60,12 @@ class read_writeTest(unittest.TestCase):
 
     test_only = []
     #    test_only = ['NOTHING!!!!!']
-    #    test_only = ['test_read_write_domain']
+    #    test_only = ['test_write_filename']
     #    test_only = ['test_read_write_unlimited']
     #    test_only = ['test_write_datatype']
     #    test_only = ['test_read_directory']
-    #    test_only = ['test_read_string']
-    #    test_only = ['test_read_write_netCDF4_compress_shuffle']
+    #    test_only = ['test_read_write_string']
+    #    test_only = ['test_read_write_domain']
 
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -133,7 +135,7 @@ class read_writeTest(unittest.TestCase):
         except FileExistsError:
             pass
         except Exception:
-            raise ValueError("Can not mkdir {}{}".format(pwd, dir))
+            raise ValueError(f"Can not mkdir {pwd}{dir}")
 
         f = "test_file2.nc"
         try:
@@ -147,14 +149,13 @@ class read_writeTest(unittest.TestCase):
         except FileExistsError:
             pass
         except Exception:
-            raise ValueError("Can not mkdir {}{}".format(pwd, subdir))
+            raise ValueError(f"Can not mkdir {pwd}{subdir}")
 
         for f in ("test_file3.nc", "test_file.nc"):
             try:
                 os.symlink(pwd + f, pwd + subdir + "/" + f)
             except FileExistsError:
                 pass
-        # --- End: for
 
         f = cf.read(dir, aggregate=False)
         self.assertEqual(len(f), 1, f)
@@ -193,18 +194,18 @@ class read_writeTest(unittest.TestCase):
             return
 
         # select on field list
-        f = cf.read(self.filename, squeeze=True)
-        f = cf.read(self.filename, unsqueeze=True)
+        cf.read(self.filename, squeeze=True)
+        cf.read(self.filename, unsqueeze=True)
         with self.assertRaises(Exception):
-            f = cf.read(self.filename, unsqueeze=True, squeeze=True)
+            cf.read(self.filename, unsqueeze=True, squeeze=True)
 
     def test_read_aggregate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename, aggregate=True)
-        f = cf.read(self.filename, aggregate=False)
-        f = cf.read(self.filename, aggregate={})
+        cf.read(self.filename, aggregate=True)
+        cf.read(self.filename, aggregate=False)
+        cf.read(self.filename, aggregate={})
 
     def test_read_extra(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -285,7 +286,7 @@ class read_writeTest(unittest.TestCase):
 
                 self.assertTrue(
                     f0.equals(g0, verbose=1),
-                    "Bad read/write of format {!r}".format(fmt),
+                    f"Bad read/write of format {fmt!r}"
                 )
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -311,7 +312,7 @@ class read_writeTest(unittest.TestCase):
                         self.assertTrue(
                             f.equals(g, verbose=2),
                             "Bad read/write with lossless compression: "
-                            "{0}, {1}, {2}".format(fmt, compress, shuffle),
+                            f"{fmt}, {compress}, {shuffle}"
                         )
         # --- End: for
         cf.chunksize(self.original_chunksize)
@@ -336,7 +337,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.dtype,
                 numpy.dtype("float32"),
-                "datatype read in is " + str(g.dtype),
+                f"datatype read in is {g.dtype}"
             )
 
         cf.chunksize(self.original_chunksize)
@@ -364,7 +365,7 @@ class read_writeTest(unittest.TestCase):
         )
 
         for single in (True, False):
-            for dousble in (True, False):
+            for double in (True, False):
                 with self.assertRaises(Exception):
                     _ = cf.write(g, double=double, single=single)
         # --- End: for
@@ -409,7 +410,7 @@ class read_writeTest(unittest.TestCase):
                         + repr(reference_datetime)
                     ),
                 )
-        # --- End: for
+
         cf.chunksize(self.original_chunksize)
 
     def test_read_write_unlimited(self):
@@ -475,7 +476,7 @@ class read_writeTest(unittest.TestCase):
 
         f0 = cf.read(self.filename)[0]
         f = cf.read(tmpfile)[0]
-        h = cf.read(tmpfileh)[0]
+        _ = cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
 
         self.assertTrue(f0.equals(f, verbose=2))
@@ -507,11 +508,11 @@ class read_writeTest(unittest.TestCase):
             j = i + n
             self.assertTrue(
                 f[i].data.equals(f[j].data, verbose=1),
-                "{!r} {!r}".format(f[i], f[j]),
+                f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=1),
-                "{!r} {!r}".format(f[j], f[i]),
+                f"{f[j]!r} {f[i]!r}"
             )
 
         f0 = cf.read(self.string_filename)
@@ -592,9 +593,6 @@ class read_writeTest(unittest.TestCase):
         self.assertIsInstance(e[0], cf.Domain)
         self.assertIsInstance(e[1], cf.Domain)
         self.assertTrue(e[0].equals(e[1]))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

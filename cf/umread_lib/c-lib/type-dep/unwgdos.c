@@ -89,7 +89,7 @@ int unwgdos(void *datain, int nbytes, REAL *dataout, int nout, REAL mdi)
   isc = get_int32(p + 4, big_endian);
   ix = get_int16(p + 8, big_endian);
   iy = get_int16(p + 10, big_endian);
-  
+
   /* Expand compressed data */
   
   prec = pow(2.0, (double) isc);
@@ -102,7 +102,6 @@ int unwgdos(void *datain, int nbytes, REAL *dataout, int nout, REAL mdi)
       base = get_float32(p1);
       ibit = get_int16(p1 + 4, big_endian);
       nop = get_int16(p1 + 6, big_endian);
-      
 #if NATIVE_ORDERING == little_endian
       swap_bytes_sgl(p1 + 8, nop);
 #endif
@@ -121,6 +120,17 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
   int btmap, btmis, btmin, btzer;
   int jword, jbit, j, iscale;
   int *imap, *imis, *imin, *izer;
+
+  /* From UMDP F3 appendix B
+     INTEGER ix      ! = LENGTH OF FIELD
+     INTEGER icomp   ! (ARRAY) = DATA FOR EXPANSION
+     REAL field      ! (ARRAY) = FIELD OF EXPANDED DATA
+     REAL prec       ! = PRECISION AS A DECIMAL FRACTION
+     INTEGER ibit    ! = NUMBER OF BITS INTO WHICH DATA PACKED
+     REAL base       ! = REFERENCE (MIN) VALUE FOR PACKED DATA
+     INTEGER nop     ! = SIZE OF COMP
+     REAL mdi        ! = MISSING DATA INDICATOR
+   */
   
   btmap = FALSE;
   btmis = FALSE;
@@ -128,7 +138,6 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
   btzer = FALSE;
   
   /* check if bitmap used for zero values */
-  
   if (ibit >= 128)
     {
       btzer = TRUE;
@@ -251,7 +260,7 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
 		     ix);
           return 1;
 	}
-      
+
       for (j=0; j<ix; j++)
 	{
 	  if (bit_test(icomp+jword, jbit))
@@ -271,6 +280,7 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
 	    }
 	}
     }
+
   
   /* If bitmap used reset pointers to beginning of 32 bit boundary */
   
@@ -330,7 +340,7 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
   
   if (btzer)
     {
-      for (j=0; j<ix; j++) 
+      for (j=0; j<ix; j++)
 	{
 	  if (izer[j] == 1) field[j] = 0.0;
 	}
@@ -340,7 +350,7 @@ static int xpnd(int ix, int32_t *icomp, REAL *field, REAL prec,
   if (btmis) free(imis);
   if (btmin) free(imin);
   if (btzer) free(izer);
-  
+
   return 0;
 }
 
@@ -358,7 +368,7 @@ int extrin(int32_t *icomp, int iword, int istart, int nbit, int *inum, int isign
       
       /* move sign bit */
       
-      *inum = (*icomp << (31-istart)) & -2 * (1 << 30);
+      *inum = (*icomp << (31-istart)) & (~0 << 31);
       
       /* set undefined if inum negative */
       
@@ -383,7 +393,7 @@ static int bit_test(void *iword, int ibit)
   
   ui = *(unsigned int *) iword;
   
-  i = (ui >> ibit) & -2;
+  i = (ui >> ibit) & ~(~0 << 1);
   
   if (i == 1)
     return TRUE;

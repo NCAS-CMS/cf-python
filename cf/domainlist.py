@@ -20,7 +20,7 @@ class DomainList(mixin.FieldDomainList, ConstructList):
     """
 
     def __init__(self, domains=None):
-        """**Initialization**
+        """Initialisation.
 
         :Parameters:
 
@@ -29,10 +29,3 @@ class DomainList(mixin.FieldDomainList, ConstructList):
 
         """
         super().__init__(constructs=domains)
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-
-
-# --- End: class

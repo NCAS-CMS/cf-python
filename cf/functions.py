@@ -12,11 +12,6 @@ import ctypes.util
 import netCDF4
 import warnings
 
-from functools import partial, wraps, update_wrapper
-
-import psutil
-
-import cftime
 
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
@@ -39,6 +34,7 @@ from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA as _numpy_ma_isMA
 from numpy.ma import masked as _numpy_ma_masked
+from numpy.ma import take as _numpy_ma_take
 
 from collections.abc import Iterable  # just 'from collections' in Python <3.4
 from hashlib import md5 as hashlib_md5
@@ -52,13 +48,12 @@ from os.path import dirname as _os_path_dirname
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
 from psutil import virtual_memory, Process
-from sys import executable as _sys_executable
 import urllib.parse
 
 import cfdm
-import cfunits
 
 from . import __version__, __file__
+
 from .constants import (
     CONSTANTS,
     _file_to_fh,
@@ -68,7 +63,6 @@ from .constants import (
 
 from .docstring import _docstring_substitution_definitions
 
-from . import mpi_on
 from . import mpi_size
 
 
@@ -233,6 +227,7 @@ def configuration(
     * `log_level`
     * `regrid_logging`
     * `relaxed_identities`
+    * `bounds_combination_mode`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -253,7 +248,7 @@ def configuration(
                  `chunksize`, `collapse_parallel_mode`,
                  `total_memory`, `free_memory_factor`, `fm_threshold`,
                  `min_total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`
+                 `relaxed_identities`, `bounds_combination_mode`
 
     :Parameters:
 
@@ -285,6 +280,10 @@ def configuration(
 
         collapse_parallel_mode: `int` or `Constant`, optional
             The new value (0, 1 or 2).
+
+        bounds_combination_mode: `str` or `Constant`, optional
+            Determine how to deal with cell bounds in binary
+            operations. See `cf.bounds_combination_mode` for details.
 
         free_memory_factor: `float` or `Constant`, optional
             The new value of the fraction of memory kept free as a
@@ -332,6 +331,7 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
+     'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
@@ -349,6 +349,7 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
+     'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
@@ -360,6 +361,48 @@ def configuration(
      'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+
+    Use as a context manager:
+
+    >>> print(cf.configuration())
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+    >>> with cf.configuration(atol=9, rtol=10):
+    ...     print(cf.configuration())
+    ...
+    {'rtol': 9.0,
+     'atol': 10.0,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
+     'chunksize': 75000000.0}
+    >>> print(cf.configuration())
+    {'rtol': 2.220446049250313e-16,
+     'atol': 2.220446049250313e-16,
+     'tempdir': '/usr/tmp',
+     'of_fraction': 0.7,
+     'free_memory_factor': 0.1,
+     'regrid_logging': False,
+     'collapse_parallel_mode': 0,
+     'relaxed_identities': False,
+     'log_level': 'INFO',
+     'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
 
     """
@@ -380,7 +423,8 @@ def configuration(
 
 
 def _configuration(_Configuration, **kwargs):
-    """Internal helper function to provide the logic for `cf.configuration`.
+    """Internal helper function to provide the logic for
+    `cf.configuration`.
 
     We delegate from the user-facing `cf.configuration` for two main reasons:
 
@@ -507,8 +551,8 @@ def FREE_MEMORY(*new_free_memory):
 
 
 def _WORKSPACE_FACTOR_1():
-    """The value of workspace factor 1 used in calculating the upper limit
-    to the chunksize given the free memory factor.
+    """The value of workspace factor 1 used in calculating the upper
+    limit to the chunksize given the free memory factor.
 
     :Returns:
 
@@ -520,8 +564,8 @@ def _WORKSPACE_FACTOR_1():
 
 
 def _WORKSPACE_FACTOR_2():
-    """The value of workspace factor 2 used in calculating the upper limit
-    to the chunksize given the free memory factor.
+    """The value of workspace factor 2 used in calculating the upper
+    limit to the chunksize given the free memory factor.
 
     :Returns:
 
@@ -536,9 +580,10 @@ def _cf_free_memory_factor(*new_free_memory_factor):
     """Internal alias for `cf.free_memory_factor`.
 
     Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other modules).
-    Note we don't use FREE_MEMORY_FACTOR() as it will likely be deprecated
-    in future.
+    argument (corresponding to 'import X as cf_X' etc. in other
+    modules). Note we don't use FREE_MEMORY_FACTOR() as it will likely
+    be deprecated in future.
+
     """
     return free_memory_factor(*new_free_memory_factor)
 
@@ -635,8 +680,8 @@ class regrid_logging(ConstantAccess):
 
 
 class collapse_parallel_mode(ConstantAccess):
-    """Which mode to use when collapse is run in parallel. There are three
-    possible modes:
+    """Which mode to use when collapse is run in parallel. There are
+    three possible modes:
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
@@ -766,9 +811,7 @@ class relaxed_identities(ConstantAccess):
 
 
 class chunksize(ConstantAccess):
-    """Set the chunksize used by LAMA for partitioning the data
-    array.
-
+    """Set the chunksize used by LAMA for partitioning the data array.
 
     This must be smaller than an upper limit determined by the free
     memory factor, which is the fraction of memory kept free as a
@@ -904,8 +947,8 @@ class tempdir(ConstantAccess):
 
 
 class of_fraction(ConstantAccess):
-    """The amount of concurrently open files above which files containing
-    data arrays may be automatically closed.
+    """The amount of concurrently open files above which files
+    containing data arrays may be automatically closed.
 
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
@@ -986,8 +1029,7 @@ class of_fraction(ConstantAccess):
 
 
 class free_memory_factor(ConstantAccess):
-    """Set the fraction of memory kept free as a temporary
-    workspace.
+    """Set the fraction of memory kept free as a temporary workspace.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -1118,9 +1160,13 @@ class bounds_combination_mode(ConstantAccess):
       No          No          *No*
       ==========  ==========  ==========  ======================
 
+    .. versionadded:: 3.8.0
+
+    .. seealso:: `configuration`
+
     :Parameters:
 
-        arg: `bool`, optional
+        arg: `str` or `Constant`, optional
             Provide a new flag value that will apply to all subsequent
             binary operations.
 
@@ -1133,16 +1179,27 @@ class bounds_combination_mode(ConstantAccess):
     **Examples:**
 
     >>> old = cf.bounds_combination_mode()
-    >>> old
-    'AND'
-    >>> cf.bounds_combination_mode('OR')
-    'AND'
-    >>> cf.bounds_combination_mode()
-    'OR'
-    >>> cf.bounds_combination_mode(old)
-    'OR'
-    >>> cf.bounds_combination_mode()
-    'AND'
+    >>> print(old)
+    AND
+    >>> print(cf.bounds_combination_mode('OR'))
+    AND
+    >>> print(cf.bounds_combination_mode())
+    OR
+    >>> print(cf.bounds_combination_mode(old))
+    OR
+    >>> print(cf.bounds_combination_mode())
+    AND
+
+    Use as a context manager:
+
+    >>> print(cf.bounds_combination_mode())
+    AND
+    >>> with cf.bounds_combination_mode('XOR'):
+    ...     print(cf.bounds_combination_mode())
+    ...
+    XOR
+    >>> print(cf.bounds_combination_mode())
+    AND
 
     """
 
@@ -1203,14 +1260,17 @@ def _cf_chunksize(*new_chunksize):
     """Internal alias for `cf.chunksize`.
 
     Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other modules).
-    Note we don't use CHUNKSIZE() as it will likely be deprecated in future.
+    argument (corresponding to 'import X as cf_X' etc. in other
+    modules). Note we don't use CHUNKSIZE() as it will likely be
+    deprecated in future.
+
     """
     return chunksize(*new_chunksize)
 
 
 def fm_threshold():
-    """The amount of memory which is kept free as a temporary work space.
+    """The amount of memory which is kept free as a temporary work
+    space.
 
     :Returns:
 
@@ -1228,18 +1288,18 @@ def fm_threshold():
 
 def set_performance(chunksize=None, free_memory_factor=None):
     """Tune performance of parallelisation by setting chunksize and free
-    memory factor. By just providing the chunksize it can be changed
-    to a smaller value than an upper limit, which is determined by the
+    memory factor. By just providing the chunksize it can be changed to
+    a smaller value than an upper limit, which is determined by the
     existing free memory factor. If just the free memory factor is
-    provided then the chunksize is set to the corresponding upper
-    limit. Note that the free memory factor is the fraction of memory
-    kept free as a temporary workspace and must be a sensible value
-    between zero and one. If both arguments are provided then the free
-    memory factor is changed first and then the chunksize is set
-    provided it is consistent with the new free memory value. If any
-    of the arguments is invalid then an error is raised and no
-    parameters are changed. When called with no arguments the existing
-    values of the parameters are returned in a tuple.
+    provided then the chunksize is set to the corresponding upper limit.
+    Note that the free memory factor is the fraction of memory kept free
+    as a temporary workspace and must be a sensible value between zero
+    and one. If both arguments are provided then the free memory factor
+    is changed first and then the chunksize is set provided it is
+    consistent with the new free memory value. If any of the arguments
+    is invalid then an error is raised and no parameters are changed.
+    When called with no arguments the existing values of the parameters
+    are returned in a tuple.
 
     :Parameters:
 
@@ -1279,7 +1339,7 @@ def min_total_memory():
 
 
 def total_memory():
-    """TODO"""
+    """TODO."""
     return CONSTANTS["TOTAL_MEMORY"]
 
 
@@ -1441,8 +1501,8 @@ if _linux:
     _fd_dir = "/proc/" + str(getpid()) + "/fd"
 
     def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than the
-        current threshold. GNU/LINUX.
+        """Return True if the total number of open files is greater than
+        the current threshold. GNU/LINUX.
 
         The threshold is defined as a fraction of the maximum possible number
         of concurrently open files (an operating system dependent amount). The
@@ -1483,8 +1543,8 @@ else:
     _process = Process(getpid())
 
     def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than the
-        current threshold.
+        """Return True if the total number of open files is greater than
+        the current threshold.
 
         The threshold is defined as a fraction of the maximum possible number
         of concurrently open files (an operating system dependent amount). The
@@ -1627,7 +1687,8 @@ def close_one_file(file_format=None):
 
 
 def open_files(file_format=None):
-    """Return the open files containing sub-arrays of master data arrays.
+    """Return the open files containing sub-arrays of master data
+    arrays.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1676,7 +1737,8 @@ def open_files(file_format=None):
 
 
 def ufunc(name, x, *args, **kwargs):
-    """The variable must have a `!copy` method and a method called
+    """The variable must have a `!copy` method and a method called.
+
     *name*. Any optional positional and keyword arguments are passed
     unchanged to the variable's *name* method.
 
@@ -1826,7 +1888,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 def parse_indices(
     shape, indices, cyclic=False, reverse=False, envelope=False, mask=False
 ):
-    """TODO
+    """TODO.
 
     :Parameters:
 
@@ -2185,7 +2247,7 @@ def parse_indices(
 
 
 def get_subspace(array, indices):
-    """TODO
+    """TODO.
 
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
@@ -2336,9 +2398,35 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
 
 
 def load_stash2standard_name(table=None, delimiter="!", merge=True):
-    """Load a STASH to standard name conversion table.
+    """Load a STASH to standard name conversion table from a file.
 
     This used when reading PP and UM fields files.
+
+    Each mapping is defined by a separate line in a text file. Each
+    line contains nine ``!``-delimited entries:
+
+    1. ID: UM sub model identifier (1 = atmosphere, 2 = ocean, etc.)
+    2. STASH: STASH code (e.g. 3236)
+    3. STASHmaster description:STASH name as given in the STASHmaster
+       files
+    4. Units: Units of this STASH code (e.g. 'kg m-2')
+    5. Valid from: This STASH valid from this UM version (e.g. 405)
+    6. Valid to: This STASH valid to this UM version (e.g. 501)
+    7. CF standard name: The CF standard name
+    8. CF info: Anything useful (such as standard name modifiers)
+    9. PP conditions: PP conditions which need to be satisfied for
+       this translation
+
+    Only entries "ID", "STASH", and "CF standard name" are mandatory,
+    all other entries may be left blank. For example,
+    ``1!999!!!!!ultraviolet_index!!`` is a valid mapping from
+    atmosphere STASH code 999 to the standard name
+    ultraviolet_index.
+
+    If the "Valid from" and "Valid to" entries are omitted then the
+    stash mapping is assumed to apply to all UM versions.
+
+    .. seealso:: `stash2standard_name`
 
     :Parameters:
 
@@ -2347,12 +2435,21 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
             the table will be looked for at
             ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
 
+            Setting *table* to `None` will reset the table, removing
+            any modifications that have previously been made.
+
         delimiter: `str`, optional
             The delimiter of the table columns. By default, ``!`` is
             taken as the delimiter.
 
         merge: `bool`, optional
-            If *table* is None then *merge* is taken as False,
+            If False then the table is updated to only contain the
+            mappings defined by the *table* parameter. By default the
+            mappings defined by the *table* parameter are incorporated
+            into the existing table, overwriting any entries which
+            already exist.
+
+            If *table* is `None` then *merge* is taken as False,
             regardless of its given value.
 
     :Returns:
@@ -2387,6 +2484,9 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
         merge = False
         package_path = os.path.dirname(__file__)
         table = os.path.join(package_path, "etc/STASH_to_CF.txt")
+    else:
+        # User supplied table
+        table = abspath(os.path.expanduser(os.path.expandvars(table)))
 
     with open(table, "r") as open_table:
         lines = csv.reader(
@@ -2478,7 +2578,17 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
 
     _stash2standard_name.update(stash2sn)
 
-    return _stash2standard_name
+
+def stash2standard_name():
+    """Return a copy of the loaded STASH to standard name conversion
+    table.
+
+    .. versionadded:: 3.8.0
+
+    .. seealso:: `load_stash2standard_name`
+
+    """
+    return _stash2standard_name.copy()
 
 
 def flat(x):
@@ -2955,9 +3065,9 @@ def allclose(x, y, rtol=None, atol=None):
 def _section(
     x, axes=None, data=False, stop=None, chunks=False, min_step=1, **kwargs
 ):
-    """Return a list of m dimensional sections of a Field of n dimensions
-    or a dictionary of m dimensional sections of a Data object of n
-    dimensions, where m <= n.
+    """Return a list of m dimensional sections of a Field of n
+    dimensions or a dictionary of m dimensional sections of a Data
+    object of n dimensions, where m <= n.
 
     In the case of a `Data` object, the keys of the dictionary are the
     indices of the sections in the original Data object. The m
@@ -3029,15 +3139,16 @@ def _section(
     """
 
     def loop_over_index(x, current_index, axis_indices, indices):
-        """Expects an index to loop over in the list indices. If this is less
-        than 0 the horizontal slice defined by indices is appended to
-        the FieldList fl, if it is the specified axis indices the
-        value in indices is left as slice(None) and it calls itself
-        recursively with the next index, otherwise each index is
-        looped over. In this loop the routine is called recursively
-        with the next index. If the count of the number of slices
-        taken is greater than or equal to stop it returns before
-        taking any more slices.
+        """Expects an index to loop over in the list indices.
+
+        If this is less than 0 the horizontal slice defined by indices
+        is appended to the FieldList fl, if it is the specified axis
+        indices the value in indices is left as slice(None) and it calls
+        itself recursively with the next index, otherwise each index is
+        looped over. In this loop the routine is called recursively with
+        the next index. If the count of the number of slices taken is
+        greater than or equal to stop it returns before taking any more
+        slices.
 
         """
         if current_index < 0:
@@ -3138,7 +3249,7 @@ def _section(
 
 
 def _get_module_info(module, try_except=False):
-    """Helper function for processing modules for cf.environment"""
+    """Helper function for processing modules for cf.environment."""
     if try_except:
         try:
             importlib.import_module(module)
@@ -3176,40 +3287,38 @@ def environment(display=True, paths=True):
     **Examples:**
 
     >>> cf.environment()
-    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
+    Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
+    HDF5 library: 1.10.5
+    netcdf library: 4.6.3
     udunits2 library: libudunits2.so.0
-    python: 3.7.3 /home/space/anaconda3/bin/python
-    netCDF4: 1.4.2 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.0.3.4 /home/space/.local/lib/python3.7/site-packages/cftime-1.0.3.4-py3.7-linux-x86_64.egg/cftime/__init__.py
-    numpy: 1.16.2 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    psutil: 5.6.3 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
-    scipy: 1.2.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
+    python: 3.7.0 /home/space/anaconda3/bin/python
+    netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
+    cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
+    psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
+    scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
     matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
-    ESMF: 7.1.0r /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
-    cfdm: 1.7.8 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
-    cfunits: 3.2.2 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
+    ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
+    cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
+    cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
     cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
-    cf: 3.0.1 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
-
+    cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
     >>> cf.environment(paths=False)
-    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
+    HDF5 library: 1.10.5
+    netcdf library: 4.6.3
     udunits2 library: libudunits2.so.0
-    python: 3.7.3
-    netCDF4: 1.4.2
-    cftime: 1.0.3.4
-    numpy: 1.16.2
-    psutil: 5.6.3
-    scipy: 1.2.1
-    matplotlib: 3.1.1
-    ESMF: 7.1.0r
-    cfdm: 1.7.8
-    cfunits: 3.2.2
-    cfplot: 3.0.0
-    cf: 3.0.1
+    Python: 3.7.0
+    netCDF4: 1.5.4
+    cftime: 1.3.0
+    numpy: 1.18.4
+    psutil: 5.4.7
+    scipy: 1.1.0
+    matplotlib: 2.2.3
+    ESMF: 8.0.0
+    cfdm: 1.8.8.0
+    cfunits: 3.3.1
+    cfplot: 3.0.38
+    cf: 3.8.0
 
     """
     dependency_version_paths_mapping = {
@@ -3423,8 +3532,8 @@ def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
 def default_fillvals():
     """Default data array fill values for each data type.
 
-    Deprecated at version 3.0.2 and is no longer available. Use
-    function `cf.default_netCDF_fillvals` instead.
+    Deprecated at version 3.0.2 and is no longer available. Use function
+    `cf.default_netCDF_fillvals` instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(

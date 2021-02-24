@@ -56,7 +56,30 @@ class Constructs(cfdm.Constructs):
     # Private methods
     # ----------------------------------------------------------------
     def _matching_values(self, value0, construct, value1):
-        """TODO"""
+        """Whether two values match according to equality on a given
+        construct.
+
+        The definition of "match" depends on the types of *value0* and
+        *value1*.
+
+        :Parameters:
+
+            value0:
+                The first value to be matched.
+
+            construct:
+                The construct whose `equals` method is used to determine whether
+                values can be considered to match.
+
+            value1:
+                The second value to be matched.
+
+        :Returns:
+
+            `bool`
+                Whether or not the two values match.
+
+        """
         if isinstance(value0, Query):
             return value0.evaluate(value1)
 
@@ -128,37 +151,41 @@ class Constructs(cfdm.Constructs):
         :Parameters:
 
             identities: optional
-                Identify the metadata constructs by one or more of
+                Select constructs that have any of the given identities or
+                construct keys.
 
-                * A metadata construct identity.
+                An identity is specified by a string (e.g. ``'latitude'``,
+                ``'long_name=time'``, etc.); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``), for which
+                all constructs whose identities match (via `re.search`)
+                are selected.
 
-                  {{construct selection identity}}
+                If no identities are provided then all constructs are selected.
 
-                * The key of a metadata construct
+                Each construct has a number of identities, and is selected
+                if any of them match any of those provided. A construct's
+                identities are those returned by its `!identities`
+                method. In the following example, the construct ``x`` has
+                five identities:
 
-                *Parameter example:*
-                  ``identity='latitude'``
+                   >>> x.identities()
+                   ['time', 'long_name=Time', 'foo=bar', 'T', 'ncvar%t']
 
-                *Parameter example:*
-                  ``'T'
+                A construct key may optionally have the ``'key%'``
+                prefix. For example ``'dimensioncoordinate2'`` and
+                ``'key%dimensioncoordinate2'`` are both acceptable keys.
 
-                *Parameter example:*
-                  ``'latitude'``
+                Note that the identifiers of a metadata construct in the
+                output of a `print` or `!dump` call are always one of its
+                identities, and so may always be used as an *identities*
+                argument.
 
-                *Parameter example:*
-                  ``'long_name=Cell Area'``
+                Domain axis constructs may also be identified by their
+                position in the field construct's data array. Positions
+                are specified by either integers.
 
-                *Parameter example:*
-                  ``'cellmeasure1'``
-
-                *Parameter example:*
-                  ``'measure:area'``
-
-                *Parameter example:*
-                  ``cf.eq('time')'``
-
-                *Parameter example:*
-                  ``re.compile('^lat')``
+                .. note:: This is an extension to the functionality of
+                          `cfdm.Constucts.filter_by_identity`.
 
         :Returns:
 
@@ -186,6 +213,25 @@ class Constructs(cfdm.Constructs):
         >>> d = c.filter_by_identity('ncvar%time')
 
         """
+        #        field_data_axes = self._field_data_axes
+        #
+        #        if field_data_axes is not None:
+        #            # Allows integer data domain axis positions, do we want this? TODO
+        #            new_identities = []
+        #            for i in identities:
+        #                try:
+        #                    _ = field_data_axes[i]
+        #                except IndexError:
+        #                    new_identities.append(i)
+        #                else:
+        #                    if isinstance(_, str):
+        #                        new_identities.append('key%'+_)
+        #                    else:
+        #                        new_identities.extend(['key%'+axis for axis in _])
+        #        else:
+        #            new_identities = identities
+        #
+
         # Allow keys without the 'key%' prefix
         identities = list(identities)
         for n, identity in enumerate(identities):

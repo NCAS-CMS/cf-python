@@ -1,13 +1,17 @@
 import datetime
+import faulthandler
 import os
 import pycodestyle
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all Python '.py' files in the 'cf' directory."""
+    """Test PEP8 compliance on all Python '.py' files in the 'cf'
+    directory."""
 
     def setUp(self):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +48,10 @@ class styleTest(unittest.TestCase):
             "E501",  # ... docstring examples include output lines >79 chars
             "E712",  # ... query module requires a (specific) '== False' check
             "E731",  # ... one sensible (default sort key) lambda expression
-        )  # TODO remove these incrementally as move towards full compliance
+            # Black auto-formatting doesn't abide by this code (e.g. see
+            # https://github.com/psf/black/issues/315)
+            "E203",
+        )
 
         # First add Python files which lie outside of the cf directory:
         python_files = self.non_cf_dir_python_paths

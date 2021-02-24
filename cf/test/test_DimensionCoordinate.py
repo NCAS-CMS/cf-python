@@ -1,8 +1,11 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -257,12 +260,12 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(y.upper_bounds.equals(x.upper_bounds[::-1]))
         self.assertTrue(y.lower_bounds.equals(x.lower_bounds[::-1]))
 
-        c = x.cellsize
-        c = y.cellsize
+        x.cellsize
+        y.cellsize
 
         y.del_bounds()
 
-        b = y.create_bounds()
+        y.create_bounds()
 
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
@@ -451,8 +454,8 @@ class DimensionCoordinateTest(unittest.TestCase):
     def test_DimensionCoordinate__setitem__(self):
         d = self.dim.copy()
 
-        a = d.array
-        b = d.bounds.array
+        d.array
+        d.bounds.array
 
         d[...] = 999
         self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))

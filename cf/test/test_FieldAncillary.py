@@ -1,6 +1,9 @@
 import datetime
+import faulthandler
 import os
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -22,7 +25,7 @@ class FieldAncillaryTest(unittest.TestCase):
         f = cf.read(self.filename)[0]
 
         a = f.auxiliary_coordinates("latitude").value()
-        x = cf.FieldAncillary(source=a)
+        cf.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
         f = cf.read(self.filename)[0]

@@ -1,7 +1,10 @@
 import datetime
+import faulthandler
 import os
 import unittest
 import warnings
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -241,9 +244,6 @@ class aggregateTest(unittest.TestCase):
         x = cf.aggregate([g, h])
 
         self.assertEqual(len(x), 1, x)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

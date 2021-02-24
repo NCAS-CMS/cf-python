@@ -20,29 +20,19 @@
 
 Version |release| for version |version| of the CF conventions.
 
-The Python `cf` package is an Earth Science data analysis library that
+The Python cf package is an Earth Science data analysis library that
 is built on a complete implementation of the :ref:`CF-data-model`.
 
+.. contents::
+   :local:
+   :backlinks: entry
 
+----
 
 **Functionality**
 -----------------
-----
 
-.. important:: **This version of cf is for Python 3 only** and there are
-          :ref:`incompatible differences between versions 2.x and 3.x
-          <two-to-three-changes>` of `cf`.
-
-	  Scripts written for version 2.x but running under version
-          3.x should either work as expected, or provide informative
-          error messages on the new API usage. However, it is advised
-          that the outputs of older scripts are checked when running
-          with Python 3 versions of the `cf` library.
-
-	  For version 2.x documentation, see the :ref:`releases
-	  <Releases>` page.
-
-The `cf` package implements the :ref:`CF-data-model` [#cfdm]_ for its
+The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
 internal data structures and so is able to process any CF-compliant
 dataset. It is not strict about CF-compliance, however, so that
 partially conformant datasets may be ingested from existing datasets
@@ -67,7 +57,7 @@ partially conformant may nonetheless be modified in memory.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The `cf` package can:
+The cf package can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 
@@ -122,15 +112,15 @@ The `cf` package can:
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.
 
+----
 
 **Visualization**
 -----------------
 
-----
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cfplot` package, that is installed
-separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
+separately to cf (see http://ajheaps.github.io/cf-plot for details).
 
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
@@ -138,7 +128,25 @@ range plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of `cfplot` displaying a `cf` field construct.*
+   *Example output of cfplot displaying a cf field construct.*
+
+----
+
+**Old versions**
+----------------
+
+Since version 3.0.0, cf is for Python 3 only and there are
+:ref:`incompatible differences between versions 2.x and 3.x
+<two-to-three-changes>` of cf.
+
+Scripts written for version 2.x but running under version 3.x should
+either work as expected, or provide informative error messages on the
+new API usage. However, it is advised that the outputs of older
+scripts are checked when running with Python 3 versions of the cf
+library.
+
+For version 2.x documentation, see the :ref:`releases <Releases>`
+page.
 
 ----
    

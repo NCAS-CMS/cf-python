@@ -1,8 +1,11 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
 

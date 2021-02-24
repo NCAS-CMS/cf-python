@@ -9,7 +9,7 @@ from . import abstract
 
 
 class GatheredSubarray(abstract.CompressedSubarray):
-    """TODO"""
+    """An underlying gathered sub-array."""
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]

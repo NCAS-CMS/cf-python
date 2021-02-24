@@ -1,33 +1,41 @@
 import datetime
+import faulthandler
 import unittest
 
-import numpy
-import cftime
+import numpy as np
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
-
 from cf import Units
 
 
 class DatetimeTest(unittest.TestCase):
     def test_Datetime(self):
-        d = cf.dt(2003)
-        d = cf.dt(2003, 2)
-        d = cf.dt(2003, 2, 30, calendar="360_day")
-        d = cf.dt(2003, 2, 30, 0, 0, calendar="360_day")
-        d = cf.dt(2003, 2, 30, 0, 0, 0, calendar="360_day")
-        d = cf.dt(2003, 4, 5, 12, 30, 15)
-        d = cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
+        cf.dt(2003)
+        cf.dt(2003, 2)
+        cf.dt(2003, 2, 30, calendar="360_day")
+        cf.dt(2003, 2, 30, 0, 0, calendar="360_day")
+        cf.dt(2003, 2, 30, 0, 0, 0, calendar="360_day")
+        cf.dt(2003, 4, 5, 12, 30, 15)
+        cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
 
     def test_Datetime_rt2dt(self):
-        self.assertEqual(
-            cf.cfdatetime.rt2dt(1, Units("days since 2004-2-28")),
-            numpy.array(cf.dt(2004, 2, 29, calendar="standard"), dtype="O"),
-        )
+        for a in (1, np.array(1), np.ma.array(1)):
+            self.assertEqual(
+                cf.cfdatetime.rt2dt(a, Units("days since 2004-2-28")),
+                np.array(cf.dt(2004, 2, 29, calendar="standard"), dtype="O"),
+            )
+
+        for a in (np.ma.array(1, mask=True), np.ma.array([1], mask=True)):
+            b = cf.cfdatetime.rt2dt(a, Units("days since 2004-2-28"))
+            self.assertIsInstance(b, np.ndarray)
+            self.assertEqual(b.mask, True)
+
         self.assertTrue(
             (
                 cf.cfdatetime.rt2dt([1, 3], Units("days since 2004-2-28"))
-                == numpy.array(
+                == np.array(
                     [
                         datetime.datetime(2004, 2, 29),
                         datetime.datetime(2004, 3, 2),
@@ -35,7 +43,8 @@ class DatetimeTest(unittest.TestCase):
                 )
             ).all()
         )
-        a = numpy.array(
+
+        a = np.array(
             [
                 cf.dt(2004, 2, 29, calendar=None),
                 cf.dt(2004, 3, 2, calendar="gregorian"),
@@ -45,11 +54,25 @@ class DatetimeTest(unittest.TestCase):
         b = cf.cfdatetime.rt2dt([1, 3], Units("days since 2004-2-28"))
         self.assertTrue((a == b).all())
 
+        for a in (
+            np.ma.array(3),
+            np.ma.array([3]),
+        ):
+            b = cf.cfdatetime.rt2dt(a, Units("days since 1970-01-01"))
+            self.assertTrue(b == cf.dt(1970, 1, 4, calendar="gregorian"))
+
+        for a in (
+            np.ma.array(3, mask=True),
+            np.ma.array([3], mask=True),
+        ):
+            b = cf.cfdatetime.rt2dt(a, Units("days since 1970-01-01"))
+            self.assertEqual(b.mask, True)
+
     def test_Datetime_dt2rt(self):
         units = Units("days since 2004-2-28")
         self.assertEqual(
             cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units),
-            numpy.array(1.0),
+            np.array(1.0),
         )
         self.assertTrue(
             (
@@ -61,7 +84,7 @@ class DatetimeTest(unittest.TestCase):
                     None,
                     units,
                 )
-                == numpy.array([1.0, 3.0])
+                == np.array([1.0, 3.0])
             ).all()
         )
         units = Units("days since 2004-2-28", "360_day")
@@ -70,13 +93,13 @@ class DatetimeTest(unittest.TestCase):
                 cf.cfdatetime.dt2rt(
                     [cf.dt(2004, 2, 29), cf.dt(2004, 3, 1)], None, units
                 )
-                == numpy.array([1.0, 3.0])
+                == np.array([1.0, 3.0])
             ).all()
         )
         units = Units("seconds since 2004-2-28")
         self.assertEqual(
             cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units),
-            numpy.array(86400.0),
+            np.array(86400.0),
         )
 
     def test_Datetime_Data(self):
@@ -102,25 +125,36 @@ class DatetimeTest(unittest.TestCase):
     def test_Datetime_dt_vector(self):
         for v in (2000, [2000], [[2000]], "2000-01-1", ["2000-01-1"]):
             x = cf.dt_vector(v)
-            self.assertIsInstance(x, numpy.ndarray)
+            self.assertIsInstance(x, np.ndarray)
             self.assertEqual(x[0], cf.dt(2000, 1, 1))
 
         for v in ([2000, 2001], [[2000], [2001]]):
             x = cf.dt_vector(v)
-            self.assertIsInstance(x, numpy.ndarray)
+            self.assertIsInstance(x, np.ndarray)
             self.assertEqual(
                 x.tolist(), [cf.dt(2000, 1, 1), cf.dt(2001, 1, 1)]
             )
 
         for v in ([[2000, 1], [2001, 2]], ["2000-01-1", "2001-02-1"]):
             x = cf.dt_vector(v)
-            self.assertIsInstance(x, numpy.ndarray)
+            self.assertIsInstance(x, np.ndarray)
             self.assertEqual(
                 x.tolist(), [cf.dt(2000, 1, 1), cf.dt(2001, 2, 1)]
             )
 
-
-# --- End: class
+    def test_Datetime_st2dt(self):
+        for a in (
+            "1970-01-04",
+            np.array("1970-01-04"),
+            np.ma.array(["1970-01-04"]),
+        ):
+            b = cf.cfdatetime.st2rt(
+                a,
+                Units("days since 1970-01-01"),
+                Units("days since 1970-01-01"),
+            )
+            self.assertIsInstance(b, np.ndarray)
+            self.assertEqual(b, 3)
 
 
 if __name__ == "__main__":

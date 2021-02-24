@@ -15,6 +15,3 @@ class RaggedContiguousArray(cfdm.RaggedContiguousArray):
     .. versionadded:: 3.0.0
 
     """
-
-
-# --- End: class

@@ -18,9 +18,7 @@ if _found_ESMF:
 
 class Regrid:
     """Class containing all the methods required for accessing ESMF
-    regridding through ESMPY and the associated utility methods.
-
-    """
+    regridding through ESMPY and the associated utility methods."""
 
     def __init__(
         self,
@@ -31,8 +29,9 @@ class Regrid:
         method="conservative_1st",
         ignore_degenerate=False,
     ):
-        """Creates a handle for regridding fields from a source grid to a
-        destination grid that can then be used by the run_regridding method.
+        """Creates a handle for regridding fields from a source grid to
+        a destination grid that can then be used by the run_regridding
+        method.
 
         :Parameters:
 
@@ -107,8 +106,8 @@ class Regrid:
     @staticmethod
     def initialize():
         """Check whether ESMF has been found. If not raise an import
-        error. Initialise the ESMPy manager. Whether logging is enabled or
-        not is determined by cf.regrid_logging. If it is then logging
+        error. Initialise the ESMPy manager. Whether logging is enabled
+        or not is determined by cf.regrid_logging. If it is then logging
         takes place after every call to ESMPy.
 
         :Returns:
@@ -136,9 +135,9 @@ class Regrid:
         coords_2D=False,
         coord_order=None,
     ):
-        """Create an ESMPy grid given a sequence of coordinates for use as a
-        source or destination grid in regridding. Optionally the grid may
-        have an associated mask.
+        """Create an ESMPy grid given a sequence of coordinates for use
+        as a source or destination grid in regridding. Optionally the
+        grid may have an associated mask.
 
         :Parameters:
 
@@ -415,8 +414,8 @@ class Regrid:
 
     @staticmethod
     def create_field(grid, name):
-        """Create an ESMPy field for use as a source or destination field in
-        regridding given an ESMPy grid and a name.
+        """Create an ESMPy field for use as a source or destination
+        field in regridding given an ESMPy grid and a name.
 
         :Parameters:
 
@@ -445,10 +444,10 @@ class Regrid:
 
     @staticmethod
     def concatenate_data(data_list, axis):
-        """Concatenates a list of Data objects into a single Data object along
-        the specified access (see cf.Data.concatenate for details). In the
-        case that the list contains only one element, that element is
-        simply returned.
+        """Concatenates a list of Data objects into a single Data object
+        along the specified access (see cf.Data.concatenate for
+        details). In the case that the list contains only one element,
+        that element is simply returned.
 
         :Parameters:
 
@@ -475,10 +474,10 @@ class Regrid:
 
     @staticmethod
     def reconstruct_sectioned_data(sections):
-        """Expects a dictionary of Data objects with ordering information as
-        keys, as output by the section method when called with a Data
-        object. Returns a reconstructed cf.Data object with the sections
-        in the original order.
+        """Expects a dictionary of Data objects with ordering
+        information as keys, as output by the section method when called
+        with a Data object. Returns a reconstructed cf.Data object with
+        the sections in the original order.
 
         :Parameters:
 

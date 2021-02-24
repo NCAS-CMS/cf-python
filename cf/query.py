@@ -18,6 +18,7 @@ from .functions import (
 from .decorators import (
     _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
+    _display_or_return,
 )
 
 
@@ -352,7 +353,7 @@ class Query:
 
     @property
     def attr(self):
-        """TODO
+        """TODO.
 
         **Examples:**
 
@@ -371,7 +372,7 @@ class Query:
 
     @property
     def operator(self):
-        """TODO
+        """TODO.
 
         Compound conditions return `None`.
 
@@ -389,7 +390,7 @@ class Query:
 
     @property
     def value(self):
-        """TODO
+        """TODO.
 
         An exception is raised for compound conditions.
 
@@ -409,8 +410,8 @@ class Query:
         raise AttributeError("Compound query doesn't have attribute 'value'")
 
     def addattr(self, attr):
-        """Return a `Query` object with a new left hand side operand attribute
-        to be used during evaluation. TODO
+        """Return a `Query` object with a new left hand side operand
+        attribute to be used during evaluation. TODO.
 
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
@@ -471,8 +472,10 @@ class Query:
         """
         return self  # TODO
 
+    @_display_or_return
     def dump(self, display=True):
-        """Return a string containing a full description of the instance.
+        """Return a string containing a full description of the
+        instance.
 
         :Parameters:
 
@@ -489,17 +492,12 @@ class Query:
                 description is returned as a string.
 
         """
-        string = str(self)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return str(self)
 
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
-        """TODO"""
+        """TODO."""
         if self._compound:
             if not other._compound:
                 logger.info(
@@ -575,7 +573,8 @@ class Query:
         return True
 
     def evaluate(self, x):
-        """Evaluate the query operation for a given left hand side operand.
+        """Evaluate the query operation for a given left hand side
+        operand.
 
         Note that for the query object ``q`` and any object, ``x``,
         ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
@@ -762,7 +761,11 @@ class Query:
     # ----------------------------------------------------------------
     @property
     def exact(self):
-        """TODO Deprecated at version 3.0.0. Use re.compile objects instead."""
+        """TODO Deprecated at version 3.0.0.
+
+        Use re.compile objects instead.
+
+        """
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "exact", "Use 're.compile' objects instead."
         )  # pragma: no cover
@@ -1691,7 +1694,8 @@ def cellge(value, units=None):
 
 
 def celllt(value, units=None):
-    """A `Query` object for a “cell bounds strictly less than” condition.
+    """A `Query` object for a “cell bounds strictly less than”
+    condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.cellwi`,
@@ -1722,7 +1726,8 @@ def celllt(value, units=None):
 
 
 def cellle(value, units=None):
-    """A `Query` object for a "cell bounds less than or equal" condition.
+    """A `Query` object for a "cell bounds less than or equal"
+    condition.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.celllt`, `cf.cellwi`,
@@ -1991,8 +1996,9 @@ def dtge(*args, **kwargs):
 
 
 def dtgt(*args, **kwargs):
-    """Deprecated at version 3.0.0. Use 'cf.gt' with a datetime object
-    value instead.
+    """Deprecated at version 3.0.0.
+
+    Use 'cf.gt' with a datetime object value instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(
@@ -2001,8 +2007,9 @@ def dtgt(*args, **kwargs):
 
 
 def dtle(*args, **kwargs):
-    """Deprecated at version 3.0.0. Use 'cf.le' with a datetime object
-    value instead.
+    """Deprecated at version 3.0.0.
+
+    Use 'cf.le' with a datetime object value instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(
@@ -2011,8 +2018,9 @@ def dtle(*args, **kwargs):
 
 
 def dtlt(*args, **kwargs):
-    """Deprecated at version 3.0.0. Use 'cf.lt' with a datetime object
-    value instead.
+    """Deprecated at version 3.0.0.
+
+    Use 'cf.lt' with a datetime object value instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(
@@ -2021,8 +2029,9 @@ def dtlt(*args, **kwargs):
 
 
 def dteq(*args, **kwargs):
-    """Deprecated at version 3.0.0. Use 'cf.eq' with a datetime object
-    value instead.
+    """Deprecated at version 3.0.0.
+
+    Use 'cf.eq' with a datetime object value instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(
@@ -2031,8 +2040,9 @@ def dteq(*args, **kwargs):
 
 
 def dtne(*args, **kwargs):
-    """Deprecated at version 3.0.0. Use 'cf.ne' with a datetime object
-    value instead.
+    """Deprecated at version 3.0.0.
+
+    Use 'cf.ne' with a datetime object value instead.
 
     """
     _DEPRECATION_ERROR_FUNCTION(

@@ -1,21 +1,15 @@
 from numpy import empty as numpy_empty
 from numpy import full as numpy_full
-from numpy import load as numpy_load
-from numpy import ndarray as numpy_ndarray
-from numpy import save as numpy_save
-
-from numpy.ma import array as numpy_ma_array
-from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import masked_all as numpy_ma_masked_all
 
 from . import abstract
 
-from ..functions import parse_indices, get_subspace
+from ..functions import parse_indices
 from ..constants import masked as cf_masked
 
 
 class FilledArray(abstract.Array):
-    """TODO"""
+    """An underlying filled array."""
 
     def __init__(
         self,
@@ -117,7 +111,7 @@ class FilledArray(abstract.Array):
 
     @property
     def ndim(self):
-        """Number of array dimensions
+        """Number of array dimensions.
 
         **Examples:**
 
@@ -141,6 +135,7 @@ class FilledArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("ndim")
 
@@ -170,6 +165,7 @@ class FilledArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("shape")
 
@@ -204,33 +200,26 @@ class FilledArray(abstract.Array):
         return self._get_component("size")
 
     def fill_value(self):
-        """TODO        """
+        """Return the data array missing data value."""
         return self._get_component("fill_value")
-
-    #    def masked_all(self):
-    #        '''TODO        '''
-    #        return self._get_component('masked_all')
 
     @property
     def array(self):
-        """TODO"""
+        """An independent numpy array containing the data."""
         return self[...]
 
     def reshape(self, newshape):
-        """TODO"""
+        """Give a new shape to the array."""
         new = self.copy()
         new.shape = newshape
         new.ndim = len(newshape)
         return new
 
     def resize(self, newshape):
-        """TODO"""
+        """Change the shape and size of the array in-place."""
         self.shape = newshape
         self.ndim = len(newshape)
 
     def view(self):
-        """TODO"""
+        """Return a view of the entire array."""
         return self[...]
-
-
-# --- End: class

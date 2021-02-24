@@ -1,10 +1,11 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
-import numpy
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -29,81 +30,69 @@ atexit.register(_remove_tmpfiles)
 
 
 class ppTest(unittest.TestCase):
-    def setUp(self):
-        self.ppfilename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "wgdos_packed.pp"
-        )
+    ppfile = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "wgdos_packed.pp"
+    )
 
-        self.new_table = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "new_STASH_to_CF.txt"
-        )
+    new_table = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "new_STASH_to_CF.txt"
+    )
+    text_file = open(new_table, "w")
+    text_file.write(
+        "1!30201!long name                           !Pa!!!NEW_NAME!!"
+    )
+    text_file.close()
 
-        text_file = open(self.new_table, "w")
-        text_file.write(
-            "1!24!SURFACE TEMPERATURE AFTER TIMESTEP  !Pa!!!NEW_NAME!!"
-        )
-        text_file.close()
+    chunk_sizes = (800000, 80000)
 
-        self.chunk_sizes = (100000, 300, 34)
-        self.original_chunksize = cf.chunksize()
-
-    def test_PP_load_stash2standard_name(self):
-        f = cf.read(self.ppfilename)[0]
-        self.assertEqual(f.identity(), "surface_temperature")
-        self.assertEqual(f.Units, cf.Units("K"))
+    def test_load_stash2standard_name(self):
+        f = cf.read(self.ppfile)[0]
+        self.assertEqual(f.identity(), "eastward_wind")
+        self.assertEqual(f.Units, cf.Units("m s-1"))
 
         for merge in (True, False):
             cf.load_stash2standard_name(self.new_table, merge=merge)
-            f = cf.read(self.ppfilename)[0]
+            f = cf.read(self.ppfile)[0]
             self.assertEqual(f.identity(), "NEW_NAME")
             self.assertEqual(f.Units, cf.Units("Pa"))
             cf.load_stash2standard_name()
-            f = cf.read(self.ppfilename)[0]
-            self.assertEqual(f.identity(), "surface_temperature")
-            self.assertEqual(f.Units, cf.Units("K"))
+            f = cf.read(self.ppfile)[0]
+            self.assertEqual(f.identity(), "eastward_wind")
+            self.assertEqual(f.Units, cf.Units("m s-1"))
 
         cf.load_stash2standard_name()
 
-    def test_PP_WGDOS_UNPACKING(self):
-        f = cf.read(self.ppfilename)[0]
+    def test_stash2standard_name(self):
+        d = cf.stash2standard_name()
+        self.assertIsInstance(d, dict)
+        d["test"] = None
+        e = cf.stash2standard_name()
+        self.assertNotEqual(d, e)
 
-        self.assertTrue(
-            f.minimum() > 221.71, "Bad unpacking of WGDOS packed data"
-        )
-        self.assertTrue(
-            f.maximum() < 310.45, "Bad unpacking of WGDOS packed data"
-        )
+    def test_PP_WGDOS_UNPACKING(self):
+        f = cf.read(self.ppfile)[0]
+
+        self.assertEqual(f.data.mean(), 3.8080420658506196)
 
         array = f.array
 
         for chunksize in self.chunk_sizes:
-            cf.chunksize(chunksize)
+            with cf.CHUNKSIZE(chunksize):
+                f = cf.read(self.ppfile)[0]
 
-            f = cf.read(self.ppfilename)[0]
+                for fmt in ("NETCDF4", "CFA4"):
+                    cf.write(f, tmpfile, fmt=fmt)
+                    g = cf.read(tmpfile)[0]
 
-            for fmt in ("NETCDF4", "CFA4"):
-                # print (fmt)
-                # f.dump()
-                # print (repr(f.dtype))
-                # print (f._FillValue)
-                # print (type(f._FillValue))
-                # f._FillValue = numpy.array(f._FillValue , dtype='float32')
-                cf.write(f, tmpfile, fmt=fmt)
-                g = cf.read(tmpfile)[0]
+                    self.assertTrue(
+                        (f.array == array).all(),
+                        "Bad unpacking of PP WGDOS packed data",
+                    )
 
-                self.assertTrue(
-                    (f.array == array).all(),
-                    "Bad unpacking of PP WGDOS packed data",
-                )
-
-                self.assertTrue(
-                    f.equals(g, verbose=2), "Bad writing/reading. fmt=" + fmt
-                )
-
-        cf.chunksize(self.original_chunksize)
-
-
-# --- End: class
+                    self.assertTrue(
+                        f.equals(g, verbose=2),
+                        "Bad writing/reading. fmt=" + fmt,
+                    )
 
 
 if __name__ == "__main__":

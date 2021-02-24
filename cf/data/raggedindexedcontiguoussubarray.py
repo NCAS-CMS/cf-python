@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
-    """TODO"""
+    """An underlying indexed ragged contiguous sub-array."""
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
@@ -26,7 +26,6 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
         # data everywhere
         uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
 
-        r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim
 
         compression = self.compression
@@ -57,13 +56,3 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
             )
 
             return get_subspace(uarray, indices)
-
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
-
-
-# --- End: class

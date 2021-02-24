@@ -13,6 +13,7 @@ from .functions import inspect as cf_inspect
 from .decorators import (
     _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
+    _display_or_return,
 )
 
 
@@ -83,7 +84,7 @@ class Flags:
         return hash(tuple(x))
 
     def __bool__(self):
-        """x.__bool__() <==> x!=0"""
+        """x.__bool__() <==> x!=0."""
         for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 return True
@@ -265,8 +266,10 @@ class Flags:
         """
         return deepcopy(self)
 
+    @_display_or_return
     def dump(self, display=True, _level=0):
-        """Return a string containing a full description of the instance.
+        """Return a string containing a full description of the
+        instance.
 
         :Parameters:
 
@@ -292,12 +295,7 @@ class Flags:
                 string.append("%s%s = %s" % (indent1, attr[1:], list(value)))
         # --- End: for
 
-        string = "\n".join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return "\n".join(string)
 
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
@@ -310,7 +308,8 @@ class Flags:
         verbose=None,
         traceback=False,
     ):
-        """True if two groups of flags are logically equal, False otherwise.
+        """True if two groups of flags are logically equal, False
+        otherwise.
 
         Note that both instances are sorted in place prior to the comparison.
 

@@ -89,7 +89,8 @@ class DimensionCoordinate(
         return ((mx // period) * period).squeeze()
 
     def _infer_direction(self):
-        """Return True if a coordinate is increasing, otherwise return False.
+        """Return True if a coordinate is increasing, otherwise return
+        False.
 
         A dimension coordinate construct is considered to be increasing if
         its data array values are increasing in index space, or if it has
@@ -201,7 +202,8 @@ class DimensionCoordinate(
 
     @property
     def decreasing(self):
-        """True if the dimension coordinate is decreasing, otherwise False.
+        """True if the dimension coordinate is decreasing, otherwise
+        False.
 
         A dimension coordinate is increasing if its coordinate values are
         increasing in index space.
@@ -229,7 +231,8 @@ class DimensionCoordinate(
 
     @property
     def increasing(self):
-        """`True` for dimension coordinate constructs, `False` otherwise.
+        """`True` for dimension coordinate constructs, `False`
+        otherwise.
 
         A dimension coordinate is increasing if its coordinate values are
         increasing in index space.
@@ -319,8 +322,8 @@ class DimensionCoordinate(
     #        return data[..., i].squeeze(1)
 
     def direction(self):
-        """Return True if the dimension coordinate values are increasing,
-        otherwise return False.
+        """Return True if the dimension coordinate values are
+        increasing, otherwise return False.
 
         Dimension coordinates values are increasing if its coordinate
         values are increasing in index space.
@@ -369,13 +372,12 @@ class DimensionCoordinate(
                 If set to a value larger (smaller) than the largest
                 (smallest) coordinate value then bounds are created which
                 include this value and for which each coordinate is in the
-                centre of its bounds. Ignored if *create* is False.
+                centre of its bounds.
 
             cellsize: optional
                 Define the exact size of each cell that is
                 created. Created cells are allowed to overlap do not have
-                to be contigious.  Ignored if *create* is False. The
-                *cellsize* parameter may be one of:
+                to be contigious. The *cellsize* parameter may be one of:
 
                   * A data-like scalar (see below) that defines the cell size,
                     either in the same units as the coordinates or in the
@@ -392,22 +394,20 @@ class DimensionCoordinate(
                         'day')`` (see `cf.Data` for details).
 
                     *Parameter example:*
-                         For coordinates ``1, 2, 10``, setting ``cellsize=1``
-                         will result in bounds of ``(0.5, 1.5), (1.5, 2.5),
-                         (9.5, 10.5)``.
+                        For coordinates ``1, 2, 10``, setting ``cellsize=1``
+                        will result in bounds of ``(0.5, 1.5), (1.5, 2.5),
+                        (9.5, 10.5)``.
 
                     *Parameter example:*
-                         For coordinates ``1, 2, 10`` kilometres, setting
-                         ``cellsize=cf.Data(5000, 'm')`` will result in bounds
-                         of ``(-1.5, 3.5), (-0.5, 4.5), (7.5, 12.5)`` (see
-                         `cf.Data` for details).
+                        For coordinates ``1, 2, 10`` kilometres, setting
+                        ``cellsize=cf.Data(5000, 'm')`` will result in bounds
+                        of ``(-1.5, 3.5), (-0.5, 4.5), (7.5, 12.5)`` (see
+                        `cf.Data` for details).
 
                     *Parameter example:*
-                      For decreasing coordinates ``2, 0, -12`` setting,
-                      ``cellsize=2`` will result in bounds of ``(3, 1),
-                      (1, -1), (-11, -13)``.
-
-                ..
+                        For decreasing coordinates ``2, 0, -12`` setting,
+                        ``cellsize=2`` will result in bounds of ``(3, 1),
+                        (1, -1), (-11, -13)``.
 
                   * A `cf.TimeDuration` defining the cell size. Only
                     applicable to reference time coordinates. It is possible
@@ -418,55 +418,55 @@ class DimensionCoordinate(
                     that the *flt* parameter is ignored in this case.
 
                     *Parameter example:*
-                      For coordinates ``1984-12-01 12:00, 1984-12-02
-                      12:00, 2000-04-15 12:00`` setting,
-                      ``cellsize=cf.D()`` will result in bounds of
-                      ``(1984-12-01, 1984-12-02), (1984-12-02,
-                      1984-12-03), (2000-05-15, 2000-04-16)`` (see `cf.D`
-                      for details).
+                        For coordinates ``1984-12-01 12:00, 1984-12-02
+                        12:00, 2000-04-15 12:00`` setting,
+                        ``cellsize=cf.D()`` will result in bounds of
+                        ``(1984-12-01, 1984-12-02), (1984-12-02,
+                        1984-12-03), (2000-05-15, 2000-04-16)`` (see `cf.D`
+                        for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-12-01, 1984-12-02,
-                      2000-04-15`` setting, ``cellsize=cf.D()`` will
-                      result in bounds of ``(1984-12-01, 1984-12-02),
-                      (1984-12-02, 1984-12-03), (2000-05-15, 2000-04-16)``
-                      (see `cf.D` for details).
+                        For coordinates ``1984-12-01, 1984-12-02,
+                        2000-04-15`` setting, ``cellsize=cf.D()`` will
+                        result in bounds of ``(1984-12-01, 1984-12-02),
+                        (1984-12-02, 1984-12-03), (2000-05-15, 2000-04-16)``
+                        (see `cf.D` for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-12-01, 1984-12-02,
-                      2000-04-15`` setting, ``cellsize=cf.D(hour=12)``
-                      will result in bounds of ``(1984-11:30 12:00,
-                      1984-12-01 12:00), (1984-12-01 12:00, 1984-12-02
-                      12:00), (2000-05-14 12:00, 2000-04-15 12:00)`` (see
-                      `cf.D` for details).
+                        For coordinates ``1984-12-01, 1984-12-02,
+                        2000-04-15`` setting, ``cellsize=cf.D(hour=12)``
+                        will result in bounds of ``(1984-11:30 12:00,
+                        1984-12-01 12:00), (1984-12-01 12:00, 1984-12-02
+                        12:00), (2000-05-14 12:00, 2000-04-15 12:00)`` (see
+                        `cf.D` for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-12-16 12:00, 1985-01-16
-                      12:00`` setting, ``cellsize=cf.M()`` will result in
-                      bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
-                      1985-02-01)`` (see `cf.M` for details).
+                        For coordinates ``1984-12-16 12:00, 1985-01-16
+                        12:00`` setting, ``cellsize=cf.M()`` will result in
+                        bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
+                        1985-02-01)`` (see `cf.M` for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-12-01 12:00, 1985-01-01
-                      12:00`` setting, ``cellsize=cf.M()`` will result in
-                      bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
-                      1985-02-01)`` (see `cf.M` for details).
+                        For coordinates ``1984-12-01 12:00, 1985-01-01
+                        12:00`` setting, ``cellsize=cf.M()`` will result in
+                        bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
+                        1985-02-01)`` (see `cf.M` for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-12-01 12:00, 1985-01-01
-                      12:00`` setting, ``cellsize=cf.M(day=20)`` will
-                      result in bounds of ``(1984-11-20, 1984-12-20),
-                      (1984-12-20, 1985-01-20)`` (see `cf.M` for details).
+                        For coordinates ``1984-12-01 12:00, 1985-01-01
+                        12:00`` setting, ``cellsize=cf.M(day=20)`` will
+                        result in bounds of ``(1984-11-20, 1984-12-20),
+                        (1984-12-20, 1985-01-20)`` (see `cf.M` for details).
 
                     *Parameter example:*
-                      For coordinates ``1984-03-01, 1984-06-01`` setting,
-                      ``cellsize=cf.Y()`` will result in bounds of
-                      ``(1984-01-01, 1985-01-01), (1984-01-01,
-                      1985-01-01)`` (see `cf.Y` for details). Note that in
-                      this case each cell has the same bounds. This
-                      because ``cf.Y()`` is equivalent to ``cf.Y(month=1,
-                      day=1)`` and the closest 1st January to both
-                      coordinates is 1st January 1984.
+                        For coordinates ``1984-03-01, 1984-06-01`` setting,
+                        ``cellsize=cf.Y()`` will result in bounds of
+                        ``(1984-01-01, 1985-01-01), (1984-01-01,
+                        1985-01-01)`` (see `cf.Y` for details). Note that in
+                        this case each cell has the same bounds. This
+                        because ``cf.Y()`` is equivalent to ``cf.Y(month=1,
+                        day=1)`` and the closest 1st January to both
+                        coordinates is 1st January 1984.
 
                 {+data-like-scalar} TODO
 
@@ -478,44 +478,38 @@ class DimensionCoordinate(
                 *cellsize* is not set.
 
                 *Parameter example:*
-                   For coordinates ``1, 2, 10``, setting ``cellsize=1,
-                   flt=0.5`` will result in bounds of ``(0.5, 1.5), (1.5,
-                   2.5), (9.5, 10.5)``.
+                    For coordinates ``1, 2, 10``, setting ``cellsize=1,
+                    flt=0.5`` will result in bounds of ``(0.5, 1.5), (1.5,
+                    2.5), (9.5, 10.5)``.
 
                 *Parameter example:*
-                   For coordinates ``1, 2, 10``, setting ``cellsize=1,
-                   flt=0.25`` will result in bounds of ``(0.75, 1.75),
-                   (1.75, 2.75), (9.75, 10.75)``.
+                    For coordinates ``1, 2, 10``, setting ``cellsize=1,
+                    flt=0.25`` will result in bounds of ``(0.75, 1.75),
+                    (1.75, 2.75), (9.75, 10.75)``.
 
                 *Parameter example:*
-                   For decreasing coordinates ``2, 0, -12``, setting
-                   ``cellsize=6, flt=0.9`` will result in bounds of
-                   ``(2.6, -3.4), (0.6, -5.4), (-11.4, -17.4)``.
-
-            min: optional
-                Limit the created bounds to be no less than this number.
-
-                *Parameter example:*
-                   To ensure that all latitude bounds are at least -90:
-                   ``min=-90``.
+                    For decreasing coordinates ``2, 0, -12``, setting
+                    ``cellsize=6, flt=0.9`` will result in bounds of
+                    ``(2.6, -3.4), (0.6, -5.4), (-11.4, -17.4)``.
 
             max: optional
                 Limit the created bounds to be no more than this number.
 
                 *Parameter example:*
-                   To ensure that all latitude bounds are at most 90:
-                   ``max=90``.
+                    To ensure that all latitude bounds are at most 90:
+                    ``max=90``.
 
-            copy: `bool`, optional
-                If `False` then the returned bounds are not independent of
-                the existing bounds, if any, or those inserted, if
-                *create* and *insert* are both True. By default the
-                returned bounds are independent.
+            min: optional
+                Limit the created bounds to be no less than this number.
+
+                *Parameter example:*
+                    To ensure that all latitude bounds are at least -90:
+                    ``min=-90``.
 
         :Returns:
 
-            `Bounds` or `None`
-                TODO
+            `Bounds`
+                The newly-created coordinate cell bounds object.
 
         **Examples:**
 
@@ -588,7 +582,6 @@ class DimensionCoordinate(
                 bounds = numpy_empty((size, 2), dtype=object)
 
                 cellsize_bounds = cellsize.bounds
-                calendar = getattr(self, "calendar", None)
                 direction = bool(self.direction())
 
                 for c, b in zip(self.datetime_array, bounds):
@@ -695,7 +688,8 @@ class DimensionCoordinate(
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
-        """TODO"""
+        """Flips the dimension coordinate, that is reverses its
+        direction."""
         d = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
 
@@ -821,13 +815,13 @@ class DimensionCoordinate(
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
-        """TODO `{{class}}`"""
+        """Rolls the dimension coordinate along a cyclic axis."""
         c = _inplace_enabled_define_and_cleanup(self)
 
         size = c.size
         if size <= 1:
             return c
-
+        
         shift %= size
         if not shift:
             # Null roll
@@ -838,9 +832,8 @@ class DimensionCoordinate(
 
         if period is None:
             raise ValueError(
-                "Can't roll {} when no period has been set".format(
-                    c.__class__.__name__
-                )
+                f"Can't roll {c.__class__.__name__} when no period has "
+                "been set"
             )
 
         direction = c.direction()
@@ -895,12 +888,7 @@ class DimensionCoordinate(
     @property
     def role(self):
         """Deprecated at version 3.0.0, use `construct_type` attribute
-        instead.
-
-        """
+        instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "role", "Use attribute 'construct_type' instead"
         )  # pragma: no cover
-
-
-# --- End: class

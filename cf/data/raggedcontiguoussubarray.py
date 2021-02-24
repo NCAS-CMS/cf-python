@@ -1,8 +1,5 @@
 import logging
 
-
-from numpy import empty as numpy_empty
-
 from numpy.ma import masked_all as numpy_ma_masked_all
 
 from ..functions import parse_indices, get_subspace
@@ -14,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class RaggedContiguousSubarray(abstract.CompressedSubarray):
-    """TODO"""
+    """An underlying contiguous ragged subarray."""
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
@@ -29,7 +26,6 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
         # data everywhere
         uarray = numpy_ma_masked_all(self.shape, dtype=array.dtype)
 
-        r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim
 
         compression = self.compression
@@ -64,6 +60,3 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
             )
 
             return get_subspace(uarray, indices)
-
-
-# --- End: class

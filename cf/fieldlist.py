@@ -229,16 +229,15 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     # Aliases
     # ----------------------------------------------------------------
     def select(self, *identities, **kwargs):
-        """Alias of `cf.{{class}}.select_by_identity`.
+        """Alias of `cf.FieldList.select_by_identity`.
 
         To find the inverse of the selection, use a list comprehension
-        with the `~cf.{{class}}_by_identity` method of the constuct
-        elements. For example, to select all constructs whose identity is
-        *not* ``'air_temperature'``:
+        with the `~cf.Field.match_by_identity` method of the field
+        constucts. For example, to select all field constructs whose
+        identity is *not* ``'air_temperature'``:
 
-           >>> gl = cf.{{class}}(
-           ...     f for f in fl if not f.match_by_identity('air_temperature')
-           ... )
+           >>> gl = cf.FieldList(f for f in fl
+           ...                   if not f.match_by_identity('air_temperature'))
 
         .. seealso:: `select_by_identity`, `select_field`
 
@@ -312,8 +311,9 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         ignore_type=False,
         traceback=False,
     ):
-        """Deprecated at version 3.0.0. Use method 'equals' with
-        unordered=True instead.
+        """Deprecated at version 3.0.0.
+
+        Use method 'equals' with unordered=True instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -323,10 +323,11 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         )  # pragma: no cover
 
     def select1(self, *args, **kwargs):
-        """Deprecated at version 3.0.0. Use method 'fl.select_field' instead."""
+        """Deprecated at version 3.0.0.
+
+        Use method 'fl.select_field' instead.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self, "select1", "Use method 'fl.select_field' instead."
         )  # pragma: no cover
-
-
-# --- End: class

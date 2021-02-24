@@ -1,18 +1,15 @@
 from numpy.ma import masked_where as numpy_ma_masked_where
 
-from ..constants import _file_to_fh
-from ..functions import (
-    open_files_threshold_exceeded,
-    close_one_file,
+from ...constants import _file_to_fh
+from ...functions import (
     parse_indices,
     get_subspace,
 )
-
-from ..data.filearray import FileArray
+from ...data.abstract.filearray import FileArray
 
 from .functions import _open_um_file, _close_um_file
 
-from .umread.umfile import Rec
+from ...umread_lib.umfile import Rec
 
 _filename_to_file = _file_to_fh.setdefault("UM", {})
 
@@ -70,7 +67,7 @@ class UMFileArray(FileArray):
     """
 
     def __getitem__(self, indices):
-        """Implement indexing
+        """Implement indexing.
 
         x.__getitem__(indices) <==> x[indices]
 
@@ -160,7 +157,7 @@ class UMFileArray(FileArray):
 
     @property
     def file_pointer(self):
-        """TODO"""
+        """TODO."""
         return (self.file, self.header_offset)
 
     def close(self):

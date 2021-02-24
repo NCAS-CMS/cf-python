@@ -1,0 +1,31 @@
+# Configure the flake8 code style checker. Note this must be in INI style
+# (see https://flake8.pycqa.org/en/latest/). To run the flake8 checker with
+# this configuration, simply execute 'flake8' under the root of the repo.
+
+[flake8]
+# Ignores should include listing of pycodestyle ignores as in test_style.py
+ignore =
+    W605,
+    E272,
+    E402,
+    E501,
+    E712,
+    E731,
+    E203,
+    W503  # Incompatible with PEP8 which we want to abide by
+# Exclude these directories/files, otherwise check all *.py files
+exclude =
+    .git,
+    __pycache__,
+    cf_python.egg-info,
+    .pytest_cache,
+    docs/build/
+
+# Ignore certain rules for some files (can't do this via comments in the files)
+per-file-ignores =
+    # Ignore unused imports in __init__ modules, as they are there to provide
+    # the project namespace (decide not to use __all__ to contain these, as
+    # suggested in some flake8 discussions e.g. by the core maintainer at
+    # https://stackoverflow.com/questions/59167405/)
+    __init__.py: F401
+    */__init__.py: F401

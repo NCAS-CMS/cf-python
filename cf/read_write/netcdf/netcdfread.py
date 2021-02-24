@@ -2,21 +2,24 @@ import json
 
 from ast import literal_eval as ast_literal_eval
 
+from numpy import dtype as numpy_dtype
+
 import cfdm
 
 from ...constants import _file_to_fh
+from ...functions import pathjoin, dirname
+from ...units import Units
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
-    """TODO
+    """TODO.
 
     .. versionadded:: 3.0.0
 
     """
-
     def _ncdimensions(self, ncvar, ncdimensions=None):
-        """Return a list of the netCDF dimensions corresponding to a netCDF
-        variable.
+        """Return a list of the netCDF dimensions corresponding to a
+        netCDF variable.
 
         If the variable has been compressed then the *implied
         uncompressed* dimensions are returned.
@@ -72,8 +75,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         return list(map(str, ncdimensions))
 
     def _get_domain_axes(self, ncvar, allow_external=False):
-        """Return the domain axis identifiers that correspond to a netCDF
-        variable's netCDF dimensions.
+        """Return the domain axis identifiers that correspond to a
+        netCDF variable's netCDF dimensions.
 
         For a CFA variable, the netCDF dimensions are taken from the
         'cfa_dimensions' netCDF attribute.
@@ -136,7 +139,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
     ):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -292,7 +295,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         loadd=None,
         **kwargs
     ):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 
@@ -319,11 +322,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=calendar,
             ncvar=ncvar,
             loadd=loadd,
+            chunk=chunk,
             **kwargs
         )
 
     def _customize_read_vars(self):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.0
 

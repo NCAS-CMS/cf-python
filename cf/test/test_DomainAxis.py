@@ -1,5 +1,8 @@
 import datetime
+import faulthandler
 import unittest
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
@@ -43,9 +46,6 @@ class DomainAxisTest(unittest.TestCase):
         self.assertNotEqual(x, 100)
 
         _ = hash(x)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":
