@@ -313,6 +313,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=calendar,
             ncvar=ncvar,
             loadd=loadd,
+            chunk=chunk,
             **kwargs
         )
 

@@ -1,6 +1,6 @@
 import logging
 
-from numpy import size as numpy_size
+import numpy as np
 
 from . import PropertiesData
 
@@ -551,12 +551,12 @@ class PropertiesDataBounds(PropertiesData):
             # Only self has bounds, so combine the self bounds with
             # the other values.
             # --------------------------------------------------------
-            if numpy_size(other) > 1:
+            if np.size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
                     try:
                         other = other.insert_dimension(-1)
                     except AttributeError:
-                        other = numpy_expand_dims(other, -1)
+                        other = np.expand_dims(other, -1)
             # --- End: if
 
             new_bounds = self.bounds._binary_operation(other, method)
@@ -2198,7 +2198,7 @@ class PropertiesDataBounds(PropertiesData):
         if not identities:
             return True
 
-        identities = self.identities()
+        self_identities = self.identities()
 
         ok = False
         for value0 in identities:
@@ -2206,11 +2206,9 @@ class PropertiesDataBounds(PropertiesData):
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            # --- End: for
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -3877,6 +3875,3 @@ class PropertiesDataBounds(PropertiesData):
             "Use method 'get_filenames' instead.",
             version="3.4.0",
         )  # pragma: no cover
-
-
-# --- End: class

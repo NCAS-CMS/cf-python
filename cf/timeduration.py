@@ -821,7 +821,7 @@ class TimeDuration:
         else:
             new = self.copy()
 
-        return getattr(self.duration, method)(other)
+        return getattr(new.duration, method)(other)
 
     def _datetime_arithmetic(self, other, op):
         """TODO.
