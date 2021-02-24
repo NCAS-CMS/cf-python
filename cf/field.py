@@ -15988,7 +15988,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if da_key0 not in data_axes:
             raise ValueError(
                 "Can't swapaxes {}: Bad axis specification: {!r}".format(
-                    self.__class__.__name__, axes0
+                    self.__class__.__name__, axis0
                 )
             )
 
@@ -17635,6 +17635,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 self, "axis_size", kwargs, "See f.domain_axes"
             )  # pragma: no cover
 
+        axis = self.domain_axis(identity, key=True)
+            
         domain_axes = self.domain_axes
 
         da = domain_axes.get(axis)
