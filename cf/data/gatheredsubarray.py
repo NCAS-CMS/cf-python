@@ -8,7 +8,7 @@ from ..functions import parse_indices, get_subspace
 from . import abstract
 
 from .utils import is_small
-    
+
 
 class GatheredSubarray(abstract.CompressedSubarray):
     """An underlying gathered sub-array."""
@@ -51,47 +51,47 @@ class GatheredSubarray(abstract.CompressedSubarray):
         u_indices = [slice(None)] * self.ndim
 
         zeros = [0] * n_compressed_axes
-        
+
         for j, b in enumerate(list_array):
             sample_indices[compressed_dimension] = j
 
             # Note that it is important for indices a and b to be
             # integers (rather than the slices a:a+1 and b:b+1) so
             # that these dimensions are dropped from uarray[u_indices]
-            u_indices[compressed_axes[0]:compressed_axes[-1] + 1] = zeros
+            u_indices[compressed_axes[0] : compressed_axes[-1] + 1] = zeros
             for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                 if b >= z:
                     (a, b) = divmod(b, z)
                     u_indices[i] = a
             # --- End: for
-            
+
             u_indices[compressed_axes[-1]] = b
 
             compressed = compressed_array[tuple(sample_indices)]
 
             uarray[tuple(u_indices)] = compressed
 
-# new        u_indices = [slice(None)] * self.ndim
-# new        for i, z in zip(compressed_axes[:-1],
-# new                        partial_uncompressed_shapes):
-# new            u_indices[i] = []
-# new            
-# new        u_indices[compressed_axes[-1]] = []
-# new
-# new        for j, b in enumerate(list_array):
-# new            # Note that it is important for indices a and b to be
-# new            # integers (rather than the slices a:a+1 and b:b+1) so
-# new            # that these dimensions are dropped from uarray[u_indices]
-# new            for i, z in zip(compressed_axes[:-1],
-# new                            partial_uncompressed_shapes):
-# new                if b >= z:
-# new                    (a, b) = divmod(b, z)
-# new                    u_indices[i].append(a)
-# new            # --- End: for
-# new
-# new            u_indices[compressed_axes[-1]].append(b)
-# new
-# new        uarray[tuple(u_indices)] = compressed_array[tuple(compressed_part)]
+        # new        u_indices = [slice(None)] * self.ndim
+        # new        for i, z in zip(compressed_axes[:-1],
+        # new                        partial_uncompressed_shapes):
+        # new            u_indices[i] = []
+        # new
+        # new        u_indices[compressed_axes[-1]] = []
+        # new
+        # new        for j, b in enumerate(list_array):
+        # new            # Note that it is important for indices a and b to be
+        # new            # integers (rather than the slices a:a+1 and b:b+1) so
+        # new            # that these dimensions are dropped from uarray[u_indices]
+        # new            for i, z in zip(compressed_axes[:-1],
+        # new                            partial_uncompressed_shapes):
+        # new                if b >= z:
+        # new                    (a, b) = divmod(b, z)
+        # new                    u_indices[i].append(a)
+        # new            # --- End: for
+        # new
+        # new            u_indices[compressed_axes[-1]].append(b)
+        # new
+        # new        uarray[tuple(u_indices)] = compressed_array[tuple(compressed_part)]
 
         if indices is Ellipsis:
             return uarray

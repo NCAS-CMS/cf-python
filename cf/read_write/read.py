@@ -54,7 +54,7 @@ def read(
     follow_symlinks=False,
     mask=True,
     warn_valid=False,
-    chunks='auto'
+    chunks="auto",
 ):
     """Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
@@ -474,7 +474,7 @@ def read(
             .. versionadded:: 1.5
 
         chunks: TODO
-            
+
             .. versionadded:: 4.0.0
 
         umversion: deprecated at version 3.0.0
@@ -567,9 +567,10 @@ def read(
 
     if chunk is not True:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'cf.read', {'chunk': chunk},
+            "cf.read",
+            {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version='4.0.0'
+            version="4.0.0",
         )  # pragma: no cover
 
     # Parse select
@@ -691,7 +692,7 @@ def read(
                 um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-#                chunk=chunk,
+                #                chunk=chunk,
                 chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,
@@ -815,7 +816,7 @@ def _read_a_file(
     height_at_top_of_model=None,
     mask=True,
     warn_valid=False,
-    chunks='auto'
+    chunks="auto",
 ):
     """Read the contents of a single file into a field list.
 
@@ -973,7 +974,7 @@ def _read_a_file(
             height_at_top_of_model=height_at_top_of_model,
             fmt=fmt,
             word_size=word_size,
-            endian=endian
+            endian=endian,
         )
 
         # PP fields are aggregated intrafile prior to interfile

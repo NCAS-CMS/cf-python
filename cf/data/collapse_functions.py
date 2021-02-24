@@ -1303,7 +1303,7 @@ def var_ffinalise(out, sub_samples=None):
         #            avg = V1*m
         #
         # https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
-#
+        #
         # For the general case of M non-overlapping data sets, X_{1}
         # through X_{M}, and the aggregate data set X=\bigcup_{i}X_{i}
         # we have the unweighted mean and variance is:

@@ -1,7 +1,7 @@
 import abc
 
 from functools import reduce
-from operator  import mul
+from operator import mul
 
 
 class CompressedSubarray(abc.ABC):
@@ -57,16 +57,12 @@ class CompressedSubarray(abc.ABC):
     # ----------------------------------------------------------------
     @property
     def dask_lock(self):
-        """TODODASK
-
-        """
+        """TODODASK."""
         return self.array.dask_lock
 
     @property
     def dask_asarray(self):
-        """TODODASK
-
-        """
+        """TODODASK."""
         return False
 
     # ----------------------------------------------------------------
@@ -137,6 +133,7 @@ class CompressedSubarray(abc.ABC):
 
         """
         return not hasattr(self.array, "__array_interface__")
+
 
 #    def unique(self):
 #        '''TODO

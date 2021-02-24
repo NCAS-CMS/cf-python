@@ -31,10 +31,10 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
         sample_indices = compression["i_element_indices"]
 
         p_indices[instance_axis] = instance_index
-        
+
         if not isinstance(sample_indices, (list, np.ndarray)):
             sample_indices = np.array(sample_indices)
-            
+
         p_indices[element_axis] = slice(0, len(sample_indices))
 
         uarray[tuple(p_indices)] = array[sample_indices, ...]
@@ -43,7 +43,8 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
             return uarray
 
         indices = parse_indices(self.shape, indices)
-       
+
         return get_subspace(uarray, indices)
+
 
 # --- End: class

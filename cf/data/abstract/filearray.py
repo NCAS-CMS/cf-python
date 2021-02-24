@@ -16,9 +16,7 @@ class FileArray(Array):
         pass
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
+        """x.__str__() <==> str(x)"""
         return f"{self.shape} in {self.file}"
 
     # ----------------------------------------------------------------

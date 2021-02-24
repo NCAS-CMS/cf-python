@@ -2407,31 +2407,28 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None)
         if data is None:
-            raise AttributeError(
-                f"{self.__class__.__name__} has no data"
-            )
+            raise AttributeError(f"{self.__class__.__name__} has no data")
 
         return data.array
 
     def dask_array(self, copy=True):
-        '''TODODASK 
-    
-    :Parameters:
+        """TODODASK.
 
-      copy
+        :Parameters:
+
+          copy
 
 
-    .. seealso:: `data`, `array`, `datetime_array`
+        .. seealso:: `data`, `array`, `datetime_array`
 
-    **Examples:**
+        **Examples:**
 
-    TODODASK
-        '''
+        TODODASK
+
+        """
         data = self.get_data(None)
         if data is None:
-            raise AttributeError(
-                f"{self.__class__.__name__} has no data"
-            )
+            raise AttributeError(f"{self.__class__.__name__} has no data")
 
         return data.dask_array(copy=copy)
 
@@ -2462,14 +2459,14 @@ class PropertiesData(Properties):
 
         """
         raise DeprecatedError("TODODASK")
-    
-#        data = self.get_data(None)
-#        if data is None:
-#            raise AttributeError(
-#                f"{self.__class__.__name__} has no data"
-#            )
-#
-#        return data.varray
+
+    #        data = self.get_data(None)
+    #        if data is None:
+    #            raise AttributeError(
+    #                f"{self.__class__.__name__} has no data"
+    #            )
+    #
+    #        return data.varray
 
     @property
     def isscalar(self):
@@ -2544,21 +2541,21 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-#    def chunk(self, chunksize=None):
-#        '''Partition the data array.
-#
-#    :Parameters:
-#
-#        chunksize: `int`
-#
-#    :Returns:
-#
-#        `None`
-#
-#        '''
-#        data = self.get_data(None)
-#        if data is not None:
-#            data.chunk(chunksize)
+    #    def chunk(self, chunksize=None):
+    #        '''Partition the data array.
+    #
+    #    :Parameters:
+    #
+    #        chunksize: `int`
+    #
+    #    :Returns:
+    #
+    #        `None`
+    #
+    #        '''
+    #        data = self.get_data(None)
+    #        if data is not None:
+    #            data.chunk(chunksize)
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

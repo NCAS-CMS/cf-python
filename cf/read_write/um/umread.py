@@ -1781,8 +1781,8 @@ class UMField:
         name = ("UMArray-" + token,)
         dsk = {}
         full_slice = Ellipsis
-        asarray = getattr(UMArray, '_dask_asarray', False)
-        if getattr(UMArray, '_dask_lock', True):
+        asarray = getattr(UMArray, "_dask_asarray", False)
+        if getattr(UMArray, "_dask_lock", True):
             lock = get_lock()
 
         if len(recs) == 1:
@@ -1798,7 +1798,7 @@ class UMField:
                 fill_value = None
 
             data_shape = yx_shape
-                
+
             subarray = UMArray(
                 filename=filename,
                 ndim=2,
@@ -1810,17 +1810,13 @@ class UMField:
                 disk_length=rec.disk_length,
                 fmt=self.fmt,
                 word_size=self.word_size,
-                byte_ordering=self.byte_ordering
-            )
-            
-            dsk[name + (0,)] = (
-                (getter, subarray, full_slice, asarray, lock)
+                byte_ordering=self.byte_ordering,
             )
 
-            dtype = numpy_result_type(*file_data_types)       
-            chunks = normalize_chunks((-1, -1),
-                                      shape=data_shape,
-                                      dtype=dtype)
+            dsk[name + (0,)] = (getter, subarray, full_slice, asarray, lock)
+
+            dtype = numpy_result_type(*file_data_types)
+            chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1847,7 +1843,7 @@ class UMField:
                     file_data_types.add(file_data_type)
 
                     shape = (1,) + yx_shape
-                    
+
                     subarray = UMArray(
                         filename=filename,
                         ndim=3,
@@ -1859,17 +1855,21 @@ class UMField:
                         disk_length=rec.disk_length,
                         fmt=self.fmt,
                         word_size=self.word_size,
-                        byte_ordering=self.byte_ordering
+                        byte_ordering=self.byte_ordering,
                     )
-                    
+
                     dsk[name + (i, 0, 0)] = (
-                        (getter, subarray, full_slice, asarray, lock)
+                        getter,
+                        subarray,
+                        full_slice,
+                        asarray,
+                        lock,
                     )
-                    
+
                 dtype = numpy_result_type(*file_data_types)
-                chunks = normalize_chunks((1, -1, -1),
-                                          shape=data_shape,
-                                          dtype=dtype)
+                chunks = normalize_chunks(
+                    (1, -1, -1), shape=data_shape, dtype=dtype
+                )
             else:
                 # ----------------------------------------------------
                 # 2-d partition matrix
@@ -1880,13 +1880,13 @@ class UMField:
                 for i, rec in enumerate(recs):
                     # Find T and Z axis indices
                     t, z = divmod(i, nz)
-                    
+
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
 
                     shape = (1, 1) + yx_shape
-                                       
+
                     subarray = UMArray(
                         filename=filename,
                         ndim=4,
@@ -1898,29 +1898,35 @@ class UMField:
                         disk_length=rec.disk_length,
                         fmt=self.fmt,
                         word_size=self.word_size,
-                        byte_ordering=self.byte_ordering
+                        byte_ordering=self.byte_ordering,
                     )
-                    
+
                     dsk[name + (t, z, 0, 0)] = (
-                        (getter, subarray, full_slice, asarray, lock)
+                        getter,
+                        subarray,
+                        full_slice,
+                        asarray,
+                        lock,
                     )
-                    
+
                 dtype = numpy_result_type(*file_data_types)
-                chunks = normalize_chunks((1, 1, -1, -1),
-                                          shape=data_shape,
-                                          dtype=dtype)
+                chunks = normalize_chunks(
+                    (1, 1, -1, -1), shape=data_shape, dtype=dtype
+                )
         # --- End: if
 
         data_axes = pmaxes + data_axes
-        
+
         # Set the data array
-        fill_value = recs[0].real_hdr.item(bmdi,)
+        fill_value = recs[0].real_hdr.item(
+            bmdi,
+        )
         if fill_value == _BMDI_no_missing_data_value:
             fill_value = None
-            
+
         # Create the dask array
         array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
-        
+
         # Create the Data object
         data = Data(array, units=units, fill_value=fill_value)
 
@@ -2100,9 +2106,7 @@ class UMField:
         lat, lon = _cached_latlon.get(cache_key, (None, None))
 
         if lat is None:
-            lat, lon = self.unrotated_latlon(
-                yc.array, xc.array, BPLAT, BPLON
-            )
+            lat, lon = self.unrotated_latlon(yc.array, xc.array, BPLAT, BPLON)
 
             atol = self.atol
             if abs(BDX) >= atol and abs(BDY) >= atol:

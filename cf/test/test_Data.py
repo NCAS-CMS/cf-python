@@ -34,18 +34,17 @@ def reshape_array(a, axes):
     return b
 
 
-
 class DataTest(unittest.TestCase):
 
-#    axes_permutations = [
-#        axes
-#        for n in range(1, a.ndim+1)
-#        for axes in itertools.permutations(range(a.ndim), n)]
-#
-#    axes_combinations = [
-#        axes
-#        for n in range(1, a.ndim+1)
-#        for axes in itertools.combinations(range(a.ndim), n)]
+    #    axes_permutations = [
+    #        axes
+    #        for n in range(1, a.ndim+1)
+    #        for axes in itertools.permutations(range(a.ndim), n)]
+    #
+    #    axes_combinations = [
+    #        axes
+    #        for n in range(1, a.ndim+1)
+    #        for axes in itertools.combinations(range(a.ndim), n)]
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -57,64 +56,63 @@ class DataTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
     )
 
-
     test_only = []
-#    test_only = ['NOTHING!!!!!']
+    #    test_only = ['NOTHING!!!!!']
     test_only = [
-        'test_Data___setitem__',
-        ]
-#        'test_Data_trigonometric_hyperbolic'
-#        'test_Data_AUXILIARY_MASK',
-#        'test_Data_datum',
-#        'test_Data_ERROR',
-#        'test_Data_array',
-#        'test_Data_varray',
-#        'test_Data_stats',
-#        'test_Data_datetime_array',
-#        'test_Data_cumsum',
-#        'test_Data_dumpd_loadd_dumps',
-#        'test_Data_root_mean_square',
-#        'test_Data_mean_mean_absolute_value',
-#        'test_Data_squeeze_insert_dimension',
-#        'test_Data_months_years',
-#        'test_Data_binary_mask',
-#        'test_Data_CachedArray',
-#        'test_Data_digitize',
-#        'test_Data_outerproduct',
-#        'test_Data_flatten',
-#        'test_Data_transpose',
-#        'test_Data__collapse_SHAPE',
-#        'test_Data_range_mid_range',
-#        'test_Data_median',
-#        'test_Data_mean_of_upper_decile',
-#        'test_Data__init__dtype_mask',
-#    ]
+        "test_Data___setitem__",
+    ]
+    #        'test_Data_trigonometric_hyperbolic'
+    #        'test_Data_AUXILIARY_MASK',
+    #        'test_Data_datum',
+    #        'test_Data_ERROR',
+    #        'test_Data_array',
+    #        'test_Data_varray',
+    #        'test_Data_stats',
+    #        'test_Data_datetime_array',
+    #        'test_Data_cumsum',
+    #        'test_Data_dumpd_loadd_dumps',
+    #        'test_Data_root_mean_square',
+    #        'test_Data_mean_mean_absolute_value',
+    #        'test_Data_squeeze_insert_dimension',
+    #        'test_Data_months_years',
+    #        'test_Data_binary_mask',
+    #        'test_Data_CachedArray',
+    #        'test_Data_digitize',
+    #        'test_Data_outerproduct',
+    #        'test_Data_flatten',
+    #        'test_Data_transpose',
+    #        'test_Data__collapse_SHAPE',
+    #        'test_Data_range_mid_range',
+    #        'test_Data_median',
+    #        'test_Data_mean_of_upper_decile',
+    #        'test_Data__init__dtype_mask',
+    #    ]
 
-#    test_only = ['test_Data_mean_mean_absolute_value']
-#    test_only = ['test_Data_AUXILIARY_MASK']
-#    test_only = ['test_Data_mean_of_upper_decile']
-#    test_only = ['test_Data__collapse_SHAPE']
-#    test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
-#    test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
-#    test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
-#    test_only = ['test_Data__collapse_WEIGHTED_MASKED']
-#    test_only = ['test_Data_ERROR']
-#    test_only = ['test_Data_diff', 'test_Data_compressed']
-#    test_only = ['test_Data__init__dtype_mask']
-#    test_only = ['test_Data_section']
-#    test_only = ['test_Data_sum_of_weights_sum_of_weights2']
-#    test_only = ['test_Data_max_min_sum_sum_of_squares']
-#    test_only = ['test_Data___setitem__']
-#    test_only = ['test_Data_year_month_day_hour_minute_second']
-#    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
-#    test_only = ['test_Data_clip']
-#    test_only = ['test_Data__init__dtype_mask']
+    #    test_only = ['test_Data_mean_mean_absolute_value']
+    #    test_only = ['test_Data_AUXILIARY_MASK']
+    #    test_only = ['test_Data_mean_of_upper_decile']
+    #    test_only = ['test_Data__collapse_SHAPE']
+    #    test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
+    #    test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
+    #    test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
+    #    test_only = ['test_Data__collapse_WEIGHTED_MASKED']
+    #    test_only = ['test_Data_ERROR']
+    #    test_only = ['test_Data_diff', 'test_Data_compressed']
+    #    test_only = ['test_Data__init__dtype_mask']
+    #    test_only = ['test_Data_section']
+    #    test_only = ['test_Data_sum_of_weights_sum_of_weights2']
+    #    test_only = ['test_Data_max_min_sum_sum_of_squares']
+    #    test_only = ['test_Data___setitem__']
+    #    test_only = ['test_Data_year_month_day_hour_minute_second']
+    #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
+    #    test_only = ['test_Data_clip']
+    #    test_only = ['test_Data__init__dtype_mask']
 
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(12).reshape(3, 4), 'm')
+        d = cf.Data(np.arange(12).reshape(3, 4), "m")
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
 
@@ -242,10 +240,10 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((b == e.array).all())
                 self.assertTrue((b.mask == e.mask.array).all())
 
-                b = np.ma.where((a == 70) | (a < 20) | (a > 80),
-                                   np.ma.masked, a)
-                e = d.apply_masking(fill_values=True,
-                                    valid_range=[20, 80])
+                b = np.ma.where(
+                    (a == 70) | (a < 20) | (a > 80), np.ma.masked, a
+                )
+                e = d.apply_masking(fill_values=True, valid_range=[20, 80])
                 self.assertTrue((b == e.array).all())
                 self.assertTrue((b.mask == e.mask.array).all())
 
@@ -287,7 +285,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.ma.arange(12.).reshape(3, 4)
+        a = np.ma.arange(12.0).reshape(3, 4)
         a[1, 1] = 4.5
         a[2, 2] = 10.5
         a[1, 2] = np.ma.masked
@@ -400,14 +398,13 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.count(), 3)
         self.assertEqual(d.shape, (2, 3))
 
-        a = np.ma.array([[280.0,   -99,   -99,   -99],
-                            [281.0, 279.0, 278.0, 279.0]],
-                           dtype=float,
-                           mask=[[0, 1, 1, 1],
-                                 [0, 0, 0, 0]])
+        a = np.ma.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
+            dtype=float,
+            mask=[[0, 1, 1, 1], [0, 0, 0, 0]],
+        )
 
-        d = cf.Data([[280, -99, -99, -99],
-                     [281, 279, 278, 279]])
+        d = cf.Data([[280, -99, -99, -99], [281, 279, 278, 279]])
         self.assertEqual(d.dtype, np.dtype(int))
 
         d = cf.Data(
@@ -421,9 +418,9 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
-        a = np.array([[280.0,   -99,   -99,   -99],
-                         [281.0, 279.0, 278.0, 279.0]],
-                        dtype=float)
+        a = np.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]], dtype=float
+        )
         mask = np.ma.masked_all(a.shape).mask
 
         d = cf.Data([[280, -99, -99, -99], [281, 279, 278, 279]], dtype=float)
@@ -434,16 +431,17 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
         # Mask broadcasting
-        a = np.ma.array([[280.0,   -99,   -99,   -99],
-                            [281.0, 279.0, 278.0, 279.0]],
-                           dtype=float,
-                           mask=[[0, 1, 1, 0],
-                                 [0, 1, 1, 0]])
+        a = np.ma.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
+            dtype=float,
+            mask=[[0, 1, 1, 0], [0, 1, 1, 0]],
+        )
 
-        d = cf.Data([[280, -99, -99, -99],
-                     [281, 279, 278, 279]],
-                    dtype=float,
-                    mask=[0, 1, 1, 0])
+        d = cf.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]],
+            dtype=float,
+            mask=[0, 1, 1, 0],
+        )
 
         self.assertEqual(d.dtype, a.dtype)
         self.assertEqual(d.mask.shape, a.mask.shape)
@@ -454,8 +452,10 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for a in [np.arange(120).reshape(3, 2, 20),
-                  np.ma.arange(120).reshape(3, 2, 20)]:
+        for a in [
+            np.arange(120).reshape(3, 2, 20),
+            np.ma.arange(120).reshape(3, 2, 20),
+        ]:
 
             if np.ma.isMA(a):
                 a[0, 1, [2, 5, 6, 7, 8]] = np.ma.masked
@@ -471,8 +471,9 @@ class DataTest(unittest.TestCase):
                             [[2, 6], [6, 10], [10, 50], [50, 100]],
                         ):
                             e = d.digitize(bins, upper=upper, open_ends=True)
-                            b = np.digitize(a, [2, 6, 10, 50, 100],
-                                               right=upper)
+                            b = np.digitize(
+                                a, [2, 6, 10, 50, 100], right=upper
+                            )
 
                             self.assertTrue((e.array == b).all())
 
@@ -541,9 +542,10 @@ class DataTest(unittest.TestCase):
                         ]
                         shape.insert(
                             sorted(axes)[0],
-                            np.prod([n
-                                        for i, n in enumerate(d.shape)
-                                        if i in axes]))
+                            np.prod(
+                                [n for i, n in enumerate(d.shape) if i in axes]
+                            ),
+                        )
 
                     self.assertEqual(e.shape, tuple(shape))
                     self.assertEqual(e.ndim, d.ndim - len(axes) + 1)
@@ -835,16 +837,16 @@ class DataTest(unittest.TestCase):
                 a.harden_mask()
             else:
                 a.soften_mask()
-            
-            d = cf.Data(a, 'm', chunks=(2, 2), hardmask=hardmask)
+
+            d = cf.Data(a, "m", chunks=(2, 2), hardmask=hardmask)
 
             # Scalar assignment
             a[:, 1] = np.ma.masked
             d[:, 1] = np.ma.masked
-            
+
             a[0, 2] = -6
             d[0, 2] = -6
-            
+
             a[0:3, 1] = -1
             d[0:3, 1] = -1
 
@@ -869,7 +871,7 @@ class DataTest(unittest.TestCase):
             # Non-scalar assignment (TODODASK - add more tests)
             a[0] = a[2]
             d[0] = a[2]
-                     
+
             self.assertTrue((d.array == a).all())
             self.assertTrue((d.array.mask == a.mask).all())
 
@@ -968,20 +970,20 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.ma.ones((1000,), dtype='int32')
+        a = np.ma.ones((1000,), dtype="int32")
         a[[1, 900]] = np.ma.masked
         a[[0, 10, 910]] = 0
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
-                d = cf.Data(np.arange(1000.), 'radians')
+                d = cf.Data(np.arange(1000.0), "radians")
                 d[[1, 900]] = cf.masked
                 d[[10, 910]] = 0
 
                 b = d.binary_mask
 
-                self.assertEqual(b.Units, cf.Units('1'))
-                self.assertEqual(b.dtype, np.dtype('int32'))
+                self.assertEqual(b.Units, cf.Units("1"))
+                self.assertEqual(b.dtype, np.dtype("int32"))
                 self.assertTrue((b.array == a).all())
 
     def test_Data_clip(self):
@@ -1014,53 +1016,73 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        calendar = '360_day'
-        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
-                                            calendar=calendar))
-        self.assertTrue((d.array == np.array([1., 2])).all())
-        a = np.array([
-            cf.dt(2000, 2, 1, 10, 29, 3, 831223, calendar=calendar),
-            cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar)
-        ])
+        calendar = "360_day"
+        d = cf.Data(
+            [1.0, 2],
+            units=cf.Units("months since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cf.dt(2000, 2, 1, 10, 29, 3, 831223, calendar=calendar),
+                cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar),
+            ]
+        )
 
-        self.assertTrue((d.datetime_array == a).all(),
-                        "{}, {}".format(d.datetime_array, a))
+        self.assertTrue(
+            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
+        )
 
-        calendar = 'standard'
-        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
-                                            calendar=calendar))
-        self.assertTrue((d.array == np.array([1., 2])).all())
-        a = np.array([
-            cf.dt(2000, 1, 31, 10, 29, 3, 831223, calendar=calendar),
-            cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar)
-        ])
-        self.assertTrue((d.datetime_array == a).all(),
-                        "{}, {}".format(d.datetime_array, a))
+        calendar = "standard"
+        d = cf.Data(
+            [1.0, 2],
+            units=cf.Units("months since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cf.dt(2000, 1, 31, 10, 29, 3, 831223, calendar=calendar),
+                cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar),
+            ]
+        )
+        self.assertTrue(
+            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
+        )
 
-        calendar = '360_day'
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
-                                            calendar=calendar))
-        self.assertTrue((d.array == np.array([1., 2])).all())
-        a = np.array([
-            cf.dt(2001, 1, 6, 5, 48, 45, 974678, calendar=calendar),
-            cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar)
-        ])
-        self.assertTrue((d.datetime_array == a).all(),
-                        "{}, {}".format(d.datetime_array, a))
+        calendar = "360_day"
+        d = cf.Data(
+            [1.0, 2], units=cf.Units("years since 2000-1-1", calendar=calendar)
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cf.dt(2001, 1, 6, 5, 48, 45, 974678, calendar=calendar),
+                cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar),
+            ]
+        )
+        self.assertTrue(
+            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
+        )
 
-        calendar = 'standard'
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
-                                            calendar=calendar))
-        self.assertTrue((d.array == np.array([1., 2])).all())
-        a = np.array([cf.dt(2000, 12, 31, 5, 48, 45, 974678,
-                               calendar=calendar),
-                         cf.dt(2001, 12, 31, 11, 37, 31, 949357,
-                               calendar=calendar)])
-        self.assertTrue((d.datetime_array == a).all(),
-                        "{}, {}".format(d.datetime_array, a))
+        calendar = "standard"
+        d = cf.Data(
+            [1.0, 2], units=cf.Units("years since 2000-1-1", calendar=calendar)
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cf.dt(2000, 12, 31, 5, 48, 45, 974678, calendar=calendar),
+                cf.dt(2001, 12, 31, 11, 37, 31, 949357, calendar=calendar),
+            ]
+        )
+        self.assertTrue(
+            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
+        )
 
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
-                                            calendar='360_day'))
+        d = cf.Data(
+            [1.0, 2],
+            units=cf.Units("years since 2000-1-1", calendar="360_day"),
+        )
         e = d * 31
         d *= 31
 
@@ -1078,8 +1100,9 @@ class DataTest(unittest.TestCase):
         ):
             a = d.datetime_array
             self.assertEqual(a.shape, ())
-            self.assertEqual(a, np.array(cf.dt('2000-12-1 12:00',
-                                                  calendar='standard')))
+            self.assertEqual(
+                a, np.array(cf.dt("2000-12-1 12:00", calendar="standard"))
+            )
 
             a = d.array
             self.assertEqual(a.shape, ())
@@ -1105,9 +1128,19 @@ class DataTest(unittest.TestCase):
             a = d.array
             self.assertTrue((a == x).all())
             a = d.datetime_array
-            self.assertTrue((a == np.array(
-                [[cf.dt('2000-12-1 12:00', calendar='standard'),
-                  cf.dt('2000-12-2 12:00', calendar='standard')]])).all())
+            self.assertTrue(
+                (
+                    a
+                    == np.array(
+                        [
+                            [
+                                cf.dt("2000-12-1 12:00", calendar="standard"),
+                                cf.dt("2000-12-2 12:00", calendar="standard"),
+                            ]
+                        ]
+                    )
+                ).all()
+            )
 
     def test_Data__asdatetime__asreftime__isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1115,7 +1148,7 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
-                d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
+                d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
                 self.assertEqual(d.dtype, np.dtype(float))
                 self.assertFalse(d._isdatetime())
 
@@ -1279,7 +1312,7 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
                 array = np.arange(24000).reshape(120, 200)
-                d = cf.Data(array.copy(), 'metre')
+                d = cf.Data(array.copy(), "metre")
 
                 for axes, indices in zip(
                     (0, 1, [0, 1]),
@@ -1295,8 +1328,8 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == array).all())
         # --- End: for
 
-        array = np.arange(3*4*5).reshape(3, 4, 5) + 1
-        d = cf.Data(array.copy(), 'metre', chunk=False)
+        array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
+        d = cf.Data(array.copy(), "metre", chunk=False)
         d.chunk(total=[0], omit_axes=[1, 2])
 
         self.assertEqual(d._pmshape, (3,))
@@ -1375,10 +1408,11 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
-            for d in (cf.Data(5, 'metre'),
-                      cf.Data([4, 5, 6, 1, 2, 3], 'metre'),
-                      cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                      ):
+            for d in (
+                cf.Data(5, "metre"),
+                cf.Data([4, 5, 6, 1, 2, 3], "metre"),
+                cf.Data([[4, 5, 6], [1, 2, 3]], "metre"),
+            ):
                 for i, j in zip(d.ndindex(), np.ndindex(d.shape)):
                     self.assertEqual(i, j)
         # --- End: for
@@ -1401,7 +1435,7 @@ class DataTest(unittest.TestCase):
                 e.roll(2, 120, inplace=True)
                 e.roll(3, -77, inplace=True)
 
-                a = np.roll(a,   4, 0)
+                a = np.roll(a, 4, 0)
                 a = np.roll(a, 120, 2)
                 a = np.roll(a, -77, 3)
 
@@ -1419,7 +1453,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.arange(10*15*19).reshape(10, 1, 15, 19)
+        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
@@ -1439,7 +1473,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.arange(10*15*19).reshape(10, 1, 15, 19)
+        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
@@ -1534,10 +1568,12 @@ class DataTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             cf.chunksize(chunksize)
-            array = np.arange(3*4*5).reshape(3, 4, 5) + 1
+            array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
 
-            arrays = (np.arange(3*4*5).reshape(3, 4, 5) + 1.0,
-                      np.arange(3*4*5).reshape(3, 4, 5) + 1)
+            arrays = (
+                np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1.0,
+                np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1,
+            )
 
             for a0 in arrays:
                 for a1 in arrays[::-1]:
@@ -1974,29 +2010,29 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.arange(-100, 200., dtype=float).reshape(3, 4, 5, 5)
+        a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
         ones = np.ones(a.shape, dtype=float)
 
         for h in (
-            'sample_size',
-            'sum',
-            'min',
-            'max',
-            'mean',
-            'var',
-            'sd',
-            'mid_range',
-            'range',
-            'integral',
-            'maximum_absolute_value',
-            'minimum_absolute_value',
-            'sum_of_squares',
-            'root_mean_square',
-            'mean_absolute_value',
-            'median',
-            'mean_of_upper_decile',
-            'sum_of_weights',
-            'sum_of_weights2',
+            "sample_size",
+            "sum",
+            "min",
+            "max",
+            "mean",
+            "var",
+            "sd",
+            "mid_range",
+            "range",
+            "integral",
+            "maximum_absolute_value",
+            "minimum_absolute_value",
+            "sum_of_squares",
+            "root_mean_square",
+            "mean_absolute_value",
+            "median",
+            "mean_of_upper_decile",
+            "sum_of_weights",
+            "sum_of_weights2",
         ):
 
             d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
@@ -2072,8 +2108,8 @@ class DataTest(unittest.TestCase):
                 # unweighted, unmasked
                 d = cf.Data(self.a)
                 for np, h in zip(
-                        (np.sum, np.amin, np.amax, np.sum),
-                        ('sum', 'min', 'max', 'sum_of_squares')
+                    (np.sum, np.amin, np.amax, np.sum),
+                    ("sum", "min", "max", "sum_of_squares"),
                 ):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
@@ -2094,9 +2130,8 @@ class DataTest(unittest.TestCase):
                 # unweighted, masked
                 d = cf.Data(self.ma)
                 for np, h in zip(
-                        (np.ma.sum, np.ma.amin, np.ma.amax,
-                         np.ma.sum),
-                        ('sum', 'min', 'max', 'sum_of_squares')
+                    (np.ma.sum, np.ma.amin, np.ma.amax, np.ma.sum),
+                    ("sum", "min", "max", "sum_of_squares"),
                 ):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
@@ -2105,8 +2140,9 @@ class DataTest(unittest.TestCase):
 
                         b = np(b, axis=-1)
                         b = np.ma.asanyarray(b)
-                        e = getattr(d, h)(axes=axes, squeeze=True,
-                                          _preserve_partitions=pp)
+                        e = getattr(d, h)(
+                            axes=axes, squeeze=True, _preserve_partitions=pp
+                        )
 
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
@@ -2152,13 +2188,13 @@ class DataTest(unittest.TestCase):
                         b = reshape_array(self.ma, axes)
                         b = np.ma.filled(b, np.nan)
                         with np.testing.suppress_warnings() as sup:
-                            sup.filter(RuntimeWarning,
-                                       message=".*All-NaN slice encountered")
+                            sup.filter(
+                                RuntimeWarning,
+                                message=".*All-NaN slice encountered",
+                            )
                             b = np.nanpercentile(b, 50, axis=-1)
 
-                        b = np.ma.masked_where(
-                            np.isnan(b), b, copy=False
-                        )
+                        b = np.ma.masked_where(np.isnan(b), b, copy=False)
                         b = np.ma.asanyarray(b)
 
                         e = d.median(
@@ -2237,15 +2273,13 @@ class DataTest(unittest.TestCase):
                         b = reshape_array(self.ma, axes)
                         b = np.ma.filled(b, np.nan)
                         with np.testing.suppress_warnings() as sup:
-                            sup.filter(RuntimeWarning,
-                                       message=".*All-NaN slice encountered")
-                            p = np.nanpercentile(
-                                b, 90, axis=-1, keepdims=True
+                            sup.filter(
+                                RuntimeWarning,
+                                message=".*All-NaN slice encountered",
                             )
+                            p = np.nanpercentile(b, 90, axis=-1, keepdims=True)
 
-                        b = np.ma.masked_where(
-                            np.isnan(b), b, copy=False
-                        )
+                        b = np.ma.masked_where(np.isnan(b), b, copy=False)
 
                         p = np.where(np.isnan(p), b.max() + 1, p)
 
@@ -2289,7 +2323,7 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.a, axes)
                             mn = np.amin(b, axis=-1)
                             mx = np.amax(b, axis=-1)
-                            if h == 'range':
+                            if h == "range":
                                 b = mx - mn
                             elif h == "mid_range":
                                 b = (mx + mn) * 0.5
@@ -2313,7 +2347,7 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.ma, axes)
                             mn = np.amin(b, axis=-1)
                             mx = np.amax(b, axis=-1)
-                            if h == 'range':
+                            if h == "range":
                                 b = mx - mn
                             elif h == "mid_range":
                                 b = (mx + mn) * 0.5
@@ -2435,8 +2469,11 @@ class DataTest(unittest.TestCase):
                         for axes in self.axes_combinations:
                             b = reshape_array(a, axes)
                             b = np.ma.asanyarray(b.sum(axis=-1))
-                            e = getattr(d, h)(axes=axes, squeeze=True,
-                                              _preserve_partitions=pp)
+                            e = getattr(d, h)(
+                                axes=axes,
+                                squeeze=True,
+                                _preserve_partitions=pp,
+                            )
 
                             self.assertTrue(
                                 (e.mask.array == b.mask).all(),
@@ -2466,9 +2503,12 @@ class DataTest(unittest.TestCase):
                             a.mask = self.ma.mask
                             b = reshape_array(a, axes)
                             b = np.ma.asanyarray(b.sum(axis=-1))
-                            e = getattr(d, h)(axes=axes, weights=x,
-                                              squeeze=True,
-                                              _preserve_partitions=pp)
+                            e = getattr(d, h)(
+                                axes=axes,
+                                weights=x,
+                                squeeze=True,
+                                _preserve_partitions=pp,
+                            )
                             self.assertTrue(
                                 (e.mask.array == b.mask).all(),
                                 "{}, axis={}, \ne.mask={}, "
@@ -2521,7 +2561,7 @@ class DataTest(unittest.TestCase):
             if absolute:
                 a = np.absolute(a)
                 ma = np.absolute(ma)
-                method = 'mean_absolute_value'
+                method = "mean_absolute_value"
 
             for chunksize in self.chunk_sizes:
                 cf.chunksize(chunksize)
@@ -2723,9 +2763,8 @@ class DataTest(unittest.TestCase):
             cf.chunksize(chunksize)
             for pp in (False, True):
                 # unweighted, unmasked
-                d = cf.Data(self.a, units='K')
-                for np, h in zip((np.var, np.std),
-                                 ('var', 'sd')):
+                d = cf.Data(self.a, units="K")
+                for np, h in zip((np.var, np.std), ("var", "sd")):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.a, axes)
@@ -2746,9 +2785,8 @@ class DataTest(unittest.TestCase):
                 # --- End: for
 
                 # unweighted, masked
-                d = cf.Data(self.ma, units='K')
-                for np, h in zip((np.ma.var, np.ma.std),
-                                 ('var', 'sd')):
+                d = cf.Data(self.ma, units="K")
+                for np, h in zip((np.ma.var, np.ma.std), ("var", "sd")):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.ma, axes)
@@ -2782,7 +2820,11 @@ class DataTest(unittest.TestCase):
                                 avg = np.expand_dims(avg, -1)
 
                             b, V1 = np.average(
-                                (b-avg)**2, axis=-1, weights=v, returned=True)
+                                (b - avg) ** 2,
+                                axis=-1,
+                                weights=v,
+                                returned=True,
+                            )
 
                             if ddof == 1:
                                 # Calculate the weighted unbiased
@@ -2790,7 +2832,7 @@ class DataTest(unittest.TestCase):
                                 # weighted with _reliability_ weights
                                 # is [V1**2/(V1**2-V2)]*var.
                                 V2 = np.asanyarray((v * v).sum(axis=-1))
-                                b *= (V1*V1/(V1*V1 - V2))
+                                b *= V1 * V1 / (V1 * V1 - V2)
                             elif ddof == 0:
                                 pass
 
@@ -2825,20 +2867,20 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.ma, axes)
                             v = reshape_array(self.mw, axes)
 
-                            not_enough_data = (
-                                np.ma.count(b, axis=-1) <= ddof
-                            )
+                            not_enough_data = np.ma.count(b, axis=-1) <= ddof
 
                             avg = np.ma.average(b, axis=-1, weights=v)
                             if np.ndim(avg) < b.ndim:
                                 avg = np.expand_dims(avg, -1)
 
                             b, V1 = np.ma.average(
-                                (b-avg)**2, axis=-1, weights=v,
-                                returned=True)
+                                (b - avg) ** 2,
+                                axis=-1,
+                                weights=v,
+                                returned=True,
+                            )
 
-                            b = np.ma.where(
-                                not_enough_data, np.ma.masked, b)
+                            b = np.ma.where(not_enough_data, np.ma.masked, b)
 
                             if ddof == 1:
                                 # Calculate the weighted unbiased
@@ -2846,7 +2888,7 @@ class DataTest(unittest.TestCase):
                                 # weighted with _reliability_ weights
                                 # is [V1**2/(V1**2-V2)]*var.
                                 V2 = np.asanyarray((v * v).sum(axis=-1))
-                                b *= (V1*V1/(V1*V1 - V2))
+                                b *= V1 * V1 / (V1 * V1 - V2)
                             elif ddof == 0:
                                 pass
 
@@ -2977,8 +3019,8 @@ class DataTest(unittest.TestCase):
 
                 # Use more appropriate data for testing for inverse methods;
                 # apply some trig operation to convert it to valid range:
-                if method.startswith('arc'):
-                    if method == 'arccosh':  # has unusual domain (x >= 1)
+                if method.startswith("arc"):
+                    if method == "arccosh":  # has unusual domain (x >= 1)
                         a = np.cosh(a.data)  # convert non-masked x to >= 1
                     else:  # convert non-masked values x to range |x| < 1
                         a = np.sin(a.data)
@@ -2993,7 +3035,8 @@ class DataTest(unittest.TestCase):
                             # attempted division by zero, as this is
                             # expected with inverse trig:
                             with np.errstate(
-                                    invalid='ignore', divide='ignore'):
+                                invalid="ignore", divide="ignore"
+                            ):
                                 e = getattr(d, method)()
                                 self.assertIsNone(
                                     getattr(d, method)(inplace=True)
@@ -3028,7 +3071,7 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
         for method in inverse_methods:
-            with np.errstate(invalid='ignore', divide='ignore'):
+            with np.errstate(invalid="ignore", divide="ignore"):
                 e = getattr(d, method)()
             self.assertTrue(
                 (e.mask.array == d.mask.array).all(),
@@ -3037,7 +3080,7 @@ class DataTest(unittest.TestCase):
 
         # In addition, test that 'nan', inf' and '-inf' emerge distinctly
         f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
-        with np.errstate(invalid='ignore', divide='ignore'):
+        with np.errstate(invalid="ignore", divide="ignore"):
             g = f.arctanh().array  # expect [ nan, -inf,  inf,  --]
 
         self.assertTrue(np.isnan(g[0]))

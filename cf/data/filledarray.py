@@ -9,13 +9,7 @@ from ..constants import masked as cf_masked
 class FilledArray(abstract.Array):
     """An underlying filled array."""
 
-    def __init__(
-        self,
-        dtype=None,
-        shape=None,
-        size=None,
-        fill_value=None
-    ):
+    def __init__(self, dtype=None, shape=None, size=None, fill_value=None):
         """**Initialization**
 
             :Parameters:
@@ -70,7 +64,7 @@ class FilledArray(abstract.Array):
                         a, b = divmod(stop - index.start, step)
                         if b:
                             a += 1
-                            
+
                         array_shape.append(a)
                 else:
                     array_shape.append(len(index))
@@ -90,11 +84,9 @@ class FilledArray(abstract.Array):
     # ----------------------------------------------------------------
     @property
     def dask_lock(self):
-        """TODODASK
-
-        """
+        """TODODASK."""
         return False
-    
+
     @property
     def dtype(self):
         """Data-type of the data elements.

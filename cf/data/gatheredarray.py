@@ -3,8 +3,7 @@ import cfdm
 from . import mixin
 
 
-class GatheredArray(mixin.CompressedArray,
-                    cfdm.GatheredArray):                    
+class GatheredArray(mixin.CompressedArray, cfdm.GatheredArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array
@@ -17,5 +16,6 @@ class GatheredArray(mixin.CompressedArray,
     .. versionadded:: 3.0.0
 
     """
+
 
 # --- End: class

@@ -40,7 +40,8 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
             return uarray
 
         indices = parse_indices(self.shape, indices)
-        
+
         return get_subspace(uarray, indices)
+
 
 # --- End: class

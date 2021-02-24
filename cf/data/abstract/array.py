@@ -10,6 +10,7 @@ class Array(cfdm.Array):
     .. versionadded:: 3.0.0
 
     """
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -22,9 +23,8 @@ class Array(cfdm.Array):
 
     @property
     def dask_asarray(self):
-        """TODODASK
-
-        """
+        """TODODASK."""
         return False
+
 
 # --- End: class

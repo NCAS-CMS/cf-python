@@ -9,62 +9,71 @@ from . import abstract
 
 
 class UMArray(abstract.FileArray):
-    """A sub-array stored in a PP or UM fields file.
+    """A sub-array stored in a PP or UM fields file."""
 
-    """
-    def __init__(self, filename=None, dtype=None, ndim=None,
-                 shape=None, size=None, header_offset=None,
-                 data_offset=None, disk_length=None, fmt=None,
-                 word_size=None, byte_ordering=None):
+    def __init__(
+        self,
+        filename=None,
+        dtype=None,
+        ndim=None,
+        shape=None,
+        size=None,
+        header_offset=None,
+        data_offset=None,
+        disk_length=None,
+        fmt=None,
+        word_size=None,
+        byte_ordering=None,
+    ):
         """**Initialization**
 
         :Parameters:
-    
+
             filename: `str`
                 The file name in normalized, absolute form.
-    
+
             dtype: `numpy.dtype`
                 The data type of the data array on disk.
-    
+
             ndim: `int`
                 The number of dimensions in the unpacked data
                 array. Must match up with th *shape* parameter.
-    
+
             shape: `tuple`
                 The shape of the unpacked data array. Note that this
                 is the shape as required by the object containing the
                 `UMArray` object, and so may contain extra size one
                 dimensions. When read, the data on disk is reshaped to
                 *shape*.
-    
+
             size: `int`
                 The number of elements in the unpacked data array.
-    
+
             header_offset: `int`
                 The start position in the file of the header.
-    
+
             data_offset: `int`
                 The start position in the file of the data array.
-    
+
             disk_length: `int`
                 The number of words on disk for the data array,
                 usually LBLREC-LBEXT. If set to 0 then `!size` is
                 used.
-    
+
             fmt: `str`, optional
-    
+
             word_size: `int`, optional
-    
+
             byte_ordering: `str`, optional
-    
+
         **Examples:**
-    
+
         >>> a = UMFileArray(file='file.pp', header_offset=3156,
         ...                 data_offset=3420,
         ...                 dtype=numpy.dtype('float32'),
         ...                 shape=(1, 1, 30, 24),
         ...                 size=720, ndim=4, disk_length=0)
-    
+
         >>> a = UMFileArray(
         ...         file='packed_file.pp', header_offset=3156,
         ...         data_offset=3420,
@@ -73,20 +82,26 @@ class UMArray(abstract.FileArray):
         ... )
 
         """
-        super().__init__(filename=filename, dtype=dtype, ndim=ndim,
-                         shape=shape, size=size,
-                         header_offset=header_offset,
-                         data_offset=data_offset,
-                         disk_length=disk_length, fmt=fmt,
-                         word_size=word_size,
-                         byte_ordering=byte_ordering)
+        super().__init__(
+            filename=filename,
+            dtype=dtype,
+            ndim=ndim,
+            shape=shape,
+            size=size,
+            header_offset=header_offset,
+            data_offset=data_offset,
+            disk_length=disk_length,
+            fmt=fmt,
+            word_size=word_size,
+            byte_ordering=byte_ordering,
+        )
 
         # By default, close the UM file after data array access
         self._close = True
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
-        
+
         Returns a numpy array.
 
         """
@@ -99,7 +114,7 @@ class UMArray(abstract.FileArray):
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
-#        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
+        #        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
         array = rec.get_data().reshape(self.shape)
 
         if indices is not Ellipsis:
@@ -147,7 +162,7 @@ class UMArray(abstract.FileArray):
         if scale_factor != 1.0 and scale_factor != 0.0:
             if integer_array:
                 scale_factor = int(scale_factor)
-                
+
             array *= scale_factor
 
         # Treat BDATUM as an add_offset if it is not 0
@@ -162,7 +177,7 @@ class UMArray(abstract.FileArray):
 
         if self._close:
             self.close()
-            
+
         # Return the numpy array
         return array
 
@@ -276,27 +291,32 @@ class UMArray(abstract.FileArray):
         """Open the file containing the data array.
 
         :Returns:
-    
+
             `umfile_lib.File`
-    
+
         **Examples:**
-    
+
         >>> f.open()
 
         """
         try:
-            f = File(path=self.filename,
-                     byte_ordering=self.byte_ordering,
-                     word_size=self.word_size, fmt=self.fmt)
+            f = File(
+                path=self.filename,
+                byte_ordering=self.byte_ordering,
+                word_size=self.word_size,
+                fmt=self.fmt,
+            )
         except Exception as error:
             try:
                 f.close_fd()
             except Exception:
                 pass
-            
+
             raise Exception(error)
         else:
             return f
+
+
 #        return _open_um_file(self.filename,
 #                             fmt=self.fmt,
 #                             word_size=self.word_size,
