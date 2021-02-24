@@ -286,7 +286,7 @@ class read_writeTest(unittest.TestCase):
 
                 self.assertTrue(
                     f0.equals(g0, verbose=1),
-                    f"Bad read/write of format {fmt!r}"
+                    f"Bad read/write of format {fmt!r}",
                 )
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -312,7 +312,7 @@ class read_writeTest(unittest.TestCase):
                         self.assertTrue(
                             f.equals(g, verbose=2),
                             "Bad read/write with lossless compression: "
-                            f"{fmt}, {compress}, {shuffle}"
+                            f"{fmt}, {compress}, {shuffle}",
                         )
         # --- End: for
         cf.chunksize(self.original_chunksize)
@@ -337,7 +337,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.dtype,
                 numpy.dtype("float32"),
-                f"datatype read in is {g.dtype}"
+                f"datatype read in is {g.dtype}",
             )
 
         cf.chunksize(self.original_chunksize)
@@ -507,12 +507,10 @@ class read_writeTest(unittest.TestCase):
 
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=1),
-                f"{f[i]!r} {f[j]!r}"
+                f[i].data.equals(f[j].data, verbose=1), f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=1),
-                f"{f[j]!r} {f[i]!r}"
+                f[j].data.equals(f[i].data, verbose=1), f"{f[j]!r} {f[i]!r}"
             )
 
         f0 = cf.read(self.string_filename)
