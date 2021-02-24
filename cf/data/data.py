@@ -8962,6 +8962,13 @@ class Data(Container, cfdm.Data):
 
             {{inplace: `bool`, optional}}
 
+        :Returns:
+
+            `Data` or `None`
+                The collapsed array.
+
+        **Examples:**
+
         """
         # TODODASK: Placeholder for the real thing, that takes into
         # account axes=axes, squeeze=squeeze, mtol=mtol,
@@ -8974,25 +8981,6 @@ class Data(Container, cfdm.Data):
 #        return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
 #                              squeeze=squeeze, mtol=mtol, inplace=inplace,
 #                              _preserve_partitions=_preserve_partitions)
-
-        :Returns:
-
-            `Data` or `None`
-                The collapsed array.
-
-        **Examples:**
-
-        """
-        return self._collapse(
-            max_f,
-            max_fpartial,
-            max_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
-        )
 
     def maximum_absolute_value(
         self,
