@@ -18499,7 +18499,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             ).items():
                 c_axes = self.get_data_axes(key)
                 out.set_construct(c, axes=c_axes, key=key)
-        # --- End: if
 
         # ------------------------------------------------------------
         # Copy coordinate reference constructs to the output field
@@ -18510,7 +18509,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             for c_key in ref.coordinates():
                 if c_key not in out.coordinates:
                     ref.del_coordinate(c_key)
-            # --- End:for
 
             for (
                 term,
@@ -18518,7 +18516,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             ) in ref.coordinate_conversion.domain_ancillaries().items():
                 if da_key not in out.domain_ancillaries:
                     ref.coordinate_conversion.set_domain_ancillary(term, None)
-            # --- End:for
 
             out.set_construct(ref, key=cr_key, copy=False)
 
@@ -18740,13 +18737,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
         key = self.construct(identity, key=True)
         c = self.constructs[key]
 
-        set_axes = True
-
         if not isinstance(construct, c.__class__):
             raise ValueError(
-                "Can't replace a {} construct with a {} construct".format(
-                    c.__class__.__name__, construct.__class__.__name__
-                )
+                f"Can't replace a {c.__class__.__name__} construct "
+                f"with a {construct.__class__.__name__} construct"
             )
 
         axes = self.get_data_axes(key, None)
@@ -18755,7 +18749,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             shape1 = getattr(construct, "shape", None)
             if shape0 != shape1:
                 raise ValueError("TODO bb")
-        # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)
 
@@ -19692,7 +19685,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         cr = self.coordinate_reference(identity)
 
-        domain_axes = tuple(self.domain_axes)
         data_axes = self.constructs.data_axes()
 
         axes = []
@@ -20130,7 +20122,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         # Initialise ESMPy for regridding if found
-        manager = Regrid.initialize()
+        Regrid.initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -20249,7 +20241,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 dst_coord_order = dst._regrid_get_coord_order(
                     dst_axis_keys, dst_coord_keys
                 )
-        # --- End: if
 
         # Get the shape of each section after it has been regridded.
         shape = self._regrid_get_section_shape(
@@ -20775,7 +20766,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         # Initialise ESMPy for regridding if found
-        manager = Regrid.initialize()
+        Regrid.initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -20944,7 +20935,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if not dst_dict and use_dst_mask and dst.data.ismasked:
             dst_mask = dst._regrid_get_destination_mask(
                 dst_order,
-                axes=dst_axes_keys,
+                axes=dst_axis_keys,
                 cartesian=True,
                 coords_ext=coords_ext,
             )

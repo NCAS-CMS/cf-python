@@ -402,11 +402,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     strlen = array.dtype.itemsize
                     if strlen > 1:
                         # Convert to an array of characters
-                        array = _character_array(array)
+                        array = self._character_array(array)
 
                         # Get the netCDF dimension for the string length
                         ncdim_strlen = [
-                            _string_length_dimension(strlen, g=None)
+                            self._string_length_dimension(strlen, g=None)
                         ]
                 # --- End: if
 
