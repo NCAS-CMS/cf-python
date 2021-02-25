@@ -1,6 +1,10 @@
 # Configure pre-commit hooks to check for Python code validity, formatting and
 # style issues and prompt for these to be corrected before committing.
 
+# Excludes for *all* pre-commit hooks as listed below:
+# (these are documentation files, either old ones or aut-generated ones)
+exclude: docs\/3\.\d\.\d\/|docs\/_downloads\/|docs\/.*\/tutorial\.py
+
 repos:
 
   # Use specific format-enforcing pre-commit hooks from the core library
