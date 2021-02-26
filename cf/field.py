@@ -6590,7 +6590,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         data=False,
         great_circle=False,
         axes=None,
-        **kwargs
+        **kwargs,
     ):
         """Return weights for the data array values.
 
@@ -9147,7 +9147,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         _update_cell_methods=True,
         i=False,
         _debug=False,
-        **kwargs
+        **kwargs,
     ):
         """Collapse axes of the field.
 
@@ -11060,7 +11060,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 squeeze=squeeze,
                 mtol=mtol,
                 inplace=True,
-                **d_kwargs
+                **d_kwargs,
             )
 
             if squeeze:
@@ -16023,7 +16023,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         inplace=False,
         items=True,
         i=False,
-        **kwargs
+        **kwargs,
     ):
         """Permute the axes of the data array.
 
@@ -17636,7 +17636,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             )  # pragma: no cover
 
         axis = self.domain_axis(identity, key=True)
-            
+
         domain_axes = self.domain_axes
 
         da = domain_axes.get(axis)
@@ -19120,7 +19120,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         i=False,
         verbose=None,
         item=None,
-        **item_options
+        **item_options,
     ):
         """Assign to data elements depending on a condition.
 

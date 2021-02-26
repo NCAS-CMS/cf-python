@@ -25,7 +25,7 @@ from numpy import arcsin as numpy_arcsin
 from numpy import arcsinh as numpy_arcsinh
 from numpy import arctan as numpy_arctan
 
-# from numpy import arctan2           as numpy_arctan2  AT2
+# from numpy import arctan2 as numpy_arctan2  AT2
 from numpy import arctanh as numpy_arctanh
 from numpy import array as numpy_array
 from numpy import asanyarray as numpy_asanyarray
@@ -15099,9 +15099,11 @@ class Data(Container, cfdm.Data):
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
-        """Return a dictionary of Data objects, which are the m
-        dimensional sections of this n dimensional Data object, where m
-        <= n. The keys of the dictionary are the indices of the sections
+        """Returns a dictionary of sections of the Data object.
+
+        Specifically, returns a dictionary of Data objects which are the
+        m-dimensional sections of this n-dimensional Data object, where
+        m <= n. The dictionary keys are the indices of the sections
         in the original Data object. The m dimensions that are not
         sliced are marked with None as a placeholder making it possible
         to reconstruct the original data object. The corresponding

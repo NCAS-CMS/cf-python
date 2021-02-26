@@ -3,7 +3,7 @@
 
 # Excludes for *all* pre-commit hooks as listed below:
 # (these are documentation files, either old ones or aut-generated ones)
-exclude: docs\/3\.\d\.\d\/|docs\/_downloads\/|docs\/.*\/tutorial\.py
+exclude: docs\/3\..*\d\/|docs\/_downloads\/|docs\/.*\/tutorial\.py
 
 repos:
 
