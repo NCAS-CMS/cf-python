@@ -173,7 +173,7 @@ if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of netCDF4
-_minimum_vn = "1.5.3"
+_minimum_vn = "1.5.4"
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         "Bad netCDF4 version: cf requires netCDF4>={}. Got {} "
