@@ -2615,7 +2615,7 @@ def flat(x):
     [1, 2, 3, 4]
 
     >>> import numpy
-    >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
+    >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])])))
     [1, 2, 3, 4, 5, 6]
 
     >>> for a in cf.flat([1, [2, [3, 4]]]):
@@ -2653,7 +2653,7 @@ def flat(x):
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
 
-    >>> fl = cf.FieldList(cf.flat([f, [f, [f, f]]])
+    >>> fl = cf.FieldList(cf.flat([f, [f, [f, f]]]))
     >>> fl
     [<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
      <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
@@ -2821,7 +2821,7 @@ def pathjoin(path1, path2):
     '/data/archive/../archive/file.nc'
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
     '/data/archive/../archive/file.nc'
-    >>> cf.abspath(cf.pathjoin('/data/', 'archive/')
+    >>> cf.abspath(cf.pathjoin('/data/', 'archive/'))
     '/data/archive'
     >>> cf.pathjoin('http://data', 'archive/file.nc')
     'http://data/archive/file.nc'

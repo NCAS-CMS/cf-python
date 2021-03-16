@@ -5793,7 +5793,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         array(['ok'],
               dtype='|S2')
 
-        >>> f.set_property('flag_meanings', numpy.array(['a', 'b'])
+        >>> f.set_property('flag_meanings', numpy.array(['a', 'b']))
         >>> f.get_property('flag_meanings')
         array(['a', 'b'],
               dtype='|S1')
@@ -20111,7 +20111,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid field, f, on tripolar grid to latitude-longitude grid of
         field, g.
 
-        >>> h = f.regrids(g, 'linear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
+        >>> h = f.regrids(g, 'linear', src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
         ...               src_cyclic=True)
 
         Regrid f to the grid of g iterating over the 'Z' axis last and the

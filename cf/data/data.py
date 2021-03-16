@@ -1273,7 +1273,7 @@ class Data(Container, cfdm.Data):
 
         **Examples:**
 
-        >>> d._auxiliary_mask_subspace((slice(0, 9, 2))
+        >>> d._auxiliary_mask_subspace((slice(0, 9, 2)))
 
         """
         if not self._auxiliary_mask:
@@ -1532,7 +1532,7 @@ class Data(Container, cfdm.Data):
         3
         >>> len(Data([[1, 2, 3]]))
         1
-        >>> len(Data([[1, 2, 3], [4, 5, 6]])
+        >>> len(Data([[1, 2, 3], [4, 5, 6]]))
         2
         >>> len(Data(1))
         TypeError: len() of scalar Data
@@ -8941,7 +8941,7 @@ class Data(Container, cfdm.Data):
 
         **Examples:**
 
-        >>> d = cf.Data([[0 0 0]])
+        >>> d = cf.Data([[0, 0, 0]])
         >>> d.any()
         False
         >>> d[0, 0] = cf.masked
@@ -10438,7 +10438,7 @@ class Data(Container, cfdm.Data):
         >>> d.cos(inplace=True)
         >>> d.Units
         <Units: 1>
-        >>> print9d.array)
+        >>> print(d.array)
         [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         """
@@ -10481,7 +10481,7 @@ class Data(Container, cfdm.Data):
         [2 2 2 2]
         >>> print(d.count(1).array)
         [0 4 4]
-        >>> print(d.count((0, 1))
+        >>> print(d.count((0, 1)))
         8
 
         """
@@ -14145,7 +14145,7 @@ class Data(Container, cfdm.Data):
         >>> d.tolist()
         [1, 2]
 
-        >>> d = cf.Data(([[1, 2], [3, 4]])
+        >>> d = cf.Data(([[1, 2], [3, 4]]))
         >>> list(d)
         [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
@@ -15349,7 +15349,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
 
     **Examples:**
 
-    >>> type f.Data
+    >>> type(f.Data)
     <class 'cf.data.Data'>
     >>> d._axes
     ['dim1', 'dim2', 'dim0']
