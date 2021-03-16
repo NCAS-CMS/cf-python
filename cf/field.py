@@ -20742,12 +20742,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid the time axes of field ``f`` conservatively onto a grid
         contained in field ``g``:
 
-        >>> h = f.regridc(g, axes='T', 'conservative')
+        >>> h = f.regridc(g, axes='T', method='conservative')
 
         Regrid the T axis of field ``f`` conservatively onto the grid
         specified in the dimension coordinate ``t``:
 
-        >>> h = f.regridc({'T': t}, axes=('T'), 'conservative_1st')
+        >>> h = f.regridc({'T': t}, axes=('T'), method='conservative_1st')
 
         Regrid the T axis of field ``f`` using linear interpolation onto
         a grid contained in field ``g``:
@@ -20757,7 +20757,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid the X and Y axes of field ``f`` conservatively onto a grid
         contained in field ``g``:
 
-        >>> h = f.regridc(g, axes=('X','Y'), 'conservative_1st')
+        >>> h = f.regridc(g, axes=('X','Y'), method='conservative_1st')
 
         Regrid the X and T axes of field ``f`` conservatively onto a grid
         contained in field ``g`` using the destination mask:
