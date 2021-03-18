@@ -618,7 +618,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         >>> r.coordinates
         {'atmosphere_hybrid_height_coordinate'}
         >>> r.change_coord_identitiers({
-        ...     'atmosphere_hybrid_height_coordinate', 'dim1', 'ncvar:ak': 'aux0'
+        ...     'atmosphere_hybrid_height_coordinate', 'dim1', 'ncvar:ak', 'aux0'
         ... })
         >>> r.coordinates
         {'dim1', 'aux0'}

@@ -916,7 +916,7 @@ class Properties(Container):
         >>> f.match_by_property(standard_name='longitude')
 
         >>> f.match_by_property(
-        ...     standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
+        ...     standard_name='longitude', foo=cf.set(['bar', 'not_bar']))
 
         >>> f.match_by_property(long_name=re.compile('^lon'))
 

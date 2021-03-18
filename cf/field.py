@@ -5781,7 +5781,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         array(['ok'],
               dtype='|S2')
 
-        >>> f.set_property('flag_meanings', numpy.array(['a', 'b'])
+        >>> f.set_property('flag_meanings', numpy.array(['a', 'b']))
         >>> f.get_property('flag_meanings')
         array(['a', 'b'],
               dtype='|S1')
@@ -20033,7 +20033,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid field, f, on tripolar grid to latitude-longitude grid of
         field, g.
 
-        >>> h = f.regrids(g, 'linear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
+        >>> h = f.regrids(g, 'linear', src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
         ...               src_cyclic=True)
 
         Regrid f to the grid of g iterating over the 'Z' axis last and the
@@ -20664,12 +20664,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid the time axes of field ``f`` conservatively onto a grid
         contained in field ``g``:
 
-        >>> h = f.regridc(g, axes='T', 'conservative')
+        >>> h = f.regridc(g, axes='T', method='conservative')
 
         Regrid the T axis of field ``f`` conservatively onto the grid
         specified in the dimension coordinate ``t``:
 
-        >>> h = f.regridc({'T': t}, axes=('T'), 'conservative_1st')
+        >>> h = f.regridc({'T': t}, axes=('T'), method='conservative_1st')
 
         Regrid the T axis of field ``f`` using linear interpolation onto
         a grid contained in field ``g``:
@@ -20679,7 +20679,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Regrid the X and Y axes of field ``f`` conservatively onto a grid
         contained in field ``g``:
 
-        >>> h = f.regridc(g, axes=('X','Y'), 'conservative_1st')
+        >>> h = f.regridc(g, axes=('X','Y'), method='conservative_1st')
 
         Regrid the X and T axes of field ``f`` conservatively onto a grid
         contained in field ``g`` using the destination mask:

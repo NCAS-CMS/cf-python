@@ -1112,7 +1112,7 @@ class FieldList(list, cfdm.Container):
         *not* have a long_name property of 'Air Pressure':
 
            >>> gl = cf.FieldList(f for f in fl if not
-           ...                   f.match_by_property(long_name='Air Pressure))
+           ...                   f.match_by_property(long_name='Air Pressure'))
 
         .. versionadded:: 3.0.0
 

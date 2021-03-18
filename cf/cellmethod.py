@@ -404,7 +404,7 @@ class CellMethod(cfdm.CellMethod):
 
         >>> c
         <CF CellMethod: lat: lon: mean>
-        >>> c.intervals = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
+        >>> c.intervals = ['0.2 degree_N', cf.Data(0.1, 'degree_E')]
         >>> c
         <CF CellMethod: lat: lon: mean (interval: 0.1 degree_N interval: 0.2 degree_E)>
 

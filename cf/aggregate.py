@@ -2871,7 +2871,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
     **Examples:**
 
-    >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False)
+    >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False):
     ...     print("Don't aggregate")
 
     """
