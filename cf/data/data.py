@@ -1830,7 +1830,6 @@ class Data(Container, cfdm.Data):
         if value is cf_masked:
             scalar_value = True
         else:
-            copied = False
             if not isinstance(value, Data):
                 # Convert to the value to a Data object
                 value = type(self)(value, self.Units)
@@ -1839,10 +1838,8 @@ class Data(Container, cfdm.Data):
                     if not value.Units.equals(self.Units):
                         value = value.copy()
                         value.Units = self.Units
-                        copied = True
                 elif not value.Units:
                     value = value.override_units(self.Units)
-                    copied = True
                 else:
                     raise ValueError(
                         "Can't assign values with units {!r} to data with "
@@ -1985,7 +1982,7 @@ class Data(Container, cfdm.Data):
                     start[i] = stop
 
                 elif location == reference_location:
-                    value_indices[i] = previous_slice[i]
+                    value_indices[i] = previous_slice[i]  # noqa F821
 
                 elif location < reference_location:
                     stop = shape[j]
@@ -1994,7 +1991,7 @@ class Data(Container, cfdm.Data):
             # --- End: for
 
             previous_location = partition.location
-            previous_slice = value_indices[:]
+            previous_slice = value_indices[:]  # noqa F821
 
             for i in flip_axes:
                 value_indices[i] = _mirror_slice(value_indices[i], shape1[i])
@@ -3480,8 +3477,6 @@ class Data(Container, cfdm.Data):
 
         """
         return self.func(numpy_ceil, out=True, inplace=inplace)
-        # Retrieve the axis
-        axis_key = self.domain_axis(axis, key=True)
 
     @_inplace_enabled(default=False)
     def convolution_filter(
@@ -4746,7 +4741,6 @@ class Data(Container, cfdm.Data):
             broadcasting = False
 
             align_offset = 0
-            ellipsis = None
 
             new_shape = data0_shape
             new_ndim = data0._ndim
@@ -10447,7 +10441,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_cos, units=_units_1, inplace=True)
+        d.func(numpy_cos, units=_units_1, inplace=True)
 
         return d
 
@@ -10565,7 +10559,7 @@ class Data(Container, cfdm.Data):
         if axes is None:
             return old
 
-        axes = [data_axes[i] for i in self._parse_axes(axes)]  # , 'cyclic')]
+        axes = [data_axes[i] for i in self._parse_axes(axes)]
 
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
@@ -10577,8 +10571,7 @@ class Data(Container, cfdm.Data):
         if auxiliary_mask is not None:
             self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
             for mask in self._auxiliary_mask:
-                mask.cyclic(axes_in, iscyclic)
-        # --- End: if
+                mask.cyclic(axes, iscyclic)
 
         return old
 
@@ -13704,7 +13697,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_sin, units=_units_1, inplace=True)
+        d.func(numpy_sin, units=_units_1, inplace=True)
 
         return d
 
@@ -13761,7 +13754,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_sinh, units=_units_1, inplace=True)
+        d.func(numpy_sinh, units=_units_1, inplace=True)
 
         return d
 
@@ -13816,7 +13809,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_cosh, units=_units_1, inplace=True)
+        d.func(numpy_cosh, units=_units_1, inplace=True)
 
         return d
 
@@ -13874,7 +13867,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_tanh, units=_units_1, inplace=True)
+        d.func(numpy_tanh, units=_units_1, inplace=True)
 
         return d
 
@@ -13907,16 +13900,6 @@ class Data(Container, cfdm.Data):
         else:
             d.func(numpy_log, units=_units_1, inplace=True)
             d /= numpy_log(base)
-
-        #        if base is None:
-        #            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
-        #        elif base == 10:
-        #            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
-        #        elif base == 2:
-        #            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
-        #        else:
-        #            d.func(numpy_log, units=d.Units.log(base), inplace=True)
-        #            d /= numpy_log(base)
 
         return d
 
@@ -14124,7 +14107,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_tan, units=_units_1, inplace=True)
+        d.func(numpy_tan, units=_units_1, inplace=True)
 
         return d
 

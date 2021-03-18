@@ -1,11 +1,9 @@
 import itertools
 import logging
-import os
 import textwrap
 
 from datetime import datetime
 
-from numpy import any as numpy_any
 from numpy import arange as numpy_arange
 from numpy import arccos as numpy_arccos
 from numpy import arcsin as numpy_arcsin
@@ -17,7 +15,6 @@ from numpy import deg2rad as numpy_deg2rad
 from numpy import dtype as numpy_dtype
 from numpy import empty as numpy_empty
 from numpy import isnan as numpy_isnan
-from numpy import mean as numpy_mean
 from numpy import nan as numpy_nan
 from numpy import pi as numpy_pi
 from numpy import rad2deg as numpy_rad2deg
@@ -2626,6 +2623,16 @@ class UMField:
         size = self.lbuser3 - 1.0
         delta = (dtime - vtime) / size
 
+        calendar = self.calendar
+        if calendar == "360_day":
+            units = _Units["360_day 0-1-1"]
+        elif calendar == "gregorian":
+            units = _Units["gregorian 1752-09-13"]
+        elif calendar == "365_day":
+            units = _Units["365_day 1752-09-13"]
+        else:
+            units = None
+
         array = numpy_arange(vtime, vtime + delta * size, size, dtype=float)
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2679,78 +2686,78 @@ class UMField:
 
         return time
 
-    def dddd(self):
-        """TODO."""
-        for axis_code, extra_type in zip((11, 10), ("x", "y")):
-            coord_type = extra_type + "_domain_bounds"
-
-            if coord_type in p.extra:
-                p.extra[coord_type]
-                # Create, from extra data, an auxiliary coordinate
-                # with 1) data and bounds, if the upper and lower
-                # bounds have no missing values; or 2) data but no
-                # bounds, if the upper bound has missing values
-                # but the lower bound does not.
-
-                # Should be the axis which has axis_code 13
-                file_position = ppfile.tell()
-                bounds = p.extra[coord_type][...]
-
-                # Reset the file pointer after reading the extra
-                # data into a numpy array
-                ppfile.seek(file_position, os.SEEK_SET)
-                data = None
-                # dch also test in bmdi?:
-                if numpy_any(bounds[..., 1] == _pp_rmdi):
-                    # dch also test in bmdi?:
-                    if not numpy_any(bounds[..., 0] == _pp_rmdi):
-                        data = bounds[..., 0]
-                    bounds = None
-                else:
-                    data = numpy_mean(bounds, axis=1)
-
-                if (data, bounds) != (None, None):
-                    aux = "aux%(auxN)d" % locals()
-                    auxN += 1  # Increment auxiliary number
-
-                    coord = _create_Coordinate(
-                        domain,
-                        aux,
-                        axis_code,
-                        p=p,
-                        array=data,
-                        aux=True,
-                        bounds_array=bounds,
-                        pubattr={"axis": None},
-                        # DCH xdim? should be the axis which has axis_code 13:
-                        dimensions=[xdim],
-                    )
-            else:
-                coord_type = "{0}_domain_lower_bound".format(extra_type)
-                if coord_type in p.extra:
-                    # Create, from extra data, an auxiliary
-                    # coordinate with data but no bounds, if the
-                    # data noes not contain any missing values
-                    file_position = ppfile.tell()
-                    data = p.extra[coord_type][...]
-                    # Reset the file pointer after reading the
-                    # extra data into a numpy array
-                    ppfile.seek(file_position, os.SEEK_SET)
-                    if not numpy_any(data == _pp_rmdi):  # dch + test in bmdi
-                        aux = "aux%(auxN)d" % locals()
-                        auxN += 1  # Increment auxiliary number
-                        coord = _create_Coordinate(
-                            domain,
-                            aux,
-                            axis_code,
-                            p=p,
-                            aux=True,
-                            array=numpy_array(data),
-                            pubattr={"axis": None},
-                            dimensions=[xdim],
-                        )  # DCH xdim?
-            # --- End: if
-        # --- End: for
+    #    def dddd(self):
+    #        """TODO."""
+    #        for axis_code, extra_type in zip((11, 10), ("x", "y")):
+    #            coord_type = extra_type + "_domain_bounds"
+    #
+    #            if coord_type in p.extra:
+    #                p.extra[coord_type]
+    #                # Create, from extra data, an auxiliary coordinate
+    #                # with 1) data and bounds, if the upper and lower
+    #                # bounds have no missing values; or 2) data but no
+    #                # bounds, if the upper bound has missing values
+    #                # but the lower bound does not.
+    #
+    #                # Should be the axis which has axis_code 13
+    #                file_position = ppfile.tell()
+    #                bounds = p.extra[coord_type][...]
+    #
+    #                # Reset the file pointer after reading the extra
+    #                # data into a numpy array
+    #                ppfile.seek(file_position, os.SEEK_SET)
+    #                data = None
+    #                # dch also test in bmdi?:
+    #                if numpy_any(bounds[..., 1] == _pp_rmdi):
+    #                    # dch also test in bmdi?:
+    #                    if not numpy_any(bounds[..., 0] == _pp_rmdi):
+    #                        data = bounds[..., 0]
+    #                    bounds = None
+    #                else:
+    #                    data = numpy_mean(bounds, axis=1)
+    #
+    #                if (data, bounds) != (None, None):
+    #                    aux = "aux%(auxN)d" % locals()
+    #                    auxN += 1  # Increment auxiliary number
+    #
+    #                    coord = _create_Coordinate(
+    #                        domain,
+    #                        aux,
+    #                        axis_code,
+    #                        p=p,
+    #                        array=data,
+    #                        aux=True,
+    #                        bounds_array=bounds,
+    #                        pubattr={"axis": None},
+    #                        # DCH xdim? should be the axis which has axis_code 13:
+    #                        dimensions=[xdim],
+    #                    )
+    #            else:
+    #                coord_type = "{0}_domain_lower_bound".format(extra_type)
+    #                if coord_type in p.extra:
+    #                    # Create, from extra data, an auxiliary
+    #                    # coordinate with data but no bounds, if the
+    #                    # data noes not contain any missing values
+    #                    file_position = ppfile.tell()
+    #                    data = p.extra[coord_type][...]
+    #                    # Reset the file pointer after reading the
+    #                    # extra data into a numpy array
+    #                    ppfile.seek(file_position, os.SEEK_SET)
+    #                    if not numpy_any(data == _pp_rmdi):  # dch + test in bmdi
+    #                        aux = "aux%(auxN)d" % locals()
+    #                        auxN += 1  # Increment auxiliary number
+    #                        coord = _create_Coordinate(
+    #                            domain,
+    #                            aux,
+    #                            axis_code,
+    #                            p=p,
+    #                            aux=True,
+    #                            array=numpy_array(data),
+    #                            pubattr={"axis": None},
+    #                            dimensions=[xdim],
+    #                        )  # DCH xdim?
+    #            # --- End: if
+    #        # --- End: for
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
         """Create 2-d arrays of unrotated latitudes and longitudes.

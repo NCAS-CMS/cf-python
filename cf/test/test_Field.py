@@ -1151,7 +1151,6 @@ class FieldTest(unittest.TestCase):
                     "INCREASING period=%s, x0=%s, anchor=%s, x1=%s"
                     % (period, x0, anchor, x1),
                 )
-            # --- End: for
 
             # Decreasing dimension coordinate
             flipped_f = f.flip("grid_longitude")

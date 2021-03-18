@@ -1220,13 +1220,13 @@ class PropertiesDataBounds(PropertiesData):
         # DCH - allow dtype to be set before data c.f.  Units
         data = self.get_data(None)
         if data is not None:
-            self.Data.dtype = value
+            data.dtype = value
 
     @dtype.deleter
     def dtype(self):
         data = self.get_data(None)
         if data is not None:
-            del self.Data.dtype
+            del data.dtype
 
     # ----------------------------------------------------------------
     # Methods
