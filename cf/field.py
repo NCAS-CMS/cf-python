@@ -187,16 +187,6 @@ _collapse_cell_methods = {
 }
 
 # --------------------------------------------------------------------
-# Map each Data method to its corresponding minimum number of
-# elements. Data methods not in this dictionary are assumed to have a
-# minimum number of elements equal to 1.
-# --------------------------------------------------------------------
-_collapse_min_size = {
-    "sd": 2,
-    "var": 2,
-}
-
-# --------------------------------------------------------------------
 # These Data methods may be weighted
 # --------------------------------------------------------------------
 _collapse_weighted_methods = set(
@@ -4248,8 +4238,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             `bool` or `None`
 
         """
-        out = set()
-
         xdims = dict(self.dimension_coordinates("X"))
         ydims = dict(self.dimension_coordinates("Y"))
 
@@ -10737,30 +10725,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     "Can't collapse: Can not identify collapse axes"
                 )
 
-            #            _collapse_methods = {
-            #    'mean'                  : 'mean',
-            #    'mean_absolute_value'   : 'mean_absolute_value',
-            #    'mean_of_upper_decile'  : 'mean_of_upper_decile',
-            #    'maximum'               : 'max',
-            #    'maximum_absolute_value': 'maximum_absolute_value',
-            #    'minimum'               : 'min',
-            #    'minimum_absolute_value': 'minimum_absolute_value',
-            #    'mid_range'             : 'mid_range',
-            #    'range'                 : 'range',
-            #    'median'                : 'median',
-            #    'standard_deviation'    : 'sd',
-            #    'sd'                    : 'sd',
-            #    'sum'                   : 'sum',
-            #    'sum_of_squares'        : 'sum_of_squares',
-            #    'integral'              : 'integral',
-            #    'root_mean_square'      : 'root_mean_square',
-            #    'variance'              : 'var',
-            #    'var'                   : 'var',
-            #    'sample_size'           : 'sample_size',
-            #    'sum_of_weights'        : 'sum_of_weights',
-            #    'sum_of_weights2'       : 'sum_of_weights2',
-            #            }
-
             if method in (
                 "sum_of_weights",
                 "sum_of_weights2",
@@ -10777,17 +10741,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             else:
                 collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
 
-            #            if method not in ('minimum_absolute_value',
-            #                              'maximum_absolute_value', 'sample_size',
-            #                              'sum_of_weights', 'sum_of_weights2',
-            #                              'mid_range', 'range', 'median',
-            #                              'sum_of_squares', 'mean_absolute_value',
-            #                              'mean_of_upper_decile',
-            #                              ):
-            #                collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
-            #            else:
-            #                collapse_axes = collapse_axes_all_sizes.copy()
-
             logger.info(
                 "    collapse_axes           = {}".format(collapse_axes)
             )  # pragma: no cover
@@ -10802,11 +10755,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         ).value(None)
                         if dc is not None and not dc.has_bounds():
                             dc.set_bounds(dc.create_bounds(cellsize=0))
-                #                    for axis in f.axes(axes):
-                #                        d = f.item(axes, role='d')
-                #                        if d and not d.has_bounds():
-                #                            d.get_bounds(
-                #                                create=True, insert=True, cellsize=0)
                 # --- End: if
 
                 continue
@@ -10816,11 +10764,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 da.get_size() for da in collapse_axes.values()
             ]
             size = reduce(operator_mul, collapse_axes_sizes, 1)
-            min_size = _collapse_min_size.get(method, 1)
-            #            if size < min_size:
-            #                raise ValueError(
-            #                    "Can't calculate {0} from fewer than {1} values".format(
-            #                    _collapse_cell_methods[method], min_size))
 
             logger.info(
                 "    collapse_axes_sizes     = {}".format(collapse_axes_sizes)
@@ -10954,29 +10897,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     "Can't return an array of groups for a non-grouped "
                     "collapse"
                 )
-
-            #            if group_contiguous:
-            #                raise ValueError(
-            #                    "Can't collapse: Can only set group_contiguous for "
-            #                    "grouped, 'within days' or 'within years' collapses."
-            #                )
-            #
-            #            if group_span is not None:
-            #                raise ValueError(
-            #                    "Can't collapse: Can only set group_span for grouped, 'within days' or 'within years' collapses.")
-
-            #            method = _collapse_methods.get(method, None)
-            #            if method is None:
-            #                raise ValueError("uih luh hbblui")
-            #
-            #            # Check that there are enough elements to collapse
-            #            size = reduce(operator_mul,
-            #                          domain.axes_sizes(collapse_axes).values())
-            #            min_size = _collapse_min_size.get(method, 1)
-            #            if size < min_size:
-            #                raise ValueError(
-            #                    "Can't calculate %s from fewer than %d elements" %
-            #                    (_collapse_cell_methods[method], min_size))
 
             data_axes = f.get_data_axes()
             iaxes = [
@@ -15665,81 +15585,83 @@ class Field(mixin.PropertiesData, cfdm.Field):
         print("This method is not ready for use.")
         return
 
-        standard_name = None
-
-        if axis is not None:
-            axis_key = self.domain_axis(
-                axis, key=True, default=ValueError("TODO")
-            )
-            axis = self.get_data_axes.index(axis_key)
-            standard_name = self.domain_axis_identity(
-                axis_key, strict=True, default=None
-            )
-
-        indices = self.data.argmax(axis, unravel=True)
-
-        if axis is None:
-            return self[indices]
-
-        # What if axis_key does not span array?
-        out = self.subspace(**{axis_key: [0]})
-        out.squeeze(axis_key, inplace=True)
-
-        for i in indices.ndindex():
-            out.data[i] = org.data[indices[i].datum()]
-
-        for key, c in tuple(
-            out.constructs.filter_by_type(
-                "dimension_coordinate",
-                "auxiliary_coordinate",
-                "cell_measure",
-                "domain_ancillary",
-                "field_ancillary",
-            )
-            .filter_by_axis("and", axis_key)
-            .items()
-        ):
-
-            out.del_construct(key)
-
-            if c.construct_type == (
-                "cell_measure",
-                "domain_ancillary",
-                "field_ancillary",
-            ):
-                continue
-
-            aux = self._AuxiliaryCoordinate()
-            aux.set_properties(c.properties())
-
-            c_data = c.get_data(None)
-            if c_data is not None:
-                data = Data.empty(indices.shape, dtype=c.dtype)
-                for x in indices.ndindex():
-                    data[x] = c_data[indices[x]]
-
-                aux.set_data(data, copy=False)
-
-            c_bounds_data = c.get_bounds_data(None)
-            if c_bounds_data is not None:
-                bounds = Data.empty(
-                    indices.shape + (c_bounds_data.shape[-1],),
-                    dtype=c_bounds_data.dtype,
-                )
-                for x in indices.ndindex():
-                    bounds[x] = c_bounds_data[indices[x]]
-
-                aux.set_bounds(
-                    self._Bounds(data=bounds, copy=False), copy=False
-                )
-
-            out.set_construct(aux, axes=out.get_data_axes(), copy=False)
-
-        if standard_name:
-            cm = CellMethod()
-            cm.create(standard_name + ": maximum")
-
-        return out
+    # Keep these commented lines for using with the future dask version
+    #
+    #        standard_name = None
+    #
+    #        if axis is not None:
+    #            axis_key = self.domain_axis(
+    #                axis, key=True, default=ValueError("TODO")
+    #            )
+    #            axis = self.get_data_axes.index(axis_key)
+    #            standard_name = self.domain_axis_identity(
+    #                axis_key, strict=True, default=None
+    #            )
+    #
+    #        indices = self.data.argmax(axis, unravel=True)
+    #
+    #        if axis is None:
+    #            return self[indices]
+    #
+    #        # What if axis_key does not span array?
+    #        out = self.subspace(**{axis_key: [0]})
+    #        out.squeeze(axis_key, inplace=True)
+    #
+    #        for i in indices.ndindex():
+    #            out.data[i] = org.data[indices[i].datum()]
+    #
+    #        for key, c in tuple(
+    #            out.constructs.filter_by_type(
+    #                "dimension_coordinate",
+    #                "auxiliary_coordinate",
+    #                "cell_measure",
+    #                "domain_ancillary",
+    #                "field_ancillary",
+    #            )
+    #            .filter_by_axis("and", axis_key)
+    #            .items()
+    #        ):
+    #
+    #            out.del_construct(key)
+    #
+    #            if c.construct_type == (
+    #                "cell_measure",
+    #                "domain_ancillary",
+    #                "field_ancillary",
+    #            ):
+    #                continue
+    #
+    #            aux = self._AuxiliaryCoordinate()
+    #            aux.set_properties(c.properties())
+    #
+    #            c_data = c.get_data(None)
+    #            if c_data is not None:
+    #                data = Data.empty(indices.shape, dtype=c.dtype)
+    #                for x in indices.ndindex():
+    #                    data[x] = c_data[indices[x]]
+    #
+    #                aux.set_data(data, copy=False)
+    #
+    #            c_bounds_data = c.get_bounds_data(None)
+    #            if c_bounds_data is not None:
+    #                bounds = Data.empty(
+    #                    indices.shape + (c_bounds_data.shape[-1],),
+    #                    dtype=c_bounds_data.dtype,
+    #                )
+    #                for x in indices.ndindex():
+    #                    bounds[x] = c_bounds_data[indices[x]]
+    #
+    #                aux.set_bounds(
+    #                    self._Bounds(data=bounds, copy=False), copy=False
+    #                )
+    #
+    #            out.set_construct(aux, axes=out.get_data_axes(), copy=False)
+    #
+    #        if standard_name:
+    #            cm = CellMethod()
+    #            cm.create(standard_name + ": maximum")
+    #
+    #        return out
 
     @_manage_log_level_via_verbosity
     def autocyclic(self, verbose=None):
@@ -20305,10 +20227,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if not numpy_array_equal(mask, old_mask):
                     # Release old memory
                     if old_mask is not None:
-                        regridSrc2Dst.destroy()
-                        srcfracfield.destroy()
-                        srcfield.destroy()
-                        srcgrid.destroy()
+                        regridSrc2Dst.destroy()  # noqa: F821
+                        srcfracfield.destroy()  # noqa: F821
+                        srcfield.destroy()  # noqa: F821
+                        srcgrid.destroy()  # noqa: F821
 
                     # (Re)create the source ESMPy grid and fields
                     srcgrid = Regrid.create_grid(
@@ -20970,10 +20892,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     if not numpy_array_equal(mask, old_mask):
                         # Release old memory
                         if old_mask is not None:
-                            regridSrc2Dst.destroy()
-                            srcfracfield.destroy()
-                            srcfield.destroy()
-                            srcgrid.destroy()
+                            regridSrc2Dst.destroy()  # noqa: F821
+                            srcfracfield.destroy()  # noqa: F821
+                            srcfield.destroy()  # noqa: F821
+                            srcgrid.destroy()  # noqa: F821
 
                         # (Re)create the source ESMPy grid and fields
                         srcgrid = Regrid.create_grid(

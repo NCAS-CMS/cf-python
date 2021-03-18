@@ -5534,23 +5534,23 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_ATTRIBUTE(self, "attributes")
 
     @property
-    def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
+    def Data(self):
         """Deprecated at version 3.0.0, use `data` attribute or
         `get_data` method instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'get_data' method instead."
         )  # pragma: no cover
 
-    @data.setter
-    def Data(self, value):  # noqa: F811 (see link against same-name setter)
+    @Data.setter
+    def Data(self, value):
         """Deprecated at version 3.0.0, use `set_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "Data", "Use 'data' attribute or 'set_data' method instead."
         )  # pragma: no cover
 
-    @data.deleter
-    def Data(self):  # noqa: F811 (see github.com/PyCQA/pyflakes/issues/372)
+    @Data.deleter
+    def Data(self):
         """Deprecated at version 3.0.0, use `del_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
