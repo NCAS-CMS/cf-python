@@ -227,6 +227,33 @@ Tests are run from within the ``cf/test`` directory:
 requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
+tests_require = (
+    [
+        "pytest",
+        "pycodestyle",
+        "coverage",
+    ],
+)
+extras_require = {
+    "required C libraries": ["udunits2==2.2.25"],
+    "regridding": ["esmpy", "ESMF>=8.0"],
+    "convolution filters, derivatives, relative vorticity": ["scipy>=1.1.0"],
+    "subspacing with multi-dimensional construct cells": ["matplotlib>=3.0.0"],
+    "parallel processing": ["mpich", "mpi4py>=3.0.0"],
+    "documentation": [
+        "sphinx>=2,<=4",
+        "sphinx-copybutton",
+        "sphinx-toggleprompt",
+        "sphinxcontrib-spelling",
+    ],
+    "pre-commit hooks": [
+        "pre-commit",
+        "black",
+        "docformatter",
+        "flake8",
+    ],
+}
+
 setup(
     name="cf-python",
     long_description=long_description,
@@ -281,6 +308,8 @@ setup(
     scripts=["scripts/cfa"],
     python_requires=">=3.6",
     install_requires=install_requires,
+    tests_require=tests_require,
+    extras_require=extras_require,
     # install_requires=[
     #     'netCDF4>=1.5.3',
     #     'cftime>=1.1.3',
