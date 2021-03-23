@@ -45,8 +45,7 @@ class Constructs(cfdm.Constructs):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    def _matching_values(self, value0, construct, value1,
-                         basic=False):
+    def _matching_values(self, value0, construct, value1, basic=False):
         """Whether two values match according to equality on a given
         construct.
 
@@ -78,8 +77,7 @@ class Constructs(cfdm.Constructs):
         if isinstance(value0, Query):
             return value0.evaluate(value1)
 
-        return super()._matching_values(value0, construct, value1,
-                                        basic=basic)
+        return super()._matching_values(value0, construct, value1, basic=basic)
 
     #     def domain_axis_key(self, identity, default=ValueError()):
     #         '''Return the key of the domain axis construct that is spanned by 1-d
@@ -247,5 +245,5 @@ class Constructs(cfdm.Constructs):
                 identities[n] = "key%" + identity
 
         ctype = [i for i in "XYZT" if i in identities]
-                
+
         return super().filter_by_identity(*identities, ctype=ctype)

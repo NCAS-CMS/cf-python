@@ -97,7 +97,7 @@ class PropertiesDataBounds(PropertiesData):
             "{}.__getitem__: findices = {}".format(cname, findices)
         )  # pragma: no cover
 
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             new.set_data(data[findices], copy=False)
 
@@ -109,7 +109,7 @@ class PropertiesDataBounds(PropertiesData):
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds_data = bounds.get_data(None, set_fill_value=False)
+            bounds_data = bounds.get_data(None, _fill_value=False)
             if bounds_data is not None:
                 findices = list(findices)
                 #                if data.ndim <= 1 and not self.has_geometry():
@@ -711,7 +711,7 @@ class PropertiesDataBounds(PropertiesData):
         oper_args=(),
         bounds=True,
         interior_ring=False,
-        **oper_kwargs
+        **oper_kwargs,
     ):
         """Define an operation that can be applied to the data array.
 
@@ -859,7 +859,7 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.dtype = numpy.dtype('float32')
 
         """
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             return data.dtype
 
@@ -873,7 +873,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @dtype.setter
     def dtype(self, value):
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.dtype = value
 
@@ -971,7 +971,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         #        return super().Units
 
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             # Return the units of the data
             return data.Units
@@ -1203,13 +1203,13 @@ class PropertiesDataBounds(PropertiesData):
     @dtype.setter
     def dtype(self, value):
         # DCH - allow dtype to be set before data c.f.  Units
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.dtype = value
 
     @dtype.deleter
     def dtype(self):
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             del data.dtype
 
@@ -1776,9 +1776,7 @@ class PropertiesDataBounds(PropertiesData):
             return True
 
         if ndim > 2:
-            raise ValueError(
-                f"Can't tell if {ndim}-d cells are contiguous"
-            )
+            raise ValueError(f"Can't tell if {ndim}-d cells are contiguous")
 
         if nbounds != 2:
             raise ValueError(
@@ -2324,7 +2322,7 @@ class PropertiesDataBounds(PropertiesData):
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            data = interior_ring.get_data(None, set_fill_value=False)
+            data = interior_ring.get_data(None, _fill_value=False)
             if data is not None:
                 out.update(interior_ring.get_filenames())
 
@@ -2624,13 +2622,13 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        data = self.get_data(None, set_fill_value=False)
+        data = self.get_data(None, _fill_value=False)
 
         if data is not None and bounds.shape[: data.ndim] != data.shape:
             # Check shape
             raise ValueError(
-                "Can't set bounds: Incorrect bounds shape {} "
-                "for data shape {}".format(bounds.shape, data.shape)
+                f"Can't set bounds: Incorrect bounds shape {bounds.shape} "
+                f"for data shape {data.shape}"
             )
 
         if copy:
@@ -3445,67 +3443,67 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-#   def identities(self, generator=False):
-#       """Return all possible identities.
-#
-#       The identities comprise:
-#
-#       * The "standard_name" property.
-#       * The "id" attribute, preceded by ``'id%'``.
-#       * The "cf_role" property, preceded by ``'cf_role='``.
-#       * The "axis" property, preceded by ``'axis='``.
-#       * The "long_name" property, preceded by ``'long_name='``.
-#       * All other properties (including "standard_name"), preceded by
-#         the property name and an ``'='``.
-#       * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-#       * The netCDF variable name, preceded by ``'ncvar%'``.
-#
-#       The identities of the bounds, if present, are included (with the
-#       exception of the bounds netCDF variable name).
-#
-#       .. versionadded:: 3.0.0
-#
-#       .. seealso:: `id`, `identity`
-#ODO
-#       :Returns:
-#
-#           `list`
-#               The identities.
-#
-#       **Examples:**
-#
-#       >>> f.properties()
-#       {'foo': 'bar',
-#        'long_name': 'Air Temperature',
-#        'standard_name': 'air_temperature'}
-#       >>> f.nc_get_variable()
-#       'tas'
-#       >>> f.identities()
-#       ['air_temperature',
-#        'long_name=Air Temperature',
-#        'foo=bar',
-#        'standard_name=air_temperature',
-#        'ncvar%tas']
-#
-#       >>> f.properties()
-#       {}
-#       >>> f.bounds.properties()
-#       {'axis': 'Z',
-#        'units': 'm'}
-#       >>> f.identities()
-#       ['axis=Z', 'units=m', 'ncvar%z']
-#
-#       """
-#       identities = super().identities()
-#
-#       bounds = self.get_bounds(None)
-#       if bounds is not None:
-#           identities.extend(
-#               [i for i in bounds.identities() if i not in identities]
-#           )
-#       # TODO ncvar AND?
-#
-#       return identities
+    #   def identities(self, generator=False):
+    #       """Return all possible identities.
+    #
+    #       The identities comprise:
+    #
+    #       * The "standard_name" property.
+    #       * The "id" attribute, preceded by ``'id%'``.
+    #       * The "cf_role" property, preceded by ``'cf_role='``.
+    #       * The "axis" property, preceded by ``'axis='``.
+    #       * The "long_name" property, preceded by ``'long_name='``.
+    #       * All other properties (including "standard_name"), preceded by
+    #         the property name and an ``'='``.
+    #       * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+    #       * The netCDF variable name, preceded by ``'ncvar%'``.
+    #
+    #       The identities of the bounds, if present, are included (with the
+    #       exception of the bounds netCDF variable name).
+    #
+    #       .. versionadded:: 3.0.0
+    #
+    #       .. seealso:: `id`, `identity`
+    # ODO
+    #       :Returns:
+    #
+    #           `list`
+    #               The identities.
+    #
+    #       **Examples:**
+    #
+    #       >>> f.properties()
+    #       {'foo': 'bar',
+    #        'long_name': 'Air Temperature',
+    #        'standard_name': 'air_temperature'}
+    #       >>> f.nc_get_variable()
+    #       'tas'
+    #       >>> f.identities()
+    #       ['air_temperature',
+    #        'long_name=Air Temperature',
+    #        'foo=bar',
+    #        'standard_name=air_temperature',
+    #        'ncvar%tas']
+    #
+    #       >>> f.properties()
+    #       {}
+    #       >>> f.bounds.properties()
+    #       {'axis': 'Z',
+    #        'units': 'm'}
+    #       >>> f.identities()
+    #       ['axis=Z', 'units=m', 'ncvar%z']
+    #
+    #       """
+    #       identities = super().identities()
+    #
+    #       bounds = self.get_bounds(None)
+    #       if bounds is not None:
+    #           identities.extend(
+    #               [i for i in bounds.identities() if i not in identities]
+    #           )
+    #       # TODO ncvar AND?
+    #
+    #       return identities
 
     @_deprecated_kwarg_check("relaxed_identity")
     def identity(

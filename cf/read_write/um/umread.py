@@ -1063,7 +1063,7 @@ class UMField:
 
             # Force cyclic X axis for particular values of LBHEM
             if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
-#                field.cyclic("X", period=360)
+                #                field.cyclic("X", period=360)
                 field.cyclic(xkey, period=360)
 
             self.fields.append(field)
@@ -1195,8 +1195,9 @@ class UMField:
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[""])
             self.implementation.set_properties(
-                dc, {"standard_name": "atmosphere_hybrid_height_coordinate"},
-                copy=False
+                dc,
+                {"standard_name": "atmosphere_hybrid_height_coordinate"},
+                copy=False,
             )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis["z"])
@@ -1220,8 +1221,7 @@ class UMField:
         ac = self.coord_data(ac, array, bounds, units=_Units["1"])
         ac.id = "UM_atmosphere_hybrid_height_coordinate_b"
         self.implementation.set_properties(
-            ac, {"long_name": "height based hybrid coeffient b"},
-            copy=False
+            ac, {"long_name": "height based hybrid coeffient b"}, copy=False
         )
         key_b = self.implementation.set_domain_ancillary(
             field, ac, axes=[_axis["z"]], copy=False

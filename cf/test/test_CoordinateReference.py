@@ -230,9 +230,9 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.vcr["standard_name"],
             self.vconversion.get_parameter("standard_name"),
         )
-        self.assertTrue(
-            self.vcr.get("earth_radius")
-            is self.datum.get_parameter("earth_radius")
+        self.assertEqual(
+            self.vcr.get("earth_radius"),
+            self.datum.get_parameter("earth_radius")
         )
         self.assertIsNone(self.vcr.get("orog"))
         self.assertEqual(self.vcr.get("orog", "qwerty"), "qwerty")
@@ -255,11 +255,11 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.hcr["grid_mapping_name"],
             self.hconversion.get_parameter("grid_mapping_name"),
         )
-        self.assertIs(
+        self.assertEqual(
             self.hcr.get("earth_radius"),
             self.datum.get_parameter("earth_radius"),
         )
-        self.assertIs(
+        self.assertEqual(
             self.hcr.get("grid_north_pole_latitude", "qwerty"),
             self.hconversion.get_parameter("grid_north_pole_latitude"),
         )
@@ -267,9 +267,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertEqual(self.hcr.get("qwerty", 12), 12)
         with self.assertRaises(Exception):
             _ = self.hcr["qwerty"]
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -122,7 +122,7 @@ class DimensionCoordinate(
         False
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the data
             if data._size > 1:
@@ -860,7 +860,7 @@ class DimensionCoordinate(
 
         if bounds_data is not None:
             b.dtype = numpy_result_type(bounds_data.dtype, period.dtype)
-            bounds_data = b.get_data(None, set_fill_value=None)
+            bounds_data = b.get_data(None, _fill_value=False)
 
         if direction:
             # Increasing

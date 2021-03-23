@@ -4,7 +4,7 @@ from ..decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _deprecated_kwarg_check,
-) 
+)
 
 from ..data.data import Data
 
@@ -489,64 +489,66 @@ class Coordinate:
 
         """
         out = super().identity(default=None)
-         
-        if out is None:
-            ctype = self.ctype
-            if ctype is not None:
-                return ctype
+        if out is not None:
+            return out
+
+        ctype = self.ctype
+        if ctype is not None:
+            return ctype
 
         return default
 
     def identities(self, generator=False, ctype="XTYZ"):
         """Return all possible identities.
 
-        The identities comprise:
+                The identities comprise:
 
-        * The "standard_name" property.
-        * The "id" attribute, preceded by ``'id%'``.
-        * The "cf_role" property, preceded by ``'cf_role='``.
-        * The "axis" property, preceded by ``'axis='``.
-        * The "long_name" property, preceded by ``'long_name='``.
-        * All other properties (including "standard_name"), preceded by
-          the property name and an ``'='``.
-        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-        * The netCDF variable name, preceded by ``'ncvar%'``.
+                * The "standard_name" property.
+                * The "id" attribute, preceded by ``'id%'``.
+                * The "cf_role" property, preceded by ``'cf_role='``.
+                * The "axis" property, preceded by ``'axis='``.
+                * The "long_name" property, preceded by ``'long_name='``.
+                * All other properties (including "standard_name"), preceded by
+                  the property name and an ``'='``.
+                * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+                * The netCDF variable name, preceded by ``'ncvar%'``.
 
-        .. versionadded:: 3.0.0
+                .. versionadded:: 3.0.0
 
-        .. seealso:: `id`, `identity`
-TODO
-        :Returns:
+                .. seealso:: `id`, `identity`
+        TODO
+                :Returns:
 
-            `list`
-                The identities.
+                    `list`
+                        The identities.
 
-        **Examples:**
+                **Examples:**
 
-        >>> f.properties()
-        {'foo': 'bar',
-         'long_name': 'Air Temperature',
-         'standard_name': 'air_temperature'}
-        >>> f.nc_get_variable()
-        'tas'
-        >>> f.identities()
-        ['air_temperature',
-         'long_name=Air Temperature',
-         'foo=bar',
-         'standard_name=air_temperature',
-         'ncvar%tas']
+                >>> f.properties()
+                {'foo': 'bar',
+                 'long_name': 'Air Temperature',
+                 'standard_name': 'air_temperature'}
+                >>> f.nc_get_variable()
+                'tas'
+                >>> f.identities()
+                ['air_temperature',
+                 'long_name=Air Temperature',
+                 'foo=bar',
+                 'standard_name=air_temperature',
+                 'ncvar%tas']
 
         """
+
         def _ctype_iter(self, ctype):
             stop = False
             for c in ctype:
                 if stop:
                     break
-                
+
                 if getattr(self, c):
                     stop = True
                     yield c
-                    
+
         identities = super().identities(generator=True)
 
         g = chain(identities, _ctype_iter(self, ctype))

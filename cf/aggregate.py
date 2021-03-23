@@ -1938,6 +1938,7 @@ def aggregate(
             aggregating_axes = []
             axis_items = meta[0].axis.items()
             for axis in axes:
+                # TODO IMPORTANT: should this be filter_by_axis ????
                 coords = meta[0].field.coordinates.filter_by_identity(
                     "exact", axis
                 )
@@ -3202,8 +3203,8 @@ def _aggregate_2_fields(
             if construct0.has_bounds():
                 data = Data.concatenate(
                     (
-                        construct0.bounds.get_data(),
-                        construct1.bounds.get_data(),
+                        construct0.bounds.get_data(_fill_value=False),
+                        construct1.bounds.get_data(_fill_value=False),
                     ),
                     axis,
                     _preserve=False,
@@ -3212,7 +3213,10 @@ def _aggregate_2_fields(
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (construct1.get_data(), construct0.get_data()),
+                (
+                    construct1.get_data(_fill_value=False),
+                    construct0.get_data(_fill_value=False),
+                ),
                 axis,
                 _preserve=False,
             )
@@ -3220,8 +3224,8 @@ def _aggregate_2_fields(
             if construct0.has_bounds():
                 data = Data.concatenate(
                     (
-                        construct1.bounds.get_data(),
-                        construct0.bounds.get_data(),
+                        construct1.bounds.get_data(_fill_value=False),
+                        construct0.bounds.get_data(_fill_value=False),
                     ),
                     axis,
                     _preserve=False,
@@ -3273,12 +3277,22 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (field0.get_data(), field1.get_data()), axis, _preserve=False
+                (
+                    field0.get_data(_fill_value=False),
+                    field1.get_data(_fill_value=False),
+                ),
+                axis,
+                _preserve=False,
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (field1.get_data(), field0.get_data()), axis, _preserve=False
+                (
+                    field1.get_data(_fill_value=False),
+                    field0.get_data(_fill_value=False),
+                ),
+                axis,
+                _preserve=False,
             )
 
         # Update the size of the aggregating axis in field0
@@ -3326,8 +3340,9 @@ def _aggregate_2_fields(
                         prop, f"{value0} :AGGREGATED: {value1}", copy=False
                     )
                 else:
-                    field0.set_property(prop, " :AGGREGATED: {value1}",
-                                        copy=False)
+                    field0.set_property(
+                        prop, " :AGGREGATED: " + value1, copy=False
+                    )
         else:
             if value0 is not None:
                 field0.del_property(prop)

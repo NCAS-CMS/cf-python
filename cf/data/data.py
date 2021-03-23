@@ -9372,7 +9372,7 @@ class Data(Container, cfdm.Data):
 
         return out
 
-    def get_data(self, default=ValueError()):
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
         .. versionadded:: 3.0.0

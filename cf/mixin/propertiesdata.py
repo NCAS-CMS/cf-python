@@ -59,7 +59,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data.__array__(*dtype)
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __contains__(self, value):
         """Called to implement membership test operators.
@@ -96,7 +96,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __setitem__(self, indices, value):
         """Called to implement assignment to x[indices]
@@ -573,9 +573,8 @@ class PropertiesData(Properties):
         data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(
-                "Can't apply {} to a {} object with no data: {!r}".format(
-                    method, self.__class__.__name__, self
-                )
+                f"Can't apply {method} to a {self.__class__.__name__} "
+                f"object with no data: {self!r}"
             )
 
         inplace = method[2] == "i"
@@ -732,9 +731,8 @@ class PropertiesData(Properties):
         """
         if self.has_data() != other.has_data():
             logger.info(
-                "{}: Only one construct has data: {!r}, {!r}".format(
-                    self.__class__.__name__, self, other
-                )
+                f"{self.__class__.__name__}: Only one construct "
+                f"has data: {self!r}, {other!r}"
             )
             return False
 
@@ -826,7 +824,6 @@ class PropertiesData(Properties):
     #            else:
     #                # Identity (not string-valued, e.g. cf.Query).
     #                matches.append({None: m})
-    #        # --- End: for
     #
     #        return matches
 
@@ -899,9 +896,8 @@ class PropertiesData(Properties):
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
-                "Can't apply {} to a {} with no data".format(
-                    method, self.__class__.__name__
-                )
+                f"Can't apply {method} to a {self.__class__.__name__} "
+                "with no data"
             )
 
         new = self.copy(data=False)
@@ -916,7 +912,7 @@ class PropertiesData(Properties):
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
-                "ERROR: Can't get {}s when there is no data array".format(attr)
+                f"ERROR: Can't get {attr}s when there is no data array"
             )
 
         out = self.copy()  # data=False)
@@ -938,7 +934,6 @@ class PropertiesData(Properties):
     #            out.del_property('standard_name', None)
     #            out.set_property('long_name', method)
     #            return out
-    #        # --- End: if
     #
     #        raise ValueError(
     #            "ERROR: Can't get {0} when there is no data array".format(method))
@@ -1132,9 +1127,8 @@ class PropertiesData(Properties):
         units = self.Units
         if not units.isreftime:
             raise AttributeError(
-                "{0} doesn't have attribute 'reference_datetime'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute "
+                "'reference_datetime'"
             )
         return dt(units.reftime, calendar=units._calendar)
 
@@ -1144,17 +1138,16 @@ class PropertiesData(Properties):
         if not units.isreftime:
             raise AttributeError(
                 "Can't set 'reference_datetime' for non reference date-time "
-                "units {}".format(self.__class__.__name__)
+                f"units {self.__class__.__name__}"
             )
 
         units = units.units.split(" since ")
         try:
-            self.units = "{0} since {1}".format(units[0], value)
+            self.units = f"{units[0]} since {value}"
         except (ValueError, TypeError):
             raise ValueError(
-                "Can't override reference date-time {0!r} with {1!r}".format(
-                    units[1], value
-                )
+                "Can't override reference date-time "
+                f"{units[1]!r} with {value!r}"
             )
 
     @property
@@ -1213,8 +1206,8 @@ class PropertiesData(Properties):
     @Units.deleter
     def Units(self):
         raise AttributeError(
-            "Can't delete {} attribute 'Units'. Use the override_units "
-            "method.".format(self.__class__.__name__)
+            f"Can't delete {self.__class__.__name__} attribute "
+            "'Units'. Use the override_units method."
         )
 
     @property
@@ -1439,14 +1432,14 @@ class PropertiesData(Properties):
                 "'calendar'"
             )
 
-#        value = getattr(self.Units, "calendar", None)
-#        if value is None:
-#            raise AttributeError(
-#                "{} doesn't have CF property 'calendar'".format(
-#                    self.__class__.__name__
-#                )
-#            )
-#        return value
+    #        value = getattr(self.Units, "calendar", None)
+    #        if value is None:
+    #            raise AttributeError(
+    #                "{} doesn't have CF property 'calendar'".format(
+    #                    self.__class__.__name__
+    #                )
+    #            )
+    #        return value
 
     @calendar.setter
     def calendar(self, value):
@@ -1456,9 +1449,8 @@ class PropertiesData(Properties):
     def calendar(self):
         if getattr(self, "calendar", None) is None:
             raise AttributeError(
-                "Can't delete non-existent {} CF property 'calendar'".format(
-                    self.__class__.__name__
-                )
+                f"Can't delete non-existent {self.__class__.__name__} "
+                "CF property 'calendar'"
             )
 
         self.Units = Units(getattr(self, "units", None))
@@ -1614,14 +1606,14 @@ class PropertiesData(Properties):
             raise AttributeError(
                 f"{self.__class__.__name__} doesn't have CF property 'units'"
             )
-    
-#        value = getattr(self.Units, "units", None)
-#        if value is None:
-#            raise AttributeError(
-#                f"{self.__class__.__name__} doesn't have CF property 'units'"
-#            )
-#
-#        return value
+
+    #        value = getattr(self.Units, "units", None)
+    #        if value is None:
+    #            raise AttributeError(
+    #                f"{self.__class__.__name__} doesn't have CF property 'units'"
+    #            )
+    #
+    #        return value
 
     @units.setter
     def units(self, value):
@@ -1631,9 +1623,8 @@ class PropertiesData(Properties):
     def units(self):
         if getattr(self, "units", None) is None:
             raise AttributeError(
-                "Can't delete non-existent {} CF property 'units'".format(
-                    self.__class__.__name__
-                )
+                f"Can't delete non-existent {self.__class__.__name__} "
+                "CF property 'units'"
             )
 
         self.Units = Units(None, getattr(self, "calendar", None))
@@ -1895,10 +1886,9 @@ class PropertiesData(Properties):
                     value.Units = self.Units
                 else:
                     raise ValueError(
-                        "Period units {!r} are not equivalent to data "
-                        "units {!r}".format(units, self.Units)
+                        f"Period units {units!r} are not equivalent to data "
+                        f"units {self.Units!r}"
                     )
-            # --- End: if
 
             value = abs(value)
             value.dtype = float
@@ -1911,7 +1901,6 @@ class PropertiesData(Properties):
         #                    "The data range of {!r} is not less than the "
         #                    "period of {!r}".format(r, value)
         #                )
-        # --- End: if
 
         self._custom["period"] = value
 
@@ -2258,7 +2247,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} has no data array".format(self.__class__.__name__)
+                f"{self.__class__.__name__} has no data array"
             )
 
         return data.datetime_array
@@ -2321,9 +2310,7 @@ class PropertiesData(Properties):
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
-                "{} doesn't have attribute 'dtype'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute 'dtype'"
             )
 
         return data.dtype
@@ -2366,21 +2353,17 @@ class PropertiesData(Properties):
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
-                "{} doesn't have attribute 'hardmask'".format(
-                    self.__class__.__name__
-                )
+               f"{self.__class__.__name__} doesn't have attribute 'hardmask'"
             )
 
         return data.hardmask
 
     @hardmask.setter
-    def hardmask(self, value): 
+    def hardmask(self, value):
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
-                "{} doesn't have attribute 'hardmask'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have any data"
             )
 
         data.hardmask = value
@@ -2388,9 +2371,7 @@ class PropertiesData(Properties):
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
-            "Won't delete {} attribute 'hardmask'".format(
-                self.__class__.__name__
-            )
+            f"Won't delete {self.__class__.__name__} attribute 'hardmask'"
         )
 
     @property
@@ -2422,7 +2403,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} has no data array".format(self.__class__.__name__)
+                f"{self.__class__.__name__} has no data array"
             )
 
         return data.array
@@ -2456,7 +2437,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} has no data array".format(self.__class__.__name__)
+                f"{self.__class__.__name__} has no data array"
             )
 
         return data.varray
@@ -2512,8 +2493,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the ceiling of the data. If the operation was
-                in-place then `None` is returned.
+                The construct with the ceiling of the data. If the
+                operation was in-place then `None` is returned.
 
         **Examples:**
 
@@ -2555,10 +2536,10 @@ class PropertiesData(Properties):
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Limit the values in the data.
 
-        Given an interval, values outside the interval are clipped to the
-        interval edges. For example, if an interval of ``[0, 1]`` is
-        specified, values smaller than 0 become 0, and values larger than
-        1 become 1.
+        Given an interval, values outside the interval are clipped to
+        the interval edges. For example, if an interval of ``[0, 1]``
+        is specified, values smaller than 0 become 0, and values
+        larger than 1 become 1.
 
         :Parameters:
 
@@ -2573,8 +2554,8 @@ class PropertiesData(Properties):
                 `a_max` may be `None`.
 
             units: `str` or `Units`
-                Specify the units of *a_min* and *a_max*. By default the
-                same units as the data are assumed.
+                Specify the units of *a_min* and *a_max*. By default
+                the same units as the data are assumed.
 
             {{inplace: `bool`, optional}}
 
@@ -2645,8 +2626,9 @@ class PropertiesData(Properties):
         out = variable0.copy()  # data=False)
 
         data = Data.concatenate(
-            [v.get_data(_fill_value=False)
-             for v in variables], axis=axis, _preserve=_preserve
+            [v.get_data(_fill_value=False) for v in variables],
+            axis=axis,
+            _preserve=_preserve,
         )
         out.set_data(data, copy=False)
 
@@ -3054,9 +3036,8 @@ class PropertiesData(Properties):
         try:
             if not self.Units.equals(other.Units):
                 logger.info(
-                    "{0}: Different Units: {1!r} != {2!r}".format(
-                        self.__class__.__name__, self.Units, other.Units
-                    )
+                    f"{self.__class__.__name__}: Different Units: "
+                    f"{self.Units!r} != {other.Units!r}"
                 )
                 return False
         except AttributeError:
@@ -3104,11 +3085,8 @@ class PropertiesData(Properties):
         # Check that each instance is the same type
         if type(self) != type(other):
             print(
-                "{}: Different types: {}, {}".format(
-                    self.__class__.__name__,
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                )
+                f"{self.__class__.__name__}: Different types: "
+                f"{self.__class__.__name__}, {other.__class__.__name__}"
             )
             return False
 
@@ -3145,12 +3123,10 @@ class PropertiesData(Properties):
             if not result:
                 if traceback:
                     print(
-                        "{}: Different {} attributes: {!r}, {!r}".format(
-                            self.__class__.__name__, attr, x, y
-                        )
+                        f"{self.__class__.__name__}: Different {attr} "
+                        f"attributes: {x!r}, {x!r}"
                     )
                 return False
-        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -3287,13 +3263,10 @@ class PropertiesData(Properties):
             else:
                 return t.interval(reftime, end=True)[0]
 
-        # --- End: def
-
         if not self.Units.isreftime:
             raise ValueError(
-                "{} must have reference time units, not {!r}".format(
-                    self.__class__.__name__, self.Units
-                )
+                f"{self.__class__.__name__} must have reference time units, "
+                f"not {self.Units!r}"
             )
 
         v = _inplace_enabled_define_and_cleanup(self)
@@ -3310,9 +3283,7 @@ class PropertiesData(Properties):
             )
         elif not getattr(units, "isreftime", False):
             raise ValueError(
-                "New units must be reference time units, not {0!r}".format(
-                    units
-                )
+                f"New units must be reference time units, not {units!r}"
             )
 
         if units0._units_since_reftime in _month_units:
@@ -3581,11 +3552,9 @@ class PropertiesData(Properties):
                     ok = Units(value).equals(self_units)
                 else:
                     ok = Units(value).equivalent(self_units)
-            # --- End: try
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -3629,29 +3598,31 @@ class PropertiesData(Properties):
         broadcastable data.
 
         Two real numbers ``x`` and ``y`` are considered equal if
-        ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-        differences) and ``rtol`` (the tolerance on relative differences)
-        are positive, typically very small numbers. See the *atol* and
-        *rtol* parameters.
+        ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on
+        absolute differences) and ``rtol`` (the tolerance on relative
+        differences) are positive, typically very small numbers. See
+        the *atol* and *rtol* parameters.
 
         .. seealso:: `all`, `any`, `isclose`
 
         :Parameters:
 
             y:
-                The object to be compared with the data array. *y* must be
-                broadcastable to the data array and if *y* has units then
-                they must be compatible. May be any object that can be
-                converted to a `Data` object (which includes numpy array
-                and `Data` objects).
+                The object to be compared with the data array. *y*
+                must be broadcastable to the data array and if *y* has
+                units then they must be compatible. May be any object
+                that can be converted to a `Data` object (which
+                includes numpy array and `Data` objects).
 
             atol: `float`, optional
                 The tolerance on absolute differences between real
-                numbers. The default value is set by the `atol` function.
+                numbers. The default value is set by the `atol`
+                function.
 
             rtol: `float`, optional
                 The tolerance on relative differences between real
-                numbers. The default value is set by the `rtol` function.
+                numbers. The default value is set by the `rtol`
+                function.
 
         :Returns:
 
@@ -3683,7 +3654,6 @@ class PropertiesData(Properties):
             else:
                 if y_data is None:
                     y_data = y
-        # --- End: if
 
         return data.allclose(y_data, rtol=rtol, atol=atol)
 
@@ -3691,7 +3661,8 @@ class PropertiesData(Properties):
         """Test whether any data elements evaluate to True.
 
         Performs a logical "or" over the data array and returns the
-        result. Masked values are considered as False during computation.
+        result. Masked values are considered as False during
+        computation.
 
         .. seealso:: `all`, `allclose`
 
@@ -3724,44 +3695,14 @@ class PropertiesData(Properties):
 
         return False
 
-    #    def files(self):
-    #        '''Return the names of any files containing parts of the data array.
-    #
-    #    .. seealso:: `close`
-    #
-    #    :Returns:
-    #
-    #        `!set`
-    #            The file names in normalized, absolute form.
-    #
-    #    **Examples:**
-    #
-    #    >>> f = cf.read_field('../file[123].nc')
-    #    >>> f.files()
-    #    {'/data/user/file1.nc',
-    #     '/data/user/file2.nc',
-    #     '/data/user/file3.nc'}
-    #    >>> a = f.array
-    #    >>> f.files()
-    #    set()
-    #
-    #        '''
-    #        data = self.get_data(None)
-    #        if data is None:
-    #            out = set()
-    #        else:
-    #            out = data.files()
-    #
-    #        return out
-
     def fill_value(self, default=None):
         """Return the data array missing data value.
 
-        This is the value of the `missing_value` CF property, or if that
-        is not set, the value of the `_FillValue` CF property, else if
-        that is not set, ``None``. In the last case the default `numpy`
-        missing data value for the array's data type is assumed if a
-        missing data value is required.
+        This is the value of the `missing_value` CF property, or if
+        that is not set, the value of the `_FillValue` CF property,
+        else if that is not set, ``None``. In the last case the
+        default `numpy` missing data value for the array's data type
+        is assumed if a missing data value is required.
 
         .. seealso:: `cf.default_netCDF_fillvals`, `_FillValue`,
                      `missing_value`
@@ -3769,12 +3710,12 @@ class PropertiesData(Properties):
         :Parameters:
 
             default: optional
-                If the missing value is unset then return this value. By
-                default, *default* is `None`. If *default* is the special
-                value ``'netCDF'`` then return the netCDF default value
-                appropriate to the data array's data type is used. These
-                may be found with the `cf.default_netCDF_fillvals`
-                function. For example:
+                If the missing value is unset then return this
+                value. By default, *default* is `None`. If *default*
+                is the special value ``'netCDF'`` then return the
+                netCDF default value appropriate to the data array's
+                data type is used. These may be found with the
+                `cf.default_netCDF_fillvals` function. For example:
 
                 >>> cf.default_netCDF_fillvals()
                 {'S1': '\x00',
@@ -3829,7 +3770,6 @@ class PropertiesData(Properties):
                 fillval = default_netCDF_fillvals()[d.kind + str(d.itemsize)]
             else:
                 fillval = default
-        # --- End: if
 
         return fillval
 
@@ -3884,8 +3824,8 @@ class PropertiesData(Properties):
     def exp(self, inplace=False, i=False):
         """The exponential of the data, element-wise.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. seealso:: `log`
 
@@ -3898,8 +3838,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the exponential of data values. If the
-                operation was in-place then `None` is returned.
+                The construct with the exponential of data values. If
+                the operation was in-place then `None` is returned.
 
         **Examples:**
 
@@ -3939,8 +3879,8 @@ class PropertiesData(Properties):
 
         The Units are changed to '1' (nondimensional).
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. seealso:: `cos`, `tan`
 
@@ -3991,14 +3931,13 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
-        """Take the trigonometric inverse tangent of the data element-
-        wise.
+        """Take the trigonometric inverse tangent of the data element-wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.0.7
 
@@ -4011,9 +3950,9 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the trigonometric inverse tangent of
-                data values. If the operation was in-place then `None` is
-                returned.
+                The construct with the trigonometric inverse tangent
+                of data values. If the operation was in-place then
+                `None` is returned.
 
         **Examples:**
 
@@ -4047,10 +3986,11 @@ class PropertiesData(Properties):
     def arctanh(self, inplace=False):
         """Take the inverse hyperbolic tangent of the data element-wise.
 
-        Units are ignored in the calculation. The result has units of radians.
+        Units are ignored in the calculation. The result has units of
+        radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.2.0
 
@@ -4063,9 +4003,9 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the inverse hyperbolic tangent of data
-                values. If the operation was in-place then `None` is
-                returned.
+                The construct with the inverse hyperbolic tangent of
+                data values. If the operation was in-place then `None`
+                is returned.
 
         **Examples:**
 
@@ -4104,8 +4044,8 @@ class PropertiesData(Properties):
         Units are ignored in the calculation. The result has units of
         radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.2.0
 
@@ -4118,9 +4058,9 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the trigonometric inverse sine of data
-                values. If the operation was in-place then `None` is
-                returned.
+                The construct with the trigonometric inverse sine of
+                data values. If the operation was in-place then `None`
+                is returned.
 
         **Examples:**
 
@@ -4156,10 +4096,11 @@ class PropertiesData(Properties):
     def arcsinh(self, inplace=False):
         """Take the inverse hyperbolic sine of the data element-wise.
 
-        Units are ignored in the calculation. The result has units of radians.
+        Units are ignored in the calculation. The result has units of
+        radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.1.0
 
@@ -4206,14 +4147,13 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
-        """Take the trigonometric inverse cosine of the data element-
-        wise.
+        """Take the trigonometric inverse cosine of the data element- wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.2.0
 
@@ -4227,8 +4167,8 @@ class PropertiesData(Properties):
 
             `{{class}}` or `None`
                 The construct with the trigonometric inverse cosine of
-                data values. If the operation was in-place then `None` is
-                returned.
+                data values. If the operation was in-place then `None`
+                is returned.
 
         **Examples:**
 
@@ -4264,10 +4204,11 @@ class PropertiesData(Properties):
     def arccosh(self, inplace=False):
         """Take the inverse hyperbolic cosine of the data element-wise.
 
-        Units are ignored in the calculation. The result has units of radians.
+        Units are ignored in the calculation. The result has units of
+        radians.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.2.0
 
@@ -4280,9 +4221,9 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the inverse hyperbolic cosine of data
-                values. If the operation was in-place then `None` is
-                returned.
+                The construct with the inverse hyperbolic cosine of
+                data values. If the operation was in-place then `None`
+                is returned.
 
         **Examples:**
 
@@ -4327,8 +4268,8 @@ class PropertiesData(Properties):
 
         The Units are changed to '1' (nondimensional).
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. seealso:: `arctan`, `cos`, `sin`, `tanh`
 
@@ -4380,16 +4321,16 @@ class PropertiesData(Properties):
     def tanh(self, inplace=False):
         """Take the hyperbolic tangent of the data array.
 
-        Units are accounted for in the calculation. If the units are not
-        equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic tangent of 90
-        degrees_east is 0.91715234, as is the hyperbolic tangent of
-        1.57079632 radians.
+        Units are accounted for in the calculation. If the units are
+        not equivalent to radians (such as Kelvin) then they are
+        treated as if they were radians. For example, the the
+        hyperbolic tangent of 90 degrees_east is 0.91715234, as is the
+        hyperbolic tangent of 1.57079632 radians.
 
         The output units are changed to '1' (nondimensional).
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.1.0
 
@@ -4442,16 +4383,16 @@ class PropertiesData(Properties):
     def sinh(self, inplace=False):
         """Take the hyperbolic sine of the data element-wise.
 
-        Units are accounted for in the calculation. If the units are not
-        equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic sine of 90
-        degrees_north is 2.30129890, as is the hyperbolic sine of
-        1.57079632 radians.
+        Units are accounted for in the calculation. If the units are
+        not equivalent to radians (such as Kelvin) then they are
+        treated as if they were radians. For example, the the
+        hyperbolic sine of 90 degrees_north is 2.30129890, as is the
+        hyperbolic sine of 1.57079632 radians.
 
         The output units are changed to '1' (nondimensional).
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.1.0
 
@@ -4464,8 +4405,9 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the hyperbolic sine of data values. If
-                the operation was in-place then `None` is returned.
+                The construct with the hyperbolic sine of data
+                values. If the operation was in-place then `None` is
+                returned.
 
         **Examples:**
 
@@ -4502,15 +4444,16 @@ class PropertiesData(Properties):
     def cosh(self, inplace=False):
         """Take the hyperbolic cosine of the data element-wise.
 
-        Units are accounted for in the calculation. If the units are not
-        equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic cosine of 0
-        degrees_east is 1.0, as is the hyperbolic cosine of 1.57079632 radians.
+        Units are accounted for in the calculation. If the units are
+        not equivalent to radians (such as Kelvin) then they are
+        treated as if they were radians. For example, the the
+        hyperbolic cosine of 0 degrees_east is 1.0, as is the
+        hyperbolic cosine of 1.57079632 radians.
 
         The output units are changed to '1' (nondimensional).
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. versionadded:: 3.1.0
 
@@ -4565,8 +4508,8 @@ class PropertiesData(Properties):
         By default the natural logarithm is taken, but any base may be
         specified.
 
-        The "standard_name" and "long_name" properties are removed from
-        the result.
+        The "standard_name" and "long_name" properties are removed
+        from the result.
 
         .. seealso:: `exp`
 
@@ -4583,8 +4526,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with the logarithm of data values, or `None`
-                if the operation was in-place.
+                The construct with the logarithm of data values, or
+                `None` if the operation was in-place.
 
         **Examples:**
 
@@ -4624,9 +4567,9 @@ class PropertiesData(Properties):
     def trunc(self, inplace=False, i=False):
         """Truncate the data, element-wise.
 
-        The truncated value of the scalar ``x``, is the nearest integer
-        ``i`` which is closer to zero than ``x`` is. I.e. the fractional
-        part of the signed number ``x`` is discarded.
+        The truncated value of the scalar ``x``, is the nearest
+        integer ``i`` which is closer to zero than ``x`` is. I.e. the
+        fractional part of the signed number ``x`` is discarded.
 
         .. versionadded:: 1.0
 
@@ -4641,8 +4584,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with truncated data. If the operation was
-                in-place then `None` is returned.
+                The construct with truncated data. If the operation
+                was in-place then `None` is returned.
 
         **Examples:**
 
@@ -4724,16 +4667,16 @@ class PropertiesData(Properties):
         :Parameters:
 
             default: optional
-                If no identity can be found then return the value of the
-                default parameter.
+                If no identity can be found then return the value of
+                the default parameter.
 
             strict: `bool`, optional
-                If True then the identity is the first found of only the
-                "standard_name" property or the "id" attribute.
+                If True then the identity is the first found of only
+                the "standard_name" property or the "id" attribute.
 
             relaxed: `bool`, optional
-                If True then the identity is the first found of only the
-                "standard_name" property, the "id" attribute, the
+                If True then the identity is the first found of only
+                the "standard_name" property, the "id" attribute, the
                 "long_name" property or the netCDF variable name.
 
             nc_only: `bool`, optional
@@ -4819,11 +4762,6 @@ class PropertiesData(Properties):
             if n is not None:
                 return f"{prop}={n}"
 
-#        if _ctype:
-#            for ctype in ("X", "Y", "Z", "T"):
-#                if getattr(self, ctype, False):
-#                    return ctype
-
         n = self.nc_get_variable(None)
         if n is not None:
             return f"ncvar%{n}"
@@ -4848,7 +4786,7 @@ class PropertiesData(Properties):
         .. versionadded:: 3.0.0
 
         .. seealso:: `id`, `identity`
-TODO
+ TODO
         :Returns:
 
             `list`
@@ -4873,7 +4811,7 @@ TODO
         id_identity = ""
         i = getattr(self, "id", None)
         if i is not None:
-            id_identity = ("id%" + i,)
+            id_identity = (f"id%{i}",)
 
         identities = super().identities(generator=True)
 
@@ -4882,7 +4820,7 @@ TODO
             return g
 
         return list(g)
-        
+
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -4933,8 +4871,7 @@ TODO
 
         return axis[0] in self.cyclic()
 
-    def get_data(self, default=ValueError(), _units=None,
-                 _fill_value=True):
+    def get_data(self, default=ValueError(), _units=None, _fill_value=True):
         """Return the data.
 
         Note that a `Data` instance is returned. Use its `array` attribute
@@ -4976,8 +4913,9 @@ TODO
         None
 
         """
-        return super().get_data(default=default, _units=False,
-                                _fill_value=_fill_value)
+        return super().get_data(
+            default=default, _units=False, _fill_value=_fill_value
+        )
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
@@ -4992,22 +4930,22 @@ TODO
     ):
         """Expand the data by adding a halo.
 
-        The halo may be applied over a subset of the data dimensions and
-        each dimension may have a different halo size (including
-        zero). The halo region is populated with a copy of the proximate
-        values from the original data.
+        The halo may be applied over a subset of the data dimensions
+        and each dimension may have a different halo size (including
+        zero). The halo region is populated with a copy of the
+        proximate values from the original data.
 
         **Cyclic axes**
 
-        A cyclic axis that is expanded with a halo of at least size 1 is
-        no longer considered to be cyclic.
+        A cyclic axis that is expanded with a halo of at least size 1
+        is no longer considered to be cyclic.
 
         **Tripolar domains**
 
-        Data for global tripolar domains are a special case in that a halo
-        added to the northern end of the "Y" axis must be filled with
-        values that are flipped in "X" direction. Such domains need to be
-        explicitly indicated with the *tripolar* parameter.
+        Data for global tripolar domains are a special case in that a
+        halo added to the northern end of the "Y" axis must be filled
+        with values that are flipped in "X" direction. Such domains
+        need to be explicitly indicated with the *tripolar* parameter.
 
         .. versionadded:: 3.5.0
 
@@ -5016,30 +4954,31 @@ TODO
             size: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *size* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (defined by its integer position in the
-                data) with a corresponding value of the halo size for that
-                axis. Axes not specified by the dictionary are not
-                expanded, and the *axes* parameter must not also be set.
+                specifies an axis (defined by its integer position in
+                the data) with a corresponding value of the halo size
+                for that axis. Axes not specified by the dictionary
+                are not expanded, and the *axes* parameter must not
+                also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
                   axes: ``size=1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
-                  no change to the data shape.
+                  Specify a halo size of zero ``size=0``. This results
+                  in no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``size={0: 3, 1: 1}``. This is equivalent
+                  to ``size={0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
@@ -5047,34 +4986,36 @@ TODO
                   ``size={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
-                Select the domain axes to be expanded, defined by their
-                integer positions in the data. By default, or if *axes* is
-                `None`, all axes are selected. No axes are expanded if
-                *axes* is an empty sequence.
+                Select the domain axes to be expanded, defined by
+                their integer positions in the data. By default, or if
+                *axes* is `None`, all axes are selected. No axes are
+                expanded if *axes* is an empty sequence.
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by their integer positions in the data.
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by their integer
+                positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *size* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``tripolar={'X': 2, 'Y':
+                  1}``
 
             fold_index: `int`, optional
-                Identify which index of the "Y" axis corresponds to the
-                fold in "X" axis of a tripolar grid. The only valid values
-                are ``-1`` for the last index, and ``0`` for the first
-                index. By default it is assumed to be the last
-                index. Ignored if *tripolar* is `None`.
+                Identify which index of the "Y" axis corresponds to
+                the fold in "X" axis of a tripolar grid. The only
+                valid values are ``-1`` for the last index, and ``0``
+                for the first index. By default it is assumed to be
+                the last index. Ignored if *tripolar* is `None`.
 
             {{inplace: `bool`, optional}}
 
@@ -5115,11 +5056,11 @@ TODO
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of date-time units.
 
-        The new calendar need not be equivalent to the original one, and
-        the data array elements will not be changed to reflect the new
-        units. Therefore, this method should only be used when it is known
-        that the data array values are correct but the calendar has been
-        incorrectly encoded.
+        The new calendar need not be equivalent to the original one,
+        and the data array elements will not be changed to reflect the
+        new units. Therefore, this method should only be used when it
+        is known that the data array values are correct but the
+        calendar has been incorrectly encoded.
 
         Not to be confused with setting the `calendar` or `Units`
         attributes to a calendar which is equivalent to the original
@@ -5158,7 +5099,7 @@ TODO
             if not v.Units.isreftime:
                 raise ValueError(
                     "Can't override the calendar of non-reference-time "
-                    "units: {0!r}".format(self.Units)
+                    f"units: {self.Units!r}"
                 )
 
             PropertiesData.Units.fset(
@@ -5172,14 +5113,15 @@ TODO
     def override_units(self, units, inplace=False, i=False):
         """Override the units.
 
-        The new units need not be equivalent to the original ones, and the
-        data array elements will not be changed to reflect the new
-        units. Therefore, this method should only be used when it is known
-        that the data array values are correct but the units have
-        incorrectly encoded.
+        The new units need not be equivalent to the original ones, and
+        the data array elements will not be changed to reflect the new
+        units. Therefore, this method should only be used when it is
+        known that the data array values are correct but the units
+        have incorrectly encoded.
 
-        Not to be confused with setting the `units` or `Units` attributes
-        to units which are equivalent to the original units.
+        Not to be confused with setting the `units` or `Units`
+        attributes to units which are equivalent to the original
+        units.
 
         .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
 
@@ -5278,12 +5220,12 @@ TODO
     def round(self, decimals=0, inplace=False, i=False):
         """Round the data to the given number of decimals.
 
-        Values exactly halfway between rounded decimal values are rounded
-        to the nearest even value. Thus 1.5 and 2.5 round to 2.0, -0.5 and
-        0.5 round to 0.0, etc. Results may also be surprising due to the
-        inexact representation of decimal fractions in the IEEE floating
-        point standard and errors introduced when scaling by powers of
-        ten.
+        Values exactly halfway between rounded decimal values are
+        rounded to the nearest even value. Thus 1.5 and 2.5 round to
+        2.0, -0.5 and 0.5 round to 0.0, etc. Results may also be
+        surprising due to the inexact representation of decimal
+        fractions in the IEEE floating point standard and errors
+        introduced when scaling by powers of ten.
 
         .. versionadded:: 1.1.4
 
@@ -5292,9 +5234,9 @@ TODO
         :Parameters:
 
             decimals: `int`, optional
-                Number of decimal places to round to (0 by default). If
-                decimals is negative, it specifies the number of positions
-                to the left of the decimal point.
+                Number of decimal places to round to (0 by
+                default). If decimals is negative, it specifies the
+                number of positions to the left of the decimal point.
 
             {{inplace: `bool`, optional}}
 
@@ -5364,8 +5306,8 @@ TODO
     def set_data(self, data, copy=True, inplace=True):
         """Set the data.
 
-        The units, calendar and fill value of the incoming `Data` instance
-        are removed prior to insertion.
+        The units, calendar and fill value of the incoming `Data`
+        instance are removed prior to insertion.
 
         .. versionadded:: 3.0.0
 
@@ -5379,8 +5321,8 @@ TODO
                 {{data_like}}
 
             copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+                If False then do not copy the data prior to
+                insertion. By default the data are copied.
 
             {{inplace: `bool`, optional (default True)}}
 
@@ -5390,8 +5332,8 @@ TODO
 
             `None` or `{{class}}`
                 If the operation was in-place then `None` is returned,
-                otherwise return a new `{{class}}` instance containing the
-                new data.
+                otherwise return a new `{{class}}` instance containing
+                the new data.
 
         **Examples:**
 
@@ -5420,26 +5362,15 @@ TODO
         if not isinstance(data, _Data):
             data = _Data(data, copy=False)
 
-        units = self.Units
-        data_units = data.Units
-        if not data_units:
+        if not data.Units:
+            units = self.Units
             if units is not None:
                 if copy:
                     copy = False
-                    data = data.override_units(units)
+                    data = data.override_units(units, inplace=False)
                 else:
                     data.override_units(units, inplace=True)
-        elif units:
-            if units.equivalent(data_units):
-                if units != data_units:
-                    if copy:
-                        copy=  False
-                        data = data.copy()
-                        
-                    data.Units = units
-            else:
-                raise ValueError("Can't set data with incompatible units") 
-            
+
         return super().set_data(data, copy=copy, inplace=inplace)
 
     @_deprecated_kwarg_check("i")
@@ -5477,9 +5408,8 @@ TODO
         else:
             if condition_data is None:
                 raise ValueError(
-                    "ERROR: Can't set data from {} with no data array".format(
-                        condition.__class__.__name__
-                    )
+                    "ERROR: Can't set data from "
+                    f"{condition.__class__.__name__} with no data array"
                 )
 
             condition = condition_data
@@ -5491,9 +5421,8 @@ TODO
         else:
             if x_data is None:
                 raise ValueError(
-                    "ERROR: Can't set data from {} with no data array".format(
-                        x.__class__.__name__
-                    )
+                    f"ERROR: Can't set data from {x.__class__.__name__} "
+                    "with no data array"
                 )
 
             x = x_data
@@ -5505,9 +5434,8 @@ TODO
         else:
             if y_data is None:
                 raise ValueError(
-                    "ERROR: Can't set data from {} with no data array".format(
-                        y.__class__.__name__
-                    )
+                    f"ERROR: Can't set data from {y.__class__.__name__} "
+                    "with no data array"
                 )
 
             y = y_data
