@@ -607,7 +607,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         #                    self.__class__.__name__))
 
         try:
-            data = value.get_data(None)
+            data = value.get_data(None, set_fill_value=False)
         except AttributeError:
             pass
         else:
@@ -620,7 +620,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             value = data
 
-        self.data[indices] = value
+        data = self.get_data(set_fill_value=False)
+        data[indices] = value
 
     def analyse_items(self, relaxed_identities=None):
         """Analyse a domain.
@@ -1848,13 +1849,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 field0.del_property("standard_name", None)
                 field0.del_property("long_name", None)
             elif other_sn is not None:
-                field0.set_property("standard_name", other_sn)
+                field0.set_property("standard_name", other_sn, copy=False)
                 if other_ln is None:
                     field0.del_property("long_name", None)
                 else:
-                    field0.set_property("long_name", other_ln)
+                    field0.set_property("long_name", other_ln, copy=False)
         elif ln is None and other_ln is not None:
-            field0.set_property("long_name", other_ln)
+            field0.set_property("long_name", other_ln, copy=False)
 
         # Warning: This code is replicated in PropertiesData
         new_units = field0.Units
@@ -2407,13 +2408,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 field0.del_property("standard_name", None)
                 field0.del_property("long_name", None)
             elif other_sn is not None:
-                field0.set_property("standard_name", other_sn)
+                field0.set_property("standard_name", other_sn, copy=False)
                 if other_ln is None:
                     field0.del_property("long_name", None)
                 else:
-                    field0.set_property("long_name", other_ln)
+                    field0.set_property("long_name", other_ln, copy=False)
         elif ln is None and other_ln is not None:
-            field0.set_property("long_name", other_ln)
+            field0.set_property("long_name", other_ln, copy=False)
 
         # Warning: This block of code is replicated in PropertiesData
         new_units = field0.Units
@@ -2625,7 +2626,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             `list`
 
         """
-        data = item.get_data(None)
+        data = item.get_data(None, set_fill_value=False)
 
         if axes is None:
             # --------------------------------------------------------
@@ -4800,7 +4801,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if measure and spherical and aux_Z is not None:
             # Multiply by radius squared, accounting for any Z
             # coordinates, to get the actual area
-            z = aux_Z.get_data(None)
+            z = aux_Z.get_data(None, set_fill_value=False)
             if z is None:
                 r = radius
             else:
@@ -5320,7 +5321,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 )
         # --- End: for
 
-        clm = clm.get_data().copy()
+        clm = clm.get_data(set_fill_value=False).copy()
         if clm_axes != clm_axes0:
             iaxes = [clm_axes0.index(axis) for axis in clm_axes]
             clm.squeeze(iaxes, inplace=True)
@@ -5843,7 +5844,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @Conventions.setter
     def Conventions(self, value):
-        self.set_property("Conventions", value)
+        self.set_property("Conventions", value, copy=False)
 
     @Conventions.deleter
     def Conventions(self):
@@ -5876,7 +5877,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @featureType.setter
     def featureType(self, value):
-        self.set_property("featureType", value)
+        self.set_property("featureType", value, copy=False)
 
     @featureType.deleter
     def featureType(self):
@@ -5906,7 +5907,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @institution.setter
     def institution(self, value):
-        self.set_property("institution", value)
+        self.set_property("institution", value, copy=False)
 
     @institution.deleter
     def institution(self):
@@ -5937,7 +5938,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @references.setter
     def references(self, value):
-        self.set_property("references", value)
+        self.set_property("references", value, copy=False)
 
     @references.deleter
     def references(self):
@@ -6003,7 +6004,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @source.setter
     def source(self, value):
-        self.set_property("source", value)
+        self.set_property("source", value, copy=False)
 
     @source.deleter
     def source(self):
@@ -6034,7 +6035,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @title.setter
     def title(self, value):
-        self.set_property("title", value)
+        self.set_property("title", value, copy=False)
 
     @title.deleter
     def title(self):
@@ -6146,7 +6147,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         #            w.override_units(radius.Units, inplace=True)
         #        # --- End: if
 
-        w.set_property("standard_name", "cell_area")
+        w.set_property("standard_name", "cell_area", copy=False)
 
         return w
 
@@ -6409,7 +6410,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return out
 
         new_data = Data.concatenate(
-            [f.get_data() for f in fields], axis=axis, _preserve=_preserve
+            [f.get_data(set_fill_value=False)
+             for f in fields], axis=axis, _preserve=_preserve
         )
 
         # Change the domain axis size
@@ -6537,7 +6539,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 self, "cyclic", kwargs
             )  # pragma: no cover
 
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is None:
             return set()
 
@@ -7675,43 +7677,42 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         f.set_property(
             "long_name",
-            "Bin index to which each {!r} value belongs".format(
-                self.identity()
-            ),
+            f"Bin index to which each {self.identity()!r} value belongs",
+            copy=False
         )
 
-        f.set_property("bin_bounds", bins.array.flatten())
+        f.set_property("bin_bounds", bins.array.flatten(), copy=False)
 
         bin_count = bins.shape[0]
         if open_ends:
             bin_count += 2
 
-        f.set_property("bin_count", bin_count)
+        f.set_property("bin_count", bin_count, copy=False)
 
         if upper:
             bin_interval_type = "lower: open upper: closed"
         else:
             bin_interval_type = "lower: closed upper: open"
 
-        f.set_property("bin_interval_type", bin_interval_type)
+        f.set_property("bin_interval_type", bin_interval_type, copy=False)
 
         standard_name = f.del_property("standard_name", None)
         if standard_name is not None:
-            f.set_property("bin_standard_name", standard_name)
+            f.set_property("bin_standard_name", standard_name, copy=False)
         else:
             long_name = f.del_property("long_name", None)
             if long_name is not None:
-                f.set_property("bin_long_name", long_name)
+                f.set_property("bin_long_name", long_name, copy=False)
         # --- End: if
 
         bin_units = bins.Units
         units = getattr(bin_units, "units", None)
         if units is not None:
-            f.set_property("bin_units", units)
+            f.set_property("bin_units", units, copy=False)
 
         calendar = getattr(bin_units, "calendar", None)
         if calendar is not None:
-            f.set_property("bin_calendar", calendar)
+            f.set_property("bin_calendar", calendar, copy=False)
 
         if return_bins:
             return f, bins
@@ -8178,7 +8179,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         True
 
         """
-        logger.info("    Method: {}".format(method))  # pragma: no cover
+        logger.info(f"    Method: {method}")  # pragma: no cover
 
         if method == "integral":
             if weights is None:
@@ -8234,12 +8235,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         for f in digitized[::-1]:
             logger.info(
-                "    Digitized field input    : {!r}".format(f)
+                f"    Digitized field input    : {f!r}"  # DCH 
             )  # pragma: no cover
 
             f = self._conform_for_data_broadcasting(f)
             logger.info(
-                "                    conformed: {!r}".format(f)
+                f"                    conformed: {f!r}"  # DCH
             )  # pragma: no cover
 
             if not self._is_broadcastable(f.shape):
@@ -8285,7 +8286,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 dim.long_name = bin_long_name
 
             if bin_interval_type is not None:
-                dim.set_property("bin_interval_type", bin_interval_type)
+                dim.set_property("bin_interval_type",
+                                 bin_interval_type, copy=False)
 
             # Create units for the bins
             units = Units(bin_units, bin_calendar)
@@ -8301,9 +8303,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             dim.set_bounds(self._Bounds(data=bounds_data))
 
             logger.info(
-                "                    bins     : {} {!r}".format(
-                    dim.identity(), bounds_data
-                )
+                f"                    bins     : {dim.identity()} {bounds_data!r}"  # DCH
             )  # pragma: no cover
 
             # Set domain axis and dimension coordinate for bins
@@ -8358,19 +8358,19 @@ class Field(mixin.PropertiesData, cfdm.Field):
         del f
         del y
 
-        logger.info("    Weights: {}".format(weights))  # pragma: no cover
+        # DCH 
+        logger.info(f"    Weights: {weights}")  # pragma: no cover
         logger.info(
-            "    Number of indexed ({}) bins: {}".format(
-                ", ".join(names), unique_indices.shape[1]
-            )
+            f"    Number of indexed ({', '.join(names)}) bins: "
+            f"{unique_indices.shape[1]}"
         )  # pragma: no cover
         logger.info(
-            "    ({}) bin indices:".format(", ".join(names))
+            f"    ({', '.join(names)}) bin indices:"  # DCH
         )  # pragma: no cover
 
         # Loop round unique collections of bin indices
         for i in zip(*unique_indices):
-            logger.info("{}".format(" ".join(str(i))))
+            logger.info(f"{' '.join(str(i))}")
 
             b = bin_indices[0] == i[0]
             for a, n in zip(bin_indices[1:], i[1:]):
@@ -8708,7 +8708,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if key is None:
                 return self._default(
                     default,
-                    "Can't identify construct from {!r}".format(identity),
+                    f"Can't identify construct from {identity!r}",
                 )
 
             ref = self.del_construct(key)
@@ -8727,7 +8727,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
             return self._default(
-                default, "Can't identify construct from {!r}".format(construct)
+                default, f"Can't identify construct from {construct!r}"
             )
 
         for key, ref in tuple(self.coordinate_references.items()):
@@ -8885,7 +8885,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             self.squeeze(dakey, inplace=True)
 
         for ckey, construct in self.constructs.filter_by_data().items():
-            data = construct.get_data(None)
+            data = construct.get_data(None, set_fill_value=False)
             if data is None:
                 continue
 
@@ -8901,7 +8901,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             if not construct_axes:
                 self.del_construct(ckey)
-        # --- End: for
 
         return domain_axis
 
@@ -9002,7 +9001,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
             return self._default(
-                default, "Can't identify construct from {!r}".format(construct)
+                default, f"Can't identify construct from {construct!r}"
             )
 
         for cr_key, ref in tuple(self.coordinate_references.items()):
@@ -12415,7 +12414,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                 raise ValueError(
                                     "Can't collapse: Need an unambiguous 1-d "
                                     "coordinate construct when "
-                                    "group_span={!r}".format(group_span)
+                                    f"group_span={group_span!r}"
                                 )
 
                             bounds = coord.get_bounds(None)
@@ -12423,11 +12422,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                 raise ValueError(
                                     "Can't collapse: Need unambiguous 1-d "
                                     "coordinate cell bounds when "
-                                    "group_span={!r}".format(group_span)
+                                    f"group_span={group_span!r}"
                                 )
 
-                            lb = bounds[0, 0].get_data()
-                            ub = bounds[-1, 1].get_data()
+                            lb = bounds[0, 0].get_data(set_fill_value=False)
+                            ub = bounds[-1, 1].get_data(set_fill_value=False)
                             if coord.T:
                                 lb = lb.datetime_array.item()
                                 ub = ub.datetime_array.item()
@@ -15255,7 +15254,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 bounds = coord.get_bounds()
                 bounds[:, 0] = bounds[0, 0]
 
-                data = coord.get_data(None)
+                data = coord.get_data(None, set_fill_value=False)
 
                 if coordinate is not None and data is not None:
                     if coordinate == "mid_range":
@@ -15272,13 +15271,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             "(None, 'mid_range', 'minimum', 'maximum'). "
                             "Got {!r}".format(coordinate)
                         )
-            # --- End: if
 
             # Add a cell method
             f._update_cell_methods(
                 method="sum", domain_axes=f.domain_axes(axis_key)
             )
-        # --- End: if
 
         return f
 
@@ -15354,7 +15351,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     construct_axes.index(axis) for axis in construct_flip_axes
                 ]
                 construct.flip(iaxes, inplace=True)
-        # --- End: for
 
         return f
 
@@ -15522,7 +15518,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 return f
         # --- End: if
 
-        c = dim.get_data()
+        c = dim.get_data(set_fill_value=False)
 
         if dim.increasing:
             # Adjust value so it's in the range [c[0], c[0]+period)
@@ -15718,7 +15714,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             logger.debug(2)  # pragma: no cover
             return False
 
-        bounds_data = bounds.get_data(None)
+        bounds_data = bounds.get_data(None, set_fill_value=False)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
             logger.debug(3)  # pragma: no cover
@@ -17203,7 +17199,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     c = self.dimension_coordinates.filter_by_axis(
                         "exact", da_key
                     )
-        # --- End: if
 
         if key:
             return c.key(default=default)
@@ -17733,41 +17728,42 @@ class Field(mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             identity: optional
-               Select the construct for which to return the domain axis
-               constructs spanned by its data. By default the field
-               construct is selected. May be:
+               Select the construct for which to return the domain
+               axis constructs spanned by its data. By default the
+               field construct is selected. May be:
 
                   * The identity or key of a metadata construct.
 
                 A construct identity is specified by a string
                 (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
+                ``'ncvar%lat'``, etc.); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``) that
+                selects the relevant constructs whose identities match
+                via `re.search`.
 
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
+                Each construct has a number of identities, and is
+                selected if any of them match any of those provided. A
+                construct's identities are those returned by its
+                `!identities` method. In the following example, the
+                construct ``x`` has six identities:
 
                    >>> x.identities()
                    ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
 
                 A construct key may optionally have the ``'key%'``
                 prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+                ``'key%dimensioncoordinate2'`` are both acceptable
+                keys.
 
                 Note that in the output of a `print` call or `!dump`
                 method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                identities, and so this description may always be used
+                as an *identity* argument.
 
             default: optional
-                Return the value of the *default* parameter if the data
-                axes have not been set. If set to an `Exception` instance
-                then it will be raised instead.
+                Return the value of the *default* parameter if the
+                data axes have not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
@@ -18387,7 +18383,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
                 c = c.copy()
 
-                bounds = c.get_bounds_data(c.get_data(None))
+                bounds = c.get_bounds_data(
+                    c.get_data(None, set_fill_value=False),
+                    _fill_value=False
+                )
                 if bounds is not None and bounds.shape[0] > 1:
                     bounds = Data(
                         [bounds.min().datum(), bounds.max().datum()],
@@ -19332,7 +19331,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             data_axes = g.get_data_axes()
 
-            construct_data = construct.get_data(None)
+            construct_data = construct.get_data(None, set_fill_value=False)
             if construct_data is None:
                 raise ValueError("{!r} has no data".format(construct))
 

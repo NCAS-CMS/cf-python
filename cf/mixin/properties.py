@@ -1,4 +1,4 @@
-from copy import deepcopy
+from cfdm.core.functions import deepcopy
 
 from ..functions import atol as cf_atol, rtol as cf_rtol
 
@@ -30,8 +30,8 @@ class Properties(Container):
         """Store component classes.
 
         .. note:: If a child class requires a different component
-        classes           than the ones defined here, then they must be
-        redefined           in the child class.
+                  classes than the ones defined here, then they must
+                  be redefined in the child class.
 
         """
         instance = super().__new__(cls)
@@ -64,7 +64,7 @@ class Properties(Container):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _matching_values(self, value0, value1, units=False):
+    def _matching_values(self, value0, value1, units=False, basic=False):
         """Whether two values match.
 
         The definition of "match" depends on the types of *value0* and
@@ -102,7 +102,7 @@ class Properties(Container):
             if units and isinstance(value0, str):
                 return Units(value0).equals(Units(value1))
 
-            return self._equals(value1, value0)
+            return self._equals(value1, value0, basic=basic)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -112,14 +112,16 @@ class Properties(Container):
         """An identity for the {{class}} object.
 
         The `id` attribute can be used to unambiguously identify
-        constructs. This can be useful when identification is not possible
-        from the existing properties, either because they are missing or
-        because they do not provide sufficiently unique information.
+        constructs. This can be useful when identification is not
+        possible from the existing properties, either because they are
+        missing or because they do not provide sufficiently unique
+        information.
 
-        In general it will only be defined if explicitly set by the user.
+        In general it will only be defined if explicitly set by the
+        user.
 
-        Note that `id` is not a CF property and so is not read from, nor
-        written to, datasets.
+        Note that `id` is not a CF property and so is not read from,
+        nor written to, datasets.
 
         .. seealso:: `identity`, `identities`, `match_by_identity`
 
@@ -186,7 +188,7 @@ class Properties(Container):
 
     @calendar.setter
     def calendar(self, value):
-        self.set_property("calendar", value)
+        self.set_property("calendar", value, copy=False)
 
     @calendar.deleter
     def calendar(self):
@@ -218,7 +220,7 @@ class Properties(Container):
 
     @comment.setter
     def comment(self, value):
-        self.set_property("comment", value)
+        self.set_property("comment", value, copy=False)
 
     @comment.deleter
     def comment(self):
@@ -250,7 +252,7 @@ class Properties(Container):
 
     @history.setter
     def history(self, value):
-        self.set_property("history", value)
+        self.set_property("history", value, copy=False)
 
     @history.deleter
     def history(self):
@@ -283,7 +285,7 @@ class Properties(Container):
 
     @leap_month.setter
     def leap_month(self, value):
-        self.set_property("leap_month", value)
+        self.set_property("leap_month", value, copy=False)
 
     @leap_month.deleter
     def leap_month(self):
@@ -350,7 +352,7 @@ class Properties(Container):
 
     @long_name.setter
     def long_name(self, value):
-        self.set_property("long_name", value)
+        self.set_property("long_name", value, copy=False)
 
     @long_name.deleter
     def long_name(self):
@@ -387,7 +389,7 @@ class Properties(Container):
 
     @month_lengths.setter
     def month_lengths(self, value):
-        self.set_property("month_lengths", tuple(value))
+        self.set_property("month_lengths", tuple(value), copy=False)
 
     @month_lengths.deleter
     def month_lengths(self):
@@ -421,7 +423,7 @@ class Properties(Container):
 
     @standard_name.setter
     def standard_name(self, value):
-        self.set_property("standard_name", value)
+        self.set_property("standard_name", value, copy=False)
 
     @standard_name.deleter
     def standard_name(self):
@@ -455,7 +457,7 @@ class Properties(Container):
 
     @units.setter
     def units(self, value):
-        self.set_property("units", value)
+        self.set_property("units", value, copy=False)
 
     @units.deleter
     def units(self):
@@ -555,7 +557,7 @@ class Properties(Container):
 
     @valid_range.setter
     def valid_range(self, value):
-        self.set_property("valid_range", tuple(value))
+        self.set_property("valid_range", tuple(value), copy=False)
 
     @valid_range.deleter
     def valid_range(self):
@@ -615,7 +617,6 @@ class Properties(Container):
                 return getattr(self, prop)
             except AttributeError as err:
                 return self._default(default, err)
-        # --- End: if
 
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
@@ -719,7 +720,6 @@ class Properties(Container):
             else:
                 delattr(self, prop)
                 return out
-        # --- End: if
 
         # Still here? Then del a non-special attribute
         return super().del_property(prop, default=default)
@@ -782,14 +782,12 @@ class Properties(Container):
         ok = False
         for value0 in identities:
             for value1 in self_identities:
-                ok = self._matching_values(value0, value1)
+                ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break
-            # --- End: for
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -850,10 +848,9 @@ class Properties(Container):
 
         ok = False
         for value0 in ncvars:
-            ok = self._matching_values(value0, ncvar)
+            ok = self._matching_values(value0, ncvar, basic=True)
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -958,7 +955,6 @@ class Properties(Container):
                     break
             elif not ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -1004,7 +1000,6 @@ class Properties(Container):
                 out.pop(prop, None)
             else:
                 out[prop] = value
-        # --- End: for
 
         return out
 

@@ -3293,7 +3293,7 @@ def _aggregate_2_fields(
     if getattr(field0, "id", None) is not None:
         standard_name = field1.get_property("standard_name", None)
         if standard_name is not None:
-            field0.set_property("standard_name", standard_name)
+            field0.set_property("standard_name", standard_name, copy=False)
             del field0.id
     # --- End: if
 
@@ -3323,10 +3323,11 @@ def _aggregate_2_fields(
             if value1 is not None:
                 if value0 is not None:
                     field0.set_property(
-                        prop, "%s :AGGREGATED: %s" % (value0, value1)
+                        prop, f"{value0} :AGGREGATED: {value1}", copy=False
                     )
                 else:
-                    field0.set_property(prop, " :AGGREGATED: %s" % value1)
+                    field0.set_property(prop, " :AGGREGATED: {value1}",
+                                        copy=False)
         else:
             if value0 is not None:
                 field0.del_property(prop)

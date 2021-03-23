@@ -149,7 +149,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _matching_values(self, value0, value1):
+    def _matching_values(self, value0, value1, basic=False):
         """Whether two coordinate reference construct identity values
         match.
 
@@ -174,7 +174,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             # re.compile object
             return value0.search(value1)
         except (AttributeError, TypeError):
-            return self._equals(value1, value0)
+            return self._equals(value1, value0, basic=basic)
 
     # ----------------------------------------------------------------
     # Private attributes
@@ -560,7 +560,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         ok = False
         for value0 in identities:
             for value1 in self_identities:
-                ok = self._matching_values(value0, value1)
+                ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break
             # --- End: for

@@ -1,7 +1,10 @@
+from itertools import chain
+
 from ..decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-)
+    _deprecated_kwarg_check,
+) 
 
 from ..data.data import Data
 
@@ -21,7 +24,8 @@ class Coordinate:
         """The CF coordinate type.
 
         One of ``'T'``, ``'X'``, ``'Y'`` or ``'Z'`` if the coordinate
-        construct is for the respective CF axis type, otherwise `None`.
+        construct is for the respective CF axis type, otherwise
+        `None`.
 
         .. seealso:: `T`, `X`, `~cf.Coordinate.Y`, `Z`
 
@@ -38,17 +42,24 @@ class Coordinate:
         'T'
 
         """
-        for t in ("T", "X", "Y", "Z"):
-            if getattr(self, t):
-                return t
+        if self.X:
+            return "X"
+
+        if self.T:
+            return "T"
+
+        if self.Y:
+            return "Y"
+
+        if self.Z:
+            return "Z"
 
     @property
     def T(self):
-        """True if and only if the data are coordinates for a CF 'T'
-        axis.
+        """True if and only if the data are coordinates for a CF 'T' axis.
 
-        CF 'T' axis coordinates are defined by having one or more of the
-        following:
+        CF 'T' axis coordinates are defined by having one or more of
+        the following:
 
           * The `axis` property has the value ``'T'``
           * Units of latitude
@@ -73,17 +84,15 @@ class Coordinate:
             bounds = self.get_bounds(None)
             if bounds is not None:
                 return bounds.T
-        # --- End: if
 
         return False
 
     @property
     def X(self):
-        """True if and only if the data are coordinates for a CF 'X'
-        axis.
+        """True if and only if the data are coordinates for a CF 'X' axis.
 
-        CF 'X' axis coordinates are defined by having one or more of the
-        following:
+        CF 'X' axis coordinates are defined by having one or more of
+        the following:
 
           * The `axis` property has the value ``'X'``
           * Units of longitude
@@ -138,17 +147,15 @@ class Coordinate:
             bounds = self.get_bounds(None)
             if bounds is not None:
                 return bounds.X
-        # --- End: if
 
         return False
 
     @property
     def Y(self):
-        """True if and only if the data are coordinates for a CF 'Y'
-        axis.
+        """True if and only if the data are coordinates for a CF 'Y' axis.
 
-        CF 'Y' axis coordinates are defined by having one or more of the
-        following:
+        CF 'Y' axis coordinates are defined by having one or more of
+        the following:
 
           * The `axis` property has the value ``'Y'``
           * Units of latitude
@@ -190,17 +197,15 @@ class Coordinate:
             bounds = self.get_bounds(None)
             if bounds is not None:
                 return bounds.Y
-        # --- End: if
 
         return False
 
     @property
     def Z(self):
-        """True if and only if the data are coordinates for a CF 'Z'
-        axis.
+        """True if and only if the data are coordinates for a CF 'Z' axis.
 
-        CF 'Z' axis coordinates are defined by having one or more of the
-        following:
+        CF 'Z' axis coordinates are defined by having one or more of
+        the following:
 
           * The `axis` property has the value ``'Z'``
           * Units of pressure, level, layer or sigma_level
@@ -278,7 +283,6 @@ class Coordinate:
             bounds = self.get_bounds(None)
             if bounds is not None:
                 return bounds.Z
-        # --- End: if
 
         return False
 
@@ -313,7 +317,7 @@ class Coordinate:
 
     @axis.setter
     def axis(self, value):
-        self.set_property("axis", value)
+        self.set_property("axis", value, copy=False)
 
     @axis.deleter
     def axis(self):
@@ -324,14 +328,14 @@ class Coordinate:
         """The positive CF property.
 
         The direction of positive (i.e., the direction in which the
-        coordinate values are increasing), whether up or down, cannot in
-        all cases be inferred from the `units`. The direction of positive
-        is useful for applications displaying the data. The `positive`
-        attribute may have the value ``'up'`` or ``'down'`` (case
-        insensitive).
+        coordinate values are increasing), whether up or down, cannot
+        in all cases be inferred from the `units`. The direction of
+        positive is useful for applications displaying the data. The
+        `positive` attribute may have the value ``'up'`` or ``'down'``
+        (case insensitive).
 
-        For example, if ocean depth coordinates encode the depth of the
-        surface as 0 and the depth of 1000 meters as 1000 then the
+        For example, if ocean depth coordinates encode the depth of
+        the surface as 0 and the depth of 1000 meters as 1000 then the
         `postive` property will have the value `'down'`.
 
         **Examples:**
@@ -351,7 +355,7 @@ class Coordinate:
 
     @positive.setter
     def positive(self, value):
-        self.set_property("positive", value)
+        self.set_property("positive", value, copy=False)
         self._direction = None
 
     @positive.deleter
@@ -366,10 +370,10 @@ class Coordinate:
     def autoperiod(self, inplace=False):
         """TODO Set dimensions to be cyclic.
 
-        TODO A dimension is set to be cyclic if it has a unique longitude (or
-        grid longitude) dimension coordinate construct with bounds and the
-        first and last bounds values differ by 360 degrees (or an
-        equivalent amount in other units).
+        TODO A dimension is set to be cyclic if it has a unique
+        longitude (or grid longitude) dimension coordinate construct
+        with bounds and the first and last bounds values differ by 360
+        degrees (or an equivalent amount in other units).
 
         .. versionadded:: 3.5.0
 
@@ -403,5 +407,150 @@ class Coordinate:
 
         return c
 
+    @_deprecated_kwarg_check("relaxed_identity")
+    def identity(
+        self,
+        default="",
+        strict=False,
+        relaxed=False,
+        nc_only=False,
+        relaxed_identity=None,
+        _ctype=True,
+    ):
+        """Return the canonical identity.
 
-# --- End: class
+        By default the identity is the first found of the following:
+
+        * The "standard_name" property.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The "cf_role" property, preceded by ``'cf_role='``.
+        * The "axis" property, preceded by ``'axis='``.
+        * The "long_name" property, preceded by ``'long_name='``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
+        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+        * The value of the *default* parameter.
+
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `id`, `identities`
+
+        :Parameters:
+
+            default: optional
+                If no identity can be found then return the value of the
+                default parameter.
+
+            strict: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property or the "id" attribute.
+
+            relaxed: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property, the "id" attribute, the
+                "long_name" property or the netCDF variable name.
+
+            nc_only: `bool`, optional
+                If True then only take the identity from the netCDF
+                variable name.
+
+            relaxed_identity: deprecated at version 3.0.0
+
+        :Returns:
+
+                The identity.
+
+        **Examples:**
+
+        >>> f.properties()
+        {'foo': 'bar',
+         'long_name': 'Air Temperature',
+         'standard_name': 'air_temperature'}
+        >>> f.nc_get_variable()
+        'tas'
+        >>> f.identity()
+        'air_temperature'
+        >>> f.del_property('standard_name')
+        'air_temperature'
+        >>> f.identity(default='no identity')
+        'air_temperature'
+        >>> f.identity()
+        'long_name=Air Temperature'
+        >>> f.del_property('long_name')
+        >>> f.identity()
+        'ncvar%tas'
+        >>> f.nc_del_variable()
+        'tas'
+        >>> f.identity()
+        'ncvar%tas'
+        >>> f.identity()
+        ''
+        >>> f.identity(default='no identity')
+        'no identity'
+
+        """
+        out = super().identity(default=None)
+         
+        if out is None:
+            ctype = self.ctype
+            if ctype is not None:
+                return ctype
+
+        return default
+
+    def identities(self, generator=False, ctype="XTYZ"):
+        """Return all possible identities.
+
+        The identities comprise:
+
+        * The "standard_name" property.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The "cf_role" property, preceded by ``'cf_role='``.
+        * The "axis" property, preceded by ``'axis='``.
+        * The "long_name" property, preceded by ``'long_name='``.
+        * All other properties (including "standard_name"), preceded by
+          the property name and an ``'='``.
+        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+        * The netCDF variable name, preceded by ``'ncvar%'``.
+
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `id`, `identity`
+TODO
+        :Returns:
+
+            `list`
+                The identities.
+
+        **Examples:**
+
+        >>> f.properties()
+        {'foo': 'bar',
+         'long_name': 'Air Temperature',
+         'standard_name': 'air_temperature'}
+        >>> f.nc_get_variable()
+        'tas'
+        >>> f.identities()
+        ['air_temperature',
+         'long_name=Air Temperature',
+         'foo=bar',
+         'standard_name=air_temperature',
+         'ncvar%tas']
+
+        """
+        def _ctype_iter(self, ctype):
+            stop = False
+            for c in ctype:
+                if stop:
+                    break
+                
+                if getattr(self, c):
+                    stop = True
+                    yield c
+                    
+        identities = super().identities(generator=True)
+
+        g = chain(identities, _ctype_iter(self, ctype))
+        if generator:
+            return g
+
+        return list(g)

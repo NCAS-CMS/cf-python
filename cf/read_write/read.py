@@ -736,7 +736,7 @@ def read(
     for f in field_list:
         standard_name = f._custom.get("standard_name", None)
         if standard_name is not None:
-            f.set_property("standard_name", standard_name)
+            f.set_property("standard_name", standard_name, copy=False)
             del f._custom["standard_name"]
     # --- End: for
 

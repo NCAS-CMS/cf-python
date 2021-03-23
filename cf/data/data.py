@@ -12505,8 +12505,8 @@ class Data(Container, cfdm.Data):
 
             axes: (sequence of) `int`
                 Select the axes. By default all axes are flipped. Each
-                axis is identified by its integer position. No axes are
-                flipped if *axes* is an empty sequence.
+                axis is identified by its integer position. No axes
+                are flipped if *axes* is an empty sequence.
 
             {{inplace: `bool`, optional}}
 

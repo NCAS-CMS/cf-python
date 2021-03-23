@@ -97,7 +97,7 @@ class PropertiesDataBounds(PropertiesData):
             "{}.__getitem__: findices = {}".format(cname, findices)
         )  # pragma: no cover
 
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             new.set_data(data[findices], copy=False)
 
@@ -109,7 +109,7 @@ class PropertiesDataBounds(PropertiesData):
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds_data = bounds.get_data(None)
+            bounds_data = bounds.get_data(None, set_fill_value=False)
             if bounds_data is not None:
                 findices = list(findices)
                 #                if data.ndim <= 1 and not self.has_geometry():
@@ -126,7 +126,6 @@ class PropertiesDataBounds(PropertiesData):
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         findices.append(slice(None, None, -1))
-                # --- End: if
 
                 if auxiliary_mask:
                     findices[1] = [
@@ -140,7 +139,6 @@ class PropertiesDataBounds(PropertiesData):
                 )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
-        # --- End: if
 
         # Remove the direction, as it may now be wrong
         new._custom.pop("direction", None)
@@ -201,7 +199,6 @@ class PropertiesDataBounds(PropertiesData):
                 indices = parse_indices(self.shape, indices)
                 indices.append(Ellipsis)
                 bounds[tuple(indices)] = value_bounds
-        # --- End: if
 
     def __eq__(self, y):
         """The rich comparison operator ``==``
@@ -488,7 +485,6 @@ class PropertiesDataBounds(PropertiesData):
                 raise ValueError(
                     "Can't combine operands with interior ring arrays"
                 )
-        # --- End: if
 
         has_bounds = self.has_bounds()
 
@@ -557,7 +553,6 @@ class PropertiesDataBounds(PropertiesData):
                         other = other.insert_dimension(-1)
                     except AttributeError:
                         other = np.expand_dims(other, -1)
-            # --- End: if
 
             new_bounds = self.bounds._binary_operation(other, method)
 
@@ -658,7 +653,6 @@ class PropertiesDataBounds(PropertiesData):
                     )
                 )  # pragma: no cover
                 return False
-        # --- End: if
 
         # Still here? Then the data are equivalent.
         return True
@@ -669,7 +663,7 @@ class PropertiesDataBounds(PropertiesData):
         out.del_bounds(None)
         return out
 
-    def _matching_values(self, value0, value1, units=False):
+    def _matching_values(self, value0, value1, units=False, basic=False):
         """Whether two values match.
 
         The definition of "match" depends on the types of *value0* and
@@ -706,8 +700,7 @@ class PropertiesDataBounds(PropertiesData):
             try:
                 return value0.search(value1)
             except (AttributeError, TypeError):
-                return self._equals(value1, value0)
-        # --- End: if
+                return self._equals(value1, value0, basic=basic)
 
         return False
 
@@ -762,7 +755,6 @@ class PropertiesDataBounds(PropertiesData):
                 getattr(bounds, oper_name)(
                     *oper_args, inplace=True, **oper_kwargs
                 )
-        # --- End: if
 
         if interior_ring:
             interior_ring = v.get_interior_ring(None)
@@ -770,7 +762,6 @@ class PropertiesDataBounds(PropertiesData):
                 getattr(interior_ring, oper_name)(
                     *oper_args, inplace=True, **oper_kwargs
                 )
-        # --- End: if
 
         return v
 
@@ -803,7 +794,6 @@ class PropertiesDataBounds(PropertiesData):
                 new.set_bounds(new_bounds)
             else:
                 new.del_bounds()
-        # --- End: if
 
         return new
 
@@ -833,7 +823,7 @@ class PropertiesDataBounds(PropertiesData):
         <CF Data(3,): [0, 0, 0] degrees_north>
 
         """
-        data = self.get_bounds_data(None)
+        data = self.get_bounds_data(None, _fill_value=None)
         if data is not None:
             if data.shape[-1] != 2:
                 raise ValueError(
@@ -850,7 +840,6 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return Data.zeros(self.shape, units=self.Units)
-        # --- End: if
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data"
@@ -870,11 +859,11 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.dtype = numpy.dtype('float32')
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             return data.dtype
 
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _fill_value=None)
         if bounds is not None:
             return bounds.dtype
 
@@ -884,11 +873,11 @@ class PropertiesDataBounds(PropertiesData):
 
     @dtype.setter
     def dtype(self, value):
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             data.dtype = value
 
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _fill_value=None)
         if bounds is not None:
             bounds.dtype = value
 
@@ -957,7 +946,6 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        # --- End: if
 
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate "
@@ -983,7 +971,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         #        return super().Units
 
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             # Return the units of the data
             return data.Units
@@ -995,7 +983,6 @@ class PropertiesDataBounds(PropertiesData):
         #            if data is not None:
         #                # Return the units of the bounds data
         #                return data.Units
-        #        # --- End: if
 
         try:
             return self._custom["Units"]
@@ -1009,7 +996,6 @@ class PropertiesDataBounds(PropertiesData):
     #                    return bounds._custom['Units']
     #                except KeyError:
     #                    bounds._custom['Units'] = _units_None
-    #        # --- End: try
 
     #        return _units_None
 
@@ -1069,7 +1055,6 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        # --- End: if
 
         raise AttributeError(
             "Can't get upper bounds when there are no bounds nor coordinate "
@@ -1218,13 +1203,13 @@ class PropertiesDataBounds(PropertiesData):
     @dtype.setter
     def dtype(self, value):
         # DCH - allow dtype to be set before data c.f.  Units
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             data.dtype = value
 
     @dtype.deleter
     def dtype(self):
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is not None:
             del data.dtype
 
@@ -1670,7 +1655,6 @@ class PropertiesDataBounds(PropertiesData):
                         )
                     )
                 return False
-        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -1740,7 +1724,7 @@ class PropertiesDataBounds(PropertiesData):
         False
 
         """
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _fill_value=None)
         if bounds is None:
             return False
 
@@ -1755,8 +1739,8 @@ class PropertiesDataBounds(PropertiesData):
         if ndim == 2:
             if nbounds != 4:
                 raise ValueError(
-                    "Can't tell if {}-d cells with {} vertices "
-                    "are contiguous".format(ndim, nbounds)
+                    f"Can't tell if {ndim}-d cells with {nbounds} vertices "
+                    "are contiguous"
                 )
 
             # Check cells (j, i) and cells (j, i+1) are contiguous
@@ -1793,13 +1777,13 @@ class PropertiesDataBounds(PropertiesData):
 
         if ndim > 2:
             raise ValueError(
-                "Can't tell if {}-d cells " "are contiguous".format(ndim)
+                f"Can't tell if {ndim}-d cells are contiguous"
             )
 
         if nbounds != 2:
             raise ValueError(
-                "Can't tell if {}-d cells with {} vertices "
-                "are contiguous".format(ndim, nbounds)
+                f"Can't tell if {ndim}-d cells with {nbounds} vertices "
+                "are contiguous"
             )
 
         lower = bounds[1:, 0]
@@ -1833,37 +1817,39 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Convert reference time data values to have new units.
 
-        Conversion is done by decoding the reference times to date-time
-        objects and then re-encoding them for the new units.
+        Conversion is done by decoding the reference times to
+        date-time objects and then re-encoding them for the new units.
 
         Any conversions are possible, but this method is primarily for
-        conversions which require a change in the date-times originally
-        encoded. For example, use this method to reinterpret data values
-        in units of "months" since a reference time to data values in
-        "calendar months" since a reference time. This is often necessary
-        when units of "calendar months" were intended but encoded as
-        "months", which have special definition. See the note and examples
-        below for more details.
+        conversions which require a change in the date-times
+        originally encoded. For example, use this method to
+        reinterpret data values in units of "months" since a reference
+        time to data values in "calendar months" since a reference
+        time. This is often necessary when units of "calendar months"
+        were intended but encoded as "months", which have special
+        definition. See the note and examples below for more details.
 
-        For conversions which do not require a change in the date-times
-        implied by the data values, this method will be considerably
-        slower than a simple reassignment of the units. For example, if
-        the original units are ``'days since 2000-12-1'`` then ``c.Units =
-        cf.Units('days since 1901-1-1')`` will give the same result and be
-        considerably faster than ``c.convert_reference_time(cf.Units('days
-        since 1901-1-1'))``.
+        For conversions which do not require a change in the
+        date-times implied by the data values, this method will be
+        considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``c.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``c.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
 
-        .. note:: It is recommended that the units "year" and "month" be
-                  used with caution, as explained in the following excerpt
-                  from the CF conventions: "The Udunits package defines a
-                  year to be exactly 365.242198781 days (the interval
-                  between 2 successive passages of the sun through vernal
-                  equinox). It is not a calendar year. Udunits includes
-                  the following definitions for years: a common_year is
-                  365 days, a leap_year is 366 days, a Julian_year is
-                  365.25 days, and a Gregorian_year is 365.2425 days. For
-                  similar reasons the unit ``month``, which is defined to
-                  be exactly year/12, should also be used with caution.
+        .. note:: It is recommended that the units "year" and "month"
+                  be used with caution, as explained in the following
+                  excerpt from the CF conventions: "The Udunits
+                  package defines a year to be exactly 365.242198781
+                  days (the interval between 2 successive passages of
+                  the sun through vernal equinox). It is not a
+                  calendar year. Udunits includes the following
+                  definitions for years: a common_year is 365 days, a
+                  leap_year is 366 days, a Julian_year is 365.25 days,
+                  and a Gregorian_year is 365.2425 days. For similar
+                  reasons the unit ``month``, which is defined to be
+                  exactly year/12, should also be used with caution.
 
         :Parameters:
 
@@ -1873,24 +1859,24 @@ class PropertiesDataBounds(PropertiesData):
                 original calendar.
 
                 *Parameter example:*
-                  If the original units are ``'months since 2000-1-1'`` in
-                  the Gregorian calendar then the default units to convert
-                  to are ``'days since 2000-1-1'`` in the Gregorian
-                  calendar.
+                  If the original units are ``'months since
+                  2000-1-1'`` in the Gregorian calendar then the
+                  default units to convert to are ``'days since
+                  2000-1-1'`` in the Gregorian calendar.
 
             calendar_months: `bool`, optional
-                If True then treat units of ``'months'`` as if they were
-                calendar months (in whichever calendar is originally
-                specified), rather than a 12th of the interval between 2
-                successive passages of the sun through vernal equinox
-                (i.e. 365.242198781/12 days).
+                If True then treat units of ``'months'`` as if they
+                were calendar months (in whichever calendar is
+                originally specified), rather than a 12th of the
+                interval between 2 successive passages of the sun
+                through vernal equinox (i.e. 365.242198781/12 days).
 
             calendar_years: `bool`, optional
-                If True then treat units of ``'years'`` as if they were
-                calendar years (in whichever calendar is originally
-                specified), rather than the interval between 2 successive
-                passages of the sun through vernal equinox
-                (i.e. 365.242198781 days).
+                If True then treat units of ``'years'`` as if they
+                were calendar years (in whichever calendar is
+                originally specified), rather than the interval
+                between 2 successive passages of the sun through
+                vernal equinox (i.e. 365.242198781 days).
 
             {{inplace: `bool`, optional}}
 
@@ -1899,7 +1885,8 @@ class PropertiesDataBounds(PropertiesData):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with converted reference time data values.
+                The construct with converted reference time data
+                values.
 
         **Examples:**
 
@@ -1990,7 +1977,6 @@ class PropertiesDataBounds(PropertiesData):
             out = self.get_bounds().get_property(prop, None)
             if out is not None:
                 return out
-        # --- End: if
 
         return super().get_property(prop, default)
 
@@ -2003,8 +1989,8 @@ class PropertiesDataBounds(PropertiesData):
         The shape of the data may change, but the size will not.
 
         The flattening is executed in row-major (C-style) order. For
-        example, the array ``[[1, 2], [3, 4]]`` would be flattened across
-        both dimensions to ``[1 2 3 4]``.
+        example, the array ``[[1, 2], [3, 4]]`` would be flattened
+        across both dimensions to ``[1 2 3 4]``.
 
         .. versionadded:: 3.0.2
 
@@ -2013,13 +1999,15 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             axes: (sequence of) int or str, optional
-                Select the axes.  By default all axes are flattened. The
-                *axes* argument may be one, or a sequence, of:
+                Select the axes.  By default all axes are
+                flattened. The *axes* argument may be one, or a
+                sequence, of:
 
                   * An internal axis identifier. Selects this axis.
 
-                  * An integer. Selects the axis corresponding to the given
-                    position in the list of axes of the data array.
+                  * An integer. Selects the axis corresponding to the
+                    given position in the list of axes of the data
+                    array.
 
                 No axes are flattened if *axes* is an empty sequence.
 
@@ -2044,9 +2032,10 @@ class PropertiesDataBounds(PropertiesData):
         (4, 2, 3)
 
         """
-        # Note the 'axes' argument can change mid-method meaning it is not
-        # possible to consolidate this method using a call to
-        # _apply_superclass_data_operations, despite mostly the same logic.
+        # Note the 'axes' argument can change mid-method meaning it is
+        # not possible to consolidate this method using a call to
+        # _apply_superclass_data_operations, despite mostly the same
+        # logic.
         v = _inplace_enabled_define_and_cleanup(self)
         super(PropertiesDataBounds, v).flatten(axes, inplace=True)
 
@@ -2155,7 +2144,6 @@ class PropertiesDataBounds(PropertiesData):
                 raise ValueError(
                     "Positional argument, if provided, must one of 'or', 'and'"
                 )
-        # --- End: if
 
         if not properties:
             return True
@@ -2172,7 +2160,6 @@ class PropertiesDataBounds(PropertiesData):
                     break
             elif not ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -2203,7 +2190,7 @@ class PropertiesDataBounds(PropertiesData):
         ok = False
         for value0 in identities:
             for value1 in self_identities:
-                ok = self._matching_values(value0, value1)
+                ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break
 
@@ -2331,16 +2318,15 @@ class PropertiesDataBounds(PropertiesData):
         """
         out = super().get_filenames()
 
-        data = self.get_bounds_data(None)
+        data = self.get_bounds_data(None, _fill_value=None)
         if data is not None:
             out.update(data.get_filenames())
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            data = interior_ring.get_data(None)
+            data = interior_ring.get_data(None, set_fill_value=False)
             if data is not None:
                 out.update(interior_ring.get_filenames())
-        # --- End: if
 
         return out
 
@@ -2638,7 +2624,7 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
 
         if data is not None and bounds.shape[: data.ndim] != data.shape:
             # Check shape
@@ -3459,67 +3445,67 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    def identities(self):
-        """Return all possible identities.
-
-        The identities comprise:
-
-        * The "standard_name" property.
-        * The "id" attribute, preceded by ``'id%'``.
-        * The "cf_role" property, preceded by ``'cf_role='``.
-        * The "axis" property, preceded by ``'axis='``.
-        * The "long_name" property, preceded by ``'long_name='``.
-        * All other properties (including "standard_name"), preceded by
-          the property name and an ``'='``.
-        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-        * The netCDF variable name, preceded by ``'ncvar%'``.
-
-        The identities of the bounds, if present, are included (with the
-        exception of the bounds netCDF variable name).
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `id`, `identity`
-
-        :Returns:
-
-            `list`
-                The identities.
-
-        **Examples:**
-
-        >>> f.properties()
-        {'foo': 'bar',
-         'long_name': 'Air Temperature',
-         'standard_name': 'air_temperature'}
-        >>> f.nc_get_variable()
-        'tas'
-        >>> f.identities()
-        ['air_temperature',
-         'long_name=Air Temperature',
-         'foo=bar',
-         'standard_name=air_temperature',
-         'ncvar%tas']
-
-        >>> f.properties()
-        {}
-        >>> f.bounds.properties()
-        {'axis': 'Z',
-         'units': 'm'}
-        >>> f.identities()
-        ['axis=Z', 'units=m', 'ncvar%z']
-
-        """
-        identities = super().identities()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            identities.extend(
-                [i for i in bounds.identities() if i not in identities]
-            )
-        # TODO ncvar AND?
-
-        return identities
+#   def identities(self, generator=False):
+#       """Return all possible identities.
+#
+#       The identities comprise:
+#
+#       * The "standard_name" property.
+#       * The "id" attribute, preceded by ``'id%'``.
+#       * The "cf_role" property, preceded by ``'cf_role='``.
+#       * The "axis" property, preceded by ``'axis='``.
+#       * The "long_name" property, preceded by ``'long_name='``.
+#       * All other properties (including "standard_name"), preceded by
+#         the property name and an ``'='``.
+#       * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+#       * The netCDF variable name, preceded by ``'ncvar%'``.
+#
+#       The identities of the bounds, if present, are included (with the
+#       exception of the bounds netCDF variable name).
+#
+#       .. versionadded:: 3.0.0
+#
+#       .. seealso:: `id`, `identity`
+#ODO
+#       :Returns:
+#
+#           `list`
+#               The identities.
+#
+#       **Examples:**
+#
+#       >>> f.properties()
+#       {'foo': 'bar',
+#        'long_name': 'Air Temperature',
+#        'standard_name': 'air_temperature'}
+#       >>> f.nc_get_variable()
+#       'tas'
+#       >>> f.identities()
+#       ['air_temperature',
+#        'long_name=Air Temperature',
+#        'foo=bar',
+#        'standard_name=air_temperature',
+#        'ncvar%tas']
+#
+#       >>> f.properties()
+#       {}
+#       >>> f.bounds.properties()
+#       {'axis': 'Z',
+#        'units': 'm'}
+#       >>> f.identities()
+#       ['axis=Z', 'units=m', 'ncvar%z']
+#
+#       """
+#       identities = super().identities()
+#
+#       bounds = self.get_bounds(None)
+#       if bounds is not None:
+#           identities.extend(
+#               [i for i in bounds.identities() if i not in identities]
+#           )
+#       # TODO ncvar AND?
+#
+#       return identities
 
     @_deprecated_kwarg_check("relaxed_identity")
     def identity(
@@ -3631,7 +3617,6 @@ class PropertiesDataBounds(PropertiesData):
 
             if out is not None and not out.startswith("ncvar%"):
                 return out
-        # --- End: if
 
         return default
 

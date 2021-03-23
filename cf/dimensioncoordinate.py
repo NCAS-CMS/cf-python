@@ -122,7 +122,7 @@ class DimensionCoordinate(
         False
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=None)
         if data is not None:
             # Infer the direction from the data
             if data._size > 1:
@@ -138,7 +138,7 @@ class DimensionCoordinate(
         # --- End: if
 
         # Still here?
-        data = self.get_bounds_data(None)
+        data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
             b = data[(0,) * (data.ndim - 1)].array
@@ -856,11 +856,11 @@ class DimensionCoordinate(
         c.dtype = numpy_result_type(c.dtype, period.dtype)
 
         b = c.get_bounds(None)
-        bounds_data = c.get_bounds_data(None)
+        bounds_data = c.get_bounds_data(None, _fill_value=False)
 
         if bounds_data is not None:
             b.dtype = numpy_result_type(bounds_data.dtype, period.dtype)
-            bounds_data = b.get_data(None)
+            bounds_data = b.get_data(None, set_fill_value=None)
 
         if direction:
             # Increasing
@@ -882,7 +882,6 @@ class DimensionCoordinate(
                 c -= period
                 if bounds_data is not None:
                     b -= period
-        # --- End: if
 
         c._custom["direction"] = direction
 
@@ -898,6 +897,3 @@ class DimensionCoordinate(
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, "role", "Use attribute 'construct_type' instead"
         )  # pragma: no cover
-
-
-# --- End: class

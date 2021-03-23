@@ -137,7 +137,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
          False
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, set_fill_value=False)
         if data is None:
             return False
 
@@ -320,6 +320,3 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
         return super().identity(
             default=default, strict=strict, relaxed=relaxed, nc_only=nc_only
         )
-
-
-# --- End: class

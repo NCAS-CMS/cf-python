@@ -45,7 +45,8 @@ class Constructs(cfdm.Constructs):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    def _matching_values(self, value0, construct, value1):
+    def _matching_values(self, value0, construct, value1,
+                         basic=False):
         """Whether two values match according to equality on a given
         construct.
 
@@ -58,11 +59,15 @@ class Constructs(cfdm.Constructs):
                 The first value to be matched.
 
             construct:
-                The construct whose `equals` method is used to determine whether
-                values can be considered to match.
+                The construct whose `_equals` method is used to
+                determine whether values can be considered to match.
 
             value1:
                 The second value to be matched.
+
+            basic: `bool`
+                If True then value0 and value1 will be compared with
+                the basic ``==`` operator.
 
         :Returns:
 
@@ -73,7 +78,8 @@ class Constructs(cfdm.Constructs):
         if isinstance(value0, Query):
             return value0.evaluate(value1)
 
-        return super()._matching_values(value0, construct, value1)
+        return super()._matching_values(value0, construct, value1,
+                                        basic=basic)
 
     #     def domain_axis_key(self, identity, default=ValueError()):
     #         '''Return the key of the domain axis construct that is spanned by 1-d
@@ -201,6 +207,13 @@ class Constructs(cfdm.Constructs):
                 .. note:: This is an extension to the functionality of
                           `cfdm.Constucts.filter_by_identity`.
 
+            kwargs: optional
+                Additional parameters for configuring each construct's
+                `identities` method. ``generator=True`` is passed by
+                default.
+
+                .. versionadded:: 3.9.0
+
         :Returns:
 
             `Constructs`
@@ -227,33 +240,12 @@ class Constructs(cfdm.Constructs):
         >>> d = c.filter_by_identity('ncvar%time')
 
         """
-        #        field_data_axes = self._field_data_axes
-        #
-        #        if field_data_axes is not None:
-        #            # Allows integer data domain axis positions, do we want this? TODO
-        #            new_identities = []
-        #            for i in identities:
-        #                try:
-        #                    _ = field_data_axes[i]
-        #                except IndexError:
-        #                    new_identities.append(i)
-        #                else:
-        #                    if isinstance(_, str):
-        #                        new_identities.append('key%'+_)
-        #                    else:
-        #                        new_identities.extend(['key%'+axis for axis in _])
-        #        else:
-        #            new_identities = identities
-        #
-
         # Allow keys without the 'key%' prefix
         identities = list(identities)
         for n, identity in enumerate(identities):
             if identity in self:
                 identities[n] = "key%" + identity
-        # --- End: for
 
-        return super().filter_by_identity(*identities)
-
-
-# --- End: class
+        ctype = [i for i in "XYZT" if i in identities]
+                
+        return super().filter_by_identity(*identities, ctype=ctype)

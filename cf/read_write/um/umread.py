@@ -902,7 +902,6 @@ class UMField:
                 if LBVC in (2, 9, 65) or LBLEV in (7777, 8888):  # CHECK!
                     self.LBLEV = LBLEV
                     c = self.model_level_number_coordinate(aux=bool(c))
-            # --- End: if
 
             # --------------------------------------------------------
             # Create the 'Y' dimension coordinate
@@ -930,6 +929,7 @@ class UMField:
             # --------------------------------------------------------
             axiscode = ix
             xc = None
+            xkey = None
             if axiscode is not None:
                 if axiscode in (20, 23):
                     # X axis is time since reference date
@@ -1061,12 +1061,12 @@ class UMField:
             if down_axes:
                 field.flip(down_axes, inplace=True)
 
-            # Force cyclic X axis for paritcular values of LBHEM
-            if int_hdr[lbhem] in (0, 1, 2, 4):
-                field.cyclic("X", period=360)
+            # Force cyclic X axis for particular values of LBHEM
+            if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
+#                field.cyclic("X", period=360)
+                field.cyclic(xkey, period=360)
 
             self.fields.append(field)
-        # --- End: for
 
         self._bool = True
 
@@ -1177,7 +1177,7 @@ class UMField:
         ac = self.coord_data(ac, array, bounds, units=_Units["m"])
         ac.id = "UM_atmosphere_hybrid_height_coordinate_a"
         self.implementation.set_properties(
-            ac, {"long_name": "height based hybrid coeffient a"}
+            ac, {"long_name": "height based hybrid coeffient a"}, copy=False
         )
         key_a = self.implementation.set_domain_ancillary(
             field, ac, axes=[_axis["z"]], copy=False
@@ -1195,7 +1195,8 @@ class UMField:
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[""])
             self.implementation.set_properties(
-                dc, {"standard_name": "atmosphere_hybrid_height_coordinate"}
+                dc, {"standard_name": "atmosphere_hybrid_height_coordinate"},
+                copy=False
             )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis["z"])
@@ -1219,7 +1220,8 @@ class UMField:
         ac = self.coord_data(ac, array, bounds, units=_Units["1"])
         ac.id = "UM_atmosphere_hybrid_height_coordinate_b"
         self.implementation.set_properties(
-            ac, {"long_name": "height based hybrid coeffient b"}
+            ac, {"long_name": "height based hybrid coeffient b"},
+            copy=False
         )
         key_b = self.implementation.set_domain_ancillary(
             field, ac, axes=[_axis["z"]], copy=False
@@ -1561,12 +1563,12 @@ class UMField:
         standard_name = _coord_standard_name.setdefault(axiscode, None)
 
         if standard_name is not None:
-            coord.set_property("standard_name", standard_name)
+            coord.set_property("standard_name", standard_name, copy=False)
             coord.ncvar = standard_name
         else:
             long_name = _coord_long_name.setdefault(axiscode, None)
             if long_name is not None:
-                coord.long_name = long_name
+                coord.set_property("long_name", long_name, copy=False)
 
         return coord
 
@@ -2337,7 +2339,9 @@ class UMField:
         dc = self.coord_data(
             dc, array, units=_axiscode_to_Units.setdefault(axiscode, None)
         )
-        self.implementation.set_properties(dc, {"long_name": "pseudolevel"})
+        self.implementation.set_properties(
+            dc, {"long_name": "pseudolevel"}, copy=False
+        )
         dc.id = "UM_pseudolevel"
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
