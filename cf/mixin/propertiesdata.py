@@ -67,7 +67,7 @@ class PropertiesData(Properties):
         x.__contains__(y) <==> y in x
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=None)
         if data is None:
             return False
 
@@ -104,12 +104,12 @@ class PropertiesData(Properties):
         x.__setitem__(indices, value) <==> x[indices]
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError("Can't set elements when there is no data")
 
         try:
-            value = value.get_data(set_fill_value=None)
+            value = value.get_data(_fill_value=None)
         except AttributeError:
             pass
 
@@ -570,7 +570,7 @@ class PropertiesData(Properties):
         >>> u._binary_operation(v, '__idiv__')
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(
                 "Can't apply {} to a {} object with no data: {!r}".format(
@@ -741,8 +741,8 @@ class PropertiesData(Properties):
         if not self.has_data():
             return True
 
-        data0 = self.get_data(set_fill_value=None)
-        data1 = other.get_data(set_fill_value=None)
+        data0 = self.get_data(_fill_value=False)
+        data1 = other.get_data(_fill_value=False)
 
         if data0.shape != data1.shape:
             logger.info(
@@ -896,7 +896,7 @@ class PropertiesData(Properties):
         [1 2 3 4 5]
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
                 "Can't apply {} to a {} with no data".format(
@@ -913,7 +913,7 @@ class PropertiesData(Properties):
 
     def _YMDhms(self, attr):
         """TODO."""
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
                 "ERROR: Can't get {}s when there is no data array".format(attr)
@@ -1174,7 +1174,7 @@ class PropertiesData(Properties):
         <Units: days since 2014-1-1 calendar=noleap>
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             return data.Units
 
@@ -1187,7 +1187,7 @@ class PropertiesData(Properties):
 
     @Units.setter
     def Units(self, value):
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.Units = value
         else:
@@ -1707,7 +1707,7 @@ class PropertiesData(Properties):
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None, set_fill_value=None)
+        data = v.get_data(None, _fill_value=False)
         if data is not None:
             data.mask_invalid(inplace=True)
 
@@ -2318,7 +2318,7 @@ class PropertiesData(Properties):
         [ 0.5  1.5  2.5]
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
                 "{} doesn't have attribute 'dtype'".format(
@@ -2331,13 +2331,13 @@ class PropertiesData(Properties):
     @dtype.setter
     def dtype(self, value):
         # DCH - allow dtype to be set before data c.f.  Units
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.dtype = value
 
     @dtype.deleter
     def dtype(self):
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             del data.dtype
 
@@ -2363,7 +2363,7 @@ class PropertiesData(Properties):
         False
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
                 "{} doesn't have attribute 'hardmask'".format(
@@ -2375,7 +2375,7 @@ class PropertiesData(Properties):
 
     @hardmask.setter
     def hardmask(self, value): 
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError(
                 "{} doesn't have attribute 'hardmask'".format(
@@ -2485,7 +2485,7 @@ class PropertiesData(Properties):
         False
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             return False
 
@@ -2546,7 +2546,7 @@ class PropertiesData(Properties):
             `None`
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.chunk(chunksize)
 
@@ -2618,7 +2618,7 @@ class PropertiesData(Properties):
         >>> f.close()
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             data.close()
 
@@ -2645,7 +2645,7 @@ class PropertiesData(Properties):
         out = variable0.copy()  # data=False)
 
         data = Data.concatenate(
-            [v.get_data(set_fill_value=None)
+            [v.get_data(_fill_value=False)
              for v in variables], axis=axis, _preserve=_preserve
         )
         out.set_data(data, copy=False)
@@ -2782,7 +2782,7 @@ class PropertiesData(Properties):
         >>> n = f.count()
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError("Can't count when there are data")
 
@@ -2801,7 +2801,7 @@ class PropertiesData(Properties):
         >>> n = f.count_masked()
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise AttributeError("Can't count masked when there are data")
 
@@ -2836,7 +2836,7 @@ class PropertiesData(Properties):
         {1} TODO
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             return set()
 
@@ -2933,7 +2933,7 @@ class PropertiesData(Properties):
         6
 
         """
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
                 "ERROR: Can't return an element when there is no data array"
@@ -3497,7 +3497,7 @@ class PropertiesData(Properties):
         if not naxes:
             return True
 
-        data = self.get_data(None, set_fill_value=None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             return False
 
@@ -4933,7 +4933,8 @@ TODO
 
         return axis[0] in self.cyclic()
 
-    def get_data(self, default=ValueError(), set_fill_value=True):
+    def get_data(self, default=ValueError(), _units=None,
+                 _fill_value=True):
         """Return the data.
 
         Note that a `Data` instance is returned. Use its `array` attribute
@@ -4976,7 +4977,7 @@ TODO
 
         """
         return super().get_data(default=default, _units=False,
-                                _fill_value=set_fill_value)
+                                _fill_value=_fill_value)
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
@@ -5149,7 +5150,7 @@ TODO
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None, set_fill_value=False)
+        data = v.get_data(None, _fill_value=False)
         if data is not None:
             data.override_calendar(calendar, inplace=True)
             v._custom["Units"] = data.Units
@@ -5219,7 +5220,7 @@ TODO
 
         units = Units(units)
 
-        data = v.get_data(None, set_fill_value=False)
+        data = v.get_data(None, _fill_value=False)
         if data is not None:
             data.override_units(units, inplace=True)
         else:
@@ -5465,7 +5466,7 @@ TODO
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None, set_fill_value=False)
+        data = v.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError("ERROR: Can't set data in nonexistent data array")
 
@@ -5484,7 +5485,7 @@ TODO
             condition = condition_data
 
         try:
-            x_data = x.get_data(None, set_fill_value=False)
+            x_data = x.get_data(None, _fill_value=False)
         except AttributeError:
             pass
         else:
@@ -5498,7 +5499,7 @@ TODO
             x = x_data
 
         try:
-            y_data = y.get_data(None, set_fill_value=False)
+            y_data = y.get_data(None, _fill_value=False)
         except AttributeError:
             pass
         else:
