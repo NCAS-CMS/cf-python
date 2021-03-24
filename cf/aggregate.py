@@ -239,6 +239,7 @@ class _Meta:
             strict=strict_identities,
             relaxed=relaxed_identities,
             nc_only=ncvar_identities,
+            default=None
         )
 
         if field_identity:

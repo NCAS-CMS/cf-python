@@ -10756,7 +10756,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         ).value(None)
                         if dc is not None and not dc.has_bounds():
                             dc.set_bounds(dc.create_bounds(cellsize=0))
-                # --- End: if
 
                 continue
 
@@ -10849,7 +10848,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
                     if not g_weights:
                         g_weights = None
-                # --- End: if
 
                 axis = collapse_axes.key()
 
@@ -11018,7 +11016,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 )
                 for key, value in c.filter_by_axis("or", axis).items():
                     logger.info(
-                        "    Removing {!r}".format(value)
+                        f"    Removing {value.construct_type}"
                     )  # pragma: no cover
 
                     f.del_construct(key)
@@ -11028,7 +11026,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
                 for key, value in c.filter_by_axis("or", axis).items():
                     logger.info(
-                        "    Removing {!r}".format(value)
+                        f"    Removing {value.construct_type} {key!r}"
                     )  # pragma: no cover
 
                     f.del_construct(key)
@@ -11044,15 +11042,18 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 for key, aux in f.auxiliary_coordinates.filter_by_axis(
                     "exact", axis
                 ).items():
-                    logger.info(
-                        "key, aux = {} {!r}".format(key, repr(aux))
-                    )  # pragma: no cover
+                    logger.info(f"key = {key}")  # pragma: no cover
 
                     d = aux[0]
 
+                    # TODODASK: remove once dask. For some reason,
+                    # without this we now get LAMA related failures in
+                    # Partition.nbytes ...
+                    _ = aux.dtype
+
                     if aux.has_bounds() or (aux[:-1] != aux[1:]).any():
                         logger.info(
-                            "    Removing {!r}".format(aux)
+                            f"    Removing {aux.construct_type} {key!r}"
                         )  # pragma: no cover
 
                         f.del_construct(key)
@@ -11062,12 +11063,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         aux.set_data(d.data, copy=False)
                         if d.has_bounds():
                             aux.bounds.set_data(d.bounds.data, copy=False)
-                # --- End: for
 
                 # Reset the axis size
                 f.domain_axes[axis].set_size(1)
                 logger.info(
-                    "Changing axis size to 1: {}".format(axis)
+                    f"Changing axis size to 1: {axis}"
                 )  # pragma: no cover
 
                 dim = f.dimension_coordinates.filter_by_axis(
@@ -11108,14 +11108,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 else:
                     raise ValueError(
                         "Can't collapse: Bad parameter value: "
-                        "coordinate={!r}".format(coordinate)
+                        f"coordinate={coordinate!r}"
                     )
 
                 bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
-            # --- End: for
 
             # --------------------------------------------------------
             # Update the cell methods
@@ -11129,7 +11128,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     over=over,
                     verbose=verbose,
                 )
-        # --- End: for
 
         # ------------------------------------------------------------
         # Return the collapsed field (or the classification array)
@@ -11225,8 +11223,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             return classification, n, lower, upper
 
-        # --- End: def
-
         def _time_interval(
             classification,
             n,
@@ -11301,7 +11297,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         group_by_coords,
                         extra_condition,
                     )
-            # --- End: if
 
             return classification, n
 
@@ -11380,7 +11375,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         group_by_coords,
                         extra_condition,
                     )
-            # --- End: if
 
             return classification, n
 
@@ -11436,7 +11430,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         group_by_coords,
                         extra_condition,
                     )
-            # --- End: if
 
             return classification, n
 
@@ -11509,10 +11502,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             #                    for i in range(1, max(1, int(float(len(x))/group_span))):
             #                        n += 1
             #                        classification[x[i*group_span:(i + 1)*group_span]] = n
-            #                # --- End: if
-
             #                n += 1
-            # --- End: for
 
             return classification, n
 
@@ -11543,7 +11533,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if classification[i] >= 0:
                     classification[i:j] = n
                     n += 1
-            # --- End: for
 
             if classification[x[-1]] >= 0:
                 classification[x[-1] :] = n
@@ -11569,7 +11558,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     classification[start : i + 1] = n
                     start = i + 1
                     n += 1
-            # --- End: for
 
             return classification
 
@@ -11635,7 +11623,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             TimeDuration.__class__.__name__, coord.Units
                         )
                     )
-            # --- End: if
 
             return (lower, upper, lower_limit, upper_limit)
 
@@ -11680,7 +11667,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     indices[iaxes.index(iaxis)] = index
                     weights[iaxes] = value[tuple(indices)]
                     break
-            # --- End: for
 
             return weights
 
@@ -11765,7 +11751,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
                 # Set group to None
                 group = None
-        # --- End: if
 
         if group is not None:
             if isinstance(group, Query):
@@ -11786,7 +11771,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     start = end
                     end += group
                     n += 1
-                # --- End: while
 
                 if group_span is True or group_span is None:
                     # Use the group definition as the group span
@@ -11891,7 +11875,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     ).value(None)
                     if coord is None:
                         raise ValueError("asdad8777787 TODO")
-                # --- End: if
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -11911,9 +11894,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 elif group_span is True:
                     raise ValueError(
                         "Can't collapse: Can't set group_span=True when "
-                        "group={!r}".format(group)
+                        f"group={group!r}"
                     )
-        # --- End: if
 
         if classification is None:
             if over == "days":
@@ -11952,11 +11934,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 elif isinstance(over_days, TimeDuration):
                     if over_days.Units.istime and over_days < Data(1, "day"):
                         raise ValueError(
-                            "Bad parameter value: over_days={!r}".format(
-                                over_days
-                            )
+                            f"Bad parameter value: over_days={over_days!r}"
                         )
-                # --- End: if
 
                 coordinate = "minimum"
 
@@ -12086,9 +12065,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     else:
                         raise ValueError(
                             "over_years is not a whole number of calendar "
-                            "years: {!r}".format(over_years)
+                            f"years: {over_years!r}"
                         )
-                # --- End: if
 
                 coordinate = "minimum"
 
@@ -12126,7 +12104,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         # Keep a record of the first cell
                         mdHMS0 = mdHMS
                         logger.info(
-                            "        mdHMS0 = {!r}".format(mdHMS0)
+                            f"        mdHMS0 = {mdHMS0!r}"
                         )  # pragma: no cover
                     elif mdHMS.equals(mdHMS0):
                         # We've got repeat of the first cell, which
@@ -12135,7 +12113,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         break
 
                     logger.info(
-                        "        mdHMS  = {!r}".format(mdHMS)
+                        f"        mdHMS  = {mdHMS!r}"
                     )  # pragma: no cover
 
                     if over_years is None:
@@ -12174,7 +12152,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             parameter="over_years",
                             extra_condition=mdHMS,
                         )
-                # --- End: for
 
             elif within == "days":
                 # ----------------------------------------------------
@@ -12209,10 +12186,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     ):
                         # % Data(1, 'day'): # % within_days:
                         raise ValueError(
-                            "Can't collapse: within_days={!r} is not an "
-                            "exact factor of 1 day".format(within_days)
+                            f"Can't collapse: within_days={within_days!r} "
+                            "is not an exact factor of 1 day"
                         )
-                # --- End: if
 
                 if isinstance(within_days, TimeDuration):
                     # ------------------------------------------------
@@ -12262,7 +12238,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     elif group_span is True:
                         raise ValueError(
                             "Can't collapse: Can't set group_span=True when "
-                            "within_days={!r}".format(within_days)
+                            f"within_days={within_days!r}"
                         )
 
             elif within == "years":
@@ -12351,22 +12327,20 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             elif over is not None:
                 raise ValueError(
-                    "Can't collapse: Bad 'over' syntax: {!r}".format(over)
+                    f"Can't collapse: Bad 'over' syntax: {over!r}"
                 )
 
             elif within is not None:
                 raise ValueError(
-                    "Can't collapse: Bad 'within' syntax: "
-                    "{!r}".format(within)
+                    f"Can't collapse: Bad 'within' syntax: {within!r}"
                 )
-        # --- End: if
 
         if classification is not None:
             # ---------------------------------------------------------
             # Collapse each group
             # ---------------------------------------------------------
             logger.info(
-                "        classification    = {}".format(classification)
+                f"        classification    = {classification}"
             )  # pragma: no cover
 
             unique = numpy_unique(classification)
@@ -12378,22 +12352,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 index = numpy_where(classification == u)[0].tolist()
 
                 pc = self.subspace(**{axis: index})
-
-                #                if group_span is not None:
-                #                    if over == 'days':
-                #                        t = pc.dimension_coordinate('T').copy()
-                #                        t.units = 'days since ' + str(t.reference_datetime)
-                #                        logger.info('{} {} {} {}'.format(
-                #                            t.bounds.Units, u, len(index),
-                #                            int(t.bounds.range().ceil()
-                #                            )
-                #                        )
-                #                        if over_days != int(t.bounds.range().ceil()):
-                #                            classification[index] = ignore_n
-                #                            ignore_n -= 1
-                #                            continue
-                #
-                # # --- End: if
 
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
@@ -12410,8 +12368,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                 ignore_n -= 1
                                 continue
                         else:
-                            # coord = pc.coordinates.filter_by_axis(
-                            #             'exact', axis).value(None)
                             if coord is None:
                                 raise ValueError(
                                     "Can't collapse: Need an unambiguous 1-d "
@@ -12443,7 +12399,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                 classification[index] = ignore_n
                                 ignore_n -= 1
                                 continue
-                    # --- End: if
 
                     if (
                         group_contiguous
@@ -12458,7 +12413,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         classification[index] = ignore_n
                         ignore_n -= 1
                         continue
-                # --- End: if
 
                 if regroup:
                     continue
@@ -12468,7 +12422,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 w = _group_weights(weights, iaxis, index)
                 logger.info(
-                    "        Collapsing group {}: {!r}".format(u, pc)
+                    f"        Collapsing group {u}:"
                 )  # pragma: no cover
 
                 fl.append(
@@ -12486,7 +12440,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         _update_cell_methods=False,
                     )
                 )
-            # --- End: for
 
             if regroup:
                 # return the numpy array
@@ -12498,16 +12451,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Still here?
         if not fl:
             c = "contiguous " if group_contiguous else ""
-            s = (
-                " spanning {}".format(group_span)
-                if group_span is not False
-                else ""
-            )
+            s = f" spanning {group_span}" if group_span is not False else ""
             if within is not None:
-                s = " within {}{}".format(within, s)
+                s = f" within {within}{s}"
 
             raise ValueError(
-                "Can't collapse: No {}groups{} were identified".format(c, s)
+                f"Can't collapse: No {c}groups{s} were identified"
             )
 
         if len(fl) == 1:
@@ -12523,7 +12472,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         c.set_bounds(c.create_bounds())
                 except Exception:
                     pass
-            # --- End: for
 
             # --------------------------------------------------------
             # Sort the list of collapsed fields
@@ -12547,8 +12495,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             try:
                 f = self.concatenate(fl, axis=iaxis, _preserve=False)
             except ValueError as error:
-                raise ValueError("Can't collapse: {0}".format(error))
-        # --- End: if
+                raise ValueError(f"Can't collapse: {error}")
 
         if squeeze and f.domain_axes[axis].get_size() == 1:
             # Remove a totally collapsed axis from the field's
@@ -12662,15 +12609,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             lastcm.over = over
 
                         cell_method = None
-        # --- End: if
 
         if cell_method is not None:
             self.set_construct(cell_method)
 
         logger.info(
-            "    Modified cell methods = {}".format(
-                self.cell_methods.ordered()
-            )
+            f"    Modified cell methods = {self.cell_methods.ordered()}"
         )  # pragma: no cover
 
     @_deprecated_kwarg_check("axes")
@@ -12735,7 +12679,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         for key, coord in self.dimension_coordinates.items():
             if axis == self.get_data_axes(key)[0]:
                 return coord.direction()
-        # --- End: for
 
         return True
 
@@ -12764,7 +12707,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if not direction:
                 axis = self.get_data_axes(key)[0]
                 out[axis] = dc.direction()
-        # --- End: for
 
         return out
 
@@ -13075,7 +13017,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if len(c) != 1:
                     raise ValueError(
                         "Can't find indices: Ambiguous axis or axes: "
-                        "{!r}".format(identity)
+                        f"{identity!r}"
                     )
 
                 key, construct = dict(c).popitem()
@@ -13091,7 +13033,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             )
 
             unique_axes.update(sorted_axes)
-        # --- End: for
 
         if len(unique_axes) < n_axes:
             raise ValueError(

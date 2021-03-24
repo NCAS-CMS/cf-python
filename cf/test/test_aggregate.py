@@ -144,7 +144,7 @@ class aggregateTest(unittest.TestCase):
 
             del t.standard_name
             del c.standard_name
-            x = cf.aggregate([c, t])
+            x = cf.aggregate([c, t], verbose=1)
             self.assertEqual(len(x), 2)
 
             t.long_name = "qwerty"

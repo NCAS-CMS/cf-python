@@ -232,7 +232,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         )
         self.assertEqual(
             self.vcr.get("earth_radius"),
-            self.datum.get_parameter("earth_radius")
+            self.datum.get_parameter("earth_radius"),
         )
         self.assertIsNone(self.vcr.get("orog"))
         self.assertEqual(self.vcr.get("orog", "qwerty"), "qwerty")

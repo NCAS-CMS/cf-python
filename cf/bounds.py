@@ -196,9 +196,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
             return True
 
         if ndim > 2:
-            raise ValueError(
-                f"Can't tell if {ndim}-d cells are contiguous"
-            )
+            raise ValueError(f"Can't tell if {ndim}-d cells are contiguous")
 
         if nbounds != 2:
             raise ValueError(
