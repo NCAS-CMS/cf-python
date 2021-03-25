@@ -24,12 +24,12 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary_source(self):
         f = cf.read(self.filename)[0]
 
-        a = f.auxiliary_coordinates("latitude").value()
+        a = f.auxiliary_coordinates(view=True)("latitude").value()
         cf.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
         f = cf.read(self.filename)[0]
-        x = f.domain_ancillaries("ncvar%a").value()
+        x = f.domain_ancillaries(view=True)("ncvar%a").value()
 
         x.set_property("long_name", "qwerty")
 
@@ -40,7 +40,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary_insert_dimension(self):
         f = cf.read(self.filename)[0]
-        d = f.dimension_coordinates("grid_longitude").value()
+        d = f.dimension_coordinates(view=True)("grid_longitude").value()
         x = cf.FieldAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -53,7 +53,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary_transpose(self):
         f = cf.read(self.filename)[0]
-        a = f.auxiliary_coordinates("longitude").value()
+        a = f.auxiliary_coordinates(view=True)("longitude").value()
         x = cf.FieldAncillary(source=a)
 
         self.assertEqual(x.shape, (9, 10))
@@ -66,7 +66,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary_squeeze(self):
         f = cf.read(self.filename)[0]
-        a = f.auxiliary_coordinates("longitude").value()
+        a = f.auxiliary_coordinates(view=True)("longitude").value()
         x = cf.FieldAncillary(source=a)
 
         x.insert_dimension(1, inplace=True)
@@ -79,9 +79,6 @@ class FieldAncillaryTest(unittest.TestCase):
 
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -2878,7 +2878,6 @@ class UMField:
                     origin -= 360.0
                 while origin + delta * size < -360.0:
                     origin += 360.0
-            # --- End: if
 
             array = numpy_arange(
                 origin + delta,

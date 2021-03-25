@@ -239,7 +239,7 @@ class _Meta:
             strict=strict_identities,
             relaxed=relaxed_identities,
             nc_only=ncvar_identities,
-            default=None
+            default=None,
         )
 
         if field_identity:
@@ -301,7 +301,7 @@ class _Meta:
 
         # Dictionaries mapping auxiliary coordinate identifiers
         # to their auxiliary coordinate objects
-        aux_1d = dict(f.auxiliary_coordinates.filter_by_naxes(1))
+        aux_1d = dict(f.auxiliary_coordinates(view=True).filter_by_naxes(1))
 
         # A set containing the identity of each coordinate
         #
@@ -314,13 +314,13 @@ class _Meta:
         # ------------------------------------------------------------
         # Coordinate references (formula_terms and grid mappings)
         # ------------------------------------------------------------
-        refs = f.coordinate_references
+        refs = f.coordinate_references(view=True)
         if not refs:
             self.coordrefs = ()
         else:
             self.coordrefs = list(refs.values())
 
-        for axis in f.domain_axes:
+        for axis in f.domain_axes(view=True):
 
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -333,7 +333,9 @@ class _Meta:
             info_dim = []
 
             #            dim_coord = item(axis)
-            dim_coords = f.dimension_coordinates.filter_by_axis("and", axis)
+            dim_coords = f.dimension_coordinates(view=True).filter_by_axis(
+                "and", axis
+            )
             dim_coord = dim_coords.value(None)
             dim_coord_key = dim_coords.key(None)
             dim_identity = None
@@ -485,9 +487,9 @@ class _Meta:
         # N-d auxiliary coordinates
         # ------------------------------------------------------------
         self.nd_aux = {}
-        for key, nd_aux_coord in f.auxiliary_coordinates.filter_by_naxes(
-            gt(1)
-        ).items():
+        for key, nd_aux_coord in (
+            f.auxiliary_coordinates(view=True).filter_by_naxes(gt(1)).items()
+        ):
 
             # Find axes' canonical identities
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
@@ -524,7 +526,7 @@ class _Meta:
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-        for key, field_anc in f.field_ancillaries.items():
+        for key, field_anc in f.field_ancillaries(view=True).items():
 
             # Find this field ancillary's identity
             identity = self.field_ancillary_has_identity_and_data(field_anc)
@@ -566,12 +568,12 @@ class _Meta:
 
         # Firstly process domain ancillaries which are used in
         # coordinate references
-        for ref in f.coordinate_references.values():
+        for ref in f.coordinate_references(view=True).values():
             for (
                 term,
                 identifier,
             ) in ref.coordinate_conversion.domain_ancillaries().items():
-                key = f.domain_ancillaries(identifier).key(None)
+                key = f.domain_ancillaries(view=True)(identifier).key(None)
                 if key is None:
                     continue
 
@@ -605,7 +607,7 @@ class _Meta:
 
         # Secondly process domain ancillaries which are not being used
         # in coordinate references
-        for key, anc in f.domain_ancillaries.items():
+        for key, anc in f.domain_ancillaries(view=True).items():
             if key in ancs_in_refs:
                 continue
 
@@ -637,7 +639,7 @@ class _Meta:
         self.msr = {}
         info_msr = {}
         copied_field = False
-        for key, msr in f.cell_measures.items():
+        for key, msr in f.cell_measures(view=True).items():
             # If the measure is an external variable, remove it because
             # the dimensions are not known so there is no way to tell if the
             # aggregation should have changed it. (This is sufficiently
@@ -872,7 +874,7 @@ class _Meta:
         """
         _canonical_cell_methods = self._canonical_cell_methods
 
-        cell_methods = self.field.cell_methods.ordered()
+        cell_methods = self.field.cell_methods(view=True).ordered()
         #        cms = getattr(self.field, 'CellMethods', None) # TODO
         if not cell_methods:
             return None
@@ -1940,8 +1942,10 @@ def aggregate(
             axis_items = meta[0].axis.items()
             for axis in axes:
                 # TODO IMPORTANT: should this be filter_by_axis ????
-                coords = meta[0].field.coordinates.filter_by_identity(
-                    "exact", axis
+                coords = (
+                    meta[0]
+                    .field.coordinates(view=True)
+                    .filter_by_identity("exact", axis)
                 )
                 coord = coords.value(default=None)
                 if coord is None:
@@ -2196,9 +2200,9 @@ def _create_hash_and_first_values(
                 continue
 
             # Still here?
-            dim_coord = m.field.dimension_coordinates.filter_by_axis(
-                "and", axis
-            )
+            dim_coord = m.field.dimension_coordinates(
+                view=True
+            ).filter_by_axis("and", axis)
 
             # Find the sort indices for this axis ...
             if dim_coord is not None:

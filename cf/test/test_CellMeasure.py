@@ -16,7 +16,7 @@ class CellMeasureTest(unittest.TestCase):
 
     def test_CellMeasure__repr__str__dump(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures("measure:area").value()
+        x = f.cell_measures(view=True)("measure:area").value()
 
         _ = repr(x)
         _ = str(x)
@@ -24,7 +24,7 @@ class CellMeasureTest(unittest.TestCase):
 
     def test_CellMeasure_measure(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures("measure:area").value()
+        x = f.cell_measures(view=True)("measure:area").value()
 
         self.assertEqual(x.measure, "area")
         del x.measure
@@ -34,16 +34,13 @@ class CellMeasureTest(unittest.TestCase):
 
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
-        x = f.cell_measures("measure:area").value()
+        x = f.cell_measures(view=True)("measure:area").value()
 
         self.assertEqual(x.identity(), "measure:area")
         del x.measure
         self.assertEqual(x.identity(), "ncvar%cell_measure", x.identity())
         x.nc_del_variable()
         self.assertEqual(x.identity(), "")
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -134,7 +134,7 @@ class Field_collapseTest(unittest.TestCase):
             print(g.constructs)
         self.assertEqual(list(g.shape), expected_shape)
 
-        for key in f.cell_methods:
+        for key in f.cell_methods(view=True):
             f.del_construct(key)
 
         g = f.collapse(
@@ -316,7 +316,6 @@ class Field_collapseTest(unittest.TestCase):
 
             a = a.min(axis=0)
             self.assertTrue(numpy.allclose(a, g.array[m % 12]))
-        # --- End: for
 
         g = f.collapse("T: mean", group=360)
 
@@ -340,7 +339,6 @@ class Field_collapseTest(unittest.TestCase):
                 group.offset.day,
                 "{}!={}, group={}".format(bound.day, group.offset.day, group),
             )
-        # --- End: for
 
     #            for group in (cf.D(30),
     #                          cf.D(30, month=12),
@@ -666,8 +664,6 @@ class Field_collapseTest(unittest.TestCase):
 #                           group_contiguous=2)
 #            g = f.collapse('T: mean', group=cf.M(5, month= 3),
 #                           group_contiguous=2)
-
-# --- End: class
 
 
 if __name__ == "__main__":

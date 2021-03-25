@@ -139,7 +139,6 @@ class functionTest(unittest.TestCase):
                     )
                 else:
                     self.assertEqual(post_set[name], val)
-        # --- End: for
 
         # Test the setting of more than one, but not all, items
         # simultaneously:
@@ -164,7 +163,6 @@ class functionTest(unittest.TestCase):
                 self.assertAlmostEqual(post_set[name], val, places=8)
             else:
                 self.assertEqual(post_set[name], val)
-        # --- End: for
 
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
@@ -275,7 +273,6 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-        # --- End: with
 
         # bounds_combination_mode
         func = cf.bounds_combination_mode
@@ -293,7 +290,6 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-        # --- End: with
 
         # Full configuration
         func = cf.configuration
@@ -346,9 +342,6 @@ class functionTest(unittest.TestCase):
             "Python: {}".format(platform.python_version()),
         ]:
             self.assertIn(component, ep)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

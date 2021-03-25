@@ -25,8 +25,8 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        _ = cf.FieldList(self.x)
-        _ = cf.FieldList([self.x])
+        cf.FieldList(self.x)
+        cf.FieldList([self.x])
 
     def test_FieldList__add__iadd__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -531,13 +531,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.index(c, start=-1), 2)
 
         with self.assertRaises(Exception):
-            _ = g.index(f)
+            g.index(f)
 
         with self.assertRaises(Exception):
-            _ = g.index(a, start=1)
-
-
-# --- End: class
+            g.index(a, start=1)
 
 
 if __name__ == "__main__":

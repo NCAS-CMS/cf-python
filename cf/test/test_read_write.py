@@ -37,7 +37,6 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-    # --- End: for
 
 
 atexit.register(_remove_tmpfiles)
@@ -157,7 +156,6 @@ class read_writeTest(unittest.TestCase):
                 os.symlink(pwd + f, pwd + subdir + "/" + f)
             except FileExistsError:
                 pass
-        # --- End: for
 
         f = cf.read(dir, aggregate=False)
         self.assertEqual(len(f), 1, f)
@@ -316,7 +314,7 @@ class read_writeTest(unittest.TestCase):
                             "Bad read/write with lossless compression: "
                             "{0}, {1}, {2}".format(fmt, compress, shuffle),
                         )
-        # --- End: for
+
         cf.chunksize(self.original_chunksize)
 
     def test_write_datatype(self):
@@ -370,7 +368,6 @@ class read_writeTest(unittest.TestCase):
             for double in (True, False):
                 with self.assertRaises(Exception):
                     _ = cf.write(g, double=double, single=single)
-        # --- End: for
 
         datatype = {numpy.dtype(float): numpy.dtype("float32")}
         with self.assertRaises(Exception):
@@ -412,7 +409,7 @@ class read_writeTest(unittest.TestCase):
                         + repr(reference_datetime)
                     ),
                 )
-        # --- End: for
+
         cf.chunksize(self.original_chunksize)
 
     def test_read_write_unlimited(self):
@@ -421,22 +418,26 @@ class read_writeTest(unittest.TestCase):
 
         for fmt in ("NETCDF4", "NETCDF3_CLASSIC"):
             f = cf.read(self.filename)[0]
+            domain_axes = f.domain_axes(view=True)
 
-            f.domain_axes["domainaxis0"].nc_set_unlimited(True)
+            domain_axes["domainaxis0"].nc_set_unlimited(True)
             cf.write(f, tmpfile, fmt=fmt)
 
             f = cf.read(tmpfile)[0]
-            self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
+            domain_axes = f.domain_axes(view=True)
+            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
 
         fmt = "NETCDF4"
         f = cf.read(self.filename)[0]
-        f.domain_axes["domainaxis0"].nc_set_unlimited(True)
-        f.domain_axes["domainaxis2"].nc_set_unlimited(True)
+        domain_axes = f.domain_axes(view=True)
+        domain_axes["domainaxis0"].nc_set_unlimited(True)
+        domain_axes["domainaxis2"].nc_set_unlimited(True)
         cf.write(f, tmpfile, fmt=fmt)
 
         f = cf.read(tmpfile)[0]
-        self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
-        self.assertTrue(f.domain_axes["domainaxis2"].nc_is_unlimited())
+        domain_axes = f.domain_axes(view=True)
+        self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
+        self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
     def test_read_pp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -528,7 +529,6 @@ class read_writeTest(unittest.TestCase):
 
                         for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=1))
-        # --- End: for
 
     def test_read_broken_bounds(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -536,9 +536,6 @@ class read_writeTest(unittest.TestCase):
 
         f = cf.read(self.broken_bounds, verbose=0)
         self.assertEqual(len(f), 2)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

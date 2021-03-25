@@ -27,12 +27,9 @@ class ListTest(unittest.TestCase):
 
         list_ = f.data.get_list()
 
-        _ = repr(list_)
-        _ = str(list_)
+        repr(list_)
+        str(list_)
         self.assertIsInstance(list_.dump(display=False), str)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

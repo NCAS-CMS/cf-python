@@ -27,12 +27,9 @@ class CountTest(unittest.TestCase):
 
         count = f.data.get_count()
 
-        _ = repr(count)
-        _ = str(count)
+        repr(count)
+        str(count)
         self.assertIsInstance(count.dump(display=False), str)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

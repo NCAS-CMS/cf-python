@@ -113,7 +113,6 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
-            # --- End: for
 
             f6 = cf.read(self.filename6)[0]
             with self.assertRaises(Exception):
@@ -181,9 +180,6 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

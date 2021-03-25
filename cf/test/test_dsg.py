@@ -27,7 +27,6 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-    # --- End: for
 
 
 atexit.register(_remove_tmpfiles)
@@ -359,9 +358,6 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(
             (z.data.get_count().data.array == numpy.array([2, 3])).all()
         )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

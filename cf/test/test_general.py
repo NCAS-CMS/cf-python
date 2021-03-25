@@ -212,8 +212,6 @@ class generalTest(unittest.TestCase):
         cf.chunksize(original_chunksize)
 
 
-# --- End: class
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

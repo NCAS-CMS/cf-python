@@ -27,12 +27,9 @@ class IndexTest(unittest.TestCase):
 
         index = f.data.get_index()
 
-        _ = repr(index)
-        _ = str(index)
+        repr(index)
+        str(index)
         self.assertIsInstance(index.dump(display=False), str)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

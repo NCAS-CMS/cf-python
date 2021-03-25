@@ -28,7 +28,6 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-    # --- End: for
 
 
 atexit.register(_remove_tmpfiles)
@@ -421,9 +420,6 @@ class DSGTest(unittest.TestCase):
                 ).all(),
                 message,
             )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

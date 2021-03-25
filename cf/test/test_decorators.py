@@ -69,9 +69,6 @@ class dummyClass:
         logger.warning(self.warning_message)
 
 
-# --- End: class
-
-
 class DecoratorsTest(unittest.TestCase):
     """Test decorators module.
 
@@ -216,9 +213,6 @@ class DecoratorsTest(unittest.TestCase):
                 test_class.decorated_logging_func()
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

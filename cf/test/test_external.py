@@ -221,9 +221,6 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertFalse(f_lon_thirds[1].cell_measures())
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     print(cf.environment())

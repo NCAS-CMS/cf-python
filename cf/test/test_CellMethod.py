@@ -86,7 +86,6 @@ class CellMethodTest(unittest.TestCase):
             cms = cf.CellMethod.create(s)
             for cm in cms:
                 self.assertTrue(cm.equivalent(cm.copy(), verbose=2))
-        # --- End: for
 
         # Intervals
         for s0, s1 in (
@@ -139,7 +138,6 @@ class CellMethodTest(unittest.TestCase):
                     cm0.equivalent(cm1, verbose=2),
                     "{0!r} not equivalent to {1!r}".format(cm0, cm1),
                 )
-        # --- End: for
 
     def test_CellMethod_get_set_delete(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -164,9 +162,6 @@ class CellMethodTest(unittest.TestCase):
         cm = cf.CellMethod.create("lat: mean (interval: 1 hour)")[0]
 
         self.assertEqual("1 hour", str(cm.intervals[0]))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -520,8 +520,6 @@ class TimeDurationTest(unittest.TestCase):
         )
 
 
-# --- End: class
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

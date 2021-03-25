@@ -154,7 +154,7 @@ class Constructs(cfdm.Constructs):
     #
     #         return self.constructs[da_key]
 
-    def filter_by_identity(self, *identities):
+    def filter_by_identity(self, *identities, view=False, **kwargs):
         """Select metadata constructs by identity.
 
         .. versionadded:: 3.0.0
@@ -205,10 +205,13 @@ class Constructs(cfdm.Constructs):
                 .. note:: This is an extension to the functionality of
                           `cfdm.Constucts.filter_by_identity`.
 
+        TODO
+
             kwargs: optional
                 Additional parameters for configuring each construct's
                 `identities` method. ``generator=True`` is passed by
-                default.
+                default, and ``ctype`` is inferred from the
+                *identities* parmaeter.
 
                 .. versionadded:: 3.9.0
 
@@ -246,4 +249,6 @@ class Constructs(cfdm.Constructs):
 
         ctype = [i for i in "XYZT" if i in identities]
 
-        return super().filter_by_identity(*identities, ctype=ctype)
+        return super().filter_by_identity(
+            *identities, view=view, ctype=ctype, **kwargs
+        )

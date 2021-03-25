@@ -694,8 +694,6 @@ def _make_external_files():
 
         nc.close()
 
-    # --- End: def
-
     parent_file = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "parent.nc"
     )
@@ -726,8 +724,6 @@ def _make_gathered_file(filename):
             if i in list_values:
                 array[index] = i
         return array
-
-    # --- End: def
 
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
