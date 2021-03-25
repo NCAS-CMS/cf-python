@@ -955,10 +955,12 @@ class FieldTest(unittest.TestCase):
         b = g + f
 
         axis = a.domain_axis("grid_longitude", key=1)
-        for key in a.field_ancillaries(view=True).filter_by_axis("or", axis):
+        for key in a.field_ancillaries(view=True).filter_by_axis(
+            axis, mode="or"
+        ):
             a.del_construct(key)
 
-        for key in a.cell_measures(view=True).filter_by_axis("or", axis):
+        for key in a.cell_measures(view=True).filter_by_axis(axis, mode="or"):
             a.del_construct(key)
 
         self.assertTrue(a.equals(b, verbose=2))
@@ -2154,12 +2156,12 @@ class FieldTest(unittest.TestCase):
             if identity == "domainaxis2":
                 key = (
                     f.dimension_coordinates(view=True)
-                    .filter_by_axis("and", identity)
+                    .filter_by_axis(identity, mode="and")
                     .key()
                 )
                 c = (
                     f.dimension_coordinates(view=True)
-                    .filter_by_axis("and", identity)
+                    .filter_by_axis(identity, mode="and")
                     .value()
                 )
             else:
@@ -2281,12 +2283,12 @@ class FieldTest(unittest.TestCase):
             if identity == "domainaxis2":
                 key = (
                     f.dimension_coordinates(view=True)
-                    .filter_by_axis("and", identity)
+                    .filter_by_axis(identity, mode="and")
                     .key()
                 )
                 c = (
                     f.dimension_coordinates(view=True)
-                    .filter_by_axis("and", identity)
+                    .filter_by_axis(identity, mode="and")
                     .value()
                 )
             elif identity == "X":

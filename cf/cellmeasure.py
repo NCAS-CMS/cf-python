@@ -144,47 +144,42 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
 
             n = self.nc_get_variable(None)
             if n is not None:
-                return "ncvar%{0}".format(n)
+                return f"ncvar%{n}"
 
             return default
 
         n = self.get_measure(default=None)
         if n is not None:
-            return "measure:{0}".format(n)
+            return f"measure:{n}"
 
         n = self.get_property("standard_name", None)
         if n is not None:
-            return "{0}".format(n)
+            return f"{n}"
 
         n = getattr(self, "id", None)
         if n is not None:
-            return "id%{0}".format(n)
+            return f"id%{n}"
 
         if relaxed:
             n = self.get_property("long_name", None)
             if n is not None:
-                return "long_name={0}".format(n)
+                return f"long_name={n}"
 
             n = self.nc_get_variable(None)
             if n is not None:
-                return "ncvar%{0}".format(n)
+                return f"ncvar%{n}"
 
             return default
 
         if strict:
             return default
 
-        for prop in ("long_name",):
-            n = self.get_property(prop, None)
-            if n is not None:
-                return "{0}={1}".format(prop, n)
-        # --- End: for
+        n = self.get_property("long_name", None)
+        if n is not None:
+            return f"long_name={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
-
-
-# --- End: class

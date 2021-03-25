@@ -93,7 +93,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
-        d = f.dimension_coordinates(view=True)(view=True)("X").value()
+        d = f.dimension_coordinates(view=True)("X").value()
         x = cf.AuxiliaryCoordinate(source=d)
 
         self.assertEqual(x.shape, (9,))

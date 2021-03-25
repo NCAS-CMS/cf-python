@@ -334,7 +334,7 @@ class _Meta:
 
             #            dim_coord = item(axis)
             dim_coords = f.dimension_coordinates(view=True).filter_by_axis(
-                "and", axis
+                axis, mode="and", view=True
             )
             dim_coord = dim_coords.value(None)
             dim_coord_key = dim_coords.key(None)
@@ -2202,7 +2202,7 @@ def _create_hash_and_first_values(
             # Still here?
             dim_coord = m.field.dimension_coordinates(
                 view=True
-            ).filter_by_axis("and", axis)
+            ).filter_by_axis(axis, mode="and", view=True)
 
             # Find the sort indices for this axis ...
             if dim_coord is not None:

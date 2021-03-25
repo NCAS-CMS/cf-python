@@ -242,12 +242,13 @@ class Constructs(cfdm.Constructs):
 
         """
         # Allow keys without the 'key%' prefix
-        identities = list(identities)
         for n, identity in enumerate(identities):
             if identity in self:
+                identities = list(identities)
                 identities[n] = "key%" + identity
+                break
 
-        ctype = [i for i in "XYZT" if i in identities]
+        ctype = [i for i in "XTYZ" if i in identities]
 
         return super().filter_by_identity(
             *identities, view=view, ctype=ctype, **kwargs

@@ -74,10 +74,12 @@ class Coordinate:
         True
 
         """
-        out = self.Units.isreftime or self.get_property("axis", None) == "T"
-
-        if out:
+        if self.Units.isreftime:
             return True
+        
+        axis = self.get_property("axis", None)
+        if axis is not None:
+            return axis == "T"
 
         # Still here? Then check the bounds.
         if self.has_bounds():
@@ -127,20 +129,23 @@ class Coordinate:
         False
 
         """
-        standard_names = (
-            "longitude",
-            "projection_x_coordinate",
-            "grid_longitude",
-        )
-        units = self.Units
-        out = (
-            units.islongitude
-            or self.get_property("axis", None) == "X"
-            or self.get_property("standard_name", None) in standard_names
-        )
-
-        if out:
+        standard_name = self.get_property("standard_name", None)
+        if (
+                standard_name is not None
+                and standard_name in (
+                    "longitude",
+                    "projection_x_coordinate",
+                    "grid_longitude"
+                )
+        ):
             return True
+                    
+        if self.Units.islongitude:
+            return True
+
+        axis = self.get_property("axis", None)
+        if axis is not None:
+            return axis == "X"
 
         # Still here? Then check the bounds.
         if self.has_bounds():
@@ -176,22 +181,24 @@ class Coordinate:
         True
 
         """
-        standard_names = (
-            "latitude",
-            "projection_y_coordinate",
-            "grid_latitude",
-        )
-
-        units = self.Units
-        out = (
-            units.islatitude
-            or self.get_property("axis", None) == "Y"
-            or self.get_property("standard_name", None) in standard_names
-        )
-
-        if out:
+        standard_name = self.get_property("standard_name", None)
+        if (
+                standard_name is not None
+                and standard_name in (
+                    "latitude",
+                    "projection_y_coordinate",
+                    "grid_latitude",
+                )
+        ):
+            return True
+            
+        if self.Units.islatitude:
             return True
 
+        axis = self.get_property("axis", None)
+        if axis is not None:
+            return axis == "Y"
+        
         # Still here? Then check the bounds.
         if self.has_bounds():
             bounds = self.get_bounds(None)
@@ -249,33 +256,38 @@ class Coordinate:
         True
 
         """
-        standard_names = (
-            "atmosphere_ln_pressure_coordinate",
-            "atmosphere_sigma_coordinate",
-            "atmosphere_hybrid_sigma_pressure_coordinate",
-            "atmosphere_hybrid_height_coordinate",
-            "atmosphere_sleve_coordinate",
-            "ocean_sigma_coordinate",
-            "ocean_s_coordinate",
-            "ocean_s_coordinate_g1",
-            "ocean_s_coordinate_g2",
-            "ocean_sigma_z_coordinate",
-            "ocean_double_sigma_coordinate",
-        )
+        standard_name = self.get_property("standard_name", None)
+        if (
+                standard_name is not None
+                and standard_name in  (
+                    "atmosphere_ln_pressure_coordinate",
+                    "atmosphere_sigma_coordinate",
+                    "atmosphere_hybrid_sigma_pressure_coordinate",
+                    "atmosphere_hybrid_height_coordinate",
+                    "atmosphere_sleve_coordinate",
+                    "ocean_sigma_coordinate",
+                    "ocean_s_coordinate",
+                    "ocean_s_coordinate_g1",
+                    "ocean_s_coordinate_g2",
+                    "ocean_sigma_z_coordinate",
+                    "ocean_double_sigma_coordinate",
+                )
+        ):
+            return True    
 
         units = self.Units
-        out = (
-            units.ispressure
-            or (
-                str(self.get_property("positive", "Z")).lower()
-                in ("up", "down")
-            )
-            or self.get_property("axis", None) == "Z"
-            or (units and units.units in ("level", "layer" "sigma_level"))
-            or self.get_property("standard_name", None) in standard_names
-        )
+        if units.ispressure:
+            return True
 
-        if out:
+        positive = self.get_property("positive", None)
+        if positive is not None:
+            return str(positive).lower() in ("up", "down")
+        
+        axis = self.get_property("axis", None)
+        if axis is not None:
+            return axis == "Z"
+        
+        if units and units.units in ("level", "layer" "sigma_level"):
             return True
 
         # Still here? Then check the bounds.
@@ -294,11 +306,12 @@ class Coordinate:
         """The axis CF property.
 
         The `axis` property may be used to specify the type of
-        coordinates. It may take one of the values `'X'`, `'Y'`, `'Z'` or
-        `'T'` which stand for a longitude, latitude, vertical, or time
-        axis respectively. A value of `'X'`, `'Y'` or `'Z'` may also also
-        used to identify generic spatial coordinates (the values `'X'` and
-        `'Y'` being used to identify horizontal coordinates).
+        coordinates. It may take one of the values `'X'`, `'Y'`, `'Z'`
+        or `'T'` which stand for a longitude, latitude, vertical, or
+        time axis respectively. A value of `'X'`, `'Y'` or `'Z'` may
+        also also used to identify generic spatial coordinates (the
+        values `'X'` and `'Y'` being used to identify horizontal
+        coordinates).
 
         **Examples:**
 
@@ -437,16 +450,16 @@ class Coordinate:
         :Parameters:
 
             default: optional
-                If no identity can be found then return the value of the
-                default parameter.
+                If no identity can be found then return the value of
+                the default parameter.
 
             strict: `bool`, optional
-                If True then the identity is the first found of only the
-                "standard_name" property or the "id" attribute.
+                If True then the identity is the first found of only
+                the "standard_name" property or the "id" attribute.
 
             relaxed: `bool`, optional
-                If True then the identity is the first found of only the
-                "standard_name" property, the "id" attribute, the
+                If True then the identity is the first found of only
+                the "standard_name" property, the "id" attribute, the
                 "long_name" property or the netCDF variable name.
 
             nc_only: `bool`, optional
@@ -501,41 +514,65 @@ class Coordinate:
     def identities(self, generator=False, ctype="XTYZ"):
         """Return all possible identities.
 
-                The identities comprise:
+        The identities comprise:
 
-                * The "standard_name" property.
-                * The "id" attribute, preceded by ``'id%'``.
-                * The "cf_role" property, preceded by ``'cf_role='``.
-                * The "axis" property, preceded by ``'axis='``.
-                * The "long_name" property, preceded by ``'long_name='``.
-                * All other properties (including "standard_name"), preceded by
-                  the property name and an ``'='``.
-                * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-                * The netCDF variable name, preceded by ``'ncvar%'``.
+        * The "standard_name" property.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The "cf_role" property, preceded by ``'cf_role='``.
+        * The "axis" property, preceded by ``'axis='``.
+        * The "long_name" property, preceded by ``'long_name='``.
+        * All other properties (including "standard_name"), preceded by
+          the property name and an ``'='``.
+        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
-                .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-                .. seealso:: `id`, `identity`
-        TODO
-                :Returns:
+        .. seealso:: `id`, `identity`
+        
+        :Parameters:
 
-                    `list`
-                        The identities.
+            {{generator: `bool`, optional}}
 
-                **Examples:**
+            ctype: (sequnce of) `str`
+                Restrict a coordinate type identies to be any of these
+                characters. Setting to a subset of ``'XTYZ'`` can give
+                performance improvements, as it will reduce the number
+                of coordinate types that are checked in circumstances
+                when particular coordinaete type have been ruled out a
+                priori.  If a coordinate type is omitted then it will
+                not be in the returned identities even if the
+                coordinate construct is of that type. Coordinate types
+                are checked in the order given.
 
-                >>> f.properties()
-                {'foo': 'bar',
-                 'long_name': 'Air Temperature',
-                 'standard_name': 'air_temperature'}
-                >>> f.nc_get_variable()
-                'tas'
-                >>> f.identities()
-                ['air_temperature',
-                 'long_name=Air Temperature',
-                 'foo=bar',
-                 'standard_name=air_temperature',
-                 'ncvar%tas']
+                *Parameter example:*
+                  ``ctype='Y'``
+
+                *Parameter example:*
+                  ``ctype='XY'``
+
+                *Parameter example:*
+                  ``ctype=('T', 'X')``
+                
+        :Returns:
+
+            `list`
+                The identities.
+
+        **Examples:**
+
+        >>> f.properties()
+        {'foo': 'bar',
+         'long_name': 'Air Temperature',
+         'standard_name': 'air_temperature'}
+        >>> f.nc_get_variable()
+        'tas'
+        >>> f.identities()
+        ['air_temperature',
+         'long_name=Air Temperature',
+         'foo=bar',
+         'standard_name=air_temperature',
+         'ncvar%tas']
 
         """
 
