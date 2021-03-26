@@ -494,7 +494,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # Set sizes of domain axes
         data_axes = new.get_data_axes()
-        domain_axes = new.domain_axes(_dict=True)
+        domain_axes = new.domain_axes(todict=True)
         for axis, size in zip(data_axes, new_data.shape):
             domain_axes[axis].set_size(size)
 
@@ -741,7 +741,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         dimension_coordinates = self.dimension_coordinates(view=True)
         auxiliary_coordinates = self.auxiliary_coordinates(view=True)
 
-        for axis in self.domain_axes(_dict=True):
+        for axis in self.domain_axes(todict=True):
 
             dims = dimension_coordinates.filter_by_axis(
                 axis, mode="and", view=True
@@ -1512,16 +1512,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
         refs0 = dict(field0.coordinate_references)
         refs1 = dict(field1.coordinate_references)
 
-        field1_dimension_coordinates = field1.dimension_coordinates(_dict=True)
-        field1_auxiliary_coordinates = field1.auxiliary_coordinates(_dict=True)
-        field1_coordinate_references = field1.coordinate_references(_dict=True)
-        field1_domain_ancillaries = field1_domain_ancillaries(_dict=True)
-        field1_domain_axes = field1.domain_axes(_dict=True)
+        field1_dimension_coordinates = field1.dimension_coordinates(todict=True)
+        field1_auxiliary_coordinates = field1.auxiliary_coordinates(todict=True)
+        field1_coordinate_references = field1.coordinate_references(todict=True)
+        field1_domain_ancillaries = field1_domain_ancillaries(todict=True)
+        field1_domain_axes = field1.domain_axes(todict=True)
 
         #        field0_auxiliary_coordinates = field0.auxiliary_coordinates(view=True)
-        field0_domain_ancillaries = field0_domain_ancillaries(_dict=True)
+        field0_domain_ancillaries = field0_domain_ancillaries(todict=True)
         c = field0.constructs.filter_by_type(
-            "auxiliary_coordinate", "domain_ancillary", _dict=True
+            "auxiliary_coordinate", "domain_ancillary", todict=True
         )
 
         for axis0 in s["size1_broadcast_axes"] + s["new_size1_axes"]:
@@ -1563,7 +1563,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             *tuple(
                                 ref0.coordinate_conversion.domain_ancillaries().values()
                             ),
-                            _dict=True,
+                            todict=True,
                         )
                     )
 
@@ -1768,7 +1768,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     "dimension_coordinate",
                     "axuiliary_coordinate",
                     "domain_ancillary",
-                    _dict=True,
+                    todict=True,
                 )
             )
             for key1, item1 in identity_map.copy().items():
@@ -1907,7 +1907,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             f_dimension_coordinates = f.dimension_coordinates(view=True)
             f_auxiliary_coordinates = f.auxiliary_coordinates(view=True)
-            for axis in f.domain_axes(_dict=True):
+            for axis in f.domain_axes(todict=True):
                 identity = None
                 key = None
                 coord = None
@@ -2224,7 +2224,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Copy over coordinate reference constructs from field1,
         # including their domain ancillary constructs.
         # ------------------------------------------------------------
-        for key, ref in field1.coordinate_references(_dict=True).items():
+        for key, ref in field1.coordinate_references(todict=True).items():
             axes = field1._coordinate_reference_axes(key)
             if axes.issubset(new_axes):
                 refs_to_add_from_field1.append(ref)
@@ -2343,7 +2343,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         identity = self.constructs[key].identity(strict=True)
 
         if coordref is None:
-            refs = self.coordinate_references(_dict=True).values()
+            refs = self.coordinate_references(todict=True).values()
         else:
             refs = [coordref]
 
@@ -2393,7 +2393,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         axis_map = {}
 
-        for cm in self.cell_methods(_dict=True).values():
+        for cm in self.cell_methods(todict=True).values():
             for axis in cm.get_axes(()):
                 if axis in axis_map:
                     continue
@@ -2441,8 +2441,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             `bool`
 
         """
-        ref0 = self.coordinate_references(_dict=True)[key0]
-        ref1 = field1.coordinate_references(_dict=True)[key1]
+        ref0 = self.coordinate_references(todict=True)[key0]
+        ref1 = field1.coordinate_references(todict=True)[key1]
 
         if not ref0.equivalent(ref1, rtol=rtol, atol=atol, verbose=verbose):
             logger.info(
@@ -2563,7 +2563,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         f"axes (got {len(set(axes))}, expected {ndim})"
                     )
 
-                domain_axes = self.domain_axes(_dict=True)
+                domain_axes = self.domain_axes(todict=True)
                 axes2 = []
                 for axis, size in zip(axes, item.data.shape):
                     dakey = self.domain_axis(
@@ -2651,7 +2651,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         #              then other.data becomes            Y   X T
         # ------------------------------------------------------------
         squeeze_axes1 = []
-        other_domain_axes = other.domain_axes(_dict=True)
+        other_domain_axes = other.domain_axes(todict=True)
 
         for axis1 in v["undefined_axes"]:
             axis_size = other_domain_axes[axis1].get_size()
@@ -3077,7 +3077,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     f"{name} field has multiple 'Y' dimension coordinates"
                 )
 
-            # TODO review for view/_dict. Is x_axis same as x_key?
+            # TODO review for view/todict. Is x_axis same as x_key?
             x = xdims.value()
             y = ydims.value()
             x_key = xdims.key()
@@ -3160,7 +3160,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     ),
                 )
 
-            domain_axes = self.domain_axes(_dict=True)
+            domain_axes = self.domain_axes(todict=True)
             x_size = domain_axes[x_axis].get_size()
             y_size = domain_axes[y_axis].get_size()
 
@@ -3779,7 +3779,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         domain_axes = None
         domain_ancillaries = None
 
-        for key, ref in self.coordinate_references(_dict=True).items():
+        for key, ref in self.coordinate_references(todict=True).items():
             ref_axes = []
             for k in ref.coordinates():
                 ref_axes.extend(self.get_data_axes(k))
@@ -3792,7 +3792,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 term,
                 value,
             ) in ref.coordinate_conversion.domain_ancillaries().items():
-                # TODo review for view/_dict
+                # TODo review for view/todict
                 domain_ancillaries = self.domain_ancillaries(
                     view=True, cache=domain_ancillaries
                 )
@@ -3845,7 +3845,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         d_axes = self.get_data_axes(key)
 
                         domain_axes = self.domain_axes(
-                            _dict=True, cache=domain_axes
+                            todict=True, cache=domain_axes
                         )
 
                         for k_s, new_size in zip(
@@ -3877,7 +3877,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             `None`
 
         """
-        for ref in dst.coordinate_references(_dict=True).values():
+        for ref in dst.coordinate_references(todict=True).values():
             axes = set()
             for key in ref.coordinates():
                 axes.update(dst.get_data_axes(key))
@@ -3964,7 +3964,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         ):
             self.del_construct(key)
 
-        domain_axes = self.domain_axes(_dict=True)
+        domain_axes = self.domain_axes(todict=True)
         dst_auxiliary_coordinates = None
 
         if cartesian:
@@ -4053,7 +4053,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # Copy names of dimensions from destination to source field
         if not dst_dict:
-            dst_domain_axes = dst.domain_axes(_dict=True)
+            dst_domain_axes = dst.domain_axes(todict=True)
             for src_axis_key, dst_axis_key in zip(
                 src_axis_keys, dst_axis_keys
             ):
@@ -4324,8 +4324,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             axis1_to_axis0 = {}
 
-            coordinate_references = self.coordinate_references(_dict=True)
-            w_coordinate_references = w.coordinate_references(_dict=True)
+            coordinate_references = self.coordinate_references(todict=True)
+            w_coordinate_references = w.coordinate_references(todict=True)
 
             for axis1 in w.get_data_axes():
                 identity = t["axis_to_id"].get(axis1, None)
@@ -5404,7 +5404,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def ncdimensions(self):
         """"""
         out = {}
-        for dim, domain_axis in self.domain_axes(_dict=True).items():
+        for dim, domain_axis in self.domain_axes(todict=True).items():
             ncdim = domain_axis.nc_get_dimension(None)
             if ncdim is not None:
                 out[dim] = ncdim
@@ -5444,7 +5444,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         4
 
         """
-        return len(self.domain_axes(_dict=True))
+        return len(self.domain_axes(todict=True))
 
     @property
     def varray(self):
@@ -6011,7 +6011,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         radii = []
-        for cr in self.coordinate_references(_dict=True).values():
+        for cr in self.coordinate_references(todict=True).values():
             r = cr.datum.get_parameter("earth_radius", None)
             if r is not None:
                 r = Data.asdata(r)
@@ -6115,7 +6115,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         super().close()
 
-        for construct in self.constructs.filter_by_data(_dict=True).values():
+        for construct in self.constructs.filter_by_data(todict=True).values():
             construct.close()
 
     def iscyclic(self, identity, **kwargs):
@@ -6231,7 +6231,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Concatenate constructs with data
         # ------------------------------------------------------------
         for key, construct in field0.constructs.filter_by_data(
-            _dict=True
+            todict=True
         ).items():
             construct_axes = field0.get_data_axes(key)
 
@@ -6745,7 +6745,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # coordinates
                 pass
 
-            domain_axes = self.domain_axes(_dict=True)
+            domain_axes = self.domain_axes(todict=True)
 
             for da_key in domain_axes:
                 if self._weights_geometry_area(
@@ -7077,17 +7077,17 @@ class Field(mixin.PropertiesData, cfdm.Field):
         field.del_data()
         field.del_data_axes()
 
-        not_needed_axes = set(field.domain_axes(_dict=True)).difference(
+        not_needed_axes = set(field.domain_axes(todict=True)).difference(
             weights_axes
         )
 
-        for key in self.cell_methods(_dict=True).copy():
+        for key in self.cell_methods(todict=True).copy():
             field.del_construct(key)
 
-        for key in self.field_ancillaries(_dict=True).copy():
+        for key in self.field_ancillaries(todict=True).copy():
             field.del_construct(key)
 
-        for key in field.coordinate_references(_dict=True).copy():
+        for key in field.coordinate_references(todict=True).copy():
             if field.coordinate_reference_domain_axes(key).intersection(
                 not_needed_axes
             ):
@@ -8463,7 +8463,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 default, f"Can't identify construct from {construct!r}"
             )
 
-        for key, ref in tuple(self.coordinate_references(_dict=True).items()):
+        for key, ref in tuple(self.coordinate_references(todict=True).items()):
             if c_key in ref.coordinates():
                 self.del_coordinate_reference(
                     key, construct=None, default=default
@@ -8617,7 +8617,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             self.squeeze(dakey, inplace=True)
 
         for ckey, construct in self.constructs.filter_by_data(
-            _dict=True
+            todict=True
         ).items():
             data = construct.get_data(None, _fill_value=False)
             if data is None:
@@ -8739,7 +8739,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             )
 
         for cr_key, ref in tuple(
-            self.coordinate_references(_dict=True).items()
+            self.coordinate_references(todict=True).items()
         ):
             if c_key in [
                 ref.coordinates(),
@@ -8808,8 +8808,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Still here?
         ref = coordinate_reference.copy()
 
-        coordinates = field.coordinates(_dict=True)
-        domain_ancillaries = field.domain_ancillaries(_dict=True)
+        coordinates = field.coordinates(todict=True)
+        domain_ancillaries = field.domain_ancillaries(todict=True)
 
         ckeys = []
         for value in coordinate_reference.coordinates():
@@ -10810,7 +10810,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             aux.bounds.set_data(d.bounds.data, copy=False)
 
                 # Reset the axis size
-                f.domain_axes(_dict=True)[axis].set_size(1)
+                f.domain_axes(todict=True)[axis].set_size(1)
                 logger.info(
                     f"Changing axis size to 1: {axis}"
                 )  # pragma: no cover
@@ -11459,7 +11459,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
         # Size of uncollapsed axis
-        axis_size = self.domain_axes(_dict=True)[axis].get_size()
+        axis_size = self.domain_axes(todict=True)[axis].get_size()
         # Integer position of collapse axis
         iaxis = self.get_data_axes().index(axis)
 
@@ -12121,7 +12121,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     if group_span is not False:
                         if isinstance(group_span, int):
                             if (
-                                pc.domain_axes(_dict=True)[axis].get_size()
+                                pc.domain_axes(todict=True)[axis].get_size()
                                 != group_span
                             ):
                                 classification[index] = ignore_n
@@ -12258,7 +12258,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 
-        if squeeze and f.domain_axes(_dict=True)[axis].get_size() == 1:
+        if squeeze and f.domain_axes(todict=True)[axis].get_size() == 1:
             # Remove a totally collapsed axis from the field's
             # data array
             f.squeeze(axis, inplace=True)
@@ -12341,7 +12341,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
                 if (
                     original_domain_axis.get_size()
-                    == self.domain_axes(_dict=True)[key].get_size()
+                    == self.domain_axes(todict=True)[key].get_size()
                 ):
                     if (
                         lastcm.get_axes(None) == axes
@@ -12437,7 +12437,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if axis is None:
             return True
 
-        for key, coord in self.dimension_coordinates(_dict=True).items():
+        for key, coord in self.dimension_coordinates(todict=True).items():
             if axis == self.get_data_axes(key)[0]:
                 return coord.direction()
 
@@ -12461,9 +12461,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         {'dim1': True, 'dim0': False}
 
         """
-        out = {key: True for key in self.domain_axes(_dict=True).keys()}
+        out = {key: True for key in self.domain_axes(todict=True).keys()}
 
-        for key, dc in self.dimension_coordinates(_dict=True).items():
+        for key, dc in self.dimension_coordinates(todict=True).items():
             direction = dc.direction()
             if not direction:
                 axis = self.get_data_axes(key)[0]
@@ -12762,7 +12762,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Initialize indices
         indices = [slice(None)] * self.ndim
 
-        domain_axes = self.domain_axes(_dict=True)
+        domain_axes = self.domain_axes(todict=True)
         constructs = self.constructs.filter_by_data(view=True)
 
         parsed = {}
@@ -13284,7 +13284,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
 
-        domain_axes = f.domain_axes(_dict=True)
+        domain_axes = f.domain_axes(todict=True)
         if axes is None and not domain_axes:
             set_axes = False
 
@@ -13438,7 +13438,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         mask.nc_del_variable(None)
 
         for key in self.constructs.filter_by_type(
-            "cell_method", "field_ancillary", _dict=True
+            "cell_method", "field_ancillary", todict=True
         ):
             mask.del_construct(key)
 
@@ -13563,7 +13563,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        for cr in f.coordinate_references(_dict=True).values():
+        for cr in f.coordinate_references(todict=True).values():
             # --------------------------------------------------------
             # Compute the non-parametric vertical coordinates, if
             # possible.
@@ -13906,7 +13906,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if not ranks:
             return True
 
-        n_domain_axes = len(self.domain_axes(_dict=True))
+        n_domain_axes = len(self.domain_axes(todict=True))
         for rank in ranks:
             ok = rank == n_domain_axes
             if ok:
@@ -14987,7 +14987,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         super(Field, f).flip(iaxes, inplace=True)
 
         # Flip any constructs which span the flipped axes
-        for key, construct in f.constructs.filter_by_data(_dict=True).items():
+        for key, construct in f.constructs.filter_by_data(todict=True).items():
             construct_axes = f.get_data_axes(key)
             construct_flip_axes = axes.intersection(construct_axes)
             if construct_flip_axes:
@@ -15150,7 +15150,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 f"Anchor value has incompatible units: {value.Units!r}"
             )
 
-        axis_size = f.domain_axes(_dict=True)[axis].get_size()
+        axis_size = f.domain_axes(todict=True)[axis].get_size()
         if axis_size <= 1:
             # Don't need to roll a size one axis
             if dry_run:
@@ -15327,7 +15327,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         >>> f.autocyclic()
 
         """
-        dims = self.dimension_coordinates(view=True).filter_by_identity("X", view=True)._dictionary()
+#        dims = self.dimension_coordinates(view=True).filter_by_identity("X", view=True)._dictionary()
+
+        dims = self.dimension_coordinates("X", todict=True)
 
         if len(dims) != 1:
             return False
@@ -15474,7 +15476,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         data_axes = self.get_data_axes()
 
         if axes is None:
-            domain_axes = self.domain_axes(_dict=True)
+            domain_axes = self.domain_axes(todict=True)
             axes = [
                 axis
                 for axis in data_axes
@@ -17079,7 +17081,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 self, "axes_names", kwargs
             )  # pragma: no cover
 
-        out = self.domain_axes(_dict=True).copy()
+        out = self.domain_axes(todict=True).copy()
 
         for key in tuple(out):
             value = self.constructs.domain_axis_identity(key)
@@ -17188,7 +17190,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         axis = self.domain_axis(identity, key=True)
 
-        domain_axes = self.domain_axes(_dict=True)
+        domain_axes = self.domain_axes(todict=True)
 
         da = domain_axes.get(axis)
         if da is not None:
@@ -17340,7 +17342,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             self._conform_cell_methods()
 
         elif construct_type == "coordinate_reference":
-            for ckey in self.coordinates(_dict=True):
+            for ckey in self.coordinates(todict=True):
                 self._conform_coordinate_references(ckey, coordref=construct)
 
         # Return the construct key
@@ -17733,7 +17735,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             d.set_size(d.get_size() + 2 * h)
 
         # Add halos to metadata constructs
-        for key, c in f.constructs.filter_by_data(_dict=True).items():
+        for key, c in f.constructs.filter_by_data(todict=True).items():
             construct_axes = f.get_data_axes(key)
             construct_size = {
                 construct_axes.index(axis): h
@@ -17977,7 +17979,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         for axis in [
             axis
-            for axis in self.domain_axes(_dict=True)
+            for axis in self.domain_axes(todict=True)
             if axis not in data_axes
         ]:
             out.set_construct(self._DomainAxis(1), key=axis)
@@ -18035,7 +18037,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         other_axes = set(
             [
                 axis
-                for axis in self.domain_axes(_dict=True)
+                for axis in self.domain_axes(todict=True)
                 if axis not in axes or self.domain_axis(axis).size == 1
             ]
         )
@@ -18053,10 +18055,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Copy coordinate reference constructs to the output field
         # ------------------------------------------------------------
-        out_coordinates = out.coordinates(_dict=True)
-        out_domain_ancillaries = out.domain_ancillaries(_dict=True)
+        out_coordinates = out.coordinates(todict=True)
+        out_domain_ancillaries = out.domain_ancillaries(todict=True)
 
-        for cr_key, ref in self.coordinate_references(_dict=True).items():
+        for cr_key, ref in self.coordinate_references(todict=True).items():
             ref = ref.copy()
 
             for c_key in ref.coordinates():
@@ -18495,7 +18497,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         f.set_data_axes(new_data_axes)
 
         # Modify or remove cell methods that span the flatten axes
-        for key, cm in tuple(f.cell_methods(_dict=True).items()):
+        for key, cm in tuple(f.cell_methods(todict=True).items()):
             cm_axes = set(cm.get_axes(()))
             if not cm_axes or cm_axes.isdisjoint(axes):
                 continue
@@ -18631,7 +18633,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         )
         f = _inplace_enabled_define_and_cleanup(self)
 
-        domain_axes = self.domain_axes(_dict=True)
+        domain_axes = self.domain_axes(todict=True)
         if domain_axes[axis].get_size() <= 1:
             if inplace:
                 f = None
@@ -18659,7 +18661,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         super(Field, f).roll(iaxis, shift, inplace=True)
 
-        for key, construct in f.constructs.filter_by_data(_dict=True).items():
+        for key, construct in f.constructs.filter_by_data(todict=True).items():
             axes = f.get_data_axes(key, default=())
             if axis in axes:
                 construct.roll(axes.index(axis), shift, inplace=True)
@@ -20860,7 +20862,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 "Use methods of the 'coordinates' attribute instead.",
             )  # pragma: no cover
 
-        if identity in self.domain_axes(_dict=True):
+        if identity in self.domain_axes(todict=True):
             # Allow an identity to be the domain axis construct key
             # spanned by a dimension coordinate construct
             return self.dimension_coordinate(
