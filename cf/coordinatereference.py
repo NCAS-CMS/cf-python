@@ -226,7 +226,6 @@ class CoordinateReference(cfdm.CoordinateReference):
     #                    if not canonical_units.equivalent(units):
     #                        raise ValueError("xasdddddddddddddd 87236768 TODO")
     #                    value.Units = canonical_units
-    #        # --- End:  for
     #
     #        return ref
 

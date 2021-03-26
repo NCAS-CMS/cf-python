@@ -55,10 +55,6 @@ class DimensionCoordinate(
 
     {{netcdf variable}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-
     """
 
     def __new__(cls, *args, **kwargs):
@@ -135,7 +131,6 @@ class DimensionCoordinate(
                         1,
                     )
                 )
-        # --- End: if
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
@@ -673,12 +668,10 @@ class DimensionCoordinate(
 
                 if not direction:
                     bounds_1d = bounds_1d[::-1]
-            # --- End: if
 
             bounds = numpy_empty((size, 2), dtype=dtype)
             bounds[:, 0] = bounds_1d[:-1]
             bounds[:, 1] = bounds_1d[1:]
-        # --- End: if
 
         # Create coordinate bounds object
         bounds = Bounds(data=Data(bounds, units=self.Units), copy=False)
@@ -783,7 +776,6 @@ class DimensionCoordinate(
     #                if verbose:
     #                    print(1)
     #                return False
-    #        # --- End: if
     #
     #        bounds = self.get_bounds(None)
     #        if bounds is None:
@@ -821,7 +813,6 @@ class DimensionCoordinate(
                 return
             else:
                 return self.copy()
-        # --- End: if
 
         shift %= self.size
 

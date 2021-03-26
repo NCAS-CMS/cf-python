@@ -188,6 +188,3 @@ class DomainAxis(cfdm.DomainAxis):
 
         """
         print(cf_inspect(self))  # pragma: no cover
-
-
-# --- End: class

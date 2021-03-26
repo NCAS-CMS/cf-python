@@ -23,6 +23,3 @@ class NodeCountProperties(mixin.Properties, cfdm.NodeCountProperties):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

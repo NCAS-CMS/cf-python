@@ -88,7 +88,6 @@ class Flags:
         for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 return True
-        # --- End: for
 
         return False
 
@@ -293,7 +292,6 @@ class Flags:
             value = getattr(self, attr, None)
             if value is not None:
                 string.append("%s%s = %s" % (indent1, attr[1:], list(value)))
-        # --- End: for
 
         return "\n".join(string)
 
@@ -406,7 +404,6 @@ class Flags:
                     % (self.__class__.__name__, attr[1:])
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         return True
 
@@ -450,13 +447,8 @@ class Flags:
             if hasattr(self, attr):
                 indices = numpy_argsort(getattr(self, attr))
                 break
-        # --- End: for
 
         for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
                 array = getattr(self, attr).view()
                 array[...] = array[indices]
-        # --- End: for
-
-
-# --- End: class

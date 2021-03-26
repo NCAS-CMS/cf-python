@@ -45,7 +45,8 @@ class Constructs(cfdm.Constructs):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    def _matching_values(self, value0, construct, value1, basic=False):
+    @classmethod
+    def _matching_values(cls, value0, construct, value1, basic=False):
         """Whether two values match according to equality on a given
         construct.
 
@@ -154,7 +155,7 @@ class Constructs(cfdm.Constructs):
     #
     #         return self.constructs[da_key]
 
-    def filter_by_identity(self, *identities, view=False, **kwargs):
+    def filter_by_identity(self, *identities, view=False, todict=False, cache=None, **identities_kwargs):
         """Select metadata constructs by identity.
 
         .. versionadded:: 3.0.0
@@ -205,13 +206,17 @@ class Constructs(cfdm.Constructs):
                 .. note:: This is an extension to the functionality of
                           `cfdm.Constucts.filter_by_identity`.
 
-        TODO
+            {{view: `bool`, optional}}
 
-            kwargs: optional
+            {{todict: `bool`, optional}}
+
+            {{cache: optional}}
+
+            identities_kwargs: optional
                 Additional parameters for configuring each construct's
-                `identities` method. ``generator=True`` is passed by
-                default, and ``ctype`` is inferred from the
-                *identities* parmaeter.
+                `identities` method. By default ``generator=True`` is
+                passed by default, and ``ctype`` is inferred from the
+                *identities* parameter.
 
                 .. versionadded:: 3.9.0
 
@@ -241,6 +246,9 @@ class Constructs(cfdm.Constructs):
         >>> d = c.filter_by_identity('ncvar%time')
 
         """
+        if cache is not None:
+            return cache
+            
         # Allow keys without the 'key%' prefix
         for n, identity in enumerate(identities):
             if identity in self:
@@ -251,5 +259,5 @@ class Constructs(cfdm.Constructs):
         ctype = [i for i in "XTYZ" if i in identities]
 
         return super().filter_by_identity(
-            *identities, view=view, ctype=ctype, **kwargs
+            *identities, view=view, todict=todict, ctype=ctype, **identities_kwargs
         )

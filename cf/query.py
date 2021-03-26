@@ -200,18 +200,19 @@ class Query:
                 The value of the condition.
 
             units: `str` or `Units`, optional
-                The units of *value*. By default, the same units as the operand
-                being tested are assumed, if applicable. If *units* is
-                specified and *value* already has units (such as those attached
-                to a `Data` object), then the pair of units must be equivalent.
+                The units of *value*. By default, the same units as
+                the operand being tested are assumed, if
+                applicable. If *units* is specified and *value*
+                already has units (such as those attached to a `Data`
+                object), then the pair of units must be equivalent.
 
             attr: `str`, optional
                 Apply the condition to the attribute, or nested
                 attributes, of the operand, rather than the operand
-                itself. Nested attributes are specified by separating them
-                with a ``.``. For example, the "month" attribute of the
-                "bounds" attribute is specified as ``'bounds.month'``. See
-                also the `addattr` method.
+                itself. Nested attributes are specified by separating
+                them with a ``.``. For example, the "month" attribute
+                of the "bounds" attribute is specified as
+                ``'bounds.month'``. See also the `addattr` method.
 
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
@@ -228,7 +229,6 @@ class Query:
                         value_units, Units(units)
                     )
                 )
-        # --- End: if
 
         self._operator = operator
         self._value = value
@@ -568,7 +568,6 @@ class Query:
                     )
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         return True
 
@@ -654,7 +653,6 @@ class Query:
                     "Can't perform regular expression search on a "
                     "non-string: {!r}".format(x)
                 )
-        # --- End: if
 
         if operator == "ne":
             try:
@@ -666,7 +664,6 @@ class Query:
                     "Can't perform regular expression search on a "
                     "non-string: {!r}".format(x)
                 )
-        # --- End: if
 
         if operator == "lt":
             _lt = getattr(x, "__query_lt__", None)
@@ -716,7 +713,6 @@ class Query:
         #                return _contain(value)
         #            else:
         #                return x == value
-        #        # --- End: if
 
         if operator == "set":
             if isinstance(x, str):
@@ -727,7 +723,6 @@ class Query:
                     except AttributeError:
                         if x == v:
                             return True
-                # --- End: for
 
                 return False
             else:
@@ -742,7 +737,6 @@ class Query:
                     out |= x == v
 
                 return out
-        # --- End: if
 
     def inspect(self):
         """Inspect the object for debugging.
@@ -775,9 +769,6 @@ class Query:
         _DEPRECATION_ERROR_FUNCTION(self, "equivalent")
 
 
-# --- End: class
-
-
 # --------------------------------------------------------------------
 # Constructor functions
 # --------------------------------------------------------------------
@@ -793,10 +784,11 @@ def lt(value, units=None, attr=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -853,10 +845,11 @@ def le(value, units=None, attr=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -896,13 +889,13 @@ def gt(value, units=None, attr=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
-
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
@@ -940,10 +933,11 @@ def ge(value, units=None, attr=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -991,10 +985,11 @@ def eq(value, units=None, attr=None, exact=True):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -1050,10 +1045,11 @@ def ne(value, units=None, attr=None, exact=True):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -1104,10 +1100,11 @@ def wi(value0, value1, units=None, attr=None):
              The upper bound of the range.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -1150,10 +1147,11 @@ def wo(value0, value1, units=None, attr=None):
              The upper bound of the range.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -1193,10 +1191,11 @@ def set(values, units=None, attr=None, exact=True):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
         attr: `str`, optional
             Apply the condition to the attribute, or nested
@@ -1246,10 +1245,11 @@ def contains(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1532,10 +1532,11 @@ def cellsize(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1575,10 +1576,11 @@ def cellwi(value0, value1, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1608,10 +1610,11 @@ def cellwo(value0, value1, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1642,10 +1645,11 @@ def cellgt(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1674,10 +1678,11 @@ def cellge(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
 
     :Returns:
@@ -1707,10 +1712,11 @@ def celllt(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1739,10 +1745,11 @@ def cellle(value, units=None):
             The query condition's value.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the operand
-            being tested are assumed, if applicable. If *units* is
-            specified and *value* already has units (such as those attached
-            to a `Data` object), then the pair of units must be equivalent.
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
 
     :Returns:
 
@@ -1974,7 +1981,6 @@ def seasons(n=4, start=12):
         m0 = m1 + 1
         if m0 > 12:
             m0 = 1
-    # --- End: for
 
     return out
 

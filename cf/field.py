@@ -276,23 +276,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     {{netCDF variable}}
 
-    The selection of properties to be written as netCDF global
-    attributes may be accessed with the `nc_global_attributes`,
-    `nc_clear_global_attributes` and `nc_set_global_attribute`
-    methods.
+    {{netCDF global attributes}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-
-    The netCDF group attributes may be accessed with the
-    `nc_group_attributes`, `nc_clear_group_attributes`,
-    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
-
-    The netCDF geometry variable group structure may be accessed with
-    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
-    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
-    `nc_set_geometry_variable_groups` methods.
+    {{netCDF group attributes}}
+    
+    {{netCDF geometry group}}
 
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
@@ -16140,22 +16128,55 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        domain_ancillaries = self.domain_ancillaries(view=True)
-        c = domain_ancillaries
+        if identity is None:
+            identities = ()
+        else:
+            identities = (identity,)
+            
+        domain_ancillaries = self.domain_ancillaries(*identities, todict=True)
 
-        if identity is not None:
-            c = c(identity, view=True)
-            if not c:
-                da_key = self.domain_axis(identity, key=True, default=None)
-                if da_key is not None:
-                    c = domain_ancillaries.filter_by_axis(
-                        da_key, mode="exact", view=True
-                    )
+        if not c:
+            da_key = self.domain_axis(identity, key=True, default=None)
+            if da_key is not None:
+                c = self.constructs.chain(
+                    "filter_by_type",
+                    ("domain_ancillary",), "filter_by_axis", (da_key,),
+                    mode="exact", todict=True
+                )
 
+        if not c:
+            return self._default(
+                default,
+                "TODO 1"
+            )
+       
+        if len(c) > 1:
+            return self._default(
+                default,
+                "TODO 2"
+            )
+
+        key, construct = c.popitem()
         if key:
-            return c.key(default=default)
+            return key
 
-        return c.value(default=default)
+        return construct
+        
+#        c = domain_ancillaries
+#
+#        if identity is not None:
+#            c = c(identity, view=True)
+#            if not c:
+#                da_key = self.domain_axis(identity, key=True, default=None)
+#                if da_key is not None:
+#                    c = domain_ancillaries.filter_by_axis(
+#                        da_key, mode="exact", view=True
+#                    )
+#
+#        if key:
+#            return c.key(default=default)
+#
+#        return c.value(default=default)
 
     def cell_measure(self, identity=None, default=ValueError(), key=False):
         """Select a cell measure construct by its identity.

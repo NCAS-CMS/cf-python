@@ -22,9 +22,7 @@ class InteriorRing(mixin.PropertiesData, cfdm.InteriorRing):
 
     **NetCDF interface**
 
-    The netCDF variable name of the interior ring variable may be
-    accessed with the `nc_set_variable`, `nc_get_variable`,
-    `nc_del_variable` and `nc_has_variable` methods.
+    {{netCDF variable}}}
 
     The name of the netCDF dimension spanned by the interior ring
     variable's data (which does not correspond to a domain axis
@@ -43,6 +41,3 @@ class InteriorRing(mixin.PropertiesData, cfdm.InteriorRing):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

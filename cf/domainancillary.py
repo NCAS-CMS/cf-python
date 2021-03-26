@@ -42,6 +42,3 @@ class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

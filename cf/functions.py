@@ -167,7 +167,6 @@ if _linux:
                 n += 1
                 if n > 3:
                     break
-        # --- End: for
 
         free_bytes = free_KiB * 1024
 
@@ -193,9 +192,6 @@ else:
 
         """
         return float(virtual_memory().available)
-
-
-# --- End: if
 
 
 def configuration(
@@ -1328,7 +1324,6 @@ def set_performance(chunksize=None, free_memory_factor=None):
         except ValueError:
             _cf_free_memory_factor(old[1])
             raise
-    # --- End: if
 
     return old
 
@@ -1579,9 +1574,6 @@ else:
         )
 
 
-# --- End: if
-
-
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
@@ -1626,9 +1618,8 @@ def close_files(file_format=None):
                 fh.close()
 
             _file_to_fh[file_format].clear()
-    # --- End: if
 
-
+            
 def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
     array.
@@ -1922,7 +1913,6 @@ def parse_indices(
         if isinstance(arg0, str) and arg0 == "mask":
             mask_indices = indices[1]
             indices = indices[2:]
-    # --- End: if
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -1967,8 +1957,6 @@ def parse_indices(
             "Scalar array can only be indexed with () or Ellipsis"
         )
 
-    # --- End: if
-
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
         if isinstance(index, slice):
@@ -2011,7 +1999,6 @@ def parse_indices(
                     # 3:6:-1 => 3:-4:-1
                     # 3:9:-1 => 3:-1:-1
                     stop -= size
-            # --- End: if
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2171,8 +2158,6 @@ def parse_indices(
                             parsed_indices, shape
                         )
                     )
-            # --- End: if
-        # --- End: if
 
         if is_slice:
             if reverse and index.step < 0:
@@ -2202,7 +2187,6 @@ def parse_indices(
 
                 index = slice(start, stop, step)
                 flip.append(i)
-            # --- End: if
 
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
@@ -2211,7 +2195,6 @@ def parse_indices(
                 div, mod = divmod(stop - start - 1, step)
                 stop = start + div * step + 1
                 index = slice(start, stop, step)
-            # --- End: if
 
             #
             if envelope:
@@ -2221,10 +2204,8 @@ def parse_indices(
                 index = slice(
                     start, stop, (1 if reverse else _numpy_sign(step))
                 )
-        # --- End: if
 
         parsed_indices[i] = index
-    # --- End: for
 
     if not (cyclic or reverse or envelope or mask):
         return parsed_indices
@@ -2571,7 +2552,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
             stash2sn[key] += line
         else:
             stash2sn[key] = line
-    # --- End: for
 
     if not merge:
         _stash2standard_name.clear()
@@ -2670,7 +2650,6 @@ def flat(x):
                 yield sub
         else:
             yield a
-    # --- End: for
 
 
 def abspath(filename):
@@ -2902,7 +2881,6 @@ def hash_array(array):
             array = array.filled()
         else:
             array = array.data
-    # --- End: if
 
     if not array.flags.c_contiguous:
         # array = array.copy()
@@ -3171,8 +3149,6 @@ def _section(
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(x, current_index - 1, axis_indices, indices)
 
-    # --- End: def
-
     # Retrieve the index of each axis defining the sections
     if data:
         if isinstance(axes, int):
@@ -3190,7 +3166,6 @@ def _section(
                 axis_indices.append(x.get_data_axes().index(key))
             except ValueError:
                 pass
-    # --- End: if
 
     # find the size of each dimension
     sizes = x.shape

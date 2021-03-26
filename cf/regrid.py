@@ -29,19 +29,19 @@ class Regrid:
         method="conservative_1st",
         ignore_degenerate=False,
     ):
-        """Creates a handle for regridding fields from a source grid to
-        a destination grid that can then be used by the run_regridding
+        """Creates a handle for regridding fields from a source grid to a
+        destination grid that can then be used by the run_regridding
         method.
 
         :Parameters:
 
             srcfield: ESMF.Field
-                The source field with an associated grid to be used for
-                regridding.
+                The source field with an associated grid to be used
+                for regridding.
 
             dstfield: ESMF.Field
-                The destination field with an associated grid to be used
-                for regridding.
+                The destination field with an associated grid to be
+                used for regridding.
 
             srcfracfield: ESMF.Field
                 A field to hold the fraction of the source field that
@@ -58,11 +58,11 @@ class Regrid:
                 used. If it is set to 'conservative_2nd' second order
                 conservative regridding is used. If it is set to
                 'linear' then (multi)linear interpolation is used.  If
-                it is set to 'patch' then higher-order patch recovery is
-                used.  If it is set to 'nearest_stod' then nearest source
-                to destination interpolation is used. If it is set to
-                'nearest_dtos' then nearest destination to source
-                interpolation is used.
+                it is set to 'patch' then higher-order patch recovery
+                is used.  If it is set to 'nearest_stod' then nearest
+                source to destination interpolation is used. If it is
+                set to 'nearest_dtos' then nearest destination to
+                source interpolation is used.
 
             ignore_degenerate: `bool`, optional
                 Whether to check for degenerate points.
@@ -196,7 +196,6 @@ class Regrid:
                         "The longitude and latitude coordinates"
                         " must have the same shape."
                     )
-            # --- End: if
 
             if use_bounds:
                 if not coords_2D:
@@ -246,7 +245,6 @@ class Regrid:
                             ) == Data(360, "degrees")
                         except ValueError:
                             pass
-            # --- End: if
 
             # Create empty grid
             max_index = numpy_array(shape, dtype="int32")
@@ -302,7 +300,6 @@ class Regrid:
                         y_bounds = y_bounds[:-1, :]
                     gridCorner[x][...] = x_bounds
                     gridCorner[y][...] = y_bounds
-            # --- End: if
         else:
             # Test the dimensionality of the list of coordinates
             ndim = len(coords)
@@ -357,7 +354,7 @@ class Regrid:
                     staggerLocs = [ESMF.StaggerLoc.CENTER]
                 else:
                     staggerLocs = [ESMF.StaggerLoc.CENTER_VCENTER]
-            # --- End: if
+
             grid = ESMF.Grid(
                 max_index, coord_sys=ESMF.CoordSys.CART, staggerloc=staggerLocs
             )
@@ -375,7 +372,6 @@ class Regrid:
                 gridCentre[...] = coords[d].array.reshape(
                     [shape[d] if x == d else 1 for x in range(0, ndim)]
                 )
-            # --- End: for
 
             # Populate grid corners
             if use_bounds:
@@ -401,8 +397,6 @@ class Regrid:
                     gridCorner[d][...] = boundsD.reshape(
                         [shape[d] + 1 if x == d else 1 for x in range(0, ndim)]
                     )
-            # --- End: if
-        # --- End: if
 
         # Add the mask if appropriate
         if mask is not None:
@@ -521,13 +515,11 @@ class Regrid:
                             )
                             new_key = k[:i]
                             data_list = [sections[k]]
-                    # --- End: for
 
                     new_sections[new_key] = Regrid.concatenate_data(
                         data_list, i
                     )
                     sections = new_sections
-        # --- End: for
 
     @staticmethod
     def compute_mass_grid(
@@ -580,6 +572,3 @@ class Regrid:
             mass = numpy_sum(areafield.data[ind] * valuefield.data[ind])
 
         return mass
-
-
-# --- End: class

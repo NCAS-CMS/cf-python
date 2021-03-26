@@ -119,7 +119,6 @@ def relative_vorticity(
             wrap = u.iscyclic(u_x_key)
         else:
             wrap = False
-    # --- End: if
 
     # Find the relative vorticity
     if is_latlong:

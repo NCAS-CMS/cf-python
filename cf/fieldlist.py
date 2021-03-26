@@ -143,7 +143,6 @@ class FieldList(list, cfdm.Container):
         for f in self:
             if f.equals(y):
                 return True
-        # --- End: for
 
         return False
 
@@ -320,7 +319,6 @@ class FieldList(list, cfdm.Container):
         for i, f in enumerate(self[start:stop]):
             if f.equals(value):
                 return i + start
-        # --- End: for
 
         raise ValueError(
             "{0!r} is not in {1}".format(value, self.__class__.__name__)
@@ -339,7 +337,6 @@ class FieldList(list, cfdm.Container):
             if f.equals(value):
                 del self[i]
                 return
-        # --- End: for
 
         raise ValueError(
             "{0}.remove(x): x not in {0}".format(self.__class__.__name__)
@@ -673,7 +670,6 @@ class FieldList(list, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-            # --- End: for
 
             # For each identity, check that there are matching pairs
             # of equal fields.
@@ -697,7 +693,6 @@ class FieldList(list, cfdm.Container):
                             found_match = True
                             del gl[i]
                             break
-                # --- End: for
 
                 if not found_match:
                     logger.info(
@@ -706,7 +701,6 @@ class FieldList(list, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Still here? Then the field lists are equal
@@ -858,7 +852,6 @@ class FieldList(list, cfdm.Container):
         #                                          kwargs={key: value},
         #                                          message=message,
         #                                          version='3.1.0') # pragma: no cover
-        #        # --- End: if
 
         if identities:
             if identities[0] == "or":
@@ -878,7 +871,6 @@ class FieldList(list, cfdm.Container):
                     message="Use 'OR=False' instead.",
                     version="3.1.0",
                 )  # pragma: no cover
-        # --- End: if
 
         return type(self)(
             f
@@ -1363,7 +1355,6 @@ class FieldList(list, cfdm.Container):
                             i, i.replace(":", "=", 1)
                         )
                     )  # pragma: no cover
-        # --- End: for
 
         return self.select_by_identity(*identities)
 
@@ -1412,6 +1403,3 @@ class FieldList(list, cfdm.Container):
         _DEPRECATION_ERROR_METHOD(
             self, "select1", "Use method 'fl.select_field' instead."
         )  # pragma: no cover
-
-
-# --- End: class
