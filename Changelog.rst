@@ -9,6 +9,9 @@ version 3.9.0
   zero size (https://github.com/NCAS-CMS/cfdm/issues/113)
 * Fixes for changes in behaviour in cftime==1.4.0
   (https://github.com/NCAS-CMS/cf-python/issues/184)
+* Better error message in the case of a `numpy.ma.core.MaskError` occurring
+  upon reading of CDL files with only header or coordinate information
+  (https://github.com/NCAS-CMS/cf-python/issues/197)
 * Changed dependency: ``1.8.9.0<=cfdm<1.8.10.0``
 * Changed dependency: ``cftime>=1.4.0``
 * Changed dependency: ``netCDF4>=1.5.4``
