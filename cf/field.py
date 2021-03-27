@@ -493,7 +493,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             construct_data_axes = new.constructs.data_axes()
 
             for key, construct in new.constructs.filter_by_axis(
-                *data_axes, mode="or", view=True
+                *data_axes, mode="or", todict=True
             ).items():
                 construct_axes = construct_data_axes[key]
                 dice = []
@@ -726,18 +726,24 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if relaxed_identities is None:
             relaxed_identities = cf_relaxed_identities()
 
-        dimension_coordinates = self.dimension_coordinates(view=True)
-        auxiliary_coordinates = self.auxiliary_coordinates(view=True)
+#        dimension_coordinates = self.dimension_coordinates(view=True)
+#        auxiliary_coordinates = self.auxiliary_coordinates(view=True)
 
         for axis in self.domain_axes(todict=True):
 
-            dims = dimension_coordinates.filter_by_axis(
-                axis, mode="and", view=True
-            )
+#            dims = self.constructs.chain(
+#                "filter_by_type",
+#                ("dimension_coordinate",), "filter_by_axis", (axis,)
+#                mode="and", todict=True
+#            )
+            dims = self.dimension_coordinates(axes=(axis,),
+                                              mode="and", todict=True)
+            
             if len(dims) == 1:
                 # This axis of the domain has a dimension coordinate
-                key = dims.key()
-                dim = dims.value()
+                key, dim = dims.popitem()
+#                key = dims.key()
+#                dim = dims.value()
 
                 identity = dim.identity(strict=True, default=None)
                 if identity is None:
@@ -754,7 +760,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if identity:
                     if identity in id_to_axis:
                         warnings.append(
-                            "Field has multiple {!r} axes".format(identity)
+                            "Field has multiple {identity!r} axes"
                         )
 
                     axis_to_id[axis] = identity
@@ -766,14 +772,19 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     continue
 
             else:
-                auxs = auxiliary_coordinates.filter_by_axis(
-                    axis, mode="exact", view=True
+                auxs = self.constructs.chain(
+                    "filter_by_type",
+                    ("auxiliary_coordinate",), "filter_by_axis", (axis,),
+                    mode="and", todict=True
                 )
+#                auxs = self.auxiliary_coordinates.filter_by_axis(
+#                    axis, mode="exact", todict=True
+#                )
                 if len(auxs) == 1:
                     # This axis of the domain does not have a
                     # dimension coordinate but it does have exactly
                     # one 1-d auxiliary coordinate, so that will do.
-                    key, aux = dict(auxs).popitem()
+                    key, aux = auxs.popitem()
 
                     identity = aux.identity(strict=True, default=None)
 
@@ -783,7 +794,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     if identity and aux.has_data():
                         if identity in id_to_axis:
                             warnings.append(
-                                "Field has multiple {!r} axes".format(identity)
+                                f"Field has multiple {identity!r} axes"
                             )
 
                         axis_to_id[axis] = identity
@@ -13348,11 +13359,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if not domain_axes:
                 raise ValueError("Can't set data: No domain axes exist")
 
-            domain_axes = f.domain_axes(view=True)
+#            domain_axes = f.domain_axes(view=True)
 
             axes = []
             for n in data_shape:
-                da = domain_axes.filter_by_size(n, view=True)
+#                da = domain_axes.filter_by_size(n, todict=True)
+                da = f.domain_axes(filter_by_size=(n,), todict=True)
                 if len(da) != 1:
                     raise ValueError(
                         "Can't insert data: Ambiguous data shape: "
@@ -13360,7 +13372,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         "Consider setting the axes parameter."
                     )
 
-                axes.append(da.key())
+                da_key, _ = da.popitem()
+                axes.append(da_key)
 
         else:
             # --------------------------------------------------------
