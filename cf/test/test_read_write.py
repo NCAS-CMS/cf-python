@@ -15,7 +15,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cf
 
 
-n_tmpfiles = 6
+n_tmpfiles = 8
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -23,7 +23,9 @@ tmpfiles = [
 (
     tmpfile,
     tmpfileh,
+    tmpfileh2,
     tmpfilec,
+    tmpfilec2,
     tmpfile0,
     tmpfile1,
     tmpfile2,
@@ -465,6 +467,11 @@ class read_writeTest(unittest.TestCase):
             shell=True,
             check=True,
         )
+
+        # For the cases of '-h' and '-c', i.e. only header info or coordinates,
+        # notably no data, take two cases each: one where there is sufficient
+        # info from the metadata to map to fields, and one where there isn't:
+        #     1. Sufficient metadata, so should be read-in successfully
         subprocess.run(
             " ".join(["ncdump", "-h", self.filename, ">", tmpfileh]),
             shell=True,
@@ -476,10 +483,34 @@ class read_writeTest(unittest.TestCase):
             check=True,
         )
 
+        #     2. Insufficient metadata, so should error with a message as such
+        geometry_1_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "geometry_1.nc"
+        )
+        subprocess.run(
+            " ".join(["ncdump", "-h", geometry_1_file, ">", tmpfileh2]),
+            shell=True,
+            check=True,
+        )
+        subprocess.run(
+            " ".join(["ncdump", "-c", geometry_1_file, ">", tmpfilec2]),
+            shell=True,
+            check=True,
+        )
+
         f0 = cf.read(self.filename)[0]
+
+        # Case (1) as above, so read in and check the fields are as should be
         f = cf.read(tmpfile)[0]
         _ = cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
+
+        # Case (2) as above, so the right error should be raised on read
+        with self.assertRaises(ValueError):
+            cf.read(tmpfileh2)[0]
+
+        with self.assertRaises(ValueError):
+            cf.read(tmpfilec2)[0]
 
         self.assertTrue(f0.equals(f, verbose=2))
 
