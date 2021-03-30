@@ -155,210 +155,122 @@ class Constructs(cfdm.Constructs):
     #
     #         return self.constructs[da_key]
 
-    def filter_by_identity(self, *identities, view=False,
-                           todict=False, cache=None, **identities_kwargs):
-        """Select metadata constructs by identity.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
-                     `filter_by_measure`, `filter_by_method`,
-                     `filter_by_naxes`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_size`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
-
-        :Parameters:
-
-            identities: optional
-                Select constructs that have any of the given identities or
-                construct keys.
-
-                An identity is specified by a string (e.g. ``'latitude'``,
-                ``'long_name=time'``, etc.); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``), for which
-                all constructs whose identities match (via `re.search`)
-                are selected.
-
-                If no identities are provided then all constructs are selected.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                five identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'T', 'ncvar%t']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that the identifiers of a metadata construct in the
-                output of a `print` or `!dump` call are always one of its
-                identities, and so may always be used as an *identities*
-                argument.
-
-                Domain axis constructs may also be identified by their
-                position in the field construct's data array. Positions
-                are specified by either integers.
-
-                .. note:: This is an extension to the functionality of
-                          `cfdm.Constucts.filter_by_identity`.
-
-            {{view: `bool`, optional}}
-
-            {{todict: `bool`, optional}}
-
-            {{cache: optional}}
-
-            identities_kwargs: optional
-                Additional parameters for configuring each construct's
-                `identities` method. By default ``generator=True`` is
-                passed by default, and ``ctype`` is inferred from the
-                *identities* parameter.
-
-                .. versionadded:: 3.9.0
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs and their construct keys.
-
-        **Examples:**
-
-        Select constructs that have a "standard_name" property of
-        'latitude':
-
-        >>> d = c.filter_by_identity('latitude')
-
-        Select constructs that have a "long_name" property of 'Height':
-
-        >>> d = c.filter_by_identity('long_name=Height')
-
-        Select constructs that have a "standard_name" property of
-        'latitude' or a "foo" property of 'bar':
-
-        >>> d = c.filter_by_identity('latitude', 'foo=bar')
-
-        Select constructs that have a netCDF variable name of 'time':
-
-        >>> d = c.filter_by_identity('ncvar%time')
-
-        """
-        if cache is not None:
-            return cache
-            
-        # Allow keys without the 'key%' prefix
-        for n, identity in enumerate(identities):
-            if identity in self:
-                identities = list(identities)
-                identities[n] = "key%" + identity
-                break
-
-        ctype = [i for i in "XTYZ" if i in identities]
-
-        return super().filter_by_identity(
-            *identities, view=view, todict=todict, ctype=ctype, **identities_kwargs
-        )
-
+#    def filter_by_identity(self, *identities, view=False,
+#                           todict=False, cache=None, **identities_kwargs):
+#        """Select metadata constructs by identity.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+#                     `filter_by_measure`, `filter_by_method`,
+#                     `filter_by_naxes`, `filter_by_ncdim`,
+#                     `filter_by_ncvar`, `filter_by_property`,
+#                     `filter_by_size`, `filter_by_type`,
+#                     `filters_applied`, `inverse_filter`, `unfilter`
+#
+#        :Parameters:
+#
+#            identities: optional
+#                Select constructs that have any of the given identities or
+#                construct keys.
+#
+#                An identity is specified by a string (e.g. ``'latitude'``,
+#                ``'long_name=time'``, etc.); or a compiled regular
+#                expression (e.g. ``re.compile('^atmosphere')``), for which
+#                all constructs whose identities match (via `re.search`)
+#                are selected.
+#
+#                If no identities are provided then all constructs are selected.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                five identities:
+#
+#                   >>> x.identities()
+#                   ['time', 'long_name=Time', 'foo=bar', 'T', 'ncvar%t']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'dimensioncoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                Note that the identifiers of a metadata construct in the
+#                output of a `print` or `!dump` call are always one of its
+#                identities, and so may always be used as an *identities*
+#                argument.
+#
+#                Domain axis constructs may also be identified by their
+#                position in the field construct's data array. Positions
+#                are specified by either integers.
+#
+#                .. note:: This is an extension to the functionality of
+#                          `cfdm.Constucts.filter_by_identity`.
+#
+#            {{view: `bool`, optional}}
+#
+#            {{todict: `bool`, optional}}
+#
+#            {{cache: optional}}
+#
+#            identities_kwargs: optional
+#                Additional parameters for configuring each construct's
+#                `identities` method. By default ``generator=True`` is
+#                passed by default, and ``ctype`` is inferred from the
+#                *identities* parameter.
+#
+#                .. versionadded:: 3.9.0
+#
+#        :Returns:
+#
+#            `Constructs`
+#                The selected constructs and their construct keys.
+#
+#        **Examples:**
+#
+#        Select constructs that have a "standard_name" property of
+#        'latitude':
+#
+#        >>> d = c.filter_by_identity('latitude')
+#
+#        Select constructs that have a "long_name" property of 'Height':
+#
+#        >>> d = c.filter_by_identity('long_name=Height')
+#
+#        Select constructs that have a "standard_name" property of
+#        'latitude' or a "foo" property of 'bar':
+#
+#        >>> d = c.filter_by_identity('latitude', 'foo=bar')
+#
+#        Select constructs that have a netCDF variable name of 'time':
+#
+#        >>> d = c.filter_by_identity('ncvar%time')
+#
+#        """
+#        if cache is not None:
+#            return cache
+#            
+#        # Allow keys without the 'key%' prefix
+#        for n, identity in enumerate(identities):
+#            if identity in self:
+#                identities = list(identities)
+#                identities[n] = "key%" + identity
+#                break
+#
+#        ctype = [i for i in "XTYZ" if i in identities]
+#
+#        return super().filter_by_identity(
+#            identities, todict=todict,
+#            _config={"identities_kwargs": {"ctype": ctype},
+#             "bypass": lambda x: x in ctype}
+#        )
+    
     @classmethod
     def _filter_by_identity(cls, self, *identities, todict=False,
-                            cache=None, _identities_config={}):
-        """Select metadata constructs by identity.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
-                     `filter_by_measure`, `filter_by_method`,
-                     `filter_by_naxes`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_size`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
-
-        :Parameters:
-
-            identities: optional
-                Select constructs that have any of the given identities or
-                construct keys.
-
-                An identity is specified by a string (e.g. ``'latitude'``,
-                ``'long_name=time'``, etc.); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``), for which
-                all constructs whose identities match (via `re.search`)
-                are selected.
-
-                If no identities are provided then all constructs are selected.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                five identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'T', 'ncvar%t']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that the identifiers of a metadata construct in the
-                output of a `print` or `!dump` call are always one of its
-                identities, and so may always be used as an *identities*
-                argument.
-
-                Domain axis constructs may also be identified by their
-                position in the field construct's data array. Positions
-                are specified by either integers.
-
-                .. note:: This is an extension to the functionality of
-                          `cfdm.Constucts.filter_by_identity`.
-
-            {{view: `bool`, optional}}
-
-            {{todict: `bool`, optional}}
-
-            {{cache: optional}}
-
-            identities_kwargs: optional
-                Additional parameters for configuring each construct's
-                `identities` method. By default ``generator=True`` is
-                passed by default, and ``ctype`` is inferred from the
-                *identities* parameter.
-
-                .. versionadded:: 3.9.0
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs and their construct keys.
-
-        **Examples:**
-
-        Select constructs that have a "standard_name" property of
-        'latitude':
-
-        >>> d = c.filter_by_identity('latitude')
-
-        Select constructs that have a "long_name" property of 'Height':
-
-        >>> d = c.filter_by_identity('long_name=Height')
-
-        Select constructs that have a "standard_name" property of
-        'latitude' or a "foo" property of 'bar':
-
-        >>> d = c.filter_by_identity('latitude', 'foo=bar')
-
-        Select constructs that have a netCDF variable name of 'time':
-
-        >>> d = c.filter_by_identity('ncvar%time')
+                            _config={}):
+        """TODO.
 
         """
-        if cache is not None:
-            return cache
-            
         # Allow keys without the 'key%' prefix
         for n, identity in enumerate(identities):
             if identity in self:
@@ -366,13 +278,27 @@ class Constructs(cfdm.Constructs):
                 identities[n] = "key%" + identity
                 break
 
-        config = {"ctype": [i for i in "XTYZ" if i in identities]}
-        config.update(_identities_config)
+        ctype = [i              for i in "XTYZ"      if i in identities]
+        
+        config = {    "identities_kwargs": {"ctype": ctype}}
 
-        return super(Constructs, cls)._filter_by_identity(
+        if ctype:
+            # Exclude a ctype from the short circuit test
+            config["short_circuit_test"] = (
+                lambda x: (
+                    x not in ctype
+                    and "=" not in x
+                    and ":" not in x
+                    and "%" not in x
+                )
+            )
+                
+        config.update(_config)
+
+        return super()._filter_by_identity(
             self,
             *identities,
             todict=todict,
             cache=cache,
-            _identities_config=config
+            _config=config
         )
