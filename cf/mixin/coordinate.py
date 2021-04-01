@@ -76,7 +76,7 @@ class Coordinate:
         """
         if self.Units.isreftime:
             return True
-        
+
         axis = self.get_property("axis", None)
         if axis is not None:
             return axis == "T"
@@ -130,16 +130,13 @@ class Coordinate:
 
         """
         standard_name = self.get_property("standard_name", None)
-        if (
-                standard_name is not None
-                and standard_name in (
-                    "longitude",
-                    "projection_x_coordinate",
-                    "grid_longitude"
-                )
+        if standard_name is not None and standard_name in (
+            "longitude",
+            "projection_x_coordinate",
+            "grid_longitude",
         ):
             return True
-                    
+
         if self.Units.islongitude:
             return True
 
@@ -182,23 +179,20 @@ class Coordinate:
 
         """
         standard_name = self.get_property("standard_name", None)
-        if (
-                standard_name is not None
-                and standard_name in (
-                    "latitude",
-                    "projection_y_coordinate",
-                    "grid_latitude",
-                )
+        if standard_name is not None and standard_name in (
+            "latitude",
+            "projection_y_coordinate",
+            "grid_latitude",
         ):
             return True
-            
+
         if self.Units.islatitude:
             return True
 
         axis = self.get_property("axis", None)
         if axis is not None:
             return axis == "Y"
-        
+
         # Still here? Then check the bounds.
         if self.has_bounds():
             bounds = self.get_bounds(None)
@@ -257,23 +251,20 @@ class Coordinate:
 
         """
         standard_name = self.get_property("standard_name", None)
-        if (
-                standard_name is not None
-                and standard_name in  (
-                    "atmosphere_ln_pressure_coordinate",
-                    "atmosphere_sigma_coordinate",
-                    "atmosphere_hybrid_sigma_pressure_coordinate",
-                    "atmosphere_hybrid_height_coordinate",
-                    "atmosphere_sleve_coordinate",
-                    "ocean_sigma_coordinate",
-                    "ocean_s_coordinate",
-                    "ocean_s_coordinate_g1",
-                    "ocean_s_coordinate_g2",
-                    "ocean_sigma_z_coordinate",
-                    "ocean_double_sigma_coordinate",
-                )
+        if standard_name is not None and standard_name in (
+            "atmosphere_ln_pressure_coordinate",
+            "atmosphere_sigma_coordinate",
+            "atmosphere_hybrid_sigma_pressure_coordinate",
+            "atmosphere_hybrid_height_coordinate",
+            "atmosphere_sleve_coordinate",
+            "ocean_sigma_coordinate",
+            "ocean_s_coordinate",
+            "ocean_s_coordinate_g1",
+            "ocean_s_coordinate_g2",
+            "ocean_sigma_z_coordinate",
+            "ocean_double_sigma_coordinate",
         ):
-            return True    
+            return True
 
         units = self.Units
         if units.ispressure:
@@ -282,11 +273,11 @@ class Coordinate:
         positive = self.get_property("positive", None)
         if positive is not None:
             return str(positive).lower() in ("up", "down")
-        
+
         axis = self.get_property("axis", None)
         if axis is not None:
             return axis == "Z"
-        
+
         if units and units.units in ("level", "layer" "sigma_level"):
             return True
 
@@ -529,7 +520,7 @@ class Coordinate:
         .. versionadded:: 3.0.0
 
         .. seealso:: `id`, `identity`
-        
+
         :Parameters:
 
             {{generator: `bool`, optional}}
@@ -553,7 +544,7 @@ class Coordinate:
 
                 *Parameter example:*
                   ``ctype=('T', 'X')``
-                
+
         :Returns:
 
             `list`
@@ -584,7 +575,7 @@ class Coordinate:
                     break
 
         identities = super().identities(generator=True)
-        
+
         g = chain(identities, _ctypes_iter(self, ctypes))
         if generator:
             return g

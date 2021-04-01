@@ -1619,7 +1619,7 @@ def close_files(file_format=None):
 
             _file_to_fh[file_format].clear()
 
-            
+
 def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
     array.

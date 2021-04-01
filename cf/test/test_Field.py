@@ -955,9 +955,7 @@ class FieldTest(unittest.TestCase):
         b = g + f
 
         axis = a.domain_axis("grid_longitude", key=1)
-        for key in a.field_ancillaries(
-                filter_by_axis=(axis,), axis_mode="or"
-        ):
+        for key in a.field_ancillaries(filter_by_axis=(axis,), axis_mode="or"):
             a.del_construct(key)
 
         for key in a.cell_measures(filter_by_axis=(axis,), axis_mode="or"):
@@ -2003,9 +2001,7 @@ class FieldTest(unittest.TestCase):
                 "mean", window_size=3, axis="X", weights=weights
             )
 
-        self.assertEqual(
-            len(g.cell_methods()), len(f.cell_methods()) + 1
-        )
+        self.assertEqual(len(g.cell_methods()), len(f.cell_methods()) + 1)
 
     def test_Field_derivative(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2154,24 +2150,26 @@ class FieldTest(unittest.TestCase):
             "dimensioncoordinate1",
         ):
             if identity == "domainaxis2":
-                key, c =  f.dimension_coordinates(
-                    filter_by_axis=(identity,), axis_mode="exact",
-                    todict=True
+                key, c = f.dimension_coordinates(
+                    filter_by_axis=(identity,), axis_mode="exact", todict=True
                 ).popitem()
-                
-#                key = (
-#                    f.dimension_coordinates()
-#                    .filter_by_axis(identity, mode="and")
-#                    .key()
-#                )
-#                c = (
-#                    f.dimension_coordinates(view=True)
-#                    .filter_by_axis(identity, mode="and")
-#                    .value()
-#                )
+
+            #                key = (
+            #                    f.dimension_coordinates()
+            #                    .filter_by_axis(identity, mode="and")
+            #                    .key()
+            #                )
+            #                c = (
+            #                    f.dimension_coordinates(view=True)
+            #                    .filter_by_axis(identity, mode="and")
+            #                    .value()
+            #                )
             else:
                 key = f.construct_key(identity)
                 c = f.construct(identity)
+
+            print(identity, key, repr(c))
+            print(f.coordinate(identity))
 
             self.assertTrue(f.coordinate(identity).equals(c, verbose=2))
             self.assertTrue(f.coordinate(identity, key=True) == key)
@@ -2287,19 +2285,18 @@ class FieldTest(unittest.TestCase):
         ):
             if identity == "domainaxis2":
                 key, c = f.dimension_coordinates(
-                    filter_by_axis=(identity,), axis_mode="exact",
-                    todict=True
+                    filter_by_axis=(identity,), axis_mode="exact", todict=True
                 ).popitem()
-#                key = (
-#                    f.dimension_coordinates(view=True)
-#                    .filter_by_axis(identity, mode="and")
-#                    .key()
-#                )
-#                c = (
-#                    f.dimension_coordinates(view=True)
-#                    .filter_by_axis(identity, mode="and")
-#                    .value()
-#                )
+            #                key = (
+            #                    f.dimension_coordinates(view=True)
+            #                    .filter_by_axis(identity, mode="and")
+            #                    .key()
+            #                )
+            #                c = (
+            #                    f.dimension_coordinates(view=True)
+            #                    .filter_by_axis(identity, mode="and")
+            #                    .value()
+            #                )
             elif identity == "X":
                 key = f.construct_key("grid_longitude")
                 c = f.construct("grid_longitude")
