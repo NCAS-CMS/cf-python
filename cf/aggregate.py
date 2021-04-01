@@ -301,7 +301,7 @@ class _Meta:
 
         # Dictionaries mapping auxiliary coordinate identifiers
         # to their auxiliary coordinate objects
-        aux_1d = dict(f.auxiliary_coordinates(view=True).filter_by_naxes(1))
+        aux_1d = f.auxiliary_coordinates(filter_by_naxes=(1,), todict=True)
 
         # A set containing the identity of each coordinate
         #
@@ -314,13 +314,13 @@ class _Meta:
         # ------------------------------------------------------------
         # Coordinate references (formula_terms and grid mappings)
         # ------------------------------------------------------------
-        refs = f.coordinate_references(view=True)
+        refs = f.coordinate_references(todict=True)
         if not refs:
             self.coordrefs = ()
         else:
             self.coordrefs = list(refs.values())
 
-        for axis in f.domain_axes(view=True):
+        for axis in f.domain_axes(todict=True):
 
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -333,11 +333,20 @@ class _Meta:
             info_dim = []
 
             #            dim_coord = item(axis)
-            dim_coords = f.dimension_coordinates(view=True).filter_by_axis(
-                axis, mode="and", view=True
+#            dim_coords = f.dimension_coordinates(view=True).filter_by_axis(
+#                axis, mode="and", view=True
+#            )
+            dim_coords = f.dimension_coordinates(
+                filter_by_axis=(axis,), axis_mode="exact",
+                todict=True
             )
-            dim_coord = dim_coords.value(None)
-            dim_coord_key = dim_coords.key(None)
+            if len(dim_coords) == 1:
+                dim_coord_key, dim_coord = dim_coords.popitem()
+            else:
+                dim_coord_key, dim_coord = None, None
+                
+#            dim_coord = dim_coords.value(None)
+#            dim_coord_key = dim_coords.key(None)
             dim_identity = None
 
             if dim_coord is not None:
@@ -488,9 +497,11 @@ class _Meta:
         # ------------------------------------------------------------
         self.nd_aux = {}
         for key, nd_aux_coord in (
-            f.auxiliary_coordinates(view=True).filter_by_naxes(gt(1)).items()
-        ):
-
+                f.auxiliary_coordinates(
+                    filter_by_naxes=(gt(1),),
+                    todict=True
+                ).items()
+        ):     
             # Find axes' canonical identities
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
@@ -526,7 +537,7 @@ class _Meta:
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-        for key, field_anc in f.field_ancillaries(view=True).items():
+        for key, field_anc in f.field_ancillaries(todict=True).items():
 
             # Find this field ancillary's identity
             identity = self.field_ancillary_has_identity_and_data(field_anc)
@@ -568,12 +579,12 @@ class _Meta:
 
         # Firstly process domain ancillaries which are used in
         # coordinate references
-        for ref in f.coordinate_references(view=True).values():
+        for ref in f.coordinate_references(todict=True).values():
             for (
                 term,
                 identifier,
             ) in ref.coordinate_conversion.domain_ancillaries().items():
-                key = f.domain_ancillaries(view=True)(identifier).key(None)
+                key = f.domain_ancillary(identifier, key=True, default=None)
                 if key is None:
                     continue
 
@@ -607,7 +618,7 @@ class _Meta:
 
         # Secondly process domain ancillaries which are not being used
         # in coordinate references
-        for key, anc in f.domain_ancillaries(view=True).items():
+        for key, anc in f.domain_ancillaries(todict=True).items():
             if key in ancs_in_refs:
                 continue
 
@@ -639,7 +650,7 @@ class _Meta:
         self.msr = {}
         info_msr = {}
         copied_field = False
-        for key, msr in f.cell_measures(view=True).items():
+        for key, msr in f.cell_measures(todict=True).items():
             # If the measure is an external variable, remove it because
             # the dimensions are not known so there is no way to tell if the
             # aggregation should have changed it. (This is sufficiently
@@ -874,7 +885,9 @@ class _Meta:
         """
         _canonical_cell_methods = self._canonical_cell_methods
 
-        cell_methods = self.field.cell_methods(view=True).ordered()
+        cell_methods = self.field.cell_methods().ordered()
+        # TODO get rid or ordered when Python 3.6 has gone
+        
         #        cms = getattr(self.field, 'CellMethods', None) # TODO
         if not cell_methods:
             return None
@@ -1941,13 +1954,14 @@ def aggregate(
             aggregating_axes = []
             axis_items = meta[0].axis.items()
             for axis in axes:
-                # TODO IMPORTANT: should this be filter_by_axis ????
-                coords = (
-                    meta[0]
-                    .field.coordinates(view=True)
-                    .filter_by_identity("exact", axis)
+                # TODO IMPORTANT: should this be filter_by_axis ???? Yes, surely ...
+                coord = (
+                    meta[0].field.coordinate(
+                        filter_by_axis=(axis,), axis_mode="exact",
+                        default=None
+                    )
                 )
-                coord = coords.value(default=None)
+#                coord = coords.value(default=None)
                 if coord is None:
                     continue
 
@@ -2200,9 +2214,12 @@ def _create_hash_and_first_values(
                 continue
 
             # Still here?
-            dim_coord = m.field.dimension_coordinates(
-                view=True
-            ).filter_by_axis(axis, mode="and", view=True)
+#            dim_coord = m.field.dimension_coordinates(
+#            ).filter_by_axis(axis, mode="and", view=True)
+            dim_coord = m.field.dimension_coordinate(
+                filter_by_axis=(axis,), axis_mode="exact",
+                default=None
+            )
 
             # Find the sort indices for this axis ...
             if dim_coord is not None:

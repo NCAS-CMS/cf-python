@@ -46,7 +46,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate__repr__str__dump(self):
         f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates(view=True)("X").value()
+        x = f.dimension_coordinate("X")
 
         _ = repr(x)
         _ = str(x)
@@ -136,8 +136,8 @@ class DimensionCoordinateTest(unittest.TestCase):
     def test_DimensionCoordinate_roll(self):
         f = cf.read(self.filename)[0]
 
-        x = f.dimension_coordinates(view=True)("X").value()
-        y = f.dimension_coordinates(view=True)("Y").value()
+        x = f.dimension_coordinate("X")
+        y = f.dimension_coordinate("Y")
 
         _ = x.roll(0, 3)
         with self.assertRaises(Exception):
@@ -248,7 +248,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates(view=True)("X").value()
+        x = f.dimension_coordinate("X")
 
         _ = x.upper_bounds
         _ = x.lower_bounds
@@ -269,7 +269,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates(view=True)("X").value()
+        x = f.dimension_coordinate("X")
 
         x.positive = "up"
         self.assertEqual(x.positive, "up")
@@ -284,7 +284,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates(view=True)("X").value()
+        x = f.dimension_coordinate("X")
 
         self.assertEqual(x.shape, (9,))
         self.assertEqual(x.bounds.shape, (9, 2))

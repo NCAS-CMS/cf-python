@@ -4813,7 +4813,7 @@ class PropertiesData(Properties):
         if i is not None:
             id_identity = (f"id%{i}",)
 
-        identities = super().identities(generator=True)
+        identities = super().identities(generator=True, **kwargs)
 
         g = chain(id_identity, identities)
         if generator:

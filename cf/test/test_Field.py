@@ -955,12 +955,12 @@ class FieldTest(unittest.TestCase):
         b = g + f
 
         axis = a.domain_axis("grid_longitude", key=1)
-        for key in a.field_ancillaries(view=True).filter_by_axis(
-            axis, mode="or"
+        for key in a.field_ancillaries(
+                filter_by_axis=(axis,), axis_mode="or"
         ):
             a.del_construct(key)
 
-        for key in a.cell_measures(view=True).filter_by_axis(axis, mode="or"):
+        for key in a.cell_measures(filter_by_axis=(axis,), axis_mode="or"):
             a.del_construct(key)
 
         self.assertTrue(a.equals(b, verbose=2))
@@ -1143,21 +1143,21 @@ class FieldTest(unittest.TestCase):
         ca = f.cell_area()
 
         self.assertEqual(ca.ndim, 2)
-        self.assertEqual(len(ca.dimension_coordinates(view=True)), 2)
-        self.assertEqual(len(ca.domain_ancillaries(view=True)), 0)
-        self.assertEqual(len(ca.coordinate_references(view=True)), 1)
+        self.assertEqual(len(ca.dimension_coordinate()), 2)
+        self.assertEqual(len(ca.domain_ancillaries()), 0)
+        self.assertEqual(len(ca.coordinate_references()), 1)
 
         f.del_construct("cellmeasure0")
         y = f.dimension_coordinate("Y")
         y.set_bounds(y.create_bounds())
-        self.assertEqual(len(f.cell_measures(view=True)), 0)
+        self.assertEqual(len(f.cell_measures()), 0)
 
         ca = f.cell_area()
 
         self.assertEqual(ca.ndim, 2)
-        self.assertEqual(len(ca.dimension_coordinates(view=True)), 2)
-        self.assertEqual(len(ca.domain_ancillaries(view=True)), 0)
-        self.assertEqual(len(ca.coordinate_references(view=True)), 1)
+        self.assertEqual(len(ca.dimension_coordinates()), 2)
+        self.assertEqual(len(ca.domain_ancillaries()), 0)
+        self.assertEqual(len(ca.coordinate_references()), 1)
         self.assertTrue(ca.Units.equivalent(cf.Units("m2")), ca.Units)
 
         y = f.dimension_coordinate("Y")
@@ -2004,7 +2004,7 @@ class FieldTest(unittest.TestCase):
             )
 
         self.assertEqual(
-            len(g.cell_methods(view=True)), len(f.cell_methods(view=True)) + 1
+            len(g.cell_methods()), len(f.cell_methods()) + 1
         )
 
     def test_Field_derivative(self):
@@ -2050,24 +2050,24 @@ class FieldTest(unittest.TestCase):
         c = f.convert("grid_latitude")
         self.assertTrue(c.ndim == 1)
         self.assertTrue(c.standard_name == "grid_latitude")
-        self.assertTrue(len(c.dimension_coordinates(view=True)) == 1)
-        self.assertTrue(len(c.auxiliary_coordinates(view=True)) == 1)
-        self.assertTrue(len(c.cell_measures(view=True)) == 0)
-        self.assertTrue(len(c.coordinate_references(view=True)) == 1)
-        self.assertTrue(len(c.domain_ancillaries(view=True)) == 0)
-        self.assertTrue(len(c.field_ancillaries(view=True)) == 0)
-        self.assertTrue(len(c.cell_methods(view=True)) == 0)
+        self.assertTrue(len(c.dimension_coordinates()) == 1)
+        self.assertTrue(len(c.auxiliary_coordinates()) == 1)
+        self.assertTrue(len(c.cell_measures()) == 0)
+        self.assertTrue(len(c.coordinate_references()) == 1)
+        self.assertTrue(len(c.domain_ancillaries()) == 0)
+        self.assertTrue(len(c.field_ancillaries()) == 0)
+        self.assertTrue(len(c.cell_methods()) == 0)
 
         c = f.convert("latitude")
         self.assertTrue(c.ndim == 2)
         self.assertTrue(c.standard_name == "latitude")
-        self.assertTrue(len(c.dimension_coordinates(view=True)) == 2)
-        self.assertTrue(len(c.auxiliary_coordinates(view=True)) == 3)
-        self.assertTrue(len(c.cell_measures(view=True)) == 1)
-        self.assertTrue(len(c.coordinate_references(view=True)) == 1)
-        self.assertTrue(len(c.domain_ancillaries(view=True)) == 0)
-        self.assertTrue(len(c.field_ancillaries(view=True)) == 0)
-        self.assertTrue(len(c.cell_methods(view=True)) == 0)
+        self.assertTrue(len(c.dimension_coordinates()) == 2)
+        self.assertTrue(len(c.auxiliary_coordinates()) == 3)
+        self.assertTrue(len(c.cell_measures()) == 1)
+        self.assertTrue(len(c.coordinate_references()) == 1)
+        self.assertTrue(len(c.domain_ancillaries()) == 0)
+        self.assertTrue(len(c.field_ancillaries()) == 0)
+        self.assertTrue(len(c.cell_methods()) == 0)
 
         # Cellsize
         c = f.convert("grid_longitude", cellsize=True)
@@ -2135,7 +2135,7 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(f.auxiliary_coordinate(identity, key=True), key)
 
         identities = ["latitude", "longitude"]
-        auxiliary_coordinates = f.auxiliary_coordinates(view=True)
+        auxiliary_coordinates = f.auxiliary_coordinates()
         auxiliary_coordinates(*identities)
         auxiliary_coordinates()
         auxiliary_coordinates(identities[0])
@@ -2154,16 +2154,21 @@ class FieldTest(unittest.TestCase):
             "dimensioncoordinate1",
         ):
             if identity == "domainaxis2":
-                key = (
-                    f.dimension_coordinates(view=True)
-                    .filter_by_axis(identity, mode="and")
-                    .key()
-                )
-                c = (
-                    f.dimension_coordinates(view=True)
-                    .filter_by_axis(identity, mode="and")
-                    .value()
-                )
+                key, c =  f.dimension_coordinates(
+                    filter_by_axis=(identity,), axis_mode="exact",
+                    todict=True
+                ).popitem()
+                
+#                key = (
+#                    f.dimension_coordinates()
+#                    .filter_by_axis(identity, mode="and")
+#                    .key()
+#                )
+#                c = (
+#                    f.dimension_coordinates(view=True)
+#                    .filter_by_axis(identity, mode="and")
+#                    .value()
+#                )
             else:
                 key = f.construct_key(identity)
                 c = f.construct(identity)
@@ -2172,7 +2177,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(f.coordinate(identity, key=True) == key)
 
             identities = ["auxiliarycoordinate1", "dimensioncoordinate1"]
-            coordinates = f.coordinates(view=True)
+            coordinates = f.coordinates()
             coordinates(*identities)
             coordinates()
             coordinates(identities[0])
@@ -2218,8 +2223,8 @@ class FieldTest(unittest.TestCase):
         # Delete
         self.assertIsNone(f.del_coordinate_reference("qwerty", default=None))
 
-        self.assertTrue(len(f.coordinate_references(view=True)) == 2)
-        self.assertTrue(len(f.domain_ancillaries(view=True)) == 3)
+        self.assertTrue(len(f.coordinate_references()) == 2)
+        self.assertTrue(len(f.domain_ancillaries()) == 3)
         c = f.coordinate_reference(
             "standard_name:atmosphere_hybrid_height_coordinate"
         )
@@ -2227,13 +2232,13 @@ class FieldTest(unittest.TestCase):
             "standard_name:atmosphere_hybrid_height_coordinate"
         )
         self.assertTrue(cr.equals(c, verbose=2))
-        self.assertTrue(len(f.coordinate_references(view=True)) == 1)
-        self.assertTrue(len(f.domain_ancillaries(view=True)) == 0)
+        self.assertTrue(len(f.coordinate_references()) == 1)
+        self.assertTrue(len(f.domain_ancillaries()) == 0)
 
         f.del_coordinate_reference(
             "grid_mapping_name:rotated_latitude_longitude"
         )
-        self.assertTrue(len(f.coordinate_references(view=True)) == 0)
+        self.assertTrue(len(f.coordinate_references()) == 0)
 
         # Set
         f = self.f.copy()
@@ -2246,7 +2251,7 @@ class FieldTest(unittest.TestCase):
             "grid_mapping_name:rotated_latitude_longitude"
         )
         f.set_coordinate_reference(cr, field=g)
-        self.assertTrue(len(f.coordinate_references(view=True)) == 1)
+        self.assertTrue(len(f.coordinate_references()) == 1)
 
         cr = g.coordinate_reference(
             "standard_name:atmosphere_hybrid_height_coordinate"
@@ -2256,8 +2261,8 @@ class FieldTest(unittest.TestCase):
             "foo", "domainancillary99"
         )
         f.set_coordinate_reference(cr, field=g)
-        self.assertTrue(len(f.coordinate_references(view=True)) == 2)
-        self.assertTrue(len(f.domain_ancillaries(view=True)) == 3)
+        self.assertTrue(len(f.coordinate_references()) == 2)
+        self.assertTrue(len(f.domain_ancillaries()) == 3)
 
         f.del_construct("coordinatereference0")
         f.del_construct("coordinatereference1")
@@ -2266,7 +2271,7 @@ class FieldTest(unittest.TestCase):
             "grid_mapping_name:rotated_latitude_longitude"
         )
         f.set_coordinate_reference(cr)
-        self.assertTrue(len(f.coordinate_references(view=True)) == 1)
+        self.assertTrue(len(f.coordinate_references()) == 1)
 
     def test_Field_dimension_coordinate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2281,16 +2286,20 @@ class FieldTest(unittest.TestCase):
             "dimensioncoordinate1",
         ):
             if identity == "domainaxis2":
-                key = (
-                    f.dimension_coordinates(view=True)
-                    .filter_by_axis(identity, mode="and")
-                    .key()
-                )
-                c = (
-                    f.dimension_coordinates(view=True)
-                    .filter_by_axis(identity, mode="and")
-                    .value()
-                )
+                key, c = f.dimension_coordinates(
+                    filter_by_axis=(identity,), axis_mode="exact",
+                    todict=True
+                ).popitem()
+#                key = (
+#                    f.dimension_coordinates(view=True)
+#                    .filter_by_axis(identity, mode="and")
+#                    .key()
+#                )
+#                c = (
+#                    f.dimension_coordinates(view=True)
+#                    .filter_by_axis(identity, mode="and")
+#                    .value()
+#                )
             elif identity == "X":
                 key = f.construct_key("grid_longitude")
                 c = f.construct("grid_longitude")
@@ -2304,7 +2313,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(f.dimension_coordinate(identity, key=True) == key)
 
             identities = ["grid_latitude", "X"]
-            dimension_coordinates = f.dimension_coordinates(view=True)
+            dimension_coordinates = f.dimension_coordinates()
             dimension_coordinates(*identities)
             dimension_coordinates()
             dimension_coordinates(identities[0])
@@ -2387,7 +2396,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(f.field_ancillary(identity, key=True) == key)
 
         identities = ["ancillary1", "ancillary3"]
-        field_ancillaries = f.field_ancillaries(view=True)
+        field_ancillaries = f.field_ancillaries()
         field_ancillaries(*identities)
         field_ancillaries()
         field_ancillaries(identities[0])

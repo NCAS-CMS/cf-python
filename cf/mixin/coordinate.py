@@ -511,7 +511,7 @@ class Coordinate:
 
         return default
 
-    def identities(self, generator=False, ctype="XTYZ"):
+    def identities(self, generator=False, ctypes="XTYZ", **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -534,13 +534,13 @@ class Coordinate:
 
             {{generator: `bool`, optional}}
 
-            ctype: (sequnce of) `str`
-                Restrict a coordinate type identies to be any of these
+            ctype: (sequence of) `str`
+                Restrict coordinate type identities to be any of these
                 characters. Setting to a subset of ``'XTYZ'`` can give
                 performance improvements, as it will reduce the number
                 of coordinate types that are checked in circumstances
-                when particular coordinaete type have been ruled out a
-                priori.  If a coordinate type is omitted then it will
+                when particular coordinate types have been ruled out a
+                priori. If a coordinate type is omitted then it will
                 not be in the returned identities even if the
                 coordinate construct is of that type. Coordinate types
                 are checked in the order given.
@@ -576,19 +576,16 @@ class Coordinate:
 
         """
 
-        def _ctype_iter(self, ctype):
-            stop = False
-            for c in ctype:
-                if stop:
+        def _ctypes_iter(self, ctypes):
+            for c in ctypes:
+                if getattr(self, c):
+                    # This coordinate constructs is of this type
+                    yield c
                     break
 
-                if getattr(self, c):
-                    stop = True
-                    yield c
-
         identities = super().identities(generator=True)
-
-        g = chain(identities, _ctype_iter(self, ctype))
+        
+        g = chain(identities, _ctypes_iter(self, ctypes))
         if generator:
             return g
 

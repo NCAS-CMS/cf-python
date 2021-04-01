@@ -1,3 +1,5 @@
+from functools import partial
+
 import cfdm
 
 from .query import Query
@@ -44,7 +46,7 @@ class Constructs(cfdm.Constructs):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
+   
     @classmethod
     def _matching_values(cls, value0, construct, value1, basic=False):
         """Whether two values match according to equality on a given
@@ -265,10 +267,12 @@ class Constructs(cfdm.Constructs):
 #             "bypass": lambda x: x in ctype}
 #        )
     
-    @classmethod
-    def _filter_by_identity(cls, self, *identities, todict=False,
-                            _config={}):
-        """TODO.
+    def _filter_by_identity(self, arg, todict, _config, identities):
+        """Worker function for `filter_by_identity` and `filter`.
+
+        See `filter_by_identity` for details.
+
+        .. versionadded:: 3.9.0
 
         """
         # Allow keys without the 'key%' prefix
@@ -278,27 +282,15 @@ class Constructs(cfdm.Constructs):
                 identities[n] = "key%" + identity
                 break
 
-        ctype = [i              for i in "XTYZ"      if i in identities]
-        
-        config = {    "identities_kwargs": {"ctype": ctype}}
+        ctypes = [i for i in "XTYZ" if i in identities]
 
-        if ctype:
+        config = {"identities_kwargs": {"ctypes": ctypes}}
+        if ctypes:
             # Exclude a ctype from the short circuit test
             config["short_circuit_test"] = (
-                lambda x: (
-                    x not in ctype
-                    and "=" not in x
-                    and ":" not in x
-                    and "%" not in x
-                )
+                lambda x: (x not in ctypes and self._short_circuit_test(x))
             )
                 
         config.update(_config)
 
-        return super()._filter_by_identity(
-            self,
-            *identities,
-            todict=todict,
-            cache=cache,
-            _config=config
-        )
+        return super()._filter_by_identity(arg, todict, config, identities)
