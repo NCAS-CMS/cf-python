@@ -16477,13 +16477,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def coordinate(
         self,
-        identity=None,
+            *identity,
         default=ValueError(),
         key=False,
         item=False,
         **filter_kwargs,
     ):
-        """Return a dimension coordinate construct, or its key.
+        """Return a dimension or auxiliary coordinate construct, or its key.
 
         .. versionadded:: 3.0.0
 
@@ -16583,7 +16583,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         c = self._construct(
             ("dimension_coordinate", "auxiliary_coordinate"),
             "coordinate",
-            identity=identity,
+            identity,
             key=key,
             item=item,
             default=default,
@@ -16596,24 +16596,34 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if not c:
             da_key = self.domain_axis(identity, key=True, default=None)
             if da_key is not None:
-                c = self.coordinate(
-                    filter_by_axis=(da_key,),
-                    axis_mode="exact",
-                    key=key,
-                    item=item,
-                    default=None,
+                return self._default(
+                    default, f"Can't find exactly one item to return"
                 )
 
-                if c is not None:
-                    return c
-
-            return self._default(
-                default, f"Can't find exactly one item to return"
+            c = self._construct(
+                ("dimension_coordinate", "auxiliary_coordinate"),
+                "coordinate",
+                identity,
+                key=key,
+                item=item,
+                default=default,
+                filter_by_axis=(da_key,),
+                axis_mode="exact"
             )
 
-    def coordinate_reference(
-        self, identity=None, default=ValueError(), key=False, **filter_kwargs
-    ):
+            c = self.coordinate(
+                filter_by_axis=(da_key,),
+                axis_mode="exact",
+                key=key,
+                item=item,
+                default=None,
+            )
+            
+            if c is not None:
+                return c
+
+    def coordinate_reference( self, *identity, default=ValueError(),
+                              key=False, item=False, **filter_kwargs ):
         """Return a coordinate reference construct, or its key.
 
         .. versionadded:: 3.0.0
@@ -16708,15 +16718,15 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return self._construct(
             ("coordinate_reference",),
             "coordinate_reference",
-            identity=identity,
+            identity,
             key=key,
             default=default,
+            item=item,
             **filter_kwargs,
         )
 
-    def field_ancillary(
-        self, identity=None, default=ValueError(), key=False, **filter_kwargs
-    ):
+    def field_ancillary( self, *identity, default=ValueError(),
+                         key=False, item=False, **filter_kwargs ):
         """Return a field ancillary construct, or its key.
 
         .. versionadded:: 3.0.0
@@ -16822,15 +16832,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return self._construct(
             ("field_ancillary",),
             "field_ancillary",
-            identity=identity,
+            identity,
             key=key,
             default=default,
+            item=item,
             **filter_kwargs,
         )
 
     def dimension_coordinate(
         self,
-        identity=None,
+            *identity,
         key=False,
         default=ValueError(),
         item=False,
@@ -16938,7 +16949,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         return self._construct(
             ("dimension_coordinate",),
             "dimension_coordinate",
-            identity=identity,
+            identity,
             key=key,
             default=default,
             item=item,
@@ -16947,7 +16958,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def domain_axis(
         self,
-        identity=None,
+            *identity,
         key=False,
         default=ValueError(),
         item=False,
@@ -17058,7 +17069,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         c = self._construct(
             ("domain_axis",),
             "domain_axis",
-            identity=identity,
+            identity,
             key=key,
             default=None,
             item=item,
