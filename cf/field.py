@@ -16477,7 +16477,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def coordinate(
         self,
-            *identity,
+        *identity,
         default=ValueError(),
         key=False,
         item=False,
@@ -16586,18 +16586,18 @@ class Field(mixin.PropertiesData, cfdm.Field):
             identity,
             key=key,
             item=item,
-            default=default,
+            default=None,
             **filter_kwargs,
         )
 
-        if identity is None:
+        if c is not None:
             return c
 
         if not c:
             da_key = self.domain_axis(identity, key=True, default=None)
             if da_key is not None:
                 return self._default(
-                    default, f"Can't find exactly one item to return"
+                    default, f"Can't find exactly one construct"
                 )
 
             c = self._construct(
@@ -16608,22 +16608,20 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 item=item,
                 default=default,
                 filter_by_axis=(da_key,),
-                axis_mode="exact"
+                axis_mode="exact",
             )
 
-            c = self.coordinate(
-                filter_by_axis=(da_key,),
-                axis_mode="exact",
-                key=key,
-                item=item,
-                default=None,
-            )
-            
             if c is not None:
                 return c
 
-    def coordinate_reference( self, *identity, default=ValueError(),
-                              key=False, item=False, **filter_kwargs ):
+    def coordinate_reference(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
         """Return a coordinate reference construct, or its key.
 
         .. versionadded:: 3.0.0
@@ -16725,8 +16723,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
             **filter_kwargs,
         )
 
-    def field_ancillary( self, *identity, default=ValueError(),
-                         key=False, item=False, **filter_kwargs ):
+    def field_ancillary(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
         """Return a field ancillary construct, or its key.
 
         .. versionadded:: 3.0.0
@@ -16841,105 +16845,101 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def dimension_coordinate(
         self,
-            *identity,
+        *identity,
         key=False,
         default=ValueError(),
         item=False,
         **filter_kwargs,
     ):
-        """Return a dimension coordinate construct, or its key.
+        """Select a dimension coordinate construct.
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate_reference`,
-                     `dimension_coordinates`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `dimension_coordinates`
 
         :Parameters:
 
             identity: optional
-                Select the dimension coordinate construct by one of:
+                Select dimension coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values. In addition to a
+                construct identities, the values are matched against:
 
-                  * `None`. This is the default, which selects the
-                    dimension coordinate construct when there is only one
-                    of them.
+                * The construct identifier, with or without the
+                  ``'key%'`` prefix, of a dimension coordinate
+                  construct.
 
-                  * The identity or key of a dimension coordinate
-                    construct.
+                  *Parameter example:*
+                    ``'dimensioncoordinate1'``
 
-                  * The identity or key of a domain axis construct that is
-                    spanned by a dimension coordinate construct's data.
+                  *Parameter example:*
+                    ``'key%dimensioncoordinate0'``
 
-                  * The position, in the field construct's data, of a domain
-                    axis construct that is spanned by a dimension coordinate
-                    construct's data.
+                * The identity or construct identifier, with or
+                  without the ``'key%'`` prefix, of a domain axis
+                  construct that is spanned by a dimension coordinate
+                  construct's data.
 
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
+                  *Parameter example:*
+                    ``'domainaxis2'``
 
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
+                  *Parameter example:*
+                    ``'ncdim%latitude'``
 
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
+                * The integer position, in the field construct's data,
+                  of the domain axis construct that is spanned by a
+                  dimension coordinate construct's data.
 
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+                  *Parameter example:*
+                    ``0'``
 
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
+                  *Parameter example:*
+                    ``cf.gt(2)``
 
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                If no values are provided then all constructs are
+                selected.
+
+                {{value match}}
+
+                {{displayed identity}}
 
                 *Parameter example:*
-                  ``identity='Y'``
+                  ``'Y'``
 
                 *Parameter example:*
-                  ``identity='latitude'``
+                  ``latitude'``
 
                 *Parameter example:*
-                  ``identity='long_name=Latitude'``
+                  ``re.compile('^lat')``
 
                 *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
+                  ``'long_name=Latitude'``
 
                 *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
+                  ``'Z', 'altutude'``
 
             key: `bool`, optional
-                If True then return the selected construct key. By default
-                the construct itself is returned.
+                If True then return the selected construct
+                identifier. By default the construct itself is
+                returned.
 
             default: optional
                 Return the value of the *default* parameter if a construct
                 can not be found. If set to an `Exception` instance then
                 it will be raised instead.
 
+            item: `bool`, optional
+                If True then return the selected construct and its
+                construct identifier in a 2-tuple. By default the only
+                construct is returned.
+
+                .. versionadded:: 3.9.0
+
         :Returns:
 
-            `DimensionCoordinate` or `str`
-                The selected dimension coordinate construct, or its key.
+            `DimensionCoordinate` or `str` or `tuple`
+                The selected dimension coordinate construct, or its
+                construct identifier, or both.
 
         **Examples:**
 
@@ -16958,7 +16958,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def domain_axis(
         self,
-            *identity,
+        *identity,
         key=False,
         default=ValueError(),
         item=False,
