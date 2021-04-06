@@ -3364,7 +3364,7 @@ def _DEPRECATION_ERROR(message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
         "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available. {3}".format(
+        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
             instance.__class__.__name__, method, arg, message, version
         )
     )
@@ -3392,7 +3392,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available. {2}".format(
+            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
                 func, key, message, version
             )
         )
@@ -3423,7 +3423,7 @@ def _DEPRECATION_ERROR_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
-            "version {4} and is no longer available. {3}".format(
+            "version {4} and is no longer available and will be removed at version 4.0.0. {3}".format(
                 instance.__class__.__name__, method, key, message, version
             )
         )
@@ -3434,7 +3434,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 ):
     raise DeprecationError(
         "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
-        "version {} and is no longer available. {}".format(
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
             value, kwarg, method, instance.__class__.__name__, version, message
         )
     )
@@ -3443,7 +3443,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
         "{} method {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(
+        "available and will be removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         )
     )
@@ -3452,25 +3452,30 @@ def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ATTRIBUTE(
     instance, attribute, message="", version="3.0.0"
 ):
-    raise DeprecationError(
-        "{} attribute {!r} has been deprecate at version {} and is no longer "
-        "available. {}".format(
-            instance.__class__.__name__, attribute, version, message
-        )
+    warnings.warn(
+        "{} attribute {!r} has been deprecated at version {} and will be "
+        "removed at version 4.0.0. {}".format(
+            instance.__class__.__name__, method, version, message
+        ),
+        DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
         "Function {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(func, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            func, version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
         "Class {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(cls, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            cls, version, message
+        )
     )
 
 
@@ -3479,7 +3484,7 @@ def _DEPRECATION_WARNING_METHOD(
 ):
     warnings.warn(
         "{} method {!r} has been deprecated at version {} and will be "
-        "removed in a future version. {}".format(
+        "removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         ),
         DeprecationWarning,
@@ -3489,14 +3494,16 @@ def _DEPRECATION_WARNING_METHOD(
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available. {}".format(version, message)
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
+            version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated at version "
-        "{} and is no longer available. Use the * operator to unpack the "
+        "{} and is no longer available and will be removed at version 4.0.0. Use the * operator to unpack the "
         "arguments instead.".format(instance.__class__.__name__, version)
     )
 

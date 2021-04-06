@@ -84,6 +84,7 @@ from .functions import (
     _DEPRECATION_ERROR_DICT,
     _DEPRECATION_ERROR_SEQUENCE,
     _DEPRECATION_ERROR_KWARG_VALUE,
+    DeprecationError,
 )
 
 from .formula_terms import FormulaTerms
@@ -736,16 +737,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
             #                ("dimension_coordinate",), "filter_by_axis", (axis,)
             #                mode="and", todict=True
             #            )
-            dims = self.dimension_coordinates(
-                filter_by_axis=(axis,), axis_mode="and", todict=True
+            key, dim = self.dimension_coordinate(
+                item=True, default=(None, None), filter_by_axis=(axis,)
             )
 
-            if len(dims) == 1:
+            if dim is not None:
                 # This axis of the domain has a dimension coordinate
-                key, dim = dims.popitem()
-                #                key = dims.key()
-                #                dim = dims.value()
-
                 identity = dim.identity(strict=True, default=None)
                 if identity is None:
                     # Dimension coordinate has no identity, but it may
@@ -777,15 +774,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     item=True,
                     default=(None, None),
                 )
-                #                auxs = self.auxiliary_coordinates.filter_by_axis(
-                #                    axis, mode="exact", todict=True
-                #                )
-                if aux is not None:  # len(auxs) == 1:
+                if aux is not None:
                     # This axis of the domain does not have a
                     # dimension coordinate but it does have exactly
                     # one 1-d auxiliary coordinate, so that will do.
-                    #                    key, aux = auxs.popitem()
-
                     identity = aux.identity(strict=True, default=None)
 
                     if identity is None and relaxed_identities:
@@ -1563,7 +1555,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         "auxiliary_coordinate",
                         "domain_ancillary",
                     ),
-                    filter_by_axis=(axis0,),
+                    filter_by_axis=(
+                        axis0,
+                    ),  # TODO check if we need an axis_mode="or" or "subset" here
                     todict=True,
                 )
             )
@@ -1926,28 +1920,24 @@ class Field(mixin.PropertiesData, cfdm.Field):
         out1 = {}
         for i, (f, out) in enumerate(zip((field0, field1), (out0, out1))):
             data_axes = f.get_data_axes()
-
-            #            f_dimension_coordinates = f.dimension_coordinates(todict=True)
-            #            f_auxiliary_coordinates = f.auxiliary_coordinates(todict=True)
             for axis in f.domain_axes(todict=True):
                 identity = None
                 key = None
                 coord = None
                 coord_type = None
 
-                coords = f.dimension_coordinates(
-                    filter_by_axis=(axis,), axis_mode="exact", todict=True
+                key, coord = f.dimension_coordinate(
+                    item=True,
+                    default=(None, None),
+                    filter_by_axis=(axis,),
                 )
-                if len(coords) == 1:
-                    # This axis of the domain has a dimension coordinate
-                    key, coord = coords.popitem()
-                    #                    key = coords.key()
-                    #                   coord = coords.value()
-
+                if coord is not None:
+                    # This axis of the domain has a dimension
+                    # coordinate
                     identity = coord.identity(strict=True, default=None)
                     if identity is None:
-                        # Dimension coordinate has no identity, but it may
-                        # have a recognised axis.
+                        # Dimension coordinate has no identity, but it
+                        # may have a recognised axis.
                         for ctype in ("T", "X", "Y", "Z"):
                             if getattr(coord, ctype, False):
                                 identity = ctype
@@ -1956,17 +1946,17 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     if identity is None and relaxed_identities:
                         identity = coord.identity(relaxed=True, default=None)
                 else:
-                    coords = f.auxiliary_coordinates(
-                        filter_by_axis=(axis,), axis_mode="exact", todict=True
+                    key, coord = f.auxiliary_coordinate(
+                        item=True,
+                        default=(None, None),
+                        filter_by_axis=(axis,),
+                        axis_mode="exact",
                     )
-                    if len(coords) == 1:
+                    if coord is not None:
                         # This axis of the domain does not have a
-                        # dimension coordinate but it does have exactly
-                        # one 1-d auxiliary coordinate, so that will do.
-                        key, coord = coords.popitem()
-                        #                        key = coords.key()
-                        #                        coord = coords.value()
-
+                        # dimension coordinate but it does have
+                        # exactly one 1-d auxiliary coordinate, so
+                        # that will do.
                         identity = coord.identity(strict=True, default=None)
 
                         if identity is None and relaxed_identities:
@@ -2032,7 +2022,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # List of field1 coordinate reference constucts which will
         # be added to field0. E.g.
-        #  [<CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>]
+        # [<CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>]
         refs_to_add_from_field1 = []
 
         # Check that the two fields are combinable
@@ -2484,11 +2474,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return False
 
         # Compare the domain ancillaries
-        #        domain_ancillaries = self.domain_ancillaries(todict=True)
-        #        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
-
         # TODO consider case of None key ?
-
         for (
             term,
             identifier0,
@@ -2567,16 +2553,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
                             )
 
                         if axes_sizes.count(n) == 1:
-                            #                            domain_axes = self.domain_axes(
-                            #                                filter_by_size=(n,), todict=True
-                            #                            )
-                            #                            key, _ = domain_axes.popitem()
-                            key = self.domain_axis(
+                            da_key = self.domain_axis(
                                 filter_by_size=(n,), key=True
                             )
-                            axes.append(key)
-                        #                                domain_axes.filter_by_size(n, view=True).key()
-                        #                            )
+                            axes.append(da_key)
                         else:
                             raise ValueError(
                                 f"Can't insert {item!r}: Ambiguous shape: "
@@ -3144,19 +3124,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if axes["X"] == axes["Y"]:
                     raise ValueError("TODO")
 
-                x = self.auxiliary_coordinates(
-                    "X", filter_by_naxes=(2,), todict=True
+                lon_key, lon = self.auxiliary_coordinate(
+                    "X", item=True, filter_by_naxes=(2,), default=(None, None)
                 )
-                y = self.auxiliary_coordinates(
-                    "Y", filter_by_naxes=(2,), todict=True
+                lat_key, lat = self.auxiliary_coordinate(
+                    "Y", item=True, filter_by_naxes=(2,), default=(None, None)
                 )
-                if len(x) != 1:
-                    raise ValueError("TODO")
-                if len(y) != 1:
-                    raise ValueError("TODO")
-
-                lon_key, lon = tuple(x.items())[0]
-                lat_key, lat = tuple(y.items())[0]
+                if lon is None:
+                    raise ValueError("TODO x")
+                if lat is None:
+                    raise ValueError("TODO y")
 
                 if lat.shape != lon.shape:
                     raise ValueError("TODO")
@@ -3213,10 +3190,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         ):
             lon_found = False
             lat_found = False
-
-            #           auxiliary_coordinates = self.auxiliary_coordinates(
-            #                view=True, cache=auxiliary_coordinates
-            #            )
 
             for key, aux in self.auxiliary_coordinates(
                 filter_by_naxes=(2,), todict=True
@@ -3558,21 +3531,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
         axis_indices = []
         if axis_order is not None:
             for axis in axis_order:
-                # axis_key = self.dim(axis, key=True)
-                #                dims = self.dimension_coordinates(
-                #                    filter_by_axis=(axis,), axis_mode="exact", todict=True
-                #                )
-                #                if len(dims)!= 1:
-                #                    axis_key = None
-                #                else:
-                #                    axis_key, _ = dims.popitem()
-
                 axis_key = self.dimension_coordinate(
                     filter_by_axis=(axis,),
-                    axis_mode="exact",
                     default=None,
                     key=True,
-                    todict=True,
                 )
                 if axis_key is not None:
                     if axis_key in regrid_axes:
@@ -3826,7 +3788,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         domain_axes = None
-        domain_ancillaries = None
+        domain_ancillaries = self.domain_ancillaries(todict=True)
 
         for key, ref in self.coordinate_references(todict=True).items():
             ref_axes = []
@@ -3837,42 +3799,23 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 self.del_construct(key)
                 continue
 
-            domain_ancillaries = self.domain_ancillaries(todict=True)
-
             for (
                 term,
                 value,
             ) in ref.coordinate_conversion.domain_ancillaries().items():
-                #                domain_ancillaries = self.domain_ancillaries(
-                #                    view=True, cache=domain_ancillaries
-                #                )
-                #
-                #                key = domain_ancillaries(value, view=True).key(default=None)
-
-                if value in domain_ancillaries:
-                    key = value
-                else:
+                if value not in domain_ancillaries:
                     continue
+
+                key = value
 
                 # If this domain ancillary spans both X and Y axes
                 # then regrid it, otherwise remove it
-                #                if f.domain_anc(key, axes_all=('X', 'Y')):# v2
                 x = self.domain_axis("X", key=True)
                 y = self.domain_axis("Y", key=True)
-                #                if domain_ancillaries.filter_by_key(key).filter_by_axis(
-                #                        x, y, mode="exact", view=True
-                #                ):
-                #                if len(
-                #                        self.domain_ancillaries(
-                #                            filter_by_axis=(x, y), axis_mode="exact",
-                #                            todict=True
-                #                    )
-                #                ) == 1:
                 if self.domain_ancillary(
                     filter_by_axis=(x, y),
                     axis_mode="exact",
                     key=True,
-                    todict=True,
                     default=False,
                 ):
                     # Convert the domain ancillary into an independent
@@ -3908,7 +3851,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         d_axes = self.get_data_axes(key)
 
                         domain_axes = self.domain_axes(
-                            todict=True, cache=domain_axes
+                            todict=True, cached=domain_axes
                         )
 
                         for k_s, new_size in zip(
@@ -4048,7 +3991,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     self.set_construct(d, axes=[k_s])
 
                 #                dst_auxiliary_coordinates = dst.auxiliary_coordinates(
-                #                    view=True, cache=dst_auxiliary_coordinates
+                #                    view=True, cached=dst_auxiliary_coordinates
                 #                )
 
                 for aux_key, aux in dst.auxiliary_coordinates(
@@ -4081,7 +4024,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         self.set_construct(coord, axes=[axis_key])
             else:
                 #                dst_auxiliary_coordinates = dst.auxiliary_coordinates(
-                #                    view=True, cache=dst_auxiliary_coordinates
+                #                    view=True, cached=dst_auxiliary_coordinates
                 #                )#
 
                 for src_axis_key, dst_axis_key in zip(
@@ -4165,11 +4108,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             `bool` or `None`
 
         """
-        #        dimension_coordinates = self.dimension_coordinates(view=True)
-
-        #        xdims = self.dimension_coordinates("X", todict=True)
-        #        ydims = self.dimension_coordinates("Y", todict=True)
-
         xkey, xcoord = self.dimension_coordinate(
             "X", item=True, default=(None, None)
         )
@@ -4177,27 +4115,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
             "Y", item=True, default=(None, None)
         )
 
-        #        if not (xdims and ydims):
-        if xcoord is None and ycoord is None:
+        if xcoord is None or ycoord is None:
             if auto:
                 return
 
             raise ValueError(
-                "No unique coordinate constructs for calculating "
-                "area weights"
+                "No unique 'X' and 'Y' dimension coordinate constructs for "
+                "calculating area weights"
             )
-
-        #        xkey, xcoord = xdims.popitem()
-        #        ykey, ycoord = ydims.popitem()
-        #
-        #        if xdims or ydims:
-        #            if auto:
-        #                return
-        #
-        #            raise ValueError(
-        #                "Ambiguous coordinate constructs for calculating area "
-        #                "weights"
-        #            )
 
         if xcoord.Units.equivalent(
             Units("radians")
@@ -4307,8 +4232,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             methods: `bool`, optional
                 If True then add a description of the method used to
-                create the weights to the *comp* dictionary, as opposed to
-                the actual weights.
+                create the weights to the *comp* dictionary, as
+                opposed to the actual weights.
 
         """
         # --------------------------------------------------------
@@ -5228,7 +5153,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 f"Can't find weights: Multiple {measure!r} cell measures"
             )
 
-        key, clm = dict(m).popitem()
+        key, clm = m.popitem()
 
         clm_axes0 = self.get_data_axes(key)
 
@@ -5318,11 +5243,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
         y_axis = None
         z_axis = None
 
-        auxiliary_coordinates = self.auxiliary_coordinates(
+        auxiliary_coordinates_1d = self.auxiliary_coordinates(
             filter_by_naxes=(1,), todict=True
         )
 
-        for key, aux in auxiliary_coordinates.items():
+        for key, aux in auxiliary_coordinates_1d.items():
             if aux.get_geometry(None) != geometry_type:
                 continue
 
@@ -5482,6 +5407,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
     @property
     def ncdimensions(self):
         """"""
+        _DEPRECATION_WARNING_ATTRIBUTE(
+            self,
+            "ncdimensions",
+            version="3.0.0",
+        )  # pragma: no cover
+
         out = {}
         for dim, domain_axis in self.domain_axes(todict=True).items():
             ncdim = domain_axis.nc_get_dimension(None)
@@ -10464,7 +10395,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         all_axes = []
         for axes in input_axes:
             if axes is None:
-                domain_axes = self.domain_axes(todict=False, cache=domain_axes)
+                domain_axes = self.domain_axes(
+                    todict=False, cached=domain_axes
+                )
                 all_axes.append(list(domain_axes))
                 continue
 
@@ -10505,7 +10438,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
-        domain_axes = f.domain_axes(todict=False, cache=domain_axes)
+        domain_axes = f.domain_axes(todict=False, cached=domain_axes)
         #        auxiliary_coordinates = f.auxiliary_coordinates(view=True)
         #        dimension_coordinates = f.dimension_coordinates(view=True)
 
@@ -10575,7 +10508,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         #                        ).value(None)
                         dc = f.dimension_coordinate(
                             filter_by_axis=(axis,),
-                            axis_mode="exact",
                             default=None,
                         )
                         if dc is not None and not dc.has_bounds():
@@ -10912,7 +10844,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 #                    axis, mode="exact", view=True
                 #                ).value(None)
                 dim = f.dimension_coordinate(
-                    filter_by_axis=(axis,), axis_mode="exact", default=None
+                    filter_by_axis=(axis,), default=None
                 )
                 if dim is None:
                     continue
@@ -11622,7 +11554,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # E.g. group=cf.M()
                 # ----------------------------------------------------
                 coord = self.dimension_coordinate(
-                    filter_by_axis=(axis,), axis_mode="exact", default=None
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
                     raise ValueError("dddddd siduhfsuildfhsuil dhfdui TODO")
@@ -11655,7 +11587,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # Chunks of
                 # ----------------------------------------------------
                 coord = self.dimension_coordinate(
-                    filter_by_axis=(axis,), axis_mode="exact", default=None
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
                     raise ValueError("TODO asdas 4444444  dhfdui ")
@@ -11708,7 +11640,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # E.g. group=[cf.month(4), cf.month(cf.wi(9, 11))]
                 # ----------------------------------------------------
                 coord = self.dimension_coordinate(
-                    filter_by_axis=(axis,), axis_mode="exact", default=None
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
                     coord = self.auxiliary_coordinate(
@@ -13463,30 +13395,17 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if not domain_axes:
                 raise ValueError("Can't set data: No domain axes exist")
 
-            #            domain_axes = f.domain_axes(view=True)
-
             axes = []
             for n in data_shape:
-                #                da = domain_axes.filter_by_size(n, todict=True)
-                #                da = f.domain_axes(filter_by_size=(n,), todict=True)
-                #                if len(da) != 1:
-                #                    raise ValueError(
-                #                        "Can't insert data: Ambiguous data shape: "
-                #                        f"{data_shape}. "
-                #                        "Consider setting the axes parameter."
-                #                    )
-                #
-                #                da_key, _ = da.popitem()
                 da_key = f.domain_axis(
                     filter_by_size=(n,), key=True, default=None
                 )
-                if da_key is None:  # len(da) != 1:
+                if da_key is None:
                     raise ValueError(
                         "Can't insert data: Ambiguous data shape: "
                         f"{data_shape}. Consider setting the axes parameter."
                     )
 
-                #                da_key, _ = da.popitem()
                 axes.append(da_key)
 
         else:
@@ -15247,9 +15166,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         else:
             f = _inplace_enabled_define_and_cleanup(self)
 
-        dim = f.dimension_coordinate(
-            filter_by_axis=(axis,), axis_mode="exact", default=None
-        )
+        dim = f.dimension_coordinate(filter_by_axis=(axis,), default=None)
         if dim is None:
             raise ValueError(
                 "Can't shift non-cyclic "
@@ -15290,9 +15207,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if not dry_run:
                 f.roll(axis, shift, inplace=True)
 
-            dim = f.dimension_coordinate(
-                filter_by_axis=(axis,), axis_mode="exact"
-            )
+            dim = f.dimension_coordinate(filter_by_axis=(axis,))
 
             n = ((value - dim.data[0]) / period).ceil()
         else:
@@ -15446,16 +15361,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
         >>> f.autocyclic()
 
         """
-        #        dims = self.dimension_coordinates(view=True).filter_by_identity("X", view=True)._dictionary()
-
         key, dim = self.dimension_coordinate(
             "X", item=True, default=(None, None)
         )
 
         if dim is None:
             return False
-
-        #        key, dim = dims.popitem()
 
         if not dim.Units.islongitude:
             if dim.get_property("standard_name", None) not in (
@@ -16000,18 +15911,41 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
-            ("auxiliary_coordinate",),
+        c = self._select_construct(
+            ("auxiliary_coordinate"),
             "auxiliary_coordinate",
-            identity=identity,
+            identity,
             key=key,
-            default=default,
+            item=item,
+            default=None,
             **filter_kwargs,
         )
+        if c is not None:
+            return c
+
+        if not c:
+            da_key = self.domain_axis(identity, key=True, default=None)
+            if da_key is not None:
+                return self._default(
+                    default,
+                    f"{self.__class__.__name__}.auxiliary_coordinate() can't "
+                    "return zero constructs",
+                )
+
+            return self._select_construct(
+                ("auxiliary_coordinate"),
+                "auxiliary_coordinate",
+                identity,
+                key=key,
+                item=item,
+                default=default,
+                filter_by_axis=(da_key,),
+                axis_mode="exact",
+            )
 
     def construct(
         self,
-        identity=None,
+        *identity,
         default=ValueError(),
         key=False,
         item=False,
@@ -16137,10 +16071,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TypeError: No height coordinates
 
         """
-        return self._construct(
+        return self._select_construct(
             (),
             "construct",
-            identity=identity,
+            identity,
             key=key,
             item=item,
             default=default,
@@ -16148,7 +16082,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
         )
 
     def domain_ancillary(
-        self, identity=None, default=ValueError(), key=False, **filter_kwargs
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
     ):
         """Return a domain ancillary construct, or its key.
 
@@ -16251,17 +16190,23 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
+        return self._select_construct(
             ("domain_ancillary",),
             "domain_ancillary",
-            identity=identity,
+            identity,
             key=key,
             default=default,
+            item=item,
             **filter_kwargs,
         )
 
     def cell_measure(
-        self, identity=None, default=ValueError(), key=False, **filter_kwargs
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
     ):
         """Select a cell measure construct by its identity.
 
@@ -16360,16 +16305,24 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
+        return self._select_construct(
             ("cell_measure",),
             "cell_meausure",
-            identity=identity,
+            identity,
             key=key,
             default=default,
+            item=item,
             **filter_kwargs,
         )
 
-    def cell_method(self, identity=None, default=ValueError(), key=False):
+    def cell_method(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
         """Select a cell method construct by its identity.
 
         .. versionadded:: 3.0.0
@@ -16472,6 +16425,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         if key:
             return c.key(default=default)
+
+        if item:
+            return c.key(default=default), c.value(default=default)
 
         return c.value(default=default)
 
@@ -16580,7 +16536,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        c = self._construct(
+        c = self._select_construct(
             ("dimension_coordinate", "auxiliary_coordinate"),
             "coordinate",
             identity,
@@ -16589,7 +16545,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
             default=None,
             **filter_kwargs,
         )
-
         if c is not None:
             return c
 
@@ -16597,10 +16552,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
             da_key = self.domain_axis(identity, key=True, default=None)
             if da_key is not None:
                 return self._default(
-                    default, f"Can't find exactly one construct"
+                    default,
+                    f"{self.__class__.__name__}.coordinate() can't "
+                    "return zero constructs",
                 )
 
-            c = self._construct(
+            return self._select_construct(
                 ("dimension_coordinate", "auxiliary_coordinate"),
                 "coordinate",
                 identity,
@@ -16610,9 +16567,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 filter_by_axis=(da_key,),
                 axis_mode="exact",
             )
-
-            if c is not None:
-                return c
 
     def coordinate_reference(
         self,
@@ -16713,7 +16667,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
+        return self._select_construct(
             ("coordinate_reference",),
             "coordinate_reference",
             identity,
@@ -16833,7 +16787,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
+        return self._select_construct(
             ("field_ancillary",),
             "field_ancillary",
             identity,
@@ -16946,15 +16900,37 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._construct(
+        c = self._select_construct(
             ("dimension_coordinate",),
             "dimension_coordinate",
             identity,
             key=key,
-            default=default,
             item=item,
+            default=None,
             **filter_kwargs,
         )
+        if c is not None:
+            return c
+
+        if not c:
+            da_key = self.domain_axis(identity, key=True, default=None)
+            if da_key is not None:
+                return self._default(
+                    default,
+                    f"{self.__class__.__name__}.dimension_coordinate can't "
+                    "return zero constructs",
+                )
+
+            return self._select_construct(
+                ("dimension_coordinate",),
+                "dimension_coordinate",
+                identity,
+                key=key,
+                item=item,
+                default=default,
+                filter_by_axis=(da_key,),
+                axis_mode="exact",
+            )
 
     def domain_axis(
         self,
@@ -17052,21 +17028,27 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         # Try for integer index
-        try:
-            da_key = self.get_data_axes(default=None)[identity]
-        except TypeError:
-            pass
-        except IndexError:
-            return self._default(
-                default,
-                "Index does not exist for field construct data dimenions",
-            )
-        else:
-            # TODO consider using filter_by_key ... but I think
-            # filter_by_identity is faster, though
-            identity = da_key
+        if identity:
+            identity2 = []
 
-        c = self._construct(
+            data_axes = self.get_data_axes(default=None)
+            for i in identity:
+                try:
+                    identity2.append(data_axes[i])
+                except TypeError:
+                    identity2.append(i)
+                except IndexError:
+                    pass
+
+            if not identity2:
+                return self._default(
+                    default,
+                    "Indices do not exist for field construct data dimenions",
+                )
+
+            identity = identity2
+
+        c = self._select_construct(
             ("domain_axis",),
             "domain_axis",
             identity,
@@ -17078,7 +17060,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        da_key = self.domain_axis_key(identity, default=None)
+        da_key = self.domain_axis_key(*identity, default=None)
+
         if da_key is not None:
             if key:
                 return da_key
@@ -17091,7 +17074,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return construct
 
         return self._default(
-            default, "No unique domain axis construct is identifable"
+            default,
+            f"{self.__class__.__name__}.domain_axis() can't return zero "
+            "constructs",
         )
 
     def domain_axis_position(self, identity):
@@ -18771,9 +18756,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             return f
 
-        dim = self.dimension_coordinate(
-            filter_by_axis=(axis,), axis_mode="exact", default=None
-        )
+        dim = self.dimension_coordinate(filter_by_axis=(axis,), default=None)
         if dim is not None and dim.period() is None:
             raise ValueError(
                 f"Can't roll: {dim.identity()!r} axis has non-periodic "
@@ -20865,22 +20848,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if axis is None:
             raise ValueError("Invalid axis specifier")
 
-        coord = self.dimension_coordinate(
-            filter_by_axis=(axis,), axis_mode="exact", default=None
-        )
+        coord = self.dimension_coordinate(filter_by_axis=(axis,), default=None)
         if coord is None:
             raise ValueError("Axis specified is not unique.")
-
-        #        dims = self.dimension_coordinates(view=True).filter_by_axis(
-        #            axis, mode="exact", view=True
-        #        )
-        #        len_dims = len(dims)
-        #        if not len_dims:
-        #            raise ValueError("Invalid axis specifier")
-        #        elif len_dims != 1:
-        #            raise ValueError("Axis specified is not unique.")
-        #
-        #        dckey, coord = dims._dictionary().popitem()
 
         # Get the axis index
         axis_index = self.get_data_axes().index(axis)
@@ -21309,31 +21279,36 @@ class Field(mixin.PropertiesData, cfdm.Field):
     @property
     def _Axes(self):
         """"""
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_Axes", "Use attribute 'domain_axes' instead."
-        )  # pragma: no cover
+        raise DeprecationError(
+            f"{self.__class__.__name__} attribute '_Axes' has been deprecated "
+            "at version 3.0.0 and is no longer available"
+            "Use 'domain_axes' instead."
+        )
 
     @property
     def CellMethods(self):
         """"""
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "CellMethods", "Use method 'cell_methods.ordered' instead."
-        )  # pragma: no cover
+        raise DeprecationError(
+            f"{self.__class__.__name__} attribute 'CellMethods' has been deprecated "
+            "at version 3.0.0 and is no longer available"
+            "Use 'cell_methods' instead."
+        )
 
     @property
     def Items(self):
-        """Deprecated at version 3.0.0.
-
-        Use attribute `constructs` instead.
-
-        """
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Items", "Use 'constructs' attribute instead."
-        )  # pragma: no cover
+        """"""
+        raise DeprecationError(
+            f"{self.__class__.__name__} attribute 'Items' has been deprecated "
+            "at version 3.0.0 and is no longer available"
+            "Use 'constructs' instead."
+        )
 
     def CM(self, xxx):
-        """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "CM")  # pragma: no cover
+        """"""
+        raise DeprecationError(
+            f"{self.__class__.__name__} method 'CM' has been deprecated "
+            "at version 3.0.0 and is no longer available"
+        )
 
     def axis_name(self, *args, **kwargs):
         """Return the canonical name for an axis.
