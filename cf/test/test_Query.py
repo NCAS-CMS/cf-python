@@ -2,7 +2,6 @@ import copy
 import datetime
 import faulthandler
 import re
-import os
 import unittest
 
 import numpy
@@ -13,18 +12,14 @@ import cf
 
 
 class QueryTest(unittest.TestCase):
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-    )
-
-    #    f = cf.read(filename)[0]
+    f = cf.example_field(1)
 
     def test_Query_contains(self):
-        f = cf.read(self.filename)[0]
-        c = f.dim("X")
+
+        c = self.f.dim("X")
         self.assertTrue(
             (
-                (cf.contains(21.1) == c).array
+                (cf.contains(-4.26) == c).array
                 == numpy.array([0, 1, 0, 0, 0, 0, 0, 0, 0], bool)
             ).all()
         )
@@ -36,41 +31,39 @@ class QueryTest(unittest.TestCase):
         )
 
     def test_Query(self):
-        f = cf.read(self.filename)[0]
-
         q = cf.Query("wi", [2, 5])
         r = cf.Query("le", 67)
         s = q | r
         t = cf.Query("gt", 12, attr="bounds")
         u = s & t
 
-        _ = repr(q)
-        _ = repr(s)
-        _ = repr(t)
-        _ = repr(u)
-        _ = str(q)
-        _ = str(s)
-        _ = str(t)
-        _ = str(u)
-        _ = u.dump(display=False)
+        repr(q)
+        repr(s)
+        repr(t)
+        repr(u)
+        str(q)
+        str(s)
+        str(t)
+        str(u)
+        u.dump(display=False)
 
-        _ = u.attr
-        _ = u.operator
-        _ = q.attr
-        _ = q.operator
-        _ = q.value
+        u.attr
+        u.operator
+        q.attr
+        q.operator
+        q.value
         with self.assertRaises(Exception):
-            _ = u.value
+            u.value
 
         self.assertTrue(u.equals(u.copy(), verbose=2))
         self.assertFalse(u.equals(t, verbose=0))
 
-        _ = copy.deepcopy(u)
+        copy.deepcopy(u)
 
-        c = f.dimension_coordinate("X")
+        c = self.f.dimension_coordinate("X")
         self.assertTrue(
             (
-                (cf.contains(21.1) == c).array
+                (cf.contains(-4.26) == c).array
                 == numpy.array([0, 1, 0, 0, 0, 0, 0, 0, 0], bool)
             ).all()
         )
@@ -81,15 +74,15 @@ class QueryTest(unittest.TestCase):
             ).all()
         )
 
-        _ = cf.cellsize(34)
-        _ = cf.cellsize(q)
+        cf.cellsize(34)
+        cf.cellsize(q)
 
-        _ = cf.celllt(3)
-        _ = cf.cellle(3)
-        _ = cf.cellge(3)
-        _ = cf.cellgt(3)
-        _ = cf.cellwi(1, 2)
-        _ = cf.cellwo(1, 2)
+        cf.celllt(3)
+        cf.cellle(3)
+        cf.cellge(3)
+        cf.cellgt(3)
+        cf.cellwi(1, 2)
+        cf.cellwo(1, 2)
 
     def test_Query_object_units(self):
         """Check units are processed correctly in and from queries."""
@@ -236,7 +229,7 @@ class QueryTest(unittest.TestCase):
             message,
         )
 
-        _ = cf.seasons()
+        cf.seasons()
         [
             cf.seasons(n, start)
             for n in [1, 2, 3, 4, 6, 12]
@@ -247,10 +240,10 @@ class QueryTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.seasons(start=8.456)
 
-        _ = cf.mam()
-        _ = cf.djf()
-        _ = cf.jja()
-        _ = cf.son()
+        cf.mam()
+        cf.djf()
+        cf.jja()
+        cf.son()
 
     def test_Query_year_month_day_hour_minute_second(self):
         d = cf.Data(

@@ -1528,6 +1528,6 @@ broken_bounds_file = _make_broken_bounds_cdl("broken_bounds.cdl")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    print(cf.environment())
+    cf.environment()
     print()
     unittest.main(verbosity=2)

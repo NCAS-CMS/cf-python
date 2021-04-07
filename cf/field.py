@@ -80,9 +80,6 @@ from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_ATTRIBUTE,
-    _DEPRECATION_ERROR_DICT,
-    _DEPRECATION_ERROR_SEQUENCE,
     _DEPRECATION_ERROR_KWARG_VALUE,
     DeprecationError,
 )
@@ -1510,10 +1507,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
         field1_coordinate_references = field1.coordinate_references(
             todict=True
         )
-        field1_domain_ancillaries = field1_domain_ancillaries(todict=True)
+
+        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
         field1_domain_axes = field1.domain_axes(todict=True)
 
-        #        field0_auxiliary_coordinates = field0.auxiliary_coordinates(view=True)
+        #        field0_auxiliary_coordinates = field0.auxiliary_coordinates(todict=True)
         #        field0_domain_ancillaries = field0_domain_ancillaries(todict=True)
 
         #        c = field0.constructs.filter_by_type(
@@ -1602,7 +1600,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             "5: remove_items = {}".format(remove_items)
         )  # pragma: no cover
 
-        for key0, aux0 in field0_auxiliary_coordinates.items():
+        for key0, aux0 in field0.auxiliary_coordinates(todict=True).items():
             if key0 in remove_items:
                 # Field0 auxiliary coordinate has already marked for
                 # removal
@@ -1665,7 +1663,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Copy field1 auxiliary coordinates which do not span any
         # matching axes to field0
         # ------------------------------------------------------------
-        filed1_data_axes = field1.constructs.data_axes()
+        field1_data_axes = field1.constructs.data_axes()
         for key1 in field1_auxiliary_coordinates:
             if key1 in insert_aux:
                 continue
@@ -1737,6 +1735,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 "axes0, key1, field1.constructs[key1] = "
                 "{}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
             )  # pragma: no cover
+
+        #        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
 
         for key1, axes0 in insert_domain_anc.items():
             try:
@@ -3060,50 +3060,30 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 and Y coordinates are returned, which are not long/lat.
 
         """
-        auxiliary_coordinates = None
-
         if axes is None:
-            # Retrieve the field construct's X and Y dimension coordinates
-            xdims = self.dimension_coordinates("X", todict=True)
-            len_x = len(xdims)
-            if not len_x:
-                raise ValueError(
-                    f"No X dimension coordinate found for the {name} "
+            # Retrieve the field construct's X and Y dimension
+            # coordinates
+            x_key, x = self.dimension_coordinate(
+                "X",
+                item=True,
+                default=ValueError(
+                    f"No unique X dimension coordinate found for the {name} "
                     "field. If none is present you "
-                    "may need to specify the axes keyword, "
-                    "otherwise you may need to set the X "
-                    "attribute of the X dimension coordinate "
-                    "to True."
-                )
-
-            if len_x > 1:
-                raise ValueError(
-                    f"{name.captalize()} field has multiple 'X' dimension "
-                    "coordinates"
-                )
-
-            ydims = self.dimension_coordinates("Y", todict=True)
-            len_y = len(ydims)
-
-            if not len_y:
-                raise ValueError(
-                    f"No Y dimension coordinate found for the {name} "
+                    "may need to specify the axes keyword."
+                ),
+            )
+            y_key, y = self.dimension_coordinate(
+                "Y",
+                item=True,
+                default=ValueError(
+                    f"No unique Y dimension coordinate found for the {name} "
                     "field. If none is present you "
-                    "may need to specify the axes keyword, "
-                    "otherwise you may need to set the Y "
-                    "attribute of the Y dimension coordinate "
-                    "to True."
-                )
+                    "may need to specify the axes keyword."
+                ),
+            )
 
-            if len_y > 1:
-                raise ValueError(
-                    f"{name} field has multiple 'Y' dimension coordinates"
-                )
-
-            x_key, x = xdims.popitem()
-            y_key, y = xdims.popitem()
-            x_axis = self.domain_axis(x_key, key=True)
-            y_axis = self.domain_axis(y_key, key=True)
+            x_axis = self.get_data_axes(x_key)[0]
+            y_axis = self.get_data_axes(y_key)[0]
 
             x_size = x.size
             y_size = y.size
@@ -3120,7 +3100,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             if axes["X"] in (1, 0) and axes["Y"] in (0, 1):
                 # Axes specified by integer position in dimensions of
-                # lat and lon 2-d coordinates
+                # lat and lon 2-d auxiliary coordinates
                 if axes["X"] == axes["Y"]:
                     raise ValueError("TODO")
 
@@ -3136,27 +3116,15 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     raise ValueError("TODO y")
 
                 if lat.shape != lon.shape:
-                    raise ValueError("TODO")
+                    raise ValueError("TODO 222222")
 
                 lon_axes = self.get_data_axes(lon_key)
                 lat_axes = self.get_data_axes(lat_key)
                 if lat_axes != lon_axes:
-                    raise ValueError("TODO")
+                    raise ValueError("TODO 3333333")
 
-                x_axis = self.domain_axis(
-                    lon_axes[axes["X"]],
-                    key=True,
-                    default=ValueError(
-                        f"'X' axis specified for {name} field not found."
-                    ),
-                )
-                y_axis = self.domain_axis(
-                    lat_axes[axes["Y"]],
-                    key=True,
-                    default=ValueError(
-                        f"'Y' axis specified for {name} field not found."
-                    ),
-                )
+                x_axis = lon_axes[axes["X"]]
+                y_axis = lat_axes[axes["Y"]]
             else:
                 x_axis = self.domain_axis(
                     axes["X"],
@@ -3283,7 +3251,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             if d is None:
                 raise ValueError(
                     f"No unique {name} dimension coordinate "
-                    f"matches key {key}."
+                    f"matches key {key!r}."
                 )
 
             coords.append(d.copy())
@@ -3667,7 +3635,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 The destination field.
 
         """
-        if not type(_compute_field_mass) == dict:
+        if not isinstance(_compute_field_mass, dict):
             raise ValueError(
                 "Expected _compute_field_mass to be a dictionary."
             )
@@ -3969,7 +3937,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             self.del_construct(key)
 
         domain_axes = self.domain_axes(todict=True)
-        dst_auxiliary_coordinates = None
+        #        dst_auxiliary_coordinates = None
 
         if cartesian:
             # Make axes map
@@ -4306,21 +4274,21 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """Creates a weights field."""
         s = self.analyse_items()
 
-        #        domain_axes = self.domain_axes(todict=True)
-        domain_axes_size_1 = self.domain_axes(filter_by_size=(1,), todict=True)
+        domain_axes = self.domain_axes(todict=True)
+        #        domain_axes_size_1 = self.domain_axes(filter_by_size=(1,), todict=True)
 
         for w in fields:
             t = w.analyse_items()
             # TODO CHECK this with org
-            domain_axes_size_1 = w.domain_axes(
-                filter_by_size=(1,), todict=True
-            )
 
             if t["undefined_axes"]:
                 #                if set(
                 #                    t.domain_axes.filter_by_size(gt(1), view=True)
                 #                ).intersection(t["undefined_axes"]):
-                if set(domain_axes_size_1).intersection(t["undefined_axes"]):
+                w_domain_axes_1 = w.domain_axes(
+                    filter_by_size=(1,), todict=True
+                )
+                if set(w_domain_axes_1).intersection(t["undefined_axes"]):
                     raise ValueError("345jn456jn TODO")
 
             w = w.squeeze()
@@ -5318,7 +5286,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 aux_X.bounds.varray
 
         if aux_Z is None:
-            for key, aux in auxiliary_coordinates.items():
+            for key, aux in auxiliary_coordinates_1d.items():
                 if aux.Z:
                     aux_Z = aux.copy()
                     z_axis = self.get_data_axes(key)[0]
@@ -5403,23 +5371,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     self.__class__.__name__
                 )
             )
-
-    @property
-    def ncdimensions(self):
-        """"""
-        _DEPRECATION_WARNING_ATTRIBUTE(
-            self,
-            "ncdimensions",
-            version="3.0.0",
-        )  # pragma: no cover
-
-        out = {}
-        for dim, domain_axis in self.domain_axes(todict=True).items():
-            ncdim = domain_axis.nc_get_dimension(None)
-            if ncdim is not None:
-                out[dim] = ncdim
-
-        return out
 
     @property
     def rank(self):
@@ -10595,7 +10546,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     g_weights = f.weights(
                         weights,
                         components=True,
-                        axes=list(collapse_axes.keys()),
+                        axes=list(collapse_axes),  # .keys()),
                         scale=scale,
                         measure=measure,
                         radius=radius,
@@ -10605,7 +10556,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     if not g_weights:
                         g_weights = None
 
-                axis = collapse_axes.key()
+                #                axis = collapse_axes.key()
+                axis = [a for a in collapse_axes][0]
 
                 f = f._collapse_grouped(
                     method,
@@ -10647,6 +10599,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     verbose=verbose,
                 )
                 continue
+
             elif regroup:
                 raise ValueError(
                     "Can't return an array of groups for a non-grouped "
@@ -10682,8 +10635,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 if method == "integral":
                     if not measure:
                         raise ValueError(
-                            "Must set measure=True for {!r} "
-                            "collapses".format(method)
+                            f"Must set measure=True for {method!r} collapses"
                         )
 
                     if scale is not None:
@@ -10709,12 +10661,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     d_kwargs["weights"] = d_weights
 
                 logger.info(
-                    "    Output weights          = {!r}".format(d_weights)
+                    f"    Output weights          = {d_weights!r}"
                 )  # pragma: no cover
+
             elif method == "integral":
                 raise ValueError(
-                    "Must set the 'weights' parameter "
-                    "for {!r} collapses".format(method)
+                    f"Must set the 'weights' parameter for {method!r} "
+                    "collapses"
                 )
 
             if method in _collapse_ddof_methods:
@@ -10723,12 +10676,12 @@ class Field(mixin.PropertiesData, cfdm.Field):
             # ========================================================
             # Collapse the data array
             # ========================================================
-            logger.info("  Before collapse of data:")  # pragma: no cover
             logger.info(
-                "    iaxes, d_kwargs = {} {}".format(iaxes, d_kwargs)
+                "  Before collapse of data:\n"
+                f"    iaxes, d_kwargs = {iaxes} {d_kwargs}\n"
+                f"    f.shape = {f.shape}\n"
+                f"    f.dtype = {f.dtype}\n"
             )  # pragma: no cover
-            logger.info("    f.shape = {}".format(f.shape))  # pragma: no cover
-            logger.info("    f.dtype = {}".format(f.dtype))  # pragma: no cover
 
             getattr(f.data, method)(
                 axes=iaxes,
@@ -10747,18 +10700,17 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     [axis for axis in data_axes if axis not in collapse_axes]
                 )
 
-            logger.info("  After collapse of data:")  # pragma: no cover
-            logger.info("    f.shape = {}".format(f.shape))  # pragma: no cover
-            logger.info("    f.dtype = {}".format(f.dtype))  # pragma: no cover
+            logger.info(
+                "  After collapse of data:\n"
+                f"    f.shape = {f.shape}\n"
+                f"    f.dtype = {f.dtype}\n",
+                f"collapse_axes = {collapse_axes}",
+            )  # pragma: no cover
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,
             # cell measures and domain ancillaries
             # ---------------------------------------------------------
-            logger.info(
-                "    collapse_axes = {}".format(collapse_axes)
-            )  # pragma: no cover
-
             for axis, domain_axis in collapse_axes.items():
                 # Ignore axes which are already size 1
                 size = domain_axis.get_size()
@@ -11675,9 +11627,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 # Over days
                 # ----------------------------------------------------
-                coord = self.dimension_coordinates.filter_by_axis(
-                    axis, mode="exact", view=True
-                ).value(None)
+                coord = self.dimension_coordinate(
+                    filter_by_axis=(axis,), default=None
+                )
                 if coord is None or not coord.Units.isreftime:
                     raise ValueError(
                         "Reference-time dimension coordinates are required "
@@ -11690,7 +11642,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         "required for an 'over days' collapse"
                     )
 
-                cell_methods = self.cell_methods(view=True).ordered()
+                cell_methods = self.cell_methods().ordered()
                 w = [
                     cm.get_qualifier("within", None)
                     for cm in cell_methods.values()
@@ -11793,10 +11745,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 # Over years
                 # ----------------------------------------------------
-                coord = (
-                    self.dimension_coordinates(view=True)
-                    .filter_by_axis(axis, mode="exact", view=True)
-                    .value(None)
+                coord = self.dimension_coordinate(
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None or not coord.Units.isreftime:
                     raise ValueError(
@@ -11811,7 +11761,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         "required for an 'over years' collapse"
                     )
 
-                cell_methods = self.cell_methods(view=True).ordered()
+                cell_methods = self.cell_methods().ordered()
                 w = [
                     cm.get_qualifier("within", None)
                     for cm in cell_methods.values()
@@ -11932,10 +11882,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 # Within days
                 # ----------------------------------------------------
-                coord = (
-                    self.dimension_coordinates(view=True)
-                    .filter_by_axis(axis, mode="exact", view=True)
-                    .value(None)
+                coord = self.dimension_coordinate(
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None or not coord.Units.isreftime:
                     raise ValueError(
@@ -12022,10 +11970,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 # Within years
                 # ----------------------------------------------------
-                coord = (
-                    self.dimension_coordinates(view=True)
-                    .filter_by_axis(axis, mode="exact", view=True)
-                    .value()
+                coord = self.dimension_coordinate(
+                    filter_by_axis=(axis,), default=None
                 )
                 if coord is None or not coord.Units.isreftime:
                     raise ValueError(
@@ -12245,10 +12191,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             # Hack to fix missing bounds!
             for g in fl:
                 try:
-                    c = (
-                        g.dimension_coordinates(view=True)
-                        .filter_by_axis(axis, mode="exact", view=True)
-                        .value()
+                    c = g.dimension_coordinate(
+                        filter_by_axis=(axis,), default=None
                     )
                     if not c.has_bounds():
                         c.set_bounds(c.create_bounds())
@@ -12263,10 +12207,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 and coord.construct_type == "dimension_coordinate"
             ):
                 fl.sort(
-                    key=lambda g: g.dimension_coordinates(view=True)
-                    .filter_by_axis(axis, mode="exact", view=True)
-                    .value()
-                    .datum(0),
+                    key=lambda g: g.dimension_coordinate(
+                        filter_by_axis=(axis,)
+                    ).datum(0),
                     reverse=coord.decreasing,
                 )
 
@@ -12794,7 +12737,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 key = None
                 construct = None
             else:
-                ##                c = constructs.filter_by_identity(identity, view=True)
+                #                c = constructs.filter_by_identity(identity, view=True)
                 #                c = self.constructs.filter(
                 #                    filter_by_data=True,
                 #                    filter_by_identity=(identity,),
@@ -15400,60 +15343,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         return True
 
-    def axes(self, axes=None, **kwargs):
-        """Return domain axis constructs.
-
-        .. seealso:: `constructs`, `domain_axis`, `domain_axes`
-
-        :Parameters:
-
-            axes:
-
-            kwargs: deprecated at version 3.0.0
-
-        :Returns:
-
-            `Constructs`
-                The domain axis constructs and their construct keys.
-
-        **Examples:**
-
-        >>> f.axes()
-        Constructs:
-        {}
-
-        >>> f.axes()
-        Constructs:
-        {'domainaxis0': <DomainAxis: size(1)>,
-         'domainaxis1': <DomainAxis: size(10)>,
-         'domainaxis2': <DomainAxis: size(9)>,
-         'domainaxis3': <DomainAxis: size(1)>}
-
-        """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "axes",
-                kwargs,
-                "Use methods of the 'domain_axes' attribute instead.",
-            )  # pragma: no cover
-
-        if axes is None:
-            return self.domain_axes()
-
-        if isinstance(axes, (str, int)):
-            axes = (axes,)
-
-        out = [
-            self.domain_axis(identity, key=True, default=None)
-            for identity in axes
-        ]
-
-        out = set(out)
-        out.discard(None)
-
-        return self.domain_axes().filter_by_key(*out, view=True)
-
     @_deprecated_kwarg_check("i")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         """Remove size 1 axes from the data.
@@ -15803,9 +15692,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     def auxiliary_coordinate(
         self,
-        identity=None,
+        *identity,
         default=ValueError(),
         key=False,
+        item=False,
         **filter_kwargs,
     ):
         """Return an auxiliary coordinate construct, or its key.
@@ -15912,7 +15802,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         c = self._select_construct(
-            ("auxiliary_coordinate"),
+            ("auxiliary_coordinate",),
             "auxiliary_coordinate",
             identity,
             key=key,
@@ -15923,25 +15813,27 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                return self._default(
-                    default,
-                    f"{self.__class__.__name__}.auxiliary_coordinate() can't "
-                    "return zero constructs",
-                )
-
+        da_key = self.domain_axis(*identity, key=True, default=None)
+        if da_key is not None:
             return self._select_construct(
-                ("auxiliary_coordinate"),
+                ("auxiliary_coordinate",),
                 "auxiliary_coordinate",
-                identity,
+                (),
                 key=key,
                 item=item,
                 default=default,
                 filter_by_axis=(da_key,),
                 axis_mode="exact",
             )
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.auxiliary_coordinate() can only "
+            "return a unique construct",
+        )
 
     def construct(
         self,
@@ -16406,30 +16298,45 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        cell_methods = self.cell_methods(view=True)
-        c = cell_methods
+        c = self._select_construct(
+            ("cell_method",),
+            "cell_method",
+            identity,
+            key=key,
+            item=item,
+            default=None,
+            **filter_kwargs,
+        )
+        if c is not None:
+            return c
 
-        if identity is not None:
-            c = c(identity, view=True)
-            if not c:
-                da_key = self.domain_axis(identity, key=True, default=None)
-                cm_keys = [
-                    key
-                    for key, cm in cell_methods.items()
-                    if cm.get_axes(None) == (da_key,)
-                ]
-                if cm_keys:
-                    c = cell_methods(*cm_keys, view=True)
-                else:
-                    c = cell_methods(None, view=True)
+        domain_axes = self.domain_axes(*identity, todict=True)
+        if domain_axes:
+            cell_methods = self.cell_methods(todict=True)
+            cm_keys = [
+                k
+                for k, cm in cell_methods.items()
+                for da_key in domain_axes
+                if cm.get_axes(None) == (da_key,)
+            ]
+            if len(cm_keys) == 1:
+                k = cm_keys[0]
+                if key:
+                    return k
 
-        if key:
-            return c.key(default=default)
+                if item:
+                    return k, cell_methods[k]
 
-        if item:
-            return c.key(default=default), c.value(default=default)
+                return cell_methods[k]
 
-        return c.value(default=default)
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.cell_method() can only "
+            "return a unique construct",
+        )
 
     def coordinate(
         self,
@@ -16439,7 +16346,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
         item=False,
         **filter_kwargs,
     ):
-        """Return a dimension or auxiliary coordinate construct, or its key.
+        """Return a dimension or auxiliary coordinate construct, or its
+        key.
 
         .. versionadded:: 3.0.0
 
@@ -16548,25 +16456,27 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                return self._default(
-                    default,
-                    f"{self.__class__.__name__}.coordinate() can't "
-                    "return zero constructs",
-                )
-
+        da_key = self.domain_axis(*identity, key=True, default=None)
+        if da_key is not None:
             return self._select_construct(
                 ("dimension_coordinate", "auxiliary_coordinate"),
                 "coordinate",
-                identity,
+                (),
                 key=key,
                 item=item,
                 default=default,
                 filter_by_axis=(da_key,),
                 axis_mode="exact",
             )
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.coordinate() can only "
+            "return a unique construct",
+        )
 
     def coordinate_reference(
         self,
@@ -16912,25 +16822,27 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                return self._default(
-                    default,
-                    f"{self.__class__.__name__}.dimension_coordinate can't "
-                    "return zero constructs",
-                )
-
+        da_key = self.domain_axis(*identity, key=True, default=None)
+        if da_key is not None:
             return self._select_construct(
                 ("dimension_coordinate",),
                 "dimension_coordinate",
-                identity,
+                (),
                 key=key,
                 item=item,
                 default=default,
                 filter_by_axis=(da_key,),
                 axis_mode="exact",
             )
+
+        if default is None:
+            return None
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.dimension_coordinate() can only "
+            "return a unique construct",
+        )
 
     def domain_axis(
         self,
@@ -17041,6 +16953,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     pass
 
             if not identity2:
+                if default is None:
+                    return default
+
                 return self._default(
                     default,
                     "Indices do not exist for field construct data dimenions",
@@ -17073,13 +16988,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             return construct
 
+        if default is None:
+            return default
+
         return self._default(
             default,
             f"{self.__class__.__name__}.domain_axis() can't return zero "
             "constructs",
         )
 
-    def domain_axis_position(self, identity):
+    def domain_axis_position(self, *identity):
         """Return the position in the data of a domain axis construct.
 
         .. versionadded:: 3.0.0
@@ -17169,7 +17087,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         1
 
         """
-        key = self.domain_axis(identity, key=True)
+        key = self.domain_axis(*identity, key=True)
         return self.get_data_axes().index(key)
 
     def axes_names(self, *identities, **kwargs):
@@ -17208,7 +17126,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    def axis_size(self, identity, default=ValueError(), axes=None, **kwargs):
+    def axis_size(self, *identity, default=ValueError(), axes=None, **kwargs):
         """Return the size of a domain axis construct.
 
         :Parameters:
@@ -17304,7 +17222,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 self, "axis_size", kwargs, "See f.domain_axes"
             )  # pragma: no cover
 
-        axis = self.domain_axis(identity, key=True)
+        axis = self.domain_axis(*identity, key=True)
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -18613,7 +18531,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         f.set_data_axes(new_data_axes)
 
         # Modify or remove cell methods that span the flatten axes
-        for key, cm in tuple(f.cell_methods(todict=True).items()):
+        for key, cm in f.cell_methods(todict=True).items():
             cm_axes = set(cm.get_axes(()))
             if not cm_axes or cm_axes.isdisjoint(axes):
                 continue
@@ -18627,21 +18545,28 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 set_axes = True
                 for i, a in enumerate(cm_axes):
                     sn = None
-                    for ctype in (
-                        "dimension_coordinate",
-                        "auxiliary_coordinate",
-                    ):
-                        for c in (
-                            f.constructs.filter_by_type(ctype, view=True)
-                            .filter_by_axis(a, mode="exact", view=True)
-                            .values()
-                        ):
-                            sn = c.get_property("standard_name", None)
-                            if sn is not None:
-                                break
-
+                    for c in f.coordinates(
+                        filter_by_axis=(a,), axis_mode="exact", todict=True
+                    ).values():
+                        sn = c.get_property("standard_name", None)
                         if sn is not None:
                             break
+
+                    #                    for ctype in (
+                    #                        "dimension_coordinate",
+                    #                        "auxiliary_coordinate",
+                    #                    ):
+                    #                        for c in (
+                    #                            f.constructs.filter_by_type(ctype, view=True)
+                    #                            .filter_by_axis(a, mode="exact", view=True)
+                    #                            .values()
+                    #                        ):
+                    #                            sn = c.get_property("standard_name", None)
+                    #                            if sn is not None:
+                    #                                break
+                    #
+                    #                        if sn is not None:
+                    #                            break
 
                     if sn is None:
                         f.del_construct(key)
@@ -18665,7 +18590,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Flatten the constructs that span all of the flattened axes,
         # and no others.
         for key, c in f.constructs.filter_by_axis(
-            *axes, mode="and", view=True
+            "and", *axes, todict=True
         ).items():
             c_axes = f.get_data_axes(key)
             c_iaxes = sorted(
@@ -18680,9 +18605,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # Remove constructs that span some, but not all, of the
         # flattened axes
-        for key in tuple(
-            f.constructs.filter_by_axis(*axes, mode="or", view=True).keys()
-        ):
+        for key in f.constructs.filter_by_axis("or", *axes, todict=True):
             f.del_construct(key)
 
         # Remove the domain axis constructs for the flattened axes
@@ -20900,287 +20823,107 @@ class Field(mixin.PropertiesData, cfdm.Field):
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
-    def aux(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.auxiliary_coordinate`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "aux",
-                kwargs,
-                "Use methods of the 'auxiliary_coordinates' attribute instead.",
-            )  # pragma: no cover
-
-        return self.auxiliary_coordinate(identity, key=key, default=default)
-
-    def auxs(self, *identities, **kwargs):
-        """Alias for `cf.Field.auxiliary_coordinates()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "auxs",
-                kwargs,
-                "Use methods of the 'auxiliary_coordinates' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.auxiliary_coordinates()(*identities)
-
-    def axis(self, identity, key=False, default=ValueError(), **kwargs):
-        """Alias of `cf.Field.domain_axis`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "axis",
-                kwargs,
-                "Use methods of the 'domain_axes' attribute instead.",
-            )  # pragma: no cover
-
-        return self.domain_axis(identity, key=key, default=default)
-
-    def coord(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.coordinate`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "coord",
-                kwargs,
-                "Use methods of the 'coordinates' attribute instead.",
-            )  # pragma: no cover
-
-        if identity in self.domain_axes(todict=True):
-            # Allow an identity to be the domain axis construct key
-            # spanned by a dimension coordinate construct
-            return self.dimension_coordinate(
-                identity, key=key, default=default
-            )
-
-        return self.coordinate(identity, key=key, default=default)
-
-    def coords(self, *identities, **kwargs):
-        """Alias for `cf.Field.coordinates()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "coords",
-                kwargs,
-                "Use methods of the 'coordinates' attribute instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.coordinates(view=True).filter_by_identity(
-            *identities, **kwargs
+    def aux(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `auxiliary_coordinate`."""
+        return self.auxiliary_coordinate(
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
-    def dim(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.dimension_coordinate`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "dim",
-                kwargs,
-                "Use methods of the 'dimension_coordinates' attribute "
-                "instead.",
-            )  # pragma: no cover
+    def auxs(self, *identities, **filter_kwargs):
+        """Alias for `coordinates`."""
+        return self.auxiliary_coordinates(*identities, **filter_kwargs)
 
-        return self.dimension_coordinate(identity, key=key, default=default)
+    def axes(self, *identities, **filter_kwargs):
+        """Alias for `domain_axes`."""
+        return self.domain_axes(*identities, **filter_kwargs)
 
-    def dims(self, *identities, **kwargs):
-        """Alias for `cf.Field.dimension_coordinates()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "dims",
-                kwargs,
-                "Use methods of the 'dimension_coordinates' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.dimension_coordinates(view=True).filter_by_identity(
-            *identities, **kwargs
+    def axis(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `domain_axis`."""
+        return self.domain_axis(
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
-    def domain_anc(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.domain_ancillary`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "domain_anc",
-                kwargs,
-                "Use methods of the 'domain_ancillaries' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        return self.domain_ancillary(identity, key=key, default=default)
-
-    def domain_ancs(self, *identities, **kwargs):
-        """Alias for `cf.Field.domain_ancillaries()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "domain_ancs",
-                kwargs,
-                "Use methods of the 'domain_ancillaries' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.domain_ancillaries(view=True).filter_by_identity(
-            *identities, **kwargs
+    def coord(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `coordinate`."""
+        return self.coordinate(
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
-    def field_anc(self, identity, default=ValueError(), key=False, **kwargs):
+    def coords(self, *identities, **filter_kwargs):
+        """Alias for `coordinates`."""
+        return self.coordinates(*identities, **filter_kwargs)
+
+    def dim(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `dimension_coordinate`."""
+        return self.dimension_coordinate(
+            *identity, key=key, default=default, item=item, **filter_kwargs
+        )
+
+    def dims(self, *identities, **filter_kwargs):
+        """Alias for `dimension_coordinates`."""
+        return self.dimension_coordinates(*identities, **filter_kwargs)
+
+    def domain_anc(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `domain_ancillary`."""
+        return self.domain_ancillary(
+            *identity, key=key, default=default, item=item, **filter_kwargs
+        )
+
+    def domain_ancs(self, *identities, **filter_kwargs):
+        """Alias for `domain_ancillaries`."""
+        return self.domain_ancillaries(*identities, **filter_kwargs)
+
+    def field_anc(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
         """Alias for `cf.Field.field_ancillary`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "field_anc",
-                kwargs,
-                "Use methods of the 'field_ancillaries' attribute " "instead.",
-            )  # pragma: no cover
-
-        return self.field_ancillary(identity, key=key, default=default)
-
-    def field_ancs(self, *identities, **kwargs):
-        """Alias for `cf.Field.field_ancillaries()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "field_ancs",
-                kwargs,
-                "Use methods of the 'field_ancillaries' attribute " "instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.field_ancillaries(view=True).filter_by_identity(
-            *identities, **kwargs
+        return self.field_ancillary(
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
-    def item(self, identity, key=False, default=ValueError(), **kwargs):
-        """Alias for `cf.Field.construct`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "item",
-                kwargs,
-                "Use methods of the 'constructs' attribute instead.",
-            )  # pragma: no cover
-
-        return self.construct(identity, key=key, default=default)
-
-    def items(self, *identities, **kwargs):
-        """Alias for `c.Field.constructs.filter_by_data`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "items",
-                kwargs,
-                "Use methods of the 'constructs' attribute instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-
-        return self.constructs.filter_by_data().filter_by_identity(*identities)
+    def field_ancs(self, *identities, **filter_kwargs):
+        """Alias for `field_ancillaries`."""
+        return self.field_ancillaries(*identities, **filter_kwargs)
 
     def key(self, identity, default=ValueError(), **kwargs):
         """Alias for `cf.Field.construct_key`."""
@@ -21194,84 +20937,47 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         return self.construct_key(identity, default=default)
 
-    def measure(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.cell_measure`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "measure",
-                kwargs,
-                "Use methods of the 'cell_measures' attribute instead",
-            )  # pragma: no cover
+    def measure(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `cell_measure`."""
+        return self.cell_measure(
+            *identity,
+            key=key,
+            default=default,
+            item=item,
+            **filter_kwargs,
+        )
 
-        return self.cell_measure(identity, key=key, default=default)
+    def measures(self, *identities, **filter_kwargs):
+        """Alias for `cell_measures`."""
+        return self.cell_measures(*identities, **filter_kwargs)
 
-    def measures(self, *identities, **kwargs):
-        """Alias for `cf.Field.cell_measures()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "measures",
-                kwargs,
-                "Use methods of the 'cell_measures' attribute instead",
-            )  # pragma: no cover
+    def ref(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Alias for `coordinate_reference`."""
+        return self.coordinate_reference(
+            *identity,
+            key=key,
+            default=default,
+            item=item,
+            **filter_kwargs,
+        )
 
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-            elif isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error and i.startswith("measure:"):
-                    error = False
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.cell_measures()(*identities)
-
-    def ref(self, identity, default=ValueError(), key=False, **kwargs):
-        """Alias for `cf.Field.coordinate_reference`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "ref",
-                kwargs,
-                "Use methods of the 'coordinate_references' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        return self.coordinate_reference(identity, key=key, default=default)
-
-    def refs(self, *identities, **kwargs):
-        """Alias for `cf.Field.coordinate_references()`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "refs",
-                kwargs,
-                "Use methods of the 'coordinate_references' attribute "
-                "instead.",
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT()  # pragma: no cover
-            elif isinstance(i, (list, tuple, set)):
-                _DEPRECATION_ERROR_SEQUENCE(i)  # pragma: no cover
-
-        return self.coordinate_references()(*identities)
+    def refs(self, *identities, **filter_kwargs):
+        """Alias for `coordinate_references`."""
+        return self.coordinate_references(*identities, **filter_kwargs)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -21289,8 +20995,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
     def CellMethods(self):
         """"""
         raise DeprecationError(
-            f"{self.__class__.__name__} attribute 'CellMethods' has been deprecated "
-            "at version 3.0.0 and is no longer available"
+            f"{self.__class__.__name__} attribute 'CellMethods' has been "
+            "deprecated at version 3.0.0 and is no longer available"
             "Use 'cell_methods' instead."
         )
 
@@ -21517,6 +21223,25 @@ class Field(mixin.PropertiesData, cfdm.Field):
             "insert_ref",
             "Use method 'set_construct' or 'set_coordinate_reference' "
             "instead.",
+        )  # pragma: no cover
+
+    def item(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """"""
+        _DEPRECATION_ERROR_METHOD(
+            self, "item", "Use 'construct' method instead."
+        )  # pragma: no cover
+
+    def items(self, *identities, **filter_kwargs):
+        """"""
+        _DEPRECATION_ERROR_METHOD(
+            self, "items", "Use 'constructs' method instead."
         )  # pragma: no cover
 
     def item_axes(

@@ -367,14 +367,14 @@ class read_writeTest(unittest.TestCase):
         for single in (True, False):
             for double in (True, False):
                 with self.assertRaises(Exception):
-                    _ = cf.write(g, double=double, single=single)
+                    cf.write(g, double=double, single=single)
 
         datatype = {numpy.dtype(float): numpy.dtype("float32")}
         with self.assertRaises(Exception):
-            _ = cf.write(g, datatype=datatype, single=True)
+            cf.write(g, datatype=datatype, single=True)
 
         with self.assertRaises(Exception):
-            _ = cf.write(g, datatype=datatype, double=True)
+            cf.write(g, datatype=datatype, double=True)
 
     def test_write_reference_datetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -479,7 +479,7 @@ class read_writeTest(unittest.TestCase):
 
         f0 = cf.read(self.filename)[0]
         f = cf.read(tmpfile)[0]
-        _ = cf.read(tmpfileh)[0]
+        cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
 
         self.assertTrue(f0.equals(f, verbose=2))
@@ -496,7 +496,7 @@ class read_writeTest(unittest.TestCase):
         )
 
         with self.assertRaises(Exception):
-            _ = cf.read("test_read_write.py")
+            cf.read("test_read_write.py")
 
     def test_read_write_string(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

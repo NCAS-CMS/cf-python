@@ -368,7 +368,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move all coordinate bounds constructs to the /forecast group
         # ------------------------------------------------------------
-        for construct in g.coordinates(view=True).values():
+        for construct in g.coordinates().values():
             try:
                 construct.bounds.nc_set_variable_groups(["forecast"])
             except ValueError:

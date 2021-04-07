@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import inspect
 import os
 import re
 import unittest
@@ -22,16 +21,10 @@ class FieldTest(unittest.TestCase):
     test_only = []
 
     def test_FieldList(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         cf.FieldList(self.x)
         cf.FieldList([self.x])
 
     def test_FieldList__add__iadd__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         f = f + f.copy()
@@ -55,9 +48,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f), 20)
 
     def test_FieldList__contains__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         f.append(self.x.copy())
@@ -67,18 +57,12 @@ class FieldTest(unittest.TestCase):
         self.assertNotIn(34.6, f)
 
     def test_FieldList_close(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
         self.assertIsNone(f.close())
 
-        _ = repr(f[0])
+        repr(f[0])
 
     def test_FieldList__len__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         self.assertEqual(len(cf.FieldList()), 0)
@@ -89,9 +73,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f), 4)
 
     def test_FieldList__mul__imul__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList()
         f = f * 4
         self.assertEqual(len(f), 0)
@@ -120,17 +101,11 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f, cf.FieldList)
 
     def test_FieldList__repr__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
         f += f
-        _ = repr(f)
+        repr(f)
 
     def test_FieldList_append_extend(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Append
         f = cf.FieldList()
 
@@ -160,9 +135,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f), 4)
 
     def test_FieldList_copy(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         f.append(f[0].copy())
@@ -171,22 +143,16 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.equals(g, verbose=2))
 
     def test_FieldList__getslice__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         f.append(f[0])
 
-        _ = f[0:1]
-        _ = f[1:2]
-        _ = f[:1]
-        _ = f[1:]
+        f[0:1]
+        f[1:2]
+        f[:1]
+        f[1:]
 
     def test_FieldList_count(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         self.assertEqual(f.count(f[0]), 1)
@@ -200,9 +166,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f.count(f[3]), 2)
 
     def test_FieldList_equals(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         g = f.copy()
@@ -241,9 +204,6 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(h, unordered=True))
 
     def test_FieldList_insert_pop_remove(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Insert
         f = cf.FieldList(self.x)
         g = f[0].copy()
@@ -293,9 +253,6 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f, cf.FieldList)
 
     def test_FieldList_reverse(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         g = f[0]
@@ -312,9 +269,6 @@ class FieldTest(unittest.TestCase):
         self.assertIs(h, f[0])
 
     def test_FieldList_select(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         g = f("not this one")
@@ -370,9 +324,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f.select_by_ncvar(re.compile("^ta"))), 8)
 
     def test_FieldList_select_by_construct(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         x = self.x.copy()
         x.del_construct("time")
 
@@ -474,13 +425,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(g), 0)
 
     def test_FieldList_select_field(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.FieldList(self.x)
 
         with self.assertRaises(Exception):
-            _ = f.select_field("not this one")
+            f.select_field("not this one")
 
         self.assertIsNone(f.select_field("not this one", None))
 
@@ -494,9 +442,6 @@ class FieldTest(unittest.TestCase):
             g = f.select_field(re.compile("^QWERTY"))
 
     def test_FieldList_concatenate(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f2[0]
 
         g = cf.FieldList([f[0], f[1:456], f[456:]])
@@ -508,9 +453,6 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.equals(h, verbose=2))
 
     def test_FieldList_index(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f2[0]
 
         a, b, c = [f[0], f[1:456], f[456:]]

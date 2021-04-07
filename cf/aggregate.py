@@ -802,12 +802,11 @@ class _Meta:
         return "\n".join(strings)
 
     def coordinate_values(self):
-        """Create a report listing all coordinate cell values and
-        bounds."""
+        """Create a report listing coordinate cell values and bounds."""
         string = ["First cell: " + str(self.first_values)]
         string.append("Last cell:  " + str(self.last_values))
-        string.append("First bounds: " + str(self.first_bounds))
-        string.append("Last bounds:  " + str(self.last_bounds))
+        string.append("First cell bounds: " + str(self.first_bounds))
+        string.append("Last cell bounds:  " + str(self.last_bounds))
 
         return "\n".join(string)
 
@@ -1950,11 +1949,7 @@ def aggregate(
             aggregating_axes = []
             axis_items = meta[0].axis.items()
             for axis in axes:
-                # TODO IMPORTANT: should this be filter_by_axis ???? Yes, surely ...
-                coord = meta[0].field.coordinate(
-                    filter_by_axis=(axis,), axis_mode="exact", default=None
-                )
-                #                coord = coords.value(default=None)
+                coord = meta[0].field.coordinate(axis, default=None)
                 if coord is None:
                     continue
 
@@ -2365,7 +2360,7 @@ def _create_hash_and_first_values(
                 key = aux["key"]
                 canonical_units = aux["units"]
 
-                coord = field.item(key)
+                coord = field.constructs[key]
 
                 axes = [m_id_to_axis[identity] for identity in aux["axes"]]
                 domain_axes = item_axes[key]
@@ -2998,7 +2993,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
             number_of_1d_aux_coord_values = 0
             for m in meta:
                 aux = m.axis[axis]["keys"][i]
-                array = m.field.item(aux).array
+                array = m.field.constructs[aux].array
                 set_of_1d_aux_coord_values.update(array)
                 number_of_1d_aux_coord_values += array.size
                 if (

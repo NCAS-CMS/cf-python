@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import inspect
 import os
 import tempfile
 import unittest
@@ -39,26 +38,17 @@ class DSGTest(unittest.TestCase):
             suffix=".nc", prefix="cf_", dir="."
         )
         os.close(fd)
-        #        self.tempfilename = 'delme.nc'
-
-        self.test_only = []
-
-    #        self.test_only = ['test_node_count']
-    #        self.test_only = ['test_geometry_interior_ring']
 
     def tearDown(self):
         os.remove(self.tempfilename)
 
     def test_node_count(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_1_file, verbose=0)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=2))
-            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 2)
+            self.assertEqual(len(g.auxiliary_coordinates()), 2)
 
         g = f[0]
         for axis in ("X", "Y"):
@@ -97,16 +87,13 @@ class DSGTest(unittest.TestCase):
         self.assertFalse(c.has_node_count())
 
     def test_geometry_2(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_2_file, verbose=0)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=2))
-            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -134,16 +121,13 @@ class DSGTest(unittest.TestCase):
         cf.write(f, self.tempfilename, verbose=0)
 
     def test_geometry_3(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_3_file, verbose=0)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=2))
-            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -162,16 +146,13 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(a.equals(b, verbose=2))
 
     def test_geometry_4(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_4_file, verbose=0)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=2))
-            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         for axis in ("X", "Y"):
             coord = g.construct("axis=" + axis)
@@ -198,9 +179,6 @@ class DSGTest(unittest.TestCase):
         cf.write(f, self.tempfilename, verbose=0)
 
     def test_geometry_interior_ring(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for geometry_file in (
             self.geometry_interior_ring_file,
             self.geometry_interior_ring_file_2,
@@ -211,7 +189,7 @@ class DSGTest(unittest.TestCase):
 
             for g in f:
                 self.assertTrue(g.equals(g.copy(), verbose=2))
-                self.assertEqual(len(g.auxiliary_coordinates(view=True)), 4)
+                self.assertEqual(len(g.auxiliary_coordinates()), 4)
 
             g = f[0]
             for axis in ("X", "Y"):
@@ -240,7 +218,7 @@ class DSGTest(unittest.TestCase):
             self.assertEqual(c.interior_ring.data.ndim, c.data.ndim + 1)
             self.assertEqual(c.interior_ring.data.shape[0], c.data.shape[0])
 
-            _ = g.dump(display=False)
+            g.dump(display=False)
 
             d = c.insert_dimension(0)
             self.assertEqual(d.data.shape, (1,) + c.data.shape)
@@ -298,9 +276,6 @@ class DSGTest(unittest.TestCase):
             cf.write(f, self.tempfilename)
 
     def test_geometry_interior_ring_roll(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
         g = f.roll(0, 1)
@@ -317,9 +292,6 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(f.equals(h))
 
     def test_geometry_interior_ring_flip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
         g = f.flip(0)
@@ -328,26 +300,17 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(f.equals(h))
 
     def test_geometry_interior_ring_flatten(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
         for i in (0, 1):
             self.assertTrue(f.equals(f.flatten(i), verbose=1))
 
     def test_geometry_interior_ring_close(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
         self.assertIsNone(f.close())
 
     def test_geometry_interior_ring_files(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
         self.assertTrue(isinstance(f.get_filenames(), set))

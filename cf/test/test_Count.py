@@ -8,6 +8,8 @@ import cf
 
 
 class CountTest(unittest.TestCase):
+    contiguous = "DSG_timeSeries_contiguous.nc"
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cf.log_level("DISABLE")
@@ -19,8 +21,6 @@ class CountTest(unittest.TestCase):
         # cf.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cf.log_level('DISABLE')
-
-        self.contiguous = "DSG_timeSeries_contiguous.nc"
 
     def test_Count__repr__str__dump(self):
         f = cf.read(self.contiguous)[0]

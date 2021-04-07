@@ -8,6 +8,8 @@ import cf
 
 
 class IndexTest(unittest.TestCase):
+    indexed = "DSG_timeSeries_indexed.nc"
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cf.log_level("DISABLE")
@@ -19,8 +21,6 @@ class IndexTest(unittest.TestCase):
         # cf.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cf.log_level('DISABLE')
-
-        self.indexed = "DSG_timeSeries_indexed.nc"
 
     def test_Index__repr__str__dump(self):
         f = cf.read(self.indexed)[0]

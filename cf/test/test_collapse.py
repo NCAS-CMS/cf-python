@@ -134,7 +134,7 @@ class Field_collapseTest(unittest.TestCase):
             print(g.constructs)
         self.assertEqual(list(g.shape), expected_shape)
 
-        for key in f.cell_methods(view=True):
+        for key in f.cell_methods(todict=True):
             f.del_construct(key)
 
         g = f.collapse(
@@ -309,7 +309,7 @@ class Field_collapseTest(unittest.TestCase):
             for i, year in enumerate(
                 f.subspace(T=cf.month(m)).coord("T").year.unique()
             ):
-                _ = cf.month(m) & cf.year(year)
+                cf.month(m) & cf.year(year)
                 x = f.subspace(T=cf.month(m) & cf.year(year))
                 x.data.mean(axes=0, inplace=True)
                 a[i] = x.array
