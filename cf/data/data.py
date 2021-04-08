@@ -11024,7 +11024,7 @@ class Data(Container, cfdm.Data):
         config = self.partition_configuration(readonly=True)
 
         other.to_memory()
-
+        import numpy
         for partition in self.partitions.matrix.flat:
             partition.open(config)
             array0 = partition.array
@@ -11032,7 +11032,7 @@ class Data(Container, cfdm.Data):
             partition.close()
 
             if not _numpy_allclose(
-                array0, array1, rtol=float(rtol), atol=float(atol)
+                    array0, array1, rtol=float(rtol), atol=float(atol)
             ):
                 logger.info(
                     "{0}: Different array values (atol={1}, "

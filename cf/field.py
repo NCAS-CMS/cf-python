@@ -3685,21 +3685,23 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         if method in conservative_regridding_methods:
-            frac = dstfracfield.data[...].copy()
+            frac = dstfracfield.data.copy()
             if fracfield:
                 regridded_data = frac
             else:
                 frac[frac == 0.0] = 1.0
                 regridded_data = numpy_ma_MaskedArray(
-                    dstfield.data[...].copy() / frac,
+                    dstfield.data / frac,
                     mask=(dstfield.data == self.fill_value(default="netCDF")),
                 )
         else:
+            print (99999,  dstfield.data.max(), self.fill_value(default="netCDF"))
+            mask = dstfield.data == self.fill_value(default="netCDF")
+            print (mask.sum())
             regridded_data = numpy_ma_MaskedArray(
-                dstfield.data[...].copy(),
-                mask=(dstfield.data == self.fill_value(default="netCDF")),
-            )
-
+                dstfield.data.copy(),
+                mask=mask)
+                
         return regridded_data
 
     def _regrid_update_coordinate_references(
@@ -19998,13 +20000,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
             # Data object. Note that the reshape is necessary to
             # replace any size 1 dimensions that we squeezed out
             # earlier.
+            print ('DDD', type(regridded_data))
             sections[k] = Data(
                 regridded_data.transpose(src_order).reshape(shape),
                 units=self.Units,
             )
 
         # Construct new data from regridded sections
+        print (sections)
         new_data = Data.reconstruct_sectioned_data(sections)
+        print ('A@ 0', type(new_data.array))
 
         # Construct new field.
         # Note: cannot call `_inplace_enabled_define_and_cleanup(self)` to
@@ -20049,6 +20054,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             f._regrid_copy_coordinate_references(dst, dst_axis_keys)
 
         # Insert regridded data into new field
+        print ('A@', type(new_data.array))
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Set the cyclicity of the destination longitude
@@ -20459,7 +20465,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             # create sections that exceed 1 chunk of memory proceed to get
             # the coordinate and associated data for the extra dimension.
             if src_shape[src_axis_indices].prod() * max_length * 8 < (
-                chunksize()
+                float(chunksize())
             ):
                 axis_keys_ext, coords_ext = f._regrid_get_cartesian_coords(
                     "source", [max_ind]

@@ -1828,11 +1828,6 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
                 return False
 
-        #            if verbose:
-        #                print('Different masks 4')
-        #
-        #            return False
-
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):

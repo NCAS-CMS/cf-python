@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import array as numpy_array
 from numpy import empty as numpy_empty
 from numpy import where as numpy_where
@@ -121,7 +120,7 @@ class Regrid:
                 "The ESMF package is needed to support regridding."
             )
 
-        manager = ESMF.Manager(debug=regrid_logging())
+        manager = ESMF.Manager(debug=bool(regrid_logging()))
 
         return manager
 
