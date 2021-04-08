@@ -50,7 +50,7 @@ class Coordinate:
 
         if self.Y:
             return "Y"
-
+ 
         if self.Z:
             return "Z"
 
@@ -492,7 +492,9 @@ class Coordinate:
         'no identity'
 
         """
-        out = super().identity(default=None)
+        out = super().identity(strict=strict,
+                               relaxed=relaxed,
+                               nc_only=nc_only, default=None)
         if out is not None:
             return out
 
@@ -502,7 +504,7 @@ class Coordinate:
 
         return default
 
-    def identities(self, generator=False, ctypes="XTYZ", **kwargs):
+    def identities(self, generator=False, ctypes="XTYZ"):
         """Return all possible identities.
 
         The identities comprise:
@@ -566,14 +568,6 @@ class Coordinate:
          'ncvar%tas']
 
         """
-
-        def _ctypes_iter(self, ctypes):
-            for c in ctypes:
-                if getattr(self, c):
-                    # This coordinate constructs is of this type
-                    yield c
-                    break
-
         identities = super().identities(generator=True)
 
         g = chain(identities, _ctypes_iter(self, ctypes))
@@ -581,3 +575,13 @@ class Coordinate:
             return g
 
         return list(g)
+
+
+def _ctypes_iter(coord, ctypes):
+    """Generator for returning the coordinate type letter."""
+    for c in ctypes:
+        if getattr(coord, c):
+            # This coordinate construct is of this type
+            yield c
+            return
+        

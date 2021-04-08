@@ -123,18 +123,17 @@ class Properties(Container):
         Note that `id` is not a CF property and so is not read from,
         nor written to, datasets.
 
-        .. seealso:: `identity`, `identities`, `match_by_identity`
+        .. seealso:: `identity`, `identities`
 
         **Examples:**
 
-        >>> f.id = 'um01002'
+        >>> f = {{package}}.{{class}}()
+        >>> f.id = "foo"
         >>> f.id
-        'um01002'
-        >>> f.match_by_identity('id%um10002')
-        True
+        'foo'
         >>> del f.id
 
-        """
+        """        
         try:
             return self._custom["id"]
         except KeyError:

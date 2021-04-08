@@ -1878,29 +1878,21 @@ class PropertiesData(Properties):
 
         if value is not None:
             value = Data.asdata(value)
-            units = value.Units
-            if not units:
-                value = value.override_units(self.Units)
-            elif units != self.Units:
-                if units.equivalent(self.Units):
-                    value.Units = self.Units
+            value_units = value.Units
+            units = self.Units
+            if not value_units:
+                value = value.override_units(units)
+            elif value_units != units:
+                if value_units.equivalent(units):
+                    value.Units = units
                 else:
                     raise ValueError(
-                        f"Period units {units!r} are not equivalent to data "
-                        f"units {self.Units!r}"
+                        f"Period units {value_units!r} are not "
+                        f"equivalent to data units {units!r}"
                     )
 
             value = abs(value)
             value.dtype = float
-
-        #            array = self.array
-        #            r = abs(array[-1] - array[0])
-        #
-        #            if r >= value.datum(0):
-        #                raise ValueError(
-        #                    "The data range of {!r} is not less than the "
-        #                    "period of {!r}".format(r, value)
-        #                )
 
         self._custom["period"] = value
 

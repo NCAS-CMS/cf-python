@@ -166,21 +166,21 @@ class Constructs(cfdm.Constructs):
 
         """
         # Allow keys without the 'key%' prefix
-        for n, identity in enumerate(identities):
-            if identity in self:
-                identities = list(identities)
-                identities[n] = "key%" + identity
-                break
-
+        construct_types = self._construct_type
+        identities = ["key%" + i if i in construct_types else i
+                      for i in identities]
+                
         ctypes = [i for i in "XTYZ" if i in identities]
 
         config = {"identities_kwargs": {"ctypes": ctypes}}
+
         if ctypes:
             # Exclude a ctype from the short circuit test
             config["short_circuit_test"] = lambda x: (
                 x not in ctypes and self._short_circuit_test(x)
             )
 
-        config.update(_config)
+        if _config:
+            config.update(_config)
 
         return super()._filter_by_identity(arg, todict, config, identities)

@@ -99,6 +99,7 @@ logger = logging.getLogger(__name__)
 # --------------------------------------------------------------------
 # Commonly used units
 # --------------------------------------------------------------------
+_units_degrees = Units("degrees")
 _units_radians = Units("radians")
 _units_metres = Units("m")
 _units_1 = Units("1")
@@ -15279,7 +15280,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
     #        return out
 
     @_manage_log_level_via_verbosity
-    def autocyclic(self, verbose=None):
+    def autocyclic(self, key=None, coord=None, verbose=None):
         """Set dimensions to be cyclic.
 
         A dimension is set to be cyclic if it has a unique longitude (or
@@ -15299,43 +15300,41 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
            `bool`
 
-        **Examples:**
-
-        >>> f.autocyclic()
-
         """
-        key, dim = self.dimension_coordinate(
-            "X", item=True, default=(None, None)
-        )
+        if coord is None:
+            key, coord = self.dimension_coordinate(
+                "X", item=True, default=(None, None)
+            )
 
-        if dim is None:
+        if coord is None:
             return False
 
-        if not dim.Units.islongitude:
-            if dim.get_property("standard_name", None) not in (
-                "longitude",
-                "grid_longitude",
-            ):
-                self.cyclic(key, iscyclic=False)
-                return False
-
-        bounds = dim.get_bounds(None)
+        bounds = coord.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
             return False
-
-        bounds_data = bounds.get_data(None, _fill_value=False)
-        if bounds_data is None:
+        
+        data = bounds.get_data(None, _fill_value=False)
+        if data is None:
+            self.cyclic(key, iscyclic=False)
+            return False
+        
+        units = bounds.Units
+        if units.islongitude:
+            period = Data(360.0, units="degrees_east")
+        elif units == _units_degrees:
+            period = Data(360.0, units="degrees")
+        else:
             self.cyclic(key, iscyclic=False)
             return False
 
-        bounds = bounds_data.array
+        period.Units = data.Units
 
-        period = Data(360.0, units="degrees")
+#        diff = bounds.last_element() - bounds.first_element()
 
-        period.Units = bounds_data.Units
-
-        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
+#        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
+#        if abs(bounds.last_element() - bounds.first_element()) != period: #.array:
+        if abs(data.last_element() - data.first_element()) != period.array:
             self.cyclic(key, iscyclic=False)
             return False
 
@@ -15813,18 +15812,19 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        da_key = self.domain_axis(*identity, key=True, default=None)
-        if da_key is not None:
-            return self._select_construct(
-                ("auxiliary_coordinate",),
-                "auxiliary_coordinate",
-                (),
-                key=key,
-                item=item,
-                default=default,
-                filter_by_axis=(da_key,),
-                axis_mode="exact",
-            )
+        if identity:
+            da_key = self.domain_axis(*identity, key=True, default=None)
+            if da_key is not None:
+                return self._select_construct(
+                    ("auxiliary_coordinate",),
+                    "auxiliary_coordinate",
+                    (),
+                    key=key,
+                    item=item,
+                    default=default,
+                    filter_by_axis=(da_key,),
+                    axis_mode="exact",
+                )
 
         if default is None:
             return default
@@ -16456,19 +16456,20 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        da_key = self.domain_axis(*identity, key=True, default=None)
-        if da_key is not None:
-            return self._select_construct(
-                ("dimension_coordinate", "auxiliary_coordinate"),
-                "coordinate",
-                (),
-                key=key,
-                item=item,
-                default=default,
-                filter_by_axis=(da_key,),
-                axis_mode="exact",
-            )
-
+        if identity:
+            da_key = self.domain_axis(*identity, key=True, default=None)
+            if da_key is not None:
+                return self._select_construct(
+                    ("dimension_coordinate", "auxiliary_coordinate"),
+                    "coordinate",
+                    (),
+                    key=key,
+                    item=item,
+                    default=default,
+                    filter_by_axis=(da_key,),
+                    axis_mode="exact",
+                )
+            
         if default is None:
             return default
 
@@ -16822,18 +16823,19 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if c is not None:
             return c
 
-        da_key = self.domain_axis(*identity, key=True, default=None)
-        if da_key is not None:
-            return self._select_construct(
-                ("dimension_coordinate",),
-                "dimension_coordinate",
-                (),
-                key=key,
-                item=item,
-                default=default,
-                filter_by_axis=(da_key,),
-                axis_mode="exact",
-            )
+        if identity:
+            da_key = self.domain_axis(*identity, key=True, default=None)
+            if da_key is not None:
+                return self._select_construct(
+                    ("dimension_coordinate",),
+                    "dimension_coordinate",
+                    (),
+                    key=key,
+                    item=item,
+                    default=default,
+                    filter_by_axis=(da_key,),
+                    axis_mode="exact",
+                )
 
         if default is None:
             return None
@@ -17350,10 +17352,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         if construct_type == "dimension_coordinate":
             data_axes = self.constructs.data_axes()
-            #            dimension_coordinates = self.dimension_coordinates(todict=True)
-            #            for dim, dim_axes in tuple(
-            #                dimension_coordinates.data_axes().items()
-            #            ):
             for dim in self.dimension_coordinates(todict=True):
                 if dim == key:
                     continue
@@ -17366,7 +17364,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if construct_type == "dimension_coordinate":
             construct.autoperiod(inplace=True)
             self._conform_coordinate_references(out)
-            self.autocyclic()
+            self.autocyclic(key=out, coord=construct)
             self._conform_cell_methods()
 
         elif construct_type == "auxiliary_coordinate":
@@ -17453,13 +17451,24 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         if identity is None:
+            # Get axes of Field data array
             return super().get_data_axes(default=default)
 
+        axes = super().get_data_axes(identity, default=None)
+        if axes is not None:
+            return axes
+        
         key = self.construct_key(identity, default=None)
-        if key is None:
-            return self.construct_key(identity, default=default)
+        if key is not None:
+            return super().get_data_axes(key=key, default=default)
 
-        return super().get_data_axes(key=key, default=default)
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"Can't get axes for non-existent construct {identify!r}"
+        )
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
