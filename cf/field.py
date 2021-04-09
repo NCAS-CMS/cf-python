@@ -3274,7 +3274,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         coords = []
         for key in axis_keys:
-            d = self.dimension_coordinate(key, default=None)
+            d = self.dimension_coordinate(filter_by_axis=(key,), default=None)
             if d is None:
                 raise ValueError(
                     f"No unique {name} dimension coordinate "
@@ -3990,7 +3990,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 }
 
                 for key_d in dst_axis_keys:
-                    dim = dst.dimension_coordinate(key_d)
+                    dim = dst.dimension_coordinate(filter_by_axis=(key_d,))
                     key_s = axis_map[key_d]
                     domain_axes[key_s].set_size(dim.size)
                     self.set_construct(dim, axes=[key_s])
@@ -4031,7 +4031,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     src_axis_keys, dst_axis_keys
                 ):
                     dim_coord = dst.dimension_coordinate(
-                        dst_axis_key, default=None
+                        filter_by_axis=(dst_axis_key,), default=None
                     )
                     if dim_coord is not None:
                         self.set_construct(dim_coord, axes=[src_axis_key])
@@ -5064,7 +5064,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 f"matching {axis!r}"
             )
 
-        dim = self.dimension_coordinate(da_key, default=None)
+        dim = self.dimension_coordinate(filter_by_axis=(da_key,), default=None)
         if dim is None:
             if auto:
                 return False
@@ -6350,7 +6350,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         if iscyclic:
             self._cyclic = old.union((axis,))
 
-            dim = self.dimension_coordinate(axis, default=None)
+            dim = self.dimension_coordinate(
+                filter_by_axis=(axis,), default=None
+            )
             if dim is not None:
                 if period is not None:
                     dim.period(period)
@@ -8126,7 +8128,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
         domain_axes = self.domain_axes(filter_by_size=(ge(2),), todict=True)
 
         for da_key in domain_axes:
-            dim = self.dimension_coordinate(da_key, default=None)
+            dim = self.dimension_coordinate(
+                filter_by_axis=(da_key,), default=None
+            )
             if dim is None:
                 continue
 
@@ -8231,7 +8235,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         False
 
         """
-        return bool(self.construct(identity, default=False))
+        return self.construct(identity, default=None) is not None
 
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.
@@ -8241,97 +8245,97 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
-    def del_construct(self, identity, default=ValueError()):
-        """Remove a metadata construct.
-
-        If a domain axis construct is selected for removal then it can't
-        be spanned by any metadata construct data, nor the field
-        construct's data; nor be referenced by any cell method constructs.
-
-        However, a domain ancillary construct may be removed even if it is
-        referenced by coordinate reference construct. In this case the
-        reference is replace with `None`.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `constructs`, `get_construct`, `has_construct`,
-                     `set_construct`, `del_domain_axis`,
-                     `del_coordinate_reference`
-
-        :Parameters:
-
-            identity:
-                Select the construct to removed. Must be
-
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-            default: optional
-                Return the value of the *default* parameter if the
-                construct can not be removed, or does not exist. If set to
-                an `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-                The removed metadata construct.
-
-        **Examples:**
-
-        >>> f.del_construct('X')
-        <CF DimensionCoordinate: grid_latitude(111) degrees>
-
-        """
-        key = self.construct_key(identity, default=None)
-        if key is None:
-            return self._default(
-                default,
-                "Can't identify construct to delete from identity "
-                f"{identity!r}",
-            )
-
-        return super().del_construct(key, default=default)
+    #    def del_construct(self, identity, default=ValueError()):
+    #        """Remove a metadata construct.
+    #
+    #        If a domain axis construct is selected for removal then it can't
+    #        be spanned by any metadata construct data, nor the field
+    #        construct's data; nor be referenced by any cell method constructs.
+    #
+    #        However, a domain ancillary construct may be removed even if it is
+    #        referenced by coordinate reference construct. In this case the
+    #        reference is replace with `None`.
+    #
+    #        .. versionadded:: 3.0.0
+    #
+    #        .. seealso:: `constructs`, `get_construct`, `has_construct`,
+    #                     `set_construct`, `del_domain_axis`,
+    #                     `del_coordinate_reference`
+    #
+    #        :Parameters:
+    #
+    #            identity:
+    #                Select the construct to removed. Must be
+    #
+    #                  * The identity or key of a metadata construct.
+    #
+    #                A construct identity is specified by a string
+    #                (e.g. ``'latitude'``, ``'long_name=time'``,
+    #                ``'ncvar%lat'``, etc.); a `Query` object
+    #                (e.g. ``cf.eq('longitude')``); or a compiled regular
+    #                expression (e.g. ``re.compile('^atmosphere')``) that
+    #                selects the relevant constructs whose identities match via
+    #                `re.search`.
+    #
+    #                A construct has a number of identities, and is selected if
+    #                any of them match any of those provided. A construct's
+    #                identities are those returned by its `!identities`
+    #                method. In the following example, the construct ``x`` has
+    #                six identities:
+    #
+    #                   >>> x.identities()
+    #                   ['time',
+    #                    'long_name=Time',
+    #                    'foo=bar',
+    #                    'standard_name=time',
+    #                    'ncvar%t',
+    #                    'T']
+    #
+    #                A construct key may optionally have the ``'key%'``
+    #                prefix. For example ``'dimensioncoordinate2'`` and
+    #                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+    #
+    #                Note that in the output of a `print` call or `!dump`
+    #                method, a construct is always described by one of its
+    #                identities, and so this description may always be used as
+    #                an *identity* argument.
+    #
+    #                *Parameter example:*
+    #                  ``identity='measure:area'``
+    #
+    #                *Parameter example:*
+    #                  ``identity='cell_area'``
+    #
+    #                *Parameter example:*
+    #                  ``identity='long_name=Cell Area'``
+    #
+    #                *Parameter example:*
+    #                  ``identity='cellmeasure1'``
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if the
+    #                construct can not be removed, or does not exist. If set to
+    #                an `Exception` instance then it will be raised instead.
+    #
+    #        :Returns:
+    #
+    #                The removed metadata construct.
+    #
+    #        **Examples:**
+    #
+    #        >>> f.del_construct('X')
+    #        <CF DimensionCoordinate: grid_latitude(111) degrees>
+    #
+    #        """
+    #        key = self.construct_key(identity, default=None)
+    #        if key is None:
+    #            return self._default(
+    #                default,
+    #                "Can't identify construct to delete from identity "
+    #                f"{identity!r}",
+    #            )
+    #
+    #        return super().del_construct(key, default=default)
 
     def del_coordinate_reference(
         self, identity=None, construct=None, default=ValueError()
@@ -12755,7 +12759,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         indices = [slice(None)] * self.ndim
 
         domain_axes = self.domain_axes(todict=True)
-        #        constructs = self.constructs.filter_by_data(view=True)
 
         parsed = {}
         unique_axes = set()
@@ -12766,16 +12769,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 key = None
                 construct = None
             else:
-                #                c = constructs.filter_by_identity(identity, view=True)
-                #                c = self.constructs.filter(
-                #                    filter_by_data=True,
-                #                    filter_by_identity=(identity,),
-                #                    todict=True
-                #                )
-                #                if len(c) != 1:
-                #                    raise ValueError(
-                #                        "Can't find indices: Ambiguous axis or axes: "
-                #                        f"{identity!r}"
                 key, construct = self.construct(
                     identity,
                     filter_by_data=True,
@@ -12787,8 +12780,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                         "Can't find indices: Ambiguous axis or axes: "
                         f"{identity!r}"
                     )
-
-                #                key, construct = c.popitem()
 
                 axes = self.get_data_axes(key)
 
@@ -14634,7 +14625,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # Update the bounds of the convolution axis if necessary
         if update_bounds:
-            coord = f.dimension_coordinate(axis_key, default=None)
+            coord = f.dimension_coordinate(
+                filter_by_axis=(axis_key,), default=None
+            )
             if coord is not None and coord.has_bounds():
                 old_bounds = coord.bounds.array
                 length = old_bounds.shape[0]
@@ -14771,19 +14764,18 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        key = self.construct_key(identity, default=None)
+        key, construct = self.construct(
+            identity, item=True, default=(None, None)
+        )
         if key is None:
             raise ValueError(
-                "Can't find metadata construct with identity {!r}".format(
-                    identity
-                )
+                f"Can't find metadata construct with identity {identity!r}"
             )
 
         f = super().convert(key, full_domain=full_domain)
 
         if cellsize:
             # Change the new field's data to cell sizes
-            construct = self.construct(key)
             try:
                 cs = construct.cellsize
             except AttributeError as error:
@@ -14915,7 +14907,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         if self.domain_axis(axis_key).get_size() > 1:
             # Update the bounds of the summed axis if necessary
-            coord = f.dimension_coordinate(axis_key, default=None)
+            coord = f.dimension_coordinate(
+                filter_by_axis=(axis_key,), default=None
+            )
             if coord is not None and coord.has_bounds():
                 bounds = coord.get_bounds()
                 bounds[:, 0] = bounds[0, 0]
@@ -15203,7 +15197,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 f.roll(axis, shift, inplace=True)
 
             # TODO should this call be like the one above?
-            dim = f.dimension_coordinate(axis)
+            dim = f.dimension_coordinate(filter_by_axis=(axis,))
 
             n = ((value - dim.data[0]) / period).floor()
 
@@ -16762,23 +16756,16 @@ class Field(mixin.PropertiesData, cfdm.Field):
             identity: optional
                 Select dimension coordinate constructs that have an
                 identity, defined by their `!identities` methods, that
-                matches any of the given values. In addition to a
+                matches any of the given values. In addition to
                 construct identities, the values are matched against:
 
-                * The construct identifier, with or without the
-                  ``'key%'`` prefix, of a dimension coordinate
-                  construct.
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
 
-                  *Parameter example:*
-                    ``'dimensioncoordinate1'``
-
-                  *Parameter example:*
-                    ``'key%dimensioncoordinate0'``
-
-                * The identity or construct identifier, with or
-                  without the ``'key%'`` prefix, of a domain axis
-                  construct that is spanned by a dimension coordinate
-                  construct's data.
+                Additionly, TODOx the values are matched against the identity or
+                construct identifier, with or without the ``'key%'``
+                prefix, of a domain axis construct that is spanned by
+                a dimension coordinate construct's data.
 
                   *Parameter example:*
                     ``'domainaxis2'``
@@ -16846,18 +16833,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        #       if not filter_kwargs and len(identity) == 1 and identity[0] in self.domain_axes(todict=True):
-        #           return self._select_construct(
-        #               ("dimension_coordinate",),
-        #               "dimension_coordinate",
-        #               (),
-        #               key=key,
-        #               item=item,
-        #               default=default,
-        #               filter_by_axis=identity,
-        #               axis_mode="exact",
-        #           )
-
         c = self._select_construct(
             ("dimension_coordinate",),
             "dimension_coordinate",
@@ -18378,8 +18353,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         >>> f.replace_construct('X', new_X_construct)
 
         """
-        key = self.construct(identity, key=True)
-        c = self.constructs[key]
+        key, c = self.construct(identity, item=True)
 
         if not isinstance(construct, c.__class__):
             raise ValueError(

@@ -216,7 +216,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     #                # units is a standard_name of a coordinate
     #                if field is None:
     #                    raise ValueError("Set the field parameter")
-    #                coord = field.coord(canonical_units, exact=True)
+    #                coord = field.coordinate(canonical_units, exact=True)
     #                if coord is not None:
     #                    canonical_units = coord.Units
     #

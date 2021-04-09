@@ -164,10 +164,10 @@ class Constructs(cfdm.Constructs):
 
         """
         # Allow keys without the 'key%' prefix
-        construct_types = self._construct_type
-        identities = [
-            "key%" + i if i in construct_types else i for i in identities
-        ]
+        #        construct_types = self._construct_type
+        #        identities = [
+        #            "key%" + i if i in construct_types else i for i in identities
+        #        ]
 
         ctypes = [i for i in "XTYZ" if i in identities]
 
