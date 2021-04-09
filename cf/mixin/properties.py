@@ -30,8 +30,8 @@ class Properties(Container):
         """Store component classes.
 
         .. note:: If a child class requires a different component
-                  classes than the ones defined here, then they must
-                  be redefined in the child class.
+        classes than the ones defined here, then they must           be
+        redefined in the child class.
 
         """
         instance = super().__new__(cls)
@@ -133,7 +133,7 @@ class Properties(Container):
         'foo'
         >>> del f.id
 
-        """        
+        """
         try:
             return self._custom["id"]
         except KeyError:

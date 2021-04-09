@@ -233,7 +233,7 @@ class _Meta:
             self.identity = f.get_property(field_identity, None)
 
         construct_axes = f.constructs.data_axes()
-            
+
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
@@ -322,7 +322,7 @@ class _Meta:
             info_dim = []
 
             dim_coord_key, dim_coord = f.dimension_coordinate(
-                  filter_by_axis=(axis,), item=True, default=(None, None)
+                filter_by_axis=(axis,), item=True, default=(None, None)
             )
             dim_identity = None
 
@@ -354,9 +354,11 @@ class _Meta:
             #                     'size'     : None})
 
             # Find the 1-d auxiliary coordinates which span this axis
-            aux_coords = {aux: auxs_1d.pop(aux)
-                          for aux in tuple(auxs_1d)
-                          if axis in construct_axes[aux]}
+            aux_coords = {
+                aux: auxs_1d.pop(aux)
+                for aux in tuple(auxs_1d)
+                if axis in construct_axes[aux]
+            }
 
             info_aux = []
             for key, aux_coord in aux_coords.items():
@@ -517,7 +519,9 @@ class _Meta:
             )
 
             # Find axes' canonical identities
-            axes = [self.axis_to_id[axis] for axis in construct_axes[key]] #f.get_data_axes(key)]
+            axes = [
+                self.axis_to_id[axis] for axis in construct_axes[key]
+            ]  # f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
             self.field_anc[identity] = {
@@ -629,9 +633,9 @@ class _Meta:
                     self.field = self.field.copy()  # copy as will delete msr
                     f = self.field
                     copied_field = True
-                    
+
                 f.del_construct(key)
-                
+
                 if is_log_level_info(logger):
                     logger.info(
                         f"Removed {msr.identity()!r} construct from a copy "
@@ -640,7 +644,7 @@ class _Meta:
                         "is not possible to determine the influence the "
                         "aggregation process should have on it."
                     )
-                    
+
                 continue
 
             if not self.cell_measure_has_data_and_units(msr):
@@ -656,7 +660,7 @@ class _Meta:
             )
 
             # Find axes' canonical identities
-            axes = [self.axis_to_id[axis] for axis in construct_axes[key]] 
+            axes = [self.axis_to_id[axis] for axis in construct_axes[key]]
             axes = tuple(sorted(axes))
 
             if units in info_msr:
@@ -780,9 +784,8 @@ class _Meta:
         return "\n".join(string)
 
     def copy(self):
-        """Replace the field associated with a summary class with a deep copy.
-
-        """
+        """Replace the field associated with a summary class with a deep
+        copy."""
         new = _Meta.__new__(_Meta)
         new.__dict__ = self.__dict__.copy()
         new.field = new.field.copy()
@@ -950,7 +953,8 @@ class _Meta:
         self.message = f"{coord!r} has no identity or no data"
 
     def field_ancillary_has_identity_and_data(self, anc):
-        """Return a field ancillary's identity if it has one and has data.
+        """Return a field ancillary's identity if it has one and has
+        data.
 
         :Parameters:
 
@@ -967,7 +971,7 @@ class _Meta:
             strict=self.strict_identities,
             relaxed=self.relaxed_identities,
             nc_only=self.ncvar_identities,
-            default=None
+            default=None,
         )
 
         if identity is not None:
@@ -983,12 +987,12 @@ class _Meta:
 
         # Still here?
         self.message = (
-            f"{anc.identity()!r} field ancillary has no identity or "
-            "no data"
+            f"{anc.identity()!r} field ancillary has no identity or " "no data"
         )
 
     def coordinate_reference_signatures(self, refs):
-        """List the structural signatures of given coordinate references.
+        """List the structural signatures of given coordinate
+        references.
 
         :Parameters:
 
@@ -1026,7 +1030,8 @@ class _Meta:
         return signatures
 
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
-        """Return a domain ancillary's identity if it has one and has data.
+        """Return a domain ancillary's identity if it has one and has
+        data.
 
         :Parameters:
 
@@ -1048,7 +1053,7 @@ class _Meta:
                 strict=self.strict_identities,
                 relaxed=self.relaxed_identities,
                 nc_only=self.ncvar_identities,
-                default=None
+                default=None,
             )
 
         if anc_identity is None:
@@ -1086,7 +1091,7 @@ class _Meta:
 
         """
         if not is_log_level_detail(logger):
-            return 
+            return
 
         if signature:
             logger.detail(
@@ -2002,8 +2007,8 @@ def aggregate(
                                 f"Unaggregatable {m1.field.identity()!r} "
                                 f"fields have{exclude} been output: "
                                 f"{m1.message}"
-                             )
-                            
+                            )
+
                         unaggregatable = True
                         break
 
@@ -2936,11 +2941,12 @@ def _aggregate_2_fields(
     # ----------------------------------------------------------------
     # Map the axes of field1 to those of field0
     # ----------------------------------------------------------------
-    dim1_name_map = {m1.id_to_axis[identity]: m0.id_to_axis[identity]
-                     for identity in m0.axis_ids}
+    dim1_name_map = {
+        m1.id_to_axis[identity]: m0.id_to_axis[identity]
+        for identity in m0.axis_ids
+    }
 
-    dim0_name_map = {axis0: axis1
-                     for axis1, axis0 in dim1_name_map.items()}
+    dim0_name_map = {axis0: axis1 for axis1, axis0 in dim1_name_map.items()}
 
     # ----------------------------------------------------------------
     # In each field, find the identifier of the aggregating axis.
@@ -3030,7 +3036,7 @@ def _aggregate_2_fields(
 
             hash_value0 = anc0["hash_value"]
             hash_value1 = anc1["hash_value"]
-            
+
             anc0["hash_value"] = hash_value0 + hash_value1
 
     # Domain ancillaries
@@ -3046,7 +3052,7 @@ def _aggregate_2_fields(
 
             hash_value0 = anc0["hash_value"]
             hash_value1 = anc1["hash_value"]
-            
+
             anc0["hash_value"] = hash_value0 + hash_value1
 
     # ----------------------------------------------------------------

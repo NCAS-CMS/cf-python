@@ -1,5 +1,3 @@
-from functools import partial
-
 import cfdm
 
 from .query import Query
@@ -167,9 +165,10 @@ class Constructs(cfdm.Constructs):
         """
         # Allow keys without the 'key%' prefix
         construct_types = self._construct_type
-        identities = ["key%" + i if i in construct_types else i
-                      for i in identities]
-                
+        identities = [
+            "key%" + i if i in construct_types else i for i in identities
+        ]
+
         ctypes = [i for i in "XTYZ" if i in identities]
 
         config = {"identities_kwargs": {"ctypes": ctypes}}

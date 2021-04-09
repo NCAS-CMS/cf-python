@@ -59,7 +59,7 @@ class read_writeTest(unittest.TestCase):
 
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
-    
+
     def test_write_filename(self):
         f = self.f0
         a = f.array
@@ -233,7 +233,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_format(self):
         cf.write(self.f1, tmpfile)
-        
+
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
                 for fmt in (
@@ -251,10 +251,10 @@ class read_writeTest(unittest.TestCase):
                     g = cf.read(tmpfile2, verbose=0)
                     self.assertEqual(len(g), 1)
                     g = g[0]
-    
+
                     self.assertTrue(
                         f.equals(g, verbose=1),
-                        f"Bad read/write of format {fmt!r}"
+                        f"Bad read/write of format {fmt!r}",
                     )
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -272,7 +272,7 @@ class read_writeTest(unittest.TestCase):
                     g = cf.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, verbose=2),
-                        f"Bad read/write with lossless compression: {fmt}"
+                        f"Bad read/write with lossless compression: {fmt}",
                     )
 
     def test_write_datatype(self):
@@ -328,15 +328,15 @@ class read_writeTest(unittest.TestCase):
     def test_write_reference_datetime(self):
         for reference_datetime in ("1751-2-3", "1492-12-30"):
             cf.write(self.f0, tmpfile, reference_datetime=reference_datetime)
-            
+
             g = cf.read(tmpfile)[0]
-            
+
             t = g.dimension_coordinate("T")
             self.assertEqual(
                 t.Units,
                 cf.Units("days since " + reference_datetime),
                 f"Units written were {t.Units.reftime!r} not "
-                f"{reference_datetime!r}"
+                f"{reference_datetime!r}",
             )
 
     def test_read_write_unlimited(self):

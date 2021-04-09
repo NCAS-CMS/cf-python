@@ -50,13 +50,14 @@ class Coordinate:
 
         if self.Y:
             return "Y"
- 
+
         if self.Z:
             return "Z"
 
     @property
     def T(self):
-        """True if and only if the data are coordinates for a CF 'T' axis.
+        """True if and only if the data are coordinates for a CF 'T'
+        axis.
 
         CF 'T' axis coordinates are defined by having one or more of
         the following:
@@ -91,7 +92,8 @@ class Coordinate:
 
     @property
     def X(self):
-        """True if and only if the data are coordinates for a CF 'X' axis.
+        """True if and only if the data are coordinates for a CF 'X'
+        axis.
 
         CF 'X' axis coordinates are defined by having one or more of
         the following:
@@ -154,7 +156,8 @@ class Coordinate:
 
     @property
     def Y(self):
-        """True if and only if the data are coordinates for a CF 'Y' axis.
+        """True if and only if the data are coordinates for a CF 'Y'
+        axis.
 
         CF 'Y' axis coordinates are defined by having one or more of
         the following:
@@ -203,7 +206,8 @@ class Coordinate:
 
     @property
     def Z(self):
-        """True if and only if the data are coordinates for a CF 'Z' axis.
+        """True if and only if the data are coordinates for a CF 'Z'
+        axis.
 
         CF 'Z' axis coordinates are defined by having one or more of
         the following:
@@ -492,9 +496,9 @@ class Coordinate:
         'no identity'
 
         """
-        out = super().identity(strict=strict,
-                               relaxed=relaxed,
-                               nc_only=nc_only, default=None)
+        out = super().identity(
+            strict=strict, relaxed=relaxed, nc_only=nc_only, default=None
+        )
         if out is not None:
             return out
 
@@ -584,4 +588,3 @@ def _ctypes_iter(coord, ctypes):
             # This coordinate construct is of this type
             yield c
             return
-        

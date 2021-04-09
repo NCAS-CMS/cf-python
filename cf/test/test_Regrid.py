@@ -105,7 +105,7 @@ class RegridTest(unittest.TestCase):
         f6 = cf.read(self.filename6)[0]
         with self.assertRaises(Exception):
             f1.regridc(f6, axes="T", method="linear")
-            
+
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
         self.assertFalse(cf.regrid_logging())

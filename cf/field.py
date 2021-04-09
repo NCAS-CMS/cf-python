@@ -594,12 +594,20 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
     @property
     def _cyclic(self):
-        """Storage for axis cyclicity. Do not change the value in-place."""
+        """Storage for axis cyclicity.
+
+        Do not change the value in-place.
+
+        """
         return self._custom.get("_cyclic", _empty_set)
 
     @_cyclic.setter
     def _cyclic(self, value):
-        """value must be a set. Do not change the value in-place."""
+        """value must be a set.
+
+        Do not change the value in-place.
+
+        """
         self._custom["_cyclic"] = value
 
     @_cyclic.deleter
@@ -3078,7 +3086,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         data_axes = self.constructs.data_axes()
-        
+
         if axes is None:
             # Retrieve the field construct's X and Y dimension
             # coordinates
@@ -3298,7 +3306,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         data_axes = self.get_data_axes()
-        
+
         # Get the positions of the axes
         axis_indices = []
         for axis_key in axis_keys:
@@ -3407,7 +3415,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         if method not in conservative_regridding_methods:
             return
-        
+
         for name, coords in zip(
             ("Source", "Destination"), (src_coords, dst_coords)
         ):
@@ -3454,7 +3462,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         elif method not in regridding_methods:
             raise ValueError(f"Can't regrid: Invalid method: {method!r}")
-        
+
         elif method == "bilinear":  # TODO use logging.info() once have logging
             print(
                 "Note the 'bilinear' method argument has been renamed to "
@@ -3519,7 +3527,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # possibibly reduce the number of trasnistions between different masks
         # - each change is slow.
         data_axes = self.get_data_axes()
-        
+
         axis_indices = []
         if axis_order is not None:
             for axis in axis_order:
@@ -3581,7 +3589,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         data_axes = self.get_data_axes()
-        
+
         indices = {axis: [0] for axis in data_axes if axis not in axes}
 
         f = self.subspace(**indices)
@@ -3663,7 +3671,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             )
 
         fill_value = self.fill_value(default="netCDF")
-        
+
         # Calculate the mass of the source field
         srcareafield = Regrid.create_field(srcgrid, "srcareafield")
         srcmass = Regrid.compute_mass_grid(
@@ -3721,8 +3729,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
             regridded_data = numpy_ma_MaskedArray(
                 dstfield.data.copy(),
                 mask=(dstfield.data == self.fill_value(default="netCDF")),
-                )
-                
+            )
+
         return regridded_data
 
     def _regrid_update_coordinate_references(
@@ -3785,7 +3793,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         domain_axes = None
 
         data_axes = self.constructs.data_axes()
-        
+
         for key, ref in self.coordinate_references(todict=True).items():
             ref_axes = []
             for k in ref.coordinates():
@@ -3808,12 +3816,15 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 # then regrid it, otherwise remove it
                 x = self.domain_axis("X", key=True)
                 y = self.domain_axis("Y", key=True)
-                if self.domain_ancillary(
-                    filter_by_axis=(x, y),
-                    axis_mode="exact",
-                    key=True,
-                    default=None,
-                ) is not None:
+                if (
+                    self.domain_ancillary(
+                        filter_by_axis=(x, y),
+                        axis_mode="exact",
+                        key=True,
+                        default=None,
+                    )
+                    is not None
+                ):
                     # Convert the domain ancillary into an independent
                     # field
                     value = self.convert(key)
@@ -3880,7 +3891,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         """
         dst_data_axes = dst.constructs.data_axes()
-        
+
         for ref in dst.coordinate_references(todict=True).values():
             axes = set()
             for key in ref.coordinates():
@@ -3985,7 +3996,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     self.set_construct(dim, axes=[key_s])
 
                 dst_data_axes = dst.constructs.data_axes()
-                
+
                 for aux_key, aux in dst.auxiliary_coordinates(
                     filter_by_axis=dst_axis_keys,
                     axis_mode="subset",
@@ -4014,7 +4025,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 else:
                     for coord, axis_key in zip(dst_coords, src_axis_keys):
                         self.set_construct(coord, axes=[axis_key])
-                        
+
             else:
                 for src_axis_key, dst_axis_key in zip(
                     src_axis_keys, dst_axis_keys
@@ -6324,7 +6335,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         old = self._cyclic.copy()
         if identity is None:
             return old
-        
+
         axis = self.domain_axis(identity, key=True)
 
         data = self.get_data(None, _fill_value=False)
@@ -6338,7 +6349,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         # Never change _cyclic in-place
         if iscyclic:
             self._cyclic = old.union((axis,))
-            
+
             dim = self.dimension_coordinate(axis, default=None)
             if dim is not None:
                 if period is not None:
@@ -6351,7 +6362,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             cyclic = old.copy()
             cyclic.discard(axis)
             self._cyclic = cyclic
-           
+
         return old
 
     def weights(
@@ -13298,9 +13309,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 data, axes=None, copy=copy, inplace=True
             )
 
-#            # Apply cyclic axes
-#            data.cyclic([data_axes.index(axis) for axis in self._cyclic], True)
-                    
+            #            # Apply cyclic axes
+            #            data.cyclic([data_axes.index(axis) for axis in self._cyclic], True)
+
             return f
 
         if data.isscalar:
@@ -13403,10 +13414,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         # Apply cyclic axes
         data.cyclic(
-            [axes.index(axis) for axis in self._cyclic if axis in axes],
-            True
+            [axes.index(axis) for axis in self._cyclic if axis in axes], True
         )
-                  
+
         return f
 
     def domain_mask(self, **kwargs):
@@ -15335,7 +15345,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 return False
         elif not coord.X:
             return False
-            
+
         bounds = coord.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
@@ -16492,7 +16502,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(da_key,),
                     axis_mode="exact",
                 )
-            
+
         if default is None:
             return default
 
@@ -16834,18 +16844,18 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-#       if not filter_kwargs and len(identity) == 1 and identity[0] in self.domain_axes(todict=True):
-#           return self._select_construct(
-#               ("dimension_coordinate",),
-#               "dimension_coordinate",
-#               (),
-#               key=key,
-#               item=item,
-#               default=default,
-#               filter_by_axis=identity,
-#               axis_mode="exact",
-#           )
-        
+        #       if not filter_kwargs and len(identity) == 1 and identity[0] in self.domain_axes(todict=True):
+        #           return self._select_construct(
+        #               ("dimension_coordinate",),
+        #               "dimension_coordinate",
+        #               (),
+        #               key=key,
+        #               item=item,
+        #               default=default,
+        #               filter_by_axis=identity,
+        #               axis_mode="exact",
+        #           )
+
         c = self._select_construct(
             ("dimension_coordinate",),
             "dimension_coordinate",
@@ -17492,7 +17502,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         axes = super().get_data_axes(identity, default=None)
         if axes is not None:
             return axes
-        
+
         key = self.construct_key(identity, default=None)
         if key is not None:
             return super().get_data_axes(key=key, default=default)
@@ -17501,8 +17511,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             return default
 
         return self._default(
-            default,
-            f"Can't get axes for non-existent construct {identify!r}"
+            default, f"Can't get axes for non-existent construct {identity!r}"
         )
 
     @_inplace_enabled(default=False)
@@ -20001,7 +20010,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
             # field gets filled with a fill value, the source field
             # with the section's data)
             self._regrid_fill_fields(src_data, srcfield, dstfield)
-         
+
             # Run regridding (dstfield is an ESMF field)
             dstfield = regridSrc2Dst.run_regridding(srcfield, dstfield)
 
@@ -20022,7 +20031,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
                     dstgrid,
                     dstfield,
                 )
-            
+
             # Get the regridded data or frac field as a numpy array
             # (regridded_data is a numpy array)
             regridded_data = self._regrid_get_regridded_data(
