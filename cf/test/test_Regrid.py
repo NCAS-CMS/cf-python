@@ -51,6 +51,8 @@ class RegridTest(unittest.TestCase):
                     f1 = cf.read(self.filename1)[0]
                     f2 = cf.read(self.filename2)[0]
                     f3 = cf.read(self.filename3)[0]
+                    f4 = cf.read(self.filename4)[0]
+                    f5 = cf.read(self.filename5)[0]
 
                     r = f1.regrids(f2, "conservative")
 
@@ -60,6 +62,7 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     r = f1.regrids(f2, method="conservative")
 
                     self.assertTrue(
@@ -68,7 +71,9 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
+
                     r = f1.regrids(dst, "conservative", dst_cyclic=True)
 
                     self.assertTrue(
@@ -77,7 +82,9 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     r = f1.regrids(dst, method="conservative", dst_cyclic=True)
+
                     self.assertTrue(
                         f3.equals(r),
                         "destination=global dict, CHUNKSIZE={}".format(
@@ -85,31 +92,9 @@ class RegridTest(unittest.TestCase):
                         ),
                     )
 
-                    f4 = cf.read(self.filename4)[0]
-                    f5 = cf.read(self.filename5)[0]
+                    # Regrid global to regional roated pole
+                    r = f1.regrids(f5, method="linear")
 
-                    r = f1.regrids(f5, "linear")
-
-                    print (f1)
-                    print (f5)
-                    print (r)
-                    print (f4)
-#                    print (f1.array.mask.sum())
-                    #print (r.array - f4.array)
-                    #print (abs(f4.array).max())
-                    #print (abs(r.array - f4.array).max())
-                    #print (abs(r.array - f4.array))
-                    #
-                    #print (cf.atol())
-                    #print ((float(cf.atol()) + float(cf.rtol()) * abs(f4.array)).max())
-                    #
-                    #for a, b in zip(r.array.flat, f4.array.flat):
-                    #    print (abs(a-b), float(cf.atol()) + float(cf.rtol()) * abs(b))
-                    #    if abs(a-b) > float(cf.atol()) + float(cf.rtol()) * abs(b):
-                    #        raise ValueError()
-                        
-                    self.assertTrue(f4.data.equals(r.data, verbose=-1))
-                    print (1/0)
                     self.assertTrue(
                         f4.equals(r, verbose=2),
                         "destination=regional Field, CHUNKSIZE={}".format(
@@ -117,18 +102,10 @@ class RegridTest(unittest.TestCase):
                         ),
                     )
 
-#                    r = f1.regrids(f5, method="linear")
-#                    self.assertTrue(
-#                        f4.equals(r),
-#                        "destination=regional Field, CHUNKSIZE={}".format(
-#                            chunksize
-#                        ),
-#                    )
-
-            f6 = cf.read(self.filename6)[0]
-            with self.assertRaises(Exception):
-                f1.regridc(f6, axes="T", method="linear")
-
+        f6 = cf.read(self.filename6)[0]
+        with self.assertRaises(Exception):
+            f1.regridc(f6, axes="T", method="linear")
+            
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
         self.assertFalse(cf.regrid_logging())
