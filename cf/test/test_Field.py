@@ -1385,6 +1385,16 @@ class FieldTest(unittest.TestCase):
         g = f.copy()
         self.assertFalse(f.equals(g + 1))
 
+        # Symmetry
+        f = cf.example_field(2)
+        g = f.copy()
+        self.assertTrue(f.equals(g, verbose=2))
+        self.assertTrue(g.equals(f, verbose=2))
+
+        g.del_construct("dimensioncoordinate0")
+        self.assertFalse(f.equals(g, verbose=2))
+        self.assertFalse(g.equals(f, verbose=2))
+
     def test_Field_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
