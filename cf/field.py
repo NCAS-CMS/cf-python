@@ -13309,9 +13309,6 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 data, axes=None, copy=copy, inplace=True
             )
 
-            #            # Apply cyclic axes
-            #            data.cyclic([data_axes.index(axis) for axis in self._cyclic], True)
-
             return f
 
         if data.isscalar:
@@ -13413,9 +13410,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
         super(cfdm.Field, f).set_data(data, axes=axes, copy=copy, inplace=True)
 
         # Apply cyclic axes
-        data.cyclic(
-            [axes.index(axis) for axis in self._cyclic if axis in axes], True
-        )
+        if axes:
+            cyclic = self._cyclic
+            if cyclic:
+                cyclic_axes = [
+                    axes.index(axis) for axis in cyclic if axis in axes
+                ]
+                if cyclic_axes:
+                    data.cyclic(cyclic_axes, True)
 
         return f
 

@@ -10559,7 +10559,8 @@ class Data(Container, cfdm.Data):
         if axes is None:
             return old
 
-        axes = [data_axes[i] for i in self._parse_axes(axes)]
+        parsed_axes = self._parse_axes(axes)
+        axes = [data_axes[i] for i in parsed_axes]
 
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
@@ -10571,7 +10572,7 @@ class Data(Container, cfdm.Data):
         if auxiliary_mask is not None:
             self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
             for mask in self._auxiliary_mask:
-                mask.cyclic(axes, iscyclic)
+                mask.cyclic(parsed_axes, iscyclic)
 
         return old
 
