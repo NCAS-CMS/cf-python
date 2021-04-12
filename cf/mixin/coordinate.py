@@ -508,7 +508,7 @@ class Coordinate:
 
         return default
 
-    def identities(self, generator=False, ctypes="XTYZ"):
+    def identities(self, generator=False, ctypes=None):
         """Return all possible identities.
 
         The identities comprise:
@@ -531,11 +531,14 @@ class Coordinate:
 
             {{generator: `bool`, optional}}
 
-            ctype: (sequence of) `str`
-                Restrict coordinate type identities to be any of these
-                characters. Setting to a subset of ``'XTYZ'`` can give
-                performance improvements, as it will reduce the number
-                of coordinate types that are checked in circumstances
+            ctypes: (sequence of) `str`
+                If set then return the coordinate type (if any) as the
+                first identity and restrict the possible coordinate
+                types to be any of these characters. By default, a
+                coordinate type is the last identity. Setting to a
+                subset of ``'XTYZ'`` can give performance
+                improvements, as it will reduce the number of
+                coordinate types that are checked in circumstances
                 when particular coordinate types have been ruled out a
                 priori. If a coordinate type is omitted then it will
                 not be in the returned identities even if the
@@ -543,13 +546,13 @@ class Coordinate:
                 are checked in the order given.
 
                 *Parameter example:*
-                  ``ctype='Y'``
+                  ``ctypes='Y'``
 
                 *Parameter example:*
-                  ``ctype='XY'``
+                  ``ctypes='XY'``
 
                 *Parameter example:*
-                  ``ctype=('T', 'X')``
+                  ``ctypes=('T', 'X')``
 
         :Returns:
 
@@ -572,9 +575,13 @@ class Coordinate:
          'ncvar%tas']
 
         """
-        identities = super().identities(generator=True)
+        identities = super().identities(generator=True, ctypes=ctypes)
 
-        g = chain(identities, _ctypes_iter(self, ctypes))
+        if ctypes:
+            g = chain(_ctypes_iter(self, ctypes), identities)
+        else:
+            g = chain(identities, _ctypes_iter(self, 'XTYZ'))
+            
         if generator:
             return g
 

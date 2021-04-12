@@ -173,13 +173,49 @@ class Constructs(cfdm.Constructs):
 
         config = {"identities_kwargs": {"ctypes": ctypes}}
 
-        if ctypes:
-            # Exclude a ctype from the short circuit test
-            config["short_circuit_test"] = lambda x: (
-                x not in ctypes and self._short_circuit_test(x)
-            )
+#        if ctypes:
+#            # Exclude a ctype from the short circuit test
+#            config["short_circuit_test"] = lambda x: (
+#                self._short_circuit_test(x) and x not in ctypes
+#            )
 
+        if ctypes:
+            config["short_circuit_test"] = lambda x: False
+            
         if _config:
             config.update(_config)
 
         return super()._filter_by_identity(arg, todict, config, identities)
+
+    def _filter_by_coordinate_type(self, arg, todict, ctypes):
+        """Worker function for `filter_by_identity` and `filter`.
+
+        See `filter_by_identity` for details.
+
+        .. versionadded:: 3.9.0
+
+        """
+        out, pop = self._filter_preprocess(
+            arg,
+            filter_applied={"filter_by_identity": ctypes},
+            todict=todict,
+        )
+
+        if not ctypes:
+            # Return all constructs if no coordinate types have been
+            # provided
+            return out
+
+        for cid, construct in tuple(out.items()):
+            ok = False
+            for ctype in ctypes:
+                if getattr(construct, ctype, False):
+                    ok = True
+                    break
+
+            if not ok:
+                pop(cid)
+
+        return out
+
+                

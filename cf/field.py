@@ -16833,19 +16833,46 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        c = self._select_construct(
+        ctypes = [i for i in "XTYZ" if i in identity]
+        if ctypes:
+            identity = [i for i in identity if i not in ctypes]
+            filter_kwargs["filter_by_coordinate_type"] = ctypes
+            last_filter = ("filter_by_coordinate_type",)
+        else:
+            last_filter = None
+
+            
+        c = self._filter_interface(
             ("dimension_coordinate",),
             "dimension_coordinate",
             identity,
+            construct=True,
             key=key,
             item=item,
             default=None,
+            _last_filter=last_filter,
+            _identity_config={"identities_kwargs": {"ctype": False}},
             **filter_kwargs,
         )
         if c is not None:
             return c
+#
+#        c = self._select_construct(
+#            ("dimension_coordinate",),
+#            "dimension_coordinate",
+#            identity,
+#            key=key,
+#            item=item,
+#            default=None,
+#            _last_filter=last_filter,
+#            _identity_config={"identities_kwargs": {"ctype": False}},
+#            **filter_kwargs,
+#        )
+#        if c is not None:
+#            return c
 
-        if identity:
+        if not filter_kwargs and len(identity) == 1 and identity in self.domain_axes(todict=True):
+            raise DeprecationError()
             da_key = self.domain_axis(*identity, key=True, default=None)
             if da_key is not None:
                 return self._select_construct(
@@ -16868,6 +16895,72 @@ class Field(mixin.PropertiesData, cfdm.Field):
             "return a unique construct",
         )
 
+    def dimension_coordinates(self, *identities, **filter_kwargs):
+        """Return dimension coordinate constructs.
+
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: optional
+                Select dimension coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all dimension
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
+
+        **Examples:**
+
+        >>> f.dimension_coordinates()
+        Constructs:
+        {}
+
+        >>> f.dimension_coordinates()
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+        """
+        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
+        if identities:
+            if filter_by_identity is not None:
+                raise TypeError(
+                    f"Can't set {self.__class__.__name__}."
+                    "dimension_coordinates() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
+                )
+        elif filter_by_identity is not None:
+            identities = filter_by_identity
+        
+        ctypes = [i for i in "XTYZ" if i in identities]
+        if len(ctypes) == len(identities):
+            filter_kwargs["filter_by_coordinate_type"] = ctypes
+            return super().dimension_coordinates(
+                _last_filter=("filter_by_coordinate_type",),
+                **filter_kwargs
+            )
+
+        return super().dimension_coordinates( *identities,
+                                              **filter_kwargs)
+    
     def domain_axis(
         self,
         *identity,
@@ -16987,13 +17080,23 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             identity = identity2
 
-        c = self._select_construct(
+#        c = self._select_construct(
+#            ("domain_axis",),
+#            "domain_axis",
+#            identity,
+#            key=key,
+#            default=None,
+#            item=item,
+#            **filter_kwargs,
+#        )
+        c = self._filter_interface(
             ("domain_axis",),
             "domain_axis",
             identity,
+            construct=True,
             key=key,
-            default=None,
             item=item,
+            default=None,
             **filter_kwargs,
         )
         if c is not None:
@@ -17114,6 +17217,71 @@ class Field(mixin.PropertiesData, cfdm.Field):
         key = self.domain_axis(*identity, key=True)
         return self.get_data_axes().index(key)
 
+    def auxiliary_coordinates(self, *identities, **filter_kwargs):
+        """Return auxiliary coordinate constructs.
+
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: optional
+                Select auxiliary coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all auxiliary
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
+
+        **Examples:**
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {}
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+
+        """
+        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
+        if identities:
+            if filter_by_identity is not None:
+                raise TypeError(
+                    f"Can't set {self.__class__.__name__}."
+                    "auxiliary_coordinates() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
+                )
+        elif filter_by_identity is not None:
+            identities = filter_by_identity
+        
+        ctypes = [i for i in "XTYZ" if i in identities]
+        if len(ctypes) == len(identities):
+            filter_kwargs["filter_by_coordinate_type"] = ctypes
+            return super().auxiliary_coordinates(
+                _last_filter=("filter_by_coordinate_type",),
+                **filter_kwargs
+            )
+
+        return super().auxiliary_coordinates( *identities,
+                                              **filter_kwargs)
+    
     def axes_names(self, *identities, **kwargs):
         """Return canonical identities for each domain axis construct.
 
@@ -19225,6 +19393,74 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
+    def coordinates(self, *identities, **filter_kwargs):
+        """Return dimension and auxiliary coordinate constructs.
+
+        . versionadded:: 3.0.0
+
+        . seealso:: `auxiliary_coordinates`, `constructs`,
+                    `dimension_coordinates`
+
+        :Parameters:
+
+            identities: optional
+                Select coordinate constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                If no identities are provided then all coordinate
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
+
+        *Examples:**
+
+        >> f.coordinates()
+        onstructs:
+        }
+
+        >> f.coordinates()
+        onstructs:
+        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+        """
+        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
+        if identities:
+            if filter_by_identity is not None:
+                raise TypeError(
+                    f"Can't set {self.__class__.__name__}.coordinates() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
+                )
+        elif filter_by_identity is not None:
+            identities = filter_by_identity
+        
+        ctypes = [i for i in "XTYZ" if i in identities]
+        if ctypes and len(ctypes) == len(identities):
+            filter_kwargs["filter_by_coordinate_type"] = ctypes
+            return super().coordinates(
+                _last_filter=("filter_by_coordinate_type",),
+                **filter_kwargs
+            )
+
+        return super().coordinates(*identities, **filter_kwargs)
+    
     def coordinate_reference_domain_axes(self, identity):
         """Return the domain axes that apply to a coordinate reference
         construct.
