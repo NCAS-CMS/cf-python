@@ -932,7 +932,6 @@ class Properties(Container):
                     "Positional argument, if provided, must one of 'or', "
                     "'and'"
                 )
-        # --- End: if
 
         if not properties:
             return True
@@ -1131,7 +1130,6 @@ class Properties(Container):
                 _DEPRECATION_ERROR_DICT(
                     "Use 'match_by_*' methods instead."
                 )  # pragma: no cover
-        # --- End: for
 
         return self.match_by_identity(*identities)
 
@@ -1166,5 +1164,3 @@ class Properties(Container):
             self, "getprop", "Use method 'get_property' instead"
         )  # pragma: no cover
 
-
-# --- End: class

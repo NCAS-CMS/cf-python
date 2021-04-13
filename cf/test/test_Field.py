@@ -440,13 +440,13 @@ class FieldTest(unittest.TestCase):
             "ncvar%a",
         ):
             for copy in (True, False):
-                f.replace_construct(x, f.construct(x), copy=copy)
+                f.replace_construct(x, new=f.construct(x), copy=copy)
 
         with self.assertRaises(Exception):
-            f.replace_construct("grid_longitude", f.construct("latitude"))
+            f.replace_construct("grid_longitude", new=f.construct("latitude"))
 
         with self.assertRaises(Exception):
-            f.replace_construct("grid_longitude", f.construct("grid_latitude"))
+            f.replace_construct("grid_longitude", new=f.construct("grid_latitude"))
 
     def test_Field_allclose(self):
         f = self.f.copy()
@@ -1953,22 +1953,12 @@ class FieldTest(unittest.TestCase):
         f = self.f
 
         for identity in (
-            "domainaxis2",
             "latitude",
             "grid_longitude",
             "auxiliarycoordinate1",
             "dimensioncoordinate1",
         ):
-            if identity == "domainaxis2":
-                key, c = f.dimension_coordinates(
-                    filter_by_axis=(identity,), axis_mode="exact", todict=True
-                ).popitem()
-
-            else:
-                key, c = f.construct_item(identity)
-
-            self.assertTrue(f.coordinate(identity).equals(c, verbose=2))
-            self.assertEqual(f.coordinate(identity, key=True), key)
+            key, c = f.construct(identity, item=True)
 
         with self.assertRaises(ValueError):
             f.coord("long_name:qweRty")
@@ -2038,7 +2028,7 @@ class FieldTest(unittest.TestCase):
         cr = g.coordinate_reference(
             "grid_mapping_name:rotated_latitude_longitude"
         )
-        f.set_coordinate_reference(cr, field=g)
+        f.set_coordinate_reference(cr, parent=g)
         self.assertEqual(len(f.coordinate_references()), 1)
 
         cr = g.coordinate_reference(
@@ -2048,7 +2038,7 @@ class FieldTest(unittest.TestCase):
         cr.coordinate_conversion.set_domain_ancillary(
             "foo", "domainancillary99"
         )
-        f.set_coordinate_reference(cr, field=g)
+        f.set_coordinate_reference(cr, parent=g)
         self.assertEqual(len(f.coordinate_references()), 2)
         self.assertEqual(len(f.domain_ancillaries()), 3)
 
@@ -2068,28 +2058,23 @@ class FieldTest(unittest.TestCase):
         f = self.f
 
         for identity in (
-            "domainaxis2",
             "grid_latitude",
             "X",
             "dimensioncoordinate1",
         ):
-            if identity == "domainaxis2":
-                key, c = f.dimension_coordinates(
-                    filter_by_axis=(identity,), axis_mode="exact", todict=True
-                ).popitem()
-            elif identity == "X":
-                key, c = f.construct_item("grid_longitude")
+            if identity == "X":
+                key, c = f.construct("grid_longitude", item=True)
             else:
-                key, c = f.construct_item(identity)
+                key, c = f.construct(identity, item=True)
 
             self.assertTrue(
                 f.dimension_coordinate(identity).equals(c, verbose=2)
             )
             self.assertEqual(f.dimension_coordinate(identity, key=True), key)
 
-            i = f.dimension_coordinate(identity, item=True)
-            self.assertEqual(i[0], key)
-            self.assertTrue(i[1].equals(c))
+            k, v = f.dimension_coordinate(identity, item=True)
+            self.assertEqual(k, key)
+            self.assertTrue(v.equals(c))
 
         self.assertIsNone(
             f.dimension_coordinate("long_name=qwerty:asd", default=None)

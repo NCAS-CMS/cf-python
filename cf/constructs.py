@@ -163,25 +163,13 @@ class Constructs(cfdm.Constructs):
         .. versionadded:: 3.9.0
 
         """
-        # Allow keys without the 'key%' prefix
-        #        construct_types = self._construct_type
-        #        identities = [
-        #            "key%" + i if i in construct_types else i for i in identities
-        #        ]
-
         ctypes = [i for i in "XTYZ" if i in identities]
 
+        if len(ctypes) == len(identities):
+            # All identities are coordinate types (X, T, Y or Z)
+            return self._filter_by_coordinate_type(arg, todict, ctypes)
+        
         config = {"identities_kwargs": {"ctypes": ctypes}}
-
-#        if ctypes:
-#            # Exclude a ctype from the short circuit test
-#            config["short_circuit_test"] = lambda x: (
-#                self._short_circuit_test(x) and x not in ctypes
-#            )
-
-        if ctypes:
-            config["short_circuit_test"] = lambda x: False
-            
         if _config:
             config.update(_config)
 
@@ -218,4 +206,36 @@ class Constructs(cfdm.Constructs):
 
         return out
 
-                
+    @classmethod
+    def _short_iteration(cls, x):
+        """The default short cicuit test.
+
+        If this method returns True then only ther first identity
+        return by the construct's `!identities` method will be
+        checked.
+    
+        See `_filter_by_identity` for details.
+    
+        .. versionadded:: (cfdm) 1.8.9.0
+    
+        :Parameters:
+    
+            x: `str`
+                The value against which the construct's identities are
+                being compared.
+    
+        :Returns:
+    
+            `bool`
+                 Returns `True` if a construct's `identities` method
+                 is to short circuit after the first identity is
+                 computed, otherwise `False`.
+
+        """
+        if not isinstance(x, str):
+            return False
+        
+        if x in "XTYZ" or x.startswith('measure:') or x.startswith('id%'):
+            return True
+        
+        return "=" not in x and ":" not in x   and "%" not in x

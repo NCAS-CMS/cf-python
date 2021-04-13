@@ -99,7 +99,7 @@ logger = logging.getLogger(__name__)
 # --------------------------------------------------------------------
 # Commonly used units
 # --------------------------------------------------------------------
-_units_degrees = Units("degrees")
+#_units_degrees = Units("degrees")
 _units_radians = Units("radians")
 _units_metres = Units("m")
 _units_1 = Units("1")
@@ -247,7 +247,7 @@ _xxx = namedtuple(
 _empty_set = set()
 
 
-class Field(mixin.PropertiesData, cfdm.Field):
+class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     """A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes
@@ -8337,497 +8337,497 @@ class Field(mixin.PropertiesData, cfdm.Field):
     #
     #        return super().del_construct(key, default=default)
 
-    def del_coordinate_reference(
-        self, identity=None, construct=None, default=ValueError()
-    ):
-        """Remove a coordinate reference construct and all of its domain
-        ancillary constructs.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `del_construct`
-
-        :Parameters:
-
-            identity: optional
-                Select the coordinate reference construct by one of:
-
-                  * The identity or key of a coordinate reference
-                    construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'grid_mapping_name:latitude_longitude'``,
-                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
-                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                two identities:
-
-                   >>> x.identities()
-                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
-
-                A identity's prefix of ``'grid_mapping_name:'`` or
-                ``'standard_name:'`` may be omitted
-                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
-                and ``'atmosphere_hybrid_height_coordinate'`` are both
-                acceptable identities).
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'coordinatereference2'`` and
-                ``'key%coordinatereference2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
-
-                *Parameter example:*
-                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
-
-                *Parameter example:*
-                  ``identity='transverse_mercator'``
-
-                *Parameter example:*
-                  ``identity='coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='key%coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='ncvar%lat_lon'``
-
-            construct: optional
-                The coordinate reference construct to remove. This may
-                alternatively be specified via the *identity* parameter.
-
-            default: optional
-                Return the value of the *default* parameter if the
-                construct can not be removed, or does not exist. If set to
-                an `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-                The removed coordinate reference construct.
-
-        **Examples:**
-
-        >>> f.del_coordinate_reference('rotated_latitude_longitude')
-        <CF CoordinateReference: rotated_latitude_longitude>
-
-        """
-        if construct is None:
-            if identity is None:
-                raise ValueError("TODO")
-
-            key = self.coordinate_reference(identity, key=True, default=None)
-            if key is None:
-                return self._default(
-                    default,
-                    f"Can't identify construct from {identity!r}",
-                )
-
-            ref = self.del_construct(key)
-
-            for (
-                da_key
-            ) in ref.coordinate_conversion.domain_ancillaries().values():
-                self.del_construct(da_key, default=None)
-
-            return ref
-        elif identity is not None:
-            raise ValueError("TODO")
-
-        out = []
-
-        c_key = self.construct(construct, key=True, default=None)
-        if c_key is None:
-            return self._default(
-                default, f"Can't identify construct from {construct!r}"
-            )
-
-        for key, ref in tuple(self.coordinate_references(todict=True).items()):
-            if c_key in ref.coordinates():
-                self.del_coordinate_reference(
-                    key, construct=None, default=default
-                )
-                out.append(ref)
-                continue
-
-            if (
-                c_key
-                in ref.coordinate_conversion.domain_ancillaries().values()
-            ):
-                self.del_coordinate_reference(
-                    key, construct=None, default=default
-                )
-                out.append(ref)
-                continue
-
-        return out
-
-    def del_domain_axis(
-        self, identity=None, squeeze=False, default=ValueError()
-    ):
-        """Remove a domain axis construct.
-
-        In general, a domain axis construct can only be removed if it is
-        not spanned by any construct's data. However, a size 1 domain axis
-        construct can be removed in any case if the *squeeze* parameter is
-        set to `True`. In this case, a metadata construct whose data spans
-        only the removed domain axis construct will also be removed.
-
-        .. versionadded:: 3.6.0
-
-        .. seealso:: `del_construct`
-
-        :Parameters:
-
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time'
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time'
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='key%domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity=2``
-
-            squeeze: `bool`, optional
-                If True then allow the removal of a size 1 domain axis
-                construct that is spanned by any data array and squeeze
-                the corresponding dimension from those arrays.
-
-            default: optional
-                Return the value of the *default* parameter if the
-                construct can not be removed, or does not exist. If set to
-                an `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `DomainAxis`
-                The removed domain axis construct.
-
-        **Examples:**
-
-        >>> f = cf.example_field(0)
-        >>> g = f[0]
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(1), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(1) = [-75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-        >>> g.del_domain_axis('Y', squeeze=True)
-        <CF DomainAxis: size(1)>
-        >>> print(g)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-        >>> g.del_domain_axis('T', squeeze=True)
-        <CF DomainAxis: size(1)>
-        >>> print(g)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
-
-        """
-        dakey = self.domain_axis(identity, key=True)
-        domain_axis = self.constructs[dakey]
-
-        if not squeeze:
-            return self.del_construct(dakey)
-
-        if dakey in self.get_data_axes(default=()):
-            self.squeeze(dakey, inplace=True)
-
-        for ckey, construct in self.constructs.filter_by_data(
-            todict=True
-        ).items():
-            data = construct.get_data(None, _fill_value=False)
-            if data is None:
-                continue
-
-            construct_axes = self.get_data_axes(ckey)
-            if dakey not in construct_axes:
-                continue
-
-            i = construct_axes.index(dakey)
-            construct.squeeze(i, inplace=True)
-            construct_axes = list(construct_axes)
-            construct_axes.remove(dakey)
-            self.set_data_axes(axes=construct_axes, key=ckey)
-
-            if not construct_axes:
-                self.del_construct(ckey)
-
-        return domain_axis
-
-    def get_coordinate_reference(
-        self, identity=None, key=False, construct=None, default=ValueError()
-    ):
-        """Returns selected coordinate reference constructs.
-
-        .. versionadded:: 3.0.2
-
-        .. seealso:: `construct`
-
-        :Parameters:
-
-            identity:
-                Select the coordinate reference construct by one of:
-
-                  * The identity or key of a coordinate reference
-                    construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'grid_mapping_name:latitude_longitude'``,
-                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
-                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                two identities:
-
-                   >>> x.identities()
-                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
-
-                A identity's prefix of ``'grid_mapping_name:'`` or
-                ``'standard_name:'`` may be omitted
-                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
-                and ``'atmosphere_hybrid_height_coordinate'`` are both
-                acceptable identities).
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'coordinatereference2'`` and
-                ``'key%coordinatereference2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
-
-                *Parameter example:*
-                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
-
-                *Parameter example:*
-                  ``identity='transverse_mercator'``
-
-                *Parameter example:*
-                  ``identity='coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='key%coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='ncvar%lat_lon'``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `CoordinateReference` or `str`
-                The selected coordinate reference construct, or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        if construct is None:
-            return self.coordinate_reference(
-                identity=identity, key=key, default=default
-            )
-
-        out = []
-
-        c_key = self.construct(construct, key=True, default=None)
-        if c_key is None:
-            return self._default(
-                default, f"Can't identify construct from {construct!r}"
-            )
-
-        for cr_key, ref in tuple(
-            self.coordinate_references(todict=True).items()
-        ):
-            if c_key in [
-                ref.coordinates(),
-                ref.coordinate_conversion.domain_ancillaries().values(),
-            ]:
-                if key:
-                    if cr_key not in out:
-                        out.append(cr_key)
-                elif ref not in out:
-                    out.append(ref)
-
-                continue
-
-        return out
-
-    def set_coordinate_reference(
-        self, coordinate_reference, key=None, field=None, strict=True
-    ):
-        """Set a coordinate reference construct.
-
-        By default, this is equivalent to using the `set_construct`
-        method. If, however, the *field* parameter has been set then it is
-        assumed to be a field construct that contains the new coordinate
-        reference construct. In this case, existing coordinate and domain
-        ancillary constructs will be referenced by the inserted coordinate
-        reference construct, based on those which are referenced from the
-        other parent field construct (given by the *field* parameter).
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `set_construct`
-
-        :Parameters:
-
-            coordinate_reference: `CoordinateReference`
-                The coordinate reference construct to be inserted.
-
-            key: `str`, optional
-                The construct identifier to be used for the construct. If
-                not set then a new, unique identifier is created
-                automatically. If the identifier already exists then the
-                existing construct will be replaced.
-
-                *Parameter example:*
-                  ``key='coordinatereference1'``
-
-            field: `Field`, optional
-                A parent field construct that contains the new coordinate
-                reference construct.
-
-            strict: `bool`, optional
-                If False then allow non-strict identities for
-                identifying coordinate and domain ancillary metadata
-                constructs.
-
-        :Returns:
-
-            `str`
-                The construct identifier for the coordinate reference
-                construct.
-
-        """
-        if field is None:
-            return self.set_construct(coordinate_reference, key=key, copy=True)
-
-        # Still here?
-        ref = coordinate_reference.copy()
-
-        coordinates = field.coordinates(todict=True)
-        domain_ancillaries = field.domain_ancillaries(todict=True)
-
-        ckeys = []
-        for value in coordinate_reference.coordinates():
-            if value in coordinates:
-                identity = coordinates[value].identity(strict=strict)
-                ckeys.append(self.coordinate(identity, key=True, default=None))
-
-        ref.clear_coordinates()
-        ref.set_coordinates(ckeys)
-
-        coordinate_conversion = coordinate_reference.coordinate_conversion
-
-        dakeys = {}
-        for term, value in coordinate_conversion.domain_ancillaries().items():
-            if value in domain_ancillaries:
-                identity = domain_ancillaries[value].identity(strict=strict)
-                dakeys[term] = self.domain_ancillary(
-                    identity, key=True, default=None
-                )
-            else:
-                dakeys[term] = None
-
-        ref.coordinate_conversion.clear_domain_ancillaries()
-        ref.coordinate_conversion.set_domain_ancillaries(dakeys)
-
-        return self.set_construct(ref, key=key, copy=False)
+#    def del_coordinate_reference(
+#        self, identity=None, construct=None, default=ValueError()
+#    ):
+#        """Remove a coordinate reference construct and all of its domain
+#        ancillary constructs.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `del_construct`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the coordinate reference construct by one of:
+#
+#                  * The identity or key of a coordinate reference
+#                    construct.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'grid_mapping_name:latitude_longitude'``,
+#                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
+#                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
+#                a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                two identities:
+#
+#                   >>> x.identities()
+#                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+#
+#                A identity's prefix of ``'grid_mapping_name:'`` or
+#                ``'standard_name:'`` may be omitted
+#                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
+#                and ``'atmosphere_hybrid_height_coordinate'`` are both
+#                acceptable identities).
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'coordinatereference2'`` and
+#                ``'key%coordinatereference2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+#
+#                *Parameter example:*
+#                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
+#
+#                *Parameter example:*
+#                  ``identity='transverse_mercator'``
+#
+#                *Parameter example:*
+#                  ``identity='coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='key%coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='ncvar%lat_lon'``
+#
+#            construct: optional
+#                The coordinate reference construct to remove. This may
+#                alternatively be specified via the *identity* parameter.
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                construct can not be removed, or does not exist. If set to
+#                an `Exception` instance then it will be raised instead.
+#
+#        :Returns:
+#
+#                The removed coordinate reference construct.
+#
+#        **Examples:**
+#
+#        >>> f.del_coordinate_reference('rotated_latitude_longitude')
+#        <CF CoordinateReference: rotated_latitude_longitude>
+#
+#        """
+#        if construct is None:
+#            if identity is None:
+#                raise ValueError("TODO")
+#
+#            key = self.coordinate_reference(identity, key=True, default=None)
+#            if key is None:
+#                return self._default(
+#                    default,
+#                    f"Can't identify construct from {identity!r}",
+#                )
+#
+#            ref = self.del_construct(key)
+#
+#            for (
+#                da_key
+#            ) in ref.coordinate_conversion.domain_ancillaries().values():
+#                self.del_construct(da_key, default=None)
+#
+#            return ref
+#        elif identity is not None:
+#            raise ValueError("TODO")
+#
+#        out = []
+#
+#        c_key = self.construct(construct, key=True, default=None)
+#        if c_key is None:
+#            return self._default(
+#                default, f"Can't identify construct from {construct!r}"
+#            )
+#
+#        for key, ref in tuple(self.coordinate_references(todict=True).items()):
+#            if c_key in ref.coordinates():
+#                self.del_coordinate_reference(
+#                    key, construct=None, default=default
+#                )
+#                out.append(ref)
+#                continue
+#
+#            if (
+#                c_key
+#                in ref.coordinate_conversion.domain_ancillaries().values()
+#            ):
+#                self.del_coordinate_reference(
+#                    key, construct=None, default=default
+#                )
+#                out.append(ref)
+#                continue
+#
+#        return out
+#
+#    def del_domain_axis(
+#        self, identity=None, squeeze=False, default=ValueError()
+#    ):
+#        """Remove a domain axis construct.
+#
+#        In general, a domain axis construct can only be removed if it is
+#        not spanned by any construct's data. However, a size 1 domain axis
+#        construct can be removed in any case if the *squeeze* parameter is
+#        set to `True`. In this case, a metadata construct whose data spans
+#        only the removed domain axis construct will also be removed.
+#
+#        .. versionadded:: 3.6.0
+#
+#        .. seealso:: `del_construct`
+#
+#        :Parameters:
+#
+#            identity:
+#               Select the domain axis construct by one of:
+#
+#                  * An identity or key of a 1-d coordinate construct that
+#                    whose data spans the domain axis construct.
+#
+#                  * A domain axis construct identity or key.
+#
+#                  * The position of the domain axis construct in the field
+#                    construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); or a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time'
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time'
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'dimensioncoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='dimensioncoordinate1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='key%domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#                *Parameter example:*
+#                  ``identity=2``
+#
+#            squeeze: `bool`, optional
+#                If True then allow the removal of a size 1 domain axis
+#                construct that is spanned by any data array and squeeze
+#                the corresponding dimension from those arrays.
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                construct can not be removed, or does not exist. If set to
+#                an `Exception` instance then it will be raised instead.
+#
+#        :Returns:
+#
+#            `DomainAxis`
+#                The removed domain axis construct.
+#
+#        **Examples:**
+#
+#        >>> f = cf.example_field(0)
+#        >>> g = f[0]
+#        Field: specific_humidity (ncvar%q)
+#        ----------------------------------
+#        Data            : specific_humidity(latitude(1), longitude(8)) 1
+#        Cell methods    : area: mean
+#        Dimension coords: latitude(1) = [-75.0] degrees_north
+#                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+#                        : time(1) = [2019-01-01 00:00:00]
+#        >>> g.del_domain_axis('Y', squeeze=True)
+#        <CF DomainAxis: size(1)>
+#        >>> print(g)
+#        Field: specific_humidity (ncvar%q)
+#        ----------------------------------
+#        Data            : specific_humidity(longitude(8)) 1
+#        Cell methods    : area: mean
+#        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+#                        : time(1) = [2019-01-01 00:00:00]
+#        >>> g.del_domain_axis('T', squeeze=True)
+#        <CF DomainAxis: size(1)>
+#        >>> print(g)
+#        Field: specific_humidity (ncvar%q)
+#        ----------------------------------
+#        Data            : specific_humidity(longitude(8)) 1
+#        Cell methods    : area: mean
+#        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+#
+#        """
+#        dakey = self.domain_axis(identity, key=True)
+#        domain_axis = self.constructs[dakey]
+#
+#        if not squeeze:
+#            return self.del_construct(dakey)
+#
+#        if dakey in self.get_data_axes(default=()):
+#            self.squeeze(dakey, inplace=True)
+#
+#        for ckey, construct in self.constructs.filter_by_data(
+#            todict=True
+#        ).items():
+#            data = construct.get_data(None, _fill_value=False)
+#            if data is None:
+#                continue
+#
+#            construct_axes = self.get_data_axes(ckey)
+#            if dakey not in construct_axes:
+#                continue
+#
+#            i = construct_axes.index(dakey)
+#            construct.squeeze(i, inplace=True)
+#            construct_axes = list(construct_axes)
+#            construct_axes.remove(dakey)
+#            self.set_data_axes(axes=construct_axes, key=ckey)
+#
+#            if not construct_axes:
+#                self.del_construct(ckey)
+#
+#        return domain_axis
+
+#    def get_coordinate_reference(
+#        self, identity=None, key=False, construct=None, default=ValueError()
+#    ):
+#        """Returns selected coordinate reference constructs.
+#
+#        .. versionadded:: 3.0.2
+#
+#        .. seealso:: `construct`
+#
+#        :Parameters:
+#
+#            identity:
+#                Select the coordinate reference construct by one of:
+#
+#                  * The identity or key of a coordinate reference
+#                    construct.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'grid_mapping_name:latitude_longitude'``,
+#                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
+#                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
+#                a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                two identities:
+#
+#                   >>> x.identities()
+#                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+#
+#                A identity's prefix of ``'grid_mapping_name:'`` or
+#                ``'standard_name:'`` may be omitted
+#                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
+#                and ``'atmosphere_hybrid_height_coordinate'`` are both
+#                acceptable identities).
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'coordinatereference2'`` and
+#                ``'key%coordinatereference2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+#
+#                *Parameter example:*
+#                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
+#
+#                *Parameter example:*
+#                  ``identity='transverse_mercator'``
+#
+#                *Parameter example:*
+#                  ``identity='coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='key%coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='ncvar%lat_lon'``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `CoordinateReference` or `str`
+#                The selected coordinate reference construct, or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        if construct is None:
+#            return self.coordinate_reference(
+#                identity=identity, key=key, default=default
+#            )
+#
+#        out = []
+#
+#        c_key = self.construct(construct, key=True, default=None)
+#        if c_key is None:
+#            return self._default(
+#                default, f"Can't identify construct from {construct!r}"
+#            )
+#
+#        for cr_key, ref in tuple(
+#            self.coordinate_references(todict=True).items()
+#        ):
+#            if c_key in [
+#                ref.coordinates(),
+#                ref.coordinate_conversion.domain_ancillaries().values(),
+#            ]:
+#                if key:
+#                    if cr_key not in out:
+#                        out.append(cr_key)
+#                elif ref not in out:
+#                    out.append(ref)
+#
+#                continue
+#
+#        return out
+#
+#    def set_coordinate_reference(
+#        self, coordinate_reference, key=None, field=None, strict=True
+#    ):
+#        """Set a coordinate reference construct.
+#
+#        By default, this is equivalent to using the `set_construct`
+#        method. If, however, the *field* parameter has been set then it is
+#        assumed to be a field construct that contains the new coordinate
+#        reference construct. In this case, existing coordinate and domain
+#        ancillary constructs will be referenced by the inserted coordinate
+#        reference construct, based on those which are referenced from the
+#        other parent field construct (given by the *field* parameter).
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `set_construct`
+#
+#        :Parameters:
+#
+#            coordinate_reference: `CoordinateReference`
+#                The coordinate reference construct to be inserted.
+#
+#            key: `str`, optional
+#                The construct identifier to be used for the construct. If
+#                not set then a new, unique identifier is created
+#                automatically. If the identifier already exists then the
+#                existing construct will be replaced.
+#
+#                *Parameter example:*
+#                  ``key='coordinatereference1'``
+#
+#            field: `Field`, optional
+#                A parent field construct that contains the new coordinate
+#                reference construct.
+#
+#            strict: `bool`, optional
+#                If False then allow non-strict identities for
+#                identifying coordinate and domain ancillary metadata
+#                constructs.
+#
+#        :Returns:
+#
+#            `str`
+#                The construct identifier for the coordinate reference
+#                construct.
+#
+#        """
+#        if field is None:
+#            return self.set_construct(coordinate_reference, key=key, copy=True)
+#
+#        # Still here?
+#        ref = coordinate_reference.copy()
+#
+#        coordinates = field.coordinates(todict=True)
+#        domain_ancillaries = field.domain_ancillaries(todict=True)
+#
+#        ckeys = []
+#        for value in coordinate_reference.coordinates():
+#            if value in coordinates:
+#                identity = coordinates[value].identity(strict=strict)
+#                ckeys.append(self.coordinate(identity, key=True, default=None))
+#
+#        ref.clear_coordinates()
+#        ref.set_coordinates(ckeys)
+#
+#        coordinate_conversion = coordinate_reference.coordinate_conversion
+#
+#        dakeys = {}
+#        for term, value in coordinate_conversion.domain_ancillaries().items():
+#            if value in domain_ancillaries:
+#                identity = domain_ancillaries[value].identity(strict=strict)
+#                dakeys[term] = self.domain_ancillary(
+#                    identity, key=True, default=None
+#                )
+#            else:
+#                dakeys[term] = None
+#
+#        ref.coordinate_conversion.clear_domain_ancillaries()
+#        ref.coordinate_conversion.set_domain_ancillaries(dakeys)
+#
+#        return self.set_construct(ref, key=key, copy=False)
 
     @_deprecated_kwarg_check("i")
     @_manage_log_level_via_verbosity
@@ -15311,65 +15311,65 @@ class Field(mixin.PropertiesData, cfdm.Field):
     #
     #        return out
 
-    @_manage_log_level_via_verbosity
-    def autocyclic(self, key=None, coord=None, verbose=None):
-        """Set dimensions to be cyclic.
-
-        A dimension is set to be cyclic if it has a unique longitude (or
-        grid longitude) dimension coordinate construct with bounds and the
-        first and last bounds values differ by 360 degrees (or an
-        equivalent amount in other units).
-
-        .. versionadded:: 1.0
-
-        .. seealso:: `cyclic`, `iscyclic`, `period`
-
-        :Parameters:
-
-            {{verbose: `int` or `str` or `None`, optional}}
-
-        :Returns:
-
-           `bool`
-
-        """
-        if coord is None:
-            key, coord = self.dimension_coordinate(
-                "X", item=True, default=(None, None)
-            )
-            if coord is None:
-                return False
-        elif not coord.X:
-            return False
-
-        bounds = coord.get_bounds(None)
-        if bounds is None:
-            self.cyclic(key, iscyclic=False)
-            return False
-
-        data = bounds.get_data(None, _fill_value=False)
-        if data is None:
-            self.cyclic(key, iscyclic=False)
-            return False
-
-        units = bounds.Units
-        if units.islongitude:
-            period = Data(360.0, units="degrees_east")
-        elif units == _units_degrees:
-            period = Data(360.0, units="degrees")
-        else:
-            self.cyclic(key, iscyclic=False)
-            return False
-
-        period.Units = data.Units
-
-        if abs(data.last_element() - data.first_element()) != period.array:
-            self.cyclic(key, iscyclic=False)
-            return False
-
-        self.cyclic(key, iscyclic=True, period=period)
-
-        return True
+#    @_manage_log_level_via_verbosity
+#    def autocyclic(self, key=None, coord=None, verbose=None):
+#        """Set dimensions to be cyclic.
+#
+#        A dimension is set to be cyclic if it has a unique longitude (or
+#        grid longitude) dimension coordinate construct with bounds and the
+#        first and last bounds values differ by 360 degrees (or an
+#        equivalent amount in other units).
+#
+#        .. versionadded:: 1.0
+#
+#        .. seealso:: `cyclic`, `iscyclic`, `period`
+#
+#        :Parameters:
+#
+#            {{verbose: `int` or `str` or `None`, optional}}
+#
+#        :Returns:
+#
+#           `bool`
+#
+#        """
+#        if coord is None:
+#            key, coord = self.dimension_coordinate(
+#                "X", item=True, default=(None, None)
+#            )
+#            if coord is None:
+#                return False
+#        elif not coord.X:
+#            return False
+#
+#        bounds = coord.get_bounds(None)
+#        if bounds is None:
+#            self.cyclic(key, iscyclic=False)
+#            return False
+#
+#        data = bounds.get_data(None, _fill_value=False)
+#        if data is None:
+#            self.cyclic(key, iscyclic=False)
+#            return False
+#
+#        units = bounds.Units
+#        if units.islongitude:
+#            period = Data(360.0, units="degrees_east")
+#        elif units == _units_degrees:
+#            period = Data(360.0, units="degrees")
+#        else:
+#            self.cyclic(key, iscyclic=False)
+#            return False
+#
+#        period.Units = data.Units
+#
+#        if abs(data.last_element() - data.first_element()) != period.array:
+#            self.cyclic(key, iscyclic=False)
+#            return False
+#
+#        self.cyclic(key, iscyclic=True, period=period)
+#
+#        return True
 
     @_deprecated_kwarg_check("i")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
@@ -15718,523 +15718,528 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def auxiliary_coordinate(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Return an auxiliary coordinate construct, or its key.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinates`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_reference`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
-
-        :Parameters:
-
-            identity: optional
-                Select the auxiliary coordinate construct by one of:
-
-                  * `None`. This is the default, which selects the
-                    auxiliary coordinate construct when there is only one
-                    of them.
-
-                  * The identity or key of an auxiliary coordinate
-                    construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a unique 1-d auxiliary coordinate
-                    construct's data.
-
-                  * The position, in the field construct's data, of a
-                    domain axis construct that is spanned by a unique 1-d
-                    auxiliary coordinate construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'auxiliarycoordinate2'`` and
-                ``'key%auxiliarycoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='Y'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='auxiliarycoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity=0``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `AuxiliaryCoordinate` or `str`
-                The selected auxiliary coordinate construct, or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        c = self._select_construct(
-            ("auxiliary_coordinate",),
-            "auxiliary_coordinate",
-            identity,
-            key=key,
-            item=item,
-            default=None,
-            **filter_kwargs,
-        )
-        if c is not None:
-            return c
-
-        if identity:
-            da_key = self.domain_axis(*identity, key=True, default=None)
-            if da_key is not None:
-                return self._select_construct(
-                    ("auxiliary_coordinate",),
-                    "auxiliary_coordinate",
-                    (),
-                    key=key,
-                    item=item,
-                    default=default,
-                    filter_by_axis=(da_key,),
-                    axis_mode="exact",
-                )
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.auxiliary_coordinate() can only "
-            "return a unique construct",
-        )
-
-    def construct(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a metadata construct by its identity.
-
-        .. seealso:: `del_construct`, `get_construct`, `has_construct`,
-                     `set_construct`
-
-        :Parameters:
-
-            identity: optional
-                Select the construct. Must be
-
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='T'
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found.
-
-                {{default Exception}}
-
-                If the *default* is `None`, or if *item* is True and
-                *default* is a 2-tuple of `Ǹone`s, then TODO
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            item: TODO
-
-        :Returns:
-
-                The selected coordinate construct, or its key.
-
-        **Examples:**
-
-        >>> f = cf.example_field(1)
-        >>> print(f)
-        Field: air_temperature (ncvar%ta)
-        ---------------------------------
-        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                        : time(1) = [2019-01-01 00:00:00]
-        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-        Coord references: grid_mapping_name:rotated_latitude_longitude
-                        : standard_name:atmosphere_hybrid_height_coordinate
-        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-
-        >>> f.construct('long_name=Grid latitude name')
-        <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
-        >>> f.construct('ncvar%a')
-        <CF DomainAncillary: ncvar%a(1) m>
-        >>> f.construct('measure:area')
-        <CF CellMeasure: measure:area(9, 10) km2>
-        >>> f.construct('domainaxis0')
-        <CF DomainAxis: size(1)>
-        >>> f.construct('height')
-        Traceback (most recent call last):
-            ...
-        ValueError: Can't return zero constructs
-        >>> f.construct('height', default=False)
-        False
-        >>> f.construct('height', default=TypeError("No height coordinates"))
-        Traceback (most recent call last):
-            ...
-        TypeError: No height coordinates
-
-        """
-        return self._select_construct(
-            (),
-            "construct",
-            identity,
-            key=key,
-            item=item,
-            default=default,
-            **filter_kwargs,
-        )
-
-    def domain_ancillary(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Return a domain ancillary construct, or its key.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_reference`,
-                     `dimension_coordinate`, `domain_ancillaries`,
-                     `domain_axis`, `field_ancillary`
-
-        :Parameters:
-
-            identity: optional
-                Select the domain ancillary construct by one of:
-
-                  * `None`. This is the default, which selects the domain
-                    ancillary construct when there is only one of them.
-
-                  * The identity or key of a domain ancillary construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a unique 1-d domain ancillary construct's data.
-
-                  * The position, in the field construct's data, of a domain
-                    axis construct that is spanned by a unique 1-d domain
-                    ancillary construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'domainancillary2'`` and
-                ``'key%domainancillary2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='Y'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='domainancillary1'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity=0``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `DomainAncillary` or `str`
-                The selected domain ancillary coordinate construct, or its
-                key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        return self._select_construct(
-            ("domain_ancillary",),
-            "domain_ancillary",
-            identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
-        )
-
-    def cell_measure(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a cell measure construct by its identity.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measures`,
-                     `cell_method`, `coordinate`, `coordinate_reference`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
-
-        :Parameters:
-
-            identity: optional
-                Select the cell measure construct by:
-
-                  * `None`. This is the default, which selects the cell
-                     measure construct when there is only one of them.
-
-                  * The identity or key of a cell measure construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a unique 1-d cell measure construct's data.
-
-                  * The position, in the field construct's data, of a
-                    domain axis construct that is spanned by a unique 1-d
-                    cell measure construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'long_name=Cell Area', ``'ncvar%areacello'``,
-                etc.); a `Query` object (e.g. ``cf.eq('measure:area')``);
-                or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'cellmeasure2'`` and
-                ``'key%cellmeasure2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity=0``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `CellMeasure`or `str`
-                The selected cell measure construct, or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        return self._select_construct(
-            ("cell_measure",),
-            "cell_meausure",
-            identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
-        )
+#    def auxiliary_coordinate(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Return an auxiliary coordinate construct, or its key.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinates`, `cell_measure`,
+#                     `cell_method`, `coordinate`, `coordinate_reference`,
+#                     `dimension_coordinate`, `domain_ancillary`,
+#                     `domain_axis`, `field_ancillary`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the auxiliary coordinate construct by one of:
+#
+#                  * `None`. This is the default, which selects the
+#                    auxiliary coordinate construct when there is only one
+#                    of them.
+#
+#                  * The identity or key of an auxiliary coordinate
+#                    construct.
+#
+#                  * The identity or key of a domain axis construct that is
+#                    spanned by a unique 1-d auxiliary coordinate
+#                    construct's data.
+#
+#                  * The position, in the field construct's data, of a
+#                    domain axis construct that is spanned by a unique 1-d
+#                    auxiliary coordinate construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); a `Query` object
+#                (e.g. ``cf.eq('longitude')``); or a compiled regular
+#                expression (e.g. ``re.compile('^atmosphere')``) that
+#                selects the relevant constructs whose identities match via
+#                `re.search`.
+#
+#                A construct has a number of identities, and is selected if
+#                any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'auxiliarycoordinate2'`` and
+#                ``'key%auxiliarycoordinate2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='Y'``
+#
+#                *Parameter example:*
+#                  ``identity='latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='auxiliarycoordinate1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#                *Parameter example:*
+#                  ``identity=0``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `AuxiliaryCoordinate` or `str`
+#                The selected auxiliary coordinate construct, or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("auxiliary_coordinate",),
+#            "auxiliary_coordinate",
+#            identity,
+#            construct=True,
+#            key=key,
+#            item=item,
+#            default=default,
+#            **filter_kwargs,
+#        )
+#        if c is not None:
+#            return c
+#
+#        if identity:
+#            da_key = self.domain_axis(*identity, key=True, default=None)
+#            if da_key is not None:
+#                return self._select_construct(
+#                    ("auxiliary_coordinate",),
+#                    "auxiliary_coordinate",
+#                    (),
+#                    construct=True,
+#                    key=key,
+#                    item=item,
+#                    default=default,
+#                    filter_by_axis=(da_key,),
+#                    axis_mode="exact",
+#                )
+#
+#        if default is None:
+#            return default
+#
+#        return self._default(
+#            default,
+#            f"{self.__class__.__name__}.auxiliary_coordinate() can only "
+#            "return a unique construct",
+#        )
+#
+#    def construct(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Select a metadata construct by its identity.
+#
+#        .. seealso:: `del_construct`, `get_construct`, `has_construct`,
+#                     `set_construct`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the construct. Must be
+#
+#                  * The identity or key of a metadata construct.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); a `Query` object
+#                (e.g. ``cf.eq('longitude')``); or a compiled regular
+#                expression (e.g. ``re.compile('^atmosphere')``) that
+#                selects the relevant constructs whose identities match via
+#                `re.search`.
+#
+#                A construct has a number of identities, and is selected if
+#                any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'dimensioncoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='T'
+#
+#                *Parameter example:*
+#                  ``identity='measure:area'``
+#
+#                *Parameter example:*
+#                  ``identity='cell_area'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Cell Area'``
+#
+#                *Parameter example:*
+#                  ``identity='cellmeasure1'``
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found.
+#
+#                {{default Exception}}
+#
+#                If the *default* is `None`, or if *item* is True and
+#                *default* is a 2-tuple of `Ǹone`s, then TODO
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            item: TODO
+#
+#        :Returns:
+#
+#                The selected coordinate construct, or its key.
+#
+#        **Examples:**
+#
+#        >>> f = cf.example_field(1)
+#        >>> print(f)
+#        Field: air_temperature (ncvar%ta)
+#        ---------------------------------
+#        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+#        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+#        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+#        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+#                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+#                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+#                        : time(1) = [2019-01-01 00:00:00]
+#        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+#                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+#                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+#        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+#        Coord references: grid_mapping_name:rotated_latitude_longitude
+#                        : standard_name:atmosphere_hybrid_height_coordinate
+#        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+#                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+#                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+#
+#        >>> f.construct('long_name=Grid latitude name')
+#        <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
+#        >>> f.construct('ncvar%a')
+#        <CF DomainAncillary: ncvar%a(1) m>
+#        >>> f.construct('measure:area')
+#        <CF CellMeasure: measure:area(9, 10) km2>
+#        >>> f.construct('domainaxis0')
+#        <CF DomainAxis: size(1)>
+#        >>> f.construct('height')
+#        Traceback (most recent call last):
+#            ...
+#        ValueError: Can't return zero constructs
+#        >>> f.construct('height', default=False)
+#        False
+#        >>> f.construct('height', default=TypeError("No height coordinates"))
+#        Traceback (most recent call last):
+#            ...
+#        TypeError: No height coordinates
+#
+#        """
+#        return self._filter_interface(
+#            (),
+#            "construct",
+#            identity,
+#            construct=True,
+#            key=key,
+#            item=item,
+#            default=default,
+#            **filter_kwargs,
+#        )
+#
+#    def domain_ancillary(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Return a domain ancillary construct, or its key.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+#                     `cell_method`, `coordinate`, `coordinate_reference`,
+#                     `dimension_coordinate`, `domain_ancillaries`,
+#                     `domain_axis`, `field_ancillary`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the domain ancillary construct by one of:
+#
+#                  * `None`. This is the default, which selects the domain
+#                    ancillary construct when there is only one of them.
+#
+#                  * The identity or key of a domain ancillary construct.
+#
+#                  * The identity or key of a domain axis construct that is
+#                    spanned by a unique 1-d domain ancillary construct's data.
+#
+#                  * The position, in the field construct's data, of a domain
+#                    axis construct that is spanned by a unique 1-d domain
+#                    ancillary construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); a `Query` object
+#                (e.g. ``cf.eq('longitude')``); or a compiled regular
+#                expression (e.g. ``re.compile('^atmosphere')``) that
+#                selects the relevant constructs whose identities match via
+#                `re.search`.
+#
+#                A construct has a number of identities, and is selected if
+#                any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'domainancillary2'`` and
+#                ``'key%domainancillary2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='Y'``
+#
+#                *Parameter example:*
+#                  ``identity='latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='domainancillary1'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity=0``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `DomainAncillary` or `str`
+#                The selected domain ancillary coordinate construct, or its
+#                key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("domain_ancillary",),
+#            "domain_ancillary",
+#            identity,
+#            construct=True,
+#            key=key,
+#            default=default,
+#            item=item,
+#            **filter_kwargs,
+#        )
+#
+#    def cell_measure(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Select a cell measure construct by its identity.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measures`,
+#                     `cell_method`, `coordinate`, `coordinate_reference`,
+#                     `dimension_coordinate`, `domain_ancillary`,
+#                     `domain_axis`, `field_ancillary`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the cell measure construct by:
+#
+#                  * `None`. This is the default, which selects the cell
+#                     measure construct when there is only one of them.
+#
+#                  * The identity or key of a cell measure construct.
+#
+#                  * The identity or key of a domain axis construct that is
+#                    spanned by a unique 1-d cell measure construct's data.
+#
+#                  * The position, in the field construct's data, of a
+#                    domain axis construct that is spanned by a unique 1-d
+#                    cell measure construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'long_name=Cell Area', ``'ncvar%areacello'``,
+#                etc.); a `Query` object (e.g. ``cf.eq('measure:area')``);
+#                or a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'cellmeasure2'`` and
+#                ``'key%cellmeasure2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='measure:area'``
+#
+#                *Parameter example:*
+#                  ``identity='cell_area'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Cell Area'``
+#
+#                *Parameter example:*
+#                  ``identity='cellmeasure1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity=0``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `CellMeasure`or `str`
+#                The selected cell measure construct, or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("cell_measure",),
+#            "cell_meausure",
+#            identity,
+#            construct=True, 
+#            key=key,
+#            default=default,
+#            item=item,
+#            **filter_kwargs,
+#        )
 
     def cell_method(
         self,
@@ -16327,10 +16332,11 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        c = self._select_construct(
+        c = self._filter_interface(
             ("cell_method",),
             "cell_method",
             identity,
+            construct=True,
             key=key,
             item=item,
             default=None,
@@ -16367,255 +16373,258 @@ class Field(mixin.PropertiesData, cfdm.Field):
             "return a unique construct",
         )
 
-    def coordinate(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Return a dimension or auxiliary coordinate construct, or its
-        key.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `coordinates`,
-                     `dimension_coordinate`
-
-        :Parameters:
-
-            identity: optional
-                Select the dimension coordinate construct by one of:
-
-                  * `None`. This is the default, which selects the
-                    coordinate construct when there is only one of them.
-
-                  * The identity or key of a dimension coordinate
-                    construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a unique 1-d coordinate construct's data.
-
-                  * The position, in the field construct's data, of a
-                    domain axis construct that is spanned by a unique 1-d
-                    coordinate construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'auxiliarycoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='Y'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `DimensionCoordinate` or `AuxiliaryCoordinate` or `str`
-                The selected dimension or auxiliary coordinate construct,
-                or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        c = self._select_construct(
-            ("dimension_coordinate", "auxiliary_coordinate"),
-            "coordinate",
-            identity,
-            key=key,
-            item=item,
-            default=None,
-            **filter_kwargs,
-        )
-        if c is not None:
-            return c
-
-        if identity:
-            da_key = self.domain_axis(*identity, key=True, default=None)
-            if da_key is not None:
-                return self._select_construct(
-                    ("dimension_coordinate", "auxiliary_coordinate"),
-                    "coordinate",
-                    (),
-                    key=key,
-                    item=item,
-                    default=default,
-                    filter_by_axis=(da_key,),
-                    axis_mode="exact",
-                )
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.coordinate() can only "
-            "return a unique construct",
-        )
-
-    def coordinate_reference(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Return a coordinate reference construct, or its key.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_references`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
-
-        :Parameters:
-
-            identity: optional
-                Select the coordinate reference construct by one of:
-
-                  * `None`. This is the default, which selects the
-                    coordinate reference construct when there is only one
-                    of them.
-
-                  * The identity or key of a coordinate reference
-                    construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'grid_mapping_name:latitude_longitude'``,
-                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
-                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                two identities:
-
-                   >>> x.identities()
-                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
-
-                A identity's prefix of ``'grid_mapping_name:'`` or
-                ``'standard_name:'`` may be omitted
-                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
-                and ``'atmosphere_hybrid_height_coordinate'`` are both
-                acceptable identities).
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'coordinatereference2'`` and
-                ``'key%coordinatereference2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
-
-                *Parameter example:*
-                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
-
-                *Parameter example:*
-                  ``identity='transverse_mercator'``
-
-                *Parameter example:*
-                  ``identity='coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='key%coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='ncvar%lat_lon'``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `CoordinateReference` or `str`
-                The selected coordinate reference construct, or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        return self._select_construct(
-            ("coordinate_reference",),
-            "coordinate_reference",
-            identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
-        )
+#    def coordinate(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Return a dimension or auxiliary coordinate construct, or its
+#        key.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinate`, `coordinates`,
+#                     `dimension_coordinate`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the dimension coordinate construct by one of:
+#
+#                  * `None`. This is the default, which selects the
+#                    coordinate construct when there is only one of them.
+#
+#                  * The identity or key of a dimension coordinate
+#                    construct.
+#
+#                  * The identity or key of a domain axis construct that is
+#                    spanned by a unique 1-d coordinate construct's data.
+#
+#                  * The position, in the field construct's data, of a
+#                    domain axis construct that is spanned by a unique 1-d
+#                    coordinate construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); a `Query` object
+#                (e.g. ``cf.eq('longitude')``); or a compiled regular
+#                expression (e.g. ``re.compile('^atmosphere')``) that
+#                selects the relevant constructs whose identities match via
+#                `re.search`.
+#
+#                A construct has a number of identities, and is selected if
+#                any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'auxiliarycoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='Y'``
+#
+#                *Parameter example:*
+#                  ``identity='latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='dimensioncoordinate1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `DimensionCoordinate` or `AuxiliaryCoordinate` or `str`
+#                The selected dimension or auxiliary coordinate construct,
+#                or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("dimension_coordinate", "auxiliary_coordinate"),
+#            "coordinate",
+#            identity,
+#            construct=True,
+#            key=key,
+#            item=item,
+#            default=default,
+#            **filter_kwargs,
+#        )
+#        if c is not None:
+#            return c
+#
+#        if identity:
+#            da_key = self.domain_axis(*identity, key=True, default=None)
+#            if da_key is not None:
+#                return self._filter_interface(
+#                    ("dimension_coordinate", "auxiliary_coordinate"),
+#                    "coordinate",
+#                    (),
+#                    construct=True,
+#                    key=key,
+#                    item=item,
+#                    default=default,
+#                    filter_by_axis=(da_key,),
+#                    axis_mode="exact",
+#                )
+#
+#        if default is None:
+#            return default
+#
+#        return self._default(
+#            default,
+#            f"{self.__class__.__name__}.coordinate() can only "
+#            "return a unique construct",
+#        )
+#
+#    def coordinate_reference(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Return a coordinate reference construct, or its key.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+#                     `cell_method`, `coordinate`, `coordinate_references`,
+#                     `dimension_coordinate`, `domain_ancillary`,
+#                     `domain_axis`, `field_ancillary`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select the coordinate reference construct by one of:
+#
+#                  * `None`. This is the default, which selects the
+#                    coordinate reference construct when there is only one
+#                    of them.
+#
+#                  * The identity or key of a coordinate reference
+#                    construct.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'grid_mapping_name:latitude_longitude'``,
+#                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
+#                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
+#                a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                two identities:
+#
+#                   >>> x.identities()
+#                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+#
+#                A identity's prefix of ``'grid_mapping_name:'`` or
+#                ``'standard_name:'`` may be omitted
+#                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
+#                and ``'atmosphere_hybrid_height_coordinate'`` are both
+#                acceptable identities).
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'coordinatereference2'`` and
+#                ``'key%coordinatereference2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+#
+#                *Parameter example:*
+#                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
+#
+#                *Parameter example:*
+#                  ``identity='transverse_mercator'``
+#
+#                *Parameter example:*
+#                  ``identity='coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='key%coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='ncvar%lat_lon'``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `CoordinateReference` or `str`
+#                The selected coordinate reference construct, or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("coordinate_reference",),
+#            "coordinate_reference",
+#            identity,
+#            construct=True,
+#            key=key,
+#            default=default,
+#            item=item,
+#            **filter_kwargs,
+#        )
 
     def field_ancillary(
         self,
@@ -16727,135 +16736,126 @@ class Field(mixin.PropertiesData, cfdm.Field):
         TODO
 
         """
-        return self._select_construct(
+        return self._filter_interface(
             ("field_ancillary",),
             "field_ancillary",
             identity,
+            construct=True,
             key=key,
             default=default,
             item=item,
             **filter_kwargs,
         )
 
-    def dimension_coordinate(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a dimension coordinate construct.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `dimension_coordinates`
-
-        :Parameters:
-
-            identity: optional
-                Select dimension coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values. In addition to
-                construct identities, the values are matched against:
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                Additionly, TODOx the values are matched against the identity or
-                construct identifier, with or without the ``'key%'``
-                prefix, of a domain axis construct that is spanned by
-                a dimension coordinate construct's data.
-
-                  *Parameter example:*
-                    ``'domainaxis2'``
-
-                  *Parameter example:*
-                    ``'ncdim%latitude'``
-
-                * The integer position, in the field construct's data,
-                  of the domain axis construct that is spanned by a
-                  dimension coordinate construct's data.
-
-                  *Parameter example:*
-                    ``0'``
-
-                  *Parameter example:*
-                    ``cf.gt(2)``
-
-                If no values are provided then all constructs are
-                selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-                *Parameter example:*
-                  ``'Y'``
-
-                *Parameter example:*
-                  ``latitude'``
-
-                *Parameter example:*
-                  ``re.compile('^lat')``
-
-                *Parameter example:*
-                  ``'long_name=Latitude'``
-
-                *Parameter example:*
-                  ``'Z', 'altutude'``
-
-            key: `bool`, optional
-                If True then return the selected construct
-                identifier. By default the construct itself is
-                returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-            item: `bool`, optional
-                If True then return the selected construct and its
-                construct identifier in a 2-tuple. By default the only
-                construct is returned.
-
-                .. versionadded:: 3.9.0
-
-        :Returns:
-
-            `DimensionCoordinate` or `str` or `tuple`
-                The selected dimension coordinate construct, or its
-                construct identifier, or both.
-
-        **Examples:**
-
-        TODO
-
-        """
-        ctypes = [i for i in "XTYZ" if i in identity]
-        if ctypes:
-            identity = [i for i in identity if i not in ctypes]
-            filter_kwargs["filter_by_coordinate_type"] = ctypes
-            last_filter = ("filter_by_coordinate_type",)
-        else:
-            last_filter = None
-
-            
-        c = self._filter_interface(
-            ("dimension_coordinate",),
-            "dimension_coordinate",
-            identity,
-            construct=True,
-            key=key,
-            item=item,
-            default=None,
-            _last_filter=last_filter,
-            _identity_config={"identities_kwargs": {"ctype": False}},
-            **filter_kwargs,
-        )
-        if c is not None:
-            return c
+#    def dimension_coordinate(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Select a dimension coordinate construct.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `dimension_coordinates`
+#
+#        :Parameters:
+#
+#            identity: optional
+#                Select dimension coordinate constructs that have an
+#                identity, defined by their `!identities` methods, that
+#                matches any of the given values. In addition to
+#                construct identities, the values are matched against:
+#
+#                Additionally, the values are matched against construct
+#                identifiers, with or without the ``'key%'`` prefix.
+#
+#                Additionly, TODOx the values are matched against the identity or
+#                construct identifier, with or without the ``'key%'``
+#                prefix, of a domain axis construct that is spanned by
+#                a dimension coordinate construct's data.
+#
+#                  *Parameter example:*
+#                    ``'domainaxis2'``
+#
+#                  *Parameter example:*
+#                    ``'ncdim%latitude'``
+#
+#                * The integer position, in the field construct's data,
+#                  of the domain axis construct that is spanned by a
+#                  dimension coordinate construct's data.
+#
+#                  *Parameter example:*
+#                    ``0'``
+#
+#                  *Parameter example:*
+#                    ``cf.gt(2)``
+#
+#                If no values are provided then all constructs are
+#                selected.
+#
+#                {{value match}}
+#
+#                {{displayed identity}}
+#
+#                *Parameter example:*
+#                  ``'Y'``
+#
+#                *Parameter example:*
+#                  ``latitude'``
+#
+#                *Parameter example:*
+#                  ``re.compile('^lat')``
+#
+#                *Parameter example:*
+#                  ``'long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``'Z', 'altutude'``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct
+#                identifier. By default the construct itself is
+#                returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#            item: `bool`, optional
+#                If True then return the selected construct and its
+#                construct identifier in a 2-tuple. By default the only
+#                construct is returned.
+#
+#                .. versionadded:: 3.9.0
+#
+#        :Returns:
+#
+#            `DimensionCoordinate` or `str` or `tuple`
+#                The selected dimension coordinate construct, or its
+#                construct identifier, or both.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        return self._filter_interface(
+#            ("dimension_coordinate",),
+#            "dimension_coordinate",
+#            identity,
+#            construct=True,
+#            key=key,
+#            item=item,
+#            default=default,
+##            _identity_config={"identities_kwargs": {"ctype": False}},
+#            **filter_kwargs,
+#        )
+#        if c is not None:
+#            return c
 #
 #        c = self._select_construct(
 #            ("dimension_coordinate",),
@@ -16870,259 +16870,195 @@ class Field(mixin.PropertiesData, cfdm.Field):
 #        )
 #        if c is not None:
 #            return c
-
-        if not filter_kwargs and len(identity) == 1 and identity in self.domain_axes(todict=True):
-            raise DeprecationError()
-            da_key = self.domain_axis(*identity, key=True, default=None)
-            if da_key is not None:
-                return self._select_construct(
-                    ("dimension_coordinate",),
-                    "dimension_coordinate",
-                    (),
-                    key=key,
-                    item=item,
-                    default=default,
-                    filter_by_axis=(da_key,),
-                    axis_mode="exact",
-                )
-
-        if default is None:
-            return None
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.dimension_coordinate() can only "
-            "return a unique construct",
-        )
-
-    def dimension_coordinates(self, *identities, **filter_kwargs):
-        """Return dimension coordinate constructs.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `constructs`
-
-        :Parameters:
-
-            identities: optional
-                Select dimension coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                If no identities are provided then all dimension
-                coordinate constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        **Examples:**
-
-        >>> f.dimension_coordinates()
-        Constructs:
-        {}
-
-        >>> f.dimension_coordinates()
-        Constructs:
-        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-        """
-        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
-        if identities:
-            if filter_by_identity is not None:
-                raise TypeError(
-                    f"Can't set {self.__class__.__name__}."
-                    "dimension_coordinates() "
-                    "keyword argument 'filter_by_identity' when "
-                    "positional *identities arguments are also set"
-                )
-        elif filter_by_identity is not None:
-            identities = filter_by_identity
-        
-        ctypes = [i for i in "XTYZ" if i in identities]
-        if len(ctypes) == len(identities):
-            filter_kwargs["filter_by_coordinate_type"] = ctypes
-            return super().dimension_coordinates(
-                _last_filter=("filter_by_coordinate_type",),
-                **filter_kwargs
-            )
-
-        return super().dimension_coordinates( *identities,
-                                              **filter_kwargs)
-    
-    def domain_axis(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Return a domain axis construct, or its key.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_reference`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axes`, `field_ancillary`
-
-        :Parameters:
-
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='key%domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity=2``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-            `DomainAxis` or `str`
-                The selected domain axis construct, or its key.
-
-        **Examples:**
-
-        TODO
-
-        """
-        # Try for integer index
-        if identity:
-            identity2 = []
-
-            data_axes = self.get_data_axes(default=None)
-            for i in identity:
-                try:
-                    identity2.append(data_axes[i])
-                except TypeError:
-                    identity2.append(i)
-                except IndexError:
-                    pass
-
-            if not identity2:
-                if default is None:
-                    return default
-
-                return self._default(
-                    default,
-                    "Indices do not exist for field construct data dimenions",
-                )
-
-            identity = identity2
-
-#        c = self._select_construct(
+#
+#        if not filter_kwargs and len(identity) == 1 and identity in self.domain_axes(todict=True):
+#            raise DeprecationError()
+#            da_key = self.domain_axis(*identity, key=True, default=None)
+#            if da_key is not None:
+#                return self._filter_interface(
+#                    ("dimension_coordinate",),
+#                    "dimension_coordinate",
+#                    (),
+#                    construct=True,
+#                    key=key,
+#                    item=item,
+#                    default=default,
+#                    filter_by_axis=(da_key,),
+#                    axis_mode="exact",
+#                )
+#
+#        if default is None:
+#            return None
+#
+#        return self._default(
+#            default,
+#            f"{self.__class__.__name__}.dimension_coordinate() can only "
+#            "return a unique construct",
+#        )
+#
+#
+#    def domain_axis(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Return a domain axis construct, or its key.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+#                     `cell_method`, `coordinate`, `coordinate_reference`,
+#                     `dimension_coordinate`, `domain_ancillary`,
+#                     `domain_axes`, `field_ancillary`
+#
+#        :Parameters:
+#
+#            identity:
+#               Select the domain axis construct by one of:
+#
+#                  * An identity or key of a 1-d coordinate construct that
+#                    whose data spans the domain axis construct.
+#
+#                  * A domain axis construct identity or key.
+#
+#                  * The position of the domain axis construct in the field
+#                    construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``,
+#                ``'ncvar%lat'``, etc.); or a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'dimensioncoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                A position of a domain axis construct in the field
+#                construct's data is specified by an integer index.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='dimensioncoordinate1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='key%domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#                *Parameter example:*
+#                  ``identity=2``
+#
+#            key: `bool`, optional
+#                If True then return the selected construct key. By
+#                default the construct itself is returned.
+#
+#            default: optional
+#                Return the value of the *default* parameter if a construct
+#                can not be found. If set to an `Exception` instance then
+#                it will be raised instead.
+#
+#        :Returns:
+#
+#            `DomainAxis` or `str`
+#                The selected domain axis construct, or its key.
+#
+#        **Examples:**
+#
+#        TODO
+#
+#        """
+#        # Try for integer index
+#        if identity:
+#            identity2 = []
+#
+#            data_axes = self.get_data_axes(default=None)
+#            for i in identity:
+#                try:
+#                    identity2.append(data_axes[i])
+#                except TypeError:
+#                    identity2.append(i)
+#                except IndexError:
+#                    pass
+#
+#            if not identity2:
+#                if default is None:
+#                    return default
+#
+#                return self._default(
+#                    default,
+#                    "Indices do not exist for field construct data dimenions",
+#                )
+#
+#            identity = identity2
+#
+##        c = self._select_construct(
+##            ("domain_axis",),
+##            "domain_axis",
+##            identity,
+##            key=key,
+##            default=None,
+##            item=item,
+##            **filter_kwargs,
+##        )
+#        c = self._filter_interface(
 #            ("domain_axis",),
 #            "domain_axis",
 #            identity,
+#            construct=True,
 #            key=key,
-#            default=None,
 #            item=item,
+#            default=None,
 #            **filter_kwargs,
 #        )
-        c = self._filter_interface(
-            ("domain_axis",),
-            "domain_axis",
-            identity,
-            construct=True,
-            key=key,
-            item=item,
-            default=None,
-            **filter_kwargs,
-        )
-        if c is not None:
-            return c
-
-        da_key = self.domain_axis_key(*identity, default=None)
-
-        if da_key is not None:
-            if key:
-                return da_key
-
-            construct = self.constructs[da_key]
-
-            if item:
-                return da_key, construct
-
-            return construct
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.domain_axis() can't return zero "
-            "constructs",
-        )
+#        if c is not None:
+#            return c
+#
+#        da_key = self.domain_axis_key(*identity, default=None)
+#
+#        if da_key is not None:
+#            if key:
+#                return da_key
+#
+#            construct = self.constructs[da_key]
+#
+#            if item:
+#                return da_key, construct
+#
+#            return construct
+#
+#        if default is None:
+#            return default
+#
+#        return self._default(
+#            default,
+#            f"{self.__class__.__name__}.domain_axis() can't return zero "
+#            "constructs",
+#        )
 
     def domain_axis_position(self, *identity):
         """Return the position in the data of a domain axis construct.
@@ -17217,70 +17153,70 @@ class Field(mixin.PropertiesData, cfdm.Field):
         key = self.domain_axis(*identity, key=True)
         return self.get_data_axes().index(key)
 
-    def auxiliary_coordinates(self, *identities, **filter_kwargs):
-        """Return auxiliary coordinate constructs.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `constructs`
-
-        :Parameters:
-
-            identities: optional
-                Select auxiliary coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                If no identities are provided then all auxiliary
-                coordinate constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        **Examples:**
-
-        >>> f.auxiliary_coordinates()
-        Constructs:
-        {}
-
-        >>> f.auxiliary_coordinates()
-        Constructs:
-        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
-
-        """
-        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
-        if identities:
-            if filter_by_identity is not None:
-                raise TypeError(
-                    f"Can't set {self.__class__.__name__}."
-                    "auxiliary_coordinates() "
-                    "keyword argument 'filter_by_identity' when "
-                    "positional *identities arguments are also set"
-                )
-        elif filter_by_identity is not None:
-            identities = filter_by_identity
-        
-        ctypes = [i for i in "XTYZ" if i in identities]
-        if len(ctypes) == len(identities):
-            filter_kwargs["filter_by_coordinate_type"] = ctypes
-            return super().auxiliary_coordinates(
-                _last_filter=("filter_by_coordinate_type",),
-                **filter_kwargs
-            )
-
-        return super().auxiliary_coordinates( *identities,
-                                              **filter_kwargs)
+#    def auxiliary_coordinates(self, *identities, **filter_kwargs):
+#        """Return auxiliary coordinate constructs.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `constructs`
+#
+#        :Parameters:
+#
+#            identities: optional
+#                Select auxiliary coordinate constructs that have an
+#                identity, defined by their `!identities` methods, that
+#                matches any of the given values.
+#
+#                If no identities are provided then all auxiliary
+#                coordinate constructs are selected.
+#
+#                {{value match}}
+#
+#                {{displayed identity}}
+#
+#            {{filter_kwargs: optional}}
+#
+#        :Returns:
+#
+#            `Constructs`
+#                The selected constructs, unless modified by any
+#                *filter_kwargs* parameters.
+#
+#        **Examples:**
+#
+#        >>> f.auxiliary_coordinates()
+#        Constructs:
+#        {}
+#
+#        >>> f.auxiliary_coordinates()
+#        Constructs:
+#        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+#         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+#         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+#
+#        """
+#        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
+#        if identities:
+#            if filter_by_identity is not None:
+#                raise TypeError(
+#                    f"Can't set {self.__class__.__name__}."
+#                    "auxiliary_coordinates() "
+#                    "keyword argument 'filter_by_identity' when "
+#                    "positional *identities arguments are also set"
+#                )
+#        elif filter_by_identity is not None:
+#            identities = filter_by_identity
+#        
+#        ctypes = [i for i in "XTYZ" if i in identities]
+#        if len(ctypes) == len(identities):
+#            filter_kwargs["filter_by_coordinate_type"] = ctypes
+#            return super().auxiliary_coordinates(
+#                _last_filter=("filter_by_coordinate_type",),
+#                **filter_kwargs
+#            )
+#
+#        return super().auxiliary_coordinates( *identities,
+#                                              **filter_kwargs)
     
     def axes_names(self, *identities, **kwargs):
         """Return canonical identities for each domain axis construct.
@@ -18434,111 +18370,112 @@ class Field(mixin.PropertiesData, cfdm.Field):
     #
     #        return super().period(*value)
 
-    def replace_construct(self, identity, construct, copy=True):
-        """Replace a metadata construct.
-
-        Replacement assigns the same construct key and, if applicable, the
-        domain axes of the original construct to the new, replacing
-        construct.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `set_construct`
-
-        :Parameters:
-
-            identity:
-                Select the metadata construct to be replaced by one of:
-
-                  * The identity or key of a metadata construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a metadata construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, ``'ncvar%lat'``,
-                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='Y'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-            construct:
-               The new construct to replace that selected by the
-               *identity* parameter.
-
-            copy: `bool`, optional
-                If True then set a copy of the new construct. By default
-                the construct is copied.
-
-        :Returns:
-
-                The construct that was replaced.
-
-        **Examples:**
-
-        >>> f.replace_construct('X', new_X_construct)
-
-        """
-        key, c = self.construct(identity, item=True)
-
-        if not isinstance(construct, c.__class__):
-            raise ValueError(
-                f"Can't replace a {c.__class__.__name__} construct "
-                f"with a {construct.__class__.__name__} construct"
-            )
-
-        axes = self.get_data_axes(key, None)
-        if axes is not None:
-            shape0 = getattr(c, "shape", None)
-            shape1 = getattr(construct, "shape", None)
-            if shape0 != shape1:
-                raise ValueError("TODO bb")
-
-        self.set_construct(construct, key=key, axes=axes, copy=copy)
-
-        return c
+#    def replace_construct(self, *identity, construct=None, copy=True,
+#                          **filter_kwargs):
+#        """Replace a metadata construct.
+#
+#        Replacement assigns the same construct key and, if applicable, the
+#        domain axes of the original construct to the new, replacing
+#        construct.
+#
+#        .. versionadded:: 3.0.0
+#
+#        .. seealso:: `set_construct`
+#
+#        :Parameters:
+#
+#            identity:
+#                Select the metadata construct to be replaced by one of:
+#
+#                  * The identity or key of a metadata construct.
+#
+#                  * The identity or key of a domain axis construct that is
+#                    spanned by a metadata construct's data.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'latitude'``, ``'long_name=time'``, ``'ncvar%lat'``,
+#                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
+#                a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                A construct has a number of identities, and is selected if
+#                any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                six identities:
+#
+#                   >>> x.identities()
+#                   ['time',
+#                    'long_name=Time',
+#                    'foo=bar',
+#                    'standard_name=time',
+#                    'ncvar%t',
+#                    'T']
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'dimensioncoordinate2'`` and
+#                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='Y'``
+#
+#                *Parameter example:*
+#                  ``identity='latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='long_name=Latitude'``
+#
+#                *Parameter example:*
+#                  ``identity='dimensioncoordinate1'``
+#
+#                *Parameter example:*
+#                  ``identity='domainaxis2'``
+#
+#                *Parameter example:*
+#                  ``identity='ncdim%y'``
+#
+#            construct:
+#               The new construct to replace that selected by the
+#               *identity* parameter.
+#
+#            copy: `bool`, optional
+#                If True then set a copy of the new construct. By default
+#                the construct is copied.
+#
+#        :Returns:
+#
+#                The construct that was replaced.
+#
+#        **Examples:**
+#
+#        >>> f.replace_construct('X', new_X_construct)
+#        
+#        """
+#        key, c = self.construct(*identity, item=True, **filter_kwargs)
+#
+#        if not isinstance(construct, c.__class__):
+#            raise ValueError(
+#                f"Can't replace a {c.__class__.__name__} construct "
+#                f"with a {construct.__class__.__name__} construct"
+#            )
+#
+#        axes = self.get_data_axes(key, None)
+#        if axes is not None:
+#            shape0 = getattr(c, "shape", None)
+#            shape1 = getattr(construct, "shape", None)
+#            if shape0 != shape1:
+#                raise ValueError("TODO bb")
+#
+#        self.set_construct(construct, key=key, axes=axes, copy=copy)
+#
+#        return c
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, return_axis=False, inplace=False):
@@ -18551,13 +18488,13 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Metadata constructs whose data spans the flattened axes will
         either themselves be flattened, or else removed.
 
-        Cell method constructs that apply to the flattened axes will be
-        removed or, if possible, have their axis specifications changed to
-        standard names.
+        Cell method constructs that apply to the flattened axes will
+        be removed or, if possible, have their axis specifications
+        changed to standard names.
 
         The flattening is executed in row-major (C-style) order. For
-        example, the array ``[[1, 2], [3, 4]]`` would be flattened across
-        both dimensions to ``[1 2 3 4]``.
+        example, the array ``[[1, 2], [3, 4]]`` would be flattened
+        across both dimensions to ``[1 2 3 4]``.
 
         .. versionadded:: 3.0.2
 
@@ -18568,21 +18505,21 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             axes: (sequence of) `str` or `int`, optional
                 Select the domain axes to be flattened, defined by the
-                domain axes that would be selected by passing each given
-                axis description to a call of the field construct's
-                `domain_axis` method. For example, for a value of ``'X'``,
-                the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
+                domain axes that would be selected by passing each
+                given axis description to a call of the field
+                construct's `domain_axis` method. For example, for a
+                value of ``'X'``, the domain axis construct returned
+                by ``f.domain_axis('X')`` is selected.
 
-                If no axes are provided then all axes spanned by the field
-                construct's data are flattened.
+                If no axes are provided then all axes spanned by the
+                field construct's data are flattened.
 
                 No axes are flattened if *axes* is an empty sequence.
 
             return_axis: `bool`, optional
-                If True then also return either the key of the flattened
-                domain axis construct; or `None` if the axes to be
-                flattened do not span the data.
+                If True then also return either the key of the
+                flattened domain axis construct; or `None` if the axes
+                to be flattened do not span the data.
 
             {{inplace: `bool`, optional}}
 
@@ -18592,9 +18529,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 The new, flattened field construct, or `None` if the
                 operation was in-place.
 
-                If *return_axis* is True then also return either the key
-                of the flattened domain axis construct; or `None` if the
-                axes to be flattened do not span the data.
+                If *return_axis* is True then also return either the
+                key of the flattened domain axis construct; or `None`
+                if the axes to be flattened do not span the data.
 
         **Examples**
 
@@ -19393,165 +19330,165 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
-    def coordinates(self, *identities, **filter_kwargs):
-        """Return dimension and auxiliary coordinate constructs.
-
-        . versionadded:: 3.0.0
-
-        . seealso:: `auxiliary_coordinates`, `constructs`,
-                    `dimension_coordinates`
-
-        :Parameters:
-
-            identities: optional
-                Select coordinate constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                If no identities are provided then all coordinate
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        *Examples:**
-
-        >> f.coordinates()
-        onstructs:
-        }
-
-        >> f.coordinates()
-        onstructs:
-        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-        """
-        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
-        if identities:
-            if filter_by_identity is not None:
-                raise TypeError(
-                    f"Can't set {self.__class__.__name__}.coordinates() "
-                    "keyword argument 'filter_by_identity' when "
-                    "positional *identities arguments are also set"
-                )
-        elif filter_by_identity is not None:
-            identities = filter_by_identity
-        
-        ctypes = [i for i in "XTYZ" if i in identities]
-        if ctypes and len(ctypes) == len(identities):
-            filter_kwargs["filter_by_coordinate_type"] = ctypes
-            return super().coordinates(
-                _last_filter=("filter_by_coordinate_type",),
-                **filter_kwargs
-            )
-
-        return super().coordinates(*identities, **filter_kwargs)
-    
-    def coordinate_reference_domain_axes(self, identity):
-        """Return the domain axes that apply to a coordinate reference
-        construct.
-
-        :Parameters:
-
-            identity:
-                Select the coordinate reference construct by one of:
-
-                  * The identity or key of a coordinate reference construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'grid_mapping_name:latitude_longitude'``,
-                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
-                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                two identities:
-
-                   >>> x.identities()
-                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
-
-                A identity's prefix of ``'grid_mapping_name:'`` or
-                ``'standard_name:'`` may be omitted
-                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
-                and ``'atmosphere_hybrid_height_coordinate'`` are both
-                acceptable identities).
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'coordinatereference2'`` and
-                ``'key%coordinatereference2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
-
-                *Parameter example:*
-                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
-
-                *Parameter example:*
-                  ``identity='transverse_mercator'``
-
-                *Parameter example:*
-                  ``identity='coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='key%coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='ncvar%lat_lon'``
-
-        :Returns:
-
-            `set`
-                The identifiers of the domain axis constructs that span
-                the data of all coordinate and domain ancillary constructs
-                used by the selected coordinate reference construct.
-
-        **Examples:**
-
-        >>> f.coordinate_reference_domain_axes('coordinatereference0')
-        {'domainaxis0', 'domainaxis1', 'domainaxis2'}
-
-        >>> f.coordinate_reference_domain_axes(
-        ...     'atmosphere_hybrid_height_coordinate')
-        {'domainaxis0', 'domainaxis1', 'domainaxis2'}
-
-        """
-        cr = self.coordinate_reference(identity)
-
-        data_axes = self.constructs.data_axes()
-
-        axes = []
-        for i in cr.coordinates() | set(
-            cr.coordinate_conversion.domain_ancillaries().values()
-        ):
-            i = self.construct_key(i, None)
-            axes.extend(data_axes.get(i, ()))
-
-        return set(axes)
+#    def coordinates(self, *identities, **filter_kwargs):
+#        """Return dimension and auxiliary coordinate constructs.
+#
+#        . versionadded:: 3.0.0
+#
+#        . seealso:: `auxiliary_coordinates`, `constructs`,
+#                    `dimension_coordinates`
+#
+#        :Parameters:
+#
+#            identities: optional
+#                Select coordinate constructs that have an identity,
+#                defined by their `!identities` methods, that matches
+#                any of the given values.
+#
+#                If no identities are provided then all coordinate
+#                constructs are selected.
+#
+#                {{value match}}
+#
+#                {{displayed identity}}
+#
+#            {{filter_kwargs: optional}}
+#
+#        :Returns:
+#
+#            `Constructs`
+#                The selected constructs, unless modified by any
+#                *filter_kwargs* parameters.
+#
+#        *Examples:**
+#
+#        >> f.coordinates()
+#        onstructs:
+#        }
+#
+#        >> f.coordinates()
+#        onstructs:
+#        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+#        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+#        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+#        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+#        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+#        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+#        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+#
+#        """
+#        filter_by_identity = filter_kwargs.pop("filter_by_identity", None)
+#        if identities:
+#            if filter_by_identity is not None:
+#                raise TypeError(
+#                    f"Can't set {self.__class__.__name__}.coordinates() "
+#                    "keyword argument 'filter_by_identity' when "
+#                    "positional *identities arguments are also set"
+#                )
+#        elif filter_by_identity is not None:
+#            identities = filter_by_identity
+#        
+#        ctypes = [i for i in "XTYZ" if i in identities]
+#        if ctypes and len(ctypes) == len(identities):
+#            filter_kwargs["filter_by_coordinate_type"] = ctypes
+#            return super().coordinates(
+#                _last_filter=("filter_by_coordinate_type",),
+#                **filter_kwargs
+#            )
+#
+#        return super().coordinates(*identities, **filter_kwargs)
+#    
+#    def coordinate_reference_domain_axes(self, identity):
+#        """Return the domain axes that apply to a coordinate reference
+#        construct.
+#
+#        :Parameters:
+#
+#            identity:
+#                Select the coordinate reference construct by one of:
+#
+#                  * The identity or key of a coordinate reference construct.
+#
+#                A construct identity is specified by a string
+#                (e.g. ``'grid_mapping_name:latitude_longitude'``,
+#                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
+#                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
+#                a compiled regular expression
+#                (e.g. ``re.compile('^atmosphere')``) that selects the
+#                relevant constructs whose identities match via
+#                `re.search`.
+#
+#                Each construct has a number of identities, and is selected
+#                if any of them match any of those provided. A construct's
+#                identities are those returned by its `!identities`
+#                method. In the following example, the construct ``x`` has
+#                two identities:
+#
+#                   >>> x.identities()
+#                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+#
+#                A identity's prefix of ``'grid_mapping_name:'`` or
+#                ``'standard_name:'`` may be omitted
+#                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
+#                and ``'atmosphere_hybrid_height_coordinate'`` are both
+#                acceptable identities).
+#
+#                A construct key may optionally have the ``'key%'``
+#                prefix. For example ``'coordinatereference2'`` and
+#                ``'key%coordinatereference2'`` are both acceptable keys.
+#
+#                Note that in the output of a `print` call or `!dump`
+#                method, a construct is always described by one of its
+#                identities, and so this description may always be used as
+#                an *identity* argument.
+#
+#                *Parameter example:*
+#                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+#
+#                *Parameter example:*
+#                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
+#
+#                *Parameter example:*
+#                  ``identity='transverse_mercator'``
+#
+#                *Parameter example:*
+#                  ``identity='coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='key%coordinatereference1'``
+#
+#                *Parameter example:*
+#                  ``identity='ncvar%lat_lon'``
+#
+#        :Returns:
+#
+#            `set`
+#                The identifiers of the domain axis constructs that span
+#                the data of all coordinate and domain ancillary constructs
+#                used by the selected coordinate reference construct.
+#
+#        **Examples:**
+#
+#        >>> f.coordinate_reference_domain_axes('coordinatereference0')
+#        {'domainaxis0', 'domainaxis1', 'domainaxis2'}
+#
+#        >>> f.coordinate_reference_domain_axes(
+#        ...     'atmosphere_hybrid_height_coordinate')
+#        {'domainaxis0', 'domainaxis1', 'domainaxis2'}
+#
+#        """
+#        cr = self.coordinate_reference(identity)
+#
+#        data_axes = self.constructs.data_axes()
+#
+#        axes = []
+#        for i in cr.coordinates() | set(
+#            cr.coordinate_conversion.domain_ancillaries().values()
+#        ):
+#            i = self.construct_key(i, None)
+#            axes.extend(data_axes.get(i, ()))
+#
+#        return set(axes)
 
     def section(self, axes=None, stop=None, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n
@@ -19623,69 +19560,71 @@ class Field(mixin.PropertiesData, cfdm.Field):
         i=False,
         _compute_field_mass=None,
     ):
-        """Return the field regridded onto a new latitude-longitude
-        grid.
+        """Return the field regridded onto a new latitude-longitude grid.
 
-        Regridding, also called remapping or interpolation, is the process
-        of changing the grid underneath field data values while preserving
-        the qualities of the original data.
+        Regridding, also called remapping or interpolation, is the
+        process of changing the grid underneath field data values
+        while preserving the qualities of the original data.
 
-        The regridding method must be specified. First-order conservative
-        interpolation conserves the global area integral of the field, but
-        may not give approximations to the values as good as linear
-        interpolation. Second-order conservative interpolation also takes
-        into account the gradient across the source cells, so in general
-        gives a smoother, more accurate representation of the source field
-        especially when going from a coarser to a finer grid. Linear
-        interpolation is available. The latter method is particular useful
-        for cases when the latitude and longitude coordinate cell
-        boundaries are not known nor inferable. Higher order patch
-        recovery is available as an alternative to linear
-        interpolation. This typically results in better approximations to
-        values and derivatives compared to the latter, but the weight
-        matrix can be larger than the linear matrix, which can be an
-        issue when regridding close to the memory limit on a
-        machine. Nearest neighbour interpolation is also
-        available. Nearest source to destination is particularly useful
-        for regridding integer fields such as land use.
+        The regridding method must be specified. First-order
+        conservative interpolation conserves the global area integral
+        of the field, but may not give approximations to the values as
+        good as linear interpolation. Second-order conservative
+        interpolation also takes into account the gradient across the
+        source cells, so in general gives a smoother, more accurate
+        representation of the source field especially when going from
+        a coarser to a finer grid. Linear interpolation is
+        available. The latter method is particular useful for cases
+        when the latitude and longitude coordinate cell boundaries are
+        not known nor inferable. Higher order patch recovery is
+        available as an alternative to linear interpolation. This
+        typically results in better approximations to values and
+        derivatives compared to the latter, but the weight matrix can
+        be larger than the linear matrix, which can be an issue when
+        regridding close to the memory limit on a machine. Nearest
+        neighbour interpolation is also available. Nearest source to
+        destination is particularly useful for regridding integer
+        fields such as land use.
 
 
         **Metadata**
 
-        The field construct's domain must have well defined X and Y axes
-        with latitude and longitude coordinate values, which may be stored
-        as dimension coordinate objects or two dimensional auxiliary
-        coordinate objects. If the latitude and longitude coordinates are
-        two dimensional then the X and Y axes must be defined by dimension
-        coordinates if present or by the netCDF dimensions. In the latter
-        case the X and Y axes must be specified using the *src_axes* or
-        *dst_axes* keyword. The same is true for the destination grid, if
-        it provided as part of another field.
+        The field construct's domain must have well defined X and Y
+        axes with latitude and longitude coordinate values, which may
+        be stored as dimension coordinate objects or two dimensional
+        auxiliary coordinate objects. If the latitude and longitude
+        coordinates are two dimensional then the X and Y axes must be
+        defined by dimension coordinates if present or by the netCDF
+        dimensions. In the latter case the X and Y axes must be
+        specified using the *src_axes* or *dst_axes* keyword. The same
+        is true for the destination grid, if it provided as part of
+        another field.
 
-        The cyclicity of the X axes of the source field and destination
-        grid is taken into account. If an X axis is in fact cyclic but is
-        not registered as such by its parent field (see
-        `cf.Field.iscyclic`), then the cyclicity may be set with the
-        *src_cyclic* or *dst_cyclic* parameters. In the case of two
-        dimensional latitude and longitude dimension coordinates without
-        bounds it will be necessary to specify *src_cyclic* or
+        The cyclicity of the X axes of the source field and
+        destination grid is taken into account. If an X axis is in
+        fact cyclic but is not registered as such by its parent field
+        (see `cf.Field.iscyclic`), then the cyclicity may be set with
+        the *src_cyclic* or *dst_cyclic* parameters. In the case of
+        two dimensional latitude and longitude dimension coordinates
+        without bounds it will be necessary to specify *src_cyclic* or
         *dst_cyclic* manually if the field is global.
 
-        The output field construct's coordinate objects which span the X
-        and/or Y axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects will
-        also be regridded, if possible.
+        The output field construct's coordinate objects which span the
+        X and/or Y axes are replaced with those from the destination
+        grid. Any fields contained in coordinate reference objects
+        will also be regridded, if possible.
 
 
         **Mask**
 
         The data array mask of the field is automatically taken into
         account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the mask
-        of the destination grid is not taken into account. If the
-        destination field data has more than two dimensions then the mask,
-        if used, is taken from the two dimensional section of the data
-        where the indices of all axes other than X and Y are zero.
+        regions where the input data array is masked. By default the
+        mask of the destination grid is not taken into account. If the
+        destination field data has more than two dimensions then the
+        mask, if used, is taken from the two dimensional section of
+        the data where the indices of all axes other than X and Y are
+        zero.
 
 
         **Implementation**
@@ -19711,8 +19650,9 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         **Curvilinear Grids**
 
-        Grids in projection coordinate systems can be regridded as long as
-        two dimensional latitude and longitude coordinates are present.
+        Grids in projection coordinate systems can be regridded as
+        long as two dimensional latitude and longitude coordinates are
+        present.
 
 
         **Rotated Pole Grids**
@@ -19720,20 +19660,21 @@ class Field(mixin.PropertiesData, cfdm.Field):
         Rotated pole grids can be regridded as long as two dimensional
         latitude and longitude coordinates are present. It may be
         necessary to explicitly identify the grid latitude and grid
-        longitude coordinates as being the X and Y axes and specify the
-        *src_cyclic* or *dst_cyclic* keywords.
+        longitude coordinates as being the X and Y axes and specify
+        the *src_cyclic* or *dst_cyclic* keywords.
 
 
         **Tripolar Grids**
 
-        Tripolar grids are logically rectangular and so may be able to be
-        regridded. If no dimension coordinates are present it will be
-        necessary to specify which netCDF dimensions are the X and Y axes
-        using the *src_axes* or *dst_axes* keywords. Connections across
-        the bipole fold are not currently supported, but are not be
-        necessary in some cases, for example if the points on either side
-        are together without a gap. It will also be necessary to specify
-        *src_cyclic* or *dst_cyclic* if the grid is global.
+        Tripolar grids are logically rectangular and so may be able to
+        be regridded. If no dimension coordinates are present it will
+        be necessary to specify which netCDF dimensions are the X and
+        Y axes using the *src_axes* or *dst_axes*
+        keywords. Connections across the bipole fold are not currently
+        supported, but are not be necessary in some cases, for example
+        if the points on either side are together without a gap. It
+        will also be necessary to specify *src_cyclic* or *dst_cyclic*
+        if the grid is global.
 
         .. versionadded:: 1.0.4
 
@@ -19742,14 +19683,15 @@ class Field(mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             dst: `Field` or `dict`
-                The field containing the new grid. If dst is a field list
-                the first field in the list is used. Alternatively a
-                dictionary can be passed containing the keywords
-                'longitude' and 'latitude' with either two 1D dimension
-                coordinates or two 2D auxiliary coordinates. In the 2D
-                case both coordinates must have their axes in the same
-                order and this must be specified by the keyword 'axes' as
-                either of the tuples ``('X', 'Y')`` or ``('Y', 'X')``.
+                The field containing the new grid. If dst is a field
+                list the first field in the list is
+                used. Alternatively a dictionary can be passed
+                containing the keywords 'longitude' and 'latitude'
+                with either two 1D dimension coordinates or two 2D
+                auxiliary coordinates. In the 2D case both coordinates
+                must have their axes in the same order and this must
+                be specified by the keyword 'axes' as either of the
+                tuples ``('X', 'Y')`` or ``('Y', 'X')``.
 
             method: `str`
                 Specify the regridding method. The *method* parameter must
@@ -19765,44 +19707,47 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 ``'conservative_1st'``  First order conservative
                                         interpolation.
 
-                                        Preserve the area integral of the
-                                        data across the interpolation from
-                                        source to destination. It uses the
+                                        Preserve the area integral of
+                                        the data across the
+                                        interpolation from source to
+                                        destination. It uses the
                                         proportion of the area of the
-                                        overlapping source and destination
-                                        cells to determine appropriate
-                                        weights.
+                                        overlapping source and
+                                        destination cells to determine
+                                        appropriate weights.
 
                                         In particular, the weight of a
-                                        source cell is the ratio of the
-                                        area of intersection of the source
-                                        and destination cells to the area
-                                        of the whole destination cell.
+                                        source cell is the ratio of
+                                        the area of intersection of
+                                        the source and destination
+                                        cells to the area of the whole
+                                        destination cell.
 
-                                        It does not account for the field
-                                        gradient across the source cell,
-                                        unlike the second-order
-                                        conservative method (see below).
+                                        It does not account for the
+                                        field gradient across the
+                                        source cell, unlike the
+                                        second-order conservative
+                                        method (see below).
 
                 ``'conservative_2nd'``  Second-order conservative
                                         interpolation.
 
-                                        As with first order (see above),
-                                        preserves the area integral of the
-                                        field between source and
-                                        destination using a weighted sum,
-                                        with weights based on the
-                                        proportionate area of
-                                        intersection.
+                                        As with first order (see
+                                        above), preserves the area
+                                        integral of the field between
+                                        source and destination using a
+                                        weighted sum, with weights
+                                        based on the proportionate
+                                        area of intersection.
 
                                         Unlike first-order, the
-                                        second-order method incorporates
-                                        further terms to take into
-                                        consideration the gradient of the
-                                        field across the source cell,
-                                        thereby typically producing a
-                                        smoother result of higher
-                                        accuracy.
+                                        second-order method
+                                        incorporates further terms to
+                                        take into consideration the
+                                        gradient of the field across
+                                        the source cell, thereby
+                                        typically producing a smoother
+                                        result of higher accuracy.
 
                 ``'conservative'``      Alias for ``'conservative_1st'``
 
@@ -19810,14 +19755,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                         interpolation.
 
                                         A second degree polynomial
-                                        regridding method, which uses a
-                                        least squares algorithm to
+                                        regridding method, which uses
+                                        a least squares algorithm to
                                         calculate the polynomial.
 
                                         This method gives better
                                         derivatives in the resulting
-                                        destination data than the linear
-                                        method.
+                                        destination data than the
+                                        linear method.
 
                 ``'nearest_stod'``      Nearest neighbour interpolation
                                         for which each destination point
@@ -19835,50 +19780,54 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                         categorical data.
 
                                         A given destination point may
-                                        receive input from multiple source
-                                        points, but no source point will
-                                        map to more than one destination
-                                        point.
+                                        receive input from multiple
+                                        source points, but no source
+                                        point will map to more than
+                                        one destination point.
                 ======================  ==================================
 
             src_cyclic: `bool`, optional
                 Specifies whether the longitude for the source grid is
                 periodic or not. If `None` then, if possible, this is
-                determined automatically otherwise it defaults to False.
+                determined automatically otherwise it defaults to
+                False.
 
             dst_cyclic: `bool`, optional
-                Specifies whether the longitude for the destination grid
-                is periodic of not. If `None` then, if possible, this is
-                determined automatically otherwise it defaults to False.
+                Specifies whether the longitude for the destination
+                grid is periodic of not. If `None` then, if possible,
+                this is determined automatically otherwise it defaults
+                to False.
 
             use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must be
-                True as it does not make sense to set it to False. For the
-                'nearest_stod' method if it is True then points in the
-                result that are nearest to a masked source point are
-                masked. Otherwise, if it is False, then these points are
-                interpolated to the nearest unmasked source points.
+                For all methods other than 'nearest_stod', this must
+                be True as it does not make sense to set it to
+                False. For the 'nearest_stod' method if it is True
+                then points in the result that are nearest to a masked
+                source point are masked. Otherwise, if it is False,
+                then these points are interpolated to the nearest
+                unmasked source points.
 
             use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination grid is
-                not taken into account when performing regridding. If this
-                option is set to true then it is. If the destination field
-                has more than two dimensions then the first 2D slice in
-                index space is used for the mask e.g. for an field varying
-                with (X, Y, Z, T) the mask is taken from the slice (X, Y,
-                0, 0).
+                By default the mask of the data on the destination
+                grid is not taken into account when performing
+                regridding. If this option is set to true then it
+                is. If the destination field has more than two
+                dimensions then the first 2D slice in index space is
+                used for the mask e.g. for an field varying with (X,
+                Y, Z, T) the mask is taken from the slice (X, Y, 0,
+                0).
 
             fracfield: `bool`, optional
-                If the method of regridding is conservative the fraction
-                of each destination grid cell involved in the regridding
-                is returned instead of the regridded data if this is
-                True. Otherwise this is ignored.
+                If the method of regridding is conservative the
+                fraction of each destination grid cell involved in the
+                regridding is returned instead of the regridded data
+                if this is True. Otherwise this is ignored.
 
             src_axes: `dict`, optional
-                A dictionary specifying the axes of the 2D latitude and
-                longitude coordinates of the source field when no 1D
-                dimension coordinates are present. It must have keys
-                ``'X'`` and ``'Y'``. TODO
+                A dictionary specifying the axes of the 2D latitude
+                and longitude coordinates of the source field when no
+                1D dimension coordinates are present. It must have
+                keys ``'X'`` and ``'Y'``. TODO
 
                 *Parameter example:*
                   ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
@@ -19887,34 +19836,35 @@ class Field(mixin.PropertiesData, cfdm.Field):
                   ``src_axes={'X': 1, 'Y': 0}``
 
             dst_axes: `dict`, optional
-                A dictionary specifying the axes of the 2D latitude and
-                longitude coordinates of the destination field when no
-                dimension coordinates are present. It must have keys
-                ``'X'`` and ``'Y'``.
+                A dictionary specifying the axes of the 2D latitude
+                and longitude coordinates of the destination field
+                when no dimension coordinates are present. It must
+                have keys ``'X'`` and ``'Y'``.
 
                 *Parameter example:*
                   ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
             axis_order: sequence, optional
-                A sequence of items specifying dimension coordinates as
-                retrieved by the `dim` method. These determine the order
-                in which to iterate over the other axes of the field when
-                regridding X-Y slices. The slowest moving axis will be the
-                first one specified. Currently the regridding weights are
-                recalculated every time the mask of an X-Y slice changes
-                with respect to the previous one, so this option allows
-                the user to minimise how frequently the mask changes.
+                A sequence of items specifying dimension coordinates
+                as retrieved by the `dim` method. These determine the
+                order in which to iterate over the other axes of the
+                field when regridding X-Y slices. The slowest moving
+                axis will be the first one specified. Currently the
+                regridding weights are recalculated every time the
+                mask of an X-Y slice changes with respect to the
+                previous one, so this option allows the user to
+                minimise how frequently the mask changes.
 
             ignore_degenerate: `bool`, optional
                 True by default. Instructs ESMPy to ignore degenerate
-                cells when checking the grids for errors. Regridding will
-                proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an error
-                will be produced if degenerate cells are found. This will
-                be present in the ESMPy log files if `cf.regrid_logging`
-                is set to True. As of ESMF 7.0.0 this only applies to
-                conservative regridding.  Other methods always skip
-                degenerate cells.
+                cells when checking the grids for errors. Regridding
+                will proceed and degenerate cells will be skipped, not
+                producing a result, when set to True. Otherwise an
+                error will be produced if degenerate cells are
+                found. This will be present in the ESMPy log files if
+                `cf.regrid_logging` is set to True. As of ESMF 7.0.0
+                this only applies to conservative regridding.  Other
+                methods always skip degenerate cells.
 
 
             {{inplace: `bool`, optional}}
@@ -19923,14 +19873,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             _compute_field_mass: `dict`, optional
                 If this is a dictionary then the field masses of the
-                source and destination fields are computed and returned
-                within the dictionary. The keys of the dictionary
-                indicates the lat-long slice of the field and the
-                corresponding value is a tuple containing the source field
-                construct's mass and the destination field construct's
-                mass. The calculation is only done if conservative
-                regridding is being performed. This is for debugging
-                purposes.
+                source and destination fields are computed and
+                returned within the dictionary. The keys of the
+                dictionary indicates the lat-long slice of the field
+                and the corresponding value is a tuple containing the
+                source field construct's mass and the destination
+                field construct's mass. The calculation is only done
+                if conservative regridding is being performed. This is
+                for debugging purposes.
 
         :Returns:
 
@@ -19939,8 +19889,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         **Examples:**
 
-        Regrid field construct ``f`` conservatively onto a grid contained
-        in field construct ``g``:
+        Regrid field construct ``f`` conservatively onto a grid
+        contained in field construct ``g``:
 
         >>> h = f.regrids(g, 'conservative')
 
@@ -19953,8 +19903,8 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
         >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
 
-        Regrid f to 2D auxiliary coordinates lat and lon, which have their
-        dimensions ordered "Y" first then "X".
+        Regrid f to 2D auxiliary coordinates lat and lon, which have
+        their dimensions ordered "Y" first then "X".
 
         >>> lat
         <CF AuxiliaryCoordinate: latitude(110, 106) degrees_north>
@@ -19965,15 +19915,15 @@ class Field(mixin.PropertiesData, cfdm.Field):
         ...         'conservative'
         ...     )
 
-        Regrid field, f, on tripolar grid to latitude-longitude grid of
-        field, g.
+        Regrid field, f, on tripolar grid to latitude-longitude grid
+        of field, g.
 
         >>> h = f.regrids(g, 'linear', src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
         ...               src_cyclic=True)
 
-        Regrid f to the grid of g iterating over the 'Z' axis last and the
-        'T' axis next to last to minimise the number of times the mask is
-        changed.
+        Regrid f to the grid of g iterating over the 'Z' axis last and
+        the 'T' axis next to last to minimise the number of times the
+        mask is changed.
 
         >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
@@ -20313,7 +20263,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         x = f.dimension_coordinate("X", default=None)
         if x is not None and x.Units.equivalent(Units("degrees")):
             f.cyclic("X", iscyclic=dst_cyclic, period=Data(360, "degrees"))
-
+            
         # Release old memory from ESMF (this ought to happen garbage
         # collection, but it doesn't seem to work there!)
         regridSrc2Dst.destroy()
@@ -20327,7 +20277,7 @@ class Field(mixin.PropertiesData, cfdm.Field):
         #        if f.data.fits_in_one_chunk_in_memory(f.data.dtype.itemsize):
         #            f.varray
 
-        f.autocyclic()
+#        f.autocyclic()
 
         return f
 
@@ -20347,57 +20297,58 @@ class Field(mixin.PropertiesData, cfdm.Field):
         i=False,
         _compute_field_mass=None,
     ):
-        """Return the field with the specified Cartesian axes regridded
-        onto a new grid.
+        """Return the field with the specified Cartesian axes regridded onto a
+        new grid.
 
         Between 1 and 3 dimensions may be regridded.
 
-        Regridding, also called remapping or interpolation, is the process
-        of changing the grid underneath field data values while preserving
-        the qualities of the original data.
+        Regridding, also called remapping or interpolation, is the
+        process of changing the grid underneath field data values
+        while preserving the qualities of the original data.
 
-        The regridding method must be specified. First-order conservative
-        interpolation conserves the global spatial integral of the field,
-        but may not give approximations to the values as good as
-        (multi)linear interpolation. Second-order conservative
-        interpolation also takes into account the gradient across the
-        source cells, so in general gives a smoother, more accurate
-        representation of the source field especially when going from a
-        coarser to a finer grid. (Multi)linear interpolation is
-        available. The latter method is particular useful for cases when
-        the latitude and longitude coordinate cell boundaries are not
-        known nor inferable. Higher order patch recovery is available as
-        an alternative to (multi)linear interpolation.  This typically
+        The regridding method must be specified. First-order
+        conservative interpolation conserves the global spatial
+        integral of the field, but may not give approximations to the
+        values as good as (multi)linear interpolation. Second-order
+        conservative interpolation also takes into account the
+        gradient across the source cells, so in general gives a
+        smoother, more accurate representation of the source field
+        especially when going from a coarser to a finer
+        grid. (Multi)linear interpolation is available. The latter
+        method is particular useful for cases when the latitude and
+        longitude coordinate cell boundaries are not known nor
+        inferable. Higher order patch recovery is available as an
+        alternative to (multi)linear interpolation.  This typically
         results in better approximations to values and derivatives
-        compared to the latter, but the weight matrix can be larger than
-        the linear matrix, which can be an issue when regridding close
-        to the memory limit on a machine. It is only available in
-        2D. Nearest neighbour interpolation is also available. Nearest
-        source to destination is particularly useful for regridding
-        integer fields such as land use.
+        compared to the latter, but the weight matrix can be larger
+        than the linear matrix, which can be an issue when regridding
+        close to the memory limit on a machine. It is only available
+        in 2D. Nearest neighbour interpolation is also
+        available. Nearest source to destination is particularly
+        useful for regridding integer fields such as land use.
 
         **Metadata**
 
         The field construct's domain must have axes matching those
         specified in *src_axes*. The same is true for the destination
-        grid, if it provided as part of another field. Optionally the axes
-        to use from the destination grid may be specified separately in
-        *dst_axes*.
+        grid, if it provided as part of another field. Optionally the
+        axes to use from the destination grid may be specified
+        separately in *dst_axes*.
 
         The output field construct's coordinate objects which span the
         specified axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects will
-        also be regridded, if possible.
+        grid. Any fields contained in coordinate reference objects
+        will also be regridded, if possible.
 
 
         **Mask**
 
         The data array mask of the field is automatically taken into
         account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the mask
-        of the destination grid is not taken into account. If the
-        destination field data has more dimensions than the number of axes
-        specified then, if used, its mask is taken from the 1-3
+        regions where the input data array is masked. By default the
+        mask of the destination grid is not taken into account. If the
+        destination field data has more dimensions than the number of
+        axes specified then, if used, its mask is taken from the 1-3
         dimensional section of the data where the indices of all axes
         other than X and Y are zero.
 
@@ -20421,21 +20372,22 @@ class Field(mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             dst: `Field` or `dict`
-                The field containing the new grid or a dictionary with the
-                axes specifiers as keys referencing dimension coordinates.
-                If dst is a field list the first field in the list is
-                used.
+                The field containing the new grid or a dictionary with
+                the axes specifiers as keys referencing dimension
+                coordinates.  If dst is a field list the first field
+                in the list is used.
 
             axes:
                 Select dimension coordinates from the source and
-                destination fields for regridding. See `cf.Field.axes` TODO for
-                options for selecting specific axes. However, the number
-                of axes returned by `cf.Field.axes` TODO must be the same as
-                the number of specifiers passed in.
+                destination fields for regridding. See `cf.Field.axes`
+                TODO for options for selecting specific axes. However,
+                the number of axes returned by `cf.Field.axes` TODO
+                must be the same as the number of specifiers passed
+                in.
 
             method: `str`
-                Specify the regridding method. The *method* parameter must
-                be one of the following:
+                Specify the regridding method. The *method* parameter
+                must be one of the following:
 
                 ======================  ==================================
                 Method                  Description
@@ -20444,9 +20396,10 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                         of dimensions being regridded.
 
                                         For two dimensional regridding
-                                        this is bilinear interpolation,
-                                        and for three dimensional
-                                        regridding this is trilinear
+                                        this is bilinear
+                                        interpolation, and for three
+                                        dimensional regridding this is
+                                        trilinear
                                         interpolation.Bilinear
                                         interpolation.
 
@@ -20455,44 +20408,47 @@ class Field(mixin.PropertiesData, cfdm.Field):
                 ``'conservative_1st'``  First order conservative
                                         interpolation.
 
-                                        Preserve the area integral of the
-                                        data across the interpolation from
-                                        source to destination. It uses the
+                                        Preserve the area integral of
+                                        the data across the
+                                        interpolation from source to
+                                        destination. It uses the
                                         proportion of the area of the
-                                        overlapping source and destination
-                                        cells to determine appropriate
-                                        weights.
+                                        overlapping source and
+                                        destination cells to determine
+                                        appropriate weights.
 
                                         In particular, the weight of a
-                                        source cell is the ratio of the
-                                        area of intersection of the source
-                                        and destination cells to the area
-                                        of the whole destination cell.
+                                        source cell is the ratio of
+                                        the area of intersection of
+                                        the source and destination
+                                        cells to the area of the whole
+                                        destination cell.
 
-                                        It does not account for the field
-                                        gradient across the source cell,
-                                        unlike the second-order
-                                        conservative method (see below).
+                                        It does not account for the
+                                        field gradient across the
+                                        source cell, unlike the
+                                        second-order conservative
+                                        method (see below).
 
                 ``'conservative_2nd'``  Second-order conservative
                                         interpolation.
 
-                                        As with first order (see above),
-                                        preserves the area integral of the
-                                        field between source and
-                                        destination using a weighted sum,
-                                        with weights based on the
-                                        proportionate area of
-                                        intersection.
+                                        As with first order (see
+                                        above), preserves the area
+                                        integral of the field between
+                                        source and destination using a
+                                        weighted sum, with weights
+                                        based on the proportionate
+                                        area of intersection.
 
                                         Unlike first-order, the
-                                        second-order method incorporates
-                                        further terms to take into
-                                        consideration the gradient of the
-                                        field across the source cell,
-                                        thereby typically producing a
-                                        smoother result of higher
-                                        accuracy.
+                                        second-order method
+                                        incorporates further terms to
+                                        take into consideration the
+                                        gradient of the field across
+                                        the source cell, thereby
+                                        typically producing a smoother
+                                        result of higher accuracy.
 
                 ``'conservative'``      Alias for ``'conservative_1st'``
 
@@ -20500,14 +20456,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                         interpolation.
 
                                         A second degree polynomial
-                                        regridding method, which uses a
-                                        least squares algorithm to
+                                        regridding method, which uses
+                                        a least squares algorithm to
                                         calculate the polynomial.
 
                                         This method gives better
                                         derivatives in the resulting
-                                        destination data than the linear
-                                        method.
+                                        destination data than the
+                                        linear method.
 
                 ``'nearest_stod'``      Nearest neighbour interpolation
                                         for which each destination point
@@ -20525,52 +20481,55 @@ class Field(mixin.PropertiesData, cfdm.Field):
                                         categorical data.
 
                                         A given destination point may
-                                        receive input from multiple source
-                                        points, but no source point will
-                                        map to more than one destination
-                                        point.
+                                        receive input from multiple
+                                        source points, but no source
+                                        point will map to more than
+                                        one destination point.
                 ======================  ==================================
 
             use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must be
-                True as it does not make sense to set it to False. For the
+                For all methods other than 'nearest_stod', this must
+                be True as it does not make sense to set it to
+                False. For the
 
                 'nearest_stod' method if it is True then points in the
                 result that are nearest to a masked source point are
-                masked. Otherwise, if it is False, then these points are
-                interpolated to the nearest unmasked source points.
+                masked. Otherwise, if it is False, then these points
+                are interpolated to the nearest unmasked source
+                points.
 
             use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination grid is
-                not taken into account when performing regridding. If this
-                option is set to True then it is.
+                By default the mask of the data on the destination
+                grid is not taken into account when performing
+                regridding. If this option is set to True then it is.
 
             fracfield: `bool`, optional
-                If the method of regridding is conservative the fraction
-                of each destination grid cell involved in the regridding
-                is returned instead of the regridded data if this is
-                True. Otherwise this is ignored.
+                If the method of regridding is conservative the
+                fraction of each destination grid cell involved in the
+                regridding is returned instead of the regridded data
+                if this is True. Otherwise this is ignored.
 
             axis_order: sequence, optional
-                A sequence of items specifying dimension coordinates as
-                retrieved by the `dim` method. These determine the order
-                in which to iterate over the other axes of the field when
-                regridding slices. The slowest moving axis will be the
-                first one specified. Currently the regridding weights are
-                recalculated every time the mask of a slice changes with
-                respect to the previous one, so this option allows the
-                user to minimise how frequently the mask changes.
+                A sequence of items specifying dimension coordinates
+                as retrieved by the `dim` method. These determine the
+                order in which to iterate over the other axes of the
+                field when regridding slices. The slowest moving axis
+                will be the first one specified. Currently the
+                regridding weights are recalculated every time the
+                mask of a slice changes with respect to the previous
+                one, so this option allows the user to minimise how
+                frequently the mask changes.
 
             ignore_degenerate: `bool`, optional
                 True by default. Instructs ESMPy to ignore degenerate
-                cells when checking the grids for errors. Regridding will
-                proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an error
-                will be produced if degenerate cells are found. This will
-                be present in the ESMPy log files if cf.regrid_logging is
-                set to True. As of ESMF 7.0.0 this only applies to
-                conservative regridding.  Other methods always skip
-                degenerate cells.
+                cells when checking the grids for errors. Regridding
+                will proceed and degenerate cells will be skipped, not
+                producing a result, when set to True. Otherwise an
+                error will be produced if degenerate cells are
+                found. This will be present in the ESMPy log files if
+                cf.regrid_logging is set to True. As of ESMF 7.0.0
+                this only applies to conservative regridding.  Other
+                methods always skip degenerate cells.
 
 
             {{inplace: `bool`, optional}}
@@ -20579,14 +20538,14 @@ class Field(mixin.PropertiesData, cfdm.Field):
 
             _compute_field_mass: `dict`, optional
                 If this is a dictionary then the field masses of the
-                source and destination fields are computed and returned
-                within the dictionary. The keys of the dictionary
-                indicates the lat/long slice of the field and the
-                corresponding value is a tuple containing the source field
-                construct's mass and the destination field construct's
-                mass. The calculation is only done if conservative
-                regridding is being performed. This is for debugging
-                purposes.
+                source and destination fields are computed and
+                returned within the dictionary. The keys of the
+                dictionary indicates the lat/long slice of the field
+                and the corresponding value is a tuple containing the
+                source field construct's mass and the destination
+                field construct's mass. The calculation is only done
+                if conservative regridding is being performed. This is
+                for debugging purposes.
 
         :Returns:
 
@@ -21090,90 +21049,90 @@ class Field(mixin.PropertiesData, cfdm.Field):
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
-    def aux(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `auxiliary_coordinate`."""
-        return self.auxiliary_coordinate(
-            *identity, key=key, default=default, item=item, **filter_kwargs
-        )
-
-    def auxs(self, *identities, **filter_kwargs):
-        """Alias for `coordinates`."""
-        return self.auxiliary_coordinates(*identities, **filter_kwargs)
-
-    def axes(self, *identities, **filter_kwargs):
-        """Alias for `domain_axes`."""
-        return self.domain_axes(*identities, **filter_kwargs)
-
-    def axis(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `domain_axis`."""
-        return self.domain_axis(
-            *identity, key=key, default=default, item=item, **filter_kwargs
-        )
-
-    def coord(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `coordinate`."""
-        return self.coordinate(
-            *identity, key=key, default=default, item=item, **filter_kwargs
-        )
-
-    def coords(self, *identities, **filter_kwargs):
-        """Alias for `coordinates`."""
-        return self.coordinates(*identities, **filter_kwargs)
-
-    def dim(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `dimension_coordinate`."""
-        return self.dimension_coordinate(
-            *identity, key=key, default=default, item=item, **filter_kwargs
-        )
-
-    def dims(self, *identities, **filter_kwargs):
-        """Alias for `dimension_coordinates`."""
-        return self.dimension_coordinates(*identities, **filter_kwargs)
-
-    def domain_anc(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `domain_ancillary`."""
-        return self.domain_ancillary(
-            *identity, key=key, default=default, item=item, **filter_kwargs
-        )
-
-    def domain_ancs(self, *identities, **filter_kwargs):
-        """Alias for `domain_ancillaries`."""
-        return self.domain_ancillaries(*identities, **filter_kwargs)
+#    def aux(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `auxiliary_coordinate`."""
+#        return self.auxiliary_coordinate(
+#            *identity, key=key, default=default, item=item, **filter_kwargs
+#        )
+#
+#    def auxs(self, *identities, **filter_kwargs):
+#        """Alias for `coordinates`."""
+#        return self.auxiliary_coordinates(*identities, **filter_kwargs)
+#
+#    def axes(self, *identities, **filter_kwargs):
+#        """Alias for `domain_axes`."""
+#        return self.domain_axes(*identities, **filter_kwargs)
+#
+#    def axis(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `domain_axis`."""
+#        return self.domain_axis(
+#            *identity, key=key, default=default, item=item, **filter_kwargs
+#        )
+#
+#    def coord(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `coordinate`."""
+#        return self.coordinate(
+#            *identity, key=key, default=default, item=item, **filter_kwargs
+#        )
+#
+#    def coords(self, *identities, **filter_kwargs):
+#        """Alias for `coordinates`."""
+#        return self.coordinates(*identities, **filter_kwargs)
+#
+#    def dim(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `dimension_coordinate`."""
+#        return self.dimension_coordinate(
+#            *identity, key=key, default=default, item=item, **filter_kwargs
+#        )
+#
+#    def dims(self, *identities, **filter_kwargs):
+#        """Alias for `dimension_coordinates`."""
+#        return self.dimension_coordinates(*identities, **filter_kwargs)
+#
+#    def domain_anc(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `domain_ancillary`."""
+#        return self.domain_ancillary(
+#            *identity, key=key, default=default, item=item, **filter_kwargs
+#        )
+#
+#    def domain_ancs(self, *identities, **filter_kwargs):
+#        """Alias for `domain_ancillaries`."""
+#        return self.domain_ancillaries(*identities, **filter_kwargs)
 
     def field_anc(
         self,
@@ -21192,59 +21151,59 @@ class Field(mixin.PropertiesData, cfdm.Field):
         """Alias for `field_ancillaries`."""
         return self.field_ancillaries(*identities, **filter_kwargs)
 
-    def key(self, identity, default=ValueError(), **kwargs):
-        """Alias for `cf.Field.construct_key`."""
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "key",
-                kwargs,
-                "Use 'construct' method or 'construct_key' method instead.",
-            )  # pragma: no cover
-
-        return self.construct_key(identity, default=default)
-
-    def measure(
-        self,
-        *identity,
-        key=False,
-        default=ValueError(),
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `cell_measure`."""
-        return self.cell_measure(
-            *identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
-        )
-
-    def measures(self, *identities, **filter_kwargs):
-        """Alias for `cell_measures`."""
-        return self.cell_measures(*identities, **filter_kwargs)
-
-    def ref(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Alias for `coordinate_reference`."""
-        return self.coordinate_reference(
-            *identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
-        )
-
-    def refs(self, *identities, **filter_kwargs):
-        """Alias for `coordinate_references`."""
-        return self.coordinate_references(*identities, **filter_kwargs)
+#    def key(self, identity, default=ValueError(), **kwargs):
+#        """Alias for `cf.Field.construct_key`."""
+#        if kwargs:
+#            _DEPRECATION_ERROR_KWARGS(
+#                self,
+#                "key",
+#                kwargs,
+#                "Use 'construct' method or 'construct_key' method instead.",
+#            )  # pragma: no cover
+#
+#        return self.construct_key(identity, default=default)
+#
+#    def measure(
+#        self,
+#        *identity,
+#        key=False,
+#        default=ValueError(),
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `cell_measure`."""
+#        return self.cell_measure(
+#            *identity,
+#            key=key,
+#            default=default,
+#            item=item,
+#            **filter_kwargs,
+#        )
+#
+#    def measures(self, *identities, **filter_kwargs):
+#        """Alias for `cell_measures`."""
+#        return self.cell_measures(*identities, **filter_kwargs)
+#
+#    def ref(
+#        self,
+#        *identity,
+#        default=ValueError(),
+#        key=False,
+#        item=False,
+#        **filter_kwargs,
+#    ):
+#        """Alias for `coordinate_reference`."""
+#        return self.coordinate_reference(
+#            *identity,
+#            key=key,
+#            default=default,
+#            item=item,
+#            **filter_kwargs,
+#        )
+#
+#    def refs(self, *identities, **filter_kwargs):
+#        """Alias for `coordinate_references`."""
+#        return self.coordinate_references(*identities, **filter_kwargs)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

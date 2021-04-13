@@ -1,4 +1,4 @@
-from itertools import chain
+#from itertools import chain
 
 from ..decorators import (
     _inplace_enabled,
@@ -508,7 +508,7 @@ class Coordinate:
 
         return default
 
-    def identities(self, generator=False, ctypes=None):
+    def identities(self, generator=False, ctypes=None, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -575,23 +575,28 @@ class Coordinate:
          'ncvar%tas']
 
         """
-        identities = super().identities(generator=True, ctypes=ctypes)
-
         if ctypes:
-            g = chain(_ctypes_iter(self, ctypes), identities)
+            pre = (self._ctypes_iter(ctypes),)
+            pre0 = kwargs.pop("pre", None)
+            if pre0:
+                pre = tuple(pre0) + pre
+
+            kwargs["pre"] = pre
         else:
-            g = chain(identities, _ctypes_iter(self, 'XTYZ'))
+            post = (self._ctypes_iter('XTYZ'),)
+            post0 = kwargs.pop("post", None)
+            if post0:
+                post += tuple(post0)
+
+            kwargs["post"] = post
+
+        return super().identities(generator=generator, **kwargs)
+
+    def _ctypes_iter(self, ctypes):
+        """Generator for returning the coordinate type letter."""
+        for c in ctypes:
+            if getattr(self, c):
+                # This coordinate construct is of this type
+                yield c
+                return
             
-        if generator:
-            return g
-
-        return list(g)
-
-
-def _ctypes_iter(coord, ctypes):
-    """Generator for returning the coordinate type letter."""
-    for c in ctypes:
-        if getattr(coord, c):
-            # This coordinate construct is of this type
-            yield c
-            return

@@ -4763,21 +4763,22 @@ class PropertiesData(Properties):
     def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
-               The identities comprise:
+        The identities comprise:
 
-               * The "standard_name" property.
-               * The "id" attribute, preceded by ``'id%'``.
-               * The "cf_role" property, preceded by ``'cf_role='``.
-               * The "axis" property, preceded by ``'axis='``.
-               * The "long_name" property, preceded by ``'long_name='``.
-               * All other properties (including "standard_name"), preceded by
-                 the property name and an ``'='``.
-               * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-               * The netCDF variable name, preceded by ``'ncvar%'``.
+        * The "standard_name" property.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The "cf_role" property, preceded by ``'cf_role='``.
+        * The "axis" property, preceded by ``'axis='``.
+        * The "long_name" property, preceded by ``'long_name='``.
+        * All other properties (including "standard_name"), preceded by
+          the property name and an ``'='``.
+        * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
-               .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-               .. seealso:: `id`, `identity`
+        .. seealso:: `id`, `identity`
+
         TODO
                :Returns:
 
@@ -4800,14 +4801,14 @@ class PropertiesData(Properties):
                 'ncvar%tas']
 
         """
-        id_identity = ""
-        i = getattr(self, "id", None)
-        if i is not None:
-            id_identity = (f"id%{i}",)
-
         identities = super().identities(generator=True, **kwargs)
+        
+        i = getattr(self, "id", None)
+        if i is None:
+            g = identities
+        else:
+            g = chain((f"id%{i}",), identities)
 
-        g = chain(id_identity, identities)
         if generator:
             return g
 
