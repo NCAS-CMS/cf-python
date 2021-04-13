@@ -4802,7 +4802,7 @@ class PropertiesData(Properties):
 
         """
         identities = super().identities(generator=True, **kwargs)
-        
+
         i = getattr(self, "id", None)
         if i is None:
             g = identities

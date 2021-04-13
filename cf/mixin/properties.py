@@ -1163,4 +1163,3 @@ class Properties(Container):
         _DEPRECATION_ERROR_METHOD(
             self, "getprop", "Use method 'get_property' instead"
         )  # pragma: no cover
-

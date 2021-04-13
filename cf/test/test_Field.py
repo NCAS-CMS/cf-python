@@ -446,7 +446,9 @@ class FieldTest(unittest.TestCase):
             f.replace_construct("grid_longitude", new=f.construct("latitude"))
 
         with self.assertRaises(Exception):
-            f.replace_construct("grid_longitude", new=f.construct("grid_latitude"))
+            f.replace_construct(
+                "grid_longitude", new=f.construct("grid_latitude")
+            )
 
     def test_Field_allclose(self):
         f = self.f.copy()

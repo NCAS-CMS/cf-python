@@ -1,4 +1,4 @@
-#from itertools import chain
+# from itertools import chain
 
 from ..decorators import (
     _inplace_enabled,
@@ -583,7 +583,7 @@ class Coordinate:
 
             kwargs["pre"] = pre
         else:
-            post = (self._ctypes_iter('XTYZ'),)
+            post = (self._ctypes_iter("XTYZ"),)
             post0 = kwargs.pop("post", None)
             if post0:
                 post += tuple(post0)
@@ -599,4 +599,3 @@ class Coordinate:
                 # This coordinate construct is of this type
                 yield c
                 return
-            
