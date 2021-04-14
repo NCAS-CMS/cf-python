@@ -42,9 +42,6 @@ class FieldDomain:
 
     """
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
@@ -108,31 +105,32 @@ class FieldDomain:
         # Initialize indices
         indices = {axis: slice(None) for axis in domain_axes}
 
-        data_axes = self.constructs.data_axes()
+        construct_data_axes = self.constructs.data_axes()
 
         parsed = {}
         unique_axes = set()
         n_axes = 0
+
         for identity, value in kwargs.items():
-            #            if identity in domain_axes:
-            #                axes = (identity,)
-            #                key = None
-            #                construct = None
-            #            else:
             key, construct = self.construct(
-                identity, item=True, default=(None, None)
+                identity,
+                filter_by_data=True,
+                item=True,
+                default=(None, None),
             )
-
-            if construct is None:
-                raise ValueError(
-                    f"Can't find indices. Ambiguous axis or axes: "
-                    f"{identity!r}"
-                )
-
-            if key in domain_axes:
-                axes = key
+            if construct is not None:
+                axes = self.get_data_axes(key)
             else:
-                axes = data_axes[key]
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    axes = (da_key,)
+                    key = None
+                    construct = None
+                else:
+                    raise ValueError(
+                        f"Can't find indices. Ambiguous axis or axes "
+                        f"defined by {identity!r}"
+                    )
 
             if axes in parsed:
                 # The axes are the same as an exisiting key
@@ -194,7 +192,7 @@ class FieldDomain:
             item_axes = axes[0]
 
             logger.debug(
-                f"  item_axes    = {item_axes!r}\n keys         = {keys!r}"
+                f"  item_axes    = {item_axes!r}\n  keys         = {keys!r}"
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -227,8 +225,9 @@ class FieldDomain:
 
                     if envelope or full:
                         size = domain_axes[axis].get_size()
-                        d = self._Data(range(size))
-                        ind = (d[value].array,)
+                        # TODODASK - consider using dask.arange here
+                        d = np.arange(size)  # self._Data(range(size))
+                        ind = (d[value],)  # .array,)
                         index = slice(None)
 
                 elif (
@@ -289,11 +288,11 @@ class FieldDomain:
                     index = slice(start, stop, 1)
 
                     if full:
-                        # index = slice(start, start+size, 1)
+                        # TODODASK - consider using some sort of
+                        #            dask.arange here
                         d = self._Data(list(range(size)))
                         d.cyclic(0)
                         ind = (d[index].array,)
-
                         index = slice(None)
 
                 elif item is not None:
@@ -326,7 +325,9 @@ class FieldDomain:
                         "construct with data for which to create indices"
                     )
 
-                logger.debug(f"  index        = {index}")  # pragma: no cover
+                logger.debug(
+                    f"  index        = {index}\n" f"  ind          = {ind}"
+                )  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -454,8 +455,6 @@ class FieldDomain:
                 masked_subspace_size = 1
                 ind = np.array(ind)
 
-                logger.debug("  ind = {ind}")  # pragma: no cover
-
                 for i, (axis, start, stop) in enumerate(
                     zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
                 ):
@@ -494,11 +493,10 @@ class FieldDomain:
                 create_mask = False
 
             # TODODASK - if we have 2 list of integers then we need to
-            #             apply different auxiliary masks (if any)
-            #             after different __getitems__. SCRUB THAT! if
-            #             we have an auxiliary mask, then by
-            #             definition we do _not_ have a list(s) of
-            #             integers
+            #            apply different auxiliary masks (if any)
+            #            after different __getitems__. SCRUB THAT! if
+            #            we have an auxiliary mask, then by definition
+            #            we do _not_ have a list(s) of integers
 
             # --------------------------------------------------------
             # Create an auxiliary mask for these axes
@@ -1329,116 +1327,37 @@ class FieldDomain:
         :Parameters:
 
             identity: optional
-                Select the construct. Must be
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
 
-                  * The identity or key of a metadata construct.
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
 
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
+                If no values are provided then all constructs are
+                selected.
 
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
+                {{value match}}
 
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
+                {{displayed identity}}
 
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+            {{key: `bool`, optional}}
 
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='T'
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
+            {{item: `bool`, optional}}
 
             default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found.
+                Return the value of the *default* parameter if there
+                is no unique construct.
 
                 {{default Exception}}
 
-                If the *default* is `None`, or if *item* is True and
-                *default* is a 2-tuple of `Ǹone`s, then TODO
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            item: TODO
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-                The selected coordinate construct, or its key.
+                {{Returns construct}}
 
         **Examples:**
-
-        >>> f = cf.example_field(1)
-        >>> print(f)
-        Field: air_temperature (ncvar%ta)
-        ---------------------------------
-        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                        : time(1) = [2019-01-01 00:00:00]
-        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
-        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-        Coord references: grid_mapping_name:rotated_latitude_longitude
-                        : standard_name:atmosphere_hybrid_height_coordinate
-        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-
-        >>> f.construct('long_name=Grid latitude name')
-        <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
-        >>> f.construct('ncvar%a')
-        <CF DomainAncillary: ncvar%a(1) m>
-        >>> f.construct('measure:area')
-        <CF CellMeasure: measure:area(9, 10) km2>
-        >>> f.construct('domainaxis0')
-        <CF DomainAxis: size(1)>
-        >>> f.construct('height')
-        Traceback (most recent call last):
-            ...
-        ValueError: Can't return zero constructs
-        >>> f.construct('height', default=False)
-        False
-        >>> f.construct('height', default=TypeError("No height coordinates"))
-        Traceback (most recent call last):
-            ...
-        TypeError: No height coordinates
 
         """
         return self._filter_interface(
@@ -1503,53 +1422,6 @@ class FieldDomain:
 
         **Examples:**
 
-
-
-            identity: optional
-                Select the cell measure construct by:
-
-                  * `None`. This is the default, which selects the cell
-                     measure construct when there is only one of them.
-
-                  * The identity or key of a cell measure construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a unique 1-d cell measure construct's data.
-
-                  * The position, in the field construct's data, of a
-                    domain axis construct that is spanned by a unique 1-d
-                    cell measure construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'long_name=Cell Area', ``'ncvar%areacello'``,
-                etc.); a `Query` object (e.g. ``cf.eq('measure:area')``);
-                or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'cellmeasure2'`` and
-                ``'key%cellmeasure2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-
         """
         return self._filter_interface(
             ("cell_measure",),
@@ -1613,8 +1485,6 @@ class FieldDomain:
 
         **Examples:**
 
-        TODO
-
         """
         return self._filter_interface(
             ("dimension_coordinate", "auxiliary_coordinate"),
@@ -1646,84 +1516,38 @@ class FieldDomain:
 
         :Parameters:
 
-            identity: optional
-                Select the coordinate reference construct by one of:
+            identities: optional
+                Select coordinate reference constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-                  * `None`. This is the default, which selects the
-                    coordinate reference construct when there is only one
-                    of them.
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
 
-                  * The identity or key of a coordinate reference
-                    construct.
+                If no identities are provided then all coordinate
+                reference constructs are selected.
 
-                A construct identity is specified by a string
-                (e.g. ``'grid_mapping_name:latitude_longitude'``,
-                ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
-                `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
+                {{value match}}
 
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                two identities:
+                {{displayed identity}}
 
-                   >>> x.identities()
-                   ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+            {{key: `bool`, optional}}
 
-                A identity's prefix of ``'grid_mapping_name:'`` or
-                ``'standard_name:'`` may be omitted
-                (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
-                and ``'atmosphere_hybrid_height_coordinate'`` are both
-                acceptable identities).
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'coordinatereference2'`` and
-                ``'key%coordinatereference2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
-
-                *Parameter example:*
-                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
-
-                *Parameter example:*
-                  ``identity='transverse_mercator'``
-
-                *Parameter example:*
-                  ``identity='coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='key%coordinatereference1'``
-
-                *Parameter example:*
-                  ``identity='ncvar%lat_lon'``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
+            {{item: `bool`, optional}}
 
             default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found. If set to an `Exception` instance then
-                it will be raised instead.
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `CoordinateReference` or `str`
-                The selected coordinate reference construct, or its key.
+                {{Returns construct}}
 
         **Examples:**
-
-        TODO
 
         """
         return self._filter_interface(
@@ -2053,7 +1877,7 @@ class FieldDomain:
 
         :Parameters:
 
-            identity: optional
+            identities: `tuple`, optional
                 Select domain axis constructs that have an identity,
                 defined by their `!identities` methods, that matches
                 any of the given values.
@@ -2061,17 +1885,16 @@ class FieldDomain:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if a domain axis construct is spanned by
-                the data of a unique 1-d dimension or auxiliary
-                coordinate construct, then if a value matches any
-                identity of that coordinate construct, defined by its
-                `!identities` method, then that domain axis construct
-                is selected.
+                Additionally, if for a given value
+                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+                1-d coordinate constructs that all span the same
+                domain axis construct then that domain axis construct
+                is selected. See `coordinates` for details.
 
-                Additionally, if there are `Field` data and a value
-                matches the positions of the domain axis construct in
-                that data then the corresponding domain axis
-                constructs are selected.
+                Additionally, if there is a `Field` data array and a
+                value matches the integer position of an array
+                dimension, then the corresponding domain axis
+                construct is selected.
 
                 If no values are provided then all domain axis
                 constructs are selected.

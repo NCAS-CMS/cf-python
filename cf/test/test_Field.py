@@ -77,17 +77,17 @@ class FieldTest(unittest.TestCase):
     atol = cf.atol()
     rtol = cf.rtol()
 
-    test_only = []
+    f = cf.read(filename)[0]
 
-    def setUp(self):
-        self.f = cf.read(self.filename)[0]
+    f0 = cf.example_field(0)
+    f1 = cf.example_field(1)
 
     def test_Field_creation_commands(self):
         for i in range(7):
             f = cf.example_field(i)
             f.creation_commands()
 
-        f = cf.example_field(1)
+        f = self.f1
 
         for rd in (False, True):
             f.creation_commands(representative_data=rd)
@@ -102,7 +102,7 @@ class FieldTest(unittest.TestCase):
             f.creation_commands(namespace=ns)
 
     def test_Field_get_filenames(self):
-        f = cf.example_field(0)
+        f = self.f0
 
         cf.write(f, tmpfile)
         g = cf.read(tmpfile)[0]
@@ -149,7 +149,7 @@ class FieldTest(unittest.TestCase):
             )
 
     def test_Field_has_construct(self):
-        f = cf.example_field(1)
+        f = self.f1
 
         self.assertTrue(f.has_construct("T"))
         self.assertTrue(f.has_construct("long_name=Grid latitude name"))
@@ -205,7 +205,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=2), message)
 
     def test_Field_apply_masking(self):
-        f = cf.example_field(0)
+        f = self.f0.copy()
 
         for prop in (
             "missing_value",
@@ -300,7 +300,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.flatten(inplace=True))
 
     def test_Field_bin(self):
-        f = self.f.copy()
+        f = self.f
 
         d = f.digitize(10)
         b = f.bin("sample_size", digitized=d)
@@ -451,7 +451,7 @@ class FieldTest(unittest.TestCase):
             )
 
     def test_Field_allclose(self):
-        f = self.f.copy()
+        f = self.f
         g = f.copy()
 
         self.assertTrue(f.allclose(f))
@@ -1264,8 +1264,301 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
+    # i#    def test_Field_indices(self):
+    # i#        f = self.f.copy()
+    # i#
+    # i#        array = numpy.ma.array(f.array)
+    # i#
+    # i#        x = f.dimension_coordinate("X")
+    # i#        a = x.varray
+    # i#        a[...] = numpy.arange(0, 360, 40)
+    # i#        x.set_bounds(x.create_bounds())
+    # i#        f.cyclic("X", iscyclic=True, period=360)
+    # i#
+    # i#        f0 = f.copy()
+    # i#
+    # i#        # wi (increasing)
+    # i#        indices = f.indices(grid_longitude=cf.wi(50, 130))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 2), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [80, 120]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(-90, 50))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-80, -40, 0, 40]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310, 450))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310 - 1080, 450 - 1080))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310 + 720, 450 + 720))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(-90, 370))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue(
+    # i#            (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
+    # i#        )
+    # i#
+    # i#        with self.assertRaises(IndexError):
+    # i#            f.indices(grid_longitude=cf.wi(90, 100))
+    # i#
+    # i#        indices = f.indices("full", grid_longitude=cf.wi(310, 450))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertEqual(x.shape, (9,), x.shape)
+    # i#        self.assertTrue(
+    # i#            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all(), x
+    # i#        )
+    # i#        a = array.copy()
+    # i#        a[..., [3, 4, 5, 6, 7]] = numpy.ma.masked
+    # i#        self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
+    # i#
+    # i#        indices = f.indices("full", grid_longitude=cf.wi(70, 200))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertEqual(x.shape, (9,), x.shape)
+    # i#        self.assertTrue(
+    # i#            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all(), x
+    # i#        )
+    # i#        a = array.copy()
+    # i#        a[..., [0, 1, 6, 7, 8]] = numpy.ma.masked
+    # i#        self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
+    # i#
+    # i#        # wi (decreasing)
+    # i#        f.flip("X", inplace=True)
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(50, 130))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 2), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [80, 120][::-1]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(-90, 50))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-80, -40, 0, 40][::-1]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310, 450))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80][::-1]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310 - 1080, 450 - 1080))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80][::-1]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wi(310 + 720, 450 + 720))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 4), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-40, 0, 40, 80][::-1]).all())
+    # i#
+    # i#        with self.assertRaises(IndexError):
+    # i#            f.indices(grid_longitude=cf.wi(90, 100))
+    # i#
+    # i#        indices = f.indices("full", grid_longitude=cf.wi(310, 450))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertEqual(x.shape, (9,), x.shape)
+    # i#        self.assertTrue(
+    # i#            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all(), x
+    # i#        )
+    # i#
+    # i#        indices = f.indices("full", grid_longitude=cf.wi(70, 200))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertEqual(x.shape, (9,), x.shape)
+    # i#        self.assertTrue(
+    # i#            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all(), x
+    # i#        )
+    # i#
+    # i#        # wo
+    # i#        f = f0.copy()
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.wo(50, 130))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 7), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [-200, -160, -120, -80, -40, 0, 40]).all())
+    # i#
+    # i#        with self.assertRaises(IndexError):
+    # i#            f.indices(grid_longitude=cf.wo(-90, 370))
+    # i#
+    # i#        # set
+    # i#        indices = f.indices(grid_longitude=cf.set([320, 40, 80, 99999]))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 3), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [40, 80, 320]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.lt(90))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 3), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [0, 40, 80]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.gt(90))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 6), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [120, 160, 200, 240, 280, 320]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.le(80))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 3), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [0, 40, 80]).all())
+    # i#
+    # i#        indices = f.indices(grid_longitude=cf.ge(80))
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 7), g.shape)
+    # i#        x = g.dimension_coordinate("X").array
+    # i#        self.assertTrue((x == [80, 120, 160, 200, 240, 280, 320]).all())
+    # i#
+    # i#        # 2-d
+    # i#        lon = f.construct("longitude").array
+    # i#        lon = numpy.transpose(lon)
+    # i#        lon = numpy.expand_dims(lon, 0)
+    # i#
+    # i#        lat = f.construct("latitude").array
+    # i#        lat = numpy.expand_dims(lat, 0)
+    # i#
+    # i#        array = numpy.ma.where(
+    # i#            (lon >= 92) & (lon <= 134), f.array, numpy.ma.masked
+    # i#        )
+    # i#
+    # i#        for mode in ("", "compress", "full", "envelope"):
+    # i#            indices = f.indices(mode, longitude=cf.wi(92, 134))
+    # i#            g = f[indices]
+    # i#            if mode == "full":
+    # i#                shape = (1, 10, 9)
+    # i#                array2 = array
+    # i#            elif mode == "envelope":
+    # i#                shape = (1, 10, 5)
+    # i#                array2 = array[..., 3:8]
+    # i#            else:
+    # i#                shape = (1, 10, 5)
+    # i#                array2 = array[..., 3:8]
+    # i#
+    # i#            self.assertEqual(g.shape, shape, str(g.shape) + "!=" + str(shape))
+    # i#            self.assertTrue(
+    # i#                cf.functions._numpy_allclose(array2, g.array), g.array
+    # i#            )
+    # i#
+    # i#        array = numpy.ma.where(
+    # i#            ((lon >= 72) & (lon <= 83)) | (lon >= 118),
+    # i#            f.array,
+    # i#            numpy.ma.masked,
+    # i#        )
+    # i#
+    # i#        for mode in ("", "compress", "full", "envelope"):
+    # i#            indices = f.indices(mode, longitude=cf.wi(72, 83) | cf.gt(118))
+    # i#            g = f[indices]
+    # i#            if mode == "full":
+    # i#                shape = (1, 10, 9)
+    # i#            elif mode == "envelope":
+    # i#                shape = (1, 10, 8)
+    # i#            else:
+    # i#                shape = (1, 10, 6)
+    # i#
+    # i#            self.assertEqual(g.shape, shape, str(g.shape) + "!=" + str(shape))
+    # i#
+    # i#        indices = f.indices(
+    # i#            "full",
+    # i#            longitude=cf.wi(92, 134),
+    # i#            latitude=cf.wi(-26, -20) | cf.ge(30),
+    # i#        )
+    # i#        g = f[indices]
+    # i#        self.assertEqual(g.shape, (1, 10, 9), g.shape)
+    # i#        array = numpy.ma.where(
+    # i#            (
+    # i#                ((lon >= 92) & (lon <= 134))
+    # i#                & (((lat >= -26) & (lat <= -20)) | (lat >= 30))
+    # i#            ),
+    # i#            f.array,
+    # i#            numpy.ma.masked,
+    # i#        )
+    # i#        self.assertTrue(cf.functions._numpy_allclose(array, g.array), g.array)
+    # i#
+    # i#        for mode in ("", "compress", "full", "envelope"):
+    # i#            indices = f.indices(mode, grid_longitude=cf.contains(23.2))
+    # i#            g = f[indices]
+    # i#            if mode == "full":
+    # i#                shape = f.shape
+    # i#            else:
+    # i#                shape = (1, 10, 1)
+    # i#
+    # i#            self.assertEqual(g.shape, shape, g.shape)
+    # i#
+    # i#            if mode != "full":
+    # i#                self.assertEqual(
+    # i#                    g.construct("grid_longitude").array, 40
+    # i#                )  # TODO
+    # i#
+    # i#        for mode in ("", "compress", "full", "envelope"):
+    # i#            indices = f.indices(mode, grid_latitude=cf.contains(3))
+    # i#            g = f[indices]
+    # i#            if mode == "full":
+    # i#                shape = f.shape
+    # i#            else:
+    # i#                shape = (1, 1, 9)
+    # i#
+    # i#            self.assertEqual(g.shape, shape, g.shape)
+    # i#
+    # i#            if mode != "full":
+    # i#                self.assertEqual(g.construct("grid_latitude").array, 3)
+    # i#
+    # i#        for mode in ("", "compress", "full", "envelope"):
+    # i#            indices = f.indices(mode, longitude=cf.contains(83))
+    # i#            g = f[indices]
+    # i#            if mode == "full":
+    # i#                shape = f.shape
+    # i#            else:
+    # i#                shape = (1, 1, 1)
+    # i#
+    # i#            self.assertEqual(g.shape, shape, g.shape)
+    # i#
+    # i#            if mode != "full":
+    # i#                self.assertEqual(g.construct("longitude").array, 83)
+    # i#
+    # i#        # Calls that should fail
+    # i#        with self.assertRaises(Exception):
+    # i#            f.indices(longitude=cf.gt(23), grid_longitude=cf.wi(92, 134))
+    # i#        with self.assertRaises(Exception):
+    # i#            f.indices(grid_longitude=cf.gt(23), longitude=cf.wi(92, 134))
+    # i#        with self.assertRaises(Exception):
+    # i#            f.indices(grid_latitude=cf.contains(-23.2))
+
     def test_Field_indices(self):
-        f = self.f.copy()
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
+        f = cf.read(self.filename)[0]
 
         array = numpy.ma.array(f.array)
 
@@ -1320,18 +1613,44 @@ class FieldTest(unittest.TestCase):
             f.indices(grid_longitude=cf.wi(90, 100))
 
         indices = f.indices("full", grid_longitude=cf.wi(310, 450))
+        self.assertTrue(indices[0], "mask")
+        self.assertTrue(
+            (
+                indices[1][0].array
+                == [
+                    [
+                        [
+                            False,
+                            False,
+                            False,
+                            True,
+                            True,
+                            True,
+                            True,
+                            True,
+                            False,
+                        ]
+                    ]
+                ]
+            ).all()
+        )
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 9), g.shape)
+
         x = g.dimension_coordinate("X").array
         self.assertEqual(x.shape, (9,), x.shape)
+
         self.assertTrue(
             (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all(), x
         )
+
         a = array.copy()
-        a[..., [3, 4, 5, 6, 7]] = numpy.ma.masked
+        a[..., 3:8] = numpy.ma.masked
+
         self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
 
         indices = f.indices("full", grid_longitude=cf.wi(70, 200))
+        self.assertTrue(indices[0], "mask")
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 9), g.shape)
         x = g.dimension_coordinate("X").array
@@ -1347,6 +1666,7 @@ class FieldTest(unittest.TestCase):
         f.flip("X", inplace=True)
 
         indices = f.indices(grid_longitude=cf.wi(50, 130))
+        self.assertTrue(indices[0], "mask")
         g = f[indices]
         self.assertEqual(g.shape, (1, 10, 2), g.shape)
         x = g.dimension_coordinate("X").array
@@ -1452,7 +1772,7 @@ class FieldTest(unittest.TestCase):
             (lon >= 92) & (lon <= 134), f.array, numpy.ma.masked
         )
 
-        for mode in ("", "compress", "full", "envelope"):
+        for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, longitude=cf.wi(92, 134))
             g = f[indices]
             if mode == "full":
@@ -1476,12 +1796,12 @@ class FieldTest(unittest.TestCase):
             numpy.ma.masked,
         )
 
-        for mode in ("", "compress", "full", "envelope"):
-            indices = f.indices(mode, longitude=cf.wi(72, 83) | cf.gt(118))
+        for mode in ((), ("compress",), ("full",), ("envelope",)):
+            indices = f.indices(*mode, longitude=cf.wi(72, 83) | cf.gt(118))
             g = f[indices]
-            if mode == "full":
+            if mode == ("full",):
                 shape = (1, 10, 9)
-            elif mode == "envelope":
+            elif mode == ("envelope",):
                 shape = (1, 10, 8)
             else:
                 shape = (1, 10, 6)
@@ -1505,7 +1825,7 @@ class FieldTest(unittest.TestCase):
         )
         self.assertTrue(cf.functions._numpy_allclose(array, g.array), g.array)
 
-        for mode in ("", "compress", "full", "envelope"):
+        for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, grid_longitude=cf.contains(23.2))
             g = f[indices]
             if mode == "full":
@@ -1520,7 +1840,7 @@ class FieldTest(unittest.TestCase):
                     g.construct("grid_longitude").array, 40
                 )  # TODO
 
-        for mode in ("", "compress", "full", "envelope"):
+        for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, grid_latitude=cf.contains(3))
             g = f[indices]
             if mode == "full":
@@ -1533,7 +1853,7 @@ class FieldTest(unittest.TestCase):
             if mode != "full":
                 self.assertEqual(g.construct("grid_latitude").array, 3)
 
-        for mode in ("", "compress", "full", "envelope"):
+        for mode in ("compress", "full", "envelope"):
             indices = f.indices(mode, longitude=cf.contains(83))
             g = f[indices]
             if mode == "full":

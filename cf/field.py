@@ -12098,6 +12098,65 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if len(mode) > 1:
             raise ValueError(
+                "Can't provide more than one positional argument. "
+                f"Got: {', '.join(repr(x) for x in mode)}"
+            )
+
+        if not mode or "compress" in mode:
+            mode = "compress"
+        elif "envelope" in mode:
+            mode = "envelope"
+        elif "full" in mode:
+            mode = "full"
+        else:
+            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
+
+        data_axes = self.get_data_axes()
+
+        # ------------------------------------------------------------
+        # Get the indices for every domain axis in the domain,
+        # including any auxiliary masks
+        # ------------------------------------------------------------
+        domain_indices = self._indices(mode, data_axes, True, **kwargs)
+
+        # Initialise the output indices with any auxiliary masks
+        auxiliary_mask = domain_indices["mask"]
+        if auxiliary_mask:
+            # Ensure that each auxiliary mask is broadcastable to the
+            # data
+            masks = []
+            for axes, mask in auxiliary_mask.items():
+                axes = list(axes)
+                for i, axis in enumerate(data_axes):
+                    if axis not in axes:
+                        axes.insert(0, axis)
+                        mask.insert_dimension(0, inplace=True)
+
+                new_order = [axes.index(axis) for axis in data_axes]
+                mask.transpose(new_order, inplace=True)
+                masks.append(mask)
+
+            indices = ["mask", tuple(masks)]
+        else:
+            indices = []
+
+        # Add the indices that apply to the field's data dimensions
+        indices.extend([domain_indices["indices"][axis] for axis in data_axes])
+
+        return tuple(indices)
+
+        # iiiiiiiiiiiiiiiiiiii
+
+        if "exact" in mode:
+            _DEPRECATION_ERROR_ARG(
+                self,
+                "indices",
+                "exact",
+                "Keywords are now never interpreted as regular expressions.",
+            )  # pragma: no cover
+
+        if len(mode) > 1:
+            raise ValueError(
                 "Can't provide more than one positional argument."
             )
 
@@ -12772,6 +12831,95 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     data.cyclic(cyclic_axes, True)
 
         return f
+
+    def domain_axis(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a domain axis construct.
+
+        {{unique construct}}
+
+        .. versionadded:: 1.8.9.0
+
+        .. seealso:: `construct`, `domain_axes`
+
+        :Parameters:
+
+            identity: optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given value
+                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+                1-d coordinate constructs that all span the same
+                domain axis construct then that domain axis construct
+                is selected. See `coordinates` for details.
+
+                Additionally, if there is a `Field` data array and a
+                value matches the integer position of an array
+                dimension, then the corresponding domain axis
+                construct is selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+
+        **Examples:**
+
+        """
+        filter_kwargs["todict"] = True
+
+        c = self.domain_axes(*identity, **filter_kwargs)
+
+        # Return construct, or key, or both, or default
+        n = len(c)
+        if n == 1:
+            k, construct = c.popitem()
+            if key:
+                return k
+
+            if item:
+                return k, construct
+
+            return construct
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.domain_axis() can't return {n} "
+            "constructs",
+        )
 
     def domain_mask(self, **kwargs):
         """Return a boolean field that is True where criteria are met.
@@ -14705,12 +14853,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             data_axes = self.get_data_axes(default=())
             if isinstance(axes, (str, int)):
                 axes = (axes,)
+
             axes2 = [self.domain_axis(x, key=True) for x in axes]
+
             if sorted(axes2) != sorted(data_axes):
                 raise ValueError(
-                    "Can't transpose {}: Bad axis specification: {!r}".format(
-                        self.__class__.__name__, axes
-                    )
+                    f"Can't transpose {self.__class__.__name__}: "
+                    f"Bad axis specification: {axes!r}"
                 )
 
             iaxes = [data_axes.index(axis) for axis in axes2]
@@ -14850,10 +14999,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if a value would select a unique domain
-                axis construct with ``f.domain_axis(value)`` then any
-                cell method constructs that span exactly that axis are
-                selected.
+                Additionally, if for a given value
+                ``f.domain_axes(value)`` returns a unique domain axis
+                construct then any cell method constructs that span
+                exactly that axis are selected. See `domain_axes` for
+                details.
 
                 If no values are provided then all cell method
                 constructs are selected.
