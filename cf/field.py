@@ -878,26 +878,36 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     def _axis_positions(self, axes, parse=True, return_axes=False):
         """Convert the given axes to their positions in the data.
+
         Any domain axes that are not spanned by the data are ignored.
+
         If there is no data then an empty list is returned.
-        .. versionadded:: 3.TODO.0
+
+        .. versionadded:: 3.9.0
+
         :Parameters:
             axes: (sequence of) `str` or `int`
-                The axes to be converted.
-                {{domain axis selection}}
+                The axes to be converted. TODO domain axis selection
+
             parse: `bool`, optional
+
                 If False then do not parse the *axes*. Parsing should
                 always occur unless the given *axes* are the output of
                 a previous call to `parse_axes`. By default *axes* is
                 parsed by `_parse_axes`.
+
             return_axes: `bool`, optional
+
                 If True then also return the domain axis identifiers
                 corresponding to the positions.
+
         :Returns:
+
             `list` [, `list`]
                 The domain axis identifiers. If *return_axes* is True
                 then also return the corresponding domain axis
                 identifiers.
+
         """
         data_axes = self.get_data_axes(default=None)
         if data_axes is None:
@@ -4083,7 +4093,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 for aux_key, aux in dst.auxiliary_coordinates(
                     filter_by_axis=dst_axis_keys,
-                    axis_mode="exact",
+                    axis_mode="subset",
                     todict=True,
                 ).items():
                     aux_axes = dst.get_data_axes(aux_key)
@@ -11129,7 +11139,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "required for an 'over days' collapse"
                     )
 
-                cell_methods = self.cell_methods().ordered()
+                cell_methods = self.cell_methods(todict=True)
                 w = [
                     cm.get_qualifier("within", None)
                     for cm in cell_methods.values()
@@ -11248,7 +11258,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "required for an 'over years' collapse"
                     )
 
-                cell_methods = self.cell_methods().ordered()
+                cell_methods = self.cell_methods(todict=True)
                 w = [
                     cm.get_qualifier("within", None)
                     for cm in cell_methods.values()
@@ -11745,7 +11755,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `None`
 
         """
-        original_cell_methods = self.cell_methods().ordered()
+        original_cell_methods = self.cell_methods(todict=True)  # .ordered()
         logger.info("  Update cell methods:")  # pragma: no cover
         logger.info(
             "    Original cell methods = {}".format(original_cell_methods)
@@ -11825,7 +11835,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             self.set_construct(cell_method)
 
         logger.info(
-            f"    Modified cell methods = {self.cell_methods().ordered()}"
+            f"    Modified cell methods = {self.cell_methods()}"
         )  # pragma: no cover
 
     @_inplace_enabled(default=False)
@@ -12832,94 +12842,94 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def domain_axis(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a domain axis construct.
-
-        {{unique construct}}
-
-        .. versionadded:: 1.8.9.0
-
-        .. seealso:: `construct`, `domain_axes`
-
-        :Parameters:
-
-            identity: optional
-                Select domain axis constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                Additionally, if for a given value
-                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
-                1-d coordinate constructs that all span the same
-                domain axis construct then that domain axis construct
-                is selected. See `coordinates` for details.
-
-                Additionally, if there is a `Field` data array and a
-                value matches the integer position of an array
-                dimension, then the corresponding domain axis
-                construct is selected.
-
-                If no values are provided then all domain axis
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{key: `bool`, optional}}
-
-            {{item: `bool`, optional}}
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-                {{Returns construct}}
-
-
-        **Examples:**
-
-        """
-        filter_kwargs["todict"] = True
-
-        c = self.domain_axes(*identity, **filter_kwargs)
-
-        # Return construct, or key, or both, or default
-        n = len(c)
-        if n == 1:
-            k, construct = c.popitem()
-            if key:
-                return k
-
-            if item:
-                return k, construct
-
-            return construct
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.domain_axis() can't return {n} "
-            "constructs",
-        )
+    #    def domain_axis(
+    #        self,
+    #        *identity,
+    #        default=ValueError(),
+    #        key=False,
+    #        item=False,
+    #        **filter_kwargs,
+    #    ):
+    #        """Select a domain axis construct.
+    #
+    #        {{unique construct}}
+    #
+    #        .. versionadded:: 1.8.9.0
+    #
+    #        .. seealso:: `construct`, `domain_axes`
+    #
+    #        :Parameters:
+    #
+    #            identity: optional
+    #                Select domain axis constructs that have an identity,
+    #                defined by their `!identities` methods, that matches
+    #                any of the given values.
+    #
+    #                Additionally, the values are matched against construct
+    #                identifiers, with or without the ``'key%'`` prefix.
+    #
+    #                Additionally, if for a given value
+    #                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+    #                1-d coordinate constructs that all span the same
+    #                domain axis construct then that domain axis construct
+    #                is selected. See `coordinates` for details.
+    #
+    #                Additionally, if there is a `Field` data array and a
+    #                value matches the integer position of an array
+    #                dimension, then the corresponding domain axis
+    #                construct is selected.
+    #
+    #                If no values are provided then all domain axis
+    #                constructs are selected.
+    #
+    #                {{value match}}
+    #
+    #                {{displayed identity}}
+    #
+    #            {{key: `bool`, optional}}
+    #
+    #            {{item: `bool`, optional}}
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if there
+    #                is no unique construct.
+    #
+    #                {{default Exception}}
+    #
+    #            {{filter_kwargs: optional}}
+    #
+    #        :Returns:
+    #
+    #                {{Returns construct}}
+    #
+    #
+    #        **Examples:**
+    #
+    #        """
+    #        filter_kwargs["todict"] = True
+    #
+    #        c = self.domain_axes(*identity, **filter_kwargs)
+    #
+    #        # Return construct, or key, or both, or default
+    #        n = len(c)
+    #        if n == 1:
+    #            k, construct = c.popitem()
+    #            if key:
+    #                return k
+    #
+    #            if item:
+    #                return k, construct
+    #
+    #            return construct
+    #
+    #        if default is None:
+    #            return default
+    #
+    #        return self._default(
+    #            default,
+    #            f"{self.__class__.__name__}.domain_axis() can't return {n} "
+    #            "constructs",
+    #        )
 
     def domain_mask(self, **kwargs):
         """Return a boolean field that is True where criteria are met.
@@ -13285,7 +13295,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         n = 0
 
-        self_cell_methods = self.cell_methods()  # TODO
+        self_cell_methods = self.cell_methods(todict=True)  # TODO
 
         for identity in identities:
             cms = False
@@ -13311,8 +13321,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     if set(filtered.construct_types().values()) == {
                         "cell_method"
                     }:
-                        key = tuple(self_cell_methods.ordered())[-1]
-                        filtered = self_cell_methods(key)(identity)  # TODO
+                        key = tuple(self_cell_methods)[-1]
+                        filtered = self.cell_method(
+                            identity, filter_by_key=(key,)
+                        )
                         if not filtered:
                             if not OR:
                                 return False
@@ -13323,9 +13335,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 elif not OR:
                     return False
             else:
-                cell_methods = tuple(self_cell_methods.ordered().values())[
-                    -len(cms) :
-                ]
+                cell_methods = tuple(self_cell_methods.values())[-len(cms) :]
                 for cm0, cm1 in zip(cms, cell_methods):
                     if cm0.has_axes() and set(cm0.get_axes()) != set(
                         cm1.get_axes(())
@@ -15031,45 +15041,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Examples:**
 
         """
-        c = self._filter_interface(
-            ("cell_method",),
+        return self._construct(
             "cell_method",
+            "cell_methods",
             identity,
-            construct=True,
             key=key,
             item=item,
-            default=None,
+            default=default,
             **filter_kwargs,
-        )
-        if c is not None:
-            return c
-
-        domain_axes = self.domain_axes(*identity, todict=True)
-        if domain_axes:
-            cell_methods = self.cell_methods(todict=True)
-            cm_keys = [
-                k
-                for k, cm in cell_methods.items()
-                for da_key in domain_axes
-                if cm.get_axes(None) == (da_key,)
-            ]
-            if len(cm_keys) == 1:
-                k = cm_keys[0]
-                if key:
-                    return k
-
-                if item:
-                    return k, cell_methods[k]
-
-                return cell_methods[k]
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.cell_method() can only "
-            "return a unique construct",
         )
 
     def field_ancillary(
@@ -15124,14 +15103,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("field_ancillary",),
+        return self._construct(
             "field_ancillary",
+            "field_ancillaries",
             identity,
-            construct=True,
             key=key,
-            default=default,
             item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -17199,7 +17177,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         i=False,
         _compute_field_mass=None,
     ):
-        """Return the field regridded onto a new latitude-longitude grid.
+        """Return the field regridded onto a new latitude-longitude
+        grid.
 
         Regridding, also called remapping or interpolation, is the
         process of changing the grid underneath field data values
@@ -17936,8 +17915,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         i=False,
         _compute_field_mass=None,
     ):
-        """Return the field with the specified Cartesian axes regridded onto a
-        new grid.
+        """Return the field with the specified Cartesian axes regridded
+        onto a new grid.
 
         Between 1 and 3 dimensions may be regridded.
 

@@ -16,10 +16,7 @@ from ..units import Units
 from ..functions import (
     parse_indices,
     bounds_combination_mode,
-    _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_DICT,
-    _DEPRECATION_ERROR_SEQUENCE,
 )
 
 from ..decorators import (
@@ -36,11 +33,87 @@ _units_degrees = Units("degrees")
 
 
 class FieldDomain:
-    """Mixin class for methods common to both field and domain constructs
+    """Mixin class for methods common to both field and domain
+    constructs.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.9.0
 
     """
+
+    def _construct(
+        self,
+        _method,
+        _constructs_method,
+        identities,
+        key=False,
+        item=False,
+        default=ValueError(),
+        **filter_kwargs,
+    ):
+        """An interface to `Constructs.filter`.
+
+        {{unique construct}}
+
+        .. versionadded:: 3.9.0
+
+        :Parameters:
+
+            _method: `str`
+                The name of the calling method.
+
+            _constructs_method: `str`
+                The name of the corresponding method that can return
+                any number of constructs.
+
+            identities: sequence
+                As for the *identities* parmaeter of the calling
+                method.
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        """
+        cached = filter_kwargs.get("cached")
+        if cached is not None:
+            return cached
+
+        filter_kwargs["todict"] = True
+
+        c = getattr(self, _constructs_method)(*identities, **filter_kwargs)
+
+        # Return construct, or key, or both, or default
+        n = len(c)
+        if n == 1:
+            k, construct = c.popitem()
+            if key:
+                return k
+
+            if item:
+                return k, construct
+
+            return construct
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.{_method}() can't return {n} "
+            "constructs",
+        )
 
     def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
         """Create indices that define a subspace of the field or domain
@@ -50,7 +123,7 @@ class FieldDomain:
 
         See the `indices` method for more details.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.9.0
 
         :Parameters:
 
@@ -535,7 +608,7 @@ class FieldDomain:
         If a roll axis is spanned by a dimension coordinate construct
         then it must be a periodic dimension coordinate construct.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.9.0
 
         :Parameters:
 
@@ -576,8 +649,7 @@ class FieldDomain:
             )
 
         for a in axis:
-            #            dim = dims.filter_by_axis("exact", a).value(None)
-            dim = self.dimension_coordinate(filter_by_axis=(a,), todict=True)
+            dim = self.dimension_coordinate(filter_by_axis=(a,), default=None)
             if dim is not None and dim.period() is None:
                 raise ValueError(
                     f"Can't roll {self.__class__.__name__}. "
@@ -625,7 +697,7 @@ class FieldDomain:
         A unique axis is selected with the *axes* and *kwargs*
         parameters.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.9.0
 
         .. seealso:: `axis`, `cyclic`, `iscyclic`, `roll`
 
@@ -634,7 +706,7 @@ class FieldDomain:
             axis:
                 The cyclic axis to be anchored.
 
-                {{domain axis selection}}
+                domain axis selection TODO.
 
             value:
                 Anchor the dimension coordinate values for the
@@ -887,7 +959,7 @@ class FieldDomain:
         referenced by coordinate reference construct. In this case the
         reference is replace with `None`.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.9.0
 
         .. seealso:: `constructs`, `get_construct`, `has_construct`,
                      `set_construct`, `del_domain_axis`,
@@ -1297,14 +1369,11 @@ class FieldDomain:
 
         **Examples:**
 
-        TODO
-
         """
-        return self._filter_interface(
-            ("auxiliary_coordinate",),
+        return self._construct(
             "auxiliary_coordinate",
+            "auxiliary_coordinates",
             identity,
-            construct=True,
             key=key,
             item=item,
             default=default,
@@ -1360,11 +1429,10 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            (),
+        return self._construct(
             "construct",
+            "constructs",
             identity,
-            construct=True,
             key=key,
             item=item,
             default=default,
@@ -1423,14 +1491,13 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("cell_measure",),
-            "cell_meausure",
+        return self._construct(
+            "cell_measure",
+            "cell_measures",
             identity,
-            construct=True,
             key=key,
-            default=default,
             item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -1486,11 +1553,10 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("dimension_coordinate", "auxiliary_coordinate"),
+        return self._construct(
             "coordinate",
+            "coordinates",
             identity,
-            construct=True,
             key=key,
             item=item,
             default=default,
@@ -1550,14 +1616,13 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("coordinate_reference",),
+        return self._construct(
             "coordinate_reference",
+            "coordinate_references",
             identity,
-            construct=True,
             key=key,
-            default=default,
             item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -1687,11 +1752,10 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("dimension_coordinate",),
+        return self._construct(
             "dimension_coordinate",
+            "dimension_coordinates",
             identity,
-            construct=True,
             key=key,
             item=item,
             default=default,
@@ -1699,7 +1763,7 @@ class FieldDomain:
         )
 
     @_deprecated_kwarg_check("axes")
-    def direction(self, identity=None, axes=None, **kwargs):
+    def direction(self, identity, axes=None, **kwargs):
         """Whether or not a domain axis is increasing.
 
         An domain axis is considered to be increasing if its dimension
@@ -1758,19 +1822,20 @@ class FieldDomain:
                 self, "direction", kwargs
             )  # pragma: no cover
 
-        axis = self.domain_axis(identity, key=True, default=None)
-        if axis is None:
-            return True
+        #        axis = self.domain_axis(identity, key=True, default=None)
+        #       if axis is None:
+        #            return True
 
         for coord in self.dimension_coordinates(
-            filter_by_axis=(axis,), todict=True
+            filter_by_axis=(identity,), todict=True
         ).values():
             return coord.direction()
 
         return True
 
     def directions(self):
-        """Return a dictionary mapping all domain axes to their directions.
+        """Return a dictionary mapping all domain axes to their
+        directions.
 
         .. seealso:: `direction`
 
@@ -1848,14 +1913,13 @@ class FieldDomain:
         **Examples:**
 
         """
-        return self._filter_interface(
-            ("domain_ancillary",),
+        return self._construct(
             "domain_ancillary",
+            "domain_ancillaries",
             identity,
-            construct=True,
             key=key,
-            default=default,
             item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -1885,7 +1949,7 @@ class FieldDomain:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if for a given value
+                Additionally, if for a given `value``,
                 ``f.coordinates(value, filter_by_naxes=(1,))`` returns
                 1-d coordinate constructs that all span the same
                 domain axis construct then that domain axis construct
@@ -1923,35 +1987,20 @@ class FieldDomain:
         **Examples:**
 
         """
-        filter_kwargs["todict"] = True
-
-        c = self.domain_axes(*identity, **filter_kwargs)
-
-        # Return construct, or key, or both, or default
-        n = len(c)
-        if n == 1:
-            k, construct = c.popitem()
-            if key:
-                return k
-
-            if item:
-                return k, construct
-
-            return construct
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.domain_axis() can't return {n} "
-            "constructs",
+        return self._construct(
+            "domain_axis",
+            "domain_axes",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
         )
 
     def get_coordinate_reference(
         self, identity=None, key=False, construct=None, default=ValueError()
     ):
-        """TODO
+        """TODO.
 
         .. versionadded:: 3.0.2
 
@@ -2255,7 +2304,7 @@ class FieldDomain:
     def _parse_axes(self, axes):
         """Convert the given axes to their domain axis identifiers.
 
-        .. versionadded:: 3.TODO:0
+        .. versionadded:: 3.9.0
 
         :Parameters:
 
@@ -2608,9 +2657,9 @@ class FieldDomain:
 
 
 def _create_auxiliary_mask_component(mask_shape, ind, compress):
-    """Create an auxiliary mask component
+    """Create an auxiliary mask component.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.9.0
 
     :Parameters:
 

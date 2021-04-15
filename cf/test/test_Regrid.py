@@ -96,7 +96,7 @@ class RegridTest(unittest.TestCase):
                     r = f1.regrids(f5, method="linear")
 
                     self.assertTrue(
-                        f4.equals(r, verbose=2),
+                        f4.equals(r, verbose=3),
                         "destination=regional Field, CHUNKSIZE={}".format(
                             chunksize
                         ),

@@ -165,9 +165,9 @@ class Constructs(cfdm.Constructs):
         """
         ctypes = [i for i in "XTYZ" if i in identities]
 
-        if len(ctypes) == len(identities):
-            # All identities are coordinate types (X, T, Y or Z)
-            return self._filter_by_coordinate_type(arg, todict, ctypes)
+        #        if len(ctypes) == len(identities):
+        #            # All identities are coordinate types (X, T, Y or Z)
+        #            return self._filter_by_coordinate_type(arg, todict, ctypes)
 
         config = {"identities_kwargs": {"ctypes": ctypes}}
         if _config:
@@ -175,36 +175,36 @@ class Constructs(cfdm.Constructs):
 
         return super()._filter_by_identity(arg, todict, config, identities)
 
-    def _filter_by_coordinate_type(self, arg, todict, ctypes):
-        """Worker function for `filter_by_identity` and `filter`.
-
-        See `filter_by_identity` for details.
-
-        .. versionadded:: 3.9.0
-
-        """
-        out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_identity": ctypes},
-            todict=todict,
-        )
-
-        if not ctypes:
-            # Return all constructs if no coordinate types have been
-            # provided
-            return out
-
-        for cid, construct in tuple(out.items()):
-            ok = False
-            for ctype in ctypes:
-                if getattr(construct, ctype, False):
-                    ok = True
-                    break
-
-            if not ok:
-                pop(cid)
-
-        return out
+    #    def _filter_by_coordinate_type(self, arg, todict, ctypes):
+    #        """Worker function for `filter_by_identity` and `filter`.
+    #
+    #        See `filter_by_identity` for details.
+    #
+    #        .. versionadded:: 3.9.0
+    #
+    #        """
+    #        out, pop = self._filter_preprocess(
+    #            arg,
+    #            filter_applied={"filter_by_identity": ctypes},
+    #            todict=todict,
+    #        )
+    #
+    #        if not ctypes:
+    #            # Return all constructs if no coordinate types have been
+    #            # provided
+    #            return out
+    #
+    #        for cid, construct in tuple(out.items()):
+    #            ok = False
+    #            for ctype in ctypes:
+    #                if getattr(construct, ctype, False):
+    #                    ok = True
+    #                    break
+    #
+    #            if not ok:
+    #                pop(cid)
+    #
+    #        return out
 
     @classmethod
     def _short_iteration(cls, x):

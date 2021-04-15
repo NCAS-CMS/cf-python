@@ -91,7 +91,7 @@ class DataTest(unittest.TestCase):
     mones = mones
 
     test_only = []
-    #    test_only = ['NOTHING!!!!!']
+    test_only = ["NOTHING!!!!!"]
     #    test_only = [
     #        'test_Data_percentile',
     #        'test_Data_trigonometric_hyperbolic'
