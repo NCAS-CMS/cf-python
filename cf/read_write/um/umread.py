@@ -1275,11 +1275,13 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_height_coordinate_ak"
         #        field.insert_aux(ac, axes=[zdim], copy=False)
         self.implementation.set_auxiliary_coordinate(
-            field, ac,
-            axes=[_axis["z"]], copy=False,
-            autocyclic={"cyclic": False}
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic={"cyclic": False},
         )
-        
+
         array = numpy_array(
             [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
         )
@@ -1297,8 +1299,11 @@ class UMField:
         ac.id = "UM_atmosphere_hybrid_height_coordinate_bk"
         ac.long_name = "atmosphere_hybrid_height_coordinate_bk"
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False,
-            autocyclic={"cyclic": False}
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic={"cyclic": False},
         )
 
         return dc
@@ -1390,16 +1395,22 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_sigma_pressure_coordinate_ak"
 
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False,
-            autocyclic={"cyclic": False}
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic={"cyclic": False},
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units["1"])
 
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False,
-            autocyclic={"cyclic": False}
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic={"cyclic": False},
         )
 
         ac.id = "UM_atmosphere_hybrid_sigma_pressure_coordinate_bk"
@@ -2213,8 +2224,11 @@ class UMField:
             if aux:
                 self.field.insert_aux(c, axes=[_axis["z"]], copy=True)
                 self.implementation.set_auxiliary_coordinate(
-                    self.field, c, axes=[_axis["z"]], copy=True,
-            autocyclic={"cyclic": False}
+                    self.field,
+                    c,
+                    axes=[_axis["z"]],
+                    copy=True,
+                    autocyclic={"cyclic": False},
                 )
             else:
                 self.implementation.set_dimension_coordinate(
@@ -2239,8 +2253,11 @@ class UMField:
                 ac = self.coord_data(ac, array, units=Units("1"))
                 ac = self.coord_names(ac, axiscode)
                 self.implementation.set_auxiliary_coordinate(
-                    self.field, ac, axes=[_axis["z"]], copy=False,
-            autocyclic={"cyclic": False}
+                    self.field,
+                    ac,
+                    axes=[_axis["z"]],
+                    copy=False,
+                    autocyclic={"cyclic": False},
                 )
 
             else:
@@ -2945,7 +2962,6 @@ class UMField:
         if X and bounds is not None:
             autocyclic["bounds_range"] = abs(bounds[0, 0] - bounds[-1, -1])
             autocyclic["bounds_units"] = dc.Units
-            
 
         key = self.implementation.set_dimension_coordinate(
             self.field, dc, axes=[axis_key], copy=False, autocyclic=autocyclic

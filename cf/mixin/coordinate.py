@@ -410,7 +410,7 @@ class Coordinate:
 
         if "cyclic" in config and not config["cyclic"]:
             return c
-            
+
         if c.period() is not None:
             return c
 

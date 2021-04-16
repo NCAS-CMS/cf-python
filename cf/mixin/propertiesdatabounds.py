@@ -3682,10 +3682,10 @@ class PropertiesDataBounds(PropertiesData):
 
         if old is not None:
             return old
-        
+
         bounds = self.get_bounds(None)
         if bounds is None:
-            return 
+            return
 
         return bounds.period(*value)
 

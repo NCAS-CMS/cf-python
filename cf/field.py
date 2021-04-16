@@ -11,7 +11,6 @@ except ImportError:
     pass
 
 from numpy import arange as numpy_arange
-from numpy import argmax as numpy_argmax
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
 
@@ -6311,8 +6310,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    def cyclic(self, identity=None, iscyclic=True, period=None,
-               config={}, **kwargs):
+    def cyclic(
+        self, identity=None, iscyclic=True, period=None, config={}, **kwargs
+    ):
         """Set the cyclicity of an axis.
 
         .. versionadded:: 1.0
@@ -6385,18 +6385,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if identity is None:
             return old
 
-
         if "axis" in config:
-            axis = config.get('axis')
+            axis = config.get("axis")
             if axis is None:
                 raise ValueError(f"Can't find config-supplied axis {axis!r}")
         else:
             axis = self.domain_axis(identity, key=True)
-        
+
         data = self.get_data(None, _fill_value=False)
         if data is not None:
             try:
-                data_axes = self.get_data_axes() 
+                data_axes = self.get_data_axes()
                 data.cyclic(data_axes.index(axis), iscyclic)
             except ValueError:
                 pass
@@ -6411,7 +6410,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dim = self.dimension_coordinate(
                     filter_by_axis=(axis,), default=None
                 )
-                
+
             if dim is not None:
                 if period is not None:
                     dim.period(period)

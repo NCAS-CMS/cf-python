@@ -178,8 +178,6 @@ class FieldDomain:
         # Initialize indices
         indices = {axis: slice(None) for axis in domain_axes}
 
-        construct_data_axes = self.constructs.data_axes()
-
         parsed = {}
         unique_axes = set()
         n_axes = 0
@@ -807,9 +805,6 @@ class FieldDomain:
                 self, "anchor", kwargs
             )  # pragma: no cover
 
-        axis_in = axis
-        #        axis = self._parse_axes(axis_in)
-
         da_key, axis = self.domain_axis(axis, item=True)
 
         if dry_run:
@@ -961,7 +956,7 @@ class FieldDomain:
             else:
                 self.cyclic(key, iscyclic=False)
                 return False
-            
+
             period.Units = bounds_units
 
         if bounds_range is None:
@@ -976,9 +971,12 @@ class FieldDomain:
 
         axis = self.get_data_axes(key, default=(None,))[0]
 
-        self.cyclic(key, iscyclic=True,
-                    period=period,
-                    config={"axis": axis, "dim": coord})
+        self.cyclic(
+            key,
+            iscyclic=True,
+            period=period,
+            config={"axis": axis, "dim": coord},
+        )
 
         return True
 
@@ -2610,8 +2608,8 @@ class FieldDomain:
 
         if construct_type == "dimension_coordinate":
             construct.autoperiod(
-                inplace=True,
-                config={"cyclic": autocyclic.get("cyclic", True)})
+                inplace=True, config={"cyclic": autocyclic.get("cyclic", True)}
+            )
             self._conform_coordinate_references(out)
             self.autocyclic(key=out, coord=construct, config=autocyclic)
             try:
@@ -2620,8 +2618,9 @@ class FieldDomain:
                 pass
 
         elif construct_type == "auxiliary_coordinate":
-            construct.autoperiod(inplace=True,
-                config={"cyclic": autocyclic.get("cyclic", True)})
+            construct.autoperiod(
+                inplace=True, config={"cyclic": autocyclic.get("cyclic", True)}
+            )
             self._conform_coordinate_references(out)
             try:
                 self._conform_cell_methods()
