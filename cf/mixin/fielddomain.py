@@ -885,7 +885,7 @@ class FieldDomain:
         return f
 
     @_manage_log_level_via_verbosity
-    def autocyclic(self, key=None, coord=None, verbose=None):
+    def autocyclic(self, key=None, coord=None, verbose=None, config={}):
         """Set dimensions to be cyclic.
 
         A dimension is set to be cyclic if it has a unique longitude
@@ -901,50 +901,84 @@ class FieldDomain:
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            config: `dict`
+                Additional parameters for optimizing the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
+
         :Returns:
 
            `bool`
 
-        **Examples:**
-
-        >>> f.autocyclic()
-
         """
+        if "cyclic" in config:
+            cyclic = config["cyclic"]
+            if not cyclic:
+                return False
+        else:
+            cyclic = None
+
         if coord is None:
             key, coord = self.dimension_coordinate(
                 "X", item=True, default=(None, None)
             )
             if coord is None:
                 return False
+        elif "X" in config:
+            if not config["X"]:
+                return False
         elif not coord.X:
             return False
 
-        bounds = coord.get_bounds(None)
-        if bounds is None:
-            self.cyclic(key, iscyclic=False)
-            return False
+        if cyclic:
+            self.cyclic(key, iscyclic=True, period=config["period"])
+            return True
 
-        data = bounds.get_data(None, _fill_value=False)
-        if data is None:
-            self.cyclic(key, iscyclic=False)
-            return False
-
-        units = bounds.Units
-        if units.islongitude:
-            period = Data(360.0, units="degrees_east")
-        elif units == _units_degrees:
-            period = Data(360.0, units="degrees")
+        bounds_range = config.get("bounds_range")
+        if bounds_range is not None:
+            bounds_units = config["bounds_units"]
         else:
+            bounds = coord.get_bounds(None)
+            if bounds is None:
+                self.cyclic(key, iscyclic=False)
+                return False
+
+            data = bounds.get_data(None, _fill_value=False)
+            if data is None:
+                self.cyclic(key, iscyclic=False)
+                return False
+
+            bounds_units = bounds.Units
+
+        period = coord.period()
+        has_period = period is not None
+        if not has_period:
+            if bounds_units.islongitude:
+                period = Data(360.0, units="degrees_east")
+            elif bounds_units == _units_degrees:
+                period = Data(360.0, units="degrees")
+            else:
+                self.cyclic(key, iscyclic=False)
+                return False
+            
+            period.Units = bounds_units
+
+        if bounds_range is None:
+            bounds_range = abs(data.last_element() - data.first_element())
+
+        if bounds_range != period:
             self.cyclic(key, iscyclic=False)
             return False
 
-        period.Units = data.Units
+        if has_period:
+            period = None
 
-        if abs(data.last_element() - data.first_element()) != period.array:
-            self.cyclic(key, iscyclic=False)
-            return False
+        axis = self.get_data_axes(key, default=(None,))[0]
 
-        self.cyclic(key, iscyclic=True, period=period)
+        self.cyclic(key, iscyclic=True,
+                    period=period,
+                    config={"axis": axis, "dim": coord})
 
         return True
 
@@ -2437,6 +2471,172 @@ class FieldDomain:
         self.set_construct(new, key=key, axes=axes, copy=copy)
 
         return c
+
+    def set_construct(
+        self,
+        construct,
+        key=None,
+        axes=None,
+        set_axes=True,
+        copy=True,
+        autocyclic={},
+    ):
+        """Set a metadata construct.
+
+        When inserting a construct with data, the domain axes constructs
+        spanned by the data are either inferred, or specified with the
+        *axes* parameter.
+
+        For a dimension coordinate construct, an existing dimension
+        coordinate construct is discarded if it spans the same domain axis
+        construct (since only one dimension coordinate construct can be
+        associated with a given domain axis construct).
+
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `constructs`, `creation_commands`, `del_construct`,
+                     `get_construct`, `set_coordinate_reference`,
+                     `set_data_axes`
+
+        :Parameters:
+
+            construct:
+                The metadata construct to be inserted.
+
+            key: `str`, optional
+                The construct identifier to be used for the construct. If
+                not set then a new, unique identifier is created
+                automatically. If the identifier already exists then the
+                existing construct will be replaced.
+
+                *Parameter example:*
+                  ``key='cellmeasure0'``
+
+            axes: (sequence of) `str` or `int`, optional
+                Set the domain axes constructs that are spanned by the
+                construct's data. If unset, and the *set_axes* parameter
+                is True, then an attempt will be made to assign existing
+                domain axis constructs to the data.
+
+                The contents of the *axes* parameter is mapped to domain
+                axis constructs by translating each element into a domain
+                axis construct key via the `domain_axis` method.
+
+                *Parameter example:*
+                  ``axes='domainaxis1'``
+
+                *Parameter example:*
+                  ``axes='X'``
+
+                *Parameter example:*
+                  ``axes=['latitude']``
+
+                *Parameter example:*
+                  ``axes=['X', 'longitude']``
+
+                *Parameter example:*
+                  ``axes=[1, 0]``
+
+            set_axes: `bool`, optional
+                If False then do not set the domain axes constructs that
+                are spanned by the data, even if the *axes* parameter has
+                been set. By default the axes are set either according to
+                the *axes* parameter, or an attempt will be made to assign
+                existing domain axis constructs to the data.
+
+            copy: `bool`, optional
+                If True then set a copy of the construct. By default the
+                construct is copied.
+
+            autocyclic: `dict`, optional
+                Additional parameters for optimizing the operation,
+                raelating to coordinate periodicity and cyclicity. See
+                the code for details.
+
+                .. versionadded:: 3.9.0
+
+        :Returns:
+
+            `str`
+                The construct identifier for the construct.
+
+        **Examples:**
+
+        >>> key = f.set_construct(c)
+        >>> key = f.set_construct(c, copy=False)
+        >>> key = f.set_construct(c, axes='domainaxis2')
+        >>> key = f.set_construct(c, key='cellmeasure0')
+
+        """
+        construct_type = construct.construct_type
+
+        if not set_axes:
+            axes = None
+
+        if construct_type in (
+            "dimension_coordinate",
+            "auxiliary_coordinate",
+            "cell_measure",
+        ):
+            if construct.isscalar:
+                # Turn a scalar object into 1-d
+                if copy:
+                    construct = construct.insert_dimension(0)
+                    copy = False
+                else:
+                    construct.insert_dimension(0, inplace=True)
+
+            if set_axes:
+                axes = self._set_construct_parse_axes(
+                    construct, axes, allow_scalar=False
+                )
+
+            if construct_type == "dimension_coordinate":
+                data_axes = self.constructs.data_axes()
+                for dim in self.dimension_coordinates(todict=True):
+                    if dim == key:
+                        continue
+
+                    if data_axes.get(dim) == tuple(axes):
+                        self.del_construct(dim, default=None)
+
+        elif construct_type in ("domain_ancillary", "field_ancillary"):
+            if set_axes:
+                axes = self._set_construct_parse_axes(
+                    construct, axes, allow_scalar=True
+                )
+
+        out = super().set_construct(construct, key=key, axes=axes, copy=copy)
+
+        if construct_type == "dimension_coordinate":
+            construct.autoperiod(
+                inplace=True,
+                config={"cyclic": autocyclic.get("cyclic", True)})
+            self._conform_coordinate_references(out)
+            self.autocyclic(key=out, coord=construct, config=autocyclic)
+            try:
+                self._conform_cell_methods()
+            except AttributeError:
+                pass
+
+        elif construct_type == "auxiliary_coordinate":
+            construct.autoperiod(inplace=True,
+                config={"cyclic": autocyclic.get("cyclic", True)})
+            self._conform_coordinate_references(out)
+            try:
+                self._conform_cell_methods()
+            except AttributeError:
+                pass
+
+        elif construct_type == "cell_method":
+            self._conform_cell_methods()
+
+        elif construct_type == "coordinate_reference":
+            for ckey in self.coordinates(todict=True):
+                self._conform_coordinate_references(ckey, coordref=construct)
+
+        # Return the construct key
+        return out
 
     def set_coordinate_reference(
         self, coordinate_reference, key=None, parent=None, strict=True

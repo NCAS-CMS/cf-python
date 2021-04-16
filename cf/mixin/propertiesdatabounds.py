@@ -3680,16 +3680,14 @@ class PropertiesDataBounds(PropertiesData):
         """
         old = super().period(*value)
 
-        old2 = None
-
+        if old is not None:
+            return old
+        
         bounds = self.get_bounds(None)
-        if bounds is not None:
-            old2 = bounds.period(*value)
+        if bounds is None:
+            return 
 
-        if old is None and old2 is not None:
-            return old2
-
-        return old
+        return bounds.period(*value)
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

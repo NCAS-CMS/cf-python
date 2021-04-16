@@ -375,7 +375,7 @@ class Coordinate:
     # Methods
     # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
-    def autoperiod(self, inplace=False):
+    def autoperiod(self, inplace=False, config={}):
         """TODO Set dimensions to be cyclic.
 
         TODO A dimension is set to be cyclic if it has a unique
@@ -391,6 +391,12 @@ class Coordinate:
 
             TODO
 
+            config: `dict`
+                Additional parameters for optimizing the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
+
         :Returns:
 
             TODO
@@ -402,6 +408,9 @@ class Coordinate:
         """
         c = _inplace_enabled_define_and_cleanup(self)
 
+        if "cyclic" in config and not config["cyclic"]:
+            return c
+            
         if c.period() is not None:
             return c
 

@@ -40,7 +40,8 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_naxes(1)), 7)
         self.assertEqual(len(c.filter_by_naxes(cf.ge(2))), 5)
         self.assertEqual(len(c.filter_by_naxes(1, cf.ge(2))), 12)
-       
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
