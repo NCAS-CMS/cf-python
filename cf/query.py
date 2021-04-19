@@ -1021,11 +1021,11 @@ def eq(value, units=None, attr=None, exact=True):
     >>> q == 4
     False
 
-    >>> q = cf.eq('air', exact=False)
+    >>> q = cf.eq('air')
     >>> q == 'air_temperature'
     True
 
-    >>> q = cf.eq('.*temp', exact=False)
+    >>> q = cf.eq('.*temp')
     >>> q == 'air_temperature'
     True
 

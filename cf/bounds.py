@@ -48,93 +48,93 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
     def contiguous(self, overlap=True, direction=None, period=None, verbose=1):
         """Return True if the bounds are contiguous.
 
-         Bounds are contiguous if the cell boundaries match up, or overlap,
-         with the boundaries of adjacent cells.
+        Bounds are contiguous if the cell boundaries match up, or overlap,
+        with the boundaries of adjacent cells.
 
-         In general, it is only possible for 1 or 0 variable dimensional
-         variables with bounds to be contiguous, but size 1 variables with
-         any number of dimensions are always contiguous.
+        In general, it is only possible for 1 or 0 variable dimensional
+        variables with bounds to be contiguous, but size 1 variables with
+        any number of dimensions are always contiguous.
 
-         An exception is raised if the variable is multidimensional and has
-         more than one element.
+        An exception is raised if the variable is multidimensional and has
+        more than one element.
 
-         .. versionadded:: 2.0
+        .. versionadded:: 2.0
 
         :Parameters:
 
-             overlap: `bool`, optional
-                 If False then 1-d cells with two bounds vertices are not
-                 considered contiguous if any adjacent cells overlap each
-                 other. By default such cells are considered contiguous.
+            overlap: `bool`, optional
+                If False then 1-d cells with two bounds vertices are not
+                considered contiguous if any adjacent cells overlap each
+                other. By default such cells are considered contiguous.
 
-             direction:
-                 Specify the direction of 1-d coordinates with two bounds
-                 vertices. Either True for increasing coordinates, or False
-                 for decreasing coordinates. By default the direction is
-                 inferred from whether the first bound of the first cell is
-                 less than its second bound (direction is True), or not
-                 (direction is False).
+            direction:
+                Specify the direction of 1-d coordinates with two bounds
+                vertices. Either True for increasing coordinates, or False
+                for decreasing coordinates. By default the direction is
+                inferred from whether the first bound of the first cell is
+                less than its second bound (direction is True), or not
+                (direction is False).
 
-             period: optional
-                 Define the period of cyclic values so that the test for
-                 contiguousness can be carried out with modulo
-                 arithmetic. By default the data are assumed to be
-                 non-cyclic, unless the bounds have units of longitude (or
-                 have units of ``'degrees'``), in which case a period of
-                 360 degrees is assumed.
+            period: optional
+                Define the period of cyclic values so that the test for
+                contiguousness can be carried out with modulo
+                arithmetic. By default the data are assumed to be
+                non-cyclic, unless the bounds have units of longitude (or
+                have units of ``'degrees'``), in which case a period of
+                360 degrees is assumed.
 
-             verbose: `int` or `str` or `None`, optional
-                 If an integer from ``-1`` to ``3``, or an equivalent string
-                 equal ignoring case to one of:
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent string
+                equal ignoring case to one of:
 
-                 * ``'DISABLE'`` (``0``)
-                 * ``'WARNING'`` (``1``)
-                 * ``'INFO'`` (``2``)
-                 * ``'DETAIL'`` (``3``)
-                 * ``'DEBUG'`` (``-1``)
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
 
-                 set for the duration of the method call only as the minimum
-                 cut-off for the verboseness level of displayed output (log)
-                 messages, regardless of the globally-configured `cf.log_level`.
-                 Note that increasing numerical value corresponds to increasing
-                 verbosity, with the exception of ``-1`` as a special case of
-                 maximal and extreme verbosity.
+                set for the duration of the method call only as the minimum
+                cut-off for the verboseness level of displayed output (log)
+                messages, regardless of the globally-configured `cf.log_level`.
+                Note that increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special case of
+                maximal and extreme verbosity.
 
-                 Otherwise, if `None` (the default value), output messages will
-                 be shown according to the value of the `cf.log_level` setting.
+                Otherwise, if `None` (the default value), output messages will
+                be shown according to the value of the `cf.log_level` setting.
 
-                 Overall, the higher a non-negative integer or equivalent string
-                 that is set (up to a maximum of ``3``/``'DETAIL'``) for
-                 increasing verbosity, the more description that is printed to
-                 convey information about the test for contiguity.
+                Overall, the higher a non-negative integer or equivalent string
+                that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                increasing verbosity, the more description that is printed to
+                convey information about the test for contiguity.
 
-         :Returns:
+        :Returns:
 
-             `bool`
-                 Whether or not the cells are contiguous.
+            `bool`
+                Whether or not the cells are contiguous.
 
-         **Examples:**
+        **Examples:**
 
-         >>> c.has_bounds()
-         False
-         >>> c.contiguous()
-         False
+        >>> c.has_bounds()
+        False
+        >>> c.contiguous()
+        False
 
-         >>> print(c.bounds[:, 0])
-         [  0.5   1.5   2.5   3.5 ]
-         >>> print(c.bounds[:, 1])
-         [  1.5   2.5   3.5   4.5 ]
-         >>> c.contiuous()
-         True
+        >>> print(c.bounds[:, 0])
+        [  0.5   1.5   2.5   3.5 ]
+        >>> print(c.bounds[:, 1])
+        [  1.5   2.5   3.5   4.5 ]
+        >>> c.contiuous()
+        True
 
-         >>> print(c.bounds[:, 0])
-         [  0.5   1.5   2.5   3.5 ]
-         >>> print(c.bounds[:, 1])
-         [  2.5   3.5   4.5   5.5 ]
-         >>> c.contiuous()
-         True
-         >>> c.contiuous(overlap=False)
-         False
+        >>> print(c.bounds[:, 0])
+        [  0.5   1.5   2.5   3.5 ]
+        >>> print(c.bounds[:, 1])
+        [  2.5   3.5   4.5   5.5 ]
+        >>> c.contiuous()
+        True
+        >>> c.contiuous(overlap=False)
+        False
 
         """
         data = self.get_data(None)
