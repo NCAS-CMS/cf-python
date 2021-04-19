@@ -614,8 +614,11 @@ class Properties(Container):
         if prop in self._special_properties:
             try:
                 return getattr(self, prop)
-            except AttributeError as err:
-                return self._default(default, err)
+            except AttributeError as error:
+                if default is None:
+                    return
+
+                return self._default(default, error)
 
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
@@ -714,8 +717,11 @@ class Properties(Container):
         if prop in self._special_properties:
             try:
                 out = getattr(self, prop)
-            except AttributeError as err:
-                return self._default(default, err)
+            except AttributeError as error:
+                if default is None:
+                    return
+
+                return self._default(default, error)
             else:
                 delattr(self, prop)
                 return out

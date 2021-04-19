@@ -490,6 +490,8 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 
 _axis = {"area": None}
 
+_autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
+
 
 class UMField:
     """TODO."""
@@ -911,7 +913,7 @@ class UMField:
                                 axiscode, "y"
                             )
                 else:
-                    ykey, yc = self.xy_coordinate(axiscode, "y")
+                    ykey, yc, yaxis = self.xy_coordinate(axiscode, "y")
 
             # --------------------------------------------------------
             # Create the 'X' dimension coordinate
@@ -932,7 +934,7 @@ class UMField:
                                 axiscode, "x"
                             )
                 else:
-                    xkey, xc = self.xy_coordinate(axiscode, "x")
+                    xkey, xc, xaxis = self.xy_coordinate(axiscode, "x")
 
             # -10: rotated latitude  (not an official axis code)
             # -11: rotated longitude (not an official axis code)
@@ -1051,8 +1053,15 @@ class UMField:
 
             # Force cyclic X axis for particular values of LBHEM
             if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
-                #                field.cyclic("X", period=360)
-                field.cyclic(xkey, period=360)
+                field.cyclic(
+                    xkey,
+                    iscyclic=True,
+                    config={
+                        "axis": xaxis,
+                        "coord": xc,
+                        "period": Data(360.0, units=xc.Units),
+                    },
+                )
 
             self.fields.append(field)
 
@@ -1194,7 +1203,7 @@ class UMField:
                 dc,
                 axes=[_axis["z"]],
                 copy=False,
-                autocyclic={"cyclic": False},
+                autocyclic=_autocyclic_false,
             )
 
         # "b" domain ancillary
@@ -1279,7 +1288,7 @@ class UMField:
             ac,
             axes=[_axis["z"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         array = numpy_array(
@@ -1303,7 +1312,7 @@ class UMField:
             ac,
             axes=[_axis["z"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -1386,7 +1395,7 @@ class UMField:
             dc,
             axes=[_axis["z"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1399,7 +1408,7 @@ class UMField:
             ac,
             axes=[_axis["z"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1410,7 +1419,7 @@ class UMField:
             ac,
             axes=[_axis["z"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         ac.id = "UM_atmosphere_hybrid_sigma_pressure_coordinate_bk"
@@ -2228,7 +2237,7 @@ class UMField:
                     c,
                     axes=[_axis["z"]],
                     copy=True,
-                    autocyclic={"cyclic": False},
+                    autocyclic=_autocyclic_false,
                 )
             else:
                 self.implementation.set_dimension_coordinate(
@@ -2236,7 +2245,7 @@ class UMField:
                     c,
                     axes=[_axis["z"]],
                     copy=True,
-                    autocyclic={"cyclic": False},
+                    autocyclic=_autocyclic_false,
                 )
         else:
             array = numpy_array(array, dtype=self.int_hdr_dtype)
@@ -2257,7 +2266,7 @@ class UMField:
                     ac,
                     axes=[_axis["z"]],
                     copy=False,
-                    autocyclic={"cyclic": False},
+                    autocyclic=_autocyclic_false,
                 )
 
             else:
@@ -2270,7 +2279,7 @@ class UMField:
                     dc,
                     axes=[_axis["z"]],
                     copy=False,
-                    autocyclic={"cyclic": False},
+                    autocyclic=_autocyclic_false,
                 )
 
             _cached_model_level_number_coordinate[key] = c
@@ -2369,7 +2378,7 @@ class UMField:
             dc,
             axes=[_axis["p"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2398,7 +2407,7 @@ class UMField:
             dc,
             axes=[_axis["r"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2456,7 +2465,7 @@ class UMField:
             dc,
             axes=[_axis["z"]],
             copy=copy,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2617,7 +2626,7 @@ class UMField:
             dc,
             axes=[_axis["t"]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2646,7 +2655,7 @@ class UMField:
             dc,
             axes=[_axis[axis]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2684,7 +2693,7 @@ class UMField:
             dc,
             axes=[_axis[axis]],
             copy=False,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2890,8 +2899,14 @@ class UMField:
             `str, `DimensionCoordinate`
 
         """
-        X = axis == "x"
+        X = axiscode in (11, -11)
+
         if X:
+            autocyclic = {"X": True}
+        else:
+            autocyclic = _autocyclic_false
+
+        if axis == "x":
             delta = self.bdx
             origin = self.real_hdr[bzx]
             size = self.lbnpt
@@ -2899,8 +2914,6 @@ class UMField:
             da = self.implementation.initialise_DomainAxis(size=size)
             axis_key = self.implementation.set_domain_axis(self.field, da)
             _axis["x"] = axis_key
-
-            autocyclic = {"X": True}
         else:
             delta = self.bdy
             origin = self.real_hdr[bzy]
@@ -2910,7 +2923,7 @@ class UMField:
             axis_key = self.implementation.set_domain_axis(self.field, da)
             _axis["y"] = axis_key
 
-            autocyclic = {"cyclic": False}
+            autocyclic = _autocyclic_false
 
         if abs(delta) > self.atol:
             # Create regular coordinates from header items
@@ -2948,26 +2961,25 @@ class UMField:
             array = self.extra.get(axis, None)
             bounds = self.extra.get(axis + "_bounds", None)
 
+        units = _axiscode_to_Units.setdefault(axiscode, None)
+
         dc = self.implementation.initialise_DimensionCoordinate()
-        dc = self.coord_data(
-            dc,
-            array,
-            bounds,
-            units=_axiscode_to_Units.setdefault(axiscode, None),
-        )
+        dc = self.coord_data(dc, array, bounds, units=units)
         dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
         if X and bounds is not None:
-            autocyclic["bounds_range"] = abs(bounds[0, 0] - bounds[-1, -1])
-            autocyclic["bounds_units"] = dc.Units
+            autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
+            autocyclic["period"] = Data(360.0, units=units)
+            autocyclic["axis"] = axis_key
+            autocyclic["coord"] = dc
 
         key = self.implementation.set_dimension_coordinate(
             self.field, dc, axes=[axis_key], copy=False, autocyclic=autocyclic
         )
 
-        return key, dc
+        return key, dc, axis_key
 
     @_manage_log_level_via_verbose_attr
     def z_coordinate(self, axiscode):
@@ -3039,7 +3051,7 @@ class UMField:
             dc,
             axes=[_axis["z"]],
             copy=copy,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         logger.info("    " + dc.dump(display=False))  # pragma: no cover
@@ -3114,7 +3126,7 @@ class UMField:
             dc,
             axes=[_axis["z"]],
             copy=copy,
-            autocyclic={"cyclic": False},
+            autocyclic=_autocyclic_false,
         )
 
         return dc

@@ -907,12 +907,22 @@ class FieldDomain:
            `bool`
 
         """
+        noop = config.get("no-op")
+
         if "cyclic" in config:
-            cyclic = config["cyclic"]
-            if not cyclic:
+            if not config["cyclic"]:
+                if not noop:
+                    self.cyclic(key, iscyclic=False, config=config)
                 return False
-        else:
-            cyclic = None
+            else:
+                period = coord.period()
+                if period is not None:
+                    period = None
+                else:
+                    period = config.get("period")
+
+                self.cyclic(key, iscyclic=True, period=period, config=config)
+                return True
 
         if coord is None:
             key, coord = self.dimension_coordinate(
@@ -922,13 +932,13 @@ class FieldDomain:
                 return False
         elif "X" in config:
             if not config["X"]:
+                if not noop:
+                    self.cyclic(key, iscyclic=False, config=config)
                 return False
         elif not coord.X:
+            if not noop:
+                self.cyclic(key, iscyclic=False, config=config)
             return False
-
-        if cyclic:
-            self.cyclic(key, iscyclic=True, period=config["period"])
-            return True
 
         bounds_range = config.get("bounds_range")
         if bounds_range is not None:
@@ -936,25 +946,32 @@ class FieldDomain:
         else:
             bounds = coord.get_bounds(None)
             if bounds is None:
-                self.cyclic(key, iscyclic=False)
+                if not noop:
+                    self.cyclic(key, iscyclic=False, config=config)
                 return False
 
             data = bounds.get_data(None, _fill_value=False)
             if data is None:
-                self.cyclic(key, iscyclic=False)
+                if not noop:
+                    self.cyclic(key, iscyclic=False, config=config)
                 return False
 
             bounds_units = bounds.Units
 
         period = coord.period()
-        has_period = period is not None
-        if not has_period:
+        if period is not None:
+            has_period = True
+        else:
+            period = config.get("period")
+            has_period = False
+
+        if period is None:
             if bounds_units.islongitude:
                 period = Data(360.0, units="degrees_east")
-            elif bounds_units == _units_degrees:
+            elif bounds_units.equivalent(_units_degrees):
                 period = Data(360.0, units="degrees")
             else:
-                self.cyclic(key, iscyclic=False)
+                self.cyclic(key, iscyclic=False, config=config)
                 return False
 
             period.Units = bounds_units
@@ -963,145 +980,19 @@ class FieldDomain:
             bounds_range = abs(data.last_element() - data.first_element())
 
         if bounds_range != period:
-            self.cyclic(key, iscyclic=False)
+            if not noop:
+                self.cyclic(key, iscyclic=False, config=config)
             return False
 
         if has_period:
             period = None
 
-        axis = self.get_data_axes(key, default=(None,))[0]
+        config = config.copy()
+        config["axis"] = self.get_data_axes(key, default=(None,))[0]
 
-        self.cyclic(
-            key,
-            iscyclic=True,
-            period=period,
-            config={"axis": axis, "dim": coord},
-        )
+        self.cyclic(key, iscyclic=True, period=period, config=config)
 
         return True
-
-    def del_construct(self, identity=None, default=ValueError()):
-        """Remove a metadata construct.
-
-        If a domain axis construct is selected for removal then it
-        can't be spanned by any metadata construct's data. See
-        `del_domain_axis` for more options in this case.
-
-        A domain ancillary construct may be removed even if it is
-        referenced by coordinate reference construct. In this case the
-        reference is replace with `None`.
-
-        .. versionadded:: 3.9.0
-
-        .. seealso:: `constructs`, `get_construct`, `has_construct`,
-                     `set_construct`, `del_domain_axis`,
-                     `del_coordinate_reference`
-
-        :Parameters:
-
-            identity: optional
-                Select the construct by one of
-
-                * A metadata construct identity.
-
-                  {{construct selection identity}}
-
-                * The key of a metadata construct
-
-                * `None`. This is the default, which selects the
-                  metadata construct when there is only one of them.
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='T'
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity=cf.eq('time')'``
-
-                *Parameter example:*
-                  ``identity=re.compile('^lat')``
-
-                Select the construct to removed. Must be
-
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-            default: optional
-                Return the value of the *default* parameter if the
-                construct can not be removed, or does not exist. If set to
-                an `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-                The removed metadata construct.
-
-        **Examples:**
-
-        >>> f.del_construct('X')
-        <CF DimensionCoordinate: grid_latitude(111) degrees>
-
-        """
-        key = self.construct_key(identity, default=None)
-        if key is None:
-            return self._default(
-                default,
-                f"Can't identify construct to delete from {identity!r}",
-            )
-
-        return super().del_construct(key, default=default)
 
     def del_coordinate_reference(
         self, identity=None, construct=None, default=ValueError()
@@ -1177,6 +1068,9 @@ class FieldDomain:
 
             key = self.coordinate_reference(identity, key=True, default=None)
             if key is None:
+                if default is None:
+                    return
+
                 return self._default(
                     default,
                     f"Can't identify construct from {identity!r}",
@@ -1197,6 +1091,9 @@ class FieldDomain:
 
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
+            if default is None:
+                return
+
             return self._default(
                 default, f"Can't identify construct from {construct!r}"
             )
@@ -2108,6 +2005,9 @@ class FieldDomain:
 
         c_key = self.construct(construct, key=True, default=None)
         if c_key is None:
+            if default is None:
+                return
+
             return self._default(
                 default, f"Can't identify construct from {construct!r}"
             )
@@ -2128,94 +2028,6 @@ class FieldDomain:
                 continue
 
         return out
-
-    def has_construct(self, identity=None):
-        """Whether a metadata construct exists.
-
-        .. versionadded:: 3.4.0
-
-        .. seealso:: `construct`, `del_construct`, `get_construct`,
-                     `set_construct`
-
-        :Parameters:
-
-            identity: optional
-                Select the construct. Must be
-
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='T'
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
-
-        :Returns:
-
-            `bool`
-                `True` if the construct exists, otherwise `False`.
-
-        **Examples:**
-
-        >>> f = cf.example_field(0)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-
-        >>> f.has_construct('T')
-        True
-        >>> f.has_construct('longitude')
-        True
-        >>> f.has_construct('Z')
-        False
-
-        """
-        return self.construct(identity, default=None) is not None
 
     def iscyclic(self, identity, **kwargs):
         """Returns True if the given axis is cyclic.
@@ -2607,9 +2419,7 @@ class FieldDomain:
         out = super().set_construct(construct, key=key, axes=axes, copy=copy)
 
         if construct_type == "dimension_coordinate":
-            construct.autoperiod(
-                inplace=True, config={"cyclic": autocyclic.get("cyclic", True)}
-            )
+            construct.autoperiod(inplace=True, config=autocyclic)
             self._conform_coordinate_references(out)
             self.autocyclic(key=out, coord=construct, config=autocyclic)
             try:
@@ -2618,9 +2428,7 @@ class FieldDomain:
                 pass
 
         elif construct_type == "auxiliary_coordinate":
-            construct.autoperiod(
-                inplace=True, config={"cyclic": autocyclic.get("cyclic", True)}
-            )
+            construct.autoperiod(inplace=True, config=autocyclic)
             self._conform_coordinate_references(out)
             try:
                 self._conform_cell_methods()

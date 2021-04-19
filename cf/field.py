@@ -2409,7 +2409,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return field0
 
     def _conform_coordinate_references(self, key, coordref=None):
-        """Where possible replace the content of coordiante refence
+        """Where possible replace the content of coordiante reference
         construct coordinates with coordinate construct keys.
 
         .. versionadded:: 3.0.0
@@ -2442,8 +2442,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             refs = [coordref]
 
         for ref in refs:
-            coordinates = ref.coordinates()
-            if identity in coordinates:
+            if identity in ref.coordinates():
                 ref.del_coordinate(identity, None)
                 ref.set_coordinate(key)
 
@@ -6381,15 +6380,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 self, "cyclic", kwargs
             )  # pragma: no cover
 
-        old = self._cyclic.copy()
-        if identity is None:
-            return old
+        if not iscyclic and config.get("no-op"):
+            return self._cyclic.copy()
 
-        if "axis" in config:
-            axis = config.get("axis")
-            if axis is None:
-                raise ValueError(f"Can't find config-supplied axis {axis!r}")
-        else:
+        old = None
+        cyclic = self._cyclic
+
+        if identity is None:
+            return cyclic.copy()
+
+        axis = config.get("axis")
+        if axis is None:
             axis = self.domain_axis(identity, key=True)
 
         data = self.get_data(None, _fill_value=False)
@@ -6400,28 +6401,39 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             except ValueError:
                 pass
 
-        # Never change _cyclic in-place
         if iscyclic:
-            self._cyclic = old.union((axis,))
-
-            if "dim" in config:
-                dim = config["dim"]
-            else:
+            dim = config.get("coord")
+            if dim is None:
                 dim = self.dimension_coordinate(
                     filter_by_axis=(axis,), default=None
                 )
 
             if dim is not None:
-                if period is not None:
-                    dim.period(period)
+                if config.get("period") is not None:
+                    dim.period(**config)
+                elif period is not None:
+                    dim.period(period, **config)
                 elif dim.period() is None:
                     raise ValueError(
                         "A cyclic dimension coordinate must have a period"
                     )
-        else:
-            cyclic = old.copy()
+
+            if axis not in cyclic:
+                # Never change _cyclic in-place
+                old = cyclic.copy()
+                cyclic = cyclic.copy()
+                cyclic.add(axis)
+                self._cyclic = cyclic
+
+        elif axis in cyclic:
+            # Never change _cyclic in-place
+            old = cyclic.copy()
+            cyclic = cyclic.copy()
             cyclic.discard(axis)
             self._cyclic = cyclic
+
+        if old is None:
+            old = cyclic.copy()
 
         return old
 
@@ -11624,7 +11636,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                             if not coord.increasing:
                                 lb, ub = ub, lb
-
                             if group_span + lb != ub:
                                 # The span of this group is not the
                                 # same as group_span, so don't
@@ -17684,9 +17695,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Set the cyclicity of the destination longitude
-        x = f.dimension_coordinate("X", default=None)
+        key, x = f.dimension_coordinate("X", default=(None, None), item=True)
         if x is not None and x.Units.equivalent(Units("degrees")):
-            f.cyclic("X", iscyclic=dst_cyclic, period=Data(360, "degrees"))
+            f.cyclic(
+                key,
+                iscyclic=dst_cyclic,
+                config={"coord": x, "period": Data(360.0, "degrees")},
+            )
 
         # Release old memory from ESMF (this ought to happen garbage
         # collection, but it doesn't seem to work there!)

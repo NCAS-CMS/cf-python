@@ -3630,7 +3630,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         print(cf_inspect(self))  # pragma: no cover
 
-    def period(self, *value):
+    def period(self, *value, **config):
         """Return or set the period for cyclic values.
 
         .. seealso:: `cyclic`
@@ -3678,7 +3678,7 @@ class PropertiesDataBounds(PropertiesData):
         <CF Data(): 360.0 degrees_east>
 
         """
-        old = super().period(*value)
+        old = super().period(*value, **config)
 
         if old is not None:
             return old
@@ -3687,7 +3687,7 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is None:
             return
 
-        return bounds.period(*value)
+        return bounds.period(*value, **config)
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

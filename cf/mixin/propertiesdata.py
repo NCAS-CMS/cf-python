@@ -1817,7 +1817,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get the minimum when there is no data array"
         )
 
-    def period(self, *value):
+    def period(self, *value, **config):
         """Return or set the period of the data.
 
         This is distinct from the cyclicity of individual axes.
@@ -1867,9 +1867,15 @@ class PropertiesData(Properties):
         <CF Data(): 360.0 degrees_east>
 
         """
-        old = self._custom.get("period")
+        custom = self._custom
+        old = custom.get("period")
         if old is not None:
             old = old.copy()
+
+        period = config.get("period")
+        if period is not None:
+            custom["period"] = period.copy()
+            return old
 
         if not value:
             return old
@@ -1894,7 +1900,7 @@ class PropertiesData(Properties):
             value = abs(value)
             value.dtype = float
 
-        self._custom["period"] = value
+        custom["period"] = value
 
         return old
 
@@ -3923,7 +3929,8 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
-        """Take the trigonometric inverse tangent of the data element-wise.
+        """Take the trigonometric inverse tangent of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
@@ -4139,7 +4146,8 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
-        """Take the trigonometric inverse cosine of the data element- wise.
+        """Take the trigonometric inverse cosine of the data element-
+        wise.
 
         Units are ignored in the calculation. The result has units of
         radians.
@@ -5164,8 +5172,7 @@ class PropertiesData(Properties):
         # Override the Units on the period
         period = v.period()
         if period is not None:
-            # v._custom['period'] = period.override_units(units)
-            v.period(period.override_units(units))
+            v.period(period=period.override_units(units))
 
         return v
 

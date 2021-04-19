@@ -6,7 +6,11 @@ from ..decorators import (
     _deprecated_kwarg_check,
 )
 
+from ..units import Units
 from ..data.data import Data
+
+
+_units_degrees = Units("degrees")
 
 
 class Coordinate:
@@ -411,16 +415,33 @@ class Coordinate:
         if "cyclic" in config and not config["cyclic"]:
             return c
 
+        if "X" in config:
+            X = config["X"]
+            if not X:
+                return c
+        else:
+            X = None
+
         if c.period() is not None:
             return c
 
-        if not (
+        if X is None and not (
             c.Units.islongitude
             or c.get_property("standard_name", None) == "grid_longitude"
         ):
             return c
 
-        c.period(Data(360.0, units=c.Units))
+        period = config.get("period")
+        if period is None:
+            units = c.Units
+            if units.islongitude:
+                period = Data(360.0, units="degrees_east")
+            else:
+                period = Data(360.0, units="degrees")
+
+            period.Units = units
+
+        c.period(period=period)
 
         return c
 
