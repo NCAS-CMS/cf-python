@@ -621,7 +621,6 @@ def read(
                             break
                 else:
                     files3.append(x)
-            # --- End: for
 
             files2 = files3
 
@@ -657,7 +656,6 @@ def read(
                     )  # pragma: no cover
 
                     continue
-            # --- End: if
 
             ftypes.add(ftype)
 
@@ -696,8 +694,6 @@ def read(
 
             field_counter = len(field_list)
             file_counter += 1
-        # --- End: for
-    # --- End: for
 
     logger.info(
         "Read {0} field{1} from {2} file{3}".format(
@@ -722,7 +718,6 @@ def read(
                 org_len, _plural(org_len), n, _plural(n)
             )
         )  # pragma: no cover
-    # --- End: if
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
@@ -738,7 +733,6 @@ def read(
         if standard_name is not None:
             f.set_property("standard_name", standard_name, copy=False)
             del f._custom["standard_name"]
-    # --- End: for
 
     # ----------------------------------------------------------------
     # Select matching fields from UM/PP fields (post setting of
@@ -764,7 +758,6 @@ def read(
     elif unsqueeze:
         for f in field_list:
             f.unsqueeze(inplace=True)
-    # --- End: if
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
@@ -885,7 +878,6 @@ def _read_a_file(
 
             if endian is None:
                 endian = "big"
-        # --- End: if
 
         if umversion is not None:
             umversion = float(str(umversion).replace(".", "0", 1))
@@ -899,7 +891,6 @@ def _read_a_file(
     #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
     #
     #            return FieldList()
-    # --- End: if
 
     extra_read_vars = {
         "chunk": chunk,
@@ -935,7 +926,6 @@ def _read_a_file(
                     "Can't determine format of file {} generated from CDL "
                     "file {}".format(filename, cdl_filename)
                 )
-    # --- End: if
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
         fields = netcdf.read(

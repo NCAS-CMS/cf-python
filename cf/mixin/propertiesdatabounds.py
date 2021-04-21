@@ -2459,16 +2459,17 @@ class PropertiesDataBounds(PropertiesData):
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
 
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`, `unsqueeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`,
+        `unsqueeze`
 
         :Parameters:
 
             axes: optional
                Select the domain axes to flip. One, or a sequence, of:
 
-                  * The position of the dimension in the data.
+               * The position of the dimension in the data.
 
-                If no axes are specified then all axes are flipped.
+               If no axes are specified then all axes are flipped.
 
             {{inplace: `bool`, optional}}
 
@@ -2477,8 +2478,8 @@ class PropertiesDataBounds(PropertiesData):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with flipped axes, or `None` if the operation
-                was in-place.
+                The construct with flipped axes, or `None` if the
+                operation was in-place.
 
         **Examples:**
 
@@ -2492,6 +2493,7 @@ class PropertiesDataBounds(PropertiesData):
 
         """
         v = _inplace_enabled_define_and_cleanup(self)
+
         super(PropertiesDataBounds, v).flip(axes=axes, inplace=True)
 
         interior_ring = v.get_interior_ring(None)
@@ -2503,7 +2505,7 @@ class PropertiesDataBounds(PropertiesData):
             # --------------------------------------------------------
             interior_ring.flip(axes, inplace=True)
 
-        bounds = v.get_bounds(None)
+        bounds = v.get_bounds_data(None, _fill_value=False)
         if bounds is not None:
             # --------------------------------------------------------
             # Flip the bounds.

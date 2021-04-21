@@ -20,9 +20,6 @@ class File_type(CT.Structure):
     ]
 
 
-# -- End: class
-
-
 def _get_ctypes_array(dtype, size=None):
     """Get ctypes corresponding to a numpy array of a given type.
 
@@ -117,9 +114,6 @@ class Enum:
             return val
 
         return self.names.index(val)
-
-
-# -- End: class
 
 
 enum_file_format = Enum("PP", "FF")
@@ -604,9 +598,6 @@ class CInterface:
             raise umfile.UMFileException("Error reading record data")
 
         return data
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

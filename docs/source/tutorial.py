@@ -56,8 +56,8 @@ t.identities()
 q, t = cf.read('file.nc')
 t.coordinate_references
 print(t.coordinate_references)
-list(t.coordinate_references.keys())
-for key, value in t.coordinate_references.items():
+list(t.coordinate_references().keys())
+for key, value in t.coordinate_references().items():
     print(key, repr(value))
 print(t.dimension_coordinates)
 print(t.domain_axes)
@@ -217,10 +217,12 @@ print(t.constructs.filter_by_property(
             'or',
            standard_name='air_temperature standard_error',
             units='m'))
-print(t.constructs.filter_by_axis('and', 'domainaxis1'))
+print(t.constructs.filter_by_axis('X', 'Y', axis_mode='or'))
 print(t.constructs.filter_by_measure('area'))
 print(t.constructs.filter_by_method('maximum'))
-print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
+print(
+    t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('domainaxis2')
+)
 c = t.constructs.filter_by_type('dimension_coordinate')
 d = c.filter_by_property(units='degrees')
 print(d)
@@ -248,34 +250,30 @@ t.construct('latitude')
 t.construct('latitude', key=True)
 key = t.construct_key('latitude')
 t.get_construct(key)
-t.constructs('latitude').value()
-t.constructs.get(key)
+key, lat = t.construct_item('latitude')
 t.constructs[key]
+t.constructs.get(key)
 t.auxiliary_coordinate('latitude')
 t.auxiliary_coordinate('latitude', key=True)
+t.auxiliary_coordinate('latitude', item=True)
 try:
-    t.construct('measure:volume')  # Raises Exception
+    t.construct('measure:volume')                # Raises Exception
 except:
     pass
-t.construct('measure:volume', False)
-c = t.constructs.filter_by_measure('volume')
+t.construct('measure:volume', default=False)
+try:
+    t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+except:
+    pass
+c = t.constructs.filter_by_measure("volume")
 len(c)
-try:
-    c.value()  # Raises Exception
-except:
-    pass
-c.value(default='No construct')
-try:
-    c.value(default=KeyError('My message'))  # Raises Exception
-except:
-    pass
-d = t.constructs('units=degrees')
+d = t.constructs("units=degrees")
 len(d)
 try:
-    d.value()  # Raises Exception
+    t.construct("units=degrees")  # Raises Exception
 except:
     pass
-print(d.value(default=None))
+print(t.construct("units=degrees", default=None))
 lon = q.construct('longitude')
 lon
 lon.set_property('long_name', 'Longitude')
@@ -322,7 +320,7 @@ print(domain_latitude.get_property('test'))
 domain_latitude.del_property('test')
 field_latitude.has_property('test')
 print(q.domain_axes)
-d = q.domain_axes.get('domainaxis1')
+d = q.domain_axes().get('domainaxis1')
 d
 d.get_size()
 print(t.coordinates)
@@ -360,7 +358,7 @@ print(f.auxiliary_coordinate('altitude', default=None))
 g = f.compute_vertical_coordinates()
 g.auxiliary_coordinate('altitude').dump()
 print(t.cell_methods)
-t.cell_methods.ordered()
+t.cell_methods().ordered()
 cm = t.constructs('method:mean').value()
 cm
 cm.get_axes()

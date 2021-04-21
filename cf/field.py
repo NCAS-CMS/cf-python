@@ -420,9 +420,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         logger.debug(
             self.__class__.__name__ + ".__getitem__"
         )  # pragma: no cover
-        logger.debug(
-            "    input indices = {}".format(indices)
-        )  # pragma: no cover
+        logger.debug(f"    input indices = {indices}")  # pragma: no cover
 
         if indices is Ellipsis:
             return self.copy()
@@ -493,7 +491,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             construct_data_axes = new.constructs.data_axes()
 
             for key, construct in new.constructs.filter_by_axis(
-                "or", *data_axes, todict=True
+                *data_axes, axis_mode="or", todict=True
             ).items():
                 construct_axes = construct_data_axes[key]
                 dice = []
@@ -540,8 +538,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         needs_slicing = True
                         dice = [auxiliary_mask[0], item_mask] + dice
 
-                logger.debug("    dice = {}".format(dice))  # pragma: no cover
-
                 # Replace existing construct with its subspace
                 if needs_slicing:
                     new.set_construct(
@@ -581,9 +577,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         else:
             if data is None:
                 raise ValueError(
-                    "Can't assign to a {} from a {!r} with no data".format(
-                        self.__class__.__name__, value.__class__.__name__
-                    )
+                    f"Can't assign to a {self.__class__.__name__} from a "
+                    f"{value.__class__.__name__} with no data"
                 )
 
             value = data
@@ -1600,9 +1595,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if axis1 in field1_dimension_coordinates:
                 insert_dim[axis1] = [axis0]
 
-            #            for key1 in field1_auxiliary_coordinates.filter_by_axis(
-            #                axis1, mode="exact", view=True
-            #            ):
             for key1 in field1.auxiliary_coordinates(
                 filter_by_axis=(axis1,), axis_mode="exact", todict=True
             ):
@@ -1618,16 +1610,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Remove all field0 auxiliary coordinates and domain
             # ancillaries which span this axis
-            #            remove_items.update(c.filter_by_axis("and", axis0, todict=True))
             remove_items.update(
                 field0.constructs.filter(
                     filter_by_type=(
                         "auxiliary_coordinate",
                         "domain_ancillary",
                     ),
-                    filter_by_axis=(
-                        axis0,
-                    ),  # TODO check if we need an axis_mode="or" or "subset" here
+                    filter_by_axis=(axis0,),
+                    # TODO check if we need an axis_mode="or" or "subset" here
                     todict=True,
                 )
             )
@@ -2093,8 +2083,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         axes_to_replace_from_field1 = {}
 
         # List of field1 coordinate reference constucts which will
-        # be added to field0. E.g.
-        # [<CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>]
+        # be added to field0
         refs_to_add_from_field1 = []
 
         # Check that the two fields are combinable
@@ -2230,7 +2219,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 a = out0[identity]
                 if y.size > 1 and a.size == 1:
                     for key0, c in field0.constructs.filter_by_axis(
-                        "or", a.axis, todict=True
+                        a.axis, axis_mode="or", todict=True
                     ).items():
                         removed_refs0 = field0.del_coordinate_reference(
                             construct=key0, default=None
@@ -7158,7 +7147,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 field.del_coordinate_reference(key)
 
         for key in field.constructs.filter_by_axis(
-            "or", *not_needed_axes, todict=True
+            *not_needed_axes, axis_mode="or", todict=True
         ):
             field.del_construct(key)
 
@@ -10311,9 +10300,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"Changing axis size to 1: {axis}"
                 )  # pragma: no cover
 
-                #                dim = dimension_coordinates.filter_by_axis(
-                #                    axis, mode="exact", view=True
-                #                ).value(None)
                 dim = f.dimension_coordinate(
                     filter_by_axis=(axis,), default=None
                 )
@@ -12619,7 +12605,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 logger.debug(
                     "    mask.shape  = {}".format(mask.shape)
                 )  # pragma: no cover
-        # --- End: for
 
         indices = tuple(parse_indices(self.shape, tuple(indices)))
 
@@ -12863,95 +12848,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    #    def domain_axis(
-    #        self,
-    #        *identity,
-    #        default=ValueError(),
-    #        key=False,
-    #        item=False,
-    #        **filter_kwargs,
-    #    ):
-    #        """Select a domain axis construct.
-    #
-    #        {{unique construct}}
-    #
-    #        .. versionadded:: 1.8.9.0
-    #
-    #        .. seealso:: `construct`, `domain_axes`
-    #
-    #        :Parameters:
-    #
-    #            identity: optional
-    #                Select domain axis constructs that have an identity,
-    #                defined by their `!identities` methods, that matches
-    #                any of the given values.
-    #
-    #                Additionally, the values are matched against construct
-    #                identifiers, with or without the ``'key%'`` prefix.
-    #
-    #                Additionally, if for a given value
-    #                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
-    #                1-d coordinate constructs that all span the same
-    #                domain axis construct then that domain axis construct
-    #                is selected. See `coordinates` for details.
-    #
-    #                Additionally, if there is a `Field` data array and a
-    #                value matches the integer position of an array
-    #                dimension, then the corresponding domain axis
-    #                construct is selected.
-    #
-    #                If no values are provided then all domain axis
-    #                constructs are selected.
-    #
-    #                {{value match}}
-    #
-    #                {{displayed identity}}
-    #
-    #            {{key: `bool`, optional}}
-    #
-    #            {{item: `bool`, optional}}
-    #
-    #            default: optional
-    #                Return the value of the *default* parameter if there
-    #                is no unique construct.
-    #
-    #                {{default Exception}}
-    #
-    #            {{filter_kwargs: optional}}
-    #
-    #        :Returns:
-    #
-    #                {{Returns construct}}
-    #
-    #
-    #        **Examples:**
-    #
-    #        """
-    #        filter_kwargs["todict"] = True
-    #
-    #        c = self.domain_axes(*identity, **filter_kwargs)
-    #
-    #        # Return construct, or key, or both, or default
-    #        n = len(c)
-    #        if n == 1:
-    #            k, construct = c.popitem()
-    #            if key:
-    #                return k
-    #
-    #            if item:
-    #                return k, construct
-    #
-    #            return construct
-    #
-    #        if default is None:
-    #            return default
-    #
-    #        return self._default(
-    #            default,
-    #            f"{self.__class__.__name__}.domain_axis() can't return {n} "
-    #            "constructs",
-    #        )
-
     def domain_mask(self, **kwargs):
         """Return a boolean field that is True where criteria are met.
 
@@ -13155,10 +13051,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             cr.set_coordinate(key)
 
             logger.debug(
-                "Non-parametric coordinates construct key: {!r}\n"
-                "Updated coordinate reference construct:\n{}".format(
-                    key, cr.dump(display=False, _level=1)
-                )
+                "Non-parametric coordinates construct key: {key!r}\n"
+                "Updated coordinate reference construct:\n"
+                f"{cr.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
         return f
@@ -13316,7 +13211,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         n = 0
 
-        self_cell_methods = self.cell_methods(todict=True)  # TODO
+        # TODO - replace ().ordered() with (todict=True) when Python
+        #        3.6 is deprecated
+        self_cell_methods = self.cell_methods().ordered()
 
         for identity in identities:
             cms = False
@@ -13344,9 +13241,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     }:
                         key = tuple(self_cell_methods)[-1]
                         filtered = self.cell_method(
-                            identity, filter_by_key=(key,)
+                            identity, filter_by_key=(key,), default=None
                         )
-                        if not filtered:
+                        if filtered is None:
                             if not OR:
                                 return False
 
@@ -14379,7 +14276,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
         if axis_key is None:
-            raise ValueError("Invalid axis specifier: {!r}".format(axis))
+            raise ValueError(f"Invalid axis specifier: {axis!r}")
 
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
@@ -14433,11 +14330,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             axes: (sequence of) `str` or `int`, optional
-                Select the domain axes to flip, defined by the domain axes
-                that would be selected by passing each given axis
+                Select the domain axes to flip, defined by the domain
+                axes that would be selected by passing each given axis
                 description to a call of the field construct's
-                `domain_axis` method. For example, for a value of ``'X'``,
-                the domain axis construct returned by
+                `domain_axis` method. For example, for a value of
+                ``'X'``, the domain axis construct returned by
                 ``f.domain_axis('X')`` is selected.
 
                 If no axes are provided then all axes are flipped.
@@ -14451,8 +14348,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field` or `None`
-                The field construct with flipped axes, or `None` if the
-                operation was in-place.
+                The field construct with flipped axes, or `None` if
+                the operation was in-place.
 
         **Examples:**
 
@@ -14711,16 +14608,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if da_key0 not in data_axes:
             raise ValueError(
-                "Can't swapaxes {}: Bad axis specification: {!r}".format(
-                    self.__class__.__name__, axis0
-                )
+                f"Can't swapaxes: Bad axis specification: {axis0!r}"
             )
 
         if da_key1 not in data_axes:
             raise ValueError(
-                "Can't swapaxes {}: Bad axis specification: {!r}".format(
-                    self.__class__.__name__, axis1
-                )
+                f"Can't swapaxes: Bad axis specification: {axis1!r}"
             )
 
         axis0 = data_axes.index(da_key0)
@@ -14838,54 +14731,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Transpose the field's data array
         return super().transpose(iaxes, constructs=constructs, inplace=inplace)
 
-    #    @_inplace_enabled(default=False)
-    #    def uncompress(self, inplace=False):
-    #        '''Uncompress the construct.
-    #
-    #    Compression saves space by identifying and removing unwanted
-    #    missing data. Such compression techniques store the data more
-    #    efficiently and result in no precision loss.
-    #
-    #    Whether or not the construct is compressed does not alter its
-    #    functionality nor external appearance.
-    #
-    #    The following type of compression are available:
-    #
-    #        * Ragged arrays for discrete sampling geometries (DSG). Three
-    #          different types of ragged array representation are
-    #          supported.
-    #
-    #        ..
-    #
-    #        * Compression by gathering.
-    #
-    #    .. versionadded:: 3.0.6
-    #
-    #    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
-    #
-    #    :Parameters:
-    #
-    #        {{inplace: `bool`, optional}}
-    #
-    #    :Returns:
-    #
-    #        `Field` or `None`
-    #            The uncompressed field construct, or `None` if the
-    #            operation was in-place.
-    #
-    #    **Examples:**
-    #
-    #    TODO
-    #
-    #        '''
-    #        f = _inplace_enabled_define_and_cleanup(self)
-    #        super(Field, f).uncompress(inplace=True)
-    #
-    #        for c in f.constructs.filter_by_data().values():
-    #            c.uncompress(inplace=True)
-    #
-    #        return f
-
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
@@ -14987,6 +14832,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -14994,6 +14841,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -15049,6 +14898,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -15056,6 +14907,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -15627,11 +15480,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
 
         """
-        if verbose:
-            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-            _ = "{}.halo(".format(self.__class__.__name__)
-            print("{}{})".format(_, (",\n" + " " * len(_)).join(_kwargs)))
-
         f = _inplace_enabled_define_and_cleanup(self)
 
         # Set the halo size for each axis.
@@ -15646,9 +15494,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if not set(data_axes).issuperset(axis_halo):
                 raise ValueError(
-                    "Can't apply halo: Bad axis specification: {!r}".format(
-                        size
-                    )
+                    f"Can't apply halo: Bad axis specification: {size!r}"
                 )
         else:
             if axes is None:
@@ -15677,16 +15523,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             try:
                 i_X = data_axes.index(X)
             except ValueError:
-                raise ValueError(
-                    "Axis {!r} is not spanned by the data".format(X_axis)
-                )
+                raise ValueError(f"Axis {X_axis!r} is not spanned by the data")
 
             try:
                 i_Y = data_axes.index(Y)
             except ValueError:
-                raise ValueError(
-                    "Axis {!r} is not spanned by the data".format(Y_axis)
-                )
+                raise ValueError(f"Axis {Y_axis!r} is not spanned by the data")
 
             tripolar["X"] = i_X
             tripolar["Y"] = i_Y
@@ -15736,9 +15578,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 inplace=True,
                 verbose=verbose,
             )
-
-        if verbose:
-            print("Returns:{!r}".format(f))  # pragma: no cover
 
         return f
 
@@ -16020,7 +15859,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         if other_axes:
             for key, c in self.constructs.filter_by_axis(
-                "subset", *other_axes, todict=True
+                *other_axes, axis_mode="subset", todict=True
             ).items():
                 c_axes = self.get_data_axes(key)
                 out.set_construct(c, axes=c_axes, key=key)
@@ -16330,7 +16169,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Flatten the constructs that span all of the flattened axes,
         # and no others.
         for key, c in f.constructs.filter_by_axis(
-            "and", *axes, todict=True
+            *axes, axis_mode="and", todict=True
         ).items():
             c_axes = f.get_data_axes(key)
             c_iaxes = sorted(
@@ -16345,7 +16184,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Remove constructs that span some, but not all, of the
         # flattened axes
-        for key in f.constructs.filter_by_axis("or", *axes, todict=True):
+        for key in f.constructs.filter_by_axis(
+            *axes, axis_mode="or", todict=True
+        ):
             f.del_construct(key)
 
         # Remove the domain axis constructs for the flattened axes
@@ -16722,7 +16563,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             key = g.construct_key(
                 construct,
                 default=ValueError(
-                    "Can't identify unique {!r} construct".format(construct)
+                    f"Can't identify unique {construct!r} construct"
                 ),
             )
             construct = g.constructs[key]
@@ -16735,7 +16576,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             construct_data = construct.get_data(None, _fill_value=False)
             if construct_data is None:
-                raise ValueError("{!r} has no data".format(construct))
+                raise ValueError(f"{construct!r} has no data")
 
             if construct_data_axes != data_axes:
                 s = [
@@ -18057,9 +17898,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 try:
                     dst_coords.append(dst[axis])
                 except KeyError:
-                    raise ValueError(
-                        "Axis {!r} not specified in dst.".format(axis)
-                    )
+                    raise ValueError(f"Axis {axis!r} not specified in dst.")
 
             dst_axis_keys = None
         else:
@@ -18076,9 +17915,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             else:
                 raise ValueError(
                     "Units of source and destination domains are not "
-                    "equivalent: {!r}, {!r}".format(
-                        src_coord.Units, dst_coord.Units
-                    )
+                    f"equivalent: {src_coord.Units!r}, {dst_coord.Units!r}"
                 )
 
         # Get the axis indices and their order for the source field
@@ -18479,9 +18316,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         long_name = f.get_property("long_name", None)
         if standard_name is not None:
             del f.standard_name
-            f.long_name = "derivative of {}".format(standard_name)
+            f.long_name = f"derivative of {standard_name}"
         elif long_name is not None:
-            f.long_name = "derivative of {}".format(long_name)
+            f.long_name = f"derivative of {long_name}"
 
         return f
 

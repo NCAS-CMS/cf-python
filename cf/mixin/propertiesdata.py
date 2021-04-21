@@ -4875,22 +4875,29 @@ class PropertiesData(Properties):
     def get_data(self, default=ValueError(), _units=None, _fill_value=True):
         """Return the data.
 
-        Note that a `Data` instance is returned. Use its `array` attribute
-        to return the data as an independent `numpy` array.
+        Note that a `Data` instance is returned. Use its `array`
+        attribute to return the data as an independent `numpy` array.
 
         The units, calendar and fill value properties are, if set,
         inserted into the data.
 
         .. versionadded:: 1.7.0
 
-        .. seealso:: `array`, `data`, `del_data`, `has_data`, `set_data`
+        .. seealso:: `array`, `data`, `del_data`, `has_data`,
+                     `set_data`
 
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if data have
-                not been set. If set to an `Exception` instance then it
-                will be raised instead.
+                Return the value of the *default* parameter if data
+                have not been set.
+
+                {{default Exception}}
+
+            _units: optional
+                Ignored.
+
+            _fill_value: optional
 
         :Returns:
 

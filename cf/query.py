@@ -755,9 +755,9 @@ class Query:
     # ----------------------------------------------------------------
     @property
     def exact(self):
-        """TODO Deprecated at version 3.0.0.
+        """Deprecated at version 3.0.0.
 
-        Use re.compile objects instead.
+        Use `re.compile` objects instead.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(

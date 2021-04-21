@@ -1284,6 +1284,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1291,6 +1293,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1343,6 +1347,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1350,6 +1356,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1405,6 +1413,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1412,6 +1422,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1467,6 +1479,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1474,6 +1488,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1530,6 +1546,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1537,6 +1555,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1666,6 +1686,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1673,6 +1695,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1827,6 +1851,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1834,6 +1860,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -1900,6 +1928,8 @@ class FieldDomain:
 
             {{item: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 3.9.0
+
             default: optional
                 Return the value of the *default* parameter if there
                 is no unique construct.
@@ -1907,6 +1937,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -2029,31 +2061,25 @@ class FieldDomain:
 
         return out
 
-    def iscyclic(self, identity, **kwargs):
+    def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
+
+        {{unique construct}}
 
         .. versionadded:: 1.0
 
-        .. seealso:: `axis`, `cyclic`, `period`
+        .. seealso:: `cyclic`, `period`, `domain_axis`
 
         :Parameters:
 
-            identity:
-               Select the domain axis construct by one of:
+            identity: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
 
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
+            {{filter_kwargs: optional}}
 
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                The *identity* parameter selects the domain axis as
-                returned by this call of the field construct's
-                `domain_axis` method: ``f.domain_axis(identity)``.
-
-            kwargs: deprecated at version 3.0.0
+                .. versionadded:: (cfdm) 3.9.0
 
         :Returns:
 
@@ -2075,16 +2101,11 @@ class FieldDomain:
         >>> x = f.iscyclic(2)
 
         """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "iscyclic", kwargs
-            )  # pragma: no cover
-
-        axis = self.domain_axis(identity, key=True, default=None)
+        axis = self.domain_axis(
+            *identity, key=True, default=None, **filter_kwargs
+        )
         if axis is None:
-            raise ValueError(
-                f"Can't identify unique axis from identity {identity!r}"
-            )
+            raise ValueError("Can't identify unique axis")
 
         return axis in self.cyclic()
 
@@ -2185,74 +2206,29 @@ class FieldDomain:
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `set_construct`
+        .. seealso:: `set_construct`, `construct`
 
         :Parameters:
 
-            identity:
-                Select TODO the metadata construct to be replaced by one of:
+            identity: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
 
-                  * The identity or key of a metadata construct.
-
-                  * The identity or key of a domain axis construct that is
-                    spanned by a metadata construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, ``'ncvar%lat'``,
-                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='Y'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-            construct:
+            new:
                The new construct to replace that selected by the
                *identity* parameter.
 
             copy: `bool`, optional
                 If True then set a copy of the new construct. By default
                 the construct is copied.
+
+            {{filter_kwargs: optional}}
+
+                .. versionadded:: 3.9.0
+
+            construct:
+                Deprecated at version 3.9.0
 
         :Returns:
 

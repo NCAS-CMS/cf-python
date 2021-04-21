@@ -684,6 +684,7 @@ class DimensionCoordinate(
         """Flips the dimension coordinate, that is reverses its
         direction."""
         d = _inplace_enabled_define_and_cleanup(self)
+
         super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
 
         direction = d._custom.get("direction")
@@ -697,14 +698,14 @@ class DimensionCoordinate(
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `bounds`, `create_bounds', `get_data`, `del_bounds`,
-                     `has_bounds`, `set_bounds`
+        .. seealso:: `bounds`, `create_bounds', `get_data`,
+                     `del_bounds`, `has_bounds`, `set_bounds`
 
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if bounds have
-                not been set.
+                Return the value of the *default* parameter if bounds
+                have not been set.
 
                 {{default Exception}}
 

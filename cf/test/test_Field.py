@@ -1558,7 +1558,7 @@ class FieldTest(unittest.TestCase):
         filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
-        f = cf.read(self.filename)[0]
+        f = cf.read(filename)[0]
 
         array = numpy.ma.array(f.array)
 
@@ -1891,11 +1891,10 @@ class FieldTest(unittest.TestCase):
             ["None", "eastward_wind"],
         ):
             self.assertTrue(
-                f.match(*identities), "Failed with {}".format(identities)
+                f.match(*identities), f"Failed with {identities!r}"
             )
             self.assertTrue(
-                f.match_by_identity(*identities),
-                "Failed with {}".format(identities),
+                f.match_by_identity(*identities), f"Failed with {identities!r}"
             )
 
         # match_by_property
@@ -1909,7 +1908,7 @@ class FieldTest(unittest.TestCase):
             ):
                 self.assertTrue(
                     f.match_by_property(*mode, **properties),
-                    "Failed with {} {}".format(mode, properties),
+                    f"Failed with {mode} {properties}",
                 )
 
         for mode in (["or"],):
@@ -1923,7 +1922,7 @@ class FieldTest(unittest.TestCase):
             ):
                 self.assertTrue(
                     f.match_by_property(*mode, **properties),
-                    "Failed with {} {}".format(mode, properties),
+                    f"Failed with {mode} {properties}",
                 )
         # match_by_units
         self.assertTrue(f.match_by_units("m s-1"))

@@ -7,13 +7,7 @@ Special docstring subtitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
-Replacement text may contain other non-special substitutions.
-
-.. note:: The values are only checked once for embedded non-special
-          substitutions, so if the embedded substitution itself
-          contains a non-special substitution then the latter will
-          *not* be replaced. This restriction is to prevent the
-          possibility of infinite recursion.
+Replacement text may not contain other non-special substitutions.
 
 Keys must be `str` or `re.Pattern` objects:
 
@@ -42,9 +36,13 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
+    #
     # ----------------------------------------------------------------
     # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
+    # List comparison
+    "{{List comparison}}": """Each construct in the list is compared with its `!equals`
+        method, rather than the ``==`` operator.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
@@ -56,7 +54,7 @@ _docstring_substitution_definitions = {
                 If False then do not assume that missing terms have a
                 value of zero. By default a missing term is assumed to
                 be zero.""",
-    # key: `bool`, optional}}
+    # key: `bool`, optional
     "{{key: `bool`, optional}}": """key: `bool`, optional
                 If True then return the selected construct
                 identifier. By default the construct itself is
@@ -69,7 +67,7 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
-    # Returns formula}
+    # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.
 

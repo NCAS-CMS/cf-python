@@ -430,7 +430,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f.select_field("not this one")
 
-        self.assertIsNone(f.select_field("not this one", None))
+        self.assertIsNone(f.select_field("not this one", default=None))
 
         g = f.select_field("air_temperature")
         self.assertIsInstance(g, cf.Field)

@@ -155,7 +155,7 @@ class Constructs(cfdm.Constructs):
     #
     #         return self.constructs[da_key]
 
-    def _filter_by_identity(self, arg, todict, _config, identities):
+    def _filter_by_identity(self, arg, identities, todict, _config):
         """Worker function for `filter_by_identity` and `filter`.
 
         See `filter_by_identity` for details.
@@ -165,17 +165,13 @@ class Constructs(cfdm.Constructs):
         """
         ctypes = [i for i in "XTYZ" if i in identities]
 
-        #        if len(ctypes) == len(identities):
-        #            # All identities are coordinate types (X, T, Y or Z)
-        #            return self._filter_by_coordinate_type(arg, todict, ctypes)
-
         config = {"identities_kwargs": {"ctypes": ctypes}}
         if _config:
             config.update(_config)
 
-        return super()._filter_by_identity(arg, todict, config, identities)
+        return super()._filter_by_identity(arg, identities, todict, config)
 
-    #    def _filter_by_coordinate_type(self, arg, todict, ctypes):
+    #    def _filter_by_coordinate_type(self, arg, ctypes, todict):
     #        """Worker function for `filter_by_identity` and `filter`.
     #
     #        See `filter_by_identity` for details.

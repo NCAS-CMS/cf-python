@@ -43,7 +43,6 @@ def _open_um_file(
                 close_one_file()
 
             f.open_fd()
-        # --- End: if
 
         return f
 

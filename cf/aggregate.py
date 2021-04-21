@@ -2706,8 +2706,10 @@ def _group_fields(meta, axis):
             # Zero axes have different 1-d coordinate values, so don't
             # aggregate anything in this entire group.
             # --------------------------------------------------------
-            meta[0].message = (
-                "indistinguishable coordinates or other " "domain information"
+            meta[
+                0
+            ].message = (
+                "No corresponding axes have different 1-d coordinate values."
             )
             return ()
 

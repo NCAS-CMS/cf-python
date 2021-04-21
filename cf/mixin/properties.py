@@ -742,18 +742,20 @@ class Properties(Container):
                 Define one or more conditions on the identities.
 
                 A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time', ``'ncvar%lat'``,
-                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that is compared with
-                the construct's identities via `re.search`.
+                (e.g. ``'latitude'``, ``'long_name=time',
+                ``'ncvar%lat'``, etc.); a `Query` object
+                (e.g. ``cf.eq('longitude')``); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``) that
+                is compared with the construct's identities via
+                `re.search`.
 
-                A construct has a number of identities, and the condition
-                is satisfied if any of the construct's identities, as
-                returned by the `identities` method, equals the condition
-                value. A construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has six identities:
+                A construct has a number of identities, and the
+                condition is satisfied if any of the construct's
+                identities, as returned by the `identities` method,
+                equals the condition value. A construct's identities
+                are those returned by its `!identities` method. In the
+                following example, the construct ``x`` has six
+                identities:
 
                    >>> x.identities()
                    ['time',
@@ -782,11 +784,9 @@ class Properties(Container):
         if not identities:
             return True
 
-        self_identities = self.identities()
-
         ok = False
-        for value0 in identities:
-            for value1 in self_identities:
+        for value1 in self.identities(generator=True):
+            for value0 in identities:
                 ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break

@@ -124,7 +124,6 @@ class UMFileArray(FileArray):
             mask = array == fill_value
             if mask.any():
                 array = numpy_ma_masked_where(mask, array, copy=False)
-        # --- End: if
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
@@ -194,6 +193,3 @@ class UMFileArray(FileArray):
             word_size=getattr(self, "word_size", None),
             byte_ordering=getattr(self, "byte_ordering", None),
         )
-
-
-# --- End: class
