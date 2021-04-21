@@ -1,4 +1,4 @@
-from .functions import _DEPRECATION_ERROR_ARG
+from ..functions import _DEPRECATION_ERROR_ARG
 
 
 class FieldDomainList:
