@@ -342,7 +342,7 @@ class ConstructList(list, Container, cfdm.Container):
         """Sort of the list in place.
 
         By default the list is sorted by the identities of its
-        constructs, but any sort criteria cna be specified with the
+        constructs, but any sort criteria can be specified with the
         *key* parameter.
 
         The sort is stable.
@@ -635,7 +635,7 @@ class ConstructList(list, Container, cfdm.Container):
         """Select list elements constructs by identity.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_identity` method of the constucts. For
+        with the `!match_by_identity` method of the constructs. For
         example, to select all constructs whose identity is *not*
         ``'air_temperature'``:
 
@@ -690,7 +690,7 @@ class ConstructList(list, Container, cfdm.Container):
         """Alias of `cf.{{class}}.select_by_identity`.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_identity` method of the constucts. For
+        with the `!match_by_identity` method of the constructs. For
         example, to select all constructs whose identity is *not*
         ``'air_temperature'``:
 

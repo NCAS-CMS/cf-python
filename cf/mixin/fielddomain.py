@@ -66,7 +66,7 @@ class FieldDomain:
                 any number of constructs.
 
             identities: sequence
-                As for the *identities* parmaeter of the calling
+                As for the *identities* parameter of the calling
                 method.
 
             {{key: `bool`, optional}}
@@ -204,7 +204,7 @@ class FieldDomain:
                     )
 
             if axes in parsed:
-                # The axes are the same as an exisiting key
+                # The axes are the same as an existing key
                 parsed[axes].append((axes, key, construct, value))
             else:
                 new_key = True
@@ -1621,7 +1621,7 @@ class FieldDomain:
                 :Returns:
 
                     `set`
-                        The identifiers of the domain axis constructs that san
+                        The identifiers of the domain axis constructs that span
                         the data of all coordinate and domain ancillary
                         constructs used by the selected coordinate reference
                         construct.
@@ -1748,7 +1748,7 @@ class FieldDomain:
                    domain construct when there is only one of them.
 
             axes: deprecated at version 3.0.0
-                Use the *identity* parmeter instead.
+                Use the *identity* parameter instead.
 
             size: deprecated at version 3.0.0
 
@@ -2336,7 +2336,7 @@ class FieldDomain:
 
             autocyclic: `dict`, optional
                 Additional parameters for optimizing the operation,
-                raelating to coordinate periodicity and cyclicity. See
+                relating to coordinate periodicity and cyclicity. See
                 the code for details.
 
                 .. versionadded:: 3.9.0
@@ -2446,7 +2446,7 @@ class FieldDomain:
                 The construct identifier to be used for the
                 construct. If not set then a new, unique identifier is
                 created automatically. If the identifier already
-                exisits then the exisiting construct will be replaced.
+                exists then the existing construct will be replaced.
 
                 *Parameter example:*
                   ``key='coordinatereference1'``
@@ -2463,7 +2463,7 @@ class FieldDomain:
         :Returns:
 
             `str`
-                The construct identifier for the coordinate refernece
+                The construct identifier for the coordinate reference
                 construct.
 
         """

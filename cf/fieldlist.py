@@ -1,12 +1,7 @@
 from . import mixin
 from . import ConstructList
 
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_DICT,
-)
+from .functions import _DEPRECATION_ERROR_METHOD
 
 
 class FieldList(mixin.FieldDomainList, ConstructList):
@@ -18,7 +13,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     indexing and methods like `!append`). These methods provide
     functionality similar to that of a :ref:`built-in list
     <python:tut-morelists>`. The main difference is that when a field
-    construct element needs to be assesed for equality its
+    construct element needs to be assessed for equality its
     `~cf.Field.equals` method is used, rather than the ``==``
     operator.
 
@@ -66,7 +61,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """Select field constructs by property.
 
         To find the inverse of the selection, use a list comprehension
-        with `~cf.Field.match_by_naxes` method of the constuct
+        with `~cf.Field.match_by_naxes` method of the construct
         elements. For example, to select all constructs which do *not*
         have 3-dimensional data:
 
@@ -108,7 +103,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """Select field constructs by units.
 
         To find the inverse of the selection, use a list comprehension
-        with `~cf.Field.match_by_units` method of the constuct
+        with `~cf.Field.match_by_units` method of the construct
         elements. For example, to select all constructs whose units
         are *not* ``'km'``:
 
@@ -229,66 +224,6 @@ class FieldList(mixin.FieldDomainList, ConstructList):
             )
 
         return out[0]
-
-    # ----------------------------------------------------------------
-    # Aliases
-    # ----------------------------------------------------------------
-    def select(self, *identities, **kwargs):
-        """Alias of `cf.FieldList.select_by_identity`.
-
-        To find the inverse of the selection, use a list comprehension
-        with the `~cf.Field.match_by_identity` method of the field
-        constucts. For example, to select all field constructs whose
-        identity is *not* ``'air_temperature'``:
-
-           >>> gl = cf.FieldList(f for f in fl
-           ...                   if not f.match_by_identity('air_temperature'))
-
-        .. seealso:: `select_by_identity`, `select_field`
-
-        """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "select",
-                kwargs,
-                "Use methods 'select_by_units', 'select_by_construct', "
-                "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
-                "instead.",
-            )  # pragma: no cover
-
-        if identities and isinstance(identities[0], (list, tuple, set)):
-            _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__
-                )
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT(
-                    "Use methods 'select_by_units', 'select_by_construct', "
-                    "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
-                )  # pragma: no cover
-
-            if isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-
-        return self.select_by_identity(*identities)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

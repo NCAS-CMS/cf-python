@@ -2082,8 +2082,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # }
         axes_to_replace_from_field1 = {}
 
-        # List of field1 coordinate reference constucts which will
-        # be added to field0
+        # List of field1 coordinate reference constructs which will be
+        # added to field0
         refs_to_add_from_field1 = []
 
         # Check that the two fields are combinable
@@ -5920,25 +5920,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             radius: optional
-                Specify the radius used for calculating the areas of cells
-                defined in spherical polar coordinates. The radius is that
-                which would be returned by this call of the field
-                construct's `~cf.Field.radius` method:
+                Specify the radius used for calculating the areas of
+                cells defined in spherical polar coordinates. The
+                radius is that which would be returned by this call of
+                the field construct's `~cf.Field.radius` method:
                 ``f.radius(radius)``. See the `cf.Field.radius` for
                 details.
 
-                By default *radius* is ``'earth'`` which means that if and
-                only if the radius can not found from the datums of any
-                coordinate reference constucts, then the default radius
-                taken as 6371229 metres.
+                By default *radius* is ``'earth'`` which means that if
+                and only if the radius can not found from the datums
+                of any coordinate reference constructs, then the
+                default radius taken as 6371229 metres.
 
             great_circle: `bool`, optional
-                If True then allow, if required, the derivation of i) area
-                weights from polygon geometry cells by assuming that each
-                cell part is a spherical polygon composed of great circle
-                segments; and ii) and the derivation of line-length
-                weights from line geometry cells by assuming that each
-                line part is composed of great circle segments.
+                If True then allow, if required, the derivation of i)
+                area weights from polygon geometry cells by assuming
+                that each cell part is a spherical polygon composed of
+                great circle segments; and ii) and the derivation of
+                line-length weights from line geometry cells by
+                assuming that each line part is composed of great
+                circle segments.
 
                 .. versionadded:: 3.2.0
 
@@ -5949,7 +5950,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field`
-                A field construct containing the horizontal cell areas.
+                A field construct containing the horizontal cell
+                areas.
 
         **Examples:**
 
@@ -5984,9 +5986,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Return the radius used for calculating cell areas in
         spherical polar coordinates.
 
-        The radius is taken from the datums of any coordinate reference
-        constucts, but if and only if this is not possible then a default
-        value may be used instead.
+        The radius is taken from the datums of any coordinate
+        reference constructs, but if and only if this is not possible
+        then a default value may be used instead.
 
         .. versionadded:: 3.0.2
 
@@ -5996,15 +5998,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             default: optional
                 The radius is taken from the datums of any coordinate
-                reference constucts, but if and only if this is not
-                possible then the value set by the *default* parameter is
-                used. May be set to any numeric scalar object, including
-                `numpy` and `Data` objects. The units of the radius are
-                assumed to be metres, unless specified by a `Data`
-                object. If the special value ``'earth'`` is given then the
-                default radius taken as 6371229 metres. If *default* is
-                `None` an exception will be raised if no unique datum can
-                be found in the coordinate reference constucts.
+                reference constructs, but if and only if this is not
+                possible then the value set by the *default* parameter
+                is used. May be set to any numeric scalar object,
+                including `numpy` and `Data` objects. The units of the
+                radius are assumed to be metres, unless specified by a
+                `Data` object. If the special value ``'earth'`` is
+                given then the default radius taken as 6371229
+                metres. If *default* is `None` an exception will be
+                raised if no unique datum can be found in the
+                coordinate reference constructs.
 
                 *Parameter example:*
                   Five equivalent ways to set a default radius of 6371200
@@ -6582,46 +6585,47 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   ``scale=1``.
 
             measure: `bool`, optional
-                Create weights that are cell measures, i.e. which describe
-                actual cell sizes (e.g. cell areas) with appropriate units
-                (e.g. metres squared).
+                Create weights that are cell measures, i.e. which
+                describe actual cell sizes (e.g. cell areas) with
+                appropriate units (e.g. metres squared).
 
                 Cell measures can be created for any combination of
-                axes. For example, cell measures for a time axis are the
-                time span for each cell with canonical units of seconds;
-                cell measures for the combination of four axes
-                representing time and three dimensional space could have
-                canonical units of metres cubed seconds.
+                axes. For example, cell measures for a time axis are
+                the time span for each cell with canonical units of
+                seconds; cell measures for the combination of four
+                axes representing time and three dimensional space
+                could have canonical units of metres cubed seconds.
 
                 .. note:: Specifying cell volume weights via
                           ``weights=['X', 'Y', 'Z']`` or
-                          ``weights=['area', 'Z']`` (or other equivalents)
-                          will produce **an incorrect result if the
-                          vertical dimension coordinates do not define the
-                          actual height or depth thickness of every cell
-                          in the domain**. In this case,
-                          ``weights='volume'`` should be used instead,
-                          which requires the field construct to have a
-                          "volume" cell measure construct.
+                          ``weights=['area', 'Z']`` (or other
+                          equivalents) will produce **an incorrect
+                          result if the vertical dimension coordinates
+                          do not define the actual height or depth
+                          thickness of every cell in the domain**. In
+                          this case, ``weights='volume'`` should be
+                          used instead, which requires the field
+                          construct to have a "volume" cell measure
+                          construct.
 
-                          If ``weights=True`` then care also needs to be
-                          taken, as a "volume" cell measure construct will
-                          be used if present, otherwise the cell volumes
-                          will be calculated using the size of the
-                          vertical coordinate cells.
+                          If ``weights=True`` then care also needs to
+                          be taken, as a "volume" cell measure
+                          construct will be used if present, otherwise
+                          the cell volumes will be calculated using
+                          the size of the vertical coordinate cells.
 
             radius: optional
-                Specify the radius used for calculating the areas of cells
-                defined in spherical polar coordinates. The radius is that
-                which would be returned by this call of the field
-                construct's `~cf.Field.radius` method:
+                Specify the radius used for calculating the areas of
+                cells defined in spherical polar coordinates. The
+                radius is that which would be returned by this call of
+                the field construct's `~cf.Field.radius` method:
                 ``f.radius(radius)``. See the `cf.Field.radius` for
                 details.
 
-                By default *radius* is ``'earth'`` which means that if and
-                only if the radius can not found from the datums of any
-                coordinate reference constucts, then the default radius
-                taken as 6371229 metres.
+                By default *radius* is ``'earth'`` which means that if
+                and only if the radius can not found from the datums
+                of any coordinate reference constructs, then the
+                default radius taken as 6371229 metres.
 
             components: `bool`, optional
                 If True then a dictionary of orthogonal weights components
@@ -7799,17 +7803,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 sample mean (Bessel's correction).
 
             radius: optional
-                Specify the radius used for calculating the areas of cells
-                defined in spherical polar coordinates. The radius is that
-                which would be returned by this call of the field
-                construct's `~cf.Field.radius` method:
+                Specify the radius used for calculating the areas of
+                cells defined in spherical polar coordinates. The
+                radius is that which would be returned by this call of
+                the field construct's `~cf.Field.radius` method:
                 ``f.radius(radius)``. See the `cf.Field.radius` for
                 details.
 
-                By default *radius* is ``'earth'`` which means that if and
-                only if the radius can not found from the datums of any
-                coordinate reference constucts, then the default radius
-                taken as 6371229 metres.
+                By default *radius* is ``'earth'`` which means that if
+                and only if the radius can not found from the datums
+                of any coordinate reference constructs, then the
+                default radius taken as 6371229 metres.
 
             great_circle: `bool`, optional
                 If True then allow, if required, the derivation of i) area
@@ -8941,17 +8945,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.0.2
 
             radius: optional
-                Specify the radius used for calculating the areas of cells
-                defined in spherical polar coordinates. The radius is that
-                which would be returned by this call of the field
-                construct's `~cf.Field.radius` method:
+                Specify the radius used for calculating the areas of
+                cells defined in spherical polar coordinates. The
+                radius is that which would be returned by this call of
+                the field construct's `~cf.Field.radius` method:
                 ``f.radius(radius)``. See the `cf.Field.radius` for
                 details.
 
-                By default *radius* is ``'earth'`` which means that if and
-                only if the radius can not found from the datums of any
-                coordinate reference constucts, then the default radius
-                taken as 6371229 metres.
+                By default *radius* is ``'earth'`` which means that if
+                and only if the radius can not found from the datums
+                of any coordinate reference constructs, then the
+                default radius taken as 6371229 metres.
 
                 .. versionadded:: 3.0.2
 
@@ -9060,7 +9064,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                  defined group size. Each subsequent
                                  group immediately follows the preceding
                                  one. By default each group contains the
-                                 consective run of elements whose
+                                 consecutive run of elements whose
                                  coordinate values lie within the group
                                  limits (see the *group_by* parameter).
 
@@ -9083,7 +9087,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                  spans the defined group size. Each
                                  subsequent group immediately follows the
                                  preceding one. By default each group
-                                 contains the consective run of elements
+                                 contains the consecutive run of elements
                                  whose coordinate values lie within the
                                  group limits (see the *group_by*
                                  parameter).
@@ -9156,7 +9160,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                  given grouped collapse.
 
                                  * The groups do not have to be in runs of
-                                   consective elements; they may be
+                                   consecutive elements; they may be
                                    scattered throughout the axis.
 
                                  * An element which corresponds to a
@@ -9420,7 +9424,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 spans the defined group size. Each
                                 subsequent group immediately follows the
                                 preceding one. By default each group
-                                contains the consective run of elements
+                                contains the consecutive run of elements
                                 whose coordinate cells lie within the
                                 group limits (see the *group_by*
                                 parameter).
@@ -9507,7 +9511,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 and spans the defined group size. Each
                                 subsequent group immediately follows the
                                 preceding one. By default each group
-                                contains the consective run of elements
+                                contains the consecutive run of elements
                                 whose coordinate cells lie within the
                                 group limits (see the *group_by*
                                 parameter).
@@ -13077,16 +13081,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 A construct identity is specified by a string
                 (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
+                ``'ncvar%lat'``, etc.); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``) that
+                selects the relevant constructs whose identities match
+                via `re.search`.
 
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
+                Each construct has a number of identities, and is
+                selected if any of them match any of those provided. A
+                construct's identities are those returned by its
+                `!identities` method. In the following example, the
+                construct ``x`` has six identities:
 
                    >>> x.identities()
                    ['time',
@@ -13098,27 +13102,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 A construct key may optionally have the ``'key%'``
                 prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
+                ``'key%dimensioncoordinate2'`` are both acceptable
+                keys.
 
                 Note that in the output of a `print` call or `!dump`
                 method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                identities, and so this description may always be used
+                as an *identity* argument.
 
                 If a cell method construct identity is given (such as
-                ``'method:mean'``) then it will only be compared with the
-                most recently applied cell method operation.
+                ``'method:mean'``) then it will only be compared with
+                the most recently applied cell method operation.
 
-                Alternatively, one or more cell method constucts may be
-                identified in a single string with a CF-netCDF cell
+                Alternatively, one or more cell method constructs may
+                be identified in a single string with a CF-netCDF cell
                 methods-like syntax for describing both the collapse
                 dimensions, the collapse method, and any cell method
-                construct qualifiers. If N cell methods are described in
-                this way then they will collectively identify the N most
-                recently applied cell method operations. For example,
-                ``'T: maximum within years T: mean over years'`` will be
-                compared with the most two most recently applied cell
-                method operations.
+                construct qualifiers. If N cell methods are described
+                in this way then they will collectively identify the N
+                most recently applied cell method operations. For
+                example, ``'T: maximum within years T: mean over
+                years'`` will be compared with the most two most
+                recently applied cell method operations.
 
                 *Parameter example:*
                   ``'measure:area'``
@@ -13479,7 +13484,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 By default *radius* is ``'earth'`` which means that if
                 and only if the radius can not found from the datums
-                of any coordinate reference constucts, then the
+                of any coordinate reference constructs, then the
                 default radius taken as 6371229 metres.
 
             great_circle: `bool`, optional

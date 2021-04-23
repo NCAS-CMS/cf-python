@@ -8,7 +8,7 @@ class FieldDomainList:
         """Select elements by their metadata constructs.
 
         To find the inverse of the selection, use a list comprehension
-        with the !match_by_construct` method of the constuct
+        with the !match_by_construct` method of the construct
         elements. For example, to select all constructs that do *not*
         have a "latitude" metadata construct:
 
@@ -43,7 +43,7 @@ class FieldDomainList:
                 ``'method:mean'``) then it will only be compared with
                 the most recently applied cell method operation.
 
-                Alternatively, one or more cell method constucts may
+                Alternatively, one or more cell method constructs may
                 be identified in a single string with a CF-netCDF cell
                 methods-like syntax for describing both the collapse
                 dimensions, the collapse method, and any cell method
@@ -170,7 +170,7 @@ class FieldDomainList:
         """Select list elements by netCDF variable name.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_ncvar` method of the constuct
+        with the `!match_by_ncvar` method of the construct
         elements. For example, to select all constructs which do *not*
         have a netCDF name of 'tas':
 
@@ -238,7 +238,7 @@ class FieldDomainList:
         """Select list elements by property.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_property` method of the constuct
+        with the `!match_by_property` method of the construct
         elements. For example, to select all constructs which do *not*
         have a long_name property of "Pressure":
 

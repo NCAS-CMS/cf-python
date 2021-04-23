@@ -558,7 +558,7 @@ class UMField:
 
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
-                return field constuct.
+                return field construct.
 
         """
         self._bool = False

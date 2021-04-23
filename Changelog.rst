@@ -127,7 +127,7 @@ version 3.5.0
 
 * Changed the API to `cf.Field.period`: Now sets and reports on the
   period of the field construct data, rather than that of its metadata
-  constucts.
+  constructs.
 * Enabled configuration of the extent and nature of informational and
   warning messages output by `cf` using a logging framework (see
   points below and also https://github.com/NCAS-CMS/cf-python/issues/37)
