@@ -27,7 +27,9 @@ from numpy import where as numpy_where
 from netCDF4 import date2num as netCDF4_date2num
 
 import cftime
+
 import cfdm
+from cfdm import Constructs
 
 from ... import __version__, __Conventions__
 from ...decorators import (
@@ -507,7 +509,8 @@ class UMField:
         height_at_top_of_model,
         verbose=None,
         implementation=None,
-        **kwargs
+        select=None,
+        **kwargs,
     ):
         """**Initialization**
 
@@ -672,12 +675,67 @@ class UMField:
         LBCODE = int_hdr[lbcode]
         LBPROC = int_hdr[lbproc]
         LBVC = int_hdr[lbvc]
+        stash = int_hdr[lbuser4]
         LBUSER5 = int_hdr[lbuser5]
+        submodel = int_hdr[lbuser7]
         BPLAT = real_hdr[bplat]
         BPLON = real_hdr[bplon]
         BDX = real_hdr[bdx]
         BDY = real_hdr[bdy]
 
+        if stash:
+            section, item = divmod(stash, 1000)
+            um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
+        else:
+            um_stash_source = None
+
+        header_um_version, source = divmod(int_hdr[lbsrce], 10000)
+
+        if header_um_version > 0 and int(um_version) == um_version:
+            model_um_version = header_um_version
+            self.um_version = header_um_version
+        else:
+            model_um_version = None
+            self.um_version = um_version
+
+        # Set source
+        source = _lbsrce_model_codes.setdefault(source, None)
+        if source is not None and model_um_version is not None:
+            source += f" vn{model_um_version}"
+
+        # Only process the requested fields
+        ok = True
+        if select:
+            values1 = (
+                f"stash_code={stash}",
+                f"lbproc={LBPROC}",
+                f"lbtim={LBTIM}",
+                f"runid={self.decode_lbexp()}",
+                f"submodel={submodel}",
+            )
+            if um_stash_source is not None:
+                values1 += (f"um_stash_source={um_stash_source}",)
+            if source:
+                values1 += (f"source={source}",)
+
+            ok = False
+            for value0 in select:
+                for value1 in values1:
+                    ok = Constructs._matching_values(
+                        value0, None, value1, basic=True
+                    )
+                    if ok:
+                        break
+
+                if ok:
+                    break
+
+        if not ok:
+            # This PP/UM ield does not match the requested selection
+            self.field = (None,)
+            return
+
+        # Still here?
         self.lbnpt = LBNPT
         self.lbrow = LBROW
         self.lbtim = LBTIM
@@ -705,19 +763,6 @@ class UMField:
         self.calendar = calendar
         self.reference_time_Units()
 
-        header_um_version, source = divmod(int_hdr[lbsrce], 10000)
-
-        if header_um_version > 0 and int(um_version) == um_version:
-            model_um_version = header_um_version
-            self.um_version = header_um_version
-        else:
-            model_um_version = None
-            self.um_version = um_version
-
-        # Set source
-        source = _lbsrce_model_codes.setdefault(source, None)
-        if source is not None and model_um_version is not None:
-            source += " vn{0}".format(model_um_version)
         if source:
             cf_properties["source"] = source
 
@@ -764,8 +809,7 @@ class UMField:
 
         # Set a identifying name based on the submodel and STASHcode
         # (or field code).
-        stash = int_hdr[lbuser4]
-        submodel = int_hdr[lbuser7]
+        #        stash = int_hdr[lbuser4]#
         self.stash = stash
 
         # The STASH code has been set in the PP header, so try to find
@@ -821,21 +865,17 @@ class UMField:
 
                 break
 
-        if stash:
-            section, item = divmod(stash, 1000)
-            um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
+        if um_stash_source is not None:
             cf_properties["um_stash_source"] = um_stash_source
-            identity = "UM_{0}_vn{1}".format(um_stash_source, self.um_version)
+            identity = f"UM_{um_stash_source}_vn{self.um_version}"
         else:
-            identity = "UM_{0}_fc{1}_vn{2}".format(
-                submodel, int_hdr[lbfc], self.um_version
-            )
+            identity = f"UM_{submodel}_fc{int_hdr[lbfc]}_vn{self.um_version}"
 
         if um_Units is None:
             self.um_Units = _Units[None]
 
         if um_condition:
-            identity += "_{0}".format(um_condition)
+            identity += f"_{um_condition}"
 
         if long_name is None:
             cf_properties["long_name"] = identity
@@ -3282,6 +3322,7 @@ class UMRead(cfdm.read_write.IORead):
         fmt=None,
         chunk=True,
         verbose=None,
+        select=None,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3331,6 +3372,19 @@ class UMRead(cfdm.read_write.IORead):
 
             set_standard_name: `bool`, optional
 
+        select: (sequence of) `str` or `Query` or `re.Pattern`, optional
+            Only return field constructs whose identities match the
+            given values(s), i.e. those fields ``f`` for which
+            ``f.match_by_identity(*select)`` is `True`. See
+            `cf.Field.match_by_identity` for details.
+
+            This is equivalent to, but faster than, not using the
+            *select* parameter but applying its value to the returned
+            field list with its `cf.FieldList.select_by_identity`
+            method. For example, ``fl = cf.read(file,
+            select='stash_code=3236')`` is equivalent to ``fl =
+            cf.read(file).select_by_identity('stash_code=3236')``.
+
         :Returns:
 
             `list`
@@ -3375,6 +3429,7 @@ class UMRead(cfdm.read_write.IORead):
                 height_at_top_of_model=height_at_top_of_model,
                 verbose=verbose,
                 implementation=self.implementation,
+                select=select,
             )
             for var in f.vars
         ]
