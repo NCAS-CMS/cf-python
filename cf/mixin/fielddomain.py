@@ -40,6 +40,73 @@ class FieldDomain:
 
     """
 
+    def _coordinate_reference_axes(self, key):
+        """Returns the set of coordinate reference axes for a key.
+
+        :Parameters:
+
+            key: `str`
+                Coordinate reference construct key.
+
+        :Returns:
+
+            `set`
+
+        **Examples:**
+
+        >>> f._coordinate_reference_axes('coordinatereference0')
+
+        """
+        ref = self.constructs[key]
+
+        axes = []
+
+        for c_key in ref.coordinates():
+            axes.extend(self.get_data_axes(c_key))
+
+        for da_key in ref.coordinate_conversion.domain_ancillaries().values():
+            axes.extend(self.get_data_axes(da_key))
+
+        return set(axes)
+
+    def _conform_coordinate_references(self, key, coordref=None):
+        """Where possible replace the content of coordiante reference
+        construct coordinates with coordinate construct keys.
+
+        .. versionadded:: 3.0.0
+
+        :Parameters:
+
+            key: `str`
+                Coordinate construct key.
+
+            coordref: `CoordinateReference`, optional
+
+                .. versionadded:: 3.6.0
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f._conform_coordinate_references('auxiliarycoordinate1')
+        >>> f._conform_coordinate_references('auxiliarycoordinate1',
+        ...                                  coordref=cr)
+
+        """
+        identity = self.constructs[key].identity(strict=True)
+
+        if coordref is None:
+            refs = self.coordinate_references(todict=True).values()
+        else:
+            refs = (coordref,)
+
+        for ref in refs:
+            if identity in ref.coordinates():
+                ref.del_coordinate(identity, None)
+                ref.set_coordinate(key)
+
     def _construct(
         self,
         _method,
@@ -114,6 +181,81 @@ class FieldDomain:
             f"{self.__class__.__name__}.{_method}() can't return {n} "
             "constructs",
         )
+
+    @_manage_log_level_via_verbosity
+    def _equivalent_coordinate_references(
+        self,
+        field1,
+        key0,
+        key1,
+        atol=None,
+        rtol=None,
+        s=None,
+        t=None,
+        verbose=None,
+        axis_map=None,
+    ):
+        """True if coordinate reference constructs are equivalent.
+
+        Two real numbers ``x`` and ``y`` are considered equal if
+        ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+        differences) and ``rtol`` (the tolerance on relative differences)
+        are positive, typically very small numbers. See the *atol* and
+        *rtol* parameters.
+
+        :Parameters:
+
+            ref0: `CoordinateReference`
+
+            ref1: `CoordinateReference`
+
+            field1: `Field`
+                The field which contains *ref1*.
+
+        :Returns:
+
+            `bool`
+
+        """
+        ref0 = self.coordinate_references(todict=True)[key0]
+        ref1 = field1.coordinate_references(todict=True)[key1]
+
+        if not ref0.equivalent(ref1, rtol=rtol, atol=atol, verbose=verbose):
+            logger.info(
+                f"{self.__class__.__name__}: Non-equivalent coordinate "
+                f"references ({ref0!r}, {ref1!r})"
+            )  # pragma: no cover
+            return False
+
+        # Compare the domain ancillaries
+        # TODO consider case of None key ?
+        for (
+            term,
+            identifier0,
+        ) in ref0.coordinate_conversion.domain_ancillaries().items():
+            if identifier0 is None:
+                continue
+
+            identifier1 = ref1.coordinate_conversion.domain_ancillaries()[term]
+
+            #            key0 = domain_ancillaries.filter_by_key(identifier0).key()
+            #            key1 = field1_domain_ancillaries.filter_by_key(identifier1).key()
+
+            if not self._equivalent_construct_data(
+                field1,
+                key0=identifier0,  # key0,
+                key1=identifier1,  # key1,
+                rtol=rtol,
+                atol=atol,
+                s=s,
+                t=t,
+                verbose=verbose,
+                axis_map=axis_map,
+            ):
+                # add traceback TODO
+                return False
+
+        return True
 
     def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
         """Create indices that define a subspace of the field or domain
@@ -680,6 +822,115 @@ class FieldDomain:
             construct.roll(c_axes, shift=c_shifts, inplace=True)
 
         return shift
+
+    def _set_construct_parse_axes(self, item, axes=None, allow_scalar=True):
+        """Parse axes for the set_construct method.
+
+        :Parameters:
+
+            item: metadata construct
+
+            axes: (sequence of) `str or `int`, optional
+
+            allow_scalar: `bool`, optional
+
+        :Returns:
+
+            `list`
+
+        """
+        data = item.get_data(None, _fill_value=False)
+
+        if axes is None:
+            # --------------------------------------------------------
+            # The axes have not been set => infer the axes.
+            # --------------------------------------------------------
+            if data is not None:
+                shape = item.shape
+                if allow_scalar and shape == ():
+                    axes = []
+                else:
+                    if not allow_scalar and not shape:
+                        shape = (1,)
+
+                    if not shape or len(shape) != len(set(shape)):
+                        raise ValueError(
+                            f"Can't insert {item!r}: Ambiguous shape: "
+                            f"{shape}. Consider setting the 'axes' parameter."
+                        )
+
+                    domain_axes = self.domain_axes(todict=True)
+                    axes = []
+                    axes_sizes = [
+                        domain_axis.get_size(None)
+                        for domain_axis in domain_axes.values()
+                    ]
+
+                    for n in shape:
+                        if not axes_sizes.count(n):
+                            raise ValueError(
+                                f"Can't insert {item!r}: There is no "
+                                f"domain axis construct with size {n}."
+                            )
+
+                        if axes_sizes.count(n) != 1:
+                            raise ValueError(
+                                f"Can't insert {item!r}: Ambiguous shape: "
+                                "f{shape}. Consider setting the 'axes' "
+                                "parameter."
+                            )
+
+                        da_key = self.domain_axis(
+                            filter_by_size=(n,), key=True
+                        )
+                        axes.append(da_key)
+        else:
+            # --------------------------------------------------------
+            # Axes have been provided
+            # --------------------------------------------------------
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            if axes and data is not None:
+                ndim = item.ndim
+                if not ndim and not allow_scalar:
+                    ndim = 1
+
+                if isinstance(axes, (str, int)):
+                    axes = (axes,)
+
+                if len(axes) != ndim or len(set(axes)) != ndim:
+                    raise ValueError(
+                        f"Can't insert {item!r}: Incorrect number of given "
+                        f"axes (got {len(set(axes))}, expected {ndim})"
+                    )
+
+                axes2 = []
+                for axis, size in zip(axes, item.data.shape):
+                    da_key, domain_axis = self.domain_axis(
+                        axis,
+                        item=True,
+                        default=ValueError(f"Unknown axis: {axis!r}"),
+                    )
+
+                    axis_size = domain_axis.get_size(None)
+                    if size != axis_size:
+                        raise ValueError(
+                            f"Can't insert {item!r}: Mismatched axis size "
+                            f"({size} != {axis_size})"
+                        )
+
+                    axes2.append(da_key)
+
+                axes = axes2
+
+                if ndim != len(set(axes)):
+                    raise ValueError(
+                        f"Can't insert {item!r}: Mismatched number of axes "
+                        f"({len(set(axes))} != {ndim})"
+                    )
+
+        return axes
 
     # ----------------------------------------------------------------
     # Methods
