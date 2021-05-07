@@ -2498,7 +2498,7 @@ class FieldDomain:
                 f"with a {new.__class__.__name__} object"
             )
 
-        axes = self.get_data_axes(key, None)
+        axes = self.get_data_axes(key, default=None)
         if axes is not None:
             shape0 = getattr(c, "shape", None)
             shape1 = getattr(new, "shape", None)

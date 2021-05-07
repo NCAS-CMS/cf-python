@@ -5890,31 +5890,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for construct in self.constructs.filter_by_data(todict=True).values():
             construct.close()
 
-    def iscyclic(self, identity, **kwargs):
-        """Returns True if the given axis is cyclic.
+    def iscyclic(self, *identity, **filter_kwargs):
+        """Returns True if the specified axis is cyclic.
 
         .. versionadded:: 1.0
 
-        .. seealso:: `axis`, `cyclic`, `period`
+        .. seealso:: `axis`, `cyclic`, `period`, `domain_axis`
 
         :Parameters:
 
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                The *identity* parameter selects the domain axis as
-                returned by this call of the field construct's
-                `domain_axis` method: ``f.domain_axis(identity)``.
-
-            kwargs: deprecated at version 3.0.0
+            identity, filter_kwargs: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
 
         :Returns:
 
@@ -5936,16 +5924,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> x = f.iscyclic(2)
 
         """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "iscyclic", kwargs
-            )  # pragma: no cover
-
-        axis = self.domain_axis(identity, key=True, default=None)
+        axis = self.domain_axis(
+            *identity, key=True, default=None, **filter_kwargs
+        )
         if axis is None:
-            raise ValueError(
-                "Can't identify unique axis from identity " f"{identity!r}"
-            )
+            raise ValueError("Can't identify unique domain axis")
 
         return axis in self.cyclic()
 
@@ -6050,30 +6033,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return out
 
     def cyclic(
-        self, identity=None, iscyclic=True, period=None, config={}, **kwargs
+        self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
     ):
         """Set the cyclicity of an axis.
 
         .. versionadded:: 1.0
 
-        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`, `period`
+        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`,
+                     `period`, `domain_axis`
 
         :Parameters:
 
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                The *identity* parameter selects the domain axis as
-                returned by this call of the field construct's
-                `domain_axis` method: ``f.domain_axis(identity)``.
+            identity, filter_kwargs: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
 
             iscyclic: `bool`, optional
                 If False then the axis is set to be non-cyclic. By
@@ -6081,25 +6055,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             period: optional
                 The period for a dimension coordinate construct which
-                spans the selected axis. May be any numeric scalar object
-                that can be converted to a `Data` object (which includes
-                numpy array and `Data` objects). The absolute value of
-                *period* is used. If *period* has units then they must be
-                compatible with those of the dimension coordinates,
-                otherwise it is assumed to have the same units as the
-                dimension coordinates.
+                spans the selected axis. May be any numeric scalar
+                object that can be converted to a `Data` object (which
+                includes numpy array and `Data` objects). The absolute
+                value of *period* is used. If *period* has units then
+                they must be compatible with those of the dimension
+                coordinates, otherwise it is assumed to have the same
+                units as the dimension coordinates.
+
+            config: `dict`
+                Additional parameters for optimizing the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
 
             axes: deprecated at version 3.0.0
-                Use the *identity* parameter instead.
-
-            kwargs: deprecated at version 3.0.0
+                Use the *identity* and **filter_kwargs* parameters
+                instead.
 
         :Returns:
 
             `set`
-                The construct keys of the domain axes which were cyclic
-                prior to the new setting, or the current cyclic domain
-                axes if no axis was specified.
+                The construct keys of the domain axes which were
+                cyclic prior to the new setting, or the current cyclic
+                domain axes if no axis was specified.
 
         **Examples:**
 
@@ -6115,23 +6094,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         set()
 
         """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "cyclic", kwargs
-            )  # pragma: no cover
-
         if not iscyclic and config.get("no-op"):
             return self._cyclic.copy()
 
         old = None
         cyclic = self._cyclic
 
-        if identity is None:
+        if not identity and not filter_kwargs:
             return cyclic.copy()
 
         axis = config.get("axis")
         if axis is None:
-            axis = self.domain_axis(identity, key=True)
+            axis = self.domain_axis(*identity, key=True, **filter_kwargs)
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
@@ -7960,7 +7934,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    def has_construct(self, identity=None):
+    def has_construct(self, *identity, **filter_kwargs):
         """Whether a metadata construct exists.
 
         .. versionadded:: 3.4.0
@@ -7970,56 +7944,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            identity: optional
-                Select the construct. Must be
-
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match via
-                `re.search`.
-
-                A construct has a number of identities, and is selected if
-                any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='T'
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='cell_area'``
-
-                *Parameter example:*
-                  ``identity='long_name=Cell Area'``
-
-                *Parameter example:*
-                  ``identity='cellmeasure1'``
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
 
         :Returns:
 
@@ -8046,7 +7974,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         False
 
         """
-        return self.construct(identity, default=None) is not None
+        return (
+            self.construct(*identity, default=None, **filter_kwargs)
+            is not None
+        )
 
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.
@@ -12819,71 +12750,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `match`, `match_by_property`, `match_by_rank`,
                      `match_by_identity`, `match_by_ncvar`,
-                     `match_by_units`
+                     `match_by_units`, `construct`
 
         :Parameters:
 
             identities: optional
-                Identify the metadata constructs that have any of the
-                given identities or construct keys.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match
-                via `re.search`.
-
-                Each construct has a number of identities, and is
-                selected if any of them match any of those provided. A
-                construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable
-                keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used
-                as an *identity* argument.
-
-                If a cell method construct identity is given (such as
-                ``'method:mean'``) then it will only be compared with
-                the most recently applied cell method operation.
-
-                Alternatively, one or more cell method constructs may
-                be identified in a single string with a CF-netCDF cell
-                methods-like syntax for describing both the collapse
-                dimensions, the collapse method, and any cell method
-                construct qualifiers. If N cell methods are described
-                in this way then they will collectively identify the N
-                most recently applied cell method operations. For
-                example, ``'T: maximum within years T: mean over
-                years'`` will be compared with the most two most
-                recently applied cell method operations.
-
-                *Parameter example:*
-                  ``'measure:area'``
-
-                *Parameter example:*
-                  ``'latitude'``
-
-                *Parameter example:*
-                  ``'long_name=Longitude'``
-
-                *Parameter example:*
-                  ``'domainancillary2', 'ncvar%areacello'``
+                Select the unique construct returned by
+                ``f.construct(*identities)``. See `construct` for
+                details.
 
             conditions: optional
                 Identify the metadata constructs that have any of the
@@ -13805,7 +13679,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def convert(self, identity, full_domain=True, cellsize=False):
+    def convert(
+        self, *identity, full_domain=True, cellsize=False, **filter_kwargs
+    ):
         """Convert a metadata construct into a new field construct.
 
         The new field construct has the properties and data of the
@@ -13824,59 +13700,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `cf.read`
+        .. seealso:: `cf.read`, `construct`
 
         :Parameters:
 
-            identity:
-                Select the metadata construct by one of:
-
-                  * The identity or key of a construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='measure:area'``
-
-                *Parameter example:*
-                  ``identity='latitude'``
-
-                *Parameter example:*
-                  ``identity='long_name=Longitude'``
-
-                *Parameter example:*
-                  ``identity='domainancillary2'``
-
-                *Parameter example:*
-                  ``identity='ncvar%areacello'``
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
 
             full_domain: `bool`, optional
                 If False then do not create a domain, other than domain
@@ -13899,7 +13730,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         key, construct = self.construct(
-            identity, item=True, default=(None, None)
+            *identity, item=True, default=(None, None), **filter_kwargs
         )
         if key is None:
             raise ValueError(
@@ -14680,7 +14511,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             **filter_kwargs,
         )
 
-    def domain_axis_position(self, *identity):
+    def domain_axis_position(self, *identity, **filter_kwargs):
         """Return the position in the data of a domain axis construct.
 
         .. versionadded:: 3.0.0
@@ -14689,68 +14520,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='key%domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity=2``
+            identity, filter_kwargs: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
 
         :Returns:
 
             `int`
-                The position in the field construct's data of the selected
-                domain axis construct.
+                The position in the field construct's data of the
+                selected domain axis construct.
 
         **Examples:**
 
@@ -14809,67 +14588,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    def axis_size(self, *identity, default=ValueError(), axes=None, **kwargs):
+    def axis_size(
+        self, *identity, default=ValueError(), axes=None, **filter_kwargs
+    ):
         """Return the size of a domain axis construct.
 
         :Parameters:
 
-            identity:
-               Select the domain axis construct by one of:
-
-                  * An identity or key of a 1-d coordinate construct that
-                    whose data spans the domain axis construct.
-
-                  * A domain axis construct identity or key.
-
-                  * The position of the domain axis construct in the field
-                    construct's data.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that selects the
-                relevant constructs whose identities match via
-                `re.search`.
-
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``x`` has
-                six identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable keys.
-
-                A position of a domain axis construct in the field
-                construct's data is specified by an integer index.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
-
-                *Parameter example:*
-                  ``identity='long_name=Latitude'``
-
-                *Parameter example:*
-                  ``identity='dimensioncoordinate1'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='key%domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-                *Parameter example:*
-                  ``identity=2``
+            identity, filter_kwargs: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
 
             default: optional
                 Return the value of the *default* parameter if a domain
@@ -14877,8 +14606,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 instance then it will be raised instead.
 
             axes: deprecated at version 3.0.0
-
-            kwargs: deprecated at version 3.0.0
 
         :Returns:
 
@@ -14900,77 +14627,45 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 self, "axis_size", "Use keyword 'identity' instead."
             )  # pragma: no cover
 
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "axis_size", kwargs, "See f.domain_axes"
-            )  # pragma: no cover
+        axis = self.domain_axis(*identity, default=None, **filter_kwargs)
+        if axis is None:
+            return self._default(default)
 
-        axis = self.domain_axis(*identity, key=True)
+        return axis.get_size(default=default)
 
-        domain_axes = self.domain_axes(todict=True)
+    def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
+        """Return domain axis constructs spanned by data.
 
-        da = domain_axes.get(axis)
-        if da is not None:
-            return da.get_size(default=default)
-
-        key = self.domain_axis(axis, key=True, default=None)
-        if key is None:
-            return self.domain_axis(axis, key=True, default=default)
-
-        return domain_axes[key].get_size(default=default)
-
-    def get_data_axes(self, identity=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the
-        data of a metadata construct.
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the field's data, or the data of a metadata construct.
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
+        .. seealso:: `del_data_axes`, `has_data_axes`,
+                     `set_data_axes`, `construct`
 
         :Parameters:
 
-            identity: optional
-               Select the construct for which to return the domain
-               axis constructs spanned by its data. By default the
-               field construct is selected. May be:
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
 
-                  * The identity or key of a metadata construct.
-
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``,
-                ``'ncvar%lat'``, etc.); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                selects the relevant constructs whose identities match
-                via `re.search`.
-
-                Each construct has a number of identities, and is
-                selected if any of them match any of those provided. A
-                construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has six identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
-
-                A construct key may optionally have the ``'key%'``
-                prefix. For example ``'dimensioncoordinate2'`` and
-                ``'key%dimensioncoordinate2'`` are both acceptable
-                keys.
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used
-                as an *identity* argument.
+                If neither *identity* nor *filter_kwargs* are set then
+                the domain of the field constructs's data are
+                returned.
 
             default: optional
                 Return the value of the *default* parameter if the
-                data axes have not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                data axes have not been set.
+
+                {{default Exception}}
 
         :Returns:
 
-            `tuple`
-                The keys of the domain axis constructs spanned by the data.
+            `tuple` of `str`
+                The keys of the domain axis constructs spanned by the
+                data.
 
         **Examples:**
 
@@ -14984,27 +14679,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(f.get_data_axes(default=None))
         None
 
-        TODO more examples with key=
-
         """
-        if identity is None:
-            # Get axes of Field data array
+        if not identity and not filter_kwargs:
+            # Get axes of the Field data array
             return super().get_data_axes(default=default)
 
-        axes = super().get_data_axes(identity, default=None)
-        if axes is not None:
-            return axes
+        key = self.construct(*identity, key=True, **filter_kwargs)
 
-        key = self.construct_key(identity, default=None)
-        if key is not None:
-            return super().get_data_axes(key=key, default=default)
+        axes = super().get_data_axes(key, default=None)
+        if axes is None:
+            return self._default(
+                default, "Can't get axes for non-existent construct"
+            )
 
-        if default is None:
-            return default
-
-        return self._default(
-            default, f"Can't get axes for non-existent construct {identity!r}"
-        )
+        return axes
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
