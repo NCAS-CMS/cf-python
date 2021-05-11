@@ -4,7 +4,10 @@ version 3.9.0
 
 **2021-05-??**
 
-* Improved docstrings.
+* Temporarily removed the experimental ability to parallelize the
+  collapse operation with MPI
+  (https://github.com/NCAS-CMS/cf-python/issues/207)
+* Improved docstrings
 * Fix for unlimited dimensions read from a netCDF4 sub-group having
   zero size (https://github.com/NCAS-CMS/cfdm/issues/113)
 * Fixes for changes in behaviour in cftime==1.4.0
