@@ -63,7 +63,8 @@ _docstring_substitution_definitions = {
     "{{item: `bool`, optional}}": """item: `bool`, optional
                 If True then return the selected construct identifier
                 and the construct itself. By default the construct
-                itself is returned.""",
+                itself is returned. If *key* is True then *item* is
+                ignored.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
