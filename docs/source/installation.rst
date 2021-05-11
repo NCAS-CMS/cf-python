@@ -37,8 +37,12 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package is only Python 3.6 or later. (Versions 2.x of cf work
-only for Python 2.7.)
+The cf package is only Python 3.6 or later. 
+
+.. note:: Python 3.6 support is deprecated and will be removed at the
+          next release.
+
+Versions 2.x of cf work only for Python 2.7.
 
 ----
 
@@ -49,9 +53,9 @@ only for Python 2.7.)
 
 cf is in the Python package index: https://pypi.org/project/cf-python
 
-cf has some :ref:`optional dependencies <Optional>` which are **not**
-automatically installed via ``pip``, but to install cf and all of its
-:ref:`required dependencies <Required>` run, for example:
+To install cf and all of its :ref:`required dependencies <Required>`
+(there are also has some :ref:`optional dependencies <Optional>` which
+are **not** automatically installed via ``pip``) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -181,14 +185,6 @@ Required
 
 * `Python <https://www.python.org/>`_, 3.6 or newer, including
   the latest version Python 3.9.
-
-  .. note::
-     Some dependencies have dropped support for Python 3.6 for their
-     newer versions, so it may be necessary to use at least Python 3.7 in
-     combination with those.
-
-     In particular, this is known to be the case if you are using `numpy` at
-     version 1.20 or above.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
