@@ -17,7 +17,7 @@ Version |release| for version |version| of the CF conventions.
 **CF-1.8**
 ----------
 
-* `version 3.9.0 <https://ncas-cms.github.io/cf-python/3.9.0>`_ (2021-02-??)
+* `version 3.9.0 <https://ncas-cms.github.io/cf-python/3.9.0>`_ (2021-05-??)
 * `version 3.8.0 <https://ncas-cms.github.io/cf-python/3.8.0>`_ (2020-12-18)
 * `version 3.7.0 <https://ncas-cms.github.io/cf-python/3.7.0>`_ (2020-10-13)
 * `version 3.6.0 <https://ncas-cms.github.io/cf-python/3.6.0>`_ (2020-07-24)
@@ -41,7 +41,7 @@ Version |release| for version |version| of the CF conventions.
 * `version 3.0.1 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (2019-10-01)
 * `version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (2019-10-01 *first Python 3 release*)
 |
-* `version 2.3.8 <https://cfpython.bitbucket.io/docs/latest>`_ (2019-10-07 *latest Python 2 release*)
+* `version 2.3.8 <https://cfpython.bitbucket.io/docs/latest>`_ (2019-10-07 *last Python 2 release*)
 * `version 2.3.0 <http://cfpython.bitbucket.io/docs/2.3.0/index.html>`_ (2018-10-22)
 * `version 2.2.8 <http://cfpython.bitbucket.io/docs/2.2.8/index.html>`_ (2018-08-28)
 * `version 2.2.5 <http://cfpython.bitbucket.io/docs/2.2.5/index.html>`_ (2018-07-02)

@@ -202,6 +202,7 @@ from . import (
     RaggedIndexedContiguousSubarray,
 )
 
+# TODODASK - Remove the next 6 lines when the move to dask is complete
 from .. import mpi_on
 
 if mpi_on:

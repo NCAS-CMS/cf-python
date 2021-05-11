@@ -1150,17 +1150,41 @@ class TimeDuration:
             other:
                 The object to compare for equality.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons, By
-                default the value returned by the `atol` function is used.
-
             rtol: `float`, optional
                 The relative tolerance for all numerical comparisons, By
                 default the value returned by the `rtol` function is used.
 
-            traceback: `bool`, optional
-                If True then print a traceback highlighting where the two
-                instances differ.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
+
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent string
+                equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the minimum
+                cut-off for the verboseness level of displayed output (log)
+                messages, regardless of the globally-configured `cf.log_level`.
+                Note that increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special case of
+                maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output messages will
+                be shown according to the value of the `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or equivalent string
+                that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                increasing verbosity, the more description that is printed to
+                convey information about the test for contiguity.
+
+            traceback: deprecated at version 3.0.0
+                Use the *verbose* parameter instead.
 
         :Returns:
 
@@ -1173,7 +1197,7 @@ class TimeDuration:
         >>> u = cf.TimeDuration(3, 'calendar_years')
         >>> t == u
         True
-        >>> t.equals(u, traceback=True)
+        >>> t.equals(u, verbose=2)
         TimeDuration: Different durations: <CF Data: 36 calendar_months>, <CF Data: 3 calendar_years>
         False
 
@@ -1229,17 +1253,41 @@ class TimeDuration:
             other:
                 The object to compare for equivalence.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons, By
-                default the value returned by the `atol` function is used.
-
             rtol: `float`, optional
                 The relative tolerance for all numerical comparisons, By
                 default the value returned by the `rtol` function is used.
 
-            traceback: `bool`, optional
-                If True then print a traceback highlighting where the two
-                instances differ.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
+
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent string
+                equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the minimum
+                cut-off for the verboseness level of displayed output (log)
+                messages, regardless of the globally-configured `cf.log_level`.
+                Note that increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special case of
+                maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output messages will
+                be shown according to the value of the `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or equivalent string
+                that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                increasing verbosity, the more description that is printed to
+                convey information about the test for contiguity.
+
+            traceback: deprecated at version 3.0.0
+                Use the *verbose* parameter instead.
 
         :Returns:
 
@@ -1254,7 +1302,7 @@ class TimeDuration:
         True
         >>> t.equivalent(u)
         True
-        >>> t.equals(u, traceback=True)
+        >>> t.equals(u, verbose=2)
         TimeDuration: Different durations: <CF Data: 12 calendar_months>, <CF Data: 1 calendar_years>
         False
 

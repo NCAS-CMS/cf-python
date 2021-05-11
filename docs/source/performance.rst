@@ -1,6 +1,8 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
+.. TODODASK - review this entire section
+
 **Performance**
 ===============
 
@@ -247,96 +249,8 @@ Data partitioning preserves as much as is possible the faster varying
 **Parallelization**
 -------------------
 
-cf-python scripts may be run in parallel using mpirun and any calls to
-collapse will be parallelised. This requires the mpi4py module to be
-installed. Only calls to collapse will be parallelised. Other methods
-are not yet parallelised. This is an experimental feature and is not
-yet recommended for operational use.
-
-Installing mpi4py with conda
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To install mpi4py with conda type:
-
-.. code-block:: console
-
-   $ conda install mpi4py
-
-This also installs the mpich implementation of MPI. To install MPI3
-rather than MPI2 type:
-
-.. code-block:: console
-
-   $ conda install -c conda-forge mpi4py
-
-It is planned to use MPI3 features in future versions of cf-python.
-
-If you are using another version of Python other than Anaconda you
-will need to install either mpich or openmpi and mpi4py.
-
-Note that if you are using regridding in a parallel script then ESMF
-must be compiled *without* parallel support.
-
-Running a cf-python script in parallel
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To use a cf-python script in parallel, pass the python invocation of
-the script to ``mpirun``
-
-.. code-block:: console
-   :caption: *Run my_script.py in parallel with 3 processors.*
-	     
-   $ mpirun -n 3 python my_script.py
-
-This will work across multiple nodes, as well as on a single node. If
-using across multiple nodes then `cf.tempdir` must be set to a shared
-location. Note that internode communication costs my be reduce the
-speed-up when multiple nodes are in use.
-
-(If you get the error ``gethostbyname failed`` you could consider
-adding ``127.0.0.1 computername`` to the file ``/etc/hosts``, where
-``computername`` is the name of your machine.)
-
-Optimising a parallel collapse operation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-There are three possible modes of optimisation, which can be set in
-your script using `cf.collapse_parallel_mode`:
-
-=====  ===============================================================
-Mode   Description
-=====  ===============================================================
-``0``  This attempts to maximise parallelism, possibly at the expense
-       of extra communication. This is the default mode.
-
-``1``  This minimises communication, possibly at the expense of the
-       degree of parallelism. If collapse is running slower than you
-       would expect, you can try changing to mode 1 to see if this
-       improves performance. This is only likely to work if the output
-       of collapse will be a sizeable array, not a single point.
-
-``2``  This is here for debugging purposes, but we would expect this
-       to maximise communication possibly at the expense of
-       parallelism. The use of this mode is, therefore, not
-       recommended.
-=====  ===============================================================
-       
-Calling `cf.collapse_parallel_mode` with no arguments returns the
-current value, otherwise the value prior to the change is returned.
-
-.. code-block:: python
-   :caption: *Inspect and set the 'collapse' parallel mode.*
-
-   >>> cf.collapse_parallel_mode()
-   0
-   >>> cf.collapse_parallel_mode(1)
-   0
-   >>> cf.collapse_parallel_mode()
-   1
-
-The parallelism is based on partitions created by :ref:`LAMA <LAMA>`
-and will be affected by the size and number of those partitions. The
-size of the partitions can be changed by calling `cf.chunksize` before
-reading a file.
-
-----
+.. note:: The experimental ability to run cf scripts in parallel using
+          mpirun was removed at version 3.9.0. This functionality will
+          be restored soon in a robust fashion when the move to using
+          `dask` (https://github.com/NCAS-CMS/cf-python/issues/182) is
+          completed.

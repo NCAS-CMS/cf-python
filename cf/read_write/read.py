@@ -923,7 +923,8 @@ def _read_a_file(
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    if ftype == "CDL":
+    originally_cdl = ftype == "CDL"
+    if originally_cdl:
         # Create a temporary netCDF file from input CDL
         ftype = "netCDF"
         cdl_filename = filename
@@ -945,16 +946,34 @@ def _read_a_file(
                 )
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
-        fields = netcdf.read(
-            filename,
-            external=external,
-            extra=extra,
-            verbose=verbose,
-            warnings=warnings,
-            extra_read_vars=extra_read_vars,
-            mask=mask,
-            warn_valid=warn_valid,
-        )
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
+        # try/except here, which acts as a temporary fix pending decisions on
+        # the best way to handle CDL with only header or coordinate info.
+        try:
+            fields = netcdf.read(
+                filename,
+                external=external,
+                extra=extra,
+                verbose=verbose,
+                warnings=warnings,
+                extra_read_vars=extra_read_vars,
+                mask=mask,
+                warn_valid=warn_valid,
+            )
+        except MaskError:
+            # Some data required for field interpretation is missing,
+            # manifesting downstream as a NumPy MaskError.
+            if originally_cdl:
+                raise ValueError(
+                    "Unable to convert CDL without data to field construct(s) "
+                    "because there is insufficient information provided by "
+                    "the header and/or coordinates alone in this case."
+                )
+            else:
+                raise ValueError(
+                    "Unable to convert netCDF to field construct(s) because "
+                    "there is missing data."
+                )
 
     elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
         fields = UM.read(

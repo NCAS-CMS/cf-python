@@ -194,6 +194,10 @@ else:
         return float(virtual_memory().available)
 
 
+# --- End: if
+
+
+# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
 def configuration(
     atol=None,
     rtol=None,
@@ -675,6 +679,7 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
+# TODODASK - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
@@ -1381,6 +1386,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
+# TODODASK - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)

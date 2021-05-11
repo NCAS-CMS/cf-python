@@ -148,6 +148,7 @@ intersphinx_mapping = {
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
     "cfplot": ("https://ajheaps.github.io/cf-plot", None),
+    "dask": ("https://docs.dask.org/en/latest", None),
 }
 
 # This extension is meant to help with the common pattern of having
@@ -332,7 +333,7 @@ html_sidebars = {
         "searchbox.html",
         "globaltoc.html",
         "relations.html",
-        # 'sourcelink.html',
+        "sponsors.html",
     ]
 }
 

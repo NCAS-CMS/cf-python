@@ -59,7 +59,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
          An exception is raised if the variable is multidimensional
          and has more than one element.
 
-         .. versionadded:: 2.0
+        .. versionadded:: 2.0
 
         :Parameters:
 
