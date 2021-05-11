@@ -121,25 +121,9 @@ if LooseVersion(platform.python_version()) < LooseVersion("3.7.0"):
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
-if importlib.util.find_spec("mpi4py"):
-    from mpi4py import MPI
-
-    mpi_comm = MPI.COMM_WORLD
-    mpi_size = mpi_comm.Get_size()
-    mpi_rank = mpi_comm.Get_rank()
-
-    if mpi_size > 1:
-        mpi_on = True
-        if mpi_rank == 0:
-            print("===============================================")
-            print("WARNING: MPI support is an experimental feature")
-            print("  and is not recommended for operational use.")
-            print("===============================================")
-    else:
-        mpi_on = False
-else:
-    mpi_on = False
-    mpi_size = 1
+# TODODASK - Remove the next 2 lines when the move to dask is complete
+mpi_on = False
+mpi_size = 1
 
 try:
     import netCDF4
