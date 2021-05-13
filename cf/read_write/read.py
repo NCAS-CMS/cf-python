@@ -4,6 +4,8 @@ import os
 from glob import glob
 from os.path import isdir
 
+from numpy.ma.core import MaskError
+
 from ..cfimplementation import implementation
 from ..fieldlist import FieldList
 from ..aggregate import aggregate as cf_aggregate
