@@ -40,10 +40,9 @@ class cfaTest(unittest.TestCase):
         returncode = cfa_test.returncode
         if returncode != 0:
             self.fail(
-                "A cfa command failed (see script's 'exit {}' point) with "
-                "error:\n{}".format(
-                    returncode, cfa_stderr_via_stdout_channel.decode("utf-8")
-                )
+                f"A cfa command failed (see script's 'exit {returncode}' "
+                "point) with error:\n"
+                f"{cfa_stderr_via_stdout_channel.decode('utf-8')}"
             )
         # else: (passes by default)
 
