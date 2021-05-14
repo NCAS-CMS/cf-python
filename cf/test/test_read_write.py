@@ -62,6 +62,18 @@ class read_writeTest(unittest.TestCase):
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
 
+    netcdf3_fmts = [
+        "NETCDF3_CLASSIC",
+        "NETCDF3_64BIT",
+        "NETCDF3_64BIT_OFFSET",
+        "NETCDF3_64BIT_DATA",
+    ]
+    netcdf4_fmts = [
+        "NETCDF4",
+        "NETCDF4_CLASSIC",
+    ]
+    netcdf_fmts = netcdf3_fmts + netcdf4_fmts
+
     def test_write_filename(self):
         f = self.f0
         a = f.array
@@ -238,15 +250,7 @@ class read_writeTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
-                for fmt in (
-                    "NETCDF3_CLASSIC",
-                    "NETCDF3_64BIT",
-                    "NETCDF3_64BIT_OFFSET",
-                    "NETCDF3_64BIT_DATA",
-                    "NETCDF4",
-                    "NETCDF4_CLASSIC",
-                    "CFA",
-                ):
+                for fmt in self.netcdf3_fmts + ["CFA"]:
                     f = cf.read(tmpfile)[0]
 
                     cf.write(f, tmpfile2, fmt=fmt)
