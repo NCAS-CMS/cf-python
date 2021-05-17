@@ -182,7 +182,8 @@ class FieldDomainList:
         :Parameters:
 
             ncvars: optional
-                Select constructs from the list. May be one or more netCDF names of constructs.
+                Select constructs from the list. May be one or more
+                netCDF names of constructs.
 
                 A construct is selected if it matches any of the given
                 names.
@@ -258,15 +259,7 @@ class FieldDomainList:
                 its properties matches.
 
             properties: optional
-                Select the constructs with the given properties. May be
-                one or more of:
-
-                  * The property of a construct.
-
-                By default a construct is selected if it matches all
-                of the given properties, but it may alternatively be
-                selected when at least one of its properties matches
-                (see the *mode* positional parameter).
+                Select the constructs with the given properties.
 
                 A property value is given by a keyword parameter of
                 the property name. The value may be a scalar or vector
@@ -275,6 +268,11 @@ class FieldDomainList:
                 (e.g. ``re.compile('^ocean')``), for which all
                 constructs whose methods match (via `re.search`) are
                 selected.
+
+                By default a construct is selected if it matches all
+                of the given properties, but it may alternatively be
+                selected when at least one of its properties matches
+                (see the *mode* positional parameter).
 
         :Returns:
 
