@@ -8,7 +8,7 @@ class FieldDomainList:
         """Select elements by their metadata constructs.
 
         To find the inverse of the selection, use a list comprehension
-        with the !match_by_construct` method of the construct
+        with the `!match_by_construct` method of the construct
         elements. For example, to select all constructs that do *not*
         have a "latitude" metadata construct:
 
@@ -55,13 +55,10 @@ class FieldDomainList:
                 recently applied cell method operations.
 
                 *Parameter example:*
-                  `'latitude'``
+                  ``'latitude'``
 
                 *Parameter example:*
                   ``'T'``
-
-                *Parameter example:*
-                  ``'latitude'``
 
                 *Parameter example:*
                   ``'long_name=Cell Area'``

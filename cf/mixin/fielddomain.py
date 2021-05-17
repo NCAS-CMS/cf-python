@@ -291,7 +291,7 @@ class FieldDomain:
                  The dictionary has two keys: ``'indices'`` and
                  ``'mask'``.
 
-                 The ``'indices'`` key stores a dictionary in keyed by
+                 The ``'indices'`` key stores a dictionary keyed by
                  domain axis identifiers, each of which has a value of
                  the index for that domain axis.
 
