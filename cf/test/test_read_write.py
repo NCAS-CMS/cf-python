@@ -265,18 +265,68 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
-        g = cf.read(self.filename)  # note g has one field
+        g = cf.read(self.filename)  # note 'g' has one field
+
+        # Test special case #1: attempt to append fields with groups
+        # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
+        # since it is the only format where groups are allowed.
+        #
+        # Note: this is not the most natural test to do first, but putting
+        # it before the rest reduces spurious seg faults for me, so...
+        g[0].nc_set_variable_groups(["forecast", "model"])
+        cf.write(g, tmpfile, fmt="NETCDF4", mode="w")  # 1. overwrite to wipe
+        f = cf.read(tmpfile)
+        with self.assertRaises(ValueError):
+            cf.write(g[0], tmpfile, fmt="NETCDF4", mode="a")
+
+        # Test special case #2: attempt to append fields with contradictory
+        # featureType to the original file:
+        g[0].nc_clear_variable_groups()
+        g[0].nc_set_global_attribute("featureType", "profile")
+        cf.write(
+            g,
+            tmpfile,
+            fmt="NETCDF4",
+            mode="w",
+            global_attributes=("featureType", "profile"),
+        )  # 1. overwrite to wipe
+        h = cf.example_field(3)
+        h.nc_set_global_attribute("featureType", "timeSeries")
+        with self.assertRaises(ValueError):
+            cf.write(h, tmpfile, fmt="NETCDF4", mode="a")
+        # Now remove featureType attribute for subsquent tests:
+        g_attrs = g[0].nc_clear_global_attributes()
+        del g_attrs["featureType"]
+        g[0].nc_set_global_attributes(g_attrs)
+
+        # Set a non-trivial (i.e. not only 'Conventions') global attribute to
+        # make the global attribute testing more robust:
+        add_global_attr = ["remark", "A global comment."]
+        original_global_attrs = g[0].nc_global_attributes()
+        original_global_attrs[add_global_attr[0]] = None  # -> None on fields
+        g[0].nc_set_global_attribute(*add_global_attr)
+
         g_copy = g.copy()
 
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:
-            cf.write(g, tmpfile, fmt=fmt, mode="w")
+            cf.write(
+                g,
+                tmpfile,
+                fmt=fmt,
+                mode="w",
+                global_attributes=add_global_attr,
+            )
             f = cf.read(tmpfile)
 
             new_length = 1  # since 1 == len(g)
             self.assertEqual(len(f), new_length)
-            self.assertTrue(f[0].equals(g[0], verbose=3))
+            # Ignore as 'remark' should be 'None' on the field as tested below
+            self.assertTrue(f[0].equals(g[0], ignore_properties=["remark"]))
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
 
             # Main aspect of this test: testing the append mode ('a'): now
             # append all other example fields, to check a diverse variety.
@@ -284,6 +334,13 @@ class read_writeTest(unittest.TestCase):
                 # Note: after Issue #141, this skip can be removed.
                 if ex_field_n == 1:
                     continue
+
+                # Skip since "RuntimeError: Can't create variable in
+                # NETCDF4_CLASSIC file from (2)  (NetCDF: Attempting netcdf-4
+                # operation on strict nc3 netcdf-4 file)" i.e. not possible.
+                if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
+                    continue
+
                 # Skip since "Can't write int64 data from <Count: (2) > to a
                 # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
                 # Note: can remove this when Issue #140 is closed.
@@ -302,12 +359,21 @@ class read_writeTest(unittest.TestCase):
                         [
                             ex_field.equals(
                                 file_field,
-                                ignore_properties=["comment", "featureType"],
+                                ignore_properties=[
+                                    "comment",
+                                    "featureType",
+                                    "remark",
+                                ],
                             )
                             for file_field in f
                         ]
                     )
                 )
+                for file_field in f:
+                    self.assertEqual(
+                        file_field.nc_global_attributes(),
+                        original_global_attrs,
+                    )
 
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works:
@@ -317,6 +383,10 @@ class read_writeTest(unittest.TestCase):
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
+            if fmt in "NETCDF4_CLASSIC":
+                # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
+                append_ex_fields = append_ex_fields[:4]
+
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cf.write(
                 append_ex_fields, tmpfile, fmt=fmt, mode="a"
@@ -328,10 +398,6 @@ class read_writeTest(unittest.TestCase):
             # but we also need to check that any coordinates that are
             # equal across different fields have been shared in the
             # source netCDF, rather than written in separately.
-            #
-            # ! TODO ! Need to check that the cf example_fields are
-            # equivalent at least in coor terms to the cf fields, else
-            # this list and the corresponding assertions might need revising.
             #
             # Note that the coordinates that are shared across the set of
             # all example fields plus the field 'g' from the contents of
@@ -367,7 +433,7 @@ class read_writeTest(unittest.TestCase):
                     for file_field in f
                     if ex_field.equals(
                         file_field,
-                        ignore_properties=["comment", "featureType"],
+                        ignore_properties=["comment", "featureType", "remark"],
                     )
                 ]
                 if not position:
@@ -429,7 +495,17 @@ class read_writeTest(unittest.TestCase):
             cf.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), 2 * len(g))
-            self.assertTrue(any([file_field.equals(g[0]) for file_field in f]))
+            self.assertTrue(
+                any(
+                    [
+                        file_field.equals(g[0], ignore_properties=["remark"])
+                        for file_field in f
+                    ]
+                )
+            )
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
 
     def test_read_write_netCDF4_compress_shuffle(self):
         for chunksize in self.chunk_sizes:
