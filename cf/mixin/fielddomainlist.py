@@ -185,9 +185,7 @@ class FieldDomainList:
         :Parameters:
 
             ncvars: optional
-                Select constructs from the list. May be one or more:
-
-                  * The netCDF name of a construct.
+                Select constructs from the list. May be one or more netCDF names of constructs.
 
                 A construct is selected if it matches any of the given
                 names.
