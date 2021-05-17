@@ -206,8 +206,8 @@ class Constructs(cfdm.Constructs):
     def _short_iteration(cls, x):
         """The default short circuit test.
 
-        If this method returns True then only ther first identity
-        return by the construct's `!identities` method will be
+        If this method returns True then only the first identity
+        returned by the construct's `!identities` method will be
         checked.
 
         See `_filter_by_identity` for details.
