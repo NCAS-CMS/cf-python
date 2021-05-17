@@ -17,9 +17,7 @@ class Index(mixin.PropertiesData, cfdm.Index):
 
     **NetCDF interface**
 
-    The netCDF variable name of the index variable may be accessed
-    with the `nc_set_variable`, `nc_get_variable`, `nc_del_variable`
-    and `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the netCDF dimension spanned by the index variable's
     data (which does not correspond to a domain axis construct) may be
@@ -53,6 +51,3 @@ class Index(mixin.PropertiesData, cfdm.Index):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

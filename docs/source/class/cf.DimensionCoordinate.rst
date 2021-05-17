@@ -111,6 +111,21 @@ Geometries
 
    ~cf.DimensionCoordinate.interior_ring
 
+Climatology
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.del_climatology
+   ~cf.DimensionCoordinate.get_climatology
+   ~cf.DimensionCoordinate.is_climatology
+   ~cf.DimensionCoordinate.set_climatology
+
 Selection
 ---------
 

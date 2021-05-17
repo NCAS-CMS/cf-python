@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import inspect
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -52,41 +51,25 @@ class CellMethodTest(unittest.TestCase):
         "time: sum within days time: maximum over days",
     )
 
-    test_only = []
-    #    test_only = ['test_CellMethod___str__']
-    #    test_only = ['test_CellMethod_equals']
-    #    test_only = ['test_CellMethod_equivalent']
-    #    test_only = ['test_CellMethod_get_set_delete']
-
     def test_CellMethod__repr__str__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             t = " ".join(map(str, cms))
             self.assertEqual(t, s, "{!r} != {!r}".format(t, s))
             for cm in cms:
-                _ = repr(cm)
+                repr(cm)
 
     def test_CellMethod_equals(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             for cm in cms:
                 self.assertTrue(cm.equals(cm.copy(), verbose=2))
 
     def test_CellMethod_equivalent(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             for cm in cms:
                 self.assertTrue(cm.equivalent(cm.copy(), verbose=2))
-        # --- End: for
 
         # Intervals
         for s0, s1 in (
@@ -139,12 +122,8 @@ class CellMethodTest(unittest.TestCase):
                     cm0.equivalent(cm1, verbose=2),
                     "{0!r} not equivalent to {1!r}".format(cm0, cm1),
                 )
-        # --- End: for
 
     def test_CellMethod_get_set_delete(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         cm0, cm1 = cf.CellMethod.create(
             "time: minimum within days time: sum over years"
         )
@@ -164,9 +143,6 @@ class CellMethodTest(unittest.TestCase):
         cm = cf.CellMethod.create("lat: mean (interval: 1 hour)")[0]
 
         self.assertEqual("1 hour", str(cm.intervals[0]))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

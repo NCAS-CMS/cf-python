@@ -30,6 +30,3 @@ class List(mixin.PropertiesData, cfdm.List):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

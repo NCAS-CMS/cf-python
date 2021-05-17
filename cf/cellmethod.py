@@ -128,7 +128,7 @@ class CellMethod(cfdm.CellMethod):
                 axis = cell_methods.pop(0)[:-1]
 
                 axes.append(axis)
-            # --- End: while
+
             cm.set_axes(axes)
 
             if not cell_methods:
@@ -149,7 +149,7 @@ class CellMethod(cfdm.CellMethod):
                 cm.set_qualifier(attr, cell_methods.pop(0))
                 if not cell_methods:
                     break
-            # --- End: while
+
             if not cell_methods:
                 out.append(cm)
                 break
@@ -190,7 +190,6 @@ class CellMethod(cfdm.CellMethod):
 
                         intervals.append(data)
                         continue
-                    # --- End: if
 
                     if term == "comment":
                         comment = []
@@ -200,13 +199,11 @@ class CellMethod(cfdm.CellMethod):
                             if cell_methods[0].endswith(":"):
                                 break
                             comment.append(cell_methods.pop(0))
-                        # --- End: while
+
                         cm.set_qualifier("comment", " ".join(comment))
-                # --- End: while
 
                 if cell_methods[0].endswith(")"):
                     cell_methods.pop(0)
-            # --- End: if
 
             n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
@@ -220,7 +217,6 @@ class CellMethod(cfdm.CellMethod):
                 cm.set_qualifier("interval", intervals)
 
             out.append(cm)
-        # --- End: while
 
         return out
 
@@ -448,7 +444,6 @@ class CellMethod(cfdm.CellMethod):
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval)
                     )
-            # --- End: if
 
             if d.size != 1:
                 raise ValueError(
@@ -459,7 +454,6 @@ class CellMethod(cfdm.CellMethod):
                 d.squeeze(inplace=True)
 
             values.append(d)
-        # --- End: for
 
         self.set_qualifier("interval", tuple(values))
 
@@ -644,7 +638,6 @@ class CellMethod(cfdm.CellMethod):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # Still here? Then they are equivalent
         return True
@@ -686,6 +679,3 @@ class CellMethod(cfdm.CellMethod):
         _DEPRECATION_ERROR_METHOD(
             self, "remove_axes", "Use method 'del_axes' instead."
         )  # pragma: no cover
-
-
-# --- End: class

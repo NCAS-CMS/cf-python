@@ -8,6 +8,8 @@ import cf
 
 
 class ListTest(unittest.TestCase):
+    gathered = "gathered.nc"
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cf.log_level("DISABLE")
@@ -20,19 +22,14 @@ class ListTest(unittest.TestCase):
         # < ... test code ... >
         # cf.log_level('DISABLE')
 
-        self.gathered = "gathered.nc"
-
     def test_List__repr__str__dump(self):
         f = cf.read(self.gathered)[0]
 
-        list_ = f.data.get_list()
+        lst = f.data.get_list()
 
-        _ = repr(list_)
-        _ = str(list_)
-        self.assertIsInstance(list_.dump(display=False), str)
-
-
-# --- End: class
+        repr(lst)
+        str(lst)
+        self.assertIsInstance(lst.dump(display=False), str)
 
 
 if __name__ == "__main__":

@@ -43,6 +43,3 @@ class Count(mixin.PropertiesData, cfdm.Count):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

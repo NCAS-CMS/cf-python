@@ -47,6 +47,7 @@ Constructs and keys
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Constructs.domain_axes
    ~cf.Constructs.key
    ~cf.Constructs.value
 
@@ -61,6 +62,7 @@ Data axes
    :template: method.rst
 
    ~cf.Constructs.data_axes
+   ~cf.Constructs.get_data_axes
 
 Miscellaneous
 -------------
@@ -74,6 +76,7 @@ Miscellaneous
 
    ~cf.Constructs.copy
    ~cf.Constructs.shallow_copy
+   ~cf.Constructs.todict
    ~cf.Constructs.equals
    ~cf.Constructs.ordered
    ~cf.Constructs.construct_type

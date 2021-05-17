@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import os
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -9,27 +8,22 @@ import cf
 
 
 class FieldAncillaryTest(unittest.TestCase):
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-    )
-    #    f = cf.read(filename)[0]
+    f = cf.example_field(1)
 
     def test_FieldAncillary(self):
         f = cf.FieldAncillary()
 
-        _ = repr(f)
-        _ = str(f)
-        _ = f.dump(display=False)
+        repr(f)
+        str(f)
+        f.dump(display=False)
 
     def test_FieldAncillary_source(self):
-        f = cf.read(self.filename)[0]
-
-        a = f.auxiliary_coordinates("latitude").value()
+        a = self.f.auxiliary_coordinate("latitude")
         cf.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
-        f = cf.read(self.filename)[0]
-        x = f.domain_ancillaries("ncvar%a").value()
+        d = self.f.domain_ancillary("ncvar%a")
+        x = cf.FieldAncillary(source=d)
 
         x.set_property("long_name", "qwerty")
 
@@ -39,8 +33,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_FieldAncillary_insert_dimension(self):
-        f = cf.read(self.filename)[0]
-        d = f.dimension_coordinates("grid_longitude").value()
+        d = self.f.dimension_coordinate("grid_longitude")
         x = cf.FieldAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -52,8 +45,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
 
     def test_FieldAncillary_transpose(self):
-        f = cf.read(self.filename)[0]
-        a = f.auxiliary_coordinates("longitude").value()
+        a = self.f.auxiliary_coordinate("longitude")
         x = cf.FieldAncillary(source=a)
 
         self.assertEqual(x.shape, (9, 10))
@@ -65,8 +57,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (10, 9))
 
     def test_FieldAncillary_squeeze(self):
-        f = cf.read(self.filename)[0]
-        a = f.auxiliary_coordinates("longitude").value()
+        a = self.f.auxiliary_coordinate("longitude")
         x = cf.FieldAncillary(source=a)
 
         x.insert_dimension(1, inplace=True)
@@ -79,9 +70,6 @@ class FieldAncillaryTest(unittest.TestCase):
 
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

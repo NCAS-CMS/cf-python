@@ -2,7 +2,6 @@ import datetime
 import faulthandler
 import os
 import unittest
-import inspect
 
 import numpy
 
@@ -16,15 +15,7 @@ class MathTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "regrid_file1.nc"
     )
 
-    test_only = []
-    #    test_only = ('NOTHING!!!!!',)
-    #    test_only = ('test_relative_vorticity_distance')
-    #    test_only = ('test_relative_vorticity_latlong')
-
     def test_relative_vorticity_distance(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         x_min = 0.0
         x_max = 100.0
         dx = 1.0
@@ -60,9 +51,6 @@ class MathTest(unittest.TestCase):
         self.assertTrue((rv.array == 0.0).all())
 
     def test_relative_vorticity_latlong(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         lat_min = -90.0
         lat_max = 90.0
         dlat = 1.0

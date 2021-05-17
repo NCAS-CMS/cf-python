@@ -1,7 +1,6 @@
 import atexit
 import datetime
 import faulthandler
-import inspect
 import os
 import tempfile
 import unittest
@@ -27,7 +26,6 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-    # --- End: for
 
 
 atexit.register(_remove_tmpfiles)
@@ -153,12 +151,7 @@ class DSGTest(unittest.TestCase):
 
     b = numpy.ma.where(b == -99, numpy.ma.masked, b)
 
-    test_only = []
-
     def test_DSG_contiguous(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.contiguous, verbose=0)
 
         self.assertEqual(len(f), 2)
@@ -232,9 +225,6 @@ class DSGTest(unittest.TestCase):
         cf.write(tas, tmpfile)
 
     def test_DSG_indexed(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.indexed)
 
         self.assertEqual(len(f), 2)
@@ -262,9 +252,6 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=2))
 
     def test_DSG_indexed_contiguous(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cf.read(self.indexed_contiguous, verbose=0)
 
         self.assertEqual(len(f), 2)
@@ -301,9 +288,6 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=2))
 
     def test_DSG_create_contiguous(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Define the ragged array values
         ragged_array = numpy.array([1, 3, 4, 3, 6], dtype="float32")
         # Define the count array values
@@ -361,11 +345,8 @@ class DSGTest(unittest.TestCase):
         )
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    print(cf.environment())
+    cf.environment()
     print()
     unittest.main(verbosity=2)
