@@ -5232,6 +5232,8 @@ The `cf.write` function has optional parameters to
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
   possible);
 
+* append to the netCDF file rather than over-writing it by default;
+
 * specify which field construct properties should become netCDF data
   variable attributes and which should become netCDF global
   attributes;
@@ -5250,6 +5252,24 @@ The `cf.write` function has optional parameters to
 * apply netCDF compression and packing; and
 
 * set the endian-ness of the output data.
+
+For example, to use the `mode` parameter to append a new field, or fields,
+to a netCDF file whilst preserving the field or fields already contained
+in that file:
+
+.. code-block:: python
+   :caption: *Append field constructs to a netCDF dataset on
+             disk.*
+
+   >>> cf.read('file.nc')
+   [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>]
+   >>> g = cf.example_field(0)
+   >>> g
+   <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
+   >>> cf.write(g, 'file.nc', mode='a')
+   >>> cf.read('file.nc')
+   [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
 
 Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set
