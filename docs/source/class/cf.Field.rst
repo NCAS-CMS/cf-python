@@ -123,14 +123,15 @@ Units
 
    ~cf.Field.override_units
    ~cf.Field.override_calendar
-
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Field.Units
-
+   ~cf.Field.reference_datetime
+   
 .. _Field-Data:
 
 Data
@@ -257,7 +258,17 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.auxiliary_coordinates
+   ~cf.Field.cell_measures
+   ~cf.Field.cell_methods
+   ~cf.Field.coordinates
+   ~cf.Field.coordinate_references
+   ~cf.Field.dimension_coordinates
+   ~cf.Field.domain_ancillaries
+   ~cf.Field.domain_axes
+   ~cf.Field.field_ancillaries
    ~cf.Field.construct
+   ~cf.Field.construct_item
    ~cf.Field.construct_key
    ~cf.Field.del_construct
    ~cf.Field.get_construct
@@ -296,17 +307,6 @@ Metadata constructs
    :template: attribute.rst
 
    ~cf.Field.constructs
-   ~cf.Field.auxiliary_coordinates
-   ~cf.Field.cell_measures
-   ~cf.Field.cell_methods
-   ~cf.Field.coordinates
-   ~cf.Field.coordinate_references
-   ~cf.Field.dimension_coordinates
-   ~cf.Field.domain_ancillaries
-   ~cf.Field.domain_axes
-   ~cf.Field.axes
-   ~cf.Field.field_ancillaries
-   ~cf.Field.reference_datetime
 
 .. _Field-Domain:
 

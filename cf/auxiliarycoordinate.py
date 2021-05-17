@@ -57,6 +57,3 @@ class AuxiliaryCoordinate(
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

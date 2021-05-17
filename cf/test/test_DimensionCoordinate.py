@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import os
 import unittest
 
 import numpy
@@ -11,11 +10,7 @@ import cf
 
 
 class DimensionCoordinateTest(unittest.TestCase):
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-    )
-
-    #    f = cf.read(filename)[0]
+    f = cf.example_field(1)
 
     dim = cf.DimensionCoordinate()
     dim.standard_name = "latitude"
@@ -45,12 +40,11 @@ class DimensionCoordinateTest(unittest.TestCase):
     dim.set_bounds(bounds)
 
     def test_DimensionCoordinate__repr__str__dump(self):
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates("X").value()
+        x = self.f.dimension_coordinate("X")
 
-        _ = repr(x)
-        _ = str(x)
-        _ = x.dump(display=False)
+        repr(x)
+        str(x)
+        x.dump(display=False)
 
     def test_DimensionCoordinate_convert_reference_time(self):
         d = cf.DimensionCoordinate()
@@ -134,33 +128,31 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((d.array == [1.0, 2, 3]).all())
 
     def test_DimensionCoordinate_roll(self):
-        f = cf.read(self.filename)[0]
+        x = self.f.dimension_coordinate("X").copy()
+        y = self.f.dimension_coordinate("Y")
 
-        x = f.dimension_coordinates("X").value()
-        y = f.dimension_coordinates("Y").value()
-
-        _ = x.roll(0, 3)
+        x.roll(0, 3)
         with self.assertRaises(Exception):
             y.roll(0, 3)
 
-        _ = x.roll(0, 3)
-        _ = x.roll(-1, 3)
+        x.roll(0, 3)
+        x.roll(-1, 3)
         with self.assertRaises(Exception):
-            _ = x.roll(2, 3)
+            x.roll(2, 3)
 
         a = x[0]
-        _ = a.roll(0, 3)
+        a.roll(0, 3)
         self.assertIsNone(a.roll(0, 3, inplace=True))
 
-        _ = x.roll(0, 0)
-        _ = x.roll(0, 3, inplace=True)
+        x.roll(0, 0)
+        x.roll(0, 3, inplace=True)
         self.assertIsNone(x.roll(0, 0, inplace=True))
 
-        _ = x._centre(360)
-        _ = x.flip()._centre(360)
+        x._centre(360)
+        x.flip()._centre(360)
 
         # Test roll on coordinate without bounds:
-        g = f.copy()
+        g = self.f.copy()
         g.dimension_coordinate("X").del_bounds()
 
         for shift_by in [1, -1, g.shape[2]]:  # vary roll direction and extent
@@ -247,11 +239,10 @@ class DimensionCoordinateTest(unittest.TestCase):
         )
 
     def test_DimensionCoordinate_bounds(self):
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates("X").value()
+        x = self.f.dimension_coordinate("X")
 
-        _ = x.upper_bounds
-        _ = x.lower_bounds
+        x.upper_bounds
+        x.lower_bounds
 
         self.assertTrue(x.increasing)
 
@@ -268,8 +259,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         y.create_bounds()
 
     def test_DimensionCoordinate_properties(self):
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates("X").value()
+        x = self.f.dimension_coordinate("X").copy()
 
         x.positive = "up"
         self.assertEqual(x.positive, "up")
@@ -283,8 +273,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(x.ndim, 1)
 
     def test_DimensionCoordinate_insert_dimension(self):
-        f = cf.read(self.filename)[0]
-        x = f.dimension_coordinates("X").value()
+        x = self.f.dimension_coordinate("X").copy()
 
         self.assertEqual(x.shape, (9,))
         self.assertEqual(x.bounds.shape, (9, 2))
@@ -472,9 +461,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         d[...] = -e
         self.assertTrue(d.data.equals(-e.data, verbose=3))
         self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

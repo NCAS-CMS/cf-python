@@ -621,6 +621,3 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             "{!r} object can't be converted to a JSON serializable type: "
             "{!r}".format(type(x), x)
         )
-
-
-# --- End: class

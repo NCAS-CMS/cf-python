@@ -28,6 +28,3 @@ class Units:
     @staticmethod
     def conform(*args, **kwargs):
         return cfUnits.conform(*args, **kwargs)
-
-
-# --- End: class

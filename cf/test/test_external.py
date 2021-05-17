@@ -52,12 +52,13 @@ class ExternalVariableTest(unittest.TestCase):
         # Read the parent file on its own, without the external file
         f = cf.read(self.parent_file, verbose=0)
 
-        for i in f:
-            _ = repr(i)
-            _ = str(i)
-            _ = i.dump(display=False)
+        self.assertEqual(len(f), 1)
 
-            self.assertEqual(len(f), 1)
+        for i in f:
+            repr(i)
+            str(i)
+            i.dump(display=False)
+
         f = f[0]
 
         cell_measure = f.constructs.filter_by_identity("measure:area").value()
@@ -73,9 +74,9 @@ class ExternalVariableTest(unittest.TestCase):
         c = cf.read(self.combined_file, verbose=0)
 
         for i in c + f:
-            _ = repr(i)
-            _ = str(i)
-            _ = i.dump(display=False)
+            repr(i)
+            str(i)
+            i.dump(display=False)
 
         cell_measure = (
             f[0].constructs.filter_by_identity("measure:area").value()
@@ -91,9 +92,9 @@ class ExternalVariableTest(unittest.TestCase):
         f = cf.read(self.parent_file, external=self.combined_file, verbose=0)
 
         for i in f:
-            _ = repr(i)
-            _ = str(i)
-            _ = i.dump(display=False)
+            repr(i)
+            str(i)
+            i.dump(display=False)
 
         self.assertEqual(len(f), 1)
         self.assertEqual(len(c), 1)
@@ -109,9 +110,9 @@ class ExternalVariableTest(unittest.TestCase):
         )
 
         for i in f:
-            _ = repr(i)
-            _ = str(i)
-            _ = i.dump(display=False)
+            repr(i)
+            str(i)
+            i.dump(display=False)
 
         self.assertEqual(len(f), 1)
         self.assertEqual(len(c), 1)
@@ -221,11 +222,8 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertFalse(f_lon_thirds[1].cell_measures())
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    print(cf.environment())
+    cf.environment()
     print()
     unittest.main(verbosity=2)

@@ -154,9 +154,6 @@ class File:
                 rec.file = self
 
 
-# --- End: class
-
-
 class Var:
     """Container for some information about variables."""
 
@@ -242,12 +239,8 @@ class Var:
                 this_grp.sort(key=self._compare_recs_by_orig_order)
                 groups.append(this_grp)
                 this_grp = []
-        # --- End: for
 
         return groups
-
-
-# --- End: class
 
 
 class Rec:
@@ -409,9 +402,6 @@ class Rec:
             data_type,
             nwords,
         )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

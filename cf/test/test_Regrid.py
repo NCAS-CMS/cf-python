@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import inspect
 import os
 import unittest
 
@@ -43,17 +42,8 @@ class RegridTest(unittest.TestCase):
 
     chunk_sizes = (300, 10000, 100000)[::-1]
 
-    test_only = []
-    #    test_only = ('NOTHING!!!!!',)
-    #    test_only = ('test_Field_regrids',)
-    #    test_only = ('test_Field_regridc',)
-    #    test_only('test_Field_section',)
-    #    test_only('test_Data_section',)
-
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regrids(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
         self.assertFalse(cf.regrid_logging())
         with cf.atol(1e-12):
             for chunksize in self.chunk_sizes:
@@ -61,6 +51,8 @@ class RegridTest(unittest.TestCase):
                     f1 = cf.read(self.filename1)[0]
                     f2 = cf.read(self.filename2)[0]
                     f3 = cf.read(self.filename3)[0]
+                    f4 = cf.read(self.filename4)[0]
+                    f5 = cf.read(self.filename5)[0]
 
                     r = f1.regrids(f2, "conservative")
 
@@ -70,6 +62,7 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     r = f1.regrids(f2, method="conservative")
 
                     self.assertTrue(
@@ -78,7 +71,9 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
+
                     r = f1.regrids(dst, "conservative", dst_cyclic=True)
 
                     self.assertTrue(
@@ -87,7 +82,9 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
                     r = f1.regrids(dst, method="conservative", dst_cyclic=True)
+
                     self.assertTrue(
                         f3.equals(r),
                         "destination=global dict, CHUNKSIZE={}".format(
@@ -95,36 +92,24 @@ class RegridTest(unittest.TestCase):
                         ),
                     )
 
-                    f4 = cf.read(self.filename4)[0]
-                    f5 = cf.read(self.filename5)[0]
-
-                    r = f1.regrids(f5, "linear")
-                    self.assertTrue(
-                        f4.equals(r),
-                        "destination=regional Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
-                    )
-
+                    # Regrid global to regional roated pole
                     r = f1.regrids(f5, method="linear")
+
                     self.assertTrue(
-                        f4.equals(r),
+                        f4.equals(r, verbose=3),
                         "destination=regional Field, CHUNKSIZE={}".format(
                             chunksize
                         ),
                     )
-            # --- End: for
 
-            f6 = cf.read(self.filename6)[0]
-            with self.assertRaises(Exception):
-                f1.regridc(f6, axes="T", method="linear")
+        f6 = cf.read(self.filename6)[0]
+        with self.assertRaises(Exception):
+            f1.regridc(f6, axes="T", method="linear")
 
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
         self.assertFalse(cf.regrid_logging())
-        with cf.atol(1e-12):
+        with cf.atol(1e-11):
             for chunksize in self.chunk_sizes:
                 self.assertFalse(cf.regrid_logging())
                 with cf.chunksize(chunksize):
@@ -181,9 +166,6 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

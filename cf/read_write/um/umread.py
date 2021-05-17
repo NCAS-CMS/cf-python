@@ -27,7 +27,9 @@ from numpy import where as numpy_where
 from netCDF4 import date2num as netCDF4_date2num
 
 import cftime
+
 import cfdm
+from cfdm import Constructs
 
 from ... import __version__, __Conventions__
 from ...decorators import (
@@ -490,6 +492,8 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 
 _axis = {"area": None}
 
+_autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
+
 
 class UMField:
     """TODO."""
@@ -505,7 +509,8 @@ class UMField:
         height_at_top_of_model,
         verbose=None,
         implementation=None,
-        **kwargs
+        select=None,
+        **kwargs,
     ):
         """**Initialization**
 
@@ -556,7 +561,7 @@ class UMField:
 
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
-                return field constuct.
+                return field construct.
 
         """
         self._bool = False
@@ -633,7 +638,6 @@ class UMField:
                         # records.
                         split_group = True
                         nz = 1
-                # --- End: if
 
                 if split_group:
                     # This group doesn't form a complete nz x nt
@@ -648,10 +652,8 @@ class UMField:
                     groups2.append(group)
                     groups_nz.append(nz)
                     groups_nt.append(group_size / nz)
-            # --- End: for
 
             groups = groups2
-        # --- End: if
 
         rec0 = groups[0][0]
 
@@ -673,12 +675,67 @@ class UMField:
         LBCODE = int_hdr[lbcode]
         LBPROC = int_hdr[lbproc]
         LBVC = int_hdr[lbvc]
+        stash = int_hdr[lbuser4]
         LBUSER5 = int_hdr[lbuser5]
+        submodel = int_hdr[lbuser7]
         BPLAT = real_hdr[bplat]
         BPLON = real_hdr[bplon]
         BDX = real_hdr[bdx]
         BDY = real_hdr[bdy]
 
+        if stash:
+            section, item = divmod(stash, 1000)
+            um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
+        else:
+            um_stash_source = None
+
+        header_um_version, source = divmod(int_hdr[lbsrce], 10000)
+
+        if header_um_version > 0 and int(um_version) == um_version:
+            model_um_version = header_um_version
+            self.um_version = header_um_version
+        else:
+            model_um_version = None
+            self.um_version = um_version
+
+        # Set source
+        source = _lbsrce_model_codes.setdefault(source, None)
+        if source is not None and model_um_version is not None:
+            source += f" vn{model_um_version}"
+
+        # Only process the requested fields
+        ok = True
+        if select:
+            values1 = (
+                f"stash_code={stash}",
+                f"lbproc={LBPROC}",
+                f"lbtim={LBTIM}",
+                f"runid={self.decode_lbexp()}",
+                f"submodel={submodel}",
+            )
+            if um_stash_source is not None:
+                values1 += (f"um_stash_source={um_stash_source}",)
+            if source:
+                values1 += (f"source={source}",)
+
+            ok = False
+            for value0 in select:
+                for value1 in values1:
+                    ok = Constructs._matching_values(
+                        value0, None, value1, basic=True
+                    )
+                    if ok:
+                        break
+
+                if ok:
+                    break
+
+        if not ok:
+            # This PP/UM ield does not match the requested selection
+            self.field = (None,)
+            return
+
+        # Still here?
         self.lbnpt = LBNPT
         self.lbrow = LBROW
         self.lbtim = LBTIM
@@ -706,19 +763,6 @@ class UMField:
         self.calendar = calendar
         self.reference_time_Units()
 
-        header_um_version, source = divmod(int_hdr[lbsrce], 10000)
-
-        if header_um_version > 0 and int(um_version) == um_version:
-            model_um_version = header_um_version
-            self.um_version = header_um_version
-        else:
-            model_um_version = None
-            self.um_version = um_version
-
-        # Set source
-        source = _lbsrce_model_codes.setdefault(source, None)
-        if source is not None and model_um_version is not None:
-            source += " vn{0}".format(model_um_version)
         if source:
             cf_properties["source"] = source
 
@@ -765,8 +809,7 @@ class UMField:
 
         # Set a identifying name based on the submodel and STASHcode
         # (or field code).
-        stash = int_hdr[lbuser4]
-        submodel = int_hdr[lbuser7]
+        #        stash = int_hdr[lbuser4]#
         self.stash = stash
 
         # The STASH code has been set in the PP header, so try to find
@@ -821,23 +864,18 @@ class UMField:
                 self.cf_info = cf_info
 
                 break
-        # --- End: if
 
-        if stash:
-            section, item = divmod(stash, 1000)
-            um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
+        if um_stash_source is not None:
             cf_properties["um_stash_source"] = um_stash_source
-            identity = "UM_{0}_vn{1}".format(um_stash_source, self.um_version)
+            identity = f"UM_{um_stash_source}_vn{self.um_version}"
         else:
-            identity = "UM_{0}_fc{1}_vn{2}".format(
-                submodel, int_hdr[lbfc], self.um_version
-            )
+            identity = f"UM_{submodel}_fc{int_hdr[lbfc]}_vn{self.um_version}"
 
         if um_Units is None:
             self.um_Units = _Units[None]
 
         if um_condition:
-            identity += "_{0}".format(um_condition)
+            identity += f"_{um_condition}"
 
         if long_name is None:
             cf_properties["long_name"] = identity
@@ -863,12 +901,6 @@ class UMField:
             # --------------------------------------------------------
             extra = recs[0].get_extra_data()
             self.extra = extra
-
-            # --------------------------------------------------------
-            # Set some derived metadata quantities
-            # --------------------------------------------------------
-            logger.detail(self.__dict__)  # pragma: no cover
-            self.printfdr()  # pragma: no cover
 
             # --------------------------------------------------------
             # Create the 'T' dimension coordinate
@@ -902,7 +934,6 @@ class UMField:
                 if LBVC in (2, 9, 65) or LBLEV in (7777, 8888):  # CHECK!
                     self.LBLEV = LBLEV
                     c = self.model_level_number_coordinate(aux=bool(c))
-            # --- End: if
 
             # --------------------------------------------------------
             # Create the 'Y' dimension coordinate
@@ -922,14 +953,14 @@ class UMField:
                                 axiscode, "y"
                             )
                 else:
-                    ykey, yc = self.xy_coordinate(axiscode, "y")
-            # --- End: if
+                    ykey, yc, yaxis = self.xy_coordinate(axiscode, "y")
 
             # --------------------------------------------------------
             # Create the 'X' dimension coordinate
             # --------------------------------------------------------
             axiscode = ix
             xc = None
+            xkey = None
             if axiscode is not None:
                 if axiscode in (20, 23):
                     # X axis is time since reference date
@@ -943,8 +974,7 @@ class UMField:
                                 axiscode, "x"
                             )
                 else:
-                    xkey, xc = self.xy_coordinate(axiscode, "x")
-            # --- End: if
+                    xkey, xc, xaxis = self.xy_coordinate(axiscode, "x")
 
             # -10: rotated latitude  (not an official axis code)
             # -11: rotated longitude (not an official axis code)
@@ -1061,12 +1091,19 @@ class UMField:
             if down_axes:
                 field.flip(down_axes, inplace=True)
 
-            # Force cyclic X axis for paritcular values of LBHEM
-            if int_hdr[lbhem] in (0, 1, 2, 4):
-                field.cyclic("X", period=360)
+            # Force cyclic X axis for particular values of LBHEM
+            if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
+                field.cyclic(
+                    xkey,
+                    iscyclic=True,
+                    config={
+                        "axis": xaxis,
+                        "coord": xc,
+                        "period": Data(360.0, units=xc.Units),
+                    },
+                )
 
             self.fields.append(field)
-        # --- End: for
 
         self._bool = True
 
@@ -1177,7 +1214,7 @@ class UMField:
         ac = self.coord_data(ac, array, bounds, units=_Units["m"])
         ac.id = "UM_atmosphere_hybrid_height_coordinate_a"
         self.implementation.set_properties(
-            ac, {"long_name": "height based hybrid coeffient a"}
+            ac, {"long_name": "height based hybrid coeffient a"}, copy=False
         )
         key_a = self.implementation.set_domain_ancillary(
             field, ac, axes=[_axis["z"]], copy=False
@@ -1195,12 +1232,18 @@ class UMField:
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[""])
             self.implementation.set_properties(
-                dc, {"standard_name": "atmosphere_hybrid_height_coordinate"}
+                dc,
+                {"standard_name": "atmosphere_hybrid_height_coordinate"},
+                copy=False,
             )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis["z"])
             self.implementation.set_dimension_coordinate(
-                field, dc, axes=[_axis["z"]], copy=False
+                field,
+                dc,
+                axes=[_axis["z"]],
+                copy=False,
+                autocyclic=_autocyclic_false,
             )
 
         # "b" domain ancillary
@@ -1219,7 +1262,7 @@ class UMField:
         ac = self.coord_data(ac, array, bounds, units=_Units["1"])
         ac.id = "UM_atmosphere_hybrid_height_coordinate_b"
         self.implementation.set_properties(
-            ac, {"long_name": "height based hybrid coeffient b"}
+            ac, {"long_name": "height based hybrid coeffient b"}, copy=False
         )
         key_b = self.implementation.set_domain_ancillary(
             field, ac, axes=[_axis["z"]], copy=False
@@ -1281,7 +1324,11 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_height_coordinate_ak"
         #        field.insert_aux(ac, axes=[zdim], copy=False)
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         array = numpy_array(
@@ -1301,7 +1348,11 @@ class UMField:
         ac.id = "UM_atmosphere_hybrid_height_coordinate_bk"
         ac.long_name = "atmosphere_hybrid_height_coordinate_bk"
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -1380,7 +1431,11 @@ class UMField:
         dc = self.coord_names(dc, axiscode)
 
         self.implementation.set_dimension_coordinate(
-            field, dc, axes=[_axis["z"]], copy=False
+            field,
+            dc,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1389,14 +1444,22 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_sigma_pressure_coordinate_ak"
 
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units["1"])
 
         self.implementation.set_auxiliary_coordinate(
-            field, ac, axes=[_axis["z"]], copy=False
+            field,
+            ac,
+            axes=[_axis["z"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         ac.id = "UM_atmosphere_hybrid_sigma_pressure_coordinate_bk"
@@ -1441,7 +1504,6 @@ class UMField:
                 cell_methods.append(cf_info["where"])
                 if "over" in cf_info:
                     cell_methods.append(cf_info["over"])
-            # --- End: if
 
             if LBPROC == 64:
                 cell_methods.append("x: mean")
@@ -1475,7 +1537,6 @@ class UMField:
             elif LBTIM_IB == 3:
                 cell_methods.append(axis + ": mean within years")
                 cell_methods.append(axis + ": mean over years")
-        # --- End: if
 
         if not cell_methods:
             return []
@@ -1561,12 +1622,12 @@ class UMField:
         standard_name = _coord_standard_name.setdefault(axiscode, None)
 
         if standard_name is not None:
-            coord.set_property("standard_name", standard_name)
+            coord.set_property("standard_name", standard_name, copy=False)
             coord.ncvar = standard_name
         else:
             long_name = _coord_long_name.setdefault(axiscode, None)
             if long_name is not None:
-                coord.long_name = long_name
+                coord.set_property("long_name", long_name, copy=False)
 
         return coord
 
@@ -1591,7 +1652,6 @@ class UMField:
             c.positive = positive
             if positive == "down" and axiscode != 4:
                 self.down_axes.add(domain_axis_key)
-        # --- End: if
 
         return c
 
@@ -1864,7 +1924,6 @@ class UMField:
                             rec.hdr_offset, location
                         )
                     )  # pragma: no cover
-                # --- End: for
 
                 # Populate the 1-d partition matrix
                 matrix = numpy_array(partitions, dtype=object)
@@ -1923,12 +1982,10 @@ class UMField:
                     logger.info(
                         "    location = {}".format(location)
                     )  # pragma: no cover
-                # --- End: for
 
                 # Populate the 2-d partition matrix
                 matrix = numpy_array(partitions, dtype=object)
                 matrix.resize(pmshape)
-            # --- End: if
 
             data_axes = pmaxes + data_axes
 
@@ -1947,7 +2004,6 @@ class UMField:
             data._size = data_size
             data.partitions = PartitionMatrix(matrix, pmaxes)
             data.dtype = numpy_result_type(*file_data_types)
-        # --- End: if
 
         self.data = data
         self.data_axes = data_axes
@@ -1999,7 +2055,6 @@ class UMField:
                 index = int(bits[i : i + 6], 2)
                 if index < _n_characters:
                     runid.append(_characters[index])
-            # --- End: for
 
             runid = "".join(runid)
 
@@ -2051,7 +2106,6 @@ class UMField:
                 _cached_date2num[key] = time
             except ValueError:
                 time = numpy_nan  # ppp
-        # --- End: if
 
         return time
 
@@ -2083,7 +2137,6 @@ class UMField:
                 out.append("EXTRA DATA:")
                 for key in sorted(self.extra):
                     out.append("{0}: {1}".format(key, str(self.extra[key])))
-            # --- End: if
 
             out.append("file: " + self.filename)
             out.append(
@@ -2132,7 +2185,6 @@ class UMField:
             atol = self.atol
             if abs(BDX) >= atol and abs(BDY) >= atol:
                 _cached_latlon[cache_key] = (lat, lon)
-        # --- End: if
 
         if xc.has_bounds() and yc.has_bounds():  # TODO push to implementation
             cache_key = ("bounds",) + cache_key
@@ -2221,11 +2273,19 @@ class UMField:
             if aux:
                 self.field.insert_aux(c, axes=[_axis["z"]], copy=True)
                 self.implementation.set_auxiliary_coordinate(
-                    self.field, c, axes=[_axis["z"]], copy=True
+                    self.field,
+                    c,
+                    axes=[_axis["z"]],
+                    copy=True,
+                    autocyclic=_autocyclic_false,
                 )
             else:
                 self.implementation.set_dimension_coordinate(
-                    self.field, c, axes=[_axis["z"]], copy=True
+                    self.field,
+                    c,
+                    axes=[_axis["z"]],
+                    copy=True,
+                    autocyclic=_autocyclic_false,
                 )
         else:
             array = numpy_array(array, dtype=self.int_hdr_dtype)
@@ -2242,7 +2302,11 @@ class UMField:
                 ac = self.coord_data(ac, array, units=Units("1"))
                 ac = self.coord_names(ac, axiscode)
                 self.implementation.set_auxiliary_coordinate(
-                    self.field, ac, axes=[_axis["z"]], copy=False
+                    self.field,
+                    ac,
+                    axes=[_axis["z"]],
+                    copy=False,
+                    autocyclic=_autocyclic_false,
                 )
 
             else:
@@ -2251,7 +2315,11 @@ class UMField:
                 dc = self.coord_names(dc, axiscode)
                 dc = self.coord_axis(dc, axiscode)
                 self.implementation.set_dimension_coordinate(
-                    self.field, dc, axes=[_axis["z"]], copy=False
+                    self.field,
+                    dc,
+                    axes=[_axis["z"]],
+                    copy=False,
+                    autocyclic=_autocyclic_false,
                 )
 
             _cached_model_level_number_coordinate[key] = c
@@ -2293,7 +2361,6 @@ class UMField:
     #            else:
     #                # Float
     #                data_type = 'float%d' % (rec_file.word_size * 8)
-    #        # --- End: if
     #
     #        return numpy_dtype(data_type)
 
@@ -2337,7 +2404,9 @@ class UMField:
         dc = self.coord_data(
             dc, array, units=_axiscode_to_Units.setdefault(axiscode, None)
         )
-        self.implementation.set_properties(dc, {"long_name": "pseudolevel"})
+        self.implementation.set_properties(
+            dc, {"long_name": "pseudolevel"}, copy=False
+        )
         dc.id = "UM_pseudolevel"
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -2345,7 +2414,11 @@ class UMField:
         _axis["p"] = axisP
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["p"]], copy=False
+            self.field,
+            dc,
+            axes=[_axis["p"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2370,7 +2443,11 @@ class UMField:
         _axis["r"] = axisR
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["r"]], copy=False
+            self.field,
+            dc,
+            axes=[_axis["r"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2424,7 +2501,11 @@ class UMField:
             copy = False
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["z"]], copy=copy
+            self.field,
+            dc,
+            axes=[_axis["z"]],
+            copy=copy,
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2581,7 +2662,11 @@ class UMField:
         dc = self.coord_names(dc, axiscode)
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["t"]], copy=False
+            self.field,
+            dc,
+            axes=[_axis["t"]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2606,7 +2691,11 @@ class UMField:
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis[axis]], copy=False
+            self.field,
+            dc,
+            axes=[_axis[axis]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
 
         return dc
@@ -2640,7 +2729,11 @@ class UMField:
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis[axis]], copy=False
+            self.field,
+            dc,
+            axes=[_axis[axis]],
+            copy=False,
+            autocyclic=_autocyclic_false,
         )
         return dc
 
@@ -2682,7 +2775,6 @@ class UMField:
                 _cached_date2num[key] = time
             except ValueError:
                 time = numpy_nan  # ppp
-        # --- End: if
 
         return time
 
@@ -2756,8 +2848,6 @@ class UMField:
     #                            pubattr={"axis": None},
     #                            dimensions=[xdim],
     #                        )  # DCH xdim?
-    #            # --- End: if
-    #        # --- End: for
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
         """Create 2-d arrays of unrotated latitudes and longitudes.
@@ -2849,15 +2939,14 @@ class UMField:
             `str, `DimensionCoordinate`
 
         """
-        if axis == "y":
-            delta = self.bdy
-            origin = self.real_hdr[bzy]
-            size = self.lbrow
+        X = axiscode in (11, -11)
 
-            da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
-            _axis["y"] = axis_key
+        if X:
+            autocyclic = {"X": True}
         else:
+            autocyclic = _autocyclic_false
+
+        if axis == "x":
             delta = self.bdx
             origin = self.real_hdr[bzx]
             size = self.lbnpt
@@ -2865,6 +2954,16 @@ class UMField:
             da = self.implementation.initialise_DomainAxis(size=size)
             axis_key = self.implementation.set_domain_axis(self.field, da)
             _axis["x"] = axis_key
+        else:
+            delta = self.bdy
+            origin = self.real_hdr[bzy]
+            size = self.lbrow
+
+            da = self.implementation.initialise_DomainAxis(size=size)
+            axis_key = self.implementation.set_domain_axis(self.field, da)
+            _axis["y"] = axis_key
+
+            autocyclic = _autocyclic_false
 
         if abs(delta) > self.atol:
             # Create regular coordinates from header items
@@ -2874,7 +2973,6 @@ class UMField:
                     origin -= 360.0
                 while origin + delta * size < -360.0:
                     origin += 360.0
-            # --- End: if
 
             array = numpy_arange(
                 origin + delta,
@@ -2897,27 +2995,31 @@ class UMField:
                 bounds = numpy_empty((size, 2), dtype=float)
                 bounds[:, 0] = array - delta_by_2
                 bounds[:, 1] = array + delta_by_2
+
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
             bounds = self.extra.get(axis + "_bounds", None)
 
+        units = _axiscode_to_Units.setdefault(axiscode, None)
+
         dc = self.implementation.initialise_DimensionCoordinate()
-        dc = self.coord_data(
-            dc,
-            array,
-            bounds,
-            units=_axiscode_to_Units.setdefault(axiscode, None),
-        )
+        dc = self.coord_data(dc, array, bounds, units=units)
         dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
+        if X and bounds is not None:
+            autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
+            autocyclic["period"] = Data(360.0, units=units)
+            autocyclic["axis"] = axis_key
+            autocyclic["coord"] = dc
+
         key = self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[axis_key], copy=False
+            self.field, dc, axes=[axis_key], copy=False, autocyclic=autocyclic
         )
 
-        return key, dc
+        return key, dc, axis_key
 
     @_manage_log_level_via_verbose_attr
     def z_coordinate(self, axiscode):
@@ -2985,7 +3087,11 @@ class UMField:
         dc = self.coord_names(dc, axiscode)
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["z"]], copy=copy
+            self.field,
+            dc,
+            axes=[_axis["z"]],
+            copy=copy,
+            autocyclic=_autocyclic_false,
         )
 
         logger.info("    " + dc.dump(display=False))  # pragma: no cover
@@ -3054,16 +3160,17 @@ class UMField:
 
             _cached_z_reference_coordinate[key] = dc
             copy = False
-        # --- End: if
 
         self.implementation.set_dimension_coordinate(
-            self.field, dc, axes=[_axis["z"]], copy=copy
+            self.field,
+            dc,
+            axes=[_axis["z"]],
+            copy=copy,
+            autocyclic=_autocyclic_false,
         )
 
         return dc
 
-
-# --- End: class
 
 # _stash2standard_name = {}
 #
@@ -3185,7 +3292,6 @@ class UMField:
 #             stash2sn[key] += line
 #         else:
 #             stash2sn[key] = line
-#     # --- End: for
 #
 #     if not merge:
 #         _stash2standard_name.clear()
@@ -3216,6 +3322,7 @@ class UMRead(cfdm.read_write.IORead):
         fmt=None,
         chunk=True,
         verbose=None,
+        select=None,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3265,6 +3372,19 @@ class UMRead(cfdm.read_write.IORead):
 
             set_standard_name: `bool`, optional
 
+        select: (sequence of) `str` or `Query` or `re.Pattern`, optional
+            Only return field constructs whose identities match the
+            given values(s), i.e. those fields ``f`` for which
+            ``f.match_by_identity(*select)`` is `True`. See
+            `cf.Field.match_by_identity` for details.
+
+            This is equivalent to, but faster than, not using the
+            *select* parameter but applying its value to the returned
+            field list with its `cf.FieldList.select_by_identity`
+            method. For example, ``fl = cf.read(file,
+            select='stash_code=3236')`` is equivalent to ``fl =
+            cf.read(file).select_by_identity('stash_code=3236')``.
+
         :Returns:
 
             `list`
@@ -3309,6 +3429,7 @@ class UMRead(cfdm.read_write.IORead):
                 height_at_top_of_model=height_at_top_of_model,
                 verbose=verbose,
                 implementation=self.implementation,
+                select=select,
             )
             for var in f.vars
         ]
@@ -3383,9 +3504,6 @@ class UMRead(cfdm.read_write.IORead):
             word_size=g["word_size"],
             fmt=g["fmt"],
         )
-
-
-# --- End: class
 
 
 """

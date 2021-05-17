@@ -338,7 +338,6 @@ class TimeDuration:
             units = self.duration.Units
             if not units.istime:
                 raise ValueError("Bad units: {!r}".format(units))
-        # --- End: if
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
@@ -368,7 +367,7 @@ class TimeDuration:
         #                    offset[4] = None
         #                    if units <= _seconds and duration < _one_minute:
         #                        offset[5] = None
-        # --- End: if
+
         self.offset = Offset(*offset)
 
         # TODO should offset be None for all "higher" units
@@ -845,8 +844,6 @@ class TimeDuration:
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
 
-        # --- End: def
-
         duration = self.duration
         units = duration.Units
 
@@ -886,7 +883,6 @@ class TimeDuration:
                 max_days = self.days_in_month(y, m, calendar)
                 if d > max_days:
                     d = max_days
-            # --- End: if
 
             # TODO When cftime==1.1.4 is ready use this one line:
             #            return other.replace(year=y, month=m, day=d)
@@ -914,7 +910,6 @@ class TimeDuration:
                     out.append(None)
                 else:
                     out.append(getattr(self, method)(d))
-            # --- End: for
 
             dt[...] = numpy.reshape(out, dt.shape)
 
@@ -1487,8 +1482,6 @@ class TimeDuration:
             else:
                 return dt1, dt  # dt1, dt.copy()
 
-        # --- End: def
-
         calendar = getattr(dt, "calendar", _default_calendar)
         if calendar == "":
             calendar = _default_calendar
@@ -1707,9 +1700,6 @@ class TimeDuration:
             return not Data(1, "day") % self.duration
         except ValueError:
             return False
-
-
-# --- End: class
 
 
 def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):

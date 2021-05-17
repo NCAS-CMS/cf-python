@@ -221,6 +221,7 @@ from .flags import Flags
 from .timeduration import TimeDuration, Y, M, D, h, m, s
 from .units import Units
 
+from .constructlist import ConstructList
 from .fieldlist import FieldList
 
 from .dimensioncoordinate import DimensionCoordinate
@@ -284,7 +285,7 @@ from .query import (
 from .constants import *  # noqa: F403
 from .functions import *  # noqa: F403
 from .maths import relative_vorticity, histogram
-from .examplefield import example_field
+from .examplefield import example_field, example_fields, example_domain
 
 
 from .cfimplementation import CFImplementation, implementation

@@ -167,7 +167,6 @@ if _linux:
                 n += 1
                 if n > 3:
                     break
-        # --- End: for
 
         free_bytes = free_KiB * 1024
 
@@ -198,6 +197,7 @@ else:
 # --- End: if
 
 
+# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
 def configuration(
     atol=None,
     rtol=None,
@@ -679,6 +679,7 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
+# TODODASK - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
@@ -1328,7 +1329,6 @@ def set_performance(chunksize=None, free_memory_factor=None):
         except ValueError:
             _cf_free_memory_factor(old[1])
             raise
-    # --- End: if
 
     return old
 
@@ -1386,6 +1386,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
+# TODODASK - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)
@@ -1579,9 +1580,6 @@ else:
         )
 
 
-# --- End: if
-
-
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
@@ -1626,7 +1624,6 @@ def close_files(file_format=None):
                 fh.close()
 
             _file_to_fh[file_format].clear()
-    # --- End: if
 
 
 def close_one_file(file_format=None):
@@ -1837,11 +1834,6 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
                 return False
 
-        #            if verbose:
-        #                print('Different masks 4')
-        #
-        #            return False
-
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
@@ -1922,7 +1914,6 @@ def parse_indices(
         if isinstance(arg0, str) and arg0 == "mask":
             mask_indices = indices[1]
             indices = indices[2:]
-    # --- End: if
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -1967,8 +1958,6 @@ def parse_indices(
             "Scalar array can only be indexed with () or Ellipsis"
         )
 
-    # --- End: if
-
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
         if isinstance(index, slice):
@@ -2011,7 +2000,6 @@ def parse_indices(
                     # 3:6:-1 => 3:-4:-1
                     # 3:9:-1 => 3:-1:-1
                     stop -= size
-            # --- End: if
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2171,8 +2159,6 @@ def parse_indices(
                             parsed_indices, shape
                         )
                     )
-            # --- End: if
-        # --- End: if
 
         if is_slice:
             if reverse and index.step < 0:
@@ -2202,7 +2188,6 @@ def parse_indices(
 
                 index = slice(start, stop, step)
                 flip.append(i)
-            # --- End: if
 
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
@@ -2211,7 +2196,6 @@ def parse_indices(
                 div, mod = divmod(stop - start - 1, step)
                 stop = start + div * step + 1
                 index = slice(start, stop, step)
-            # --- End: if
 
             #
             if envelope:
@@ -2221,10 +2205,8 @@ def parse_indices(
                 index = slice(
                     start, stop, (1 if reverse else _numpy_sign(step))
                 )
-        # --- End: if
 
         parsed_indices[i] = index
-    # --- End: for
 
     if not (cyclic or reverse or envelope or mask):
         return parsed_indices
@@ -2571,7 +2553,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
             stash2sn[key] += line
         else:
             stash2sn[key] = line
-    # --- End: for
 
     if not merge:
         _stash2standard_name.clear()
@@ -2670,7 +2651,6 @@ def flat(x):
                 yield sub
         else:
             yield a
-    # --- End: for
 
 
 def abspath(filename):
@@ -2902,7 +2882,6 @@ def hash_array(array):
             array = array.filled()
         else:
             array = array.data
-    # --- End: if
 
     if not array.flags.c_contiguous:
         # array = array.copy()
@@ -3171,8 +3150,6 @@ def _section(
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(x, current_index - 1, axis_indices, indices)
 
-    # --- End: def
-
     # Retrieve the index of each axis defining the sections
     if data:
         if isinstance(axes, int):
@@ -3190,7 +3167,6 @@ def _section(
                 axis_indices.append(x.get_data_axes().index(key))
             except ValueError:
                 pass
-    # --- End: if
 
     # find the size of each dimension
     sizes = x.shape
@@ -3389,7 +3365,7 @@ def _DEPRECATION_ERROR(message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
         "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available. {3}".format(
+        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
             instance.__class__.__name__, method, arg, message, version
         )
     )
@@ -3417,7 +3393,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available. {2}".format(
+            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
                 func, key, message, version
             )
         )
@@ -3448,7 +3424,7 @@ def _DEPRECATION_ERROR_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
-            "version {4} and is no longer available. {3}".format(
+            "version {4} and is no longer available and will be removed at version 4.0.0. {3}".format(
                 instance.__class__.__name__, method, key, message, version
             )
         )
@@ -3459,7 +3435,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 ):
     raise DeprecationError(
         "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
-        "version {} and is no longer available. {}".format(
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
             value, kwarg, method, instance.__class__.__name__, version, message
         )
     )
@@ -3468,7 +3444,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
         "{} method {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(
+        "available and will be removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         )
     )
@@ -3477,25 +3453,30 @@ def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ATTRIBUTE(
     instance, attribute, message="", version="3.0.0"
 ):
-    raise DeprecationError(
-        "{} attribute {!r} has been deprecate at version {} and is no longer "
-        "available. {}".format(
-            instance.__class__.__name__, attribute, version, message
-        )
+    warnings.warn(
+        "{} attribute {!r} has been deprecated at version {} and will be "
+        "removed at version 4.0.0. {}".format(
+            instance.__class__.__name__, method, version, message
+        ),
+        DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
         "Function {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(func, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            func, version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
         "Class {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(cls, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            cls, version, message
+        )
     )
 
 
@@ -3504,7 +3485,7 @@ def _DEPRECATION_WARNING_METHOD(
 ):
     warnings.warn(
         "{} method {!r} has been deprecated at version {} and will be "
-        "removed in a future version. {}".format(
+        "removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         ),
         DeprecationWarning,
@@ -3514,14 +3495,16 @@ def _DEPRECATION_WARNING_METHOD(
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available. {}".format(version, message)
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
+            version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated at version "
-        "{} and is no longer available. Use the * operator to unpack the "
+        "{} and is no longer available and will be removed at version 4.0.0. Use the * operator to unpack the "
         "arguments instead.".format(instance.__class__.__name__, version)
     )
 

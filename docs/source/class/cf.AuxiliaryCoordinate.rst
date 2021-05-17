@@ -107,6 +107,21 @@ Geometries
 
    ~cf.AuxiliaryCoordinate.interior_ring
 
+Climatology
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.del_climatology
+   ~cf.AuxiliaryCoordinate.get_climatology
+   ~cf.AuxiliaryCoordinate.is_climatology
+   ~cf.AuxiliaryCoordinate.set_climatology
+
 Selection
 ---------
 

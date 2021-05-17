@@ -29,6 +29,7 @@ autodetected
 autoperiod
 aux
 AuxiliaryCoordinate
+auxiliarycoordinate
 auxs
 basenames
 bilinear
@@ -70,10 +71,8 @@ climatological
 Climatological
 Colour
 conda
+config
 conformant
-consective
-constuct
-constucts
 contigious
 contiguousness
 contruct
@@ -362,6 +361,7 @@ TimeDuration
 timeseries
 timeSeries
 timeSeriesProfile
+todict
 tolist
 trac
 trajectoryProfile

@@ -6,18 +6,24 @@ from os.path import isdir
 
 from numpy.ma.core import MaskError
 
+from ..cfimplementation import implementation
+from ..fieldlist import FieldList
+from ..aggregate import aggregate as cf_aggregate
+from ..decorators import _manage_log_level_via_verbosity
+from ..query import Query
+from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
+
 from .netcdf import NetCDFRead
 from .um import UMRead
 
-from ..cfimplementation import implementation
-
-from ..fieldlist import FieldList
-
-from ..aggregate import aggregate as cf_aggregate
-
-from ..decorators import _manage_log_level_via_verbosity
-
-from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
+# TODO - replace the try block with "from re import Pattern" when
+#        Python 3.6 is deprecated
+try:
+    from re import Pattern
+except ImportError:  # pragma: no cover
+    python36 = True  # pragma: no cover
+else:
+    python36 = False
 
 
 # --------------------------------------------------------------------
@@ -336,13 +342,12 @@ def read(
             ``f.match_by_identity(*select)`` is `True`. See
             `cf.Field.match_by_identity` for details.
 
-            This is equivalent to, but possibly faster than, not using
-            the *select* parameter but applying its value to the
-            returned field list with its
-            `cf.FieldList.select_by_identity` method. For example,
-            ``fl = cf.read(file, select='air_temperature')`` is
-            equivalent to
-            ``fl = cf.read(file).select_by_identity('air_temperature')``.
+            This is equivalent to, but faster than, not using the
+            *select* parameter but applying its value to the returned
+            field list with its `cf.FieldList.select_by_identity`
+            method. For example, ``fl = cf.read(file,
+            select='air_temperature')`` is equivalent to ``fl =
+            cf.read(file).select_by_identity('air_temperature')``.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -560,8 +565,16 @@ def read(
         )  # pragma: no cover
 
     # Parse select
-    if isinstance(select, str):
-        select = (select,)
+    # TODO - delete the "if python36:" clause when Python 3.6 is
+    #        deprecated
+    if python36:
+        if isinstance(select, (str, Query)) or hasattr(
+            select, "search"
+        ):  # pragma: no cover
+            select = (select,)  # pragma: no cover
+    else:
+        if isinstance(select, (str, Query, Pattern)):
+            select = (select,)
 
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
@@ -623,7 +636,6 @@ def read(
                             break
                 else:
                     files3.append(x)
-            # --- End: for
 
             files2 = files3
 
@@ -659,7 +671,6 @@ def read(
                     )  # pragma: no cover
 
                     continue
-            # --- End: if
 
             ftypes.add(ftype)
 
@@ -682,10 +693,11 @@ def read(
                 chunk=chunk,
                 mask=mask,
                 warn_valid=warn_valid,
+                select=select,
             )
 
             # --------------------------------------------------------
-            # Select matching fields (not from UM files)
+            # Select matching fields (not from UM files, yet)
             # --------------------------------------------------------
             if select and ftype != "UM":
                 fields = fields.select_by_identity(*select)
@@ -698,8 +710,6 @@ def read(
 
             field_counter = len(field_list)
             file_counter += 1
-        # --- End: for
-    # --- End: for
 
     logger.info(
         "Read {0} field{1} from {2} file{3}".format(
@@ -720,11 +730,9 @@ def read(
 
         n = len(field_list)  # pragma: no cover
         logger.info(
-            "{0} input field{1} aggregated into {2} field{3}".format(
-                org_len, _plural(org_len), n, _plural(n)
-            )
+            f"{org_len} input field{_plural(org_len)} aggregated into "
+            f"{n} field{ _plural(n)}"
         )  # pragma: no cover
-    # --- End: if
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
@@ -738,9 +746,8 @@ def read(
     for f in field_list:
         standard_name = f._custom.get("standard_name", None)
         if standard_name is not None:
-            f.set_property("standard_name", standard_name)
+            f.set_property("standard_name", standard_name, copy=False)
             del f._custom["standard_name"]
-    # --- End: for
 
     # ----------------------------------------------------------------
     # Select matching fields from UM/PP fields (post setting of
@@ -766,7 +773,6 @@ def read(
     elif unsqueeze:
         for f in field_list:
             f.unsqueeze(inplace=True)
-    # --- End: if
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
@@ -803,6 +809,7 @@ def _read_a_file(
     chunk=True,
     mask=True,
     warn_valid=False,
+    select=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -855,6 +862,9 @@ def _read_a_file(
             that is set (up to a maximum of ``3``/``'DETAIL'``) for
             increasing verbosity, the more description that is printed.
 
+        select: optional
+            For `read. Ignored for a netCDF file.
+
     :Returns:
 
         `FieldList`
@@ -887,7 +897,6 @@ def _read_a_file(
 
             if endian is None:
                 endian = "big"
-        # --- End: if
 
         if umversion is not None:
             umversion = float(str(umversion).replace(".", "0", 1))
@@ -901,7 +910,6 @@ def _read_a_file(
     #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
     #
     #            return FieldList()
-    # --- End: if
 
     extra_read_vars = {
         "chunk": chunk,
@@ -938,7 +946,6 @@ def _read_a_file(
                     "Can't determine format of file {} generated from CDL "
                     "file {}".format(filename, cdl_filename)
                 )
-    # --- End: if
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
         # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
@@ -981,6 +988,7 @@ def _read_a_file(
             word_size=word_size,
             endian=endian,
             chunk=chunk,
+            select=select,
         )  # , mask=mask, warn_valid=warn_valid)
 
         # PP fields are aggregated intrafile prior to interfile
@@ -991,12 +999,6 @@ def _read_a_file(
                 aggregate_options["relaxed_units"] = True
     else:
         fields = ()
-
-    # ----------------------------------------------------------------
-    # Check for cyclic dimensions
-    # ----------------------------------------------------------------
-    for f in fields:
-        f.autocyclic()
 
     # ----------------------------------------------------------------
     # Return the fields

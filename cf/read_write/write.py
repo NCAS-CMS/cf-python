@@ -532,8 +532,8 @@ def write(
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constucts and
-            its components will be created and populated.
+            defined by the netCDF interface of the field constructs
+            and its components will be created and populated.
 
             .. versionadded:: 3.6.0
 

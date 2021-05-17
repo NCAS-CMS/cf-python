@@ -202,6 +202,7 @@ from . import (
     RaggedIndexedContiguousSubarray,
 )
 
+# TODODASK - Remove the next 6 lines when the move to dask is complete
 from .. import mpi_on
 
 if mpi_on:
@@ -6143,7 +6144,7 @@ class Data(Container, cfdm.Data):
         inplace=False,
         i=False,
         _preserve_partitions=False,
-        **kwargs
+        **kwargs,
     ):
         """Collapse the data.
 
@@ -6468,7 +6469,7 @@ class Data(Container, cfdm.Data):
                     mtol,
                     _preserve_partitions=_preserve_partitions,
                     _parallelise_collapse_subspace=_parallelise_collapse_sub,
-                    **kwargs
+                    **kwargs,
                 )
 
                 partition.close(keep_in_memory=keep_in_memory)
@@ -6541,7 +6542,7 @@ class Data(Container, cfdm.Data):
         weights=None,
         _preserve_partitions=False,
         _parallelise_collapse_subspace=True,
-        **kwargs
+        **kwargs,
     ):
         """Collapse a subspace of a data array.
 
@@ -9372,7 +9373,7 @@ class Data(Container, cfdm.Data):
 
         return out
 
-    def get_data(self, default=ValueError()):
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
         .. versionadded:: 3.0.0
@@ -9515,7 +9516,7 @@ class Data(Container, cfdm.Data):
     def set_units(self, value):
         """Set the units.
 
-        .. seealso:: `del_units`, `get_units`
+        .. seealso:: `del_units`, `get_units`, `has_units`
 
         :Parameters:
 
@@ -10559,7 +10560,8 @@ class Data(Container, cfdm.Data):
         if axes is None:
             return old
 
-        axes = [data_axes[i] for i in self._parse_axes(axes)]
+        parsed_axes = self._parse_axes(axes)
+        axes = [data_axes[i] for i in parsed_axes]
 
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
@@ -10571,7 +10573,7 @@ class Data(Container, cfdm.Data):
         if auxiliary_mask is not None:
             self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
             for mask in self._auxiliary_mask:
-                mask.cyclic(axes, iscyclic)
+                mask.cyclic(parsed_axes, iscyclic)
 
         return old
 
@@ -11572,6 +11574,67 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    def has_calendar(self):
+        """Whether a calendar has been set.
+
+        .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
+                     `has_units`
+
+        :Returns:
+
+            `bool`
+                True if the calendar has been set, otherwise False.
+
+        **Examples:**
+
+        >>> d.set_calendar('360_day')
+        >>> d.has_calendar()
+        True
+        >>> d.get_calendar()
+        '360_day'
+        >>> d.del_calendar()
+        >>> d.has_calendar()
+        False
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
+        >>> print(d.del_calendar(None))
+        None
+
+        """
+        return hasattr(self.Units, "calendar")
+
+    def has_units(self):
+        """Whether units have been set.
+
+        .. seealso:: `del_units`, `get_units`, `set_units`, `has_calendar`
+
+        :Returns:
+
+            `bool`
+                True if units have been set, otherwise False.
+
+        **Examples:**
+
+        >>> d.set_units('metres')
+        >>> d.has_units()
+        True
+        >>> d.get_units()
+        'metres'
+        >>> d.del_units()
+        >>> d.has_units()
+        False
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+        >>> print(d.del_units(None))
+        None
+
+        """
+        return hasattr(self.Units, "units")
+
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with the fill value.
@@ -12408,6 +12471,106 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    def del_calendar(self, default=ValueError()):
+        """Delete the calendar.
+
+        .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
+                     `del_units`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                calendar has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The value of the deleted calendar.
+
+        **Examples:**
+
+        >>> d.set_calendar('360_day')
+        >>> d.has_calendar()
+        True
+        >>> d.get_calendar()
+        '360_day'
+        >>> d.del_calendar()
+        >>> d.has_calendar()
+        False
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
+        >>> print(d.del_calendar(None))
+        None
+
+        """
+        calendar = getattr(self.Units, "calendar", None)
+
+        if calendar is not None:
+            self.override_calendar(None, inplace=True)
+            return calendar
+
+        raise self._default(
+            default, f"{self.__class__.__name__} has no 'calendar' component"
+        )
+
+    def del_units(self, default=ValueError()):
+        """Delete the units.
+
+        .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the units
+                has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The value of the deleted units.
+
+        **Examples:**
+
+        >>> d.set_units('metres')
+        >>> d.has_units()
+        True
+        >>> d.get_units()
+        'metres'
+        >>> d.del_units()
+        >>> d.has_units()
+        False
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+        >>> print(d.del_units(None))
+        None
+
+        """
+        out = self.Units
+
+        units = getattr(out, "units", None)
+        calendar = getattr(out, "calendar", None)
+
+        if calendar is not None:
+            self.Units = Units(None, calendar)
+        else:
+            del self.Units
+
+        if units is not None:
+            return units
+
+        return self._default(
+            default, f"{self.__class__.__name__} has no 'units' component"
+        )
+
     @classmethod
     def masked_all(cls, shape, dtype=None, units=None, chunk=True):
         """Return a new data array of given shape and type with all
@@ -12505,8 +12668,8 @@ class Data(Container, cfdm.Data):
 
             axes: (sequence of) `int`
                 Select the axes. By default all axes are flipped. Each
-                axis is identified by its integer position. No axes are
-                flipped if *axes* is an empty sequence.
+                axis is identified by its integer position. No axes
+                are flipped if *axes* is an empty sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -14401,7 +14564,7 @@ class Data(Container, cfdm.Data):
         inplace=False,
         preserve_invalid=False,
         i=False,
-        **kwargs
+        **kwargs,
     ):
         """Apply an element-wise array operation to the data array.
 
