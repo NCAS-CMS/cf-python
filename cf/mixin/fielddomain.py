@@ -70,7 +70,7 @@ class FieldDomain:
         return set(axes)
 
     def _conform_coordinate_references(self, key, coordref=None):
-        """Where possible replace the content of coordiante reference
+        """Where possible replace the content of coordinate reference
         construct coordinates with coordinate construct keys.
 
         .. versionadded:: 3.0.0
