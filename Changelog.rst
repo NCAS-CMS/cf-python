@@ -2,8 +2,16 @@ version 3.9.0
 -------------
 ----
 
-**2021-05-??**
+**2021-05-17**
 
+* Construct access API changes
+  (https://github.com/NCAS-CMS/cf-python/issues/201,
+  https://github.com/NCAS-CMS/cf-python/issues/202,
+  https://github.com/NCAS-CMS/cf-python/issues/203,
+  https://github.com/NCAS-CMS/cf-python/issues/204)
+* Performance enhancements
+  (https://github.com/NCAS-CMS/cfdm/issues/201,
+  https://github.com/NCAS-CMS/cfdm/issues/202)
 * Temporarily removed the experimental ability to parallelize the
   collapse operation with MPI
   (https://github.com/NCAS-CMS/cf-python/issues/207)
