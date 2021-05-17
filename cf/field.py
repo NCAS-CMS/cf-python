@@ -4875,7 +4875,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                f"Can't create linear weights for {axis!r} axis: No " "bounds"
+                f"Can't create linear weights for {axis!r} axis: No bounds"
             )
         else:
             # Bounds exist
