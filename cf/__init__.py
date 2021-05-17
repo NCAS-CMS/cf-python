@@ -81,7 +81,7 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.8"
-__date__ = "2021-05-??"
+__date__ = "2021-05-17"
 __version__ = "3.9.0"
 
 _requires = (
