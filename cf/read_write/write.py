@@ -213,17 +213,38 @@ def write(
 
                      In practice this means that new fields will be
                      created, whilst the original fields will not be
-                     edited at all. Coordinates on the fields, where
-                     equal, will be shared as standard.
+                     changed at all, except perhaps by means of
+                     aggregation with appended fields. Coordinates on
+                     the fields, where equal, will be shared as
+                     standard.
 
-                     Note that the global attributes on the file
-                     will remain the same as they were originally,
-                     so will become inaccurate where appended fields
-                     have incompatible attributes. To rectify this,
-                     manually inspect and edit them as appropriate
-                     after the append operation using methods such as
-                     `nc_clear_global_attributes` and
-                     `nc_set_global_attribute`.
+                     For append mode, note the following:
+
+                     * Global attributes on the file
+                       will remain the same as they were originally,
+                       so will become inaccurate where appended fields
+                       have incompatible attributes. To rectify this,
+                       manually inspect and edit them as appropriate
+                       after the append operation using methods such as
+                       `nc_clear_global_attributes` and
+                       `nc_set_global_attribute`.
+
+                     * Fields with incompatible ``featureType`` to
+                       the original file cannot be appended.
+
+                     * At present fields with groups cannot be
+                       appended, but this will be possible in a future
+                       version. Groups can however be cleared, the
+                       fields appended, and groups re-applied, via
+                       methods such as `nc_clear_variable_groups` and
+                       `nc_set_variable_groups`, to achieve the same
+                       for now.
+
+                     * At present domain ancillary constructs of
+                       appended fields may not be handled correctly
+                       and can appear as extra fields. Set them on the
+                       resultant fields using `set_domain_ancillary`
+                       and similar methods if required.
 
             =======  =================================================
 
