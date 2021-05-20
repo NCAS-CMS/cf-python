@@ -5261,13 +5261,15 @@ in that file:
    :caption: *Append field constructs to a netCDF dataset on
              disk.*
 
-   >>> cf.read('file.nc')
+   >>> g = cf.example_field(2)
+   >>> cf.write(g, 'append-example-file.nc')
+   >>> cf.read('append-example-file.nc')
    [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>]
-   >>> g = cf.example_field(0)
-   >>> g
+   >>> h = cf.example_field(0)
+   >>> h
    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cf.write(g, 'file.nc', mode='a')
-   >>> cf.read('file.nc')
+   >>> cf.write(h, 'append-example-file.nc', mode='a')
+   >>> cf.read('append-example-file.nc')
    [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
 

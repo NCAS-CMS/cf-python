@@ -812,6 +812,13 @@ print(q)
 cf.write(q, 'q_file.nc')
 x
 cf.write(x, 'new_file.nc')
+g = cf.example_field(2)
+cf.write(g, 'append-example-file.nc')
+cf.read('append-example-file.nc')
+h = cf.example_field(0)
+h
+cf.write(h, 'append-example-file.nc', mode='a')
+cf.read('append-example-file.nc')
 f = cf.read('q_file.nc')[0]
 q.equals(f)
 f.set_property('model', 'model_A')
