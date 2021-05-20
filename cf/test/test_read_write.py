@@ -350,25 +350,62 @@ class read_writeTest(unittest.TestCase):
                 cf.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cf.read(tmpfile)
 
-                new_length += 1  # there should be exactly one more field now
+                if ex_field_n == 5:  # another special case
+                    # The n=2 and n=5 example fields for cf-python aggregate
+                    # down to one field, e.g. for b as n=2 and c as n=5:
+                    #   >>> c.equals(b, verbose=-1)
+                    #   Data: Different shapes: (118, 5, 8) != (36, 5, 8)
+                    #   Field: Different data
+                    #   False
+                    #   >>> a = cf.aggregate([b, c])
+                    #   >>> a
+                    #   [<CF Field: air_potential_temperature(
+                    #    time(154), latitude(5), longitude(8)) K>]
+                    #
+                    # therefore need to check FL length hasn't changed and
+                    # (further below) that n=2,5 aggregated field is present.
+                    pass  # i.e. new_length should remain the same as before
+                else:
+                    new_length += 1  # should be exactly one more field now
                 self.assertEqual(len(f), new_length)
-                # Can't guarantee order of fields read in after the appends, so
-                # check that the field is *somewhere* in the read-in fieldlist
-                self.assertTrue(
-                    any(
-                        [
-                            ex_field.equals(
-                                file_field,
-                                ignore_properties=[
-                                    "comment",
-                                    "featureType",
-                                    "remark",
-                                ],
-                            )
-                            for file_field in f
-                        ]
+
+                if ex_field_n == 5:
+                    ex_n2_and_n5_aggregated = cf.aggregate(
+                        [cf.example_field(2), cf.example_field(5)]
+                    )[0]
+                    self.assertTrue(
+                        any(
+                            [
+                                ex_n2_and_n5_aggregated.equals(
+                                    file_field,
+                                    ignore_properties=[
+                                        "comment",
+                                        "featureType",
+                                        "remark",
+                                    ],
+                                )
+                                for file_field in f
+                            ]
+                        )
                     )
-                )
+                else:
+                    # Can't guarantee order of fields created during append op.
+                    # so check new field is *somewhere* in read-in fieldlist
+                    self.assertTrue(
+                        any(
+                            [
+                                ex_field.equals(
+                                    file_field,
+                                    ignore_properties=[
+                                        "comment",
+                                        "featureType",
+                                        "remark",
+                                    ],
+                                )
+                                for file_field in f
+                            ]
+                        )
+                    )
                 for file_field in f:
                     self.assertEqual(
                         file_field.nc_global_attributes(),
@@ -387,7 +424,9 @@ class read_writeTest(unittest.TestCase):
                 # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
                 append_ex_fields = append_ex_fields[:4]
 
-            overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
+            # Equals len(append_ex_fields), + 1 [for original 'g'] and -1 [for
+            # field n=5 which aggregates to one with n=2] => + 1 - 1 = + 0:
+            overall_length = len(append_ex_fields)
             cf.write(
                 append_ex_fields, tmpfile, fmt=fmt, mode="a"
             )  # 2. now append
