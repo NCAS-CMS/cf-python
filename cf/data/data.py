@@ -3298,7 +3298,6 @@ class Data(Container, cfdm.Data):
 
         dtype = d["dtype"]
         self._dtype = dtype
-        #        print ('P45 asdasdasds', dtype)
         self.Units = units
         self._axes = axes
 
@@ -4256,7 +4255,6 @@ class Data(Container, cfdm.Data):
 
         if not units0 and not units1:
             return data0, data1, units0
-
         if (
             units0.isreftime
             and units1.isreftime

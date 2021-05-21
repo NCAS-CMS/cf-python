@@ -337,7 +337,7 @@ class Query:
         attr = ".".join(self._attr)
 
         if not self._compound:
-            out = "{}({} {})".format(attr, self._operator, self._value)
+            out = f"{attr}({self._operator} " + str(self._value)
         else:
             bitwise_operator = repr(self._bitwise_operator)
             if "and_" in bitwise_operator:

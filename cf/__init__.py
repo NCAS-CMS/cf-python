@@ -116,8 +116,10 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     )
 
 if LooseVersion(platform.python_version()) < LooseVersion("3.7.0"):
-    print("\nDeprecation Warning: Python 3.6 support will be removed at "
-          "the next version of cf\n")
+    print(
+        "\nDeprecation Warning: Python 3.6 support will be removed at "
+        "the next version of cf\n"
+    )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
@@ -167,7 +169,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.4.1"
+_minimum_vn = "1.5.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
@@ -183,7 +185,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.1"
+_minimum_vn = "3.3.2"
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "

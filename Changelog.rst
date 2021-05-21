@@ -24,7 +24,7 @@ version 3.9.0
   upon reading of CDL files with only header or coordinate information
   (https://github.com/NCAS-CMS/cf-python/issues/197)
 * Changed dependency: ``1.8.9.0<=cfdm<1.8.10.0``
-* Changed dependency: ``cftime>=1.4.1``
+* Changed dependency: ``cftime>=1.5.0``
 * Changed dependency: ``netCDF4>=1.5.4``
 
 version 3.8.0
