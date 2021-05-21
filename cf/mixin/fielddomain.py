@@ -308,11 +308,11 @@ class FieldDomain:
         envelope = mode == "envelope"
         full = mode == "full"
 
-        logger.debug(
-            f"{self.__class__.__name__}._indices:\n"
-            f"  mode         = {mode!r}\n"
-            f"  input kwargs = {kwargs!r}"
-        )  # pragma: no cover
+        #        logger.debug(
+        #            f"{self.__class__.__name__}._indices:\n"
+        #            f"  mode         = {mode!r}\n"
+        #            f"  input kwargs = {kwargs!r}"
+        #        )  # pragma: no cover
 
         domain_axes = self.domain_axes(todict=True)
         #        constructs = self.constructs.filter_by_data()

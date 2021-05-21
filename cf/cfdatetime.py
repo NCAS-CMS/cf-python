@@ -471,7 +471,10 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     """
     ndim = np.ndim(array)
 
-    array = units_out._utime.date2num(array)
+    #    array = units_out._utime.date2num(array)
+    array = cftime.date2num(
+        array, units=units_out.units, calendar=units_out._utime.calendar
+    )
 
     if not ndim:
         array = np.asanyarray(array)
@@ -500,7 +503,10 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
     """
     array = st2dt(array, units_in)
-    array = units_out._utime.date2num(array)
+    #    array = units_out._utime.date2num(array)
+    array = cftime.date2num(
+        array, units=units_out.units, calendar=units_out._utime.calendar
+    )
 
     if not np.ndim(array):
         array = np.asanyarray(array)
