@@ -71,11 +71,16 @@ if [[ $2 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
 fi
 
+# Copy the templates to the target directory
+if [[ $2 != "latest" ]] ; then
+  rm -fr $dir/_templates
+  cp -pr _templates $dir
+fi
+
 # --------------------------------------------------------------------
 # Add and commit the latest or archive
 # --------------------------------------------------------------------
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
-  echo "d2=$2"
   cd $dir
   git add \
 	  *.html \
@@ -83,6 +88,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  *.inv \
 	  *.js \
 	  _static \
+	  _templates \
 	  _downloads/cf_tutorial_files.zip \
 	  _downloads/tutorial.py \
 	  _downloads/field_analysis.py \
