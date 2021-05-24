@@ -750,6 +750,10 @@ class read_writeTest(unittest.TestCase):
                 "{!r} {!r}".format(f[j], f[i]),
             )
 
+        # Note: Don't loop round all netCDF formats for better
+        #       performance. Just one netCDF3 and one netCDF4 format
+        #       is sufficient to test the functionality
+
         for string0 in (True, False):
             for fmt0 in ("NETCDF4", "NETCDF3_CLASSIC"):
                 cf.write(f, tmpfile0, fmt=fmt0, string=string0)
