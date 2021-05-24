@@ -1,6 +1,8 @@
 import json
 import random
 
+from os.path import isfile
+
 from string import hexdigits
 
 import numpy
@@ -10,9 +12,63 @@ import cfdm
 from ... import DomainAncillary, Coordinate, Bounds
 from ...functions import relpath
 
+from netCDF4 import Dataset as netCDF4_Dataset
+
+# TODO: is it OK to import from here? Maybe best move these to '...functions'?
+from ...data.functions import _close_netcdf_file, _file_to_Dataset
+
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     """TODO."""
+
+    def file_close(self, filename):
+        """Close the netCDF file that has been written.
+
+        :Returns:
+
+            `None`
+
+        """
+        _close_netcdf_file(filename)
+
+    def file_open(self, filename, mode, fmt, fields):
+        """Open the netCDF file for writing.
+
+        :Parameters:
+
+            filename: `str`
+                As for the *filename* parameter for initialising a
+                `netCDF.Dataset` instance.
+
+            mode: `str`
+                As for the *mode* parameter for initialising a
+                `netCDF.Dataset` instance.
+
+            fmt: `str`
+                As for the *format* parameter for initialising a
+                `netCDF.Dataset` instance.
+
+            fields: sequence of `Field`
+                The field constructs to be written.
+
+        :Returns:
+
+            `netCDF.Dataset`
+                A `netCDF4.Dataset` object for the file.
+
+        """
+        # I.e. if on either file IO iteration for append mode:
+        if self.write_vars["dry_run"] or self.write_vars["post_dry_run"]:
+            if not isfile(filename):
+                nc = netCDF4_Dataset(filename, "w", format=fmt)
+                nc.close()
+            elif filename in _file_to_Dataset:
+                _close_netcdf_file(filename)
+
+        nc = super().file_open(filename, mode, fmt, fields)
+        _file_to_Dataset[filename] = nc
+
+        return nc
 
     def _write_as_cfa(self, cfvar):
         """TODO.
