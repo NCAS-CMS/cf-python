@@ -62,6 +62,18 @@ class read_writeTest(unittest.TestCase):
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
 
+    netcdf3_fmts = [
+        "NETCDF3_CLASSIC",
+        "NETCDF3_64BIT",
+        "NETCDF3_64BIT_OFFSET",
+        "NETCDF3_64BIT_DATA",
+    ]
+    netcdf4_fmts = [
+        "NETCDF4",
+        "NETCDF4_CLASSIC",
+    ]
+    netcdf_fmts = netcdf3_fmts + netcdf4_fmts
+
     def test_write_filename(self):
         f = self.f0
         a = f.array
@@ -238,15 +250,7 @@ class read_writeTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
-                for fmt in (
-                    "NETCDF3_CLASSIC",
-                    "NETCDF3_64BIT",
-                    "NETCDF3_64BIT_OFFSET",
-                    "NETCDF3_64BIT_DATA",
-                    "NETCDF4",
-                    "NETCDF4_CLASSIC",
-                    "CFA",
-                ):
+                for fmt in self.netcdf3_fmts + ["CFA"]:
                     f = cf.read(tmpfile)[0]
 
                     cf.write(f, tmpfile2, fmt=fmt)
@@ -258,6 +262,301 @@ class read_writeTest(unittest.TestCase):
                         f.equals(g, verbose=1),
                         f"Bad read/write of format {fmt!r}",
                     )
+
+    def test_write_netcdf_mode(self):
+        """Test the `mode` parameter to `write`, notably append mode."""
+        g = cf.read(self.filename)  # note 'g' has one field
+
+        # Test special case #1: attempt to append fields with groups
+        # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
+        # since it is the only format where groups are allowed.
+        #
+        # Note: this is not the most natural test to do first, but putting
+        # it before the rest reduces spurious seg faults for me, so...
+        g[0].nc_set_variable_groups(["forecast", "model"])
+        cf.write(g, tmpfile, fmt="NETCDF4", mode="w")  # 1. overwrite to wipe
+        f = cf.read(tmpfile)
+        with self.assertRaises(ValueError):
+            cf.write(g[0], tmpfile, fmt="NETCDF4", mode="a")
+
+        # Test special case #2: attempt to append fields with contradictory
+        # featureType to the original file:
+        g[0].nc_clear_variable_groups()
+        g[0].nc_set_global_attribute("featureType", "profile")
+        cf.write(
+            g,
+            tmpfile,
+            fmt="NETCDF4",
+            mode="w",
+            global_attributes=("featureType", "profile"),
+        )  # 1. overwrite to wipe
+        h = cf.example_field(3)
+        h.nc_set_global_attribute("featureType", "timeSeries")
+        with self.assertRaises(ValueError):
+            cf.write(h, tmpfile, fmt="NETCDF4", mode="a")
+        # Now remove featureType attribute for subsquent tests:
+        g_attrs = g[0].nc_clear_global_attributes()
+        del g_attrs["featureType"]
+        g[0].nc_set_global_attributes(g_attrs)
+
+        # Set a non-trivial (i.e. not only 'Conventions') global attribute to
+        # make the global attribute testing more robust:
+        add_global_attr = ["remark", "A global comment."]
+        original_global_attrs = g[0].nc_global_attributes()
+        original_global_attrs[add_global_attr[0]] = None  # -> None on fields
+        g[0].nc_set_global_attribute(*add_global_attr)
+
+        # First test a bad mode value:
+        with self.assertRaises(ValueError):
+            cf.write(g[0], tmpfile, mode="g")
+
+        g_copy = g.copy()
+
+        for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
+            # Other tests cover write as default mode (i.e. test with no mode
+            # argument); here test explicit provision of 'w' as argument:
+            cf.write(
+                g,
+                tmpfile,
+                fmt=fmt,
+                mode="w",
+                global_attributes=add_global_attr,
+            )
+            f = cf.read(tmpfile)
+
+            new_length = 1  # since 1 == len(g)
+            self.assertEqual(len(f), new_length)
+            # Ignore as 'remark' should be 'None' on the field as tested below
+            self.assertTrue(f[0].equals(g[0], ignore_properties=["remark"]))
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
+
+            # Main aspect of this test: testing the append mode ('a'): now
+            # append all other example fields, to check a diverse variety.
+            for ex_field_n, ex_field in enumerate(cf.example_fields()):
+                # Note: after Issue #141, this skip can be removed.
+                if ex_field_n == 1:
+                    continue
+
+                # Skip since "RuntimeError: Can't create variable in
+                # NETCDF4_CLASSIC file from (2)  (NetCDF: Attempting netcdf-4
+                # operation on strict nc3 netcdf-4 file)" i.e. not possible.
+                if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
+                    continue
+
+                # Skip since "Can't write int64 data from <Count: (2) > to a
+                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
+                # Note: can remove this when Issue #140 is closed.
+                if fmt in self.netcdf3_fmts and ex_field_n == 6:
+                    continue
+
+                cf.write(ex_field, tmpfile, fmt=fmt, mode="a")
+                f = cf.read(tmpfile)
+
+                if ex_field_n == 5:  # another special case
+                    # The n=2 and n=5 example fields for cf-python aggregate
+                    # down to one field, e.g. for b as n=2 and c as n=5:
+                    #   >>> c.equals(b, verbose=-1)
+                    #   Data: Different shapes: (118, 5, 8) != (36, 5, 8)
+                    #   Field: Different data
+                    #   False
+                    #   >>> a = cf.aggregate([b, c])
+                    #   >>> a
+                    #   [<CF Field: air_potential_temperature(
+                    #    time(154), latitude(5), longitude(8)) K>]
+                    #
+                    # therefore need to check FL length hasn't changed and
+                    # (further below) that n=2,5 aggregated field is present.
+                    pass  # i.e. new_length should remain the same as before
+                else:
+                    new_length += 1  # should be exactly one more field now
+                self.assertEqual(len(f), new_length)
+
+                if ex_field_n == 5:
+                    ex_n2_and_n5_aggregated = cf.aggregate(
+                        [cf.example_field(2), cf.example_field(5)]
+                    )[0]
+                    self.assertTrue(
+                        any(
+                            [
+                                ex_n2_and_n5_aggregated.equals(
+                                    file_field,
+                                    ignore_properties=[
+                                        "comment",
+                                        "featureType",
+                                        "remark",
+                                    ],
+                                )
+                                for file_field in f
+                            ]
+                        )
+                    )
+                else:
+                    # Can't guarantee order of fields created during append op.
+                    # so check new field is *somewhere* in read-in fieldlist
+                    self.assertTrue(
+                        any(
+                            [
+                                ex_field.equals(
+                                    file_field,
+                                    ignore_properties=[
+                                        "comment",
+                                        "featureType",
+                                        "remark",
+                                    ],
+                                )
+                                for file_field in f
+                            ]
+                        )
+                    )
+                for file_field in f:
+                    self.assertEqual(
+                        file_field.nc_global_attributes(),
+                        original_global_attrs,
+                    )
+
+            # Now do the same test, but appending all of the example fields in
+            # one operation rather than one at a time, to check that it works.
+            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            append_ex_fields = cf.example_fields()
+            del append_ex_fields[1]  # note: can remove after Issue #141 closed
+            # Note: can remove this del when Issue #140 is closed:
+            if fmt in self.netcdf3_fmts:
+                del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
+            if fmt in "NETCDF4_CLASSIC":
+                # Remove n=6 and =7 for reasons as given above (del => minus 1)
+                append_ex_fields = append_ex_fields[:5]
+
+            # Equals len(append_ex_fields), + 1 [for original 'g'] and -1 [for
+            # field n=5 which aggregates to one with n=2] => + 1 - 1 = + 0:
+            overall_length = len(append_ex_fields)
+            cf.write(
+                append_ex_fields, tmpfile, fmt=fmt, mode="a"
+            )  # 2. now append
+            f = cf.read(tmpfile)
+            self.assertEqual(len(f), overall_length)
+
+            # Also test the mode="r+" alias for mode="a".
+            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            cf.write(
+                append_ex_fields, tmpfile, fmt=fmt, mode="r+"
+            )  # 2. now append
+            f = cf.read(tmpfile)
+            self.assertEqual(len(f), overall_length)
+
+            # The appended fields themselves are now known to be correct,
+            # but we also need to check that any coordinates that are
+            # equal across different fields have been shared in the
+            # source netCDF, rather than written in separately.
+            #
+            # Note that the coordinates that are shared across the set of
+            # all example fields plus the field 'g' from the contents of
+            # the original file (self.filename) are as follows:
+            #
+            # 1. Example fields n=0 and n=1 share:
+            #    <DimensionCoordinate: time(1) days since 2018-12-01 >
+            # 2. Example fields n=0, n=2 and n=5 share:
+            #    <DimensionCoordinate: latitude(5) degrees_north> and
+            #    <DimensionCoordinate: longitude(8) degrees_east>
+            # 3. Example fields n=2 and n=5 share:
+            #    <DimensionCoordinate: air_pressure(1) hPa>
+            # 4. The original file field ('g') and example field n=1 share:
+            #    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+            #    <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+            #    <Dimension...: atmosphere_hybrid_height_coordinate(1) >,
+            #    <DimensionCoordinate: grid_latitude(10) degrees>,
+            #    <DimensionCoordinate: grid_longitude(9) degrees> and
+            #    <DimensionCoordinate: time(1) days since 2018-12-01 >
+            #
+            # Therefore we check all of those coordinates for singularity,
+            # i.e. the same underlying netCDF variables, in turn.
+
+            # But first, since the order of the fields appended isn't
+            # guaranteed, we must find the mapping of the example fields to
+            # their position in the read-in FieldList.
+            f = cf.read(tmpfile)
+            # Element at index N gives position of example field n=N in file
+            file_field_order = []
+            for ex_field in cf.example_fields():
+                position = [
+                    f.index(file_field)
+                    for file_field in f
+                    if ex_field.equals(
+                        file_field,
+                        ignore_properties=["comment", "featureType", "remark"],
+                    )
+                ]
+                if not position:
+                    position = [None]  # to record skipped example fields
+                file_field_order.append(position[0])
+
+            equal_coors = {
+                ((0, "dimensioncoordinate2"), (1, "dimensioncoordinate3")),
+                ((0, "dimensioncoordinate0"), (2, "dimensioncoordinate1")),
+                ((0, "dimensioncoordinate1"), (2, "dimensioncoordinate2")),
+                ((0, "dimensioncoordinate0"), (5, "dimensioncoordinate1")),
+                ((0, "dimensioncoordinate1"), (5, "dimensioncoordinate2")),
+                ((2, "dimensioncoordinate3"), (5, "dimensioncoordinate3")),
+            }
+            for coor_1, coor_2 in equal_coors:
+                ex_field_1_position, c_1 = coor_1
+                ex_field_2_position, c_2 = coor_2
+                # Now map the appropriate example field to the file FieldList
+                f_1 = file_field_order[ex_field_1_position]
+                f_2 = file_field_order[ex_field_2_position]
+                # None for fields skipped in test, distinguish from falsy 0
+                if f_1 is None or f_2 is None:
+                    continue
+                self.assertEqual(
+                    f[f_1]
+                    .constructs()
+                    .filter_by_identity(c_1)
+                    .value()
+                    .nc_get_variable(),
+                    f[f_2]
+                    .constructs()
+                    .filter_by_identity(c_2)
+                    .value()
+                    .nc_get_variable(),
+                )
+
+            # Note: after Issue #141, the block below should be un-commented.
+            #
+            # The original file field 'g' must be at the remaining position:
+            # rem_position = list(set(
+            #     range(len(f))).difference(set(file_field_order)))[0]
+            # # In the final cases, it is easier to remove the one differing
+            # # coordinate to get the equal coordinates that should be shared:
+            # original_field_coors = dict(f[rem_position].coordinates())
+            # ex_field_1_coors = dict(f[file_field_order[1]].coordinates())
+            # for orig_coor, ex_1_coor in zip(
+            #         original_field_coors.values(), ex_field_1_coors.values()):
+            #     # The 'auxiliarycoordinate2' construct differs for both, so
+            #     # skip that but otherwise the two fields have the same coors:
+            #     if orig_coor.identity == "auxiliarycoordinate2":
+            #         continue
+            #     self.assertEqual(
+            #         orig_coor.nc_get_variable(),
+            #         ex_1_coor.nc_get_variable(),
+            #     )
+
+            # Check behaviour when append identical fields, as an edge case:
+            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            cf.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
+            f = cf.read(tmpfile)
+            self.assertEqual(len(f), 2 * len(g))
+            self.assertTrue(
+                any(
+                    [
+                        file_field.equals(g[0], ignore_properties=["remark"])
+                        for file_field in f
+                    ]
+                )
+            )
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
 
     def test_read_write_netCDF4_compress_shuffle(self):
         for chunksize in self.chunk_sizes:
@@ -462,6 +761,10 @@ class read_writeTest(unittest.TestCase):
                 f[j].data.equals(f[i].data, verbose=1),
                 "{!r} {!r}".format(f[j], f[i]),
             )
+
+        # Note: Don't loop round all netCDF formats for better
+        #       performance. Just one netCDF3 and one netCDF4 format
+        #       is sufficient to test the functionality
 
         for string0 in (True, False):
             for fmt0 in ("NETCDF4", "NETCDF3_CLASSIC"):

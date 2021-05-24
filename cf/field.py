@@ -304,7 +304,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         instance._Bounds = Bounds
@@ -17788,7 +17788,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     # ----------------------------------------------------------------
     @property
     def _Axes(self):
-        """"""
+        """TODO."""
         raise DeprecationError(
             f"{self.__class__.__name__} attribute '_Axes' has been deprecated "
             "at version 3.0.0 and is no longer available and will be removed"
@@ -17798,7 +17798,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @property
     def CellMethods(self):
-        """"""
+        """TODO."""
         raise DeprecationError(
             f"{self.__class__.__name__} attribute 'CellMethods' has been "
             "deprecated at version 3.0.0 and is no longer available "
@@ -17808,7 +17808,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @property
     def Items(self):
-        """"""
+        """TODO."""
         raise DeprecationError(
             f"{self.__class__.__name__} attribute 'Items' has been deprecated "
             "at version 3.0.0 and is no longer available "
@@ -17817,7 +17817,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
     def CM(self, xxx):
-        """"""
+        """TODO."""
         raise DeprecationError(
             f"{self.__class__.__name__} method 'CM' has been deprecated "
             "at version 3.0.0 and is no longer available "
@@ -18041,13 +18041,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         item=False,
         **filter_kwargs,
     ):
-        """"""
+        """TODO."""
         _DEPRECATION_ERROR_METHOD(
             self, "item", "Use 'construct' method instead."
         )  # pragma: no cover
 
     def items(self, *identities, **filter_kwargs):
-        """"""
+        """TODO."""
         _DEPRECATION_ERROR_METHOD(
             self, "items", "Use 'constructs' method instead."
         )  # pragma: no cover

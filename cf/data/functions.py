@@ -49,7 +49,7 @@ def _open_netcdf_file(filename, mode, fmt="NETCDF4"):  # set_auto_mask=True):
         # Close a random data file to make way for this one
         close_one_file()
 
-    if mode in ("a", "r+"):
+    if mode == "a":
         if not isfile(filename):
             nc = netCDF4_Dataset(filename, "w", format=fmt)
             nc.close()

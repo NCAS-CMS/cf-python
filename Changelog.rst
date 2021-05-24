@@ -2,7 +2,7 @@ version 3.9.0
 -------------
 ----
 
-**2021-05-17**
+**2021-05-18**
 
 * Construct access API changes
   (https://github.com/NCAS-CMS/cf-python/issues/201,
@@ -12,6 +12,8 @@ version 3.9.0
 * Performance enhancements
   (https://github.com/NCAS-CMS/cfdm/issues/201,
   https://github.com/NCAS-CMS/cfdm/issues/202)
+* New write mode ``mode='a'`` for appending to, rather than over-writing,
+  a netCDF file on disk (https://github.com/NCAS-CMS/cf-python/issues/30)
 * Temporarily removed the experimental ability to parallelize the
   collapse operation with MPI
   (https://github.com/NCAS-CMS/cf-python/issues/207)

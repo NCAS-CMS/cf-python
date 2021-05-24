@@ -607,7 +607,7 @@ def _make_indexed_contiguous_file(filename):
 
 
 def _make_external_files():
-    """"""
+    """TODO."""
 
     def _pp(
         filename,
@@ -616,7 +616,7 @@ def _make_external_files():
         combined=False,
         external_missing=False,
     ):
-        """"""
+        """TODO."""
         nc = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
         nc.createDimension("grid_latitude", 10)
@@ -716,7 +716,7 @@ def _make_external_files():
 
 
 def _make_gathered_file(filename):
-    """"""
+    """TODO."""
 
     def _jj(shape, list_values):
         array = numpy.ma.masked_all(shape)
