@@ -199,54 +199,54 @@ def write(
         mode: `str`, optional
             Specify the mode of write access for the output file. One of:
 
-            =======  =================================================
-            *mode*   Description
-            =======  =================================================
-            ``'w'``  Open a new file for writing to. If it exists and
-                     *overwrite* is True then the file is deleted
-                     prior to being recreated.
+            ========  =================================================
+            *mode*    Description
+            ========  =================================================
+            ``'w'``   Open a new file for writing to. If it exists and
+                      *overwrite* is True then the file is deleted
+                      prior to being recreated.
 
-            ``'a'``  Open an existing file for appending new
-                     information to. The new information will be
-                     incorporated whilst the original contents of the
-                     file will be preserved.
+            ``'a'``   Open an existing file for appending new
+                      information to. The new information will be
+                      incorporated whilst the original contents of the
+                      file will be preserved.
 
-                     In practice this means that new fields will be
-                     created, whilst the original fields will not be
-                     changed at all, except perhaps by means of
-                     aggregation with appended fields. Coordinates on
-                     the fields, where equal, will be shared as
-                     standard.
+                      In practice this means that new fields will be
+                      created, whilst the original fields will not be
+                      edited at all. Coordinates on the fields, where
+                      equal, will be shared as standard.
 
-                     For append mode, note the following:
+                      For append mode, note the following:
 
-                     * Global attributes on the file
-                       will remain the same as they were originally,
-                       so will become inaccurate where appended fields
-                       have incompatible attributes. To rectify this,
-                       manually inspect and edit them as appropriate
-                       after the append operation using methods such as
-                       `nc_clear_global_attributes` and
-                       `nc_set_global_attribute`.
+                      * Global attributes on the file
+                        will remain the same as they were originally,
+                        so will become inaccurate where appended fields
+                        have incompatible attributes. To rectify this,
+                        manually inspect and edit them as appropriate
+                        after the append operation using methods such as
+                        `nc_clear_global_attributes` and
+                        `nc_set_global_attribute`.
 
-                     * Fields with incompatible ``featureType`` to
-                       the original file cannot be appended.
+                      * Fields with incompatible ``featureType`` to
+                        the original file cannot be appended.
 
-                     * At present fields with groups cannot be
-                       appended, but this will be possible in a future
-                       version. Groups can however be cleared, the
-                       fields appended, and groups re-applied, via
-                       methods such as `nc_clear_variable_groups` and
-                       `nc_set_variable_groups`, to achieve the same
-                       for now.
+                      * At present fields with groups cannot be
+                        appended, but this will be possible in a future
+                        version. Groups can however be cleared, the
+                        fields appended, and groups re-applied, via
+                        methods such as `nc_clear_variable_groups` and
+                        `nc_set_variable_groups`, to achieve the same
+                        for now.
 
-                     * At present domain ancillary constructs of
-                       appended fields may not be handled correctly
-                       and can appear as extra fields. Set them on the
-                       resultant fields using `set_domain_ancillary`
-                       and similar methods if required.
+                      * At present domain ancillary constructs of
+                        appended fields may not be handled correctly
+                        and can appear as extra fields. Set them on the
+                        resultant fields using `set_domain_ancillary`
+                        and similar methods if required.
 
-            =======  =================================================
+            ``'r+'``  Alias for ``'a'``.
+
+            ========  =================================================
 
             By default the file is opened with write access mode
             ``'w'``.

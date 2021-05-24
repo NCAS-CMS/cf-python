@@ -306,6 +306,10 @@ class read_writeTest(unittest.TestCase):
         original_global_attrs[add_global_attr[0]] = None  # -> None on fields
         g[0].nc_set_global_attribute(*add_global_attr)
 
+        # First test a bad mode value:
+        with self.assertRaises(ValueError):
+            cf.write(g[0], tmpfile, mode="g")
+
         g_copy = g.copy()
 
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
@@ -413,7 +417,7 @@ class read_writeTest(unittest.TestCase):
                     )
 
             # Now do the same test, but appending all of the example fields in
-            # one operation rather than one at a time, to check that it works:
+            # one operation rather than one at a time, to check that it works.
             cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             append_ex_fields = cf.example_fields()
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
@@ -432,6 +436,15 @@ class read_writeTest(unittest.TestCase):
             )  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), overall_length)
+
+            # Also test the mode="r+" alias for mode="a".
+            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            cf.write(
+                append_ex_fields, tmpfile, fmt=fmt, mode="r+"
+            )  # 2. now append
+            f = cf.read(tmpfile)
+            self.assertEqual(len(f), overall_length)
+            print("PASSES", fmt)
 
             # The appended fields themselves are now known to be correct,
             # but we also need to check that any coordinates that are
