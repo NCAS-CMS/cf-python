@@ -45,7 +45,7 @@ class AuxiliaryCoordinate(
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance

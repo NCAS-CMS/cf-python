@@ -46,7 +46,7 @@ class Datetime(cftime.datetime):
         dayofyr=1,
         calendar=None,
     ):
-        """"""
+        """TODO."""
         _DEPRECATION_ERROR_CLASS(
             "Datetime",
             "Use function 'cf.dt' to create date-time objects instead.",

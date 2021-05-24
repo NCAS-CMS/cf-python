@@ -18,7 +18,7 @@ tmpfiles = [tmpfile, tmpfile2, "delme.nc", "delme.nca"]
 
 
 def _remove_tmpfiles():
-    """"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)

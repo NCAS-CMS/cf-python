@@ -28,8 +28,8 @@ class Regrid:
         method="conservative_1st",
         ignore_degenerate=False,
     ):
-        """Creates a handle for regridding fields from a source grid to a
-        destination grid that can then be used by the run_regridding
+        """Creates a handle for regridding fields from a source grid to
+        a destination grid that can then be used by the run_regridding
         method.
 
         :Parameters:
@@ -429,7 +429,7 @@ class Regrid:
         return field
 
     def run_regridding(self, srcfield, dstfield):
-        """"""
+        """TODO."""
         dstfield = self.regridSrc2Dst(
             srcfield, dstfield, zero_region=ESMF.Region.SELECT
         )

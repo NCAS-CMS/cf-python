@@ -1244,7 +1244,7 @@ class bounds_combination_mode(ConstantAccess):
 
 
 def CF():
-    """"""
+    """TODO."""
     return cfdm.CF()
 
 
@@ -2287,7 +2287,7 @@ _equals = cfdm.Data()._equals
 
 
 def equals(x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs):
-    """"""
+    """TODO."""
     if rtol is None:
         rtol = _cf_rtol()
 
@@ -3456,7 +3456,7 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
     warnings.warn(
         "{} attribute {!r} has been deprecated at version {} and will be "
         "removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, method, version, message
+            instance.__class__.__name__, attribute, version, message
         ),
         DeprecationWarning,
     )
