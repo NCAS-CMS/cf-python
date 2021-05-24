@@ -57,7 +57,7 @@ def _get_cf_version():
 
 
 def _get_year():
-    """"""
+    """TODO."""
     return str(datetime.datetime.now().year)
 
 

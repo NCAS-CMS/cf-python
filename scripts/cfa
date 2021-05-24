@@ -1007,7 +1007,7 @@ Written by David Hassell
         p.communicate(input=manpage)
 
     def _check_overwrite(outfile, files, overwrite):
-        """"""
+        """TODO."""
         if not os.path.isfile(outfile):
             return
 
