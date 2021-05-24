@@ -3,4 +3,4 @@ cftime>=1.5.0
 numpy>=1.15
 cfdm>=1.8.9.0, <1.8.10.0
 psutil>=0.6.0
-cfunits>=3.3.2
+cfunits>=3.3.3

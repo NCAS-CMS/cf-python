@@ -266,6 +266,7 @@ setup(
     author_email="david.hassell@ncas.ac.uk",
     url="https://ncas-cms.github.io/cf-python",
     platforms=["Linux", "MacOS"],
+    license="MIT",
     keywords=[
         "cf",
         "netcdf",
