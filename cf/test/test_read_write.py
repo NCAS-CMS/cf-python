@@ -425,8 +425,8 @@ class read_writeTest(unittest.TestCase):
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
             if fmt in "NETCDF4_CLASSIC":
-                # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
-                append_ex_fields = append_ex_fields[:4]
+                # Remove n=6 and =7 for reasons as given above (del => minus 1)
+                append_ex_fields = append_ex_fields[:5]
 
             # Equals len(append_ex_fields), + 1 [for original 'g'] and -1 [for
             # field n=5 which aggregates to one with n=2] => + 1 - 1 = + 0:
@@ -444,7 +444,6 @@ class read_writeTest(unittest.TestCase):
             )  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), overall_length)
-            print("PASSES", fmt)
 
             # The appended fields themselves are now known to be correct,
             # but we also need to check that any coordinates that are
