@@ -152,7 +152,7 @@ The `cf` package can:
 
 * create new field constructs in memory,
 
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells.
 

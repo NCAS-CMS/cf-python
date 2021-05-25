@@ -22,7 +22,7 @@ The `cf` package can:
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 
 * incorporate, and create, metadata stored in external files (*new in
   version 3.0.0*),
@@ -81,7 +81,7 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.8"
-__date__ = "2021-05-17"
+__date__ = "2021-05-25"
 __version__ = "3.9.0"
 
 _requires = (

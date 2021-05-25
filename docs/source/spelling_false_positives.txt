@@ -173,6 +173,7 @@ hasbounds
 hasdata
 hashable
 hasprop
+Hassell
 hdf
 HDF
 Hovmuller
@@ -222,6 +223,7 @@ Januarys
 Javier
 jja
 kB
+Kinoshita
 Kristian
 kwargs
 lat

@@ -125,7 +125,7 @@ The following file types can be read:
 ..
 
 * Files in `CDL format
-  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_utilities_guide.html>`_,
+  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html>`_,
   with or without the data array values.
 
 ..
@@ -6909,4 +6909,3 @@ if any, are filtered out.
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
-,c
