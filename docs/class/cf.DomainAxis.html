@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.DomainAxis &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,12 +121,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-domainaxis">
+  <section id="cf-domainaxis">
 <span id="id1"></span><h1>cf.DomainAxis<a class="headerlink" href="#cf-domainaxis" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAxis">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/domainaxis.py#L6-L170"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/domainaxis.py#L6-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainaxis.DomainAxis</span></code></p>
 <p>A domain axis construct of the CF data model.</p>
 <p>A domain axis construct specifies the number of points along an
@@ -120,7 +141,7 @@ their presence makes no difference to the order of the elements.</p>
 <p>The netCDF dimension name of the construct may be accessed with
 the <a class="reference internal" href="../method/cf.DomainAxis.nc_set_dimension.html#cf.DomainAxis.nc_set_dimension" title="cf.DomainAxis.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a>, <a class="reference internal" href="../method/cf.DomainAxis.nc_get_dimension.html#cf.DomainAxis.nc_get_dimension" title="cf.DomainAxis.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>, <a class="reference internal" href="../method/cf.DomainAxis.nc_del_dimension.html#cf.DomainAxis.nc_del_dimension" title="cf.DomainAxis.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a> and
 <a class="reference internal" href="../method/cf.DomainAxis.nc_has_dimension.html#cf.DomainAxis.nc_has_dimension" title="cf.DomainAxis.nc_has_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></a> methods.</p>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
@@ -132,20 +153,21 @@ the <a class="reference internal" href="../method/cf.DomainAxis.nc_set_dimension
 </dd>
 </dl>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the size from that of <em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Initialise the size from that of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cf.DomainAxis(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cf.DomainAxis(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -174,8 +196,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="size">
+</section>
+<section id="size">
 <h2>Size<a class="headerlink" href="#size" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -210,8 +232,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -224,7 +246,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return a deep copy.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAxis.creation_commands.html#cf.DomainAxis.creation_commands" title="cf.DomainAxis.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
-<td><p>Return the commands that would create the domain axis construct.</p></td>
+<td><p>Returns the commands to create the domain axis construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAxis.equals.html#cf.DomainAxis.equals" title="cf.DomainAxis.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two domain axis constructs are the same.</p></td>
@@ -234,8 +256,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -264,8 +286,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="arithmetic-and-comparison-operations">
+</section>
+<section id="arithmetic-and-comparison-operations">
 <h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bitwise and comparison operations are defined on a field
 construct as element-wise operations on its data which yield a new
@@ -321,7 +343,7 @@ construct’s data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.__radd__.html#cf.Field.__radd__" title="cf.Field.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -348,11 +370,11 @@ construct’s data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAxis.__int__.html#cf.DomainAxis.__int__" title="cf.DomainAxis.__int__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Implements the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -372,9 +394,9 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -387,7 +409,7 @@ construct’s data in-place.</p>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAxis.__hash__.html#cf.DomainAxis.__hash__" title="cf.DomainAxis.__hash__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Returns the hash value of the domain axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAxis.__repr__.html#cf.DomainAxis.__repr__" title="cf.DomainAxis.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
@@ -397,8 +419,8 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -408,11 +430,11 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

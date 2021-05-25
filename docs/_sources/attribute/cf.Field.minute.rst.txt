@@ -1,4 +1,4 @@
-cf.Field.minute
+﻿cf.Field.minute
 ===============
 
 .. currentmodule:: cf

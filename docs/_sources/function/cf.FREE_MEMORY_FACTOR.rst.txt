@@ -1,4 +1,4 @@
-cf.FREE_MEMORY_FACTOR
+﻿cf.FREE_MEMORY_FACTOR
 =====================
 
 .. currentmodule:: cf

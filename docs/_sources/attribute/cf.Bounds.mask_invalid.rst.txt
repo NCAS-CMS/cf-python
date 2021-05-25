@@ -1,4 +1,4 @@
-cf.Bounds.mask_invalid
+﻿cf.Bounds.mask_invalid
 ======================
 
 .. currentmodule:: cf

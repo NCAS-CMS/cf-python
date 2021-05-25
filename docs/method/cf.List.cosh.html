@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.List.cosh &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,19 +123,20 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-list-cosh">
+  <section id="cf-list-cosh">
 <h1>cf.List.cosh<a class="headerlink" href="#cf-list-cosh" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.List.cosh">
-<code class="sig-prename descclassname">List.</code><code class="sig-name descname">cosh</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/decorators.py#L40-L64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.cosh" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">List.</code><code class="sig-name descname">cosh</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/decorators.py#L43-L67"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.cosh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take the hyperbolic cosine of the data element-wise.</p>
-<p>Units are accounted for in the calculation. If the units are not
-equivalent to radians (such as Kelvin) then they are treated as if
-they were radians. For example, the the hyperbolic cosine of 0
-degrees_east is 1.0, as is the hyperbolic cosine of 1.57079632 radians.</p>
+<p>Units are accounted for in the calculation. If the units are
+not equivalent to radians (such as Kelvin) then they are
+treated as if they were radians. For example, the the
+hyperbolic cosine of 0 degrees_east is 1.0, as is the
+hyperbolic cosine of 1.57079632 radians.</p>
 <p>The output units are changed to ‘1’ (nondimensional).</p>
-<p>The “standard_name” and “long_name” properties are removed from
-the result.</p>
+<p>The “standard_name” and “long_name” properties are removed
+from the result.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.1.0.</span></p>
 </div>
@@ -125,7 +147,8 @@ the result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -163,7 +186,7 @@ returned.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -173,11 +196,11 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

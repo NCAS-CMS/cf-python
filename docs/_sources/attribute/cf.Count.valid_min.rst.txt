@@ -1,4 +1,4 @@
-cf.Count.valid_min
+﻿cf.Count.valid_min
 ==================
 
 .. currentmodule:: cf

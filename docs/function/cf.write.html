@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.write &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,11 +121,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-write">
+  <section id="cf-write">
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/read_write/write.py#L25-L671"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/read_write/write.py#L25-L751"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -238,6 +259,67 @@ against the netCDF4 library.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code> files use the version 4 disk format (HDF5)
 and use the new features of the version 4 API.</p>
 </dd>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output file. One of:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><em>mode</em></p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'w'</span></code></p></td>
+<td><p>Open a new file for writing to. If it exists and
+<em>overwrite</em> is True then the file is deleted
+prior to being recreated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'a'</span></code></p></td>
+<td><p>Open an existing file for appending new
+information to. The new information will be
+incorporated whilst the original contents of the
+file will be preserved.</p>
+<p>In practice this means that new fields will be
+created, whilst the original fields will not be
+edited at all. Coordinates on the fields, where
+equal, will be shared as standard.</p>
+<p>For append mode, note the following:</p>
+<ul class="simple">
+<li><p>Global attributes on the file
+will remain the same as they were originally,
+so will become inaccurate where appended fields
+have incompatible attributes. To rectify this,
+manually inspect and edit them as appropriate
+after the append operation using methods such as
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code>.</p></li>
+<li><p>Fields with incompatible <code class="docutils literal notranslate"><span class="pre">featureType</span></code> to
+the original file cannot be appended.</p></li>
+<li><p>At present fields with groups cannot be
+appended, but this will be possible in a future
+version. Groups can however be cleared, the
+fields appended, and groups re-applied, via
+methods such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code>, to achieve the same
+for now.</p></li>
+<li><p>At present domain ancillary constructs of
+appended fields may not be handled correctly
+and can appear as extra fields. Set them on the
+resultant fields using <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code>
+and similar methods if required.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'r+'</span></code></p></td>
+<td><p>Alias for <code class="docutils literal notranslate"><span class="pre">'a'</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>By default the file is opened with write access mode
+<code class="docutils literal notranslate"><span class="pre">'w'</span></code>.</p>
+</dd>
 <dt>overwrite: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then raise an error if the output file
 pre-exists. By default a pre-existing output file is
 overwritten.</p>
@@ -337,28 +419,6 @@ a netCDF data variable attribute</p>
 external to the named external file. Ignored if there are
 no such constructs.</p>
 </dd>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output file. One of:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 13%" />
-<col style="width: 88%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p><em>mode</em></p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'w'</span></code></p></td>
-<td><p>Open a new file for writing to. If it exists and
-<em>overwrite</em> is True then the file is deleted
-prior to being recreated.</p></td>
-</tr>
-</tbody>
-</table>
-<p>By default the file is opened with write access mode
-<code class="docutils literal notranslate"><span class="pre">'w'</span></code>.</p>
-</dd>
 <dt>cfa_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>A dictionary giving parameters for configuring the output
 CFA-netCDF file:</p>
 <table class="docutils align-default">
@@ -454,7 +514,7 @@ do not support 64-bit integers). By default, input data
 types are preserved. Any data type conversion is only
 applied to the arrays on disk, and not to the input field
 constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
 objects in a dictionary whose keys are input data types
 with values of output data types.</p>
 <dl class="simple">
@@ -553,8 +613,8 @@ resulting warning may be suppressed by setting
 <dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” netCDF file, i.e. one with
 only the root group, regardless of any group structure
 specified by the field constructs. By default any groups
-defined by the netCDF interface of the field constucts and
-its components will be created and populated.</p>
+defined by the netCDF interface of the field constructs
+and its components will be created and populated.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.6.0.</span></p>
 </div>
@@ -597,7 +657,7 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -607,11 +667,11 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.valid_max
+﻿cf.DimensionCoordinate.valid_max
 ================================
 
 .. currentmodule:: cf

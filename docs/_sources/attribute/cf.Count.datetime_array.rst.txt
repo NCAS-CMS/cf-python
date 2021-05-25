@@ -1,4 +1,4 @@
-cf.Count.datetime_array
+﻿cf.Count.datetime_array
 =======================
 
 .. currentmodule:: cf

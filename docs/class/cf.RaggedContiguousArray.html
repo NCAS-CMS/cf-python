@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.RaggedContiguousArray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,12 +121,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-raggedcontiguousarray">
+  <section id="cf-raggedcontiguousarray">
 <h1>cf.RaggedContiguousArray<a class="headerlink" href="#cf-raggedcontiguousarray" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.RaggedContiguousArray">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RaggedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/data/raggedcontiguousarray.py#L4-L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedContiguousArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RaggedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/data/raggedcontiguousarray.py#L4-L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedContiguousArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.raggedcontiguousarray.RaggedContiguousArray</span></code></p>
 <p>An underlying contiguous ragged array.</p>
 <p>A collection of features stored using a contiguous ragged array
@@ -117,7 +138,7 @@ contiguous block.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.0.</span></p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -137,7 +158,7 @@ corresponding to a CF-netCDF count variable.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -150,10 +171,10 @@ corresponding to a CF-netCDF count variable.</p>
 <td><p>Return axes that are compressed in the underlying array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.RaggedContiguousArray.get_compressed_dimension.html#cf.RaggedContiguousArray.get_compressed_dimension" title="cf.RaggedContiguousArray.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></p></td>
-<td><p>Return the position of the compressed dimension in the compressed array.</p></td>
+<td><p>Returns the compressed dimension’s position in the array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.RaggedContiguousArray.get_compression_type.html#cf.RaggedContiguousArray.get_compression_type" title="cf.RaggedContiguousArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
-<td><p>The type of compression that has been applied to the underlying array.</p></td>
+<td><p>Returns the array’s compression type.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.RaggedContiguousArray.get_count.html#cf.RaggedContiguousArray.get_count" title="cf.RaggedContiguousArray.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></p></td>
 <td><p>Return the count variable for a compressed array.</p></td>
@@ -174,10 +195,10 @@ corresponding to a CF-netCDF count variable.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.RaggedContiguousArray.array.html#cf.RaggedContiguousArray.array" title="cf.RaggedContiguousArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
-<td><p>Return an independent numpy array containing the uncompressed data.</p></td>
+<td><p>Returns a numpy array containing the uncompressed data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.RaggedContiguousArray.compressed_array.html#cf.RaggedContiguousArray.compressed_array" title="cf.RaggedContiguousArray.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></p></td>
-<td><p>Return an independent numpy array containing the compressed data.</p></td>
+<td><p>Returns an independent numpy array with the compressed data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.RaggedContiguousArray.dtype.html#cf.RaggedContiguousArray.dtype" title="cf.RaggedContiguousArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
 <td><p>Data-type of the data elements.</p></td>
@@ -193,8 +214,8 @@ corresponding to a CF-netCDF count variable.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -214,8 +235,8 @@ corresponding to a CF-netCDF count variable.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -225,11 +246,11 @@ corresponding to a CF-netCDF count variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

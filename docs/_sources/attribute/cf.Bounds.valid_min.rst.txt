@@ -1,4 +1,4 @@
-cf.Bounds.valid_min
+﻿cf.Bounds.valid_min
 ===================
 
 .. currentmodule:: cf

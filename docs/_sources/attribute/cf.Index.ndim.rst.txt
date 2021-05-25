@@ -1,4 +1,4 @@
-cf.Index.ndim
+﻿cf.Index.ndim
 =============
 
 .. currentmodule:: cf

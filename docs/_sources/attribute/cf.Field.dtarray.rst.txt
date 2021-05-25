@@ -1,4 +1,4 @@
-cf.Field.dtarray
+﻿cf.Field.dtarray
 ================
 
 .. currentmodule:: cf

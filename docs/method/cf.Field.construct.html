@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,8 +22,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.construct_key" href="cf.Field.construct_key.html" />
-    <link rel="prev" title="cf.Field.chunk" href="cf.Field.chunk.html" />
+    <link rel="next" title="cf.Field.construct_item" href="cf.Field.construct_item.html" />
+    <link rel="prev" title="cf.Field.field_ancillaries" href="cf.Field.field_ancillaries.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -86,14 +87,34 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.chunk.html" title="previous chapter">cf.Field.chunk</a></li>
-      <li>Next: <a href="cf.Field.construct_key.html" title="next chapter">cf.Field.construct_key</a></li>
+      <li>Previous: <a href="cf.Field.field_ancillaries.html" title="previous chapter">cf.Field.field_ancillaries</a></li>
+      <li>Next: <a href="cf.Field.construct_item.html" title="next chapter">cf.Field.construct_item</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,11 +123,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-construct">
+  <section id="cf-field-construct">
 <h1>cf.Field.construct<a class="headerlink" href="#cf-field-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.construct">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">construct</code><span class="sig-paren">(</span><em class="sig-param">identity=None</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/field.py#L15423-L15560"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em>, <em class="sig-param">item=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/mixin/fielddomain.py#L1567-L1628"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a metadata construct by its identity.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -116,112 +137,55 @@
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>identity: optional</dt><dd><p>Select the construct. Must be</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>The identity or key of a metadata construct.</p></li>
-</ul>
-</div></blockquote>
-<p>A construct identity is specified by a string
-(e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'long_name=time'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'ncvar%lat'</span></code>, etc.); a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
-(e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('longitude')</span></code>); or a compiled regular
-expression (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that
-selects the relevant constructs whose identities match via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>A construct has a number of identities, and is selected if
-any of them match any of those provided. A construct’s
-identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code>
-method. In the following example, the construct <code class="docutils literal notranslate"><span class="pre">x</span></code> has
-six identities:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
-<span class="go">[&#39;time&#39;,</span>
-<span class="go"> &#39;long_name=Time&#39;,</span>
-<span class="go"> &#39;foo=bar&#39;,</span>
-<span class="go"> &#39;standard_name=time&#39;,</span>
-<span class="go"> &#39;ncvar%t&#39;,</span>
-<span class="go"> &#39;T&#39;]</span>
-</pre></div>
+<dt>identity: optional</dt><dd><p>Select constructs that have an identity, defined by
+their <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods, that matches any of the
+given values.</p>
+<p>Additionally, the values are matched against construct
+identifiers, with or without the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code> prefix.</p>
+<p>If no values are provided then all constructs are
+selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+call, a construct is always described by an identity
+that will select it.</p>
+</dd>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct
+identifier. By default the construct itself is
+returned.</p>
+</dd>
+<dt>item: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct identifier
+and the construct itself. By default the construct
+itself is returned. If <em>key</em> is True then <em>item</em> is
+ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>3.9.0</p>
 </div>
-<p>A construct key may optionally have the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code>
-prefix. For example <code class="docutils literal notranslate"><span class="pre">'dimensioncoordinate2'</span></code> and
-<code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code> are both acceptable keys.</p>
-<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
-method, a construct is always described by one of its
-identities, and so this description may always be used as
-an <em>identity</em> argument.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><a href="#id1"><span class="problematic" id="id2">``</span></a>identity=’T’</p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='measure:area'</span></code></p>
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
+is no unique construct.</p>
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+raised instead.</p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='cell_area'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='long_name=Cell</span> <span class="pre">Area'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='cellmeasure1'</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if a construct
-can not be found. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then
-it will be raised instead.</p>
-</dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct key. By
-default the construct itself is returned.</p>
+<dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code>
+that define additional construct selection
+criteria.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>3.9.0</p>
+</div>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The selected coordinate construct, or its key.</p>
+<dd class="field-even"><p>The selected construct, or its identifier if <em>key</em> is
+True, or a tuple of both if <em>item</em> is True.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="go">Field: air_temperature (ncvar%ta)</span>
-<span class="go">---------------------------------</span>
-<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
-<span class="go">Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum</span>
-<span class="go">Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
-<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
-<span class="go">                : grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
-<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
-<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
-<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
-<span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
-<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
-<span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
-<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
-<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
-<span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;long_name=Grid latitude name&#39;</span><span class="p">)</span>
-<span class="go">&lt;CF AuxiliaryCoordinate: long_name=Grid latitude name(10) &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;ncvar%a&#39;</span><span class="p">)</span>
-<span class="go">&lt;CF DomainAncillary: ncvar%a(1) m&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;measure:area&#39;</span><span class="p">)</span>
-<span class="go">&lt;CF CellMeasure: measure:area(9, 10) km2&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;domainaxis0&#39;</span><span class="p">)</span>
-<span class="go">&lt;CF DomainAxis: size(1)&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
-<span class="gt">Traceback (most recent call last):</span>
-    <span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Can&#39;t return zero constructs</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;No height coordinates&quot;</span><span class="p">))</span>
-<span class="gt">Traceback (most recent call last):</span>
-    <span class="o">...</span>
-<span class="gr">TypeError</span>: <span class="n">No height coordinates</span>
-</pre></div>
-</div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -231,11 +195,11 @@ default the construct itself is returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

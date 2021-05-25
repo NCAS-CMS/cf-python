@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs.unfilter &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,7 +22,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Constructs.key" href="cf.Constructs.key.html" />
+    <link rel="next" title="cf.Constructs.domain_axes" href="cf.Constructs.domain_axes.html" />
     <link rel="prev" title="cf.Constructs.inverse_filter" href="cf.Constructs.inverse_filter.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -87,13 +88,33 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Constructs.html">cf.Constructs</a><ul>
       <li>Previous: <a href="cf.Constructs.inverse_filter.html" title="previous chapter">cf.Constructs.inverse_filter</a></li>
-      <li>Next: <a href="cf.Constructs.key.html" title="next chapter">cf.Constructs.key</a></li>
+      <li>Next: <a href="cf.Constructs.domain_axes.html" title="next chapter">cf.Constructs.domain_axes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,41 +123,38 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs-unfilter">
+  <section id="cf-constructs-unfilter">
 <h1>cf.Constructs.unfilter<a class="headerlink" href="#cf-constructs-unfilter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.unfilter">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">unfilter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/constructs.py#L2110-L2212"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">unfilter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L3098-L3199"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the constructs that existed prior to previous filters.</p>
 <p>By default, the unfiltered constructs are those that existed
 before all previously applied filters.</p>
 <p>If the <em>depth</em> parameter is set to <em>N</em> then the unfiltered
 constructs are those that existed before the <em>N</em>-th most
 recently applied filter.</p>
-<p>A history of the filters that have been applied is returned in a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of the
-tuple describes the last filter applied. If no filters have been
-applied then the tuple is empty.</p>
+<p>A history of the filters that have been applied is returned in
+a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of
+the tuple describes the last filter applied. If no filters
+have been applied then the tuple is empty.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_key.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_measure.html#cf.Constructs.filter_by_measure" title="cf.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_method.html#cf.Constructs.filter_by_method" title="cf.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_naxes.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_ncdim.html#cf.Constructs.filter_by_ncdim" title="cf.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_ncvar.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_property.html#cf.Constructs.filter_by_property" title="cf.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>,
+<a class="reference internal" href="cf.Constructs.clear_filters_applied.html#cf.Constructs.clear_filters_applied" title="cf.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by the
-<code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default the
-constructs from before all previously applied filters are
-returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the total number of
-filters applied, which results in the default behaviour.</p>
+<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by
+the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default
+the constructs from before all previously applied
+filters are returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the
+total number of filters applied, which results in the
+default behaviour.</p>
 </dd>
 </dl>
 </dd>
@@ -194,7 +212,7 @@ unchanged:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -204,11 +222,11 @@ unchanged:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

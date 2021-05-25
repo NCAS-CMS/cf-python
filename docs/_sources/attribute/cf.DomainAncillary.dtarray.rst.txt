@@ -1,4 +1,4 @@
-cf.DomainAncillary.dtarray
+﻿cf.DomainAncillary.dtarray
 ==========================
 
 .. currentmodule:: cf

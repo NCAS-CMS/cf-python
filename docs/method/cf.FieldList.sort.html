@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.FieldList.sort &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,14 +123,15 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-fieldlist-sort">
+  <section id="cf-fieldlist-sort">
 <h1>cf.FieldList.sort<a class="headerlink" href="#cf-fieldlist-sort" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.sort">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/fieldlist.py#L345-L422"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.sort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sort of the field list in place.</p>
-<p>By default the field list is sorted by the identities of its field
-construct elements.</p>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/constructlist.py#L341-L375"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort of the list in place.</p>
+<p>By default the list is sorted by the identities of its
+constructs, but any sort criteria can be specified with the
+<em>key</em> parameter.</p>
 <p>The sort is stable.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.4.</span></p>
@@ -121,13 +143,14 @@ construct elements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>key: function, optional</dt><dd><p>Specify a function of one argument that is used to extract
-a comparison key from each field construct. By default the
-field list is sorted by field identity, i.e. the default
-value of <em>key</em> is <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">f:</span> <span class="pre">f.identity()</span></code>.</p>
+<dt>key: function, optional</dt><dd><p>Specify a function of one argument that is used to
+extract a comparison key from each construct. By
+default the list is sorted by construct identity,
+i.e. the default value of <em>key</em> is <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">x:</span>
+<span class="pre">x.identity()</span></code>.</p>
 </dd>
-<dt>reverse: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, then the field list elements are sorted
-as if each comparison were reversed.</p>
+<dt>reverse: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, then the list elements are sorted as
+if each comparison were reversed.</p>
 </dd>
 </dl>
 </dd>
@@ -135,56 +158,9 @@ as if each comparison were reversed.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
-<span class="go">[&lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
-<span class="go"> &lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;,</span>
-<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
-<span class="go">[&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
-<span class="go"> &lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
-<span class="go">[&lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
-<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">]</span>
-<span class="go">[masked,</span>
-<span class="go"> -0.12850454449653625,</span>
-<span class="go"> -0.12850454449653625,</span>
-<span class="go"> 236.51275634765625]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">]</span>
-<span class="go">[masked,</span>
-<span class="go"> 236.51275634765625,</span>
-<span class="go"> -0.12850454449653625,</span>
-<span class="go"> -0.12850454449653625]</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">attrgetter</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">]</span>
-<span class="go">[&#39;Meridional Overturning Streamfunction&#39;,</span>
-<span class="go"> &#39;U COMPNT OF WIND ON PRESSURE LEVELS&#39;,</span>
-<span class="go"> &#39;U COMPNT OF WIND ON PRESSURE LEVELS&#39;,</span>
-<span class="go"> &#39;air_temperature&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">]</span>
-<span class="go">[&#39;air_temperature&#39;,</span>
-<span class="go"> &#39;Meridional Overturning Streamfunction&#39;,</span>
-<span class="go"> &#39;U COMPNT OF WIND ON PRESSURE LEVELS&#39;,</span>
-<span class="go"> &#39;U COMPNT OF WIND ON PRESSURE LEVELS&#39;]</span>
-</pre></div>
-</div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -194,11 +170,11 @@ as if each comparison were reversed.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

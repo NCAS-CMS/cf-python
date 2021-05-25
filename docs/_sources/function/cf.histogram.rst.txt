@@ -1,4 +1,4 @@
-cf.histogram
+﻿cf.histogram
 ============
 
 .. currentmodule:: cf

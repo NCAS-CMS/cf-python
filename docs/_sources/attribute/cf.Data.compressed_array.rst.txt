@@ -1,4 +1,4 @@
-cf.Data.compressed_array
+﻿cf.Data.compressed_array
 ========================
 
 .. currentmodule:: cf

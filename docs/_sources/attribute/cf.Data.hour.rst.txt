@@ -1,4 +1,4 @@
-cf.Data.hour
+﻿cf.Data.hour
 ============
 
 .. currentmodule:: cf

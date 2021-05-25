@@ -1,4 +1,4 @@
-cf.DomainAncillary.mask_invalid
+﻿cf.DomainAncillary.mask_invalid
 ===============================
 
 .. currentmodule:: cf

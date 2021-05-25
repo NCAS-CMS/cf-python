@@ -1,4 +1,4 @@
-cf.Bounds.datetime_array
+﻿cf.Bounds.datetime_array
 ========================
 
 .. currentmodule:: cf

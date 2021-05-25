@@ -1,4 +1,4 @@
-cf.COLLAPSE_PARALLEL_MODE
+﻿cf.COLLAPSE_PARALLEL_MODE
 =========================
 
 .. currentmodule:: cf

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.FieldList &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,52 +121,33 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-fieldlist">
+  <section id="cf-fieldlist">
 <span id="fieldlist"></span><h1>cf.FieldList<a class="headerlink" href="#cf-fieldlist" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.FieldList">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldList</code><span class="sig-paren">(</span><em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/fieldlist.py#L21-L1365"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.abstract.container.Container</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldList</code><span class="sig-paren">(</span><em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/fieldlist.py#L7-L272"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomainlist.FieldDomainList</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.constructlist.ConstructList</span></code></p>
 <p>An ordered sequence of fields.</p>
 <p>Each element of a field list is a field construct.</p>
 <p>A field list supports the python list-like operations (such as
-indexing and methods like <code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code>).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
-<span class="go">&lt;CF Field: air_temperaturetime(12), latitude(73), longitude(96) K&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
-<span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">f</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
-<span class="go">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span> <span class="o">+</span> <span class="n">fl</span><span class="p">)</span>
-<span class="go">6</span>
-</pre></div>
-</div>
-<p>These methods provide functionality similar to that of a
-<a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html#tut-morelists" title="(in Python v3.9)"><span class="xref std std-ref">built-in list</span></a>. The main difference
-is that when a field element needs to be assessed for equality its
+indexing and methods like <code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code>). These methods provide
+functionality similar to that of a <a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html#tut-morelists" title="(in Python v3.9)"><span class="xref std std-ref">built-in list</span></a>. The main difference is that when a field
+construct element needs to be assessed for equality its
 <a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
 operator.</p>
 <p><strong>Initialization</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>fields: (sequence of) <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, optional</dt><dd><p>Create a new field list with these fields.</p>
+<dt>fields: (sequence of) <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, optional</dt><dd><p>Create a new list with these field constructs.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="selecting">
+<section id="selecting">
 <h2>Selecting<a class="headerlink" href="#selecting" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -154,22 +156,22 @@ operator.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_construct.html#cf.FieldList.select_by_construct" title="cf.FieldList.select_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_construct</span></code></a></p></td>
-<td><p>Select field constructs by metadata constructs.</p></td>
+<td><p>Select elements by their metadata constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_identity</span></code></a></p></td>
-<td><p>Select field constructs by identity.</p></td>
+<td><p>Select list elements constructs by identity.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_naxes.html#cf.FieldList.select_by_naxes" title="cf.FieldList.select_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_naxes</span></code></a></p></td>
 <td><p>Select field constructs by property.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_ncvar.html#cf.FieldList.select_by_ncvar" title="cf.FieldList.select_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_ncvar</span></code></a></p></td>
-<td><p>Select field constructs by netCDF variable name.</p></td>
+<td><p>Select list elements by netCDF variable name.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_property.html#cf.FieldList.select_by_property" title="cf.FieldList.select_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_property</span></code></a></p></td>
-<td><p>Select field constructs by property.</p></td>
+<td><p>Select list elements by property.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_rank.html#cf.FieldList.select_by_rank" title="cf.FieldList.select_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_rank</span></code></a></p></td>
-<td><p>Select field constructs by the number of domain axis constructs.</p></td>
+<td><p>Select list elements by the number of domain axis constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_units.html#cf.FieldList.select_by_units" title="cf.FieldList.select_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_units</span></code></a></p></td>
 <td><p>Select field constructs by units.</p></td>
@@ -185,8 +187,8 @@ operator.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="comparison">
+</section>
+<section id="comparison">
 <h2>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -195,12 +197,12 @@ operator.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
-<td><p>Whether two field lists are the same.</p></td>
+<td><p>Whether two lists are the same.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -209,7 +211,7 @@ operator.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.close.html#cf.FieldList.close" title="cf.FieldList.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
-<td><p>Close all files referenced by each field construct.</p></td>
+<td><p>Close all files referenced by each construct in the list.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.concatenate.html#cf.FieldList.concatenate" title="cf.FieldList.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
 <td><p>Join the sequence of fields together.</p></td>
@@ -219,8 +221,8 @@ operator.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="aliases">
+</section>
+<section id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -236,8 +238,8 @@ operator.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="list-like-operations">
+</section>
+<section id="list-like-operations">
 <h2>List-like operations<a class="headerlink" href="#list-like-operations" title="Permalink to this headline">¶</a></h2>
 <p>These methods provide functionality identical to that of a Python
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, with one exception:</p>
@@ -270,7 +272,7 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
 <td><p>Remove all items from list.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.count.html#cf.FieldList.count" title="cf.FieldList.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
-<td><p>Return number of occurrences of value</p></td>
+<td><p>Return number of occurrences of value.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.extend.html#cf.FieldList.extend" title="cf.FieldList.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a></p></td>
 <td><p>Extend list by appending elements from the iterable.</p></td>
@@ -291,7 +293,7 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
 <td><p>Reverse <em>IN PLACE</em>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.sort.html#cf.FieldList.sort" title="cf.FieldList.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a></p></td>
-<td><p>Sort of the field list in place.</p></td>
+<td><p>Sort of the list in place.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__add__.html#cf.FieldList.__add__" title="cf.FieldList.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
 <td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
@@ -352,8 +354,8 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special-methods">
+</section>
+<section id="special-methods">
 <h2>Special methods<a class="headerlink" href="#special-methods" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -369,8 +371,8 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="deprecated">
+</section>
+<section id="deprecated">
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -387,8 +389,8 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -398,11 +400,11 @@ operator. This affects the <a class="reference internal" href="../method/cf.Fiel
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

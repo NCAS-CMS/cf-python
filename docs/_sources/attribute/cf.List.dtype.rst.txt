@@ -1,4 +1,4 @@
-cf.List.dtype
+﻿cf.List.dtype
 =============
 
 .. currentmodule:: cf

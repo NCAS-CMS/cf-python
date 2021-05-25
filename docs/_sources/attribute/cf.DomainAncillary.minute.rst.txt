@@ -1,4 +1,4 @@
-cf.DomainAncillary.minute
+﻿cf.DomainAncillary.minute
 =========================
 
 .. currentmodule:: cf

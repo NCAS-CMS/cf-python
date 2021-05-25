@@ -1,4 +1,4 @@
-cf.CoordinateReference.coordinate_conversion
+﻿cf.CoordinateReference.coordinate_conversion
 ============================================
 
 .. currentmodule:: cf

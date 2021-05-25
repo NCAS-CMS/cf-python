@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs.filter_by_data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,12 +123,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs-filter-by-data">
+  <section id="cf-constructs-filter-by-data">
 <h1>cf.Constructs.filter_by_data<a class="headerlink" href="#cf-constructs-filter-by-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.filter_by_data">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/constructs.py#L954-L994"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Select metadata constructs by whether they could contain data.</p>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_data</code><span class="sig-paren">(</span><em class="sig-param">todict=False</em>, <em class="sig-param">cached=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L1654-L1692"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects metadata constructs that could contain data.</p>
 <p>Selection is not based on whether they actually have data,
 rather by whether the construct supports the inclusion of
 data. For example, constructs selected by this method will all
@@ -117,16 +138,30 @@ have a <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_key.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_measure.html#cf.Constructs.filter_by_measure" title="cf.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_method.html#cf.Constructs.filter_by_method" title="cf.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_naxes.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_ncdim.html#cf.Constructs.filter_by_ncdim" title="cf.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_ncvar.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filter_by_property.html#cf.Constructs.filter_by_property" title="cf.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a>,
-<a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>, <a class="reference internal" href="cf.Constructs.unfilter.html#cf.Constructs.unfilter" title="cf.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>,
+<a class="reference internal" href="cf.Constructs.clear_filters_applied.html#cf.Constructs.clear_filters_applied" title="cf.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.unfilter.html#cf.Constructs.unfilter" title="cf.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt><dd><p>The selected constructs and their construct keys.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>todict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
 </dd>
 </dl>
 </dd>
@@ -138,7 +173,7 @@ have a <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -148,11 +183,11 @@ have a <code class="xref py py-obj docutils literal notranslate"><span class="pr
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

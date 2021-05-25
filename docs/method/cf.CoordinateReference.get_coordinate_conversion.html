@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.CoordinateReference.get_coordinate_conversion &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,11 +123,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-coordinatereference-get-coordinate-conversion">
+  <section id="cf-coordinatereference-get-coordinate-conversion">
 <h1>cf.CoordinateReference.get_coordinate_conversion<a class="headerlink" href="#cf-coordinatereference-get-coordinate-conversion" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CoordinateReference.get_coordinate_conversion">
-<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">get_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/core/coordinatereference.py#L381-L405"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.get_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">get_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/coordinatereference.py#L420-L457"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.get_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the coordinate conversion component.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -125,13 +146,26 @@
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_coordinate_conversion</span><span class="p">()</span>
-<span class="go">&lt;CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CoordinateReference</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CoordinateConversion</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;atmosphere_hybrid_height_coordinate&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="n">domain_ancillaries</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;orog&#39;</span><span class="p">:</span> <span class="n">orog</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">set_coordinate_conversion</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">get_coordinate_conversion</span><span class="p">()</span>
+<span class="go">&lt;CoordinateConversion: Parameters: standard_name; Ancillaries: orog&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">del_coordinate_conversion</span><span class="p">()</span>
+<span class="go">&lt;CoordinateConversion: Parameters: standard_name; Ancillaries: orog&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">get_coordinate_conversion</span><span class="p">()</span>
+<span class="go">&lt;CoordinateConversion: Parameters: ; Ancillaries: &gt;</span>
 </pre></div>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -141,11 +175,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

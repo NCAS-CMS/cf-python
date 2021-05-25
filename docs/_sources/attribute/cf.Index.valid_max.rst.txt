@@ -1,4 +1,4 @@
-cf.Index.valid_max
+﻿cf.Index.valid_max
 ==================
 
 .. currentmodule:: cf

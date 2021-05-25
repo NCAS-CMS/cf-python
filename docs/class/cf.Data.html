@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,16 +121,16 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data">
+  <section id="cf-data">
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">loadd=None</em>, <em class="sig-param">loads=None</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/data/data.py#L288-L14526"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">loadd=None</em>, <em class="sig-param">loads=None</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/data/data.py#L355-L15431"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
 <li><p>Contains an N-dimensional, indexable and broadcastable array with
-many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
+many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
 <li><p>Contains the units of the array elements.</p></li>
 <li><p>Supports masked arrays, regardless of whether or not it was
 initialised with a masked array.</p></li>
@@ -206,9 +227,9 @@ initialisation with the <a class="reference internal" href="../method/cf.Data.se
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data-type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
 parameter is set.</p>
 <p>The fill value may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
@@ -236,7 +257,7 @@ the <a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.
 <dt>mask: optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
 parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
 applied. May be any scalar or array-like object (such as a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
 broadcastable to the shape of <em>array</em>. Masking will be
 carried out where the mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <p>This mask will applied in addition to any mask already
@@ -285,7 +306,7 @@ if it is larger than the chunk size, as returned by the
 </div>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -301,7 +322,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>A numpy array view the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>Number of dimensions in the data array.</p></td>
@@ -326,8 +347,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -382,10 +403,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-creation-routines">
+</section>
+<section id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="ones-and-zeros">
+<section id="ones-and-zeros">
 <h3>Ones and zeros<a class="headerlink" href="#ones-and-zeros" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -397,21 +418,21 @@ if it is larger than the chunk size, as returned by the
 <td><p>Create a new data array without initializing the elements.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.full.html#cf.Data.full" title="cf.Data.full"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full</span></code></a></p></td>
-<td><p>Return a new data array of given shape and type, filled with the given value.</p></td>
+<td><p>Returns a new data array of given shape and type, filled with the given value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ones.html#cf.Data.ones" title="cf.Data.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Returns a new array filled with ones of set shape and type.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.zeros.html#cf.Data.zeros" title="cf.Data.zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Returns a new array filled with zeros of set shape and type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.masked_all.html#cf.Data.masked_all" title="cf.Data.masked_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_all</span></code></a></p></td>
 <td><p>Return a new data array of given shape and type with all elements masked.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="from-existing-data">
+</section>
+<section id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -429,15 +450,15 @@ if it is larger than the chunk size, as returned by the
 <td><p>Reset the data in place from a dictionary serialization.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.loads.html#cf.Data.loads" title="cf.Data.loads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loads</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Reset the data in place from a string serialization.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="data-manipulation-routines">
+</section>
+</section>
+<section id="data-manipulation-routines">
 <h2>Data manipulation routines<a class="headerlink" href="#data-manipulation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="changing-data-shape">
+<section id="changing-data-shape">
 <h3>Changing data shape<a class="headerlink" href="#changing-data-shape" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -446,12 +467,12 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
-<td><p>Flatten axes of the data</p></td>
+<td><p>Flatten axes of the data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="transpose-like-operations">
+</section>
+<section id="transpose-like-operations">
 <h3>Transpose-like operations<a class="headerlink" href="#transpose-like-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -467,8 +488,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="changing-number-of-dimensions">
+</section>
+<section id="changing-number-of-dimensions">
 <h3>Changing number of dimensions<a class="headerlink" href="#changing-number-of-dimensions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -484,8 +505,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="joining-data">
+</section>
+<section id="joining-data">
 <h3>Joining data<a class="headerlink" href="#joining-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -501,8 +522,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="adding-and-removing-elements">
+</section>
+<section id="adding-and-removing-elements">
 <h3>Adding and removing elements<a class="headerlink" href="#adding-and-removing-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -515,8 +536,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="rearranging-elements">
+</section>
+<section id="rearranging-elements">
 <h3>Rearranging elements<a class="headerlink" href="#rearranging-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -528,12 +549,12 @@ if it is larger than the chunk size, as returned by the
 <td><p>Reverse the direction of axes of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.roll.html#cf.Data.roll" title="cf.Data.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
-<td><p>A lot like <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.roll.html#numpy.roll" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.roll</span></code></a></p></td>
+<td><p>Roll array elements along a given axis.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="expanding-the-data">
+</section>
+<section id="expanding-the-data">
 <h3>Expanding the data<a class="headerlink" href="#expanding-the-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -546,8 +567,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="binary-operations">
+</section>
+<section id="binary-operations">
 <h3>Binary operations<a class="headerlink" href="#binary-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -557,9 +578,9 @@ if it is larger than the chunk size, as returned by the
 <tbody>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="date-time-support">
+</section>
+</section>
+<section id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -572,7 +593,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>An independent numpy array of date-time objects.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.datetime_as_string.html#cf.Data.datetime_as_string" title="cf.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p></td>
-<td><p>Return an independent numpy array containing string representations of times since a reference date.</p></td>
+<td><p>Returns an independent numpy array with datetimes as strings.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.day.html#cf.Data.day" title="cf.Data.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
 <td><p>The day of each data array element.</p></td>
@@ -597,10 +618,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="indexing-routines">
+</section>
+<section id="indexing-routines">
 <h2>Indexing routines<a class="headerlink" href="#indexing-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="single-value-selection">
+<section id="single-value-selection">
 <h3>Single value selection<a class="headerlink" href="#single-value-selection" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -622,8 +643,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="iterating-over-data">
+</section>
+<section id="iterating-over-data">
 <h3>Iterating over data<a class="headerlink" href="#iterating-over-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -639,9 +660,9 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="cyclic-axes">
+</section>
+</section>
+<section id="cyclic-axes">
 <h2>Cyclic axes<a class="headerlink" href="#cyclic-axes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -650,12 +671,12 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cyclic.html#cf.Data.cyclic" title="cf.Data.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Returns or sets the axes of the data array which are cyclic.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="input-and-output">
+</section>
+<section id="input-and-output">
 <h2>Input and output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -674,8 +695,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="linear-algebra">
+</section>
+<section id="linear-algebra">
 <h2>Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -688,10 +709,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="logic-functions">
+</section>
+<section id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="truth-value-testing">
+<section id="truth-value-testing">
 <h3>Truth value testing<a class="headerlink" href="#truth-value-testing" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -707,8 +728,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="comparison">
+</section>
+<section id="comparison">
 <h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -727,9 +748,9 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="mask-support">
+</section>
+</section>
+<section id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -796,10 +817,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-functions">
+</section>
+<section id="mathematical-functions">
 <h2>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="trigonometric-functions">
+<section id="trigonometric-functions">
 <h3>Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -820,15 +841,15 @@ if it is larger than the chunk size, as returned by the
 <td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.arccos.html#cf.Data.arccos" title="cf.Data.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
-<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.arctan.html#cf.Data.arctan" title="cf.Data.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
-<td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="hyperbolic-functions">
+</section>
+<section id="hyperbolic-functions">
 <h3>Hyperbolic functions<a class="headerlink" href="#hyperbolic-functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -856,8 +877,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="rounding">
+</section>
+<section id="rounding">
 <h3>Rounding<a class="headerlink" href="#rounding" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -882,8 +903,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sums-products-differences">
+</section>
+<section id="sums-products-differences">
 <h3>Sums, products, differences<a class="headerlink" href="#sums-products-differences" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -914,8 +935,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="exponents-and-logarithms">
+</section>
+<section id="exponents-and-logarithms">
 <h3>Exponents and logarithms<a class="headerlink" href="#exponents-and-logarithms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -927,12 +948,12 @@ if it is larger than the chunk size, as returned by the
 <td><p>Take the exponential of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.log.html#cf.Data.log" title="cf.Data.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Takes the logarithm of the data array.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h3>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -948,11 +969,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="set-routines">
+</section>
+</section>
+<section id="set-routines">
 <h2>Set routines<a class="headerlink" href="#set-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="making-proper-sets">
+<section id="making-proper-sets">
 <h3>Making proper sets<a class="headerlink" href="#making-proper-sets" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -965,11 +986,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="sorting-searching-and-counting">
+</section>
+</section>
+<section id="sorting-searching-and-counting">
 <h2>Sorting, searching, and counting<a class="headerlink" href="#sorting-searching-and-counting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="searching">
+<section id="searching">
 <h3>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -985,8 +1006,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="counting">
+</section>
+<section id="counting">
 <h3>Counting<a class="headerlink" href="#counting" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1002,11 +1023,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="statistics">
+</section>
+</section>
+<section id="statistics">
 <h2>Statistics<a class="headerlink" href="#statistics" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="order-statistics">
+<section id="order-statistics">
 <h3>Order statistics<a class="headerlink" href="#order-statistics" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1037,8 +1058,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="averages-and-variances">
+</section>
+<section id="averages-and-variances">
 <h3>Averages and variances<a class="headerlink" href="#averages-and-variances" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1053,10 +1074,10 @@ if it is larger than the chunk size, as returned by the
 <td><p>Collapse axes with their mean absolute value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile" title="cf.Data.mean_of_upper_decile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Compute the mean the of upper decile.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.median.html#cf.Data.median" title="cf.Data.median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Compute the median of the values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
 <td><p>Collapse axes with the unweighted average of their maximum and minimum values.</p></td>
@@ -1065,7 +1086,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Collapse axes with the absolute difference between their maximum and minimum values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.root_mean_square.html#cf.Data.root_mean_square" title="cf.Data.root_mean_square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root_mean_square</span></code></a></p></td>
-<td><p>TODO Collapse axes with their weighted mean.</p></td>
+<td><p>Collapse axes with their root mean square.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.standard_deviation.html#cf.Data.standard_deviation" title="cf.Data.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></p></td>
@@ -1081,8 +1102,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sums">
+</section>
+<section id="sums">
 <h3>Sums<a class="headerlink" href="#sums" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1091,7 +1112,7 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.integral.html#cf.Data.integral" title="cf.Data.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integral</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Collapse axes with their integral.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
 <td><p>Collapse axes with their sum.</p></td>
@@ -1101,8 +1122,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="histograms">
+</section>
+<section id="histograms">
 <h3>Histograms<a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1115,8 +1136,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="id1">
+</section>
+<section id="id1">
 <h3>Miscellaneous<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1125,22 +1146,22 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sample_size.html#cf.Data.sample_size" title="cf.Data.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Collapses axes with their sample size.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.stats.html#cf.Data.stats" title="cf.Data.stats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code></a></p></td>
 <td><p>Calculate statistics of the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sum_of_weights.html#cf.Data.sum_of_weights" title="cf.Data.sum_of_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Collapse axes with the sum of weights.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sum_of_weights2.html#cf.Data.sum_of_weights2" title="cf.Data.sum_of_weights2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights2</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Collapse axes with the sum of squares of weights.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="error-handling">
+</section>
+</section>
+<section id="error-handling">
 <h2>Error handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1153,8 +1174,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="compression-by-convention">
+</section>
+<section id="compression-by-convention">
 <h2>Compression by convention<a class="headerlink" href="#compression-by-convention" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1163,13 +1184,13 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_compressed_axes.html#cf.Data.get_compressed_axes" title="cf.Data.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></p></td>
-<td><p>Return the dimensions that have compressed in the underlying array.</p></td>
+<td><p>Returns the dimensions that are compressed in the array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_compressed_dimension.html#cf.Data.get_compressed_dimension" title="cf.Data.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></p></td>
-<td><p>Return the position of the compressed dimension in the compressed array.</p></td>
+<td><p>Returns the compressed dimension’s array position.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_compression_type.html#cf.Data.get_compression_type" title="cf.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
-<td><p>Return the type of compression applied to the underlying array.</p></td>
+<td><p>Returns the type of compression applied to the array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_count.html#cf.Data.get_count" title="cf.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></p></td>
 <td><p>Return the count variable for a compressed array.</p></td>
@@ -1193,12 +1214,12 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.compressed_array.html#cf.Data.compressed_array" title="cf.Data.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></p></td>
-<td><p>Return an independent numpy array containing the compressed data.</p></td>
+<td><p>Returns an independent numpy array of the compressed data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="id2">
+</section>
+<section id="id2">
 <h2>Miscellaneous<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1213,7 +1234,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Return the names of files containing parts of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_data.html#cf.Data.get_data" title="cf.Data.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Returns the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.source.html#cf.Data.source" title="cf.Data.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
 <td><p>Return the underlying array object.</p></td>
@@ -1232,8 +1253,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="performance">
+</section>
+<section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1278,7 +1299,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Store each partition’s data in memory in place if the master array is smaller than the chunk size.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.in_memory.html#cf.Data.in_memory" title="cf.Data.in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_memory</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>True if the array is retained in memory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.fits_in_memory.html#cf.Data.fits_in_memory" title="cf.Data.fits_in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fits_in_memory</span></code></a></p></td>
 <td><p>Return True if the master array is small enough to be retained in memory.</p></td>
@@ -1287,18 +1308,18 @@ if it is larger than the chunk size, as returned by the
 <td><p>Return True if the master array is small enough to be retained in memory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.section.html#cf.Data.section" title="cf.Data.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a></p></td>
-<td><p>Return a dictionary of Data objects, which are the m dimensional sections of this n dimensional Data object, where m &lt;= n.</p></td>
+<td><p>Returns a dictionary of sections of the Data object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.reconstruct_sectioned_data.html#cf.Data.reconstruct_sectioned_data" title="cf.Data.reconstruct_sectioned_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_sectioned_data</span></code></a></p></td>
 <td><p>Expects a dictionary of Data objects with ordering information as keys, as output by the section method when called with a Data object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.HDF_chunks.html#cf.Data.HDF_chunks" title="cf.Data.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a></p></td>
-<td><p></p></td>
+<td><p>TODO.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="element-wise-arithmetic-bit-and-comparison-operations">
+</section>
+<section id="element-wise-arithmetic-bit-and-comparison-operations">
 <h2>Element-wise arithmetic, bit and comparison operations<a class="headerlink" href="#element-wise-arithmetic-bit-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bit and comparison operations are defined as element-wise
 data array operations which yield a new <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object or, for
@@ -1383,28 +1404,28 @@ augmented assignments, modify the data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__radd__.html#cf.Data.__radd__" title="cf.Data.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__rsub__.html#cf.Data.__rsub__" title="cf.Data.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rmul__.html#cf.Data.__rmul__" title="cf.Data.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__rdiv__.html#cf.Data.__rdiv__" title="cf.Data.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rtruediv__.html#cf.Data.__rtruediv__" title="cf.Data.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__rfloordiv__.html#cf.Data.__rfloordiv__" title="cf.Data.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rpow__.html#cf.Data.__rpow__" title="cf.Data.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></p></td>
-<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__rmod__.html#cf.Data.__rmod__" title="cf.Data.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1491,19 +1512,19 @@ augmented assignments, modify the data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rand__.html#cf.Data.__rand__" title="cf.Data.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__ror__.html#cf.Data.__ror__" title="cf.Data.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rxor__.html#cf.Data.__rxor__" title="cf.Data.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__rlshift__.html#cf.Data.__rlshift__" title="cf.Data.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__rrshift__.html#cf.Data.__rrshift__" title="cf.Data.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1543,8 +1564,8 @@ augmented assignments, modify the data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1586,18 +1607,18 @@ augmented assignments, modify the data in-place.</p>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__query_set__.html#cf.Data.__query_set__" title="cf.Data.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Implements the “member of set” condition.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__query_wi__.html#cf.Data.__query_wi__" title="cf.Data.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Implements the “within a range” condition.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__query_wo__.html#cf.Data.__query_wo__" title="cf.Data.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>Implements the “without a range” condition.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="deprecated">
+</section>
+<section id="deprecated">
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1626,8 +1647,8 @@ augmented assignments, modify the data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -1637,11 +1658,11 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

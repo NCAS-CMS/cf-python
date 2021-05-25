@@ -1,4 +1,4 @@
-cf.Count.calendar
+﻿cf.Count.calendar
 =================
 
 .. currentmodule:: cf

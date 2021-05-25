@@ -1,4 +1,4 @@
-cf.Index.long_name
+﻿cf.Index.long_name
 ==================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Count.reference_datetime
+﻿cf.Count.reference_datetime
 ===========================
 
 .. currentmodule:: cf

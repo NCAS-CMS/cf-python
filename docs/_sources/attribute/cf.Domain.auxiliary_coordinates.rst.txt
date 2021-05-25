@@ -1,4 +1,4 @@
-cf.Domain.auxiliary_coordinates
+﻿cf.Domain.auxiliary_coordinates
 ===============================
 
 .. currentmodule:: cf

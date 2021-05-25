@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Incompatible differences between versions 2.x and 3.x &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.9.0</a></h1>
 
 
 
@@ -84,6 +85,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -92,7 +113,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="incompatible-differences-between-versions-2-x-and-3-x">
+  <section id="incompatible-differences-between-versions-2-x-and-3-x">
 <span id="two-to-three-changes"></span><h1>Incompatible differences between versions 2.x and 3.x<a class="headerlink" href="#incompatible-differences-between-versions-2-x-and-3-x" title="Permalink to this headline">¶</a></h1>
 <p>For those familiar with the cf-python API at version 2.x, some
 important, backwards incompatible changes were introduced at version
@@ -104,26 +125,26 @@ scripts are checked when running with Python 3 versions of the cf
 library.</p>
 <p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#releases"><span class="std std-ref">releases</span></a>
 page.</p>
-<div class="section" id="python">
+<section id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x only works for Python 3.5 or later. Version 2.x only works
 for python version 2.7.</p>
-</div>
-<div class="section" id="in-place-operations">
+</section>
+<section id="in-place-operations">
 <h2>In-place operations<a class="headerlink" href="#in-place-operations" title="Permalink to this headline">¶</a></h2>
 <p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
 modified construct. The keyword that defines the operation to be
 in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
 <span class="go">&lt;class &#39;cf.field.Field&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">None</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="field-creation">
+</section>
+<section id="field-creation">
 <h2>Field creation<a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
 <p>Field construct creation is has changed in two notable ways:</p>
 <p>Firstly, a single method <a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a> has replaced the
@@ -145,8 +166,8 @@ set on the field construct:</p>
 are able to match up existing domain axis constructs to the new data
 or construct if the mapping can be made unambiguously (as is the case
 in the above example).</p>
-</div>
-<div class="section" id="new-methods-that-replace-deprecated-ones">
+</section>
+<section id="new-methods-that-replace-deprecated-ones">
 <h2>New methods that replace deprecated ones<a class="headerlink" href="#new-methods-that-replace-deprecated-ones" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x methods that replace deprecated version 2.x methods:</p>
 <table class="docutils align-default">
@@ -215,8 +236,8 @@ in the above example).</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="changes-to-the-api-of-existing-methods">
+</section>
+<section id="changes-to-the-api-of-existing-methods">
 <h2>Changes to the  API of existing methods<a class="headerlink" href="#changes-to-the-api-of-existing-methods" title="Permalink to this headline">¶</a></h2>
 <p>Methods that have a different API in version 3.x</p>
 <table class="docutils align-default">
@@ -242,7 +263,7 @@ are no longer assumed to be an abbreviation.</p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
 are no longer assumed to be an abbreviation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
 are no longer assumed to be an abbreviation.</p></td>
 </tr>
@@ -345,7 +366,7 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.identity.html#cf.Field.identity" title="cf.Field.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.identity</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">relaxed_identity</span></code> parameter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode. Construct identity
 arguments are no longer assumed to be an abbreviation.</p></td>
 </tr>
@@ -368,7 +389,7 @@ arguments are no longer assumed to be an abbreviation.</p></td>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.log</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.measure.html#cf.Field.measure" title="cf.Field.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measure</span></code></a></p></td>
@@ -449,8 +470,8 @@ arguments are no longer assumed to be an abbreviation.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -460,11 +481,11 @@ arguments are no longer assumed to be an abbreviation.</p></td>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

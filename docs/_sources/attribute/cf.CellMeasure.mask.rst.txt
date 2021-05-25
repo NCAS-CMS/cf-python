@@ -1,4 +1,4 @@
-cf.CellMeasure.mask
+﻿cf.CellMeasure.mask
 ===================
 
 .. currentmodule:: cf

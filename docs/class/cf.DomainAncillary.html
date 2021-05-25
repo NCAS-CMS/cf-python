@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.DomainAncillary &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,12 +121,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-domainancillary">
+  <section id="cf-domainancillary">
 <span id="id1"></span><h1>cf.DomainAncillary<a class="headerlink" href="#cf-domainancillary" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/domainancillary.py#L8-L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/domainancillary.py#L8-L44"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed
@@ -122,37 +143,38 @@ array, with the addition of an extra dimension whose size is that
 of the number of vertices of each cell.</p>
 <p><strong>NetCDF interface</strong></p>
 <p>{{netcdf variable}}</p>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
 <div><p>Set descriptive properties. The dictionary keys are
-property names, with corresponding values. Ignored if the
-<em>source</em> parameter is set.</p>
-<p>Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.DomainAncillary.set_properties.html#cf.DomainAncillary.set_properties" title="cf.DomainAncillary.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.DomainAncillary.set_property.html#cf.DomainAncillary.set_property" title="cf.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.DomainAncillary.set_properties.html#cf.DomainAncillary.set_properties" title="cf.DomainAncillary.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.DomainAncillary.set_property.html#cf.DomainAncillary.set_property" title="cf.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </div></blockquote>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is set.</p>
-<p>A data_like object is any object that can be converted to
-a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects, and cf instances that contain <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects.</p>
+<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
+set.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
 <a class="reference internal" href="../method/cf.DomainAncillary.set_data.html#cf.DomainAncillary.set_data" title="cf.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
-<dt>bounds: <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt><dd><p>Set the bounds array. Ignored if the <em>source</em> parameter is
-set.</p>
-<p>The bounds array may also be set after initialisation with
-the <a class="reference internal" href="../method/cf.DomainAncillary.set_bounds.html#cf.DomainAncillary.set_bounds" title="cf.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
+<dt>bounds: <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt><dd><p>Set the bounds array. Ignored if the <em>source</em>
+parameter is set.</p>
+<p>The bounds array may also be set after initialisation
+with the <a class="reference internal" href="../method/cf.DomainAncillary.set_bounds.html#cf.DomainAncillary.set_bounds" title="cf.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
-<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type. Ignored if the <em>source</em> parameter
-is set.</p>
+<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type. Ignored if the <em>source</em>
+parameter is set.</p>
 <p>The geometry type may also be set after initialisation
 with the <a class="reference internal" href="../method/cf.DomainAncillary.set_geometry.html#cf.DomainAncillary.set_geometry" title="cf.DomainAncillary.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
 <dl class="simple">
@@ -160,26 +182,27 @@ with the <a class="reference internal" href="../method/cf.DomainAncillary.set_ge
 </dd>
 </dl>
 </dd>
-<dt>interior_ring: <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code>, optional</dt><dd><p>Set the interior ring variable. Ignored if the <em>source</em>
-parameter is set.</p>
+<dt>interior_ring: <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code>, optional</dt><dd><p>Set the interior ring variable. Ignored if the
+<em>source</em> parameter is set.</p>
 <p>The interior ring variable may also be set after
 initialisation with the <a class="reference internal" href="../method/cf.DomainAncillary.set_interior_ring.html#cf.DomainAncillary.set_interior_ring" title="cf.DomainAncillary.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a> method.</p>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the properties, data and bounds from those of
-<em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Initialise the properties, data and bounds from those
+of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cf.DomainAncillary(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cf.DomainAncillary(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -232,8 +255,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="bounds">
+</section>
+<section id="bounds">
 <h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -283,7 +306,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="geometries">
+<section id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -323,7 +346,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the node count variable for geometry bounds.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.has_node_count.html#cf.DomainAncillary.has_node_count" title="cf.DomainAncillary.has_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_node_count</span></code></a></p></td>
-<td><p>Whether or not there is a node count variable for geometry bounds..</p></td>
+<td><p>Whether geometry bounds have a node count variable.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.set_node_count.html#cf.DomainAncillary.set_node_count" title="cf.DomainAncillary.set_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_count</span></code></a></p></td>
 <td><p>Set the node count variable for geometry bounds.</p></td>
@@ -335,7 +358,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the part node count variable for geometry bounds.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.has_part_node_count.html#cf.DomainAncillary.has_part_node_count" title="cf.DomainAncillary.has_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_part_node_count</span></code></a></p></td>
-<td><p>Whether or not there is a part node count variable for geometry bounds..</p></td>
+<td><p>Whether geometry bounds have a part node count variable.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.set_part_node_count.html#cf.DomainAncillary.set_part_node_count" title="cf.DomainAncillary.set_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_part_node_count</span></code></a></p></td>
 <td><p>Set the part node count variable for geometry bounds.</p></td>
@@ -354,9 +377,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="selection">
+</section>
+</section>
+<section id="selection">
 <h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -382,8 +405,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties">
+</section>
+<section id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -472,8 +495,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -502,8 +525,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -516,7 +539,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>A numpy array deep copy of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.Data.html#cf.DomainAncillary.Data" title="cf.DomainAncillary.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
-<td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.data.html#cf.DomainAncillary.data" title="cf.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
 <td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
@@ -528,7 +551,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.dtype.html#cf.DomainAncillary.dtype" title="cf.DomainAncillary.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.isscalar.html#cf.DomainAncillary.isscalar" title="cf.DomainAncillary.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data array is scalar.</p></td>
@@ -579,7 +602,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.flatten.html#cf.DomainAncillary.flatten" title="cf.DomainAncillary.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
-<td><p>Flatten axes of the data</p></td>
+<td><p>Flatten axes of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.flip.html#cf.DomainAncillary.flip" title="cf.DomainAncillary.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
 <td><p>Flip (reverse the direction of) data dimensions.</p></td>
@@ -637,7 +660,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.mask.html#cf.DomainAncillary.mask" title="cf.DomainAncillary.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
 <td><p>The mask of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.mask_invalid.html#cf.DomainAncillary.mask_invalid" title="cf.DomainAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.mask_invalid.html#cf.DomainAncillary.mask_invalid" title="cf.DomainAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
 </tbody>
@@ -663,7 +686,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.halo.html#cf.DomainAncillary.halo" title="cf.DomainAncillary.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the data by adding a halo.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.mask_invalid.html#cf.DomainAncillary.mask_invalid" title="cf.DomainAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.mask_invalid.html#cf.DomainAncillary.mask_invalid" title="cf.DomainAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.subspace.html#cf.DomainAncillary.subspace" title="cf.DomainAncillary.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
@@ -700,15 +723,15 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Whether or a not a given axis is cyclic.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.isperiodic.html#cf.DomainAncillary.isperiodic" title="cf.DomainAncillary.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.get_filenames.html#cf.DomainAncillary.get_filenames" title="cf.DomainAncillary.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -737,8 +760,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-operations">
+</section>
+<section id="mathematical-operations">
 <h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
@@ -749,7 +772,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arccos.html#cf.DomainAncillary.arccos" title="cf.DomainAncillary.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
-<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arccosh.html#cf.DomainAncillary.arccosh" title="cf.DomainAncillary.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
@@ -761,7 +784,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arctan.html#cf.DomainAncillary.arctan" title="cf.DomainAncillary.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
-<td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arctanh.html#cf.DomainAncillary.arctanh" title="cf.DomainAncillary.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
@@ -876,8 +899,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="date-time-operations">
+</section>
+<section id="date-time-operations">
 <h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -912,8 +935,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="logic-functions">
+</section>
+<section id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Truth value testing</p>
 <table class="longtable docutils align-default">
@@ -957,8 +980,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -981,8 +1004,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="aliases">
+</section>
+<section id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1008,8 +1031,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="arithmetic-and-comparison-operations">
+</section>
+<section id="arithmetic-and-comparison-operations">
 <h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bitwise and comparison operations are defined as
 element-wise operations on the data, which yield a new construct or,
@@ -1082,28 +1105,28 @@ for augmented assignments, modify the construct’s data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__radd__.html#cf.DomainAncillary.__radd__" title="cf.DomainAncillary.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rsub__.html#cf.DomainAncillary.__rsub__" title="cf.DomainAncillary.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rmul__.html#cf.DomainAncillary.__rmul__" title="cf.DomainAncillary.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rdiv__.html#cf.DomainAncillary.__rdiv__" title="cf.DomainAncillary.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rtruediv__.html#cf.DomainAncillary.__rtruediv__" title="cf.DomainAncillary.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rfloordiv__.html#cf.DomainAncillary.__rfloordiv__" title="cf.DomainAncillary.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rpow__.html#cf.DomainAncillary.__rpow__" title="cf.DomainAncillary.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></p></td>
-<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rmod__.html#cf.DomainAncillary.__rmod__" title="cf.DomainAncillary.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></p></td>
-<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands</p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1190,19 +1213,19 @@ for augmented assignments, modify the construct’s data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rand__.html#cf.DomainAncillary.__rand__" title="cf.DomainAncillary.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__ror__.html#cf.DomainAncillary.__ror__" title="cf.DomainAncillary.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rxor__.html#cf.DomainAncillary.__rxor__" title="cf.DomainAncillary.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rlshift__.html#cf.DomainAncillary.__rlshift__" title="cf.DomainAncillary.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__rrshift__.html#cf.DomainAncillary.__rrshift__" title="cf.DomainAncillary.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></p></td>
-<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands</p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1242,7 +1265,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1262,9 +1285,9 @@ for augmented assignments, modify the construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1298,18 +1321,18 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>Returns a new reference to the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__query_set__.html#cf.DomainAncillary.__query_set__" title="cf.DomainAncillary.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__query_wi__.html#cf.DomainAncillary.__query_wi__" title="cf.DomainAncillary.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.__query_wo__.html#cf.DomainAncillary.__query_wo__" title="cf.DomainAncillary.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="deprecated">
+</section>
+<section id="deprecated">
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1386,8 +1409,8 @@ for augmented assignments, modify the construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -1397,11 +1420,11 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -1,4 +1,4 @@
-cf.DomainAncillary.valid_min
+﻿cf.DomainAncillary.valid_min
 ============================
 
 .. currentmodule:: cf

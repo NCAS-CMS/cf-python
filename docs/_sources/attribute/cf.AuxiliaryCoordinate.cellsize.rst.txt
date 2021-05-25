@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.cellsize
+﻿cf.AuxiliaryCoordinate.cellsize
 ===============================
 
 .. currentmodule:: cf

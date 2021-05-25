@@ -1,4 +1,4 @@
-cf.CellMeasure.id
+﻿cf.CellMeasure.id
 =================
 
 .. currentmodule:: cf

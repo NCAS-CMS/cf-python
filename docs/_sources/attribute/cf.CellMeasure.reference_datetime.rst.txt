@@ -1,4 +1,4 @@
-cf.CellMeasure.reference_datetime
+﻿cf.CellMeasure.reference_datetime
 =================================
 
 .. currentmodule:: cf

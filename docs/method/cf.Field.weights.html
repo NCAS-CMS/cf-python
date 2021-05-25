@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.weights &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,11 +123,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-weights">
+  <section id="cf-field-weights">
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/field.py#L6238-L6956"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/field.py#L6154-L6887"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
@@ -287,44 +308,45 @@ the others.</p>
 </dd>
 </dl>
 </dd>
-<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Create weights that are cell measures, i.e. which describe
-actual cell sizes (e.g. cell areas) with appropriate units
-(e.g. metres squared).</p>
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Create weights that are cell measures, i.e. which
+describe actual cell sizes (e.g. cell areas) with
+appropriate units (e.g. metres squared).</p>
 <p>Cell measures can be created for any combination of
-axes. For example, cell measures for a time axis are the
-time span for each cell with canonical units of seconds;
-cell measures for the combination of four axes
-representing time and three dimensional space could have
-canonical units of metres cubed seconds.</p>
+axes. For example, cell measures for a time axis are
+the time span for each cell with canonical units of
+seconds; cell measures for the combination of four
+axes representing time and three dimensional space
+could have canonical units of metres cubed seconds.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Specifying cell volume weights via
 <code class="docutils literal notranslate"><span class="pre">weights=['X',</span> <span class="pre">'Y',</span> <span class="pre">'Z']</span></code> or
-<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other equivalents)
-will produce <strong>an incorrect result if the
-vertical dimension coordinates do not define the
-actual height or depth thickness of every cell
-in the domain</strong>. In this case,
-<code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be used instead,
-which requires the field construct to have a
-“volume” cell measure construct.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to be
-taken, as a “volume” cell measure construct will
-be used if present, otherwise the cell volumes
-will be calculated using the size of the
-vertical coordinate cells.</p>
+<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other
+equivalents) will produce <strong>an incorrect
+result if the vertical dimension coordinates
+do not define the actual height or depth
+thickness of every cell in the domain</strong>. In
+this case, <code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be
+used instead, which requires the field
+construct to have a “volume” cell measure
+construct.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to
+be taken, as a “volume” cell measure
+construct will be used if present, otherwise
+the cell volumes will be calculated using
+the size of the vertical coordinate cells.</p>
 </div>
 </dd>
-<dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of cells
-defined in spherical polar coordinates. The radius is that
-which would be returned by this call of the field
-construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
+<dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of
+cells defined in spherical polar coordinates. The
+radius is that which would be returned by this call of
+the field construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
 <code class="docutils literal notranslate"><span class="pre">f.radius(radius)</span></code>. See the <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a> for
 details.</p>
-<p>By default <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> which means that if and
-only if the radius can not found from the datums of any
-coordinate reference constucts, then the default radius
-taken as 6371229 metres.</p>
+<p>By default <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> which means that if
+and only if the radius can not found from the datums
+of any coordinate reference constructs, then the
+default radius taken as 6371229 metres.</p>
 </dd>
 <dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then a dictionary of orthogonal weights components
 is returned instead of a field. Each key is a tuple of
@@ -417,7 +439,7 @@ weights in a dictionary.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -427,11 +449,11 @@ weights in a dictionary.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -1,4 +1,4 @@
-cf.List.hardmask
+﻿cf.List.hardmask
 ================
 
 .. currentmodule:: cf

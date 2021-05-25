@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Analysis &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.9.0</a></h1>
 
 
 
@@ -88,6 +89,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -96,10 +117,10 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="analysis">
+  <section id="analysis">
 <span id="id1"></span><h1><strong>Analysis</strong><a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.8.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.9.0 for version 1.8 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in an executable
 script (<a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
 <p>Note that this page is duplicated in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
@@ -162,7 +183,7 @@ with Python 3 versions of the cf library.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="sample-datasets">
+<section id="sample-datasets">
 <span id="id2"></span><h2><a class="toc-backref" href="#id84"><strong>Sample datasets</strong></a><a class="headerlink" href="#sample-datasets" title="Permalink to this headline">¶</a></h2>
 <p>This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file <code class="docutils literal notranslate"><span class="pre">cf_tutorial_files.zip</span></code>
@@ -170,8 +191,8 @@ be found in the zip file <code class="docutils literal notranslate"><span class=
 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id27">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id27" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> unzip -q cf_tutorial_files.zip
-<span class="gp">$</span> ls -1
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>unzip -q cf_tutorial_files.zip
+<span class="gp">$ </span>ls -1
 <span class="go">air_temperature.nc</span>
 <span class="go">cf_tutorial_files.zip</span>
 <span class="go">contiguous.nc</span>
@@ -194,8 +215,8 @@ and no other files.</p>
 <p>The tutorial files may be also found in the <a class="reference external" href="https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads">downloads directory</a>
 of the on-line code repository.</p>
 <hr class="docutils" />
-</div>
-<div class="section" id="statistical-collapses">
+</section>
+<section id="statistical-collapses">
 <span id="id3"></span><h2><a class="toc-backref" href="#id85"><strong>Statistical collapses</strong></a><a class="headerlink" href="#statistical-collapses" title="Permalink to this headline">¶</a></h2>
 <p>Collapsing one or more dimensions reduces their size and replaces the
 data along those axes with representative statistical values. The
@@ -203,12 +224,12 @@ result is a new field construct with consistent metadata for the
 collapsed values. Collapses are carried with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
 method of the field construct.</p>
 <p>By default all axes with size greater than 1 are collapsed completely
-(i.e. to size 1) with a given <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
+(i.e. to size 1) with a given <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id28">
 <div class="code-block-caption"><span class="caption-text"><em>Find the minimum of the entire data.</em></span><a class="headerlink" href="#id28" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;timeseries.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K</span>
@@ -218,7 +239,7 @@ method of the field construct.</p>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;minimum&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K</span>
@@ -227,7 +248,7 @@ method of the field construct.</p>
 <span class="go">                : latitude(1) = [0.0] degrees_north</span>
 <span class="go">                : longitude(1) = [180.0] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[198.9]]]</span>
 </pre></div>
 </div>
@@ -253,7 +274,7 @@ a combination of dimensions.</p>
 of temporal maxima at each horizontal location.</em></span><a class="headerlink" href="#id29" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;maximum&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(1), latitude(5), longitude(8)) K</span>
@@ -262,7 +283,7 @@ of temporal maxima at each horizontal location.</em></span><a class="headerlink"
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[310.6 309.1 309.9 311.2 310.4 310.1 310.7 309.6]</span>
 <span class="go">  [310.  310.7 311.1 311.3 310.9 311.2 310.6 310. ]</span>
 <span class="go">  [308.9 309.8 311.2 311.2 311.2 309.3 311.1 310.7]</span>
@@ -276,7 +297,7 @@ of temporal maxima at each horizontal location.</em></span><a class="headerlink"
 techniques.</em></span><a class="headerlink" href="#id30" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;maximum&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: Y: maximum&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K</span>
@@ -295,7 +316,7 @@ reference system.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Find the horizontal maximum using the special identity
 ‘area’.</em></span><a class="headerlink" href="#id31" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: maximum&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K</span>
@@ -307,7 +328,7 @@ reference system.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="collapse-methods">
+<section id="collapse-methods">
 <span id="id4"></span><h3><a class="toc-backref" href="#id86">Collapse methods</a><a class="headerlink" href="#collapse-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following collapse methods are available, over any subset of the
 domain axes. The “Cell method” column in the table gives the method of
@@ -414,7 +435,7 @@ result.</p>
 <div class="math notranslate nohighlight">
 \[\mu=\frac{1}{N}\sum_{i=1}^{N}
 x_i\]</div>
-<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
 is</p>
@@ -431,7 +452,7 @@ values <span class="math notranslate nohighlight">\(x_i\)</span> absoluted is</p
 <div class="math notranslate nohighlight">
 \[\mu_{abs}=\frac{1}{N}
 \sum_{i=1}^{N}|x_i|\]</div>
-<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 absoluted with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -464,7 +485,7 @@ unbiased estimate of the variance using
 Bessel’s correction
 (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is given by
 <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 biased estimate of the variance of
 <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
 corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -474,7 +495,7 @@ corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> 
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>The corresponding <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
+<p>The corresponding <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
 the variance is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}^{2}=\frac{1}{V_{1} -
@@ -491,7 +512,7 @@ opposed to frequency weights.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></p></td>
 <td><p>The standard deviation is the square
 root of the unweighted or
-<a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 variance, as defined in this table.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
 </tr>
@@ -502,7 +523,7 @@ variance, as defined in this table.</p></td>
 \[RMS=\sqrt{\frac{1}{N}
 \sum_{i=1}^{N}
 x_{i}^2}\]</div>
-<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 root mean square of <span class="math notranslate nohighlight">\(N\)</span> values
 <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -516,8 +537,8 @@ x_{i}^2}\]</div>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-type-and-missing-data">
+</section>
+<section id="data-type-and-missing-data">
 <span id="id5"></span><h3><a class="toc-backref" href="#id87">Data type and missing data</a><a class="headerlink" href="#data-type-and-missing-data" title="Permalink to this headline">¶</a></h3>
 <p>In all collapses, missing data array elements are accounted for in the
 calculation.</p>
@@ -527,8 +548,8 @@ maximum), will return a field containing double precision floating
 point numbers. If this is not desired then the data type can be reset
 after the collapse with the <a class="reference internal" href="attribute/cf.Field.dtype.html#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> attribute of the field
 construct.</p>
-</div>
-<div class="section" id="collapse-weights">
+</section>
+<section id="collapse-weights">
 <span id="id6"></span><h3><a class="toc-backref" href="#id88">Collapse weights</a><a class="headerlink" href="#collapse-weights" title="Permalink to this headline">¶</a></h3>
 <p>For weights to be incorporated in the collapse, the axes to be
 weighted must be identified with the <em>weights</em> keyword. A collapse by
@@ -667,8 +688,8 @@ value. Collapsed axes that are not identified by the <em>weights</em> keyword
 are unweighted during the collapse operation.</p>
 <div class="literal-block-wrapper docutils container" id="id32">
 <div class="code-block-caption"><span class="caption-text"><em>Create a weighted time average.</em></span><a class="headerlink" href="#id32" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(1), latitude(5), longitude(8)) K</span>
@@ -677,7 +698,7 @@ are unweighted during the collapse operation.</p>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[254.03120723 255.89723515 253.06490556 254.17815494 255.18458801 253.3684369  253.26624692 253.63818779]</span>
 <span class="go">  [248.92058582 253.99597591 259.67957843 257.08967972 252.57333698 252.5746236  258.90938954 253.86939502]</span>
 <span class="go">  [255.94716671 254.77330961 254.35929373 257.91478237 251.87670408 252.72723789 257.26038872 258.19698878]</span>
@@ -690,13 +711,13 @@ are unweighted during the collapse operation.</p>
 <div class="literal-block-wrapper docutils container" id="id33">
 <div class="code-block-caption"><span class="caption-text"><em>Create and view weights derived from the field construct’s
 time axis.</em></span><a class="headerlink" href="#id33" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Field: long_name=weights (ncvar%air_potential_temperature)</span>
 <span class="go">----------------------------------------------------------</span>
 <span class="go">Data            : long_name=weights(time(120)) d</span>
 <span class="go">Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[31. 31. 29. 31. 30. 31. 30. 31. 31. 30. 31. 30. 31. 31. 28. 31. 30. 31.</span>
 <span class="go"> 30. 31. 31. 30. 31. 30. 31. 31. 28. 31. 30. 31. 30. 31. 31. 30. 31. 30.</span>
 <span class="go"> 31. 31. 28. 31. 30. 31. 30. 31. 31. 30. 31. 30. 31. 31. 29. 31. 30. 31.</span>
@@ -711,7 +732,7 @@ time axis.</em></span><a class="headerlink" href="#id33" title="Permalink to thi
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the mean over the time and latitude axes, with
 weights only applied to the latitude axis.</em></span><a class="headerlink" href="#id34" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: Y: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(1), latitude(1), longitude(8)) K</span>
@@ -720,7 +741,7 @@ weights only applied to the latitude axis.</em></span><a class="headerlink" href
 <span class="go">                : latitude(1) = [0.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[256.15819444 254.625      255.73666667 255.43041667 253.19444444 253.31277778 256.68236111 256.42055556]]]</span>
 </pre></div>
 </div>
@@ -729,8 +750,8 @@ weights only applied to the latitude axis.</em></span><a class="headerlink" href
 <code class="docutils literal notranslate"><span class="pre">'area'</span></code> syntax.</p>
 <div class="literal-block-wrapper docutils container" id="id35">
 <div class="code-block-caption"><span class="caption-text"><em>Alternative syntax for specifying area weights.</em></span><a class="headerlink" href="#id35" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K</span>
@@ -748,7 +769,7 @@ method.</p>
 <div class="literal-block-wrapper docutils container" id="id36">
 <div class="code-block-caption"><span class="caption-text"><em>Alternative syntax for specifying weights.</em></span><a class="headerlink" href="#id36" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K</span>
@@ -762,8 +783,8 @@ method.</p>
 </div>
 <p>See the <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method for full details on how weights may be
 specified.</p>
-</div>
-<div class="section" id="multiple-collapses">
+</section>
+<section id="multiple-collapses">
 <span id="id7"></span><h3><a class="toc-backref" href="#id89">Multiple collapses</a><a class="headerlink" href="#multiple-collapses" title="Permalink to this headline">¶</a></h3>
 <p>Multiple collapses normally require multiple calls to
 <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>: one on the original field construct and then one on
@@ -771,8 +792,8 @@ each interim field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id37">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the temporal maximum of the weighted areal
 means using two independent calls.</em></span><a class="headerlink" href="#id37" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K</span>
@@ -781,7 +802,7 @@ means using two independent calls.</em></span><a class="headerlink" href="#id37"
 <span class="go">                : latitude(1) = [0.0] degrees_north</span>
 <span class="go">                : longitude(1) = [180.0] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[271.77199724]]]</span>
 </pre></div>
 </div>
@@ -795,14 +816,14 @@ collapses).</p>
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the temporal maximum of the weighted areal
 means in a single call, using the cf-netCDF cell
 methods-like syntax.</em></span><a class="headerlink" href="#id38" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean T: maximum&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean T: maximum&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[271.77199724]]]</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="grouped-collapses">
+</section>
+<section id="grouped-collapses">
 <span id="id8"></span><h3><a class="toc-backref" href="#id90">Grouped collapses</a><a class="headerlink" href="#grouped-collapses" title="Permalink to this headline">¶</a></h3>
 <p>A grouped collapse is one for which an axis is not collapsed
 completely to size 1. Instead the collapse axis is partitioned into
@@ -828,7 +849,7 @@ to start on 1st January.</em></span><a class="headerlink" href="#id39" title="Pe
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
 <span class="go">&lt;CF TimeDuration: P1Y (Y-12-01 00:00:00)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(10), latitude(5), longitude(8)) K</span>
@@ -844,7 +865,7 @@ to start on 1st January.</em></span><a class="headerlink" href="#id39" title="Pe
 <div class="code-block-caption"><span class="caption-text"><em>Find the maximum of each group of 6 elements along an
 axis.</em></span><a class="headerlink" href="#id40" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(20), latitude(5), longitude(8)) K</span>
@@ -859,7 +880,7 @@ axis.</em></span><a class="headerlink" href="#id40" title="Permalink to this cod
 <div class="literal-block-wrapper docutils container" id="id41">
 <div class="code-block-caption"><span class="caption-text"><em>Create December, January, February maxima from a time series.</em></span><a class="headerlink" href="#id41" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">djf</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(10), latitude(5), longitude(8)) K</span>
@@ -881,7 +902,7 @@ axis.</em></span><a class="headerlink" href="#id40" title="Permalink to this cod
 <span class="go"> &lt;CF Query: month(wi (6, 8))&gt;,</span>
 <span class="go"> &lt;CF Query: month(wi (9, 11))&gt;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(40), latitude(5), longitude(8)) K</span>
@@ -897,7 +918,7 @@ axis.</em></span><a class="headerlink" href="#id40" title="Permalink to this cod
 <div class="code-block-caption"><span class="caption-text"><em>Calculate zonal means for the western and eastern
 hemispheres.</em></span><a class="headerlink" href="#id43" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(5), longitude(2)) K</span>
@@ -914,8 +935,8 @@ groups whose actual span is not equal to a given value) and the
 <em>group_contiguous</em> (to include non-contiguous groups, or any
 contiguous group containing overlapping cells) keywords of
 <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
-</div>
-<div class="section" id="climatological-statistics">
+</section>
+<section id="climatological-statistics">
 <span id="id9"></span><h3><a class="toc-backref" href="#id91">Climatological statistics</a><a class="headerlink" href="#climatological-statistics" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#climatological-statistics">Climatological statistics</a> may be derived from corresponding
 portions of the annual cycle in a set of years (e.g. the average
@@ -960,8 +981,8 @@ method is to be applied.</p>
 <div class="literal-block-wrapper docutils container" id="id44">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual average of the seasonal means.</em></span><a class="headerlink" href="#id44" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean within years T: mean over years&#39;</span><span class="p">,</span>
-<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(4), latitude(5), longitude(8)) K</span>
@@ -970,7 +991,7 @@ method is to be applied.</p>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]</span>
@@ -983,8 +1004,8 @@ method is to be applied.</p>
 minima. Note that the units of the result have been
 changed from ‘K’ to ‘K2’.</em></span><a class="headerlink" href="#id45" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: minimum within years T: variance over years&#39;</span><span class="p">,</span>
-<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(4), latitude(5), longitude(8)) K2</span>
@@ -993,7 +1014,7 @@ changed from ‘K’ to ‘K2’.</em></span><a class="headerlink" href="#id45" 
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]</span>
@@ -1009,9 +1030,9 @@ chunks, with the <em>over_years</em> keyword to <a class="reference internal" hr
 <div class="literal-block-wrapper docutils container" id="id46">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual average of the seasonal means
 in 5 year chunks.</em></span><a class="headerlink" href="#id46" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean within years T: mean over years&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean within years T: mean over years&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">over_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(8), latitude(5), longitude(8)) K</span>
@@ -1020,7 +1041,7 @@ in 5 year chunks.</em></span><a class="headerlink" href="#id46" title="Permalink
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1964-03-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1964-06-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1964-09-01 00:00:00)]</span>
@@ -1035,9 +1056,9 @@ in 5 year chunks.</em></span><a class="headerlink" href="#id46" title="Permalink
 <div class="literal-block-wrapper docutils container" id="id47">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual average of the seasonal means,
 restricting the years from 1963 to 1968.</em></span><a class="headerlink" href="#id47" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean within years T: mean over years&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean within years T: mean over years&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">over_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">year</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">1963</span><span class="p">,</span> <span class="mi">1968</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(4), latitude(5), longitude(8)) K</span>
@@ -1046,7 +1067,7 @@ restricting the years from 1963 to 1968.</em></span><a class="headerlink" href="
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1962-12-01 00:00:00) cftime.DatetimeGregorian(1968-03-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1963-03-01 00:00:00) cftime.DatetimeGregorian(1968-06-01 00:00:00)]</span>
 <span class="go"> [cftime.DatetimeGregorian(1963-06-01 00:00:00) cftime.DatetimeGregorian(1968-09-01 00:00:00)]</span>
@@ -1067,8 +1088,8 @@ method constructs.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual maximum of the seasonal
 standard deviations with two separate collapse calls.</em></span><a class="headerlink" href="#id48" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: standard_deviation within years&#39;</span><span class="p">,</span>
-<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">... </span>               <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">seasons</span><span class="p">(),</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(40), latitude(5), longitude(8)) K</span>
@@ -1078,7 +1099,7 @@ standard deviations with two separate collapse calls.</em></span><a class="heade
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: maximum over years&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(4), latitude(5), longitude(8)) K</span>
@@ -1091,11 +1112,11 @@ standard deviations with two separate collapse calls.</em></span><a class="heade
 </div>
 </div>
 <hr class="docutils" />
-</div>
-</div>
-<div class="section" id="other-statistical-operations">
+</section>
+</section>
+<section id="other-statistical-operations">
 <h2><a class="toc-backref" href="#id92"><strong>Other statistical operations</strong></a><a class="headerlink" href="#other-statistical-operations" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="cumulative-sums">
+<section id="cumulative-sums">
 <span id="id10"></span><h3><a class="toc-backref" href="#id93">Cumulative sums</a><a class="headerlink" href="#cumulative-sums" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a> method of the field construct calculates the
 cumulative sum of elements along a given axis. The cell bounds of the
@@ -1106,7 +1127,7 @@ construct.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Calculate cumulative sums along the “T” axis, showing
 the cell bounds before and after the operation.</em></span><a class="headerlink" href="#id49" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;timeseries.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K</span>
@@ -1116,7 +1137,7 @@ the cell bounds before and after the operation.</em></span><a class="headerlink"
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
 <span class="go">Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K</span>
@@ -1125,10 +1146,10 @@ the cell bounds before and after the operation.</em></span><a class="headerlink"
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1969-11-01 00:00:00)</span>
 <span class="go">  cftime.DatetimeGregorian(1969-12-01 00:00:00))]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
 <span class="go">[[cftime.DatetimeGregorian(1959-11-01 00:00:00)</span>
 <span class="go">  cftime.DatetimeGregorian(1969-12-01 00:00:00))]]</span>
 </pre></div>
@@ -1137,8 +1158,8 @@ the cell bounds before and after the operation.</em></span><a class="headerlink"
 <p>The treatment of missing values can be specified, as well as the
 positioning of coordinate values in the summed axis of the returned
 field construct.</p>
-</div>
-<div class="section" id="histograms">
+</section>
+<section id="histograms">
 <span id="id11"></span><h3><a class="toc-backref" href="#id94">Histograms</a><a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a> function is used to record the distribution of a
 set of variables in the form of an N-dimensional histogram.</p>
@@ -1158,14 +1179,14 @@ range.</em></span><a class="headerlink" href="#id50" title="Permalink to this co
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 <span class="go">Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs (ncvar%q)</span>
 <span class="go">------------------------------------------------------------------------------------</span>
 <span class="go">Data            : long_name=Bin index to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))</span>
@@ -1173,13 +1194,13 @@ range.</em></span><a class="headerlink" href="#id50" title="Permalink to this co
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_eastg</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0 2 0 0 1 2 1 1]</span>
 <span class="go"> [1 2 2 4 3 4 0 4]</span>
 <span class="go"> [7 8 8 9 5 6 3 0]</span>
 <span class="go"> [1 3 2 4 3 4 0 0]</span>
 <span class="go"> [0 2 1 2 1 2 2 0]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.003  0.0173]</span>
 <span class="go"> [0.0173 0.0316]</span>
 <span class="go"> [0.0316 0.0459]</span>
@@ -1191,15 +1212,15 @@ range.</em></span><a class="headerlink" href="#id50" title="Permalink to this co
 <span class="go"> [0.1174 0.1317]</span>
 <span class="go"> [0.1317 0.146 ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>
 <span class="go">Data            : number_of_observations(specific_humidity(10)) 1</span>
 <span class="go">Cell methods    : latitude: longitude: point</span>
 <span class="go">Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[9 7 9 4 5 1 1 1 2 1]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.003  0.0173]</span>
 <span class="go"> [0.0173 0.0316]</span>
 <span class="go"> [0.0316 0.0459]</span>
@@ -1223,8 +1244,8 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%q)</span>
 <span class="go">--------------------------------</span>
 <span class="go">Data            : air_temperature(latitude(5), longitude(8)) K</span>
@@ -1234,14 +1255,14 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indices_t</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">indices_t</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>
 <span class="go">Data            : number_of_observations(air_temperature(5), specific_humidity(10)) 1</span>
 <span class="go">Cell methods    : latitude: longitude: point</span>
 <span class="go">Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K</span>
 <span class="go">                : specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[2  1  5  3  2 -- -- -- -- --]</span>
 <span class="go"> [1  1  2 --  1 --  1  1 -- --]</span>
 <span class="go"> [4  4  2  1  1  1 -- --  1  1]</span>
@@ -1252,13 +1273,13 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="binning-operations">
+</section>
+<section id="binning-operations">
 <span id="id12"></span><h3><a class="toc-backref" href="#id95">Binning operations</a><a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
-representative value. The same <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
+an <a class="reference internal" href="field_analysis.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
+representative value. The same <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
 the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method are available.</p>
 <p>The result of the binning operation is a field construct whose domain
 axis and dimension coordinate constructs describe the sizes of the
@@ -1274,7 +1295,7 @@ equally-sized bins of the data itself.</em></span><a class="headerlink" href="#i
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
@@ -1282,15 +1303,15 @@ equally-sized bins of the data itself.</em></span><a class="headerlink" href="#i
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;range&#39;</span><span class="p">,</span> <span class="n">digitized</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(specific_humidity(5)) 1</span>
 <span class="go">Cell methods    : latitude: longitude: range</span>
 <span class="go">Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[0.026 0.025 0.025 0.007 0.022]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.003  0.0316]</span>
 <span class="go"> [0.0316 0.0602]</span>
 <span class="go"> [0.0602 0.0888]</span>
@@ -1304,7 +1325,7 @@ equally-sized bins of the data itself.</em></span><a class="headerlink" href="#i
 that correspond to two-dimensional bins defined by
 temperature and pressure values.</em></span><a class="headerlink" href="#id53" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file2.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%t)</span>
 <span class="go">--------------------------------</span>
 <span class="go">Data            : air_temperature(latitude(5), longitude(8)) degreesC</span>
@@ -1312,7 +1333,7 @@ temperature and pressure values.</em></span><a class="headerlink" href="#id53" t
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">Field: air_pressure (ncvar%p)</span>
 <span class="go">-----------------------------</span>
 <span class="go">Data            : air_pressure(latitude(5), longitude(8)) hPa</span>
@@ -1323,14 +1344,14 @@ temperature and pressure values.</em></span><a class="headerlink" href="#id53" t
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p_indices</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">digitized</span><span class="o">=</span><span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">p_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1</span>
 <span class="go">Cell methods    : latitude: longitude: mean</span>
 <span class="go">Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa</span>
 <span class="go">                : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[     --       --       --  0.011  ]</span>
 <span class="go"> [0.131    0.0145   0.0345   0.05052]</span>
 <span class="go"> [0.05742  0.01727  0.06392  0.0105 ]</span>
@@ -1340,15 +1361,15 @@ temperature and pressure values.</em></span><a class="headerlink" href="#id53" t
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="percentiles">
+</section>
+<section id="percentiles">
 <span id="id13"></span><h3><a class="toc-backref" href="#id96">Percentiles</a><a class="headerlink" href="#percentiles" title="Permalink to this headline">¶</a></h3>
 <p>Percentiles of the data can be computed along any subset of the axes
 with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id54">
 <div class="code-block-caption"><span class="caption-text"><em>Find the 20th, 40th, 50th, 60th and 80th percentiles.</em></span><a class="headerlink" href="#id54" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
@@ -1356,14 +1377,14 @@ with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.
 <span class="go">Dimension coords: time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">percentile</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">80</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(long_name=Percentile ranks for latitude, longitude dimensions(5), latitude(1), longitude(1)) 1</span>
@@ -1371,7 +1392,7 @@ with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.
 <span class="go">                : latitude(1) = [0.0] degrees_north</span>
 <span class="go">                : longitude(1) = [180.0] degrees_east</span>
 <span class="go">                : long_name=Percentile ranks for latitude, longitude dimensions(5) = [20, ..., 80]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[0.0164]]</span>
 <span class="go"> [[0.032 ]]</span>
 <span class="go"> [[0.036 ]]</span>
@@ -1384,7 +1405,7 @@ with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.
 <div class="code-block-caption"><span class="caption-text"><em>Find the standard deviation of the values above the 80th
 percentile.</em></span><a class="headerlink" href="#id55" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p80</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p80</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p80</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(1), longitude(1)) 1</span>
@@ -1393,13 +1414,13 @@ percentile.</em></span><a class="headerlink" href="#id55" title="Permalink to th
 <span class="go">                : longitude(1) = [180.0] degrees_east</span>
 <span class="go">                : long_name=Percentile ranks for latitude, longitude dimensions(1) = [80]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">q</span><span class="o">&lt;=</span><span class="n">p80</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  --    --    --    --    --    -- -- --]</span>
 <span class="go"> [  --    --    --    --    -- 0.073 -- --]</span>
 <span class="go"> [0.11 0.131 0.124 0.146 0.087 0.103 -- --]</span>
 <span class="go"> [  --    --    --    --    -- 0.072 -- --]</span>
 <span class="go"> [  --    --    --    --    --    -- -- --]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;standard_deviation&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;standard_deviation&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data(1, 1): [[0.024609938742357642]] 1&gt;</span>
 </pre></div>
 </div>
@@ -1408,20 +1429,20 @@ percentile.</em></span><a class="headerlink" href="#id55" title="Permalink to th
 <div class="code-block-caption"><span class="caption-text"><em>Find the mean of the values above the 45th percentile
 along the X axis.</em></span><a class="headerlink" href="#id56" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p45</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p45</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p45</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.0189 ]</span>
 <span class="go"> [0.04515]</span>
 <span class="go"> [0.10405]</span>
 <span class="go"> [0.04185]</span>
 <span class="go"> [0.02125]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">q</span><span class="o">&lt;=</span><span class="n">p45</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  -- 0.034    --    --    -- 0.037 0.024 0.029]</span>
 <span class="go"> [  --    --    -- 0.062 0.046 0.073    -- 0.066]</span>
 <span class="go"> [0.11 0.131 0.124 0.146    --    --    --    --]</span>
 <span class="go"> [  -- 0.059    -- 0.07  0.058 0.072    --    --]</span>
 <span class="go"> [  -- 0.036    -- 0.035   --  0.037 0.034    --]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.031  ]</span>
 <span class="go"> [0.06175]</span>
 <span class="go"> [0.12775]</span>
@@ -1433,11 +1454,11 @@ along the X axis.</em></span><a class="headerlink" href="#id56" title="Permalink
 <div class="literal-block-wrapper docutils container" id="id57">
 <div class="code-block-caption"><span class="caption-text"><em>Find the histogram bin boundaries associated with given
 percentiles, and digitize the data based on these bins.</em></span><a class="headerlink" href="#id57" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bins</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">percentile</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">squeeze</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bins</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">percentile</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[0.003  0.0088 0.036  0.1037 0.146 ]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">closed_ends</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">closed_ends</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0 1 0 1 1 2 1 1]</span>
 <span class="go"> [1 2 2 2 2 2 0 2]</span>
 <span class="go"> [3 3 3 3 2 2 2 1]</span>
@@ -1447,9 +1468,9 @@ percentiles, and digitize the data based on these bins.</em></span><a class="hea
 </div>
 </div>
 <hr class="docutils" />
-</div>
-</div>
-<div class="section" id="regridding">
+</section>
+</section>
+<section id="regridding">
 <span id="id14"></span><h2><a class="toc-backref" href="#id97"><strong>Regridding</strong></a><a class="headerlink" href="#regridding" title="Permalink to this headline">¶</a></h2>
 <p>Regridding, also called remapping or interpolation, is the process of
 changing the domain of a field construct whilst preserving the
@@ -1461,7 +1482,7 @@ coordinate systems. The interpolation is carried by out using the
 <a class="reference external" href="https://www.earthsystemcog.org/projects/esmpy">ESMF</a> package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.</p>
-<p>As with <a class="reference internal" href="tutorial.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
+<p>As with <a class="reference internal" href="field_analysis.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
 regridding may be applied over a subset of the domain axes, and the
 domain axis constructs and coordinate constructs for the non-regridded
 dimensions remain the same.</p>
@@ -1469,7 +1490,7 @@ dimensions remain the same.</p>
 spans the regridding dimensions are also regridded, but <a class="reference internal" href="tutorial.html#field-ancillaries"><span class="std std-ref">field
 ancillary constructs</span></a> whose data spans the
 regridding dimensions are removed from the regridded field construct.</p>
-<div class="section" id="regridding-methods">
+<section id="regridding-methods">
 <span id="id15"></span><h3><a class="toc-backref" href="#id98">Regridding methods</a><a class="headerlink" href="#regridding-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following regridding methods are available (in this table,
 “source” and “destination” refer to the domain of the field construct
@@ -1558,14 +1579,14 @@ input at most one source point.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="spherical-regridding">
+</section>
+<section id="spherical-regridding">
 <span id="id16"></span><h3><a class="toc-backref" href="#id99">Spherical regridding</a><a class="headerlink" href="#spherical-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Regridding from and to spherical coordinate systems using the
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
+the sphere, rather in <a class="reference internal" href="field_analysis.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table class="docutils align-default">
@@ -1638,7 +1659,7 @@ regridding method to use:</p>
 contained in field construct b.</em></span><a class="headerlink" href="#id58" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;air_temperature.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;precipitation_flux.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(2), latitude(73), longitude(96)) K</span>
@@ -1647,7 +1668,7 @@ contained in field construct b.</em></span><a class="headerlink" href="#id58" ti
 <span class="go">                : latitude(73) = [-90.0, ..., 90.0] degrees_north</span>
 <span class="go">                : longitude(96) = [0.0, ..., 356.25] degrees_east</span>
 <span class="go">                : height(1) = [2.0] m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: precipitation_flux (ncvar%tas)</span>
 <span class="go">-------------------------------------</span>
 <span class="go">Data            : precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1</span>
@@ -1657,7 +1678,7 @@ contained in field construct b.</em></span><a class="headerlink" href="#id58" ti
 <span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
 <span class="go">                : height(1) = [2.0] m</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(2), latitude(64), longitude(128)) K</span>
@@ -1716,11 +1737,11 @@ dictionary of dimension coordinate constructs, then cyclicity can be
 registered by setting a period of cyclicity with the
 <a class="reference internal" href="method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a> method of the dimension coordinate
 construct.</p>
-</div>
-<div class="section" id="cartesian-regridding">
+</section>
+<section id="cartesian-regridding">
 <span id="id17"></span><h3><a class="toc-backref" href="#id100">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
-similar to <a class="reference internal" href="tutorial.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
+similar to <a class="reference internal" href="field_analysis.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidian spaces</a> for the purpose of
 calculating regridding weights, and all dimensions are assumed to be
@@ -1762,7 +1783,7 @@ coordinate time.</em></span><a class="headerlink" href="#id61" title="Permalink 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(60), latitude(73), longitude(96)) K</span>
@@ -1776,8 +1797,8 @@ coordinate time.</em></span><a class="headerlink" href="#id61" title="Permalink 
 </div>
 <p>Cartesian regridding to the dimension of another field construct is
 also possible, similarly to spherical regridding.</p>
-</div>
-<div class="section" id="regridding-masked-data">
+</section>
+<section id="regridding-masked-data">
 <span id="id18"></span><h3><a class="toc-backref" href="#id101">Regridding masked data</a><a class="headerlink" href="#regridding-masked-data" title="Permalink to this headline">¶</a></h3>
 <p>The data mask of the source field construct is taken into account,
 such that the regridded data will be masked in regions where the
@@ -1791,8 +1812,8 @@ destination cell means that the cell won’t participate in the
 regridding. For all other regridding methods, masking is done on
 points. For these methods, masking a destination point means that the
 point will not participate in the regridding.</p>
-</div>
-<div class="section" id="vertical-regridding">
+</section>
+<section id="vertical-regridding">
 <span id="id19"></span><h3><a class="toc-backref" href="#id102">Vertical regridding</a><a class="headerlink" href="#vertical-regridding" title="Permalink to this headline">¶</a></h3>
 <p>The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
@@ -1805,7 +1826,7 @@ pressure coordinates after the regridding operation.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Regrid a field construct from one set of pressure levels
 to another.</em></span><a class="headerlink" href="#id62" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;vertical.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
 <span class="go">-------------------------------</span>
 <span class="go">Data            : eastward_wind(time(3), air_pressure(5), grid_latitude(11), grid_longitude(10)) m s-1</span>
@@ -1818,19 +1839,19 @@ to another.</em></span><a class="headerlink" href="#id62" title="Permalink to th
 <span class="go">                : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east</span>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z_p</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">z_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">z_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[850. 700. 500. 250.  50.]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z_ln_p</span> <span class="o">=</span> <span class="n">z_p</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z_ln_p</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Z&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">z_ln_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">z_ln_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">z_ln_p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">z_ln_p</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_p</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">632</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mf">320.</span><span class="p">],</span> <span class="s1">&#39;hPa&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span> <span class="o">=</span> <span class="n">new_z_p</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Z&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="n">new_z_ln_p</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new_z_p</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">new_v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new_z_p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
 <span class="go">-------------------------------</span>
 <span class="go">Data            : eastward_wind(time(3), Z(5), grid_latitude(11), grid_longitude(10)) m s-1</span>
@@ -1850,11 +1871,11 @@ is used to easily replace the vertical dimension coordinate construct,
 without having to manually match up the corresponding domain axis
 construct and construct key.</p>
 <hr class="docutils" />
-</div>
-</div>
-<div class="section" id="mathematical-operations">
+</section>
+</section>
+<section id="mathematical-operations">
 <span id="id20"></span><h2><a class="toc-backref" href="#id103"><strong>Mathematical operations</strong></a><a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="binary-arithmetical-operations">
+<section id="binary-arithmetical-operations">
 <span id="id21"></span><h3><a class="toc-backref" href="#id104">Binary arithmetical operations</a><a class="headerlink" href="#binary-arithmetical-operations" title="Permalink to this headline">¶</a></h3>
 <p>A field construct may be arithmetically combined with another field
 construct, or any other object that is broadcastable to its data. See
@@ -1905,7 +1926,7 @@ the units and permute the axes of air temperature data
 on a field construct. Note the use of augmented
 assignment to apply an offset to the units.</em></span><a class="headerlink" href="#id64" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">&lt;CF Field: air_temperature(grid_longitude(1), grid_latitude(10), atmosphere_hybrid_height_coordinate(1)) K @ 273.15&gt;</span>
@@ -1955,7 +1976,7 @@ with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
 checks on the metadata. See
-<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
+<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
 will be made easier in a future release with a new function for
 combining such field constructs.)</em></p>
 <p class="rubric" id="bounds">Bounds</p>
@@ -2029,16 +2050,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -2067,8 +2088,8 @@ the left hand operand is a numpy array or a
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="unary-operations">
+</section>
+<section id="unary-operations">
 <span id="id22"></span><h3><a class="toc-backref" href="#id105">Unary operations</a><a class="headerlink" href="#unary-operations" title="Permalink to this headline">¶</a></h3>
 <p>Python unary operators also work on the field construct’s data,
 returning a new field construct with modified data values. See the
@@ -2076,19 +2097,19 @@ returning a new field construct with modified data values. See the
 <div class="literal-block-wrapper docutils container" id="id69">
 <div class="code-block-caption"><span class="caption-text"><em>Apply some unary operations to a field construct’s data.</em></span><a class="headerlink" href="#id69" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]</span>
 <span class="go"> [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]</span>
 <span class="go"> [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]</span>
 <span class="go"> [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]</span>
 <span class="go"> [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
@@ -2097,8 +2118,8 @@ returning a new field construct with modified data values. See the
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="relational-operations">
+</section>
+<section id="relational-operations">
 <span id="id23"></span><h3><a class="toc-backref" href="#id106">Relational operations</a><a class="headerlink" href="#relational-operations" title="Permalink to this headline">¶</a></h3>
 <p>A field construct may compared with another field construct, or any
 other object that is broadcastable to its data. See the
@@ -2121,25 +2142,25 @@ the other are assumed.</p>
 the nature of some relations between a field construct and
 another operand.</em></span><a class="headerlink" href="#id70" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True  True]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True False  True False  True False]</span>
 <span class="go"> [False False False False False False False  True]</span>
 <span class="go"> [ True False  True False False False  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True  True]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[ True  True  True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True False  True]</span>
 <span class="go"> [ True  True  True  True  True  True  True False]</span>
@@ -2187,13 +2208,13 @@ example, this will be the case if both operands are field constructs
 with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
-checks on the metadata. See <a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
+checks on the metadata. See <a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
 for more details. <em>(This will be made easier in a future release with
 a new function for combining such field constructs.)</em></p>
-</div>
-<div class="section" id="arithmetical-and-relational-operations-with-insufficient-metadata">
+</section>
+<section id="arithmetical-and-relational-operations-with-insufficient-metadata">
 <span id="id24"></span><h3><a class="toc-backref" href="#id107">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
-<p>When both operands of a <a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
+<p>When both operands of a <a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
 creation of the mapping of physically compatible dimensions relies on
 there being sufficient metadata. By default, the mapping relies on
 their being “strict” identities for the metadata constructs with
@@ -2203,10 +2224,10 @@ method of a construct:</p>
 <div class="literal-block-wrapper docutils container" id="id72">
 <div class="code-block-caption"><span class="caption-text"><em>Find the “strict” identity of a construct.</em></span><a class="headerlink" href="#id72" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;latitude&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">standard_name</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;&#39;</span>
 </pre></div>
 </div>
@@ -2217,7 +2238,7 @@ the operation to proceed:</p>
 <ul class="simple">
 <li><p><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instances instead. See
-<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
+<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
 <li><p><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
@@ -2227,17 +2248,17 @@ property and netCDF variable name (see the <a class="reference internal" href="t
 constructs.</p></li>
 <li><p><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</p></li>
 </ul>
-</div>
-<div class="section" id="operating-on-the-field-constructs-data">
+</section>
+<section id="operating-on-the-field-constructs-data">
 <span id="id25"></span><h3><a class="toc-backref" href="#id108">Operating on the field constructs’ data</a><a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
-<a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
+<p><a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
+<a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
 be carried out on their data instances, thereby bypassing any
 reference to, or checks on, the metadata constructs. This can be
-useful if there <a class="reference internal" href="tutorial.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
+useful if there <a class="reference internal" href="field_analysis.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
 for determining if the two field constructs are compatible; or if the
 domain metadata constructs of the result can not be
-<a class="reference internal" href="tutorial.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
+<a class="reference internal" href="field_analysis.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
 <p>In such cases the data instances may be operated on instead and the
 result then inserted into one of the field constructs, either with the
 <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field construct, or with
@@ -2283,8 +2304,8 @@ two field constructs.</em></span><a class="headerlink" href="#id75" title="Perma
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="trigonometrical-and-hyperbolic-functions">
+</section>
+<section id="trigonometrical-and-hyperbolic-functions">
 <h3><a class="toc-backref" href="#id109">Trigonometrical and hyperbolic functions</a><a class="headerlink" href="#trigonometrical-and-hyperbolic-functions" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs have methods to apply
 trigonometric and hyperbolic functions, and their inverses,
@@ -2389,16 +2410,16 @@ this case, you can use <code class="xref py py-obj docutils literal notranslate"
 resultant invalid values into masked data values.</em></span><a class="headerlink" href="#id77" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">arctanh</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[-- nan inf 0.5493061443340548 --]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">mask_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">mask_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[-- -- -- 0.5493061443340548 --]</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="exponential-and-logarithmic-functions">
+</section>
+<section id="exponential-and-logarithmic-functions">
 <h3><a class="toc-backref" href="#id110">Exponential and logarithmic functions</a><a class="headerlink" href="#exponential-and-logarithmic-functions" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs have <a class="reference internal" href="method/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> and
 <a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a> methods for applying exponential and logarithmic
@@ -2423,8 +2444,8 @@ metadata but changing the construct’s units where required.</p>
 </div>
 <p>The “standard_name” and “long_name” properties are removed from the
 result.</p>
-</div>
-<div class="section" id="rounding-and-truncation">
+</section>
+<section id="rounding-and-truncation">
 <h3><a class="toc-backref" href="#id111">Rounding and truncation</a><a class="headerlink" href="#rounding-and-truncation" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs the following methods to
 round and truncate their data:</p>
@@ -2459,8 +2480,8 @@ round and truncate their data:</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="moving-windows">
+</section>
+<section id="moving-windows">
 <h3><a class="toc-backref" href="#id112">Moving windows</a><a class="headerlink" href="#moving-windows" title="Permalink to this headline">¶</a></h3>
 <p>Moving window calculations along an axis may be created with the
 <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method of the field construct.</p>
@@ -2471,7 +2492,7 @@ cell sizes (or custom weights) may applied to the calculation.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point weighted mean of the ‘X’ axis. Since
 the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="headerlink" href="#id79" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
@@ -2479,13 +2500,13 @@ the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  0.  45.]</span>
 <span class="go"> [ 45.  90.]</span>
 <span class="go"> [ 90. 135.]</span>
@@ -2496,8 +2517,8 @@ the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="
 <span class="go"> [315. 360.]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
@@ -2505,13 +2526,13 @@ the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]</span>
 <span class="go"> [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]</span>
 <span class="go"> [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]</span>
 <span class="go"> [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]</span>
 <span class="go"> [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-45.  90.]</span>
 <span class="go"> [  0. 135.]</span>
 <span class="go"> [ 45. 180.]</span>
@@ -2531,8 +2552,8 @@ latter i) can not change the window weights as the filter
 passes through the axis; and ii) does not update the cell
 method constructs.</p>
 </div>
-</div>
-<div class="section" id="convolution-filters">
+</section>
+<section id="convolution-filters">
 <h3><a class="toc-backref" href="#id113">Convolution filters</a><a class="headerlink" href="#convolution-filters" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference external" href="https://en.wikipedia.org/wiki/Convolution">convolution</a> of the
 field construct data with a filter along a single domain axis can be
@@ -2544,7 +2565,7 @@ filter. Convolution filters are carried with the
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 5-point mean of the ‘X’ axis with a
 non-uniform window function. Since the the ‘X’ axis is
 cyclic, the convolution wraps by default.</em></span><a class="headerlink" href="#id80" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
@@ -2555,7 +2576,7 @@ cyclic, the convolution wraps by default.</em></span><a class="headerlink" href=
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
@@ -2563,7 +2584,7 @@ cyclic, the convolution wraps by default.</em></span><a class="headerlink" href=
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  0.  45.]</span>
 <span class="go"> [ 45.  90.]</span>
 <span class="go"> [ 90. 135.]</span>
@@ -2572,7 +2593,7 @@ cyclic, the convolution wraps by default.</em></span><a class="headerlink" href=
 <span class="go"> [225. 270.]</span>
 <span class="go"> [270. 315.]</span>
 <span class="go"> [315. 360.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-90. 135.]</span>
 <span class="go"> [-45. 180.]</span>
 <span class="go"> [  0. 225.]</span>
@@ -2591,7 +2612,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.5.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.6.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id81">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2600,10 +2621,10 @@ by default inserts missing data at points for which the
 filter window extends beyond the array.</em></span><a class="headerlink" href="#id81" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">windows</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exponential_window</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">exponential_window</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">exponential_window</span><span class="p">)</span>
 <span class="go">[0.36787944 1.         0.36787944]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">(</span><span class="n">exponential_window</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[--      --      --      --      --      --      --      --     ]</span>
 <span class="go"> [0.06604 0.0967  0.09172 0.12086 0.08463 0.1245  0.0358  0.08072]</span>
 <span class="go"> [0.12913 0.16595 0.1549  0.19456 0.12526 0.15634 0.06252 0.04153]</span>
@@ -2618,7 +2639,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.5.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.6.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2627,8 +2648,8 @@ latter i) can not change the window weights as the filter
 passes through the axis; and ii) does not update the cell
 method constructs.</p>
 </div>
-</div>
-<div class="section" id="derivatives">
+</section>
+<section id="derivatives">
 <h3><a class="toc-backref" href="#id114">Derivatives</a><a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h3>
 <p>The derivative along a dimension of the field construct’s data can be
 calculated as a centred finite difference with the <a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
@@ -2642,12 +2663,12 @@ the ‘X’ and ‘Y’ axes, where the former (by default) uses missing
 values in the calculation, but the latter has been told to use a
 one-sided finite difference at the boundary.</em></span><a class="headerlink" href="#id82" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">one_sided_at_boundary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">one_sided_at_boundary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="relative-vorticity">
+</section>
+<section id="relative-vorticity">
 <h3><a class="toc-backref" href="#id115">Relative vorticity</a><a class="headerlink" href="#relative-vorticity" title="Permalink to this headline">¶</a></h3>
 <p>The relative vorticity of the wind may be calculated on a global or
 limited area domain, and in Cartesian or spherical polar coordinate
@@ -2678,7 +2699,7 @@ component field constructs, then round the field’s data to
 8 decimal places.</em></span><a class="headerlink" href="#id83" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;wind_components.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">relative_vorticity</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span>
 <span class="go">Field: atmosphere_relative_vorticity (ncvar%va)</span>
 <span class="go">-----------------------------------------------</span>
 <span class="go">Data            : atmosphere_relative_vorticity(time(1), atmosphere_hybrid_height_coordinate(1), latitude(9), longitude(8)) s-1</span>
@@ -2690,7 +2711,7 @@ component field constructs, then round the field’s data to
 <span class="go">Domain ancils   : atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate(1)) = [9.9982] m</span>
 <span class="go">                : long_name=vertical coordinate formula term: b(k)(atmosphere_hybrid_height_coordinate(1)) = [0.9989]</span>
 <span class="go">                : surface_altitude(latitude(9), longitude(8)) = [[2816.25, ..., 2325.98]] m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">zeta</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">zeta</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
 <span class="go">[[[[--        --        --        --        --        --        --        --       ]</span>
 <span class="go">   [-2.04e-06  1.58e-06  5.19e-06  4.74e-06 -4.76e-06 -2.27e-06  9.55e-06 -3.64e-06]</span>
 <span class="go">   [-8.4e-07  -4.37e-06 -3.55e-06 -2.31e-06 -3.6e-07  -8.58e-06 -2.45e-06  6.5e-07 ]</span>
@@ -2709,9 +2730,9 @@ wrap around, or a one-sided difference is calculated at the edges. If
 the longitudinal axis is <a class="reference internal" href="tutorial.html#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
 derivative wraps around by default.</p>
 <hr class="docutils" />
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>
@@ -2721,11 +2742,11 @@ derivative wraps around by default.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

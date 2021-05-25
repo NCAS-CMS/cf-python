@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.AuxiliaryCoordinate.allclose &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,18 +123,18 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-auxiliarycoordinate-allclose">
+  <section id="cf-auxiliarycoordinate-allclose">
 <h1>cf.AuxiliaryCoordinate.allclose<a class="headerlink" href="#cf-auxiliarycoordinate-allclose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.allclose">
-<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">allclose</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/mixin/propertiesdata.py#L3500-L3561"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.allclose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">allclose</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/mixin/propertiesdata.py#L3594-L3656"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.allclose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test whether all data are element-wise equal to other,
 broadcastable data.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
-<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
-are positive, typically very small numbers. See the <em>atol</em> and
-<em>rtol</em> parameters.</p>
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on
+absolute differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative
+differences) are positive, typically very small numbers. See
+the <em>atol</em> and <em>rtol</em> parameters.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.AuxiliaryCoordinate.all.html#cf.AuxiliaryCoordinate.all" title="cf.AuxiliaryCoordinate.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.any.html#cf.AuxiliaryCoordinate.any" title="cf.AuxiliaryCoordinate.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">isclose</span></code></p>
@@ -121,17 +142,19 @@ are positive, typically very small numbers. See the <em>atol</em> and
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>y:</dt><dd><p>The object to be compared with the data array. <em>y</em> must be
-broadcastable to the data array and if <em>y</em> has units then
-they must be compatible. May be any object that can be
-converted to a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which includes numpy array
-and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects).</p>
+<dt>y:</dt><dd><p>The object to be compared with the data array. <em>y</em>
+must be broadcastable to the data array and if <em>y</em> has
+units then they must be compatible. May be any object
+that can be converted to a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which
+includes numpy array and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects).</p>
 </dd>
 <dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a>
+function.</p>
 </dd>
 <dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a>
+function.</p>
 </dd>
 </dl>
 </dd>
@@ -149,7 +172,7 @@ tolerance; <a class="reference external" href="https://docs.python.org/3/library
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -159,11 +182,11 @@ tolerance; <a class="reference external" href="https://docs.python.org/3/library
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

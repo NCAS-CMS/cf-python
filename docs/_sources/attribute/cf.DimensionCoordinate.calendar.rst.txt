@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.calendar
+﻿cf.DimensionCoordinate.calendar
 ===============================
 
 .. currentmodule:: cf

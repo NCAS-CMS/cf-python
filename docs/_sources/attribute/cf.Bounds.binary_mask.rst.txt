@@ -1,4 +1,4 @@
-cf.Bounds.binary_mask
+﻿cf.Bounds.binary_mask
 =====================
 
 .. currentmodule:: cf

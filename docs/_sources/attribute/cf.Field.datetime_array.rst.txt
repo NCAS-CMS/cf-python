@@ -1,4 +1,4 @@
-cf.Field.datetime_array
+﻿cf.Field.datetime_array
 =======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.CellMethod.axes
+﻿cf.CellMethod.axes
 ==================
 
 .. currentmodule:: cf

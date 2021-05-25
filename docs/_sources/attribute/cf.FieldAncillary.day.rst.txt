@@ -1,4 +1,4 @@
-cf.FieldAncillary.day
+﻿cf.FieldAncillary.day
 =====================
 
 .. currentmodule:: cf

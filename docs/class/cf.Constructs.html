@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,12 +121,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs">
+  <section id="cf-constructs">
 <h1>cf.Constructs<a class="headerlink" href="#cf-constructs" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Constructs">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/constructs.py#L6-L234"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/constructs.py#L6-L237"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
 <p>The following metadata constructs can be included:</p>
@@ -134,17 +155,19 @@ example, to select constructs that have an identity of
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.0.</span></p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>auxiliary_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of auxiliary coordinate constructs.</p>
+<dt>auxiliary_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of auxiliary coordinate
+constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">auxiliary_coordinate='auxiliarycoordinate'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>dimension_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of dimension coordinate constructs.</p>
+<dt>dimension_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of dimension coordinate
+constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dimension_coordinate='dimensioncoordinate'</span></code></p>
 </dd>
@@ -168,7 +191,8 @@ example, to select constructs that have an identity of
 </dd>
 </dl>
 </dd>
-<dt>coordinate_reference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of coordinate reference constructs.</p>
+<dt>coordinate_reference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of coordinate reference
+constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">coordinate_reference='coordinatereference'</span></code></p>
 </dd>
@@ -186,12 +210,12 @@ example, to select constructs that have an identity of
 </dd>
 </dl>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the construct keys and contained metadata
+<dt>source: optional</dt><dd><p>Initialise the construct keys and contained metadata
 constructs from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy metadata constructs from
-those of <em>source</em> prior to initialization. By default such
-metadata constructs are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy metadata constructs
+from those of <em>source</em> prior to initialisation. By
+default such metadata constructs are deep copied.</p>
 </dd>
 <dt>_ignore: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Ignores the given construct types.</p>
 <dl class="simple">
@@ -204,7 +228,7 @@ metadata constructs are deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="filtering">
+<section id="filtering">
 <h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -229,13 +253,13 @@ metadata constructs are deep copied.</p>
 <td><p>Select metadata constructs by axes spanned by their data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_naxes.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></p></td>
-<td><p>Select metadata constructs by the number of domain axis constructs spanned by their data.</p></td>
+<td><p>Selects constructs by the number of axes their data spans.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_size.html#cf.Constructs.filter_by_size" title="cf.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_size</span></code></a></p></td>
 <td><p>Select domain axis constructs by size.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></p></td>
-<td><p>Select metadata constructs by whether they could contain data.</p></td>
+<td><p>Selects metadata constructs that could contain data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a></p></td>
 <td><p>Select metadata constructs by type.</p></td>
@@ -263,8 +287,8 @@ metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="constructs-and-keys">
+</section>
+<section id="constructs-and-keys">
 <h2>Constructs and keys<a class="headerlink" href="#constructs-and-keys" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -273,16 +297,19 @@ metadata constructs are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.key.html#cf.Constructs.key" title="cf.Constructs.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axes.html#cf.Constructs.domain_axes" title="cf.Constructs.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></p></td>
+<td><p>Return domain axis constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.key.html#cf.Constructs.key" title="cf.Constructs.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
 <td><p>Return the construct key of the sole metadata construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.value.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.value.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></td>
 <td><p>Return the sole metadata construct.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-axes">
+</section>
+<section id="data-axes">
 <h2>Data axes<a class="headerlink" href="#data-axes" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -292,12 +319,15 @@ metadata constructs are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a></p></td>
-<td><p>Return the domain axis constructs spanned by metadata construct data.</p></td>
+<td><p>Returns the axes spanned by the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.get_data_axes.html#cf.Constructs.get_data_axes" title="cf.Constructs.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
+<td><p>Return the keys of the axes spanned by a construct’s data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -312,31 +342,34 @@ metadata constructs are deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.shallow_copy.html#cf.Constructs.shallow_copy" title="cf.Constructs.shallow_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shallow_copy</span></code></a></p></td>
 <td><p>Return a shallow copy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.equals.html#cf.Constructs.equals" title="cf.Constructs.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.todict.html#cf.Constructs.todict" title="cf.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
+<td><p>Return a dictionary of the metadata constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.equals.html#cf.Constructs.equals" title="cf.Constructs.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two <a class="reference internal" href="#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.ordered.html#cf.Constructs.ordered" title="cf.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.ordered.html#cf.Constructs.ordered" title="cf.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a></p></td>
 <td><p>Return the constructs in their predetermined order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_type.html#cf.Constructs.construct_type" title="cf.Constructs.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
-<td><p>Return the type of a metadata construct for a given key.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_type.html#cf.Constructs.construct_type" title="cf.Constructs.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return the type of a construct for a given key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_types.html#cf.Constructs.construct_types" title="cf.Constructs.construct_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_types</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_types.html#cf.Constructs.construct_types" title="cf.Constructs.construct_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_types</span></code></a></p></td>
 <td><p>Return all of the construct types for all keys.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axis_identity.html#cf.Constructs.domain_axis_identity" title="cf.Constructs.domain_axis_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_identity</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axis_identity.html#cf.Constructs.domain_axis_identity" title="cf.Constructs.domain_axis_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_identity</span></code></a></p></td>
 <td><p>Return the canonical identity for a domain axis construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.new_identifier.html#cf.Constructs.new_identifier" title="cf.Constructs.new_identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_identifier</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.new_identifier.html#cf.Constructs.new_identifier" title="cf.Constructs.new_identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_identifier</span></code></a></p></td>
 <td><p>Return a new, unused construct key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.replace.html#cf.Constructs.replace" title="cf.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.replace.html#cf.Constructs.replace" title="cf.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
 <td><p>Replace one metadata construct with another.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="dictionary-access-methods">
+</section>
+<section id="dictionary-access-methods">
 <h2>Dictionary-access methods<a class="headerlink" href="#dictionary-access-methods" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -346,7 +379,7 @@ metadata constructs are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
-<td><p>Return the construct for construct key, if it exists, else default.</p></td>
+<td><p>Returns the construct for the key, else default.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a></p></td>
 <td><p>Return the items as (construct key, construct) pairs.</p></td>
@@ -362,8 +395,8 @@ metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -376,7 +409,7 @@ metadata constructs are deep copied.</p>
 <td><p>Select metadata constructs by identity.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.__contains__.html#cf.Constructs.__contains__" title="cf.Constructs.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></p></td>
-<td><p>Called to implement membership test operators for construct keys.</p></td>
+<td><p>Implements membership test operators for construct keys.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.__copy__.html#cf.Constructs.__copy__" title="cf.Constructs.__copy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__copy__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.copy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.copy</span></code></a> standard library function.</p></td>
@@ -401,8 +434,8 @@ metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -412,11 +445,11 @@ metadata constructs are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -1,4 +1,4 @@
-cf.CellMeasure.mask_invalid
+﻿cf.CellMeasure.mask_invalid
 ===========================
 
 .. currentmodule:: cf

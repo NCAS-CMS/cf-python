@@ -1,4 +1,4 @@
-cf.CellMethod.comment
+﻿cf.CellMethod.comment
 =====================
 
 .. currentmodule:: cf

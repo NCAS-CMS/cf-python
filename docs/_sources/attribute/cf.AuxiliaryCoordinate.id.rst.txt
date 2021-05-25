@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.id
+﻿cf.AuxiliaryCoordinate.id
 =========================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Count.dtarray
+﻿cf.Count.dtarray
 ================
 
 .. currentmodule:: cf

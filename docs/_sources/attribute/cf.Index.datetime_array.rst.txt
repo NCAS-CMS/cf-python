@@ -1,4 +1,4 @@
-cf.Index.datetime_array
+﻿cf.Index.datetime_array
 =======================
 
 .. currentmodule:: cf

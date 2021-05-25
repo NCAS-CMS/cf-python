@@ -1,4 +1,4 @@
-cf.Index.month
+﻿cf.Index.month
 ==============
 
 .. currentmodule:: cf

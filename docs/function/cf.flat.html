@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.flat &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -22,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.hash_array" href="cf.hash_array.html" />
-    <link rel="prev" title="cf.example_field" href="cf.example_field.html" />
+    <link rel="prev" title="cf.example_domain" href="cf.example_domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -85,13 +86,33 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.example_field.html" title="previous chapter">cf.example_field</a></li>
+      <li>Previous: <a href="cf.example_domain.html" title="previous chapter">cf.example_domain</a></li>
       <li>Next: <a href="cf.hash_array.html" title="next chapter">cf.hash_array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,11 +121,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-flat">
+  <section id="cf-flat">
 <h1>cf.flat<a class="headerlink" href="#cf-flat" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.flat">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">flat</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/functions.py#L2599-L2677"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.flat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">flat</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/functions.py#L2575-L2653"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.flat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an iterator over an arbitrarily nested sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -132,7 +153,7 @@ to passing a single element sequence containing <em>x</em>.</p>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])])))</span>
 <span class="go">[1, 2, 3, 4, 5, 6]</span>
 </pre></div>
 </div>
@@ -177,7 +198,7 @@ to passing a single element sequence containing <em>x</em>.</p>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">]]])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">]]]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
 <span class="go">[&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;,</span>
 <span class="go"> &lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;,</span>
@@ -187,7 +208,7 @@ to passing a single element sequence containing <em>x</em>.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -197,11 +218,11 @@ to passing a single element sequence containing <em>x</em>.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

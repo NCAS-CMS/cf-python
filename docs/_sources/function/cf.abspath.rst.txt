@@ -1,4 +1,4 @@
-cf.abspath
+﻿cf.abspath
 ==========
 
 .. currentmodule:: cf

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf functions &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.9.0</a></h1>
 
 
 
@@ -90,6 +91,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -98,11 +119,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-functions">
+  <section id="cf-functions">
 <span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.8.0 for version 1.8 of the CF conventions.</p>
-<div class="section" id="reading-and-writing">
+<p>Version 3.9.0 for version 1.8 of the CF conventions.</p>
+<section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -118,8 +139,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="aggregation">
+</section>
+<section id="aggregation">
 <h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -132,8 +153,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-operations">
+</section>
+<section id="mathematical-operations">
 <span id="functions-mathematical-operations"></span><h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -142,10 +163,10 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a></p></td>
-<td><p>The tolerance on absolute differences when testing for numerically tolerant equality.</p></td>
+<td><p>The numerical equality tolerance on absolute differences.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a></p></td>
-<td><p>The tolerance on relative differences when testing for numerically tolerant equality.</p></td>
+<td><p>The numerical equality tolerance on relative differences.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a></p></td>
 <td><p>Default data array fill values for each data type.</p></td>
@@ -167,8 +188,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="condition-constructors">
+</section>
+<section id="condition-constructors">
 <h2>Condition constructors<a class="headerlink" href="#condition-constructors" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">General conditions</p>
 <table class="longtable docutils align-default">
@@ -281,8 +302,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="date-time-and-time-duration">
+</section>
+<section id="date-time-and-time-duration">
 <h2>Date-time and time duration<a class="headerlink" href="#date-time-and-time-duration" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -316,8 +337,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="resource-management">
+</section>
+<section id="resource-management">
 <h2>Resource management<a class="headerlink" href="#resource-management" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -356,7 +377,7 @@
 <td><p>The directory for internally generated temporary files.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.total_memory.html#cf.total_memory" title="cf.total_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.total_memory</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.close_files.html#cf.close_files" title="cf.close_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_files</span></code></a></p></td>
 <td><p>Close open files containing sub-arrays of data arrays.</p></td>
@@ -405,8 +426,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -431,6 +452,12 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p></td>
 <td><p>Return an example field construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.example_fields.html#cf.example_fields" title="cf.example_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_fields</span></code></a></p></td>
+<td><p>Return example field constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.example_domain.html#cf.example_domain" title="cf.example_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_domain</span></code></a></p></td>
+<td><p>Return an example domain construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.flat.html#cf.flat" title="cf.flat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.flat</span></code></a></p></td>
 <td><p>Return an iterator over an arbitrarily nested sequence.</p></td>
@@ -476,8 +503,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -487,11 +514,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -9,6 +9,8 @@ $(document).ready(function() {
     var div = $('.highlight-python .highlight,' +
                 '.highlight-python3 .highlight,' +
                 '.highlight-pycon .highlight,' +
+                '.highlight-pycon3 .highlight,' +
+                '.highlight-ipython .highlight,' +
                 '.highlight-default .highlight');
     var pre = div.find('pre');
 
@@ -24,7 +26,8 @@ $(document).ready(function() {
         'border-color': border_color, 'border-style': border_style,
         'border-width': border_width, 'color': border_color, 'text-size': '75%',
         'font-family': 'monospace', 'padding-left': '0.2em', 'padding-right': '0.2em',
-        'border-radius': '0 3px 0 0'
+        'border-radius': '0 3px 0 0',
+        'user-select': 'none'
     }
 
     // create and add the button to all the code blocks that contain >>>
@@ -50,15 +53,19 @@ $(document).ready(function() {
         var button = $(this);
         if (button.data('hidden') === 'false') {
             // hide the code output
-            button.parent().find('.go, .gp, .gt').hide();
-            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            // `.go` for comments
+            // `.gp` for ">>>", "...", "In [x]:"
+            // `.gt` for tracebacks
+            // `.gh` for "Out[x]:"
+            button.parent().find('.go, .gp, .gh, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .gh, .go').css('visibility', 'hidden');
             button.css('text-decoration', 'line-through');
             button.attr('title', show_text);
             button.data('hidden', 'true');
         } else {
             // show the code output
-            button.parent().find('.go, .gp, .gt').show();
-            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.parent().find('.go, .gp, .gh, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .gh, .go').css('visibility', 'visible');
             button.css('text-decoration', 'none');
             button.attr('title', hide_text);
             button.data('hidden', 'false');

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Query &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -92,6 +93,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -100,12 +121,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-query">
+  <section id="cf-query">
 <h1>cf.Query<a class="headerlink" href="#cf-query" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/query.py#L24-L760"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/query.py#L28-L769"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition for subsequent evaluation.</p>
 <p>A condition that may be applied to any object may be stored in a
@@ -316,17 +337,18 @@ the value.</p>
 </dd>
 <dt>value:</dt><dd><p>The value of the condition.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as the operand
-being tested are assumed, if applicable. If <em>units</em> is
-specified and <em>value</em> already has units (such as those attached
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object), then the pair of units must be equivalent.</p>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as
+the operand being tested are assumed, if
+applicable. If <em>units</em> is specified and <em>value</em>
+already has units (such as those attached to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+object), then the pair of units must be equivalent.</p>
 </dd>
 <dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Apply the condition to the attribute, or nested
 attributes, of the operand, rather than the operand
-itself. Nested attributes are specified by separating them
-with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example, the “month” attribute of the
-“bounds” attribute is specified as <code class="docutils literal notranslate"><span class="pre">'bounds.month'</span></code>. See
-also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
+itself. Nested attributes are specified by separating
+them with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example, the “month” attribute
+of the “bounds” attribute is specified as
+<code class="docutils literal notranslate"><span class="pre">'bounds.month'</span></code>. See also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
 </dd>
 <dt>exact: deprecated at version 3.0.0.</dt><dd><p>Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
 </dd>
@@ -335,7 +357,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 </dl>
 </dd></dl>
 
-<div class="section" id="attributes">
+<section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -344,21 +366,21 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.attr.html#cf.Query.attr" title="cf.Query.attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.operator.html#cf.Query.operator" title="cf.Query.operator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">operator</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.value.html#cf.Query.value" title="cf.Query.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.isquery.html#cf.Query.isquery" title="cf.Query.isquery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isquery</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="methods">
+</section>
+<section id="methods">
 <h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -376,7 +398,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 <td><p>Return a string containing a full description of the instance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.equals.html#cf.Query.equals" title="cf.Query.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
-<td><p>TODO</p></td>
+<td><p>TODO.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.equivalent.html#cf.Query.equivalent" title="cf.Query.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
@@ -385,15 +407,15 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 <td><p>Evaluate the query operation for a given left hand side operand.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.exact.html#cf.Query.exact" title="cf.Query.exact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exact</span></code></a></p></td>
-<td><p>TODO Deprecated at version 3.0.0.</p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.inspect.html#cf.Query.inspect" title="cf.Query.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
 <td><p>Inspect the object for debugging.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -403,11 +425,11 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

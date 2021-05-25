@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.auxiliary_coordinates &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,8 +22,6 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.cell_measures" href="cf.Field.cell_measures.html" />
-    <link rel="prev" title="cf.Field.constructs" href="cf.Field.constructs.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -66,14 +65,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
@@ -83,17 +82,29 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
-  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.constructs.html" title="previous chapter">cf.Field.constructs</a></li>
-      <li>Next: <a href="cf.Field.cell_measures.html" title="next chapter">cf.Field.cell_measures</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,44 +113,14 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-auxiliary-coordinates">
+  <section id="cf-field-auxiliary-coordinates">
 <h1>cf.Field.auxiliary_coordinates<a class="headerlink" href="#cf-field-auxiliary-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="attribute">
 <dt id="cf.Field.auxiliary_coordinates">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">auxiliary_coordinates</code><a class="headerlink" href="#cf.Field.auxiliary_coordinates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return auxiliary coordinate constructs.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.constructs.html#cf.Field.constructs" title="cf.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt><dd><p>The auxiliary coordinate constructs and their construct
-keys.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span>
-<span class="go">Constructs:</span>
-<span class="go">{}</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span>
-<span class="go">Constructs:</span>
-<span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;CF AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;,</span>
-<span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;CF AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;,</span>
-<span class="go"> &#39;auxiliarycoordinate2&#39;: &lt;CF AuxiliaryCoordinate: long_name:Grid latitude name(10) &gt;}</span>
-</pre></div>
-</div>
-</dd></dl>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">auxiliary_coordinates</code><em class="property"> = &lt;function auxiliary_coordinates&gt;</em><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/mixin/fielddomain.py#L386-L438"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.auxiliary_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -149,11 +130,11 @@ keys.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

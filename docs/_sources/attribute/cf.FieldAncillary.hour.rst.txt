@@ -1,4 +1,4 @@
-cf.FieldAncillary.hour
+﻿cf.FieldAncillary.hour
 ======================
 
 .. currentmodule:: cf

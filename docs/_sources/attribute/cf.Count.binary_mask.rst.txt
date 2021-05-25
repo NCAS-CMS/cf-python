@@ -1,4 +1,4 @@
-cf.Count.binary_mask
+﻿cf.Count.binary_mask
 ====================
 
 .. currentmodule:: cf

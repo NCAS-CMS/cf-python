@@ -1,4 +1,4 @@
-cf.Index.second
+﻿cf.Index.second
 ===============
 
 .. currentmodule:: cf

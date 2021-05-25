@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.match_by_rank &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,11 +123,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-match-by-rank">
+  <section id="cf-field-match-by-rank">
 <h1>cf.Field.match_by_rank<a class="headerlink" href="#cf-field-match-by-rank" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.match_by_rank">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">match_by_rank</code><span class="sig-paren">(</span><em class="sig-param">*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/field.py#L13458-L13513"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.match_by_rank" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">match_by_rank</code><span class="sig-paren">(</span><em class="sig-param">*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/mixin/fielddomain.py#L2363-L2418"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.match_by_rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not the number of domain axis constructs satisfies
 conditions.</p>
 <div class="versionadded">
@@ -114,29 +135,28 @@ conditions.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a>, <a class="reference internal" href="cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a>, <a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>,
-<a class="reference internal" href="cf.Field.match_by_ncvar.html#cf.Field.match_by_ncvar" title="cf.Field.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a>, <a class="reference internal" href="cf.Field.match_by_units.html#cf.Field.match_by_units" title="cf.Field.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a>,
+<p><a class="reference internal" href="cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a>, <a class="reference internal" href="cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a>,
+<a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>, <a class="reference internal" href="cf.Field.match_by_ncvar.html#cf.Field.match_by_ncvar" title="cf.Field.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a>,
 <a class="reference internal" href="cf.Field.match_by_construct.html#cf.Field.match_by_construct" title="cf.Field.match_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_construct</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>ranks: optional</dt><dd><p>Define conditions on the number of domain axis constructs.</p>
+<dt>ranks: optional</dt><dd><p>Define conditions on the number of domain axis
+constructs.</p>
 <p>A condition is one of:</p>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></li>
 <li><p>a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object</p></li>
 </ul>
-</div></blockquote>
-<p>The condition is satisfied if the number of domain axis
-constructs equals the condition value.</p>
+<p>The condition is satisfied if the number of domain
+axis constructs equals the condition value.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To see if the field construct has 4 domain axis
 constructs: <code class="docutils literal notranslate"><span class="pre">4</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p>To see if the field construct has at least 3 domain axis
-constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3)</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p>To see if the field construct has at least 3 domain
+axis constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3)</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -161,7 +181,7 @@ constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -171,11 +191,11 @@ constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

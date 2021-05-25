@@ -1,4 +1,4 @@
-cf.CellMeasure.long_name
+﻿cf.CellMeasure.long_name
 ========================
 
 .. currentmodule:: cf

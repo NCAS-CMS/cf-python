@@ -1,4 +1,4 @@
-cf.Count.scale_factor
+﻿cf.Count.scale_factor
 =====================
 
 .. currentmodule:: cf

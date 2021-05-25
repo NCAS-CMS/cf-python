@@ -1,4 +1,4 @@
-cf.Bounds.second
+﻿cf.Bounds.second
 ================
 
 .. currentmodule:: cf

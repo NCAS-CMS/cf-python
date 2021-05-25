@@ -1,4 +1,4 @@
-cf.DomainAncillary.hour
+﻿cf.DomainAncillary.hour
 =======================
 
 .. currentmodule:: cf

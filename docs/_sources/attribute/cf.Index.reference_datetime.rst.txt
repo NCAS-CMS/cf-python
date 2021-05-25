@@ -1,4 +1,4 @@
-cf.Index.reference_datetime
+﻿cf.Index.reference_datetime
 ===========================
 
 .. currentmodule:: cf

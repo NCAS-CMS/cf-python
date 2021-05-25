@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Performance &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.9.0</a></h1>
 
 
 
@@ -88,6 +89,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -96,35 +117,29 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="performance">
+  <section id="performance">
 <h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.8.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.9.0 for version 1.8 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#lazy-operations" id="id4"><strong>Lazy operations</strong></a></p></li>
-<li><p><a class="reference internal" href="#large-amounts-of-massive-arrays-lama" id="id5"><strong>Large Amounts of Massive Arrays (LAMA)</strong></a></p>
+<li><p><a class="reference internal" href="#lazy-operations" id="id2"><strong>Lazy operations</strong></a></p></li>
+<li><p><a class="reference internal" href="#large-amounts-of-massive-arrays-lama" id="id3"><strong>Large Amounts of Massive Arrays (LAMA)</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#reading-from-files" id="id6">Reading from files</a></p></li>
-<li><p><a class="reference internal" href="#copying" id="id7">Copying</a></p></li>
-<li><p><a class="reference internal" href="#aggregation" id="id8">Aggregation</a></p></li>
-<li><p><a class="reference internal" href="#subspacing" id="id9">Subspacing</a></p></li>
-<li><p><a class="reference internal" href="#speed-and-memory-management" id="id10">Speed and memory management</a></p></li>
-<li><p><a class="reference internal" href="#temporary-files" id="id11">Temporary files</a></p></li>
-<li><p><a class="reference internal" href="#partitioning" id="id12">Partitioning</a></p></li>
+<li><p><a class="reference internal" href="#reading-from-files" id="id4">Reading from files</a></p></li>
+<li><p><a class="reference internal" href="#copying" id="id5">Copying</a></p></li>
+<li><p><a class="reference internal" href="#aggregation" id="id6">Aggregation</a></p></li>
+<li><p><a class="reference internal" href="#subspacing" id="id7">Subspacing</a></p></li>
+<li><p><a class="reference internal" href="#speed-and-memory-management" id="id8">Speed and memory management</a></p></li>
+<li><p><a class="reference internal" href="#temporary-files" id="id9">Temporary files</a></p></li>
+<li><p><a class="reference internal" href="#partitioning" id="id10">Partitioning</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#parallelization" id="id13"><strong>Parallelization</strong></a></p>
-<ul>
-<li><p><a class="reference internal" href="#installing-mpi4py-with-conda" id="id14">Installing mpi4py with conda</a></p></li>
-<li><p><a class="reference internal" href="#running-a-cf-python-script-in-parallel" id="id15">Running a cf-python script in parallel</a></p></li>
-<li><p><a class="reference internal" href="#optimising-a-parallel-collapse-operation" id="id16">Optimising a parallel collapse operation</a></p></li>
-</ul>
-</li>
+<li><p><a class="reference internal" href="#parallelization" id="id11"><strong>Parallelization</strong></a></p></li>
 </ul>
 </div>
-<div class="section" id="lazy-operations">
-<h2><a class="toc-backref" href="#id4"><strong>Lazy operations</strong></a><a class="headerlink" href="#lazy-operations" title="Permalink to this headline">¶</a></h2>
+<section id="lazy-operations">
+<h2><a class="toc-backref" href="#id2"><strong>Lazy operations</strong></a><a class="headerlink" href="#lazy-operations" title="Permalink to this headline">¶</a></h2>
 <p>Many data operations of field and metadata constructs are lazy
 i.e. the operation is actually performed until the result is needed,
 or the underlying data are shared with a <a class="reference external" href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> technique, or <a class="reference external" href="https://en.wikipedia.org/wiki/Lazy_loading">lazy
@@ -144,9 +159,9 @@ collapse, etc. functions.</p>
 <p>All of these lazy techniques make use of <a class="reference internal" href="#lama"><span class="std std-ref">LAMA (Large Amounts
 of Massive Arrays)</span></a> functionality.</p>
 <hr class="docutils" />
-</div>
-<div class="section" id="large-amounts-of-massive-arrays-lama">
-<span id="lama"></span><h2><a class="toc-backref" href="#id5"><strong>Large Amounts of Massive Arrays (LAMA)</strong></a><a class="headerlink" href="#large-amounts-of-massive-arrays-lama" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="large-amounts-of-massive-arrays-lama">
+<span id="lama"></span><h2><a class="toc-backref" href="#id3"><strong>Large Amounts of Massive Arrays (LAMA)</strong></a><a class="headerlink" href="#large-amounts-of-massive-arrays-lama" title="Permalink to this headline">¶</a></h2>
 <p>Data are stored and manipulated in a very memory efficient manner such
 that large numbers of constructs may co-exist and be manipulated
 regardless of the size of their data arrays. The limiting factor on
@@ -183,21 +198,21 @@ dimensions, etc.) always reflect the data array in its entirety,
 regardless of how the array is partitioned and whether or not its
 partitions are in memory, constructs containing data arrays may be
 used in the API as if they were normal, in-memory objects (like
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
 this may be minimised for particular applications or hardware
 configurations.</p>
 </li>
 </ul>
-<div class="section" id="reading-from-files">
-<span id="lama-reading"></span><h3><a class="toc-backref" href="#id6">Reading from files</a><a class="headerlink" href="#reading-from-files" title="Permalink to this headline">¶</a></h3>
+<section id="reading-from-files">
+<span id="lama-reading"></span><h3><a class="toc-backref" href="#id4">Reading from files</a><a class="headerlink" href="#reading-from-files" title="Permalink to this headline">¶</a></h3>
 <p>When a field construct is read from a file, the data array is not
 realized in memory, however large or small it may be. Instead each
 partition refers to part of the original file on disk. Therefore
 reading even very large field constructs is initially very fast and
 uses up only a very small amount of memory.</p>
-</div>
-<div class="section" id="copying">
-<span id="lama-copying"></span><h3><a class="toc-backref" href="#id7">Copying</a><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="copying">
+<span id="lama-copying"></span><h3><a class="toc-backref" href="#id5">Copying</a><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h3>
 <p>When a field construct is deep copied with its <a class="reference internal" href="method/cf.Field.copy.html#cf.Field.copy" title="cf.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method or
 the Python <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function, the partitions of its data array
 are transferred to the new field construct as object identities and
@@ -209,9 +224,9 @@ since each partition that is stored in memory (as opposed to on disk)
 is deep copied if and when the data in the new field construct is
 actually accessed, and then only if the partition’s data still exists
 in the original (or any other) field construct.</p>
-</div>
-<div class="section" id="aggregation">
-<h3><a class="toc-backref" href="#id8">Aggregation</a><a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="aggregation">
+<h3><a class="toc-backref" href="#id6">Aggregation</a><a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h3>
 <p>When two field constructs are aggregated to form one, larger field
 construct there is no need for either field construct’s data array
 partitions to be accessed, and therefore brought into memory if they
@@ -224,9 +239,9 @@ since each partition that is stored in memory (as opposed to on disk)
 is deep copied when the data in the new field construct is actually
 accessed, and then only if the partition’s data still exists in its
 the original (or any other) field construct.</p>
-</div>
-<div class="section" id="subspacing">
-<span id="lama-subspacing"></span><h3><a class="toc-backref" href="#id9">Subspacing</a><a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="subspacing">
+<span id="lama-subspacing"></span><h3><a class="toc-backref" href="#id7">Subspacing</a><a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h3>
 <p>When a new field construct is created by <a class="reference external" href="https://ncas-cms.github.io/cfdm/tutorial.html#subspacing" title="(in Python cfdm package v1.8)"><span class="xref std std-ref">subspacing</span></a> a field construct, the new field construct is actually a
 <a class="reference internal" href="#lama-copying"><span class="std std-ref">LAMA deep copy</span></a> of the original but with
 additional instructions on each of its data partitions to only use the
@@ -253,9 +268,9 @@ example:</p>
 <p>and if all of the partitions of field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> are stored on
 disk then in both cases so are all of the partitions of field
 construct <code class="docutils literal notranslate"><span class="pre">h</span></code> and no data has been read from disk.</p>
-</div>
-<div class="section" id="speed-and-memory-management">
-<h3><a class="toc-backref" href="#id10">Speed and memory management</a><a class="headerlink" href="#speed-and-memory-management" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="speed-and-memory-management">
+<h3><a class="toc-backref" href="#id8">Speed and memory management</a><a class="headerlink" href="#speed-and-memory-management" title="Permalink to this headline">¶</a></h3>
 <p>The creation of temporary files for array partitions of large arrays
 and the reading of data from files on disk can create significant
 speed overheads (for example, recent tests show that writing a 100
@@ -273,9 +288,9 @@ the amount of available physical memory falls below a specified
 amount. By default this amount is 10% of the total physical memory
 and is found and set with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.MINNCFCM</span></code> function.</p></li>
 </ul>
-</div>
-<div class="section" id="temporary-files">
-<span id="lama-temporary-files"></span><h3><a class="toc-backref" href="#id11">Temporary files</a><a class="headerlink" href="#temporary-files" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="temporary-files">
+<span id="lama-temporary-files"></span><h3><a class="toc-backref" href="#id9">Temporary files</a><a class="headerlink" href="#temporary-files" title="Permalink to this headline">¶</a></h3>
 <p>The directory in which temporary files is found and set with the
 <a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a> function:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">tempdir</span><span class="p">()</span>
@@ -293,9 +308,9 @@ partitions require the file it will be deleted automatically.</p>
 <p>When python exits normally, all temporary files are always deleted.</p>
 <p>Changing the temporary file directory does not prevent temporary files
 in the original directory from being garbage collected.</p>
-</div>
-<div class="section" id="partitioning">
-<h3><a class="toc-backref" href="#id12">Partitioning</a><a class="headerlink" href="#partitioning" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="partitioning">
+<h3><a class="toc-backref" href="#id10">Partitioning</a><a class="headerlink" href="#partitioning" title="Permalink to this headline">¶</a></h3>
 <p>Data partitioning preserves as much as is possible the faster varying
 (inner) dimensions’ sizes in each of the sub-arrays.</p>
 <p><strong>Examples</strong></p>
@@ -310,105 +325,20 @@ sub-arrays will have shape (1, 2, 3).</p></li>
 eight sub-arrays will have shape (1, 1, 1).</p></li>
 </ul>
 <hr class="docutils" />
+</section>
+</section>
+<section id="parallelization">
+<span id="id1"></span><h2><a class="toc-backref" href="#id11"><strong>Parallelization</strong></a><a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The experimental ability to run cf scripts in parallel using
+mpirun was removed at version 3.9.0. This functionality will
+be restored soon in a robust fashion when the move to using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/182">https://github.com/NCAS-CMS/cf-python/issues/182</a>) is
+completed.</p>
 </div>
-</div>
-<div class="section" id="parallelization">
-<span id="id1"></span><h2><a class="toc-backref" href="#id13"><strong>Parallelization</strong></a><a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
-<p>cf-python scripts may be run in parallel using mpirun and any calls to
-collapse will be parallelised. This requires the mpi4py module to be
-installed. Only calls to collapse will be parallelised. Other methods
-are not yet parallelised. This is an experimental feature and is not
-yet recommended for operational use.</p>
-<div class="section" id="installing-mpi4py-with-conda">
-<h3><a class="toc-backref" href="#id14">Installing mpi4py with conda</a><a class="headerlink" href="#installing-mpi4py-with-conda" title="Permalink to this headline">¶</a></h3>
-<p>To install mpi4py with conda type:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install mpi4py
-</pre></div>
-</div>
-<p>This also installs the mpich implementation of MPI. To install MPI3
-rather than MPI2 type:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c conda-forge mpi4py
-</pre></div>
-</div>
-<p>It is planned to use MPI3 features in future versions of cf-python.</p>
-<p>If you are using another version of Python other than Anaconda you
-will need to install either mpich or openmpi and mpi4py.</p>
-<p>Note that if you are using regridding in a parallel script then ESMF
-must be compiled <em>without</em> parallel support.</p>
-</div>
-<div class="section" id="running-a-cf-python-script-in-parallel">
-<h3><a class="toc-backref" href="#id15">Running a cf-python script in parallel</a><a class="headerlink" href="#running-a-cf-python-script-in-parallel" title="Permalink to this headline">¶</a></h3>
-<p>To use a cf-python script in parallel, pass the python invocation of
-the script to <code class="docutils literal notranslate"><span class="pre">mpirun</span></code></p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text"><em>Run my_script.py in parallel with 3 processors.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> mpirun -n <span class="m">3</span> python my_script.py
-</pre></div>
-</div>
-</div>
-<p>This will work across multiple nodes, as well as on a single node. If
-using across multiple nodes then <a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a> must be set to a shared
-location. Note that internode communication costs my be reduce the
-speed-up when multiple nodes are in use.</p>
-<p>(If you get the error <code class="docutils literal notranslate"><span class="pre">gethostbyname</span> <span class="pre">failed</span></code> you could consider
-adding <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span> <span class="pre">computername</span></code> to the file <code class="docutils literal notranslate"><span class="pre">/etc/hosts</span></code>, where
-<code class="docutils literal notranslate"><span class="pre">computername</span></code> is the name of your machine.)</p>
-</div>
-<div class="section" id="optimising-a-parallel-collapse-operation">
-<h3><a class="toc-backref" href="#id16">Optimising a parallel collapse operation</a><a class="headerlink" href="#optimising-a-parallel-collapse-operation" title="Permalink to this headline">¶</a></h3>
-<p>There are three possible modes of optimisation, which can be set in
-your script using <a class="reference internal" href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a>:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 7%" />
-<col style="width: 93%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Mode</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p>This attempts to maximise parallelism, possibly at the expense
-of extra communication. This is the default mode.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>This minimises communication, possibly at the expense of the
-degree of parallelism. If collapse is running slower than you
-would expect, you can try changing to mode 1 to see if this
-improves performance. This is only likely to work if the output
-of collapse will be a sizeable array, not a single point.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
-<td><p>This is here for debugging purposes, but we would expect this
-to maximise communication possibly at the expense of
-parallelism. The use of this mode is, therefore, not
-recommended.</p></td>
-</tr>
-</tbody>
-</table>
-<p>Calling <a class="reference internal" href="function/cf.collapse_parallel_mode.html#cf.collapse_parallel_mode" title="cf.collapse_parallel_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse_parallel_mode</span></code></a> with no arguments returns the
-current value, otherwise the value prior to the change is returned.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text"><em>Inspect and set the ‘collapse’ parallel mode.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">()</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">collapse_parallel_mode</span><span class="p">()</span>
-<span class="go">1</span>
-</pre></div>
-</div>
-</div>
-<p>The parallelism is based on partitions created by <a class="reference internal" href="#lama"><span class="std std-ref">LAMA</span></a>
-and will be affected by the size and number of those partitions. The
-size of the partitions can be changed by calling <a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> before
-reading a file.</p>
-<hr class="docutils" />
-</div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -418,11 +348,11 @@ reading a file.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

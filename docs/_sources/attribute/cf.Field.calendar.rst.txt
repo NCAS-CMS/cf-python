@@ -1,4 +1,4 @@
-cf.Field.calendar
+﻿cf.Field.calendar
 =================
 
 .. currentmodule:: cf

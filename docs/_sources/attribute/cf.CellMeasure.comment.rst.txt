@@ -1,4 +1,4 @@
-cf.CellMeasure.comment
+﻿cf.CellMeasure.comment
 ======================
 
 .. currentmodule:: cf

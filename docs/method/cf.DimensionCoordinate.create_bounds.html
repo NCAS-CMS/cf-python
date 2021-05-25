@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.DimensionCoordinate.create_bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,11 +123,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-dimensioncoordinate-create-bounds">
+  <section id="cf-dimensioncoordinate-create-bounds">
 <h1>cf.DimensionCoordinate.create_bounds<a class="headerlink" href="#cf-dimensioncoordinate-create-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.create_bounds">
-<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">create_bounds</code><span class="sig-paren">(</span><em class="sig-param">bound=None</em>, <em class="sig-param">cellsize=None</em>, <em class="sig-param">flt=0.5</em>, <em class="sig-param">max=None</em>, <em class="sig-param">min=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/dimensioncoordinate.py#L346-L642"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.create_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">create_bounds</code><span class="sig-paren">(</span><em class="sig-param">bound=None</em>, <em class="sig-param">cellsize=None</em>, <em class="sig-param">flt=0.5</em>, <em class="sig-param">max=None</em>, <em class="sig-param">min=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/dimensioncoordinate.py#L359-L679"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.create_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create cell bounds.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -114,12 +135,11 @@
 <dt>bound: optional</dt><dd><p>If set to a value larger (smaller) than the largest
 (smallest) coordinate value then bounds are created which
 include this value and for which each coordinate is in the
-centre of its bounds. Ignored if <em>create</em> is False.</p>
+centre of its bounds.</p>
 </dd>
 <dt>cellsize: optional</dt><dd><p>Define the exact size of each cell that is
 created. Created cells are allowed to overlap do not have
-to be contigious.  Ignored if <em>create</em> is False. The
-<em>cellsize</em> parameter may be one of:</p>
+to be contigious. The <em>cellsize</em> parameter may be one of:</p>
 <blockquote>
 <div><ul>
 <li><p>A data-like scalar (see below) that defines the cell size,
@@ -149,10 +169,6 @@ of <code class="docutils literal notranslate"><span class="pre">(-1.5,</span> <s
 </dd>
 </dl>
 </li>
-</ul>
-</div></blockquote>
-<blockquote>
-<div><ul>
 <li><p>A <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> defining the cell size. Only
 applicable to reference time coordinates. It is possible
 to “anchor” the cell bounds via the <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a>
@@ -231,13 +247,6 @@ each cell has its coordinate at it’s centre. Ignored if
 </dd>
 </dl>
 </dd>
-<dt>min: optional</dt><dd><p>Limit the created bounds to be no less than this number.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>To ensure that all latitude bounds are at least -90:
-<code class="docutils literal notranslate"><span class="pre">min=-90</span></code>.</p>
-</dd>
-</dl>
-</dd>
 <dt>max: optional</dt><dd><p>Limit the created bounds to be no more than this number.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To ensure that all latitude bounds are at most 90:
@@ -245,16 +254,18 @@ each cell has its coordinate at it’s centre. Ignored if
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned bounds are not independent of
-the existing bounds, if any, or those inserted, if
-<em>create</em> and <em>insert</em> are both True. By default the
-returned bounds are independent.</p>
+<dt>min: optional</dt><dd><p>Limit the created bounds to be no less than this number.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To ensure that all latitude bounds are at least -90:
+<code class="docutils literal notranslate"><span class="pre">min=-90</span></code>.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
+<dt><a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a></dt><dd><p>The newly-created coordinate cell bounds object.</p>
 </dd>
 </dl>
 </dd>
@@ -266,7 +277,7 @@ returned bounds are independent.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -276,11 +287,11 @@ returned bounds are independent.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

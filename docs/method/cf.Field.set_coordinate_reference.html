@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.set_coordinate_reference &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,19 +123,18 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-set-coordinate-reference">
+  <section id="cf-field-set-coordinate-reference">
 <h1>cf.Field.set_coordinate_reference<a class="headerlink" href="#cf-field-set-coordinate-reference" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_coordinate_reference">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">set_coordinate_reference</code><span class="sig-paren">(</span><em class="sig-param">coordinate_reference</em>, <em class="sig-param">key=None</em>, <em class="sig-param">field=None</em>, <em class="sig-param">strict=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.8.0/cf/field.py#L8558-L8638"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_coordinate_reference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">set_coordinate_reference</code><span class="sig-paren">(</span><em class="sig-param">coordinate_reference</em>, <em class="sig-param">key=None</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">strict=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/mixin/fielddomain.py#L2675-L2754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_coordinate_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a coordinate reference construct.</p>
 <p>By default, this is equivalent to using the <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>
-method. If, however, the <em>field</em> parameter has been set then it is
-assumed to be a field construct that contains the new coordinate
-reference construct. In this case, existing coordinate and domain
-ancillary constructs will be referenced by the inserted coordinate
-reference construct, based on those which are referenced from the
-other parent field construct (given by the <em>field</em> parameter).</p>
+method. If, however, the <em>parent</em> parameter has been set to be
+a field or domain construct that contains the new coordinate
+reference construct then copies of its coordinate and domain
+ancillary constructs will be referenced by the inserted
+coordinate reference construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.0.</span></p>
 </div>
@@ -127,17 +147,17 @@ other parent field construct (given by the <em>field</em> parameter).</p>
 <dd class="field-odd"><dl>
 <dt>coordinate_reference: <a class="reference internal" href="../class/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a></dt><dd><p>The coordinate reference construct to be inserted.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the construct. If
-not set then a new, unique identifier is created
-automatically. If the identifier already exists then the
-existing construct will be replaced.</p>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the
+construct. If not set then a new, unique identifier is
+created automatically. If the identifier already
+exists then the existing construct will be replaced.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">key='coordinatereference1'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>field: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, optional</dt><dd><p>A parent field construct that contains the new coordinate
-reference construct.</p>
+<dt>parent: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference internal" href="../class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a>, optional</dt><dd><p>A field or domain construct that contains the new
+coordinate reference construct.</p>
 </dd>
 <dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then allow non-strict identities for
 identifying coordinate and domain ancillary metadata
@@ -155,7 +175,7 @@ construct.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -165,11 +185,11 @@ construct.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

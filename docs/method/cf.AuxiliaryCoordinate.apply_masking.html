@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.AuxiliaryCoordinate.apply_masking &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
 
 
 
@@ -94,6 +95,26 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,43 +123,43 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-auxiliarycoordinate-apply-masking">
+  <section id="cf-auxiliarycoordinate-apply-masking">
 <h1>cf.AuxiliaryCoordinate.apply_masking<a class="headerlink" href="#cf-auxiliarycoordinate-apply-masking" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.apply_masking">
-<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/decorators.py#L42-L67"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.apply_masking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/decorators.py#L41-L54"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.apply_masking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply masking as defined by the CF conventions.</p>
-<p>Masking is applied according to any of the following criteria that
-are applicable:</p>
+<p>Masking is applied according to any of the following criteria
+that are applicable:</p>
 <ul class="simple">
 <li><p>where data elements are equal to the value of the
 <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> property;</p></li>
-<li><p>where data elements are equal to the value of the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>
-property;</p></li>
+<li><p>where data elements are equal to the value of the
+<code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> property;</p></li>
 <li><p>where data elements are strictly less than the value of the
 <code class="docutils literal notranslate"><span class="pre">valid_min</span></code> property;</p></li>
-<li><p>where data elements are strictly greater than the value of the
-<code class="docutils literal notranslate"><span class="pre">valid_max</span></code> property;</p></li>
-<li><p>where data elements are within the inclusive range specified by
-the two values of <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> property.</p></li>
+<li><p>where data elements are strictly greater than the value of
+the <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> property;</p></li>
+<li><p>where data elements are within the inclusive range specified
+by the two values of <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> property.</p></li>
 </ul>
-<p>If any of the above properties have not been set the no masking is
-applied for that method.</p>
+<p>If any of the above properties have not been set the no
+masking is applied for that method.</p>
 <p>The cell bounds, if any, are also masked according to the same
-criteria as the parent construct. If, however, any of the relevant
-properties are explicitly set on the bounds instance then their
-values will be used in preference to those of the parent
-construct.</p>
+criteria as the parent construct. If, however, any of the
+relevant properties are explicitly set on the bounds instance
+then their values will be used in preference to those of the
+parent construct.</p>
 <p>Elements that are already masked remain so.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If using the <a class="reference internal" href="#cf.AuxiliaryCoordinate.apply_masking" title="cf.AuxiliaryCoordinate.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a> method on a construct that
-has been read from a dataset with the <code class="docutils literal notranslate"><span class="pre">mask=False</span></code>
-parameter to the <a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function, then the mask defined
-in the dataset can only be recreated if the
-<code class="docutils literal notranslate"><span class="pre">missing_value</span></code>, <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>,
-<code class="docutils literal notranslate"><span class="pre">valid_max</span></code>, and <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties have not
-been updated.</p>
+<p>If using the <a class="reference internal" href="#cf.AuxiliaryCoordinate.apply_masking" title="cf.AuxiliaryCoordinate.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a> method on a construct
+that has been read from a dataset with the
+<code class="docutils literal notranslate"><span class="pre">mask=False</span></code> parameter to the <a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function,
+then the mask defined in the dataset can only be
+recreated if the <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>, <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>,
+<code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code>, and <code class="docutils literal notranslate"><span class="pre">valid_range</span></code>
+properties have not been updated.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.2</p>
@@ -150,7 +171,8 @@ been updated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -182,7 +204,7 @@ operation was in-place.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -192,11 +214,11 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

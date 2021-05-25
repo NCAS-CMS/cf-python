@@ -1,4 +1,4 @@
-cf.TimeDuration.iso
+﻿cf.TimeDuration.iso
 ===================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.CellMeasure.day
+﻿cf.CellMeasure.day
 ==================
 
 .. currentmodule:: cf

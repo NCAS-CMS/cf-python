@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.datetime_array
+﻿cf.AuxiliaryCoordinate.datetime_array
 =====================================
 
 .. currentmodule:: cf

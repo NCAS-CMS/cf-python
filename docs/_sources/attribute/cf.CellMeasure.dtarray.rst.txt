@@ -1,4 +1,4 @@
-cf.CellMeasure.dtarray
+﻿cf.CellMeasure.dtarray
 ======================
 
 .. currentmodule:: cf
