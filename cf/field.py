@@ -9894,8 +9894,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             logger.info(
                 "  After collapse of data:\n"
                 f"    f.shape = {f.shape}\n"
-                f"    f.dtype = {f.dtype}\n",
-                f"collapse_axes = {collapse_axes}",
+                f"    f.dtype = {f.dtype}\n"
+                f"collapse_axes = {collapse_axes}"
             )  # pragma: no cover
 
             # ---------------------------------------------------------
