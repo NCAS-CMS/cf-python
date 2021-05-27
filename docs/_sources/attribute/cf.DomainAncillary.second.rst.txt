@@ -1,4 +1,4 @@
-cf.DomainAncillary.second
+﻿cf.DomainAncillary.second
 =========================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.List.day
+﻿cf.List.day
 ===========
 
 .. currentmodule:: cf

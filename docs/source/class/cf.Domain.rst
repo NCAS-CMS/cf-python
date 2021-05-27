@@ -32,7 +32,15 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Domain.auxiliary_coordinates
+   ~cf.Domain.cell_measures
+   ~cf.Domain.coordinates
+   ~cf.Domain.coordinate_references
+   ~cf.Domain.dimension_coordinates
+   ~cf.Domain.domain_ancillaries
+   ~cf.Domain.domain_axes
    ~cf.Domain.construct
+   ~cf.Domain.construct_item
    ~cf.Domain.construct_key
    ~cf.Domain.del_construct
    ~cf.Domain.get_construct
@@ -43,6 +51,7 @@ Metadata constructs
    ~cf.Domain.has_data_axes
    ~cf.Domain.set_data_axes
    ~cf.Domain.domain_axis_key
+   ~cf.Domain.climatological_time_axes
 
 .. rubric:: Attributes
    
@@ -52,13 +61,6 @@ Metadata constructs
    :template: attribute.rst
 
    ~cf.Domain.constructs
-   ~cf.Domain.auxiliary_coordinates
-   ~cf.Domain.cell_measures
-   ~cf.Domain.coordinates
-   ~cf.Domain.coordinate_references
-   ~cf.Domain.dimension_coordinates
-   ~cf.Domain.domain_ancillaries
-   ~cf.Domain.domain_axes
 
 Miscellaneous
 -------------
@@ -73,6 +75,19 @@ Miscellaneous
    ~cf.Domain.copy
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
+   ~cf.Domain.apply_masking   
+   ~cf.Domain.get_filenames
+   ~cf.Domain.has_data
+   ~cf.Domain.get_data
+   
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Domain.has_geometry
 
 Special
 -------

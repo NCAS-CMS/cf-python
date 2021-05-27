@@ -1,4 +1,4 @@
-cf.Field.X
+﻿cf.Field.X
 ==========
 
 .. currentmodule:: cf

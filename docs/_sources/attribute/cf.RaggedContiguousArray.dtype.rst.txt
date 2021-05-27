@@ -1,4 +1,4 @@
-cf.RaggedContiguousArray.dtype
+﻿cf.RaggedContiguousArray.dtype
 ==============================
 
 .. currentmodule:: cf

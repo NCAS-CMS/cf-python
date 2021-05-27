@@ -1,4 +1,4 @@
-cf.Field.scale_factor
+﻿cf.Field.scale_factor
 =====================
 
 .. currentmodule:: cf

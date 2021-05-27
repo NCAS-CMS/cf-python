@@ -1,15 +1,7 @@
-from copy import copy
-
-
 from . import mixin
 from . import ConstructList
 
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_DICT,
-)
+from .functions import _DEPRECATION_ERROR_METHOD
 
 
 class FieldList(mixin.FieldDomainList, ConstructList):
@@ -21,7 +13,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     indexing and methods like `!append`). These methods provide
     functionality similar to that of a :ref:`built-in list
     <python:tut-morelists>`. The main difference is that when a field
-    construct element needs to be assesed for equality its
+    construct element needs to be assessed for equality its
     `~cf.Field.equals` method is used, rather than the ``==``
     operator.
 
@@ -38,15 +30,12 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def concatenate(self, axis=0, _preserve=True):
         """Join the sequence of fields together.
 
-        This is different to `cf.aggregate` because it does not account
-        for all metadata. For example, it assumes that the axis order is
-        the same in each field.
+        This is different to `cf.aggregate` because it does not
+        account for all metadata. For example, it assumes that the
+        axis order is the same in each field.
 
         .. versionadded:: 1.0
 
@@ -69,7 +58,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """Select field constructs by property.
 
         To find the inverse of the selection, use a list comprehension
-        with `~cf.Field.match_by_naxes` method of the constuct
+        with `~cf.Field.match_by_naxes` method of the construct
         elements. For example, to select all constructs which do *not*
         have 3-dimensional data:
 
@@ -89,10 +78,11 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 Select field constructs whose data spans a particular
                 number of domain axis constructs.
 
-                A number of domain axis constructs is given by an `int`.
+                A number of domain axis constructs is given by an
+                `int`.
 
-                If no numbers are provided then all field constructs are
-                selected.
+                If no numbers are provided then all field constructs
+                are selected.
 
         :Returns:
 
@@ -110,9 +100,9 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """Select field constructs by units.
 
         To find the inverse of the selection, use a list comprehension
-        with `~cf.Field.match_by_units` method of the constuct
-        elements. For example, to select all constructs whose units are
-        *not* ``'km'``:
+        with `~cf.Field.match_by_units` method of the construct
+        elements. For example, to select all constructs whose units
+        are *not* ``'km'``:
 
            >>> gl = cf.FieldList(
            ...     f for f in fl if not f.match_by_units('km')
@@ -127,24 +117,24 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         :Parameters:
 
             units: optional
-                Select field constructs. By default all field constructs
-                are selected. May be one or more of:
+                Select field constructs. By default all field
+                constructs are selected. May be one or more of:
 
                   * The units of a field construct.
 
                 Units are specified by a string or compiled regular
-                expression (e.g. 'km', 'm s-1', ``re.compile('^kilo')``,
-                etc.) or a `Units` object (e.g. ``Units('km')``,
-                ``Units('m s-1')``, etc.).
+                expression (e.g. 'km', 'm s-1',
+                ``re.compile('^kilo')``, etc.) or a `Units` object
+                (e.g. ``Units('km')``, ``Units('m s-1')``, etc.).
 
             exact: `bool`, optional
-                If `False` then select field constructs whose units are
-                equivalent to any of those given by *units*. For example,
-                metres and are equivalent to kilometres. By default, field
-                constructs whose units are exactly one of those given by
-                *units* are selected. Note that the format of the units is
-                not important, i.e. 'm' is exactly the same as 'metres'
-                for this purpose.
+                If `False` then select field constructs whose units
+                are equivalent to any of those given by *units*. For
+                example, metres and are equivalent to kilometres. By
+                default, field constructs whose units are exactly one
+                of those given by *units* are selected. Note that the
+                format of the units is not important, i.e. 'm' is
+                exactly the same as 'metres' for this purpose.
 
         :Returns:
 
@@ -185,8 +175,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                   {{construct selection identity}}
 
             default: optional
-                Return the value of the *default* parameter if a unique
-                field construct can not be found.
+                Return the value of the *default* parameter if a
+                unique field construct can not be found.
 
                 {{default Exception}}
 
@@ -214,77 +204,23 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         out = self.select_by_identity(*identities)
 
         if not out:
+            if default is None:
+                return
+
             return self._default(
-                default, "No fields found from {}".format(identities)
+                default, "select_field() can't return 0 fields"
             )
 
-        if len(out) > 1:
+        n = len(out)
+        if n > 1:
+            if default is None:
+                return
+
             return self._default(
-                default, "Multiple fields found from {!r}".format(identities)
+                default, "select_field() can't return {n} fields"
             )
 
         return out[0]
-
-    # ----------------------------------------------------------------
-    # Aliases
-    # ----------------------------------------------------------------
-    def select(self, *identities, **kwargs):
-        """Alias of `cf.FieldList.select_by_identity`.
-
-        To find the inverse of the selection, use a list comprehension
-        with the `~cf.Field.match_by_identity` method of the field
-        constucts. For example, to select all field constructs whose
-        identity is *not* ``'air_temperature'``:
-
-           >>> gl = cf.FieldList(f for f in fl
-           ...                   if not f.match_by_identity('air_temperature'))
-
-        .. seealso:: `select_by_identity`, `select_field`
-
-        """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "select",
-                kwargs,
-                "Use methods 'select_by_units', 'select_by_construct', "
-                "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
-                "instead.",
-            )  # pragma: no cover
-
-        if identities and isinstance(identities[0], (list, tuple, set)):
-            _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__
-                )
-            )  # pragma: no cover
-
-        for i in identities:
-            if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT(
-                    "Use methods 'select_by_units', 'select_by_construct', "
-                    "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
-                )  # pragma: no cover
-
-            if isinstance(i, str) and ":" in i:
-                error = True
-                if "=" in i:
-                    index0 = i.index("=")
-                    index1 = i.index(":")
-                    error = index0 > index1
-
-                if error:
-                    _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
-                    )  # pragma: no cover
-        # --- End: for
-
-        return self.select_by_identity(*identities)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.datetime_array
+﻿cf.DimensionCoordinate.datetime_array
 =====================================
 
 .. currentmodule:: cf

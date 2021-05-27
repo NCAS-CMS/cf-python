@@ -1,4 +1,4 @@
-cf.Index.history
+﻿cf.Index.history
 ================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.RaggedContiguousArray.size
+﻿cf.RaggedContiguousArray.size
 =============================
 
 .. currentmodule:: cf

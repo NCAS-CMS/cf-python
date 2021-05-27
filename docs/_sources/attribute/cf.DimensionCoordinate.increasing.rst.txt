@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.increasing
+﻿cf.DimensionCoordinate.increasing
 =================================
 
 .. currentmodule:: cf

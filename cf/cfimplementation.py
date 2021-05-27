@@ -73,8 +73,6 @@ class CFImplementation(cfdm.CFDMImplementation):
 #
 #        return ''
 
-# --- End: class
-
 
 _implementation = CFImplementation(
     cf_version=CF(),

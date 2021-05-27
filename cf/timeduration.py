@@ -338,7 +338,6 @@ class TimeDuration:
             units = self.duration.Units
             if not units.istime:
                 raise ValueError("Bad units: {!r}".format(units))
-        # --- End: if
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
@@ -368,7 +367,7 @@ class TimeDuration:
         #                    offset[4] = None
         #                    if units <= _seconds and duration < _one_minute:
         #                        offset[5] = None
-        # --- End: if
+
         self.offset = Offset(*offset)
 
         # TODO should offset be None for all "higher" units
@@ -845,8 +844,6 @@ class TimeDuration:
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
 
-        # --- End: def
-
         duration = self.duration
         units = duration.Units
 
@@ -886,7 +883,6 @@ class TimeDuration:
                 max_days = self.days_in_month(y, m, calendar)
                 if d > max_days:
                     d = max_days
-            # --- End: if
 
             # TODO When cftime==1.1.4 is ready use this one line:
             #            return other.replace(year=y, month=m, day=d)
@@ -914,7 +910,6 @@ class TimeDuration:
                     out.append(None)
                 else:
                     out.append(getattr(self, method)(d))
-            # --- End: for
 
             dt[...] = numpy.reshape(out, dt.shape)
 
@@ -1155,17 +1150,41 @@ class TimeDuration:
             other:
                 The object to compare for equality.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons, By
-                default the value returned by the `atol` function is used.
-
             rtol: `float`, optional
                 The relative tolerance for all numerical comparisons, By
                 default the value returned by the `rtol` function is used.
 
-            traceback: `bool`, optional
-                If True then print a traceback highlighting where the two
-                instances differ.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
+
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent string
+                equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the minimum
+                cut-off for the verboseness level of displayed output (log)
+                messages, regardless of the globally-configured `cf.log_level`.
+                Note that increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special case of
+                maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output messages will
+                be shown according to the value of the `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or equivalent string
+                that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                increasing verbosity, the more description that is printed to
+                convey information about the test for contiguity.
+
+            traceback: deprecated at version 3.0.0
+                Use the *verbose* parameter instead.
 
         :Returns:
 
@@ -1178,7 +1197,7 @@ class TimeDuration:
         >>> u = cf.TimeDuration(3, 'calendar_years')
         >>> t == u
         True
-        >>> t.equals(u, traceback=True)
+        >>> t.equals(u, verbose=2)
         TimeDuration: Different durations: <CF Data: 36 calendar_months>, <CF Data: 3 calendar_years>
         False
 
@@ -1234,17 +1253,41 @@ class TimeDuration:
             other:
                 The object to compare for equivalence.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons, By
-                default the value returned by the `atol` function is used.
-
             rtol: `float`, optional
                 The relative tolerance for all numerical comparisons, By
                 default the value returned by the `rtol` function is used.
 
-            traceback: `bool`, optional
-                If True then print a traceback highlighting where the two
-                instances differ.
+            atol: `float`, optional
+                The absolute tolerance for all numerical comparisons, By
+                default the value returned by the `atol` function is used.
+
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent string
+                equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the minimum
+                cut-off for the verboseness level of displayed output (log)
+                messages, regardless of the globally-configured `cf.log_level`.
+                Note that increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special case of
+                maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output messages will
+                be shown according to the value of the `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or equivalent string
+                that is set (up to a maximum of ``3``/``'DETAIL'``) for
+                increasing verbosity, the more description that is printed to
+                convey information about the test for contiguity.
+
+            traceback: deprecated at version 3.0.0
+                Use the *verbose* parameter instead.
 
         :Returns:
 
@@ -1259,7 +1302,7 @@ class TimeDuration:
         True
         >>> t.equivalent(u)
         True
-        >>> t.equals(u, traceback=True)
+        >>> t.equals(u, verbose=2)
         TimeDuration: Different durations: <CF Data: 12 calendar_months>, <CF Data: 1 calendar_years>
         False
 
@@ -1438,8 +1481,6 @@ class TimeDuration:
                 return dt, dt1  # dt.copy(), dt1
             else:
                 return dt1, dt  # dt1, dt.copy()
-
-        # --- End: def
 
         calendar = getattr(dt, "calendar", _default_calendar)
         if calendar == "":
@@ -1659,9 +1700,6 @@ class TimeDuration:
             return not Data(1, "day") % self.duration
         except ValueError:
             return False
-
-
-# --- End: class
 
 
 def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):

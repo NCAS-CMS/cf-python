@@ -7,13 +7,7 @@ Special docstring subtitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
-Replacement text may contain other non-special substitutions.
-
-.. note:: The values are only checked once for embedded non-special
-          substitutions, so if the embedded substitution itself
-          contains a non-special substitution then the latter will
-          *not* be replaced. This restriction is to prevent the
-          possibility of infinite recursion.
+Replacement text may not contain other non-special substitutions.
 
 Keys must be `str` or `re.Pattern` objects:
 
@@ -28,7 +22,7 @@ Keys must be `str` or `re.Pattern` objects:
 """
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General docstring susbstitutions
+    # General susbstitutions (not indent-dependent)
     # ----------------------------------------------------------------
     "{{repr}}": "CF ",
     # ----------------------------------------------------------------
@@ -43,76 +37,59 @@ _docstring_substitution_definitions = {
     `Appendix D: Parametric Vertical Coordinates
     <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-v-coord>`_""",
     # ----------------------------------------------------------------
+    # Class description susbstitutions (1 level of indentation)
+    # ----------------------------------------------------------------
+    #
+    # ----------------------------------------------------------------
     # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
-    "{{List comparison}}": """Each construct in the list is compared with its `!equals` method,
-    rather than the ``==`` operator.""",
+    # List comparison
+    "{{List comparison}}": """Each construct in the list is compared with its `!equals`
+        method, rather than the ``==`` operator.""",
     # ----------------------------------------------------------------
-    # Parameter description substitutions
+    # Method description susbstitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
+    # i: deprecated at version 3.0.0
     "{{i: deprecated at version 3.0.0}}": """i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.""",
+                Use the *inplace* parameter instead.""",
+    # default_to_zero: `bool`, optional
     "{{default_to_zero: `bool`, optional}}": """default_to_zero: `bool`, optional
-            If False then do not assume that missing terms have a
-            value of zero. By default a missing term is assumed to be
-            zero.""",
-    "{{construct identities}}": """A construct has a number of string-valued identities defined by its
-            `!identities` method, and is selected if any of them match
-            the value. It may be a string or a `Query` object that
-            equals one of a construct's identities; or a `re.Pattern`
-            object that matches one of a construct's identities via
-            `re.search`.
-
-            A construct may also be selected by it's construct
-            identifier, with or without the ``key%`` prefix.
-
-            Note that in the output of a `dump` method or `print`
-            call, a construct is always described by an identity that
-            will select it when passed to the `construct` method
-            (providing that the construct with that identity is
-            unique).""",
-    "{{construct selection}}": """A construct is defined as that which would be returned when the
-            value to a call of the `construct` method. For example, a
-            value of ``'X'`` would define the construct returned by
-            ``f.construct('X')``.
-
-            Note that in the output of a `dump` method or `print`
-            call, a construct is always described by an identity that
-            will select it when passed to the `construct` method
-            (providing that the construct with that identity is
-            unique).""",
-    "{{domain axis selection}}": """A domain axis is defined as that which would be returned when
-            passing the value to a call of the `domain_axis`
-            method. For example, a value of ``'X'`` would define the
-            domain axis construct returned by
-            ``f.domain_axis('X')``.""",
-    "{{domain axis identities}}": """A domain axis construct has a number of string-valued identities
-            defined by its `!identities` method, and is selected if
-            any of them match the *identity* parameter. *identity* may
-            be a string or a `Query` object that equals one of a
-            construct's identities; or a `re.Pattern` object that
-            matches one of a construct's identities via `re.search`.
-
-            A construct may also be selected by it's construct
-            identifier, with or without the ``key%`` prefix.""",
+                If False then do not assume that missing terms have a
+                value of zero. By default a missing term is assumed to
+                be zero.""",
+    # key: `bool`, optional
+    "{{key: `bool`, optional}}": """key: `bool`, optional
+                If True then return the selected construct
+                identifier. By default the construct itself is
+                returned.""",
+    # item: `bool`, optional
+    "{{item: `bool`, optional}}": """item: `bool`, optional
+                If True then return the selected construct identifier
+                and the construct itself. By default the construct
+                itself is returned. If *key* is True then *item* is
+                ignored.""",
     # ----------------------------------------------------------------
-    # Returns substitutions
+    # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
+    # Returns formula
     "{{Returns formula}}": """5-`tuple`
-            * The standard name of the parametric coordinates.
+                * The standard name of the parametric coordinates.
 
-            * The standard name of the computed non-parametric
-              coordinates.
+                * The standard name of the computed non-parametric
+                  coordinates.
 
-            * The computed non-parametric coordinates in a
-              `DomainAncillary` construct.
+                * The computed non-parametric coordinates in a
+                  `DomainAncillary` construct.
 
-            * A tuple of the domain axis construct keys for the
-              dimensions of the computed non-parametric coordinates.
+                * A tuple of the domain axis construct keys for the
+                  dimensions of the computed non-parametric
+                  coordinates.
 
-            * A tuple containing the construct key of the vertical
-              domain axis. If the vertical axis does not appear in the
-              computed non-parametric coodinates then this an empty
-              tuple.""",
+                * A tuple containing the construct key of the vertical
+                  domain axis. If the vertical axis does not appear in
+                  the computed non-parametric coodinates then this an
+                  empty tuple.""",
+    # Returns construct
+    "{{Returns construct}}": """The selected construct, or its identifier if *key* is
+                True, or a tuple of both if *item* is True.""",
 }
- 

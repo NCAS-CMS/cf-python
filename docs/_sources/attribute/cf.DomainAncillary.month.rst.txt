@@ -1,4 +1,4 @@
-cf.DomainAncillary.month
+﻿cf.DomainAncillary.month
 ========================
 
 .. currentmodule:: cf

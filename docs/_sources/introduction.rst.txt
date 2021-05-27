@@ -71,7 +71,7 @@ The cf package can:
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 
 * incorporate, and create, metadata stored in external files (*new in
   version 3.0.0*),
@@ -135,8 +135,8 @@ range plotting possibilities with example code.
 **Old versions**
 ----------------
 
-Since version 3.0.0, cf is for Python 3 only and there are
-:ref:`incompatible differences between versions 2.x and 3.x
+Since version 3.0.0 (released 2019-10-01), cf is for Python 3 only and
+there are :ref:`incompatible differences between versions 2.x and 3.x
 <two-to-three-changes>` of cf.
 
 Scripts written for version 2.x but running under version 3.x should

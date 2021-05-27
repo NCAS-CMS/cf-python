@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.binary_mask
+﻿cf.DimensionCoordinate.binary_mask
 ==================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Data.isscalar
+﻿cf.Data.isscalar
 ================
 
 .. currentmodule:: cf

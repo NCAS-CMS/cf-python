@@ -1,4 +1,4 @@
-cf.Field.references
+﻿cf.Field.references
 ===================
 
 .. currentmodule:: cf

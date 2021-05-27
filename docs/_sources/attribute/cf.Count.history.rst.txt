@@ -1,4 +1,4 @@
-cf.Count.history
+﻿cf.Count.history
 ================
 
 .. currentmodule:: cf

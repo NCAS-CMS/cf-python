@@ -295,7 +295,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                         if term_standard_name == x:
                             computed_standard_name = y
                             break
-        # --- End: if
 
         if computed_standard_name is None:
             # ------------------------------------------------------------
@@ -326,7 +325,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     "computed_standard_name", None
                 )
                 break
-        # --- End: if
 
         logger.detail(
             "computed_standard_name: {}".format(
@@ -637,7 +635,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                         "{!r} term {!r} has invalid "
                         "standard name: {!r}".format(term, var, standard_name)
                     )
-        # --- End: for
 
         if strict and not indices:
             raise ValueError(
@@ -2175,10 +2172,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     computed_axes,
                     k_axis,
                 )
-        # --- End: if
 
         # Still here?
         return (None,) * 5
-
-
-# --- End: class

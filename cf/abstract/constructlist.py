@@ -1,7 +1,5 @@
 import logging
 
-from copy import copy
-
 import cfdm
 
 from ..mixin_container import Container
@@ -9,7 +7,6 @@ from ..mixin_container import Container
 from ..functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_DICT,
 )
 
@@ -23,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class ConstructList(list, Container, cfdm.Container):
-    """An ordered sequence of constructs
+    """An ordered sequence of constructs.
 
     The elements of the list are construct of the same type.
 
@@ -64,7 +61,7 @@ class ConstructList(list, Container, cfdm.Container):
         super(cfdm.Container, self).__init__()
 
         if constructs is not None:
-            if getattr(fields, "construct_type", None) is not None:
+            if getattr(constructs, "construct_type", None) is not None:
                 self.append(constructs)
             else:
                 self.extend(constructs)

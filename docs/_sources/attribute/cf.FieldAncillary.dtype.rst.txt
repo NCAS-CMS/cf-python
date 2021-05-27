@@ -1,4 +1,4 @@
-cf.FieldAncillary.dtype
+﻿cf.FieldAncillary.dtype
 =======================
 
 .. currentmodule:: cf

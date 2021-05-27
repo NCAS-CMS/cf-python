@@ -1,4 +1,4 @@
-cf.Data.datetime_as_string
+﻿cf.Data.datetime_as_string
 ==========================
 
 .. currentmodule:: cf

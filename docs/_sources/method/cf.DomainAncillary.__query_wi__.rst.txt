@@ -1,4 +1,4 @@
-:orphan:
+﻿:orphan:
 
 cf.DomainAncillary.__query_wi__
 ===============================

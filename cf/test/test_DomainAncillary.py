@@ -11,9 +11,9 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary(self):
         f = cf.DomainAncillary()
 
-        _ = repr(f)
-        _ = str(f)
-        _ = f.dump(display=False)
+        repr(f)
+        str(f)
+        f.dump(display=False)
 
 
 if __name__ == "__main__":

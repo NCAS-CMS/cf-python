@@ -144,7 +144,7 @@ class aggregateTest(unittest.TestCase):
 
             del t.standard_name
             del c.standard_name
-            x = cf.aggregate([c, t])
+            x = cf.aggregate([c, t], verbose=1)
             self.assertEqual(len(x), 2)
 
             t.long_name = "qwerty"
@@ -176,65 +176,64 @@ class aggregateTest(unittest.TestCase):
         cf.chunksize(self.original_chunksize)
 
     def test_aggregate_verbosity(self):
-        for chunksize in self.chunk_sizes:
-            f0 = cf.example_field(0)
-            f1 = cf.example_field(1)
+        f0 = cf.example_field(0)
+        f1 = cf.example_field(1)
 
-            detail_header = "DETAIL:cf.aggregate:STRUCTURAL SIGNATURE:"
-            debug_header = "DEBUG:cf.aggregate:COMPLETE AGGREGATION METADATA:"
+        detail_header = "DETAIL:cf.aggregate:STRUCTURAL SIGNATURE:"
+        debug_header = "DEBUG:cf.aggregate:COMPLETE AGGREGATION METADATA:"
 
-            # 'DEBUG' (-1) verbosity should output both log message headers...
-            with self.assertLogs(level="NOTSET") as catch:
-                cf.aggregate([f0, f1], verbose=-1)
-                for header in (detail_header, debug_header):
-                    self.assertTrue(
-                        any(
-                            log_item.startswith(header)
-                            for log_item in catch.output
-                        ),
-                        "No log entry begins with '{}'".format(header),
-                    )
-
-            # ...but with 'DETAIL' (3), should get only the detail-level one.
-            with self.assertLogs(level="NOTSET") as catch:
-                cf.aggregate([f0, f1], verbose=3)
+        # 'DEBUG' (-1) verbosity should output both log message headers...
+        with self.assertLogs(level="NOTSET") as catch:
+            cf.aggregate([f0, f1], verbose=-1)
+            for header in (detail_header, debug_header):
                 self.assertTrue(
                     any(
-                        log_item.startswith(detail_header)
+                        log_item.startswith(header)
                         for log_item in catch.output
                     ),
-                    "No log entry begins with '{}'".format(detail_header),
+                    "No log entry begins with '{}'".format(header),
                 )
+
+        # ...but with 'DETAIL' (3), should get only the detail-level one.
+        with self.assertLogs(level="NOTSET") as catch:
+            cf.aggregate([f0, f1], verbose=3)
+            self.assertTrue(
+                any(
+                    log_item.startswith(detail_header)
+                    for log_item in catch.output
+                ),
+                "No log entry begins with '{}'".format(detail_header),
+            )
+            self.assertFalse(
+                any(
+                    log_item.startswith(debug_header)
+                    for log_item in catch.output
+                ),
+                "A log entry begins with '{}' but should not".format(
+                    debug_header
+                ),
+            )
+
+        # and neither should emerge at the 'WARNING' (1) level.
+        with self.assertLogs(level="NOTSET") as catch:
+            logger.warning(
+                "Dummy message to log something at warning level so that "
+                "'assertLog' does not error when no logs messages emerge."
+            )
+            # Note: can use assertNoLogs in Python 3.10 to avoid this, see:
+            # https://bugs.python.org/issue39385
+
+            cf.aggregate([f0, f1], verbose=1)
+            for header in (detail_header, debug_header):
                 self.assertFalse(
                     any(
-                        log_item.startswith(debug_header)
+                        log_item.startswith(header)
                         for log_item in catch.output
                     ),
                     "A log entry begins with '{}' but should not".format(
-                        debug_header
+                        header
                     ),
                 )
-
-            # and neither should emerge at the 'WARNING' (1) level.
-            with self.assertLogs(level="NOTSET") as catch:
-                logger.warning(
-                    "Dummy message to log something at warning level so that "
-                    "'assertLog' does not error when no logs messages emerge."
-                )
-                # Note: can use assertNoLogs in Python 3.10 to avoid this, see:
-                # https://bugs.python.org/issue39385
-
-                cf.aggregate([f0, f1], verbose=1)
-                for header in (detail_header, debug_header):
-                    self.assertFalse(
-                        any(
-                            log_item.startswith(header)
-                            for log_item in catch.output
-                        ),
-                        "A log entry begins with '{}' but should not".format(
-                            header
-                        ),
-                    )
 
     def test_aggregate_domain(self):
         f = cf.example_field(0)

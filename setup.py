@@ -1,4 +1,5 @@
-from distutils.core import setup
+from setuptools import setup
+
 from distutils.command.build import build
 import os
 import fnmatch
@@ -151,7 +152,7 @@ The `cf` package can:
 
 * create new field constructs in memory,
 
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells.
 
@@ -227,6 +228,33 @@ Tests are run from within the ``cf/test`` directory:
 requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
+tests_require = (
+    [
+        "pytest",
+        "pycodestyle",
+        "coverage",
+    ],
+)
+extras_require = {
+    "required C libraries": ["udunits2==2.2.25"],
+    "regridding": ["esmpy", "ESMF>=8.0"],
+    "convolution filters, derivatives, relative vorticity": ["scipy>=1.1.0"],
+    "subspacing with multi-dimensional construct cells": ["matplotlib>=3.0.0"],
+    "parallel processing": ["mpich", "mpi4py>=3.0.0"],
+    "documentation": [
+        "sphinx>=2,<=4",
+        "sphinx-copybutton",
+        "sphinx-toggleprompt",
+        "sphinxcontrib-spelling",
+    ],
+    "pre-commit hooks": [
+        "pre-commit",
+        "black",
+        "docformatter",
+        "flake8",
+    ],
+}
+
 setup(
     name="cf-python",
     long_description=long_description,
@@ -238,6 +266,7 @@ setup(
     author_email="david.hassell@ncas.ac.uk",
     url="https://ncas-cms.github.io/cf-python",
     platforms=["Linux", "MacOS"],
+    license="MIT",
     keywords=[
         "cf",
         "netcdf",
@@ -258,6 +287,12 @@ setup(
         "Topic :: Utilities",
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     packages=[
         "cf",
@@ -275,6 +310,8 @@ setup(
     scripts=["scripts/cfa"],
     python_requires=">=3.6",
     install_requires=install_requires,
+    tests_require=tests_require,
+    extras_require=extras_require,
     # install_requires=[
     #     'netCDF4>=1.5.3',
     #     'cftime>=1.1.3',

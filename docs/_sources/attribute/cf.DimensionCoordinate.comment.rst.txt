@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.comment
+﻿cf.DimensionCoordinate.comment
 ==============================
 
 .. currentmodule:: cf

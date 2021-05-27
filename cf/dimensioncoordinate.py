@@ -55,14 +55,10 @@ class DimensionCoordinate(
 
     {{netcdf variable}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
@@ -122,7 +118,7 @@ class DimensionCoordinate(
         False
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the data
             if data._size > 1:
@@ -135,10 +131,9 @@ class DimensionCoordinate(
                         1,
                     )
                 )
-        # --- End: if
 
         # Still here?
-        data = self.get_bounds_data(None)
+        data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
             b = data[(0,) * (data.ndim - 1)].array
@@ -673,12 +668,10 @@ class DimensionCoordinate(
 
                 if not direction:
                     bounds_1d = bounds_1d[::-1]
-            # --- End: if
 
             bounds = numpy_empty((size, 2), dtype=dtype)
             bounds[:, 0] = bounds_1d[:-1]
             bounds[:, 1] = bounds_1d[1:]
-        # --- End: if
 
         # Create coordinate bounds object
         bounds = Bounds(data=Data(bounds, units=self.Units), copy=False)
@@ -691,6 +684,7 @@ class DimensionCoordinate(
         """Flips the dimension coordinate, that is reverses its
         direction."""
         d = _inplace_enabled_define_and_cleanup(self)
+
         super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
 
         direction = d._custom.get("direction")
@@ -704,14 +698,14 @@ class DimensionCoordinate(
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `bounds`, `create_bounds', `get_data`, `del_bounds`,
-                     `has_bounds`, `set_bounds`
+        .. seealso:: `bounds`, `create_bounds', `get_data`,
+                     `del_bounds`, `has_bounds`, `set_bounds`
 
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if bounds have
-                not been set.
+                Return the value of the *default* parameter if bounds
+                have not been set.
 
                 {{default Exception}}
 
@@ -783,7 +777,6 @@ class DimensionCoordinate(
     #                if verbose:
     #                    print(1)
     #                return False
-    #        # --- End: if
     #
     #        bounds = self.get_bounds(None)
     #        if bounds is None:
@@ -821,7 +814,7 @@ class DimensionCoordinate(
         size = c.size
         if size <= 1:
             return c
-        
+
         shift %= size
         if not shift:
             # Null roll
@@ -850,11 +843,11 @@ class DimensionCoordinate(
         c.dtype = numpy_result_type(c.dtype, period.dtype)
 
         b = c.get_bounds(None)
-        bounds_data = c.get_bounds_data(None)
+        bounds_data = c.get_bounds_data(None, _fill_value=False)
 
         if bounds_data is not None:
             b.dtype = numpy_result_type(bounds_data.dtype, period.dtype)
-            bounds_data = b.get_data(None)
+            bounds_data = b.get_data(None, _fill_value=False)
 
         if direction:
             # Increasing
@@ -876,7 +869,6 @@ class DimensionCoordinate(
                 c -= period
                 if bounds_data is not None:
                     b -= period
-        # --- End: if
 
         c._custom["direction"] = direction
 

@@ -13,6 +13,9 @@ fi
 
 vn=$1
 
+# Get the major.minor Python version
+py=$(python -V | cut -d " " -f 2 | cut -d "." -f 1,2)
+
 mkdir -p ~/tmp
 cp dist/cf-python-$vn.tar.gz ~/tmp
 cd ~/tmp
@@ -24,13 +27,10 @@ python setup.py install --home=~/tmp
 export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
 export PATH=~/tmp/bin:$PATH
 
-cd ~/tmp/lib/python/cf/test
+cd ~/tmp/lib/python/cf_python-${vn}-py${py}.egg/cf/test
+
 python run_tests.py
 test_result_status=$?
-
-#mpirun -n 3 python run_tests.py
-#mpirun -n 2 python run_tests.py
-#mpirun -n 1 python run_tests.py
 
 set -x
 

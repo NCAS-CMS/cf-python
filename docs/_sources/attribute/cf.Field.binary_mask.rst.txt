@@ -1,4 +1,4 @@
-cf.Field.binary_mask
+﻿cf.Field.binary_mask
 ====================
 
 .. currentmodule:: cf

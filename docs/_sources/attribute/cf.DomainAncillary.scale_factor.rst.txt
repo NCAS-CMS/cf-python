@@ -1,4 +1,4 @@
-cf.DomainAncillary.scale_factor
+﻿cf.DomainAncillary.scale_factor
 ===============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Index.size
+﻿cf.Index.size
 =============
 
 .. currentmodule:: cf

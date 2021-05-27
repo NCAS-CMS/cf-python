@@ -1,5 +1,3 @@
-from copy import copy
-
 import logging
 
 import cfdm
@@ -9,7 +7,6 @@ from .mixin_container import Container
 from .functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_DICT,
 )
 
@@ -23,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class ConstructList(list, Container, cfdm.Container):
-    """An ordered sequence of constructs
+    """An ordered sequence of constructs.
 
     The elements of the list are construct of the same type.
 
@@ -146,7 +143,6 @@ class ConstructList(list, Container, cfdm.Container):
         for f in self:
             if f.equals(y):
                 return True
-        # --- End: for
 
         return False
 
@@ -175,7 +171,7 @@ class ConstructList(list, Container, cfdm.Container):
 
         {{List comparison}}
 
-        Note that ``f == x`` is equivalent to ``not f.equals(x)``.
+        Note that ``f == x`` is equivalent to ``f.equals(x)``.
 
         :Returns:
 
@@ -211,9 +207,9 @@ class ConstructList(list, Container, cfdm.Container):
 
         :Returns:
 
-                If *index* is an integer then the corresponding construct
-                element is returned. If *index* is a slice then a new
-                {{class}} is returned, which may be empty.
+                If *index* is an integer then the corresponding
+                construct element is returned. If *index* is a slice
+                then a new {{class}} is returned, which may be empty.
 
         **Examples:**
 
@@ -277,7 +273,7 @@ class ConstructList(list, Container, cfdm.Container):
             f.close()
 
     def count(self, value):
-        """Return number of occurrences of value
+        """Return number of occurrences of value.
 
         {{List comparison}}
 
@@ -320,7 +316,6 @@ class ConstructList(list, Container, cfdm.Container):
         for i, f in enumerate(self[start:stop]):
             if f.equals(value):
                 return i + start
-        # --- End: for
 
         raise ValueError(
             "{0!r} is not in {1}".format(value, self.__class__.__name__)
@@ -338,7 +333,6 @@ class ConstructList(list, Container, cfdm.Container):
             if f.equals(value):
                 del self[i]
                 return
-        # --- End: for
 
         raise ValueError(
             "{0}.remove(x): x not in {0}".format(self.__class__.__name__)
@@ -347,8 +341,9 @@ class ConstructList(list, Container, cfdm.Container):
     def sort(self, key=None, reverse=False):
         """Sort of the list in place.
 
-        By default the list is sorted by the identities of its constructs,
-        but any sort criteria cna be specified with the *key* parameter.
+        By default the list is sorted by the identities of its
+        constructs, but any sort criteria can be specified with the
+        *key* parameter.
 
         The sort is stable.
 
@@ -359,14 +354,15 @@ class ConstructList(list, Container, cfdm.Container):
         :Parameters:
 
             key: function, optional
-                Specify a function of one argument that is used to extract
-                a comparison key from each construct. By default the list
-                is sorted by construct identity, i.e. the default value of
-                *key* is ``lambda x: x.identity()``.
+                Specify a function of one argument that is used to
+                extract a comparison key from each construct. By
+                default the list is sorted by construct identity,
+                i.e. the default value of *key* is ``lambda x:
+                x.identity()``.
 
             reverse: `bool`, optional
-                If set to `True`, then the list elements are sorted as if
-                each comparison were reversed.
+                If set to `True`, then the list elements are sorted as
+                if each comparison were reversed.
 
         :Returns:
 
@@ -385,6 +381,7 @@ class ConstructList(list, Container, cfdm.Container):
 
         :Returns:
 
+            `{{class}}`
                 The deep copy.
 
         **Examples:**
@@ -423,40 +420,41 @@ class ConstructList(list, Container, cfdm.Container):
     ):
         """Whether two lists are the same.
 
-        Equality requires the two lists to have the same length and for
-        the construct elements to be equal pair-wise, using their
+        Equality requires the two lists to have the same length and
+        for the construct elements to be equal pair-wise, using their
         `!equals` methods.
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another {{class}}, or a subclass of one. See the
-        *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another {{class}}, or a subclass of
+        one. See the *ignore_type* parameter.
 
         Equality is between the constructs is strict by default. This
         means that for two constructs to be considered equal they must
         have corresponding metadata constructs and for each pair of
         constructs:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also
-          have same the size and be element-wise equal (see the
-          *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
         ..
 
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see
-          the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
         {{equals tolerance}}
 
-        If data arrays are compressed then the compression type and the
-        underlying compressed arrays must be the same, as well as the
-        arrays in their uncompressed forms. See the *ignore_compression*
-        parameter.
+        If data arrays are compressed then the compression type and
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms. See the
+        *ignore_compression* parameter.
 
-        NetCDF elements, such as netCDF variable and dimension names, do
-        not constitute part of the CF data model and so are not checked on
-        any construct.
+        NetCDF elements, such as netCDF variable and dimension names,
+        do not constitute part of the CF data model and so are not
+        checked on any construct.
 
         :Parameters:
             other:
@@ -471,10 +469,10 @@ class ConstructList(list, Container, cfdm.Container):
             {{verbose: `int` or `str` or `None`, optional}}
 
             ignore_properties: sequence of `str`, optional
-                The names of properties of the field construct (not the TODO
-                metadata constructs) to omit from the comparison. Note
-                that the "Conventions" property is always omitted by
-                default.
+                The names of properties of the field construct (not
+                the TODO metadata constructs) to omit from the
+                comparison. Note that the "Conventions" property is
+                always omitted by default.
 
             {{ignore_data_type: `bool`, optional}}
 
@@ -596,7 +594,6 @@ class ConstructList(list, Container, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-            # --- End: for
 
             # For each identity, check that there are matching pairs
             # of equal constructs.
@@ -620,7 +617,6 @@ class ConstructList(list, Container, cfdm.Container):
                             found_match = True
                             del gl[i]
                             break
-                # --- End: for
 
                 if not found_match:
                     logger.info(
@@ -629,7 +625,6 @@ class ConstructList(list, Container, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Still here? Then the lists are equal
@@ -640,7 +635,7 @@ class ConstructList(list, Container, cfdm.Container):
         """Select list elements constructs by identity.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_identity` method of the constucts. For
+        with the `!match_by_identity` method of the constructs. For
         example, to select all constructs whose identity is *not*
         ``'air_temperature'``:
 
@@ -657,8 +652,8 @@ class ConstructList(list, Container, cfdm.Container):
         :Parameters:
 
             identities: optional
-                Select constructs from the list. By default all constructs
-                are selected. May be one or more of:
+                Select constructs from the list. By default all
+                constructs are selected. May be one or more of:
 
                 * A construct identity.
 
@@ -695,7 +690,7 @@ class ConstructList(list, Container, cfdm.Container):
         """Alias of `cf.{{class}}.select_by_identity`.
 
         To find the inverse of the selection, use a list comprehension
-        with the `!match_by_identity` method of the constucts. For
+        with the `!match_by_identity` method of the constructs. For
         example, to select all constructs whose identity is *not*
         ``'air_temperature'``:
 
@@ -746,9 +741,5 @@ class ConstructList(list, Container, cfdm.Container):
                             i, i.replace(":", "=", 1)
                         )
                     )  # pragma: no cover
-        # --- End: for
 
         return self.select_by_identity(*identities)
-
-
-# --- End: class

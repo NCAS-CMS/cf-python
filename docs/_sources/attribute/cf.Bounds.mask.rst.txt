@@ -1,4 +1,4 @@
-cf.Bounds.mask
+﻿cf.Bounds.mask
 ==============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Bounds.scale_factor
+﻿cf.Bounds.scale_factor
 ======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.CellMeasure.size
+﻿cf.CellMeasure.size
 ===================
 
 .. currentmodule:: cf

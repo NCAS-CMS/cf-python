@@ -27,6 +27,7 @@ def write(
     fields,
     filename,
     fmt="NETCDF4",
+    mode="w",
     overwrite=True,
     global_attributes=None,
     file_descriptors=None,
@@ -41,7 +42,6 @@ def write(
     reference_datetime=None,
     verbose=None,
     cfa_options=None,
-    mode="w",
     single=None,
     double=None,
     variable_attributes=None,
@@ -196,6 +196,61 @@ def write(
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
 
+        mode: `str`, optional
+            Specify the mode of write access for the output file. One of:
+
+            ========  =================================================
+            *mode*    Description
+            ========  =================================================
+            ``'w'``   Open a new file for writing to. If it exists and
+                      *overwrite* is True then the file is deleted
+                      prior to being recreated.
+
+            ``'a'``   Open an existing file for appending new
+                      information to. The new information will be
+                      incorporated whilst the original contents of the
+                      file will be preserved.
+
+                      In practice this means that new fields will be
+                      created, whilst the original fields will not be
+                      edited at all. Coordinates on the fields, where
+                      equal, will be shared as standard.
+
+                      For append mode, note the following:
+
+                      * Global attributes on the file
+                        will remain the same as they were originally,
+                        so will become inaccurate where appended fields
+                        have incompatible attributes. To rectify this,
+                        manually inspect and edit them as appropriate
+                        after the append operation using methods such as
+                        `nc_clear_global_attributes` and
+                        `nc_set_global_attribute`.
+
+                      * Fields with incompatible ``featureType`` to
+                        the original file cannot be appended.
+
+                      * At present fields with groups cannot be
+                        appended, but this will be possible in a future
+                        version. Groups can however be cleared, the
+                        fields appended, and groups re-applied, via
+                        methods such as `nc_clear_variable_groups` and
+                        `nc_set_variable_groups`, to achieve the same
+                        for now.
+
+                      * At present domain ancillary constructs of
+                        appended fields may not be handled correctly
+                        and can appear as extra fields. Set them on the
+                        resultant fields using `set_domain_ancillary`
+                        and similar methods if required.
+
+            ``'r+'``  Alias for ``'a'``.
+
+            ========  =================================================
+
+            By default the file is opened with write access mode
+            ``'w'``.
+
         overwrite: `bool`, optional
             If False then raise an error if the output file
             pre-exists. By default a pre-existing output file is
@@ -313,20 +368,6 @@ def write(
             Write metadata constructs that have data and are marked as
             external to the named external file. Ignored if there are
             no such constructs.
-
-        mode: `str`, optional
-            Specify the mode of write access for the output file. One of:
-
-            =======  =================================================
-            *mode*   Description
-            =======  =================================================
-            ``'w'``  Open a new file for writing to. If it exists and
-                     *overwrite* is True then the file is deleted
-                     prior to being recreated.
-            =======  =================================================
-
-            By default the file is opened with write access mode
-            ``'w'``.
 
         cfa_options: `dict`, optional
             A dictionary giving parameters for configuring the output
@@ -532,8 +573,8 @@ def write(
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constucts and
-            its components will be created and populated.
+            defined by the netCDF interface of the field constructs
+            and its components will be created and populated.
 
             .. versionadded:: 3.6.0
 
@@ -684,6 +725,7 @@ def write(
             fields,
             filename,
             fmt=fmt,
+            mode=mode,
             overwrite=overwrite,
             global_attributes=global_attributes,
             variable_attributes=variable_attributes,

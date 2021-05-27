@@ -12,12 +12,14 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 
-from .functions import parse_indices
+from .functions import (
+    parse_indices,
+    _DEPRECATION_ERROR_ARG,
+)
 
 from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _manage_log_level_via_verbosity,
 )
 
 logger = logging.getLogger(__name__)
@@ -56,26 +58,28 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    # ----------------------------------------------------------------
-    # Private attributes
-    # ----------------------------------------------------------------
     @property
     def _cyclic(self):
-        """Storage for axis cyclicity. Do not change the value in-place."""
+        """Storage for axis cyclicity.
+
+        Do not change the value in-place.
+
+        """
         return self._custom.get("_cyclic", _empty_set)
 
     @_cyclic.setter
     def _cyclic(self, value):
-        """value must be a set. Do not change the value in-place."""
+        """value must be a set.
+
+        Do not change the value in-place.
+
+        """
         self._custom["_cyclic"] = value
 
     @_cyclic.deleter
     def _cyclic(self):
         self._custom["_cyclic"] = _empty_set
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def size(self):
         """The number of locations in the domain.
@@ -84,7 +88,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         construct has a size of 0, then the size is 0.
 
         """
-        domain_axes = self.domain_axes
+        domain_axes = self.domain_axes(todict=True)
         if not domain_axes:
             return 0
 
@@ -94,9 +98,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             1,
         )
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def close(self):
         """Close all files referenced by the domain construct.
 
@@ -116,169 +117,170 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         self.constructs.close()
 
-    def cyclic(self, identity=None, iscyclic=True, period=None):
-        """Set the cyclicity of an axis.
-
-        .. versionadded:: 3.TODO.0
-
-        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
-
-        :Parameters:
-
-            identity: optional
-                Select the domain axis construct.
-
-                {{domain axis selection}}
-
-                If *identity is `None` (the default) then the unique
-                domain axis construct is selected when there is only one
-                of them.
-
-                *Parameter example:*
-                  ``identity='time'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-            iscyclic: `bool`, optional
-                If False then the axis is set to be non-cyclic. By
-                default the selected axis is set to be cyclic.
-
-            period: optional
-                The period for a dimension coordinate construct which
-                spans the selected axis. May be any numeric scalar object
-                that can be converted to a `Data` object (which includes
-                numpy array and `Data` objects). The absolute value of
-                *period* is used. If *period* has units then they must be
-                compatible with those of the dimension coordinates,
-                otherwise it is assumed to have the same units as the
-                dimension coordinates.
-
-        :Returns:
-
-            `set`
-                The construct keys of the domain axes which were cyclic
-                prior to the new setting, or the current cyclic domain
-                axes if no axis was specified.
-
-        **Examples:**
-
-        >>> f.cyclic()
-        set()
-        >>> f.cyclic('X', period=360)
-        set()
-        >>> f.cyclic()
-        {'domainaxis2'}
-        >>> f.cyclic('X', iscyclic=False)
-        {'domainaxis2'}
-        >>> f.cyclic()
-        set()
-
-        """
-        cyclic = self._cyclic
-        old = cyclic.copy()
-
-        if identity is None:
-            return old
-
-        axis = self.domain_axis(identity, key=True)
-
-        if iscyclic:
-            dim = self.dimension_coordinate(axis, default=None)
-            if dim is not None:
-                if period is not None:
-                    dim.period(period)
-                elif dim.period() is None:
-                    raise ValueError(
-                        "A cyclic dimension coordinate must have a period"
-                    )
-        # --- End: if
-
-        # Never change _cyclic in-place
-        self._cyclic = cyclic.union((axis,))
-
-        return old
-
-    def domain_axis(self, identity=None, key=False, default=ValueError()):
-        """Return a domain axis construct, or its key.
-
-        .. versionadded:: 3.TODO.0
-
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_reference`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axes`, `field_ancillary`
-
-        :Parameters:
-
-            identity: optional
-                Select the domain axis construct.
-
-                {{domain axis selection}}
-
-                If *identity is `None` (the default) then the unique
-                domain axis construct is selected when there is only one
-                of them.
-
-                *Parameter example:*
-                  ``identity='time'``
-
-                *Parameter example:*
-                  ``identity='domainaxis2'``
-
-                *Parameter example:*
-                  ``identity='ncdim%y'``
-
-            key: `bool`, optional
-                If True then return the selected construct key. By
-                default the construct itself is returned.
-
-            default: optional
-                Return the value of the *default* parameter if a construct
-                can not be found.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `DomainAxis` or `str`
-                The selected domain axis construct, or its key.
-
-        **Examples:**
-
-        """
-        domain_axes = self.domain_axes(identity)
-
-        n_domain_axes = len(domain_axes)
-        if n_domain_axes == 1:
-            # identity is a unique domain axis construct identity
-            if key:
-                return domain_axes.key()
-
-            return domain_axes.value()
-
-        if n_domain_axes > 1:
-            return self._default(
-                default,
-                message="Mulitple domain axes found from identity "
-                f"{identity!r}",
-            )
-
-        # identity is not a unique domain axis construct identity
-        da_key = self.domain_axis_key(identity, default=None)
-        if da_key is None:
-            return self._default(
-                default,
-                message=f"No domain axis found from identity {identity!r}",
-            )
-
-        if key:
-            return da_key
-
-        return self.constructs[da_key]
+    #    def cyclic(
+    #        self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
+    #    ):
+    #        """Set the cyclicity of an axis.
+    #
+    #        .. versionadded:: 3.TODO.0
+    #
+    #        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
+    #
+    #        :Parameters:
+    #
+    #            identity, filter_kwargs: optional
+    #                Select the unique domain axis construct returned by
+    #                ``f.domain_axis(*identity, **filter_kwargs)``. See
+    #                `domain_axis` for details.
+    #
+    #            iscyclic: `bool`, optional
+    #                If False then the axis is set to be non-cyclic. By
+    #                default the selected axis is set to be cyclic.
+    #
+    #            period: optional
+    #                The period for a dimension coordinate construct which
+    #                spans the selected axis. May be any numeric scalar
+    #                object that can be converted to a `Data` object (which
+    #                includes numpy array and `Data` objects). The absolute
+    #                value of *period* is used. If *period* has units then
+    #                they must be compatible with those of the dimension
+    #                coordinates, otherwise it is assumed to have the same
+    #                units as the dimension coordinates.
+    #
+    #            config: `dict`
+    #                Additional parameters for optimizing the
+    #                operation. See the code for details.
+    #
+    #        :Returns:
+    #
+    #            `set`
+    #                The construct keys of the domain axes which were cyclic
+    #                prior to the new setting, or the current cyclic domain
+    #                axes if no axis was specified.
+    #
+    #        **Examples:**
+    #
+    #        >>> f.cyclic()
+    #        set()
+    #        >>> f.cyclic('X', period=360)
+    #        set()
+    #        >>> f.cyclic()
+    #        {'domainaxis2'}
+    #        >>> f.cyclic('X', iscyclic=False)
+    #        {'domainaxis2'}
+    #        >>> f.cyclic()
+    #        set()
+    #
+    #        """
+    #        cyclic = self._cyclic
+    #        old = cyclic.copy()
+    #
+    #        if identity is None:
+    #            return old
+    #
+    #        axis = self.domain_axis(identity, key=True)
+    #
+    #        if iscyclic:
+    #            dim = self.dimension_coordinate(axis, default=None)
+    #            if dim is not None:
+    #                if period is not None:
+    #                    dim.period(period)
+    #                elif dim.period() is None:
+    #                    raise ValueError(
+    #                        "A cyclic dimension coordinate must have a period"
+    #                    )
+    #
+    #        # Never change _cyclic in-place
+    #        self._cyclic = cyclic.union((axis,))
+    #
+    #        return old
+    #
+    #    def domain_axis(self, identity=None, key=False, item=False,
+    #                    default=ValueError()):
+    #        """Return a domain axis construct, or its key.
+    #
+    #        .. versionadded:: 3.TODO.0
+    #
+    #        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+    #                     `cell_method`, `coordinate`, `coordinate_reference`,
+    #                     `dimension_coordinate`, `domain_ancillary`,
+    #                     `domain_axes`, `field_ancillary`
+    #
+    #        :Parameters:
+    #
+    #            identity: optional
+    #                Select the domain axis construct.
+    #
+    #                {{domain axis selection}}
+    #
+    #                If *identity is `None` (the default) then the unique
+    #                domain axis construct is selected when there is only one
+    #                of them.
+    #
+    #                *Parameter example:*
+    #                  ``identity='time'``
+    #
+    #                *Parameter example:*
+    #                  ``identity='domainaxis2'``
+    #
+    #                *Parameter example:*
+    #                  ``identity='ncdim%y'``
+    #
+    #            key: `bool`, optional
+    #                If True then return the selected construct key. By
+    #                default the construct itself is returned.
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if a construct
+    #                can not be found.
+    #
+    #                {{default Exception}}
+    #
+    #        :Returns:
+    #
+    #            `DomainAxis` or `str`
+    #                The selected domain axis construct, or its key.
+    #
+    #        **Examples:**
+    #
+    #        """
+    #        c = self.domain_axes(identity)
+    #
+    #        n = len(c)
+    #        if n == 1:
+    #            k, construct = c.popitem()
+    #            if key:
+    #                return k
+    #
+    #            if item:
+    #                return k, construct
+    #
+    #            return construct
+    #        elif n > 1:
+    #            if default is None:
+    #                return default
+    #
+    #            return self._default(
+    #                default,
+    #                f"{self.__class__.__name__}.{_method}() can't return {n} "
+    #                "constructs",
+    #            )
+    #
+    #        # identity is not a unique domain axis construct identity
+    #        da_key = self.domain_axis_key(identity, default=None)
+    #        if da_key is None:
+    #            if default is None:
+    #                return default
+    #
+    #            return self._default(
+    #                default,
+    #                message=f"No domain axis found from identity {identity!r}",
+    #            )
+    #
+    #        if key:
+    #            return da_key
+    #
+    #        return self.constructs[da_key]
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):
@@ -335,7 +337,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         if axes is None:
             # Flip all the axes
-            axes = self.domain_axes
+            axes = self.domain_axes(todict=True)
         else:
             axes = self._parse_axes(axes)
 
@@ -346,9 +348,57 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return d
 
+    def get_data(self, default=ValueError(), _units=None, _fill_value=True):
+        """Return a default value when data is requested.
+
+        A `Domain` instance can never have data, so a default value
+        must be returned if data is requested. This is useful for
+        cases when it is not known in advance if a `Field` or `Domain`
+        instance is in use.
+
+        .. versionadded:: 3.TODO.0
+
+        .. seealso:: `has_data`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter.
+
+                {{default Exception}}
+
+            _units: optional
+                Ignored.
+
+            _fill_value: optional
+                Ignored.
+
+        :Returns:
+
+                The value of the *default* parameter, if an exception
+                has not been raised.
+
+        **Examples:**
+
+        >>> d = cf.example_domain(0)
+        >>> print(d.get_data(None))
+        None
+        >>> d.get_data()
+        Traceback (most recent call last):
+            ...
+        ValueError: Domain has no data
+
+        """
+        if default is None:
+            return
+
+        return self._default(
+            default, message=f"{self.__class__.__name__} has no data"
+        )
+
     def get_data_axes(self, identity, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of a metadata construct.
 
         .. versionadded:: 3.TODO.0
 
@@ -595,7 +645,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return out
 
     def indices(self, *mode, **kwargs):
-        """Create indices that define a subspace of the domain construct.
+        """Create indices that define a subspace of the domain
+        construct.
 
         The indices returned by this method be used to create the subspace
         by passing them to the `subspace` method of the original domain
@@ -886,7 +937,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                     n += 1
                 elif not OR:
                     return False
-        # --- End: if
 
         if OR:
             return bool(n)
@@ -954,7 +1004,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return d
 
     def subspace(self, *mode, **kwargs):
-        """Create indices that define a subspace of the domain construct.
+        """Create indices that define a subspace of the domain
+        construct.
 
         The indices returned by this method be used to create the subspace
         by passing them to the `subspace` method of the original domain
@@ -1064,8 +1115,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         """
         logger.debug(
-            "{}.subspace\n"
-            "  input kwargs = {}".format(self.__class__.__name__, kwargs)
+            f"{self.__class__.__name__}.subspace\n"
+            f"  input kwargs = {kwargs}"
         )  # pragma: no cover
 
         test = False
@@ -1091,7 +1142,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         if test:
             return True
 
-        domain_axes = self.domain_axes
+        domain_axes = self.domain_axes(todict=True)
 
         axes = []
         shape = []
@@ -1106,9 +1157,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         )
 
         logger.debug(
-            "  axes           = {!r}\n"
-            "  parsed indices = {!r}\n"
-            "  roll           = {!r}".format(axes, indices, roll)
+            f"  axes           = {axes!r}\n"
+            f"  parsed indices = {indices!r}\n"
+            f"  roll           = {roll!r}"
         )  # pragma: no cover
 
         if roll:
@@ -1130,7 +1181,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         # ------------------------------------------------------------
         # Set sizes of domain axes
         # ------------------------------------------------------------
-        domain_axes = new.domain_axes
+        domain_axes = new.domain_axes(todict=True)
         for axis, index in zip(axes, indices):
             if isinstance(index, slice):
                 old_size = domain_axes[axis].get_size()
@@ -1241,11 +1292,12 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         axes = d._parse_axes(axes)
 
-        if len(set(axes)) != len(d.domain_axes):
+        rank = self.rank
+        if len(set(axes)) != rank:
             raise ValueError(
                 f"Can't transpose {self.__class__.__name__}. "
                 f"Must provide an unambiguous order for all "
-                f"{len(d.domain_axes)} domain axes. Got: {axes}"
+                f"{rank} domain axes. Got: {axes}"
             )
 
         data_axes = d.constructs.data_axes()

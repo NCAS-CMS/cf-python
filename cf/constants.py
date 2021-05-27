@@ -36,7 +36,6 @@ _TOTAL_MEMORY = float(virtual_memory().total)
 #         if field_size[0] == 'MemTotal:':
 #             _MemTotal = float(field_size[1]) * 1024
 #             break
-#     # --- End: for
 #
 #     _meminfo_file.close()
 

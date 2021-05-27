@@ -1,4 +1,4 @@
-cf.month
+﻿cf.month
 ========
 
 .. currentmodule:: cf

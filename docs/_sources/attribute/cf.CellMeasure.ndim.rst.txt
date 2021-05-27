@@ -1,4 +1,4 @@
-cf.CellMeasure.ndim
+﻿cf.CellMeasure.ndim
 ===================
 
 .. currentmodule:: cf

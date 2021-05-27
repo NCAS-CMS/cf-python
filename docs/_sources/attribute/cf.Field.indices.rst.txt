@@ -1,4 +1,4 @@
-cf.Field.indices
+﻿cf.Field.indices
 ================
 
 .. currentmodule:: cf

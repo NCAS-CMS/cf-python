@@ -172,6 +172,7 @@ Miscellaneous
    cf.environment
    cf.example_field
    cf.example_fields
+   cf.example_domain
    cf.flat
    cf.hash_array
    cf.implementation

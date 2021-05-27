@@ -1,4 +1,4 @@
-cf.Bounds.minute
+﻿cf.Bounds.minute
 ================
 
 .. currentmodule:: cf

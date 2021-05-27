@@ -1,4 +1,4 @@
-cf.Field.Conventions
+﻿cf.Field.Conventions
 ====================
 
 .. currentmodule:: cf

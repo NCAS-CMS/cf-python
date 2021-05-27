@@ -1,4 +1,4 @@
-cf.Data.varray
+﻿cf.Data.varray
 ==============
 
 .. currentmodule:: cf

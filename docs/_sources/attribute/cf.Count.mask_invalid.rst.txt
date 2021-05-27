@@ -1,4 +1,4 @@
-cf.Count.mask_invalid
+﻿cf.Count.mask_invalid
 =====================
 
 .. currentmodule:: cf

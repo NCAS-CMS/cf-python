@@ -1,4 +1,4 @@
-cf.Field.isscalar
+﻿cf.Field.isscalar
 =================
 
 .. currentmodule:: cf

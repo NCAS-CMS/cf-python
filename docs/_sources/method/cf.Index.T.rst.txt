@@ -1,4 +1,4 @@
-cf.Index.T
+﻿cf.Index.T
 ==========
 
 .. currentmodule:: cf

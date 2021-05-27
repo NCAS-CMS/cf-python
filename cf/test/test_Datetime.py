@@ -59,7 +59,7 @@ class DatetimeTest(unittest.TestCase):
             np.ma.array([3]),
         ):
             b = cf.cfdatetime.rt2dt(a, Units("days since 1970-01-01"))
-            self.assertTrue(b == cf.dt(1970, 1, 4, calendar="gregorian"))
+            self.assertEqual(b, cf.dt(1970, 1, 4, calendar="gregorian"))
 
         for a in (
             np.ma.array(3, mask=True),

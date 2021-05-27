@@ -38,6 +38,3 @@ class FieldAncillary(mixin.PropertiesData, cfdm.FieldAncillary):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

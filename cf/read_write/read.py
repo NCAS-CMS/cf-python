@@ -4,18 +4,27 @@ import os
 from glob import glob
 from os.path import isdir
 
+from numpy.ma.core import MaskError
+
+from ..cfimplementation import implementation
+from ..domainlist import DomainList
+from ..fieldlist import FieldList
+from ..aggregate import aggregate as cf_aggregate
+from ..decorators import _manage_log_level_via_verbosity
+from ..query import Query
+from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
+
 from .netcdf import NetCDFRead
 from .um import UMRead
 
-from ..cfimplementation import implementation
-
-from ..fieldlist import FieldList
-
-from ..aggregate import aggregate as cf_aggregate
-
-from ..decorators import _manage_log_level_via_verbosity
-
-from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
+# TODO - replace the try block with "from re import Pattern" when
+#        Python 3.6 is deprecated
+try:
+    from re import Pattern
+except ImportError:  # pragma: no cover
+    python36 = True  # pragma: no cover
+else:
+    python36 = False
 
 
 # --------------------------------------------------------------------
@@ -334,13 +343,12 @@ def read(
             ``f.match_by_identity(*select)`` is `True`. See
             `cf.Field.match_by_identity` for details.
 
-            This is equivalent to, but possibly faster than, not using
-            the *select* parameter but applying its value to the
-            returned field list with its
-            `cf.FieldList.select_by_identity` method. For example,
-            ``fl = cf.read(file, select='air_temperature')`` is
-            equivalent to
-            ``fl = cf.read(file).select_by_identity('air_temperature')``.
+            This is equivalent to, but faster than, not using the
+            *select* parameter but applying its value to the returned
+            field list with its `cf.FieldList.select_by_identity`
+            method. For example, ``fl = cf.read(file,
+            select='air_temperature')`` is equivalent to ``fl =
+            cf.read(file).select_by_identity('air_temperature')``.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -514,9 +522,9 @@ def read(
 
     :Returns:
 
-        `FieldList`
-            The field constructs found in the input dataset(s). The
-            list may be empty.
+        `FieldList` or `DomainList`
+            The field or domain constructs found in the input
+            dataset(s). The list may be empty.
 
     **Examples:**
 
@@ -583,8 +591,16 @@ def read(
         )  # pragma: no cover
 
     # Parse select
-    if isinstance(select, str):
-        select = (select,)
+    # TODO - delete the "if python36:" clause when Python 3.6 is
+    #        deprecated
+    if python36:
+        if isinstance(select, (str, Query)) or hasattr(
+            select, "search"
+        ):  # pragma: no cover
+            select = (select,)  # pragma: no cover
+    else:
+        if isinstance(select, (str, Query, Pattern)):
+            select = (select,)
 
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
@@ -596,8 +612,11 @@ def read(
             )
         )
 
-    # Initialize the output list of fields
-    field_list = FieldList()
+    # Initialize the output list of fields/domains
+    if domain:
+        out = DomainList()
+    else:
+        out = FieldList()
 
     if isinstance(aggregate, dict):
         aggregate_options = aggregate.copy()
@@ -646,12 +665,11 @@ def read(
                             break
                 else:
                     files3.append(x)
-            # --- End: for
 
             files2 = files3
 
         for filename in files2:
-            logger.info("File: {0}".format(filename))  # pragma: no cover
+            logger.info(f"File: {filename}")  # pragma: no cover
 
             if um:
                 ftype = "UM"
@@ -677,19 +695,21 @@ def read(
 
                         raise ValueError(message)
 
-                    logger.warning(
-                        "WARNING: {}".format(error)
-                    )  # pragma: no cover
+                    logger.warning(f"WARNING: {error}")  # pragma: no cover
 
                     continue
-            # --- End: if
+
+            if domain and ftype == "UM":
+                raise ValueError(
+                    f"Can't read PP/UM file {filename} into domain constructs"
+                )
 
             ftypes.add(ftype)
 
             # --------------------------------------------------------
-            # Read the file into fields
+            # Read the file
             # --------------------------------------------------------
-            fields = _read_a_file(
+            file_contents = _read_a_file(
                 filename,
                 ftype=ftype,
                 external=external,
@@ -705,25 +725,24 @@ def read(
                 chunk=chunk,
                 mask=mask,
                 warn_valid=warn_valid,
+                select=select,
                 domain=domain,
             )
 
             # --------------------------------------------------------
-            # Select matching fields (not from UM files)
+            # Select matching fields (not from UM files, yet)
             # --------------------------------------------------------
             if select and ftype != "UM":
-                fields = fields.select_by_identity(*select)
+                file_contents = file_contents.select_by_identity(*select)
 
             # --------------------------------------------------------
-            # Add this file's fields to those already read from other
+            # Add this file's contents to that already read from other
             # files
             # --------------------------------------------------------
-            field_list.extend(fields)
+            out.extend(file_contents)
 
-            field_counter = len(field_list)
+            field_counter = len(out)
             file_counter += 1
-        # --- End: for
-    # --- End: for
 
     logger.info(
         "Read {0} field{1} from {2} file{3}".format(
@@ -735,43 +754,40 @@ def read(
     )  # pragma: no cover
 
     # ----------------------------------------------------------------
-    # Aggregate the output fields
+    # Aggregate the output fields/domains
     # ----------------------------------------------------------------
-    if aggregate and len(field_list) > 1:
-        org_len = len(field_list)  # pragma: no cover
+    if aggregate and len(out) > 1:
+        org_len = len(out)  # pragma: no cover
 
-        field_list = cf_aggregate(field_list, **aggregate_options)
+        out = cf_aggregate(out, **aggregate_options)
 
-        n = len(field_list)  # pragma: no cover
+        n = len(out)  # pragma: no cover
         logger.info(
-            "{0} input field{1} aggregated into {2} field{3}".format(
-                org_len, _plural(org_len), n, _plural(n)
-            )
+            f"{org_len} input field{_plural(org_len)} aggregated into "
+            f"{n} field{ _plural(n)}"
         )  # pragma: no cover
-    # --- End: if
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
     # ----------------------------------------------------------------
-    if len(field_list) > 1:
-        field_list.sort(key=lambda f: f.nc_get_variable(""))
+    if len(out) > 1:
+        out.sort(key=lambda f: f.nc_get_variable(""))
 
     # ----------------------------------------------------------------
     # Add standard names to UM/PP fields (post aggregation)
     # ----------------------------------------------------------------
-    for f in field_list:
+    for f in out:
         standard_name = f._custom.get("standard_name", None)
         if standard_name is not None:
-            f.set_property("standard_name", standard_name)
+            f.set_property("standard_name", standard_name, copy=False)
             del f._custom["standard_name"]
-    # --- End: for
 
     # ----------------------------------------------------------------
     # Select matching fields from UM/PP fields (post setting of
     # standard names)
     # ----------------------------------------------------------------
     if select and "UM" in ftypes:
-        field_list = field_list.select_by_identity(*select)
+        out = out.select_by_identity(*select)
 
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
@@ -784,25 +800,25 @@ def read(
     #
     # 3) Nothing
     # ----------------------------------------------------------------
-    if squeeze:
-        for f in field_list:
-            f.squeeze(inplace=True)
-    elif unsqueeze:
-        for f in field_list:
-            f.unsqueeze(inplace=True)
-    # --- End: if
+    if not domain:
+        if squeeze:
+            for f in out:
+                f.squeeze(inplace=True)
+        elif unsqueeze:
+            for f in out:
+                f.unsqueeze(inplace=True)
 
-    if nfields is not None and len(field_list) != nfields:
+    if nfields is not None and len(out) != nfields:
         raise ValueError(
             "{} field{} requested but {} fields found in file{}".format(
                 nfields,
                 _plural(nfields),
-                len(field_list),
+                len(out),
                 _plural(file_counter),
             )
         )
 
-    return field_list
+    return out
 
 
 def _plural(n):  # pragma: no cover
@@ -827,6 +843,7 @@ def _read_a_file(
     chunk=True,
     mask=True,
     warn_valid=False,
+    select=None,
     domain=False,
 ):
     """Read the contents of a single file into a field list.
@@ -851,12 +868,15 @@ def _read_a_file(
         verbose: `int` or `str` or `None`, optional
             See `cf.read` for details.
 
+        select: optional
+            For `read. Ignored for a netCDF file.
+
         domain: `bool`, optional
             See `cf.read` for details.
 
     :Returns:
 
-        `FieldList` or `list` of `Domain`
+        `FieldList` or `DomainList`
             The field or domain constructs in the dataset.
 
     """
@@ -886,7 +906,6 @@ def _read_a_file(
 
             if endian is None:
                 endian = "big"
-        # --- End: if
 
         if umversion is not None:
             umversion = float(str(umversion).replace(".", "0", 1))
@@ -900,7 +919,6 @@ def _read_a_file(
     #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
     #
     #            return FieldList()
-    # --- End: if
 
     extra_read_vars = {
         "chunk": chunk,
@@ -916,7 +934,8 @@ def _read_a_file(
     # ----------------------------------------------------------------
     # Still here? Read the file into fields or domains.
     # ----------------------------------------------------------------
-    if ftype == "CDL":
+    originally_cdl = ftype == "CDL"
+    if originally_cdl:
         # Create a temporary netCDF file from input CDL
         ftype = "netCDF"
         cdl_filename = filename
@@ -936,20 +955,37 @@ def _read_a_file(
                     "Can't determine format of file {} generated from CDL "
                     "file {}".format(filename, cdl_filename)
                 )
-    # --- End: if
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
-        out = netcdf.read(
-            filename,
-            external=external,
-            extra=extra,
-            verbose=verbose,
-            warnings=warnings,
-            extra_read_vars=extra_read_vars,
-            mask=mask,
-            warn_valid=warn_valid,
-            domain=domain,
-        )
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
+        # try/except here, which acts as a temporary fix pending decisions on
+        # the best way to handle CDL with only header or coordinate info.
+        try:
+            out = netcdf.read(
+                filename,
+                external=external,
+                extra=extra,
+                verbose=verbose,
+                warnings=warnings,
+                extra_read_vars=extra_read_vars,
+                mask=mask,
+                warn_valid=warn_valid,
+                domain=domain,
+            )
+        except MaskError:
+            # Some data required for field interpretation is missing,
+            # manifesting downstream as a NumPy MaskError.
+            if originally_cdl:
+                raise ValueError(
+                    "Unable to convert CDL without data to field construct(s) "
+                    "because there is insufficient information provided by "
+                    "the header and/or coordinates alone in this case."
+                )
+            else:
+                raise ValueError(
+                    "Unable to convert netCDF to field or domain construct "
+                    "because there is missing data. TODO"
+                )
 
     elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
         if domain:
@@ -967,6 +1003,7 @@ def _read_a_file(
             word_size=word_size,
             endian=endian,
             chunk=chunk,
+            select=select,
         )
 
         # PP fields are aggregated intrafile prior to interfile
@@ -975,20 +1012,12 @@ def _read_a_file(
             # For PP fields, the default is strict_units=False
             if "strict_units" not in aggregate_options:
                 aggregate_options["relaxed_units"] = True
-    else:
-        out = []
 
     # ----------------------------------------------------------------
-    # Check for cyclic dimensions
-    # ----------------------------------------------------------------
-    for f in out:
-        f.autocyclic()
-
-    # ----------------------------------------------------------------
-    # Return the fields or domains
+    # Return the fields
     # ----------------------------------------------------------------
     if domain:
-        return out
+        return DomainList(out)
 
     return FieldList(out)
 

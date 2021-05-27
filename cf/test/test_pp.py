@@ -18,7 +18,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -68,6 +68,10 @@ class ppTest(unittest.TestCase):
         d["test"] = None
         e = cf.stash2standard_name()
         self.assertNotEqual(d, e)
+
+    def test_PP_select(self):
+        f = cf.read(self.ppfile, select="lbproc=0")
+        self.assertEqual(len(f), 1)
 
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfile)[0]

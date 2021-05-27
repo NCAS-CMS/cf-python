@@ -1,4 +1,4 @@
-cf.relpath
+﻿cf.relpath
 ==========
 
 .. currentmodule:: cf

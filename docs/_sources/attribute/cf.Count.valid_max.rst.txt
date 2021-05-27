@@ -1,4 +1,4 @@
-cf.Count.valid_max
+﻿cf.Count.valid_max
 ==================
 
 .. currentmodule:: cf

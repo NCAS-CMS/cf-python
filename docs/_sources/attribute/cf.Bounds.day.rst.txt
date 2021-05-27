@@ -1,4 +1,4 @@
-cf.Bounds.day
+﻿cf.Bounds.day
 =============
 
 .. currentmodule:: cf

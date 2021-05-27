@@ -12,7 +12,7 @@ class FileArray(Array):
     """
 
     def __getitem__(self, indices):
-        """"""
+        """TODO."""
         pass
 
     def __str__(self):

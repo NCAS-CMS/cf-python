@@ -1,4 +1,4 @@
-cf.Index.day
+﻿cf.Index.day
 ============
 
 .. currentmodule:: cf

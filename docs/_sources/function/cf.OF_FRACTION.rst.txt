@@ -1,4 +1,4 @@
-cf.OF_FRACTION
+﻿cf.OF_FRACTION
 ==============
 
 .. currentmodule:: cf

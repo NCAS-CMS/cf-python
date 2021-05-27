@@ -1,4 +1,4 @@
-cf.REGRID_LOGGING
+﻿cf.REGRID_LOGGING
 =================
 
 .. currentmodule:: cf

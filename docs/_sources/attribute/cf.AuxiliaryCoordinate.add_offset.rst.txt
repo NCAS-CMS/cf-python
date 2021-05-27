@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.add_offset
+﻿cf.AuxiliaryCoordinate.add_offset
 =================================
 
 .. currentmodule:: cf

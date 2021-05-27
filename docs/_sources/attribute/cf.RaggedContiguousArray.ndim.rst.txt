@@ -1,4 +1,4 @@
-cf.RaggedContiguousArray.ndim
+﻿cf.RaggedContiguousArray.ndim
 =============================
 
 .. currentmodule:: cf

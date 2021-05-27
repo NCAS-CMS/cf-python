@@ -1,4 +1,4 @@
-cf.write
+﻿cf.write
 ========
 
 .. currentmodule:: cf

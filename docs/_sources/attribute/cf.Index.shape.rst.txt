@@ -1,4 +1,4 @@
-cf.Index.shape
+﻿cf.Index.shape
 ==============
 
 .. currentmodule:: cf

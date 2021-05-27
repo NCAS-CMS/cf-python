@@ -4,7 +4,6 @@ import os
 import platform
 import sys
 import unittest
-import inspect
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -16,19 +15,13 @@ class functionTest(unittest.TestCase):
         self.test_only = ()
 
     def test_example_field(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for f in cf.example_fields():
-            _ = f.dump(display=False)
+            f.dump(display=False)
 
         with self.assertRaises(ValueError):
-            _ = cf.example_field(-999)
+            cf.example_field(-999)
 
     def test_keyword_deprecation(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Use as test case 'i' kwarg, the deprecated old name for
         # 'inplace':
         a = cf.Data([list(range(100))])
@@ -39,9 +32,6 @@ class functionTest(unittest.TestCase):
             b.squeeze(i=True)
 
     def test_aliases(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
         self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
         self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
@@ -58,9 +48,6 @@ class functionTest(unittest.TestCase):
         )
 
     def test_configuration(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # This test assumes 'total_memory' remains constant throughout
         # the test run, which should be true generally in any
         # reasonable context.
@@ -137,7 +124,6 @@ class functionTest(unittest.TestCase):
                     )
                 else:
                     self.assertEqual(post_set[name], val)
-        # --- End: for
 
         # Test the setting of more than one, but not all, items
         # simultaneously:
@@ -162,7 +148,6 @@ class functionTest(unittest.TestCase):
                 self.assertAlmostEqual(post_set[name], val, places=8)
             else:
                 self.assertEqual(post_set[name], val)
-        # --- End: for
 
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
@@ -223,9 +208,6 @@ class functionTest(unittest.TestCase):
         cf.log_level("DISABLE")
 
     def test_context_managers(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # rtol, atol, chunksize
         for func in (
             cf.atol,
@@ -273,7 +255,6 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-        # --- End: with
 
         # bounds_combination_mode
         func = cf.bounds_combination_mode
@@ -291,7 +272,6 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-        # --- End: with
 
         # Full configuration
         func = cf.configuration
@@ -307,23 +287,14 @@ class functionTest(unittest.TestCase):
         func(**org)
 
     def test_Constant(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = cf.atol()
         self.assertIs(c._func, cf.atol)
 
     def test_Configuration(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = cf.Configuration()
         self.assertIs(c._func, cf.configuration)
 
     def test_environment(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         e = cf.environment(display=False)
         ep = cf.environment(display=False, paths=False)
         self.assertIsInstance(e, str)
@@ -344,9 +315,6 @@ class functionTest(unittest.TestCase):
             "Python: {}".format(platform.python_version()),
         ]:
             self.assertIn(component, ep)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

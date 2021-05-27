@@ -18,7 +18,7 @@ tmpfiles = [tmpfile, tmpfile2, "delme.nc", "delme.nca"]
 
 
 def _remove_tmpfiles():
-    """"""
+    """TODO."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -47,7 +47,7 @@ class generalTest(unittest.TestCase):
 
         c = cf.set([0, 3, 4, 5])
 
-        _ = f == c
+        f == c
 
         # +, -, *, /, **
         h = g.copy()
@@ -83,8 +83,8 @@ class generalTest(unittest.TestCase):
 
         # Access the field's data as a numpy array
         g.array
-        g.item("latitude").array
-        g.item("longitude").array
+        g.construct("latitude").array
+        g.construct("longitude").array
 
         # Subspace the field
         g[..., 2:5].array
@@ -211,8 +211,6 @@ class generalTest(unittest.TestCase):
 
         cf.chunksize(original_chunksize)
 
-
-# --- End: class
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -1,4 +1,4 @@
-cf.GatheredArray.array
+﻿cf.GatheredArray.array
 ======================
 
 .. currentmodule:: cf

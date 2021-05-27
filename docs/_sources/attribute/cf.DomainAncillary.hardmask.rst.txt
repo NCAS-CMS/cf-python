@@ -1,4 +1,4 @@
-cf.DomainAncillary.hardmask
+﻿cf.DomainAncillary.hardmask
 ===========================
 
 .. currentmodule:: cf

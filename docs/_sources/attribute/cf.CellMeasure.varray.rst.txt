@@ -1,4 +1,4 @@
-cf.CellMeasure.varray
+﻿cf.CellMeasure.varray
 =====================
 
 .. currentmodule:: cf

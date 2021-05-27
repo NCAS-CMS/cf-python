@@ -1,6 +1,4 @@
 import datetime
-import inspect
-import os
 import re
 import unittest
 
@@ -32,7 +30,7 @@ class DomainTest(unittest.TestCase):
         self.assertIsInstance(d.dump(display=False), str)
 
     def test_Domain__init__(self):
-        d = cf.Domain(source="qwerty")
+        cf.Domain(source="qwerty")
 
     def test_Domain_equals(self):
         d = self.d
@@ -45,7 +43,9 @@ class DomainTest(unittest.TestCase):
     def test_Domain_flip(self):
         f = self.d.copy()
 
-        kwargs = {axis: slice(None, None, -1) for axis in f.domain_axes}
+        kwargs = {
+            axis: slice(None, None, -1) for axis in f.domain_axes(todict=True)
+        }
         g = f.subspace(**kwargs)
 
         h = f.flip()
@@ -254,7 +254,7 @@ class DomainTest(unittest.TestCase):
 
         # Calls that should fail
         with self.assertRaises(Exception):
-            f.subspace(grid_longitudecf.gt(23), grid_longitude=cf.wi(92, 134))
+            f.subspace(grid_longitude=cf.gt(23), X=cf.wi(92, 134))
         with self.assertRaises(Exception):
             f.subspace(grid_longitude=cf.gt(23), longitude=cf.wi(92, 134))
         with self.assertRaises(Exception):

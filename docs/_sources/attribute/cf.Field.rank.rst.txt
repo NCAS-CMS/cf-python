@@ -1,4 +1,4 @@
-cf.Field.rank
+﻿cf.Field.rank
 =============
 
 .. currentmodule:: cf

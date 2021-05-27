@@ -1,4 +1,4 @@
-cf.Count.hour
+﻿cf.Count.hour
 =============
 
 .. currentmodule:: cf

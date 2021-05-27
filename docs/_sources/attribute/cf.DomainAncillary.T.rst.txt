@@ -1,4 +1,4 @@
-cf.DomainAncillary.T
+﻿cf.DomainAncillary.T
 ====================
 
 .. currentmodule:: cf

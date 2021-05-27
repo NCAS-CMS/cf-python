@@ -1,4 +1,4 @@
-cf.Index.comment
+﻿cf.Index.comment
 ================
 
 .. currentmodule:: cf

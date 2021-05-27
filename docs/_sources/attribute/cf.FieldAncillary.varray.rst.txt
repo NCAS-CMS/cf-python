@@ -1,4 +1,4 @@
-cf.FieldAncillary.varray
+﻿cf.FieldAncillary.varray
 ========================
 
 .. currentmodule:: cf

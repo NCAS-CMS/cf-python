@@ -1,4 +1,4 @@
-cf.TimeDuration.isint
+﻿cf.TimeDuration.isint
 =====================
 
 .. currentmodule:: cf

@@ -2,15 +2,34 @@ version 3.9.0
 -------------
 ----
 
-**202?-02-??**
+**2021-05-25**
 
-* Improved docstrings.
+* Construct access API changes
+  (https://github.com/NCAS-CMS/cf-python/issues/201,
+  https://github.com/NCAS-CMS/cf-python/issues/202,
+  https://github.com/NCAS-CMS/cf-python/issues/203,
+  https://github.com/NCAS-CMS/cf-python/issues/204)
+* Performance enhancements
+  (https://github.com/NCAS-CMS/cfdm/issues/201,
+  https://github.com/NCAS-CMS/cfdm/issues/202)
+* New write mode ``mode='a'`` for appending to, rather than over-writing,
+  a netCDF file on disk (https://github.com/NCAS-CMS/cf-python/issues/30)
+* Temporarily removed the experimental ability to parallelize the
+  collapse operation with MPI
+  (https://github.com/NCAS-CMS/cf-python/issues/207)
+* Improved docstrings
 * Fix for unlimited dimensions read from a netCDF4 sub-group having
   zero size (https://github.com/NCAS-CMS/cfdm/issues/113)
 * Fixes for changes in behaviour in cftime==1.4.0
   (https://github.com/NCAS-CMS/cf-python/issues/184)
+* Better error message in the case of a `numpy.ma.core.MaskError` occurring
+  upon reading of CDL files with only header or coordinate information
+  (https://github.com/NCAS-CMS/cf-python/issues/197)
 * Changed dependency: ``1.8.9.0<=cfdm<1.8.10.0``
-* Changed dependency: ``cftime>=1.4.0``
+* Changed dependency: ``cftime>=1.5.0``
+* Changed dependency: ``cfunits>=3.3.3``
+* Changed dependency: ``netCDF4>=1.5.4``
+
 
 version 3.8.0
 -------------
@@ -126,7 +145,7 @@ version 3.5.0
 
 * Changed the API to `cf.Field.period`: Now sets and reports on the
   period of the field construct data, rather than that of its metadata
-  constucts.
+  constructs.
 * Enabled configuration of the extent and nature of informational and
   warning messages output by `cf` using a logging framework (see
   points below and also https://github.com/NCAS-CMS/cf-python/issues/37)

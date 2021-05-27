@@ -1,4 +1,4 @@
-cf.Data.mask
+﻿cf.Data.mask
 ============
 
 .. currentmodule:: cf

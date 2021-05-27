@@ -37,8 +37,12 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package is only Python 3.6 or later. (Versions 2.x of cf work
-only for Python 2.7.)
+The cf package is only Python 3.6 or later. 
+
+.. note:: Python 3.6 support is deprecated and will be removed at the
+          next release.
+
+Versions 2.x of cf work only for Python 2.7.
 
 ----
 
@@ -49,9 +53,9 @@ only for Python 2.7.)
 
 cf is in the Python package index: https://pypi.org/project/cf-python
 
-cf has some :ref:`optional dependencies <Optional>` which are **not**
-automatically installed via ``pip``, but to install cf and all of its
-:ref:`required dependencies <Required>` run, for example:
+To install cf and all of its :ref:`required dependencies <Required>`
+(there are also has some :ref:`optional dependencies <Optional>` which
+are **not** automatically installed via ``pip``) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -179,19 +183,20 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.6 or newer.
+* `Python <https://www.python.org/>`_, 3.6 or newer, including
+  the latest version Python 3.9.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.3 or newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.4.0 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.5.0 or newer
   (note that this package may be installed with netCDF4).
 
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.9.0 or up to,
   but not including, 1.8.10.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.1 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.3 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

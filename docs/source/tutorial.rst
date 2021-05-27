@@ -140,7 +140,7 @@ The following file types can be read:
 ..
 
 * Files in `CDL format
-  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_utilities_guide.html>`_,
+  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html>`_,
   with or without the data array values.
 
 ..
@@ -840,9 +840,9 @@ like their corresponding `dict` methods. It also has a
    Constructs:
    {'coordinatereference0': <CF CoordinateReference: standard_name:atmosphere_hybrid_height_coordinate>,
     'coordinatereference1': <CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>}
-   >>> list(t.coordinate_references.keys())
+   >>> list(t.coordinate_references().keys())
    ['coordinatereference0', 'coordinatereference1']
-   >>> for key, value in t.coordinate_references.items():
+   >>> for key, value in t.coordinate_references().items():
    ...     print(key, repr(value))
    ...
    coordinatereference0 <CF CoordinateReference: standard_name:atmosphere_hybrid_height_coordinate>
@@ -1756,6 +1756,7 @@ constructs that meet various criteria:
 ================================  ==========================================================================  
 Method                            Filter criteria                                                             
 ================================  ==========================================================================  
+`~Constructs.filter`              General purpose interface to all other filter methods
 `~Constructs.filter_by_identity`  Metadata construct identity                
 `~Constructs.filter_by_type`      Metadata construct type                       
 `~Constructs.filter_by_property`  Property values                                     
@@ -1769,6 +1770,9 @@ Method                            Filter criteria
 `~Constructs.filter_by_ncvar`     NetCDF variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
 `~Constructs.filter_by_ncdim`     NetCDF dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
+
+The `~Constructs.filter` method of a `Constructs` instance allows
+these filters to be chained together in a single call.
 
 Each of these methods returns a new `cf.Constructs` instance that
 contains the selected metadata constructs.
@@ -1811,11 +1815,10 @@ contains the selected metadata constructs.
     'fieldancillary0': <CF FieldAncillary: air_temperature standard_error(10, 9) K>}
    
 .. code-block:: python
-   :caption: *Get constructs whose data span the 'domainaxis1' domain
-             axis construct; and those which also do not span the
-             'domainaxis2' domain axis construct.*
+   :caption: *Get constructs whose data span at least one of the 'Y'
+             and 'X' domain axis constructs.*
 
-   >>> print(t.constructs.filter_by_axis('and', 'domainaxis1'))
+   >>> print(t.constructs.filter_by_axis('X', 'Y', axis_mode='or'))
    Constructs:
    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -1845,7 +1848,9 @@ easy to perform further filters on their results:
 .. code-block:: python
    :caption: *Make selections from previous selections.*
 	     
-   >>> print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
+   >>> print(
+   ...     t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('domainaxis2')
+   ... )
    Constructs:
    {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
@@ -2034,8 +2039,7 @@ returned by any of the following techniques:
    >>> t.construct('latitude', key=True)
    'auxiliarycoordinate0'
 
-* with the `~Field.construct_key` and `~Field.get_construct` methods of
-  a field construct:
+* with the `~Field.construct_key` method of a field construct:
 
 .. code-block:: python
    :caption: *Get the "latitude" metadata construct key with its construct
@@ -2045,14 +2049,22 @@ returned by any of the following techniques:
    >>> t.get_construct(key)
    <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-* with the `~Constructs.value` method of a `cf.Constructs` instance
-  that contains one construct,
+* with the `~Field.construct_item` method of a field construct:
 
 .. code-block:: python
-   :caption: *Get the "latitude" metadata construct via its identity
-             and the 'value' method.*
+   :caption: *Get the "latitude" metadata construct and its identifier
+             via its construct identity.*
+      
+   >>> key, lat = t.construct_item('latitude')
+   ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
+
+* by indexing a `cf.Constructs` instance with  a construct key.
+
+.. code-block:: python
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and indexing*
 	     
-   >>> t.constructs('latitude').value()
+   >>> t.constructs[key]
    <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.get` method of a `cf.Constructs` instance, or
@@ -2062,15 +2074,6 @@ returned by any of the following techniques:
              key and the 'get' method.*
 	     
    >>> t.constructs.get(key)
-   <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-
-* by indexing a `cf.Constructs` instance with  a construct key.
-
-.. code-block:: python
-   :caption: *Get the "latitude" metadata construct via its construct
-             key and indexing*
-	     
-   >>> t.constructs[key]
    <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 In addition, an individual metadata construct of a particular type can
@@ -2100,6 +2103,8 @@ of the chosen type.
    <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.auxiliary_coordinate('latitude', key=True)
    'auxiliarycoordinate0'
+   >>> t.auxiliary_coordinate('latitude', item=True)
+   ('auxiliarycoordinate0', <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
 The `~Field.construct` method of the field construct, the above
 methods for finding a construct of a particular type, and the
@@ -2113,33 +2118,27 @@ raising a customised exception:
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')  # Raises Exception
+   >>> t.construct('measure:volume')                # Raises Exception
    Traceback (most recent call last):
-       ...
+      ...
    ValueError: Can't return zero constructs
-   >>> t.construct('measure:volume', False)
+   >>> t.construct('measure:volume', default=False)
    False
-   >>> c = t.constructs.filter_by_measure('volume')
+   >>> t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+   Traceback (most recent call last):
+      ...
+   Exception: my error
+   >>> c = t.constructs.filter_by_measure("volume")
    >>> len(c)
    0
-   >>> c.value()  # Raises Exception
-   Traceback (most recent call last):
-       ...
-   ValueError: Can't return zero constructs
-   >>> c.value(default='No construct')
-   'No construct'
-   >>> c.value(default=KeyError('My message'))  # Raises Exception
-   Traceback (most recent call last):
-       ...
-   KeyError: 'My message'
-   >>> d = t.constructs('units=degrees')
+   >>> d = t.constructs("units=degrees")
    >>> len(d)
    2
-   >>> d.value()  # Raises Exception
+   >>> t.construct("units=degrees")  # Raises Exception
    Traceback (most recent call last):
-       ...
-   ValueError: Can't return 2 constructs 
-   >>> print(d.value(default=None))
+      ...
+   ValueError: Field.construct() can't return 2 constructs
+   >>> print(t.construct("units=degrees", default=None))
    None
 
 The `~Constructs.get` method of a `cf.Constructs` instance accepts an
@@ -2444,7 +2443,7 @@ the `~cf.DomainAxis.get_size` method of the domain axis construct.
    {'domainaxis0': <CF DomainAxis: size(5)>,
     'domainaxis1': <CF DomainAxis: size(8)>,
     'domainaxis2': <CF DomainAxis: size(1)>}
-   >>> d = q.domain_axes.get('domainaxis1')
+   >>> d = q.domain_axes().get('domainaxis1')
    >>> d
    <CF DomainAxis: size(8)>
    >>> d.get_size()
@@ -2819,7 +2818,7 @@ to the field construct during :ref:`field construct creation
    :caption: *Retrieve the cell method constructs in the same order
              that they were applied.*
 	     
-   >>> t.cell_methods.ordered()
+   >>> t.cell_methods().ordered()
    OrderedDict([('cellmethod0', <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CF CellMethod: domainaxis3: maximum>)])
 
@@ -5246,6 +5245,8 @@ The `cf.write` function has optional parameters to
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
   possible);
 
+* append to the netCDF file rather than over-writing it by default;
+
 * specify which field construct properties should become netCDF data
   variable attributes and which should become netCDF global
   attributes;
@@ -5264,6 +5265,26 @@ The `cf.write` function has optional parameters to
 * apply netCDF compression and packing; and
 
 * set the endian-ness of the output data.
+
+For example, to use the `mode` parameter to append a new field, or fields,
+to a netCDF file whilst preserving the field or fields already contained
+in that file:
+
+.. code-block:: python
+   :caption: *Append field constructs to a netCDF dataset on
+             disk.*
+
+   >>> g = cf.example_field(2)
+   >>> cf.write(g, 'append-example-file.nc')
+   >>> cf.read('append-example-file.nc')
+   [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>]
+   >>> h = cf.example_field(0)
+   >>> h
+   <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
+   >>> cf.write(h, 'append-example-file.nc', mode='a')
+   >>> cf.read('append-example-file.nc')
+   [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
 
 Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set

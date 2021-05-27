@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.month
+﻿cf.DimensionCoordinate.month
 ============================
 
 .. currentmodule:: cf
