@@ -51,17 +51,35 @@ class Regrid:
                 contributes to conservative regridding.
 
             method: `str`, optional
+                Setting as follows gives a corresponding result of:
+
+                ===================  ==================================
+                Method set           Result
+                ===================  ==================================
+                'conservative_1st'   Use first-order conservative
+                                     regridding.
+
+                'conservative'       Alias for 'conservative_1st'.
+
+                'conservative_2nd'   Use second-order conservative
+                                     regridding.
+
+                'linear'             Use (multi)linear interpolation.
+
+                'bilinear'           Deprecated alias for 'linear'.
+
+                'patch'              Use higher-order patch recovery.
+
+                'nearest_stod'       Use nearest source to destination
+                                     interpolation.
+
+                'nearest_dtos'       Use nearest destination to
+                                     source interpolation.
+
+                ===================  ==================================
+
                 By default the regridding method is set to
-                'conservative_1st'. In this case or if it is set to
-                'conservative' first-order conservative regridding is
-                used. If it is set to 'conservative_2nd' second order
-                conservative regridding is used. If it is set to
-                'linear' then (multi)linear interpolation is used.  If
-                it is set to 'patch' then higher-order patch recovery
-                is used.  If it is set to 'nearest_stod' then nearest
-                source to destination interpolation is used. If it is
-                set to 'nearest_dtos' then nearest destination to
-                source interpolation is used.
+                'conservative_1st'.
 
             ignore_degenerate: `bool`, optional
                 Whether to check for degenerate points.
