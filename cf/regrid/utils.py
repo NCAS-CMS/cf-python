@@ -1,7 +1,11 @@
 """Worker functions for regridding."""
+from operator import itemgetter
+
 import numpy as np
 
 from ..functions import regrid_logging
+from ..dimensioncoordinate import DimensionCoordinate
+from ..data import Data
 from .. import _found_ESMF
 
 if _found_ESMF:
@@ -10,7 +14,7 @@ if _found_ESMF:
     except Exception as error:
         print(f"WARNING: Can not import ESMF for regridding: {error}")
 
-from .regrid import regrid_method_map
+from .regridoperator import regrid_method_map
 
 from ..decorators import _deprecated_kwarg_check
 
@@ -98,9 +102,9 @@ def regrid_compute_mass_grid(
 
 def regrid_get_latlong(f, name, axes=None):
     """Retrieve the latitude and longitude coordinates of this field and
-       associated information. If 1D lat/long coordinates are found
-       then these are returned. Otherwise, 2D lat/long coordinates are
-       searched for and if found returned.
+    associated information. If 1D lat/long coordinates are found then
+    these are returned. Otherwise, 2D lat/long coordinates are searched
+    for and if found returned.
 
     :Parameters:
 
@@ -452,8 +456,8 @@ def regrid_get_section_shape(f, axis_sizes, axis_indices):
 
 
 def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
-    """Check the bounds of the coordinates for regridding and reassign the
-    regridding method if auto is selected.
+    """Check the bounds of the coordinates for regridding and reassign
+    the regridding method if auto is selected.
 
     :Parameters:
 
@@ -631,9 +635,9 @@ def regrid_check_use_src_mask(use_src_mask, method):
 def regrid_get_reordered_sections(
     f, axis_order, regrid_axes, regrid_axis_indices
 ):
-    """Get a dictionary of the data sections for regridding and a
-    list of its keys reordered if necessary so that they will be
-    looped over in the order specified in axis_order.
+    """Get a dictionary of the data sections for regridding and a list
+    of its keys reordered if necessary so that they will be looped over
+    in the order specified in axis_order.
 
     :Parameters:
 
@@ -748,8 +752,8 @@ def regrid_get_destination_mask(
 
 
 def regrid_fill_fields(src_data, srcfield, dstfield, fill_value):
-    """Fill the source field with data and the destination field
-    with fill values.
+    """Fill the source field with data and the destination field with
+    fill values.
 
     :Parameters:
 
@@ -820,7 +824,7 @@ def regrid_compute_field_mass(
     fill_value = f.fill_value(default="netCDF")
 
     # Calculate the mass of the source field
-    srcareafield = Regrid.create_field(srcgrid, "srcareafield")
+    srcareafield = create_Field(srcgrid, "srcareafield")
     srcmass = regrid_compute_mass_grid(
         srcfield,
         srcareafield,
@@ -830,7 +834,7 @@ def regrid_compute_field_mass(
     )
 
     # Calculate the mass of the destination field
-    dstareafield = create_field(dstgrid, "dstareafield")
+    dstareafield = create_Field(dstgrid, "dstareafield")
     dstmass = regrid_compute_mass_grid(
         dstfield, dstareafield, uninitval=fill_value
     )
@@ -840,8 +844,8 @@ def regrid_compute_field_mass(
 
 
 def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
-    """Get the regridded data of frac field as a numpy array from
-    the ESMPy fields.
+    """Get the regridded data of frac field as a numpy array from the
+    ESMPy fields.
 
     :Parameters:
 
@@ -1022,8 +1026,8 @@ def regrid_update_coordinate_references(
 
 
 def regrid_copy_coordinate_references(f, dst, dst_axis_keys):
-    """Copy coordinate references from the destination field to the
-    new, regridded field.
+    """Copy coordinate references from the destination field to the new,
+    regridded field.
 
     :Parameters:
 
@@ -1055,8 +1059,8 @@ def regrid_copy_coordinate_references(f, dst, dst_axis_keys):
 
 
 def regrid_use_bounds(method):
-    """Returns whether to use the bounds or not in regridding. This
-    is only the case for conservative regridding.
+    """Returns whether to use the bounds or not in regridding. This is
+    only the case for conservative regridding.
 
     :Parameters:
 
@@ -1217,7 +1221,7 @@ def regrid_update_coordinates(
 
 
 def grids_have_same_mask(grid0, grid1):
-    """TODO
+    """TODO.
 
     :Parameters:
 
@@ -1281,10 +1285,10 @@ def grids_have_same_coords(grid0, grid1):
 
 
 def regrid_initialize():
-    """Check whether ESMF has been found. If not raise an import
-    error. Initialise the ESMPy manager. Whether logging is enabled
-    or not is determined by cf.regrid_logging. If it is then logging
-    takes place after every call to ESMPy.
+    """Check whether ESMF has been found. If not raise an import error.
+    Initialise the ESMPy manager. Whether logging is enabled or not is
+    determined by cf.regrid_logging. If it is then logging takes place
+    after every call to ESMPy.
 
     :Returns:
 
@@ -1303,9 +1307,8 @@ def create_Regrid(
     method,
     ignore_degenerate=False,
 ):
-    """Creates a handle for regridding fields from a source grid to
-    a destination grid that can then be used by the run_regridding
-    method.
+    """Creates a handle for regridding fields from a source grid to a
+    destination grid that can then be used by the run_regridding method.
 
     :Parameters:
 
@@ -1384,8 +1387,8 @@ def create_Grid(
     coords_2D=False,
     coord_order=None,
 ):
-    """Create an `ESMF` grid given a sequence of coordinates for use as a
-    source or destination grid in regridding.
+    """Create an `ESMF` grid given a sequence of coordinates for use as
+    a source or destination grid in regridding.
 
     Optionally the grid may have an associated mask.
 
@@ -1654,8 +1657,8 @@ def create_Grid(
 
 
 def create_Field(grid, name):
-    """Create an `ESMF` field for use as a source or destination field in
-    regridding given an `ESMF` grid and a name.
+    """Create an `ESMF` field for use as a source or destination field
+    in regridding given an `ESMF` grid and a name.
 
     :Parameters:
 

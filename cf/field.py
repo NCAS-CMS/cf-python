@@ -1,7 +1,6 @@
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
-from operator import itemgetter
 
 import logging
 
@@ -12,7 +11,6 @@ except ImportError:
 
 import numpy as np
 
-from numpy import arange as numpy_arange
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
 
@@ -38,7 +36,6 @@ from numpy import where as numpy_where
 from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
 
-from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import where as numpy_ma_where
 
 import cfdm
@@ -76,6 +73,7 @@ from .data import GatheredArray
 from . import mixin
 
 from .regrid import (
+    conservative_regridding_methods,
     create_Grid,
     create_Field,
     create_Regrid,
@@ -15260,9 +15258,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_operator=None,
+        return_operator=False,
     ):
-        """Return the field regridded onto a new latitude-longitude grid.
+        """Return the field regridded onto a new latitude-longitude
+        grid.
 
         Regridding, also called remapping or interpolation, is the
         process of changing the grid underneath field data values
@@ -15635,12 +15634,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
         """
-        try:
-            import ESMF
-        except ModuleNotFoundError as error:
-            raise ModuleNotFoundError(
-                f"Can't find module ESMF for regridding: {error}"
-            )
+        #        try:
+        #            import ESMF
+        #        except ModuleNotFoundError as error:
+        #            raise ModuleNotFoundError(
+        #                f"Can't find module ESMF for regridding: {error}"
+        #            )
 
         # Check the method
         regrid_check_method(method)
@@ -15650,9 +15649,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        dst_dict = isinstance(dst, dict)
         dst_field = isinstance(dst, self.__class__)
-        dst_regrid = isinstance(dst, RegridOperator)
+        dst_dict = not dst_field and isinstance(dst, dict)
+        dst_regrid = not dst_field and isinstance(dst, RegridOperator)
 
         if dst_regrid:
             if not dst.check_method(method):
@@ -15698,6 +15697,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             if dst_coords[0].ndim == 1:
+                dst_coords_2D = False
                 dst_axis_sizes = [coord.size for coord in dst_coords]
             elif dst_coords[0].ndim == 2:
                 try:
@@ -16082,6 +16082,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         inplace=False,
         i=False,
         _compute_field_mass=None,
+        return_operator=False,
     ):
         """Return the field with the specified Cartesian axes regridded
         onto a new grid.
@@ -16372,12 +16373,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
 
         """
-        try:
-            import ESMF
-        except ModuleNotFoundError as error:
-            raise ModuleNotFoundError(
-                f"Can't find module ESMF for regridding: {error}"
-            )
+        #        try:
+        #            import ESMF
+        #        except ModuleNotFoundError as error:
+        #            raise ModuleNotFoundError(
+        #                f"Can't find module ESMF for regridding: {error}"
+        #           )
 
         # Check the method
         regrid_check_method(method)
@@ -16417,12 +16418,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Retrieve the source axis keys and dimension coordinates
-        src_axis_keys, src_coords = regrid_get_cartesian_coords(
-            f, "source", axes
-        )
+        src_axis_keys, src_coords = get_cartesian_coords(f, "source", axes)
 
         # Retrieve the destination axis keys and dimension coordinates
-        if dst_dict:
+        if dst_field:
+            dst_axis_keys, dst_coords = get_cartesian_coords(
+                dst, "destination", axes
+            )
+        elif dst_dict:
             dst_coords = []
             for axis in axes:
                 try:
@@ -16432,8 +16435,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             dst_axis_keys = None
         else:
-            dst_axis_keys, dst_coords = regrid_get_cartesian_coords(
-                dst, "destination", axes
+            raise TypeError(
+                "'dst' parameter must be Field, dict or RegridOperator. "
+                f"Got {type(dst)}"
             )
 
         # Check that the units of the source and the destination
@@ -16485,7 +16489,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if src_shape[src_axis_indices].prod() * max_length * 8 < (
                 float(chunksize())
             ):
-                axis_keys_ext, coords_ext = regrid_get_cartesian_coords(
+                axis_keys_ext, coords_ext = get_cartesian_coords(
                     f, "source", [max_ind]
                 )
                 (
@@ -16553,6 +16557,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
+            # TODODASK: Just get the mask?
             dst_mask = regrid_get_destination_mask(
                 dst,
                 dst_order,
@@ -16561,12 +16566,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coords_ext=coords_ext,
             )
 
-        # Create the destination ESMPy grid and fields
-        dstgrid = create_Grid(
-            coords_ext + dst_coords, use_bounds, mask=dst_mask, cartesian=True
-        )
-        dstfield = create_Field(dstgrid, "dstfield")
-        dstfracfield = create_Field(dstgrid, "dstfracfield")
+        if dst_regrid:
+            srcgrid = create_Grid(
+                coords_ext + src_coords,
+                use_bounds,
+                cartesian=True,
+            )
+            if not grids_have_same_coords(srcgrid, regrid.srcfield.grid):
+                raise ValueError("TODO")
+
+        # Create the destination ESMF Grid, Field and fractional Field
+        if dst_regrid:
+            dstgrid = regrid.dstfield.grid
+            dstfield = regrid.dstfield
+            dstfracfield = regrid.dst_frac_field
+            regridSrc2Dst = regrid
+        else:
+            dstgrid = create_Grid(
+                coords_ext + dst_coords,
+                use_bounds,
+                mask=dst_mask,
+                cartesian=True,
+            )
+            dstfield = create_Field(dstgrid, "dstfield")
+            dstfracfield = create_Field(dstgrid, "dstfracfield")
 
         # Regrid each section
         old_mask = None
@@ -16631,15 +16654,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 else:
                     if not unmasked_grid_created or old_mask is not None:
                         # Create the source ESMPy grid and fields
-                        srcgrid = Regrid.create_grid(
+                        srcgrid = create_Grid(
                             coords_ext + src_coords, use_bounds, cartesian=True
                         )
-                        srcfield = Regrid.create_field(srcgrid, "srcfield")
-                        srcfracfield = Regrid.create_field(
-                            srcgrid, "srcfracfield"
-                        )
+                        srcfield = create_Field(srcgrid, "srcfield")
+                        srcfracfield = create_Field(srcgrid, "srcfracfield")
 
                         # Initialise the regridder
+                        create_new_regridder = not dst_regrid
                         if dst_regrid:
                             create_new_regridder = not grids_have_same_mask(
                                 srcgrid, regridSrc2Dst.srcfield.grid
@@ -16649,7 +16671,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             if destroy_old_Regrid:
                                 regridSrc2Dst.destroy()  # noqa: F821
 
-                            regridSrc2Dst = Regrid(
+                            regridSrc2Dst = create_Regrid(
                                 srcfield,
                                 dstfield,
                                 srcfracfield,

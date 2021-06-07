@@ -4,6 +4,7 @@ from .regridoperator import (
     regrid_method_map_inverse,
 )
 from .utils import (
+    conservative_regridding_methods,
     create_Grid,
     create_Field,
     create_Regrid,
@@ -27,5 +28,6 @@ from .utils import (
     regrid_use_bounds,
     regrid_update_coordinates,
     regrid_initialize,
+    regridding_methods,
     run_Regrid,
 )
