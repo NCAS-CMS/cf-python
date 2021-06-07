@@ -10,6 +10,8 @@ try:
 except ImportError:
     pass
 
+import numpy as np
+
 from numpy import arange as numpy_arange
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
@@ -74,9 +76,14 @@ from .data import GatheredArray
 from . import mixin
 
 from .regrid import (
-    Regrid,
+    create_Grid,
+    create_Field,
+    create_Regrid,
+    get_cartesian_coords,
+    grids_have_same_coords,
+    grids_have_same_mask,
+    RegridOperator,
     regrid_get_latlong,
-    regrid_get_cartesian_coords,
     regrid_get_axis_indices,
     regrid_get_coord_order,
     regrid_get_section_shape,
@@ -92,6 +99,8 @@ from .regrid import (
     regrid_copy_coordinate_references,
     regrid_use_bounds,
     regrid_update_coordinates,
+    regrid_initialize,
+    run_Regrid,
 )
 
 from .functions import (
@@ -15238,7 +15247,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def regrids(
         self,
         dst,
-        method=None,
+        method,
         src_cyclic=None,
         dst_cyclic=None,
         use_src_mask=True,
@@ -15251,10 +15260,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         inplace=False,
         i=False,
         _compute_field_mass=None,
-            weights=None,
+        return_operator=None,
     ):
-        """Return the field regridded onto a new latitude-longitude
-        grid.
+        """Return the field regridded onto a new latitude-longitude grid.
 
         Regridding, also called remapping or interpolation, is the
         process of changing the grid underneath field data values
@@ -15376,7 +15384,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field` or `dict`
+            dst: `Field` or `dict` or `RegridOperator`
                 The field containing the new grid. If dst is a field
                 list the first field in the list is
                 used. Alternatively a dictionary can be passed
@@ -15389,7 +15397,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             method: `str`
                 Specify the regridding method. The *method* parameter
-                may be one of the following:
+                must be one of the following:
 
                 ======================  ==================================
                 Method                  Description
@@ -15478,20 +15486,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                         source points, but no source
                                         point will map to more than
                                         one destination point.
-
-                ``None`                 This is the default and is
-                                        only allowed if *dst* is a
-                                        `Regrid` instance, when the
-                                        method may inferred
-                                        *dst*.
                 ======================  ==================================
-
-                If *dst* is a `Regrid` instance then *method* must
-                either be `None` (the default) or else match the
-                method encoded within *dst*. For example, if *dst* was
-                previously created with ``dst = f.regrids(g,
-                method='conservative', regrid=True)`` then *method*
-                must be `None` or ``'conservative'``.
 
             src_cyclic: `bool`, optional
                 Specifies whether the longitude for the source grid is
@@ -15575,8 +15570,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{inplace: `bool`, optional}}
 
-            {{i: deprecated at version 3.0.0}}
-
             _compute_field_mass: `dict`, optional
                 If this is a dictionary then the field masses of the
                 source and destination fields are computed and
@@ -15587,6 +15580,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 field construct's mass. The calculation is only done
                 if conservative regridding is being performed. This is
                 for debugging purposes.
+
+            return_operator: `bool`, optional
+                TODO
+
+                .. versionadded:: 3.10.0
+
+            {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
@@ -15635,20 +15635,36 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
         """
-        # Initialise ESMPy for regridding if found
-        Regrid.initialize()
+        try:
+            import ESMF
+        except ModuleNotFoundError as error:
+            raise ModuleNotFoundError(
+                f"Can't find module ESMF for regridding: {error}"
+            )
+
+        # Check the method
+        regrid_check_method(method)
+
+        # Initialise ESMF for regridding
+        regrid_initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
         dst_dict = isinstance(dst, dict)
-        dst_field = isinstance(dst, f.__class__)
-        dst_regrid = False # isinstance(dst, ESMF.Regrid)
+        dst_field = isinstance(dst, self.__class__)
+        dst_regrid = isinstance(dst, RegridOperator)
 
         if dst_regrid:
-            if method is None:
-                method = dst.method
-            elif method != dst.method or set(('conservative', 'conservative_1st')) != set((method, dst.method)):
-                raise ValueError("TODO")
+            if not dst.check_method(method):
+                raise ("TODO")
+
+            if return_operator:
+                # Return the input RegridOperator instance
+                return dst.copy()
+
+            regrid = dst.regrid
+            dst = dst.dst
+            dst_field = True
 
         # Retrieve the source field's latitude and longitude
         # coordinates
@@ -15662,26 +15678,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Retrieve the destination field's latitude and longitude
         # coordinates
-        if dst_dict:
+        if dst_field:
+            # dst is a field construct
+            (
+                dst_axis_keys,
+                dst_axis_sizes,
+                dst_coord_keys,
+                dst_coords,
+                dst_coords_2D,
+            ) = regrid_get_latlong(dst, "destination", axes=dst_axes)
+        elif dst_dict:
             # dst is a dictionary
             try:
                 dst_coords = (dst["longitude"], dst["latitude"])
             except KeyError:
                 raise ValueError(
-                    "Keys 'longitude' and 'latitude' must be"
-                    " specified for destination."
+                    "Keys 'longitude' and 'latitude' must be "
+                    "specified for destination."
                 )
 
             if dst_coords[0].ndim == 1:
-#                dst_coords_2D = False
                 dst_axis_sizes = [coord.size for coord in dst_coords]
             elif dst_coords[0].ndim == 2:
                 try:
                     dst_axes = dst["axes"]
                 except KeyError:
                     raise ValueError(
-                        "Key 'axes' must be specified for 2D"
-                        " latitude/longitude coordinates."
+                        "Key 'axes' must be specified for 2D "
+                        "latitude/longitude coordinates."
                     )
                 dst_coords_2D = True
                 if dst_axes == ("X", "Y"):
@@ -15705,18 +15729,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             dst_axis_keys = None
-        elif dst_field:
-            # dst is a Field
-            (
-                dst_axis_keys,
-                dst_axis_sizes,
-                dst_coord_keys,
-                dst_coords,
-                dst_coords_2D,
-            ) = regrid_get_latlong(dst, "destination", axes=dst_axes)
         else:
-            dst_coords_2D = False
-            Set  dst_axis_sizes here!
+            raise TypeError(
+                "'dst' parameter must be Field, dict or RegridOperator. "
+                f"Got {type(dst)}"
+            )
 
         # Automatically detect the cyclicity of the source longitude
         # if src_cyclic is None
@@ -15729,8 +15746,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_cyclic = dst.iscyclic(dst_axis_keys[0])
         elif dst_dict and dst_cyclic is None:
             dst = dst.copy()
-            #            dst['longitude'] = dst['longitude'].copy()
-            #            dst['longitude'].autoperiod()
             dst["longitude"] = dst["longitude"].autoperiod()
             dst_cyclic = dst["longitude"].isperiodic
 
@@ -15741,8 +15756,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # field.
         if dst_field:
             dst = dst.copy()
-            dst_axis_indices, dst_order = regrid_get_axis_indices(dst,
-                dst_axis_keys
+            dst_axis_indices, dst_order = regrid_get_axis_indices(
+                dst, dst_axis_keys
             )
 
         # Get the order of the X and Y axes for each 2D auxiliary
@@ -15750,8 +15765,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         src_coord_order = None
         dst_coord_order = None
         if src_coords_2D:
-            src_coord_order = regrid_get_coord_order(self,
-                src_axis_keys, src_coord_keys
+            src_coord_order = regrid_get_coord_order(
+                f, src_axis_keys, src_coord_keys
             )
 
         if dst_coords_2D:
@@ -15766,17 +15781,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "('Y', 'X')."
                     )
             else:
-                dst_coord_order = regrid_get_coord_order(dst,
-                    dst_axis_keys, dst_coord_keys
+                dst_coord_order = regrid_get_coord_order(
+                    dst, dst_axis_keys, dst_coord_keys
                 )
 
         # Get the shape of each section after it has been regridded.
-        shape = regrid_get_section_shape(self,
-            dst_axis_sizes, src_axis_indices
+        shape = regrid_get_section_shape(
+            self, dst_axis_sizes, src_axis_indices
         )
-
-        # Check the method
-        regrid_check_method(method)
 
         # Check that use_src_mask is True for all methods other than
         # nearest_stod
@@ -15786,33 +15798,44 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         use_bounds = regrid_use_bounds(method)
 
         # Check the bounds of the coordinates
-        if not dst_regrid:
-            regrid_check_bounds(src_coords, dst_coords, method)
+        regrid_check_bounds(src_coords, dst_coords, method)
 
         # Slice the source data into 2D latitude/longitude sections,
         # also getting a list of dictionary keys in the order
         # requested. If axis_order has not been set, then the order is
         # random, and so in this case the order in which sections are
         # regridded is random.
-        section_keys, sections = regrid_get_reordered_sections(self,
-            axis_order, src_axis_keys, src_axis_indices
+        section_keys, sections = regrid_get_reordered_sections(
+            self, axis_order, src_axis_keys, src_axis_indices
         )
 
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if dst_field and use_dst_mask and dst.data.ismasked:
             # TODODASK: Just get the mask?
-            dst_mask = regrid_get_destination_mask(dst,
-                dst_order, axes=dst_axis_keys
+            dst_mask = regrid_get_destination_mask(
+                dst, dst_order, axes=dst_axis_keys
             )
 
-        # Retrieve the destination ESMPy grid and fields
         if dst_regrid:
-            dstgrid = dst.dstgrid
-            dstfield = dst.srcfield
-            dstfracfield = dst.dst_frac_field
+            srcgrid = create_Grid(
+                src_coords,
+                use_bounds,
+                cyclic=src_cyclic,
+                coords_2D=src_coords_2D,
+                coord_order=src_coord_order,
+            )
+            if not grids_have_same_coords(srcgrid, regrid.srcfield.grid):
+                raise ValueError("TODO")
+
+        # Get the destination ESMF Grid, Field and fractional Field
+        if dst_regrid:
+            dstgrid = regrid.dstfield.grid
+            dstfield = regrid.dstfield
+            dstfracfield = regrid.dst_frac_field
+            regridSrc2Dst = regrid
         else:
-            dstgrid = Regrid.create_grid(
+            dstgrid = create_Grid(
                 dst_coords,
                 use_bounds,
                 mask=dst_mask,
@@ -15821,54 +15844,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coord_order=dst_coord_order,
             )
 
-#        if weights is not None:
-#            if not regrid_ppp_coord(dstgrid,
-#                                weights.regridSrc2Dst.dstfield.grid):
-#                raise ValueError("TODO")
-#
-#            if not regrid_ppp_mask(dstgrid,
-#                               weights.regridSrc2Dst.dstfield.grid):
-#                weights = None
-
-        # dstfield will be reused to receive the regridded source data
-        # for each section, one after the other
-            dstfield = Regrid.create_field(dstgrid, "dstfield")
-            dstfracfield = Regrid.create_field(dstgrid, "dstfracfield")
-
-#        srcgrid = Regrid.create_grid(
-#            src_coords,
-#            use_bounds,
-#            cyclic=src_cyclic,
-#            coords_2D=src_coords_2D,
-#            coord_order=src_coord_order,
-#        )
-#        if not regrid_ppp_coord(
-#                srcgrid,
-#                weights.regridSrc2Dst.srcfield.grid):
-#            raise ValueError("TODO")
+            # dstfield will be reused to receive the regridded source
+            # data for each section, one after the other
+            dstfield = create_Field(dstgrid, "dstfield")
+            dstfracfield = create_Field(dstgrid, "dstfracfield")
 
         # Regrid each section
         old_mask = None
         unmasked_grid_created = False
+        destroy_old_Regrid = False
         for k in section_keys:
             d = sections[k]  # d is a Data object
-            # Retrieve the source field's grid, create the ESMPy grid and a
-            # handle to regridding.dst_dict
+
+            # Retrieve the source field's grid, create the ESMF Grid
+            # and a handle to regridding.dst_dict
             src_data = d.squeeze().transpose(src_order).array
             if not (
                 method == "nearest_stod" and use_src_mask
-            ) and numpy_ma_is_masked(src_data):
+            ) and np.ma.is_masked(src_data):
                 mask = src_data.mask
-                if not numpy_array_equal(mask, old_mask):
+                if not np.array_equal(mask, old_mask):
                     # Release old memory
                     if old_mask is not None:
-                        regridSrc2Dst.destroy()  # noqa: F821
                         srcfracfield.destroy()  # noqa: F821
                         srcfield.destroy()  # noqa: F821
                         srcgrid.destroy()  # noqa: F821
 
                     # (Re)create the source ESMPy grid and fields
-                    srcgrid = Regrid.create_grid(
+                    srcgrid = create_Grid(
                         src_coords,
                         use_bounds,
                         mask=mask,
@@ -15876,21 +15879,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         coords_2D=src_coords_2D,
                         coord_order=src_coord_order,
                     )
-                    srcfield = Regrid.create_field(srcgrid, "srcfield")
-                    srcfracfield = Regrid.create_field(srcgrid, "srcfracfield")
+                    srcfield = create_Field(srcgrid, "srcfield")
+                    srcfracfield = create_Field(srcgrid, "srcfracfield")
 
                     # (Re)initialise the regridder
-                    new_regridder = weights is None
-                    if weights is not None:
-                        if regrid_ppp_mask(
-                                srcgrid,
-                                weights.regridSrc2Dst.srcfield.grid):
-                            regridSrc2Dst = weights
-                        else:
-                            new_regridder = True
+                    create_new_regridder = not dst_regrid
+                    if dst_regrid:
+                        create_new_regridder = not grids_have_same_mask(
+                            srcgrid, regridSrc2Dst.srcfield.grid
+                        )
 
-                    if new_regridder:
-                        regridSrc2Dst = Regrid(
+                    if create_new_regridder:
+                        if destroy_old_Regrid:
+                            regridSrc2Dst.destroy()  # noqa: F821
+
+                        regridSrc2Dst = create_Regrid(
                             srcfield,
                             dstfield,
                             srcfracfield,
@@ -15898,6 +15901,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             method,
                             ignore_degenerate=ignore_degenerate,
                         )
+                        destroy_old_Regrid = True
 
                     old_mask = mask
             else:
@@ -15906,29 +15910,29 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # section.
                 if not unmasked_grid_created or old_mask is not None:
                     # Create the source ESMPy grid and fields
-                    srcgrid = Regrid.create_grid(
+                    srcgrid = create_Grid(
                         src_coords,
                         use_bounds,
                         cyclic=src_cyclic,
                         coords_2D=src_coords_2D,
                         coord_order=src_coord_order,
                     )
-                    srcfield = Regrid.create_field(srcgrid, "srcfield")
-                    srcfracfield = Regrid.create_field(srcgrid, "srcfracfield")
+                    srcfield = create_Field(srcgrid, "srcfield")
+                    srcfracfield = create_Field(srcgrid, "srcfracfield")
 
                     # Initialise the regridder. This also creates the
                     # weights needed for the regridding.
-                    new_regridder = weights is None
-                    if weights is not None:
-                        if regrid_ppp_mask(
-                                srcgrid,
-                                weights.regridSrc2Dst.srcfield.grid):
-                            raise ValueError("TODO")
+                    create_new_regridder = not dst_regrid
+                    if dst_regrid:
+                        create_new_regridder = not grids_have_same_mask(
+                            srcgrid, regridSrc2Dst.srcfield.grid
+                        )
 
-                        regridSrc2Dst = weights
+                    if create_new_regridder:
+                        if destroy_old_Regrid:
+                            regridSrc2Dst.destroy()  # noqa: F821
 
-                    if new_regridder:
-                        regridSrc2Dst = Regrid(
+                        regridSrc2Dst = create_Regrid(
                             srcfield,
                             dstfield,
                             srcfracfield,
@@ -15936,27 +15940,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             method,
                             ignore_degenerate=ignore_degenerate,
                         )
+                        destroy_old_Regrid = True
 
                     unmasked_grid_created = True
                     old_mask = None
 
+                if return_operator:
+                    # Return the first created Regrid instance
+                    return RegridOperator(regrid=regridSrc2Dst, dst=dst.copy())
+
             # Fill the source and destination fields (the destination
             # field gets filled with a fill value, the source field
             # with the section's data)
-            regrid_fill_fields(src_data, srcfield, dstfield,
-                               self.fill_value(default="netCDF"))
+            regrid_fill_fields(
+                src_data, srcfield, dstfield, f.fill_value(default="netCDF")
+            )
 
-            # Run regridding (dstfield is an ESMF field)
-            dstfield = regridSrc2Dst.run_regridding(srcfield, dstfield)
-
-            print (type(regridSrc2Dst))
-            print (dir(regridSrc2Dst.regridSrc2Dst))
-            print (regridSrc2Dst.regridSrc2Dst.srcfield.grid.coords)
-            print ()
-            print (dir(regridSrc2Dst.regridSrc2Dst.dstfield.grid))
-            print (type(regridSrc2Dst.regridSrc2Dst.dstfield.grid))
-            print (regridSrc2Dst.regridSrc2Dst.dstfield.grid.has_corners)
-            print (type(regridSrc2Dst.regridSrc2Dst.regrid_method))
+            # Run regridding (dstfield is an ESMF Field)
+            dstfield = run_Regrid(regridSrc2Dst, srcfield, dstfield)
 
             # Compute field mass if requested for conservative regridding
             if (
@@ -15966,7 +15967,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # Update the _compute_field_mass dictionary in-place,
                 # thereby making the field mass available after
                 # returning
-                regrid_compute_field_mass(self,
+                regrid_compute_field_mass(
+                    f,
                     _compute_field_mass,
                     k,
                     srcgrid,
@@ -15978,8 +15980,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Get the regridded data or frac field as a numpy array
             # (regridded_data is a numpy array)
-            regridded_data = regrid_get_regridded_data(self,
-                method, fracfield, dstfield, dstfracfield
+            regridded_data = regrid_get_regridded_data(
+                f, method, fracfield, dstfield, dstfracfield
             )
 
             # Insert regridded data, with axes in order of the
@@ -15990,7 +15992,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # earlier.
             sections[k] = Data(
                 regridded_data.transpose(src_order).reshape(shape),
-                units=self.Units,
+                units=f.Units,
             )
 
         # Construct new data from regridded sections
@@ -16012,7 +16014,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         #            f.domain_axes[k_s].set_size(new_size)
 
         # Update coordinate references of new field
-        regrid_update_coordinate_references(f,
+        regrid_update_coordinate_references(
+            f,
             dst,
             src_axis_keys,
             dst_axis_sizes,
@@ -16023,7 +16026,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         # Update coordinates of new field
-        regrid_update_coordinates(f,
+        regrid_update_coordinates(
+            f,
             dst,
             dst_dict,
             dst_coords,
@@ -16052,18 +16056,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Release old memory from ESMF (this ought to happen garbage
         # collection, but it doesn't seem to work there!)
-        regridSrc2Dst.destroy()
-        dstfracfield.destroy()
-        srcfracfield.destroy()
-        dstfield.destroy()
-        srcfield.destroy()
-        dstgrid.destroy()
-        srcgrid.destroy()
-
-        #        if f.data.fits_in_one_chunk_in_memory(f.data.dtype.itemsize):
-        #            f.varray
-
-        #        f.autocyclic()
+        if destroy_old_Regrid:
+            regridSrc2Dst.destroy()
+            dstfracfield.destroy()
+            srcfracfield.destroy()
+            dstfield.destroy()
+            srcfield.destroy()
+            dstgrid.destroy()
+            srcgrid.destroy()
 
         return f
 
@@ -16157,7 +16157,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field` or `dict`
+            dst: `Field` or `dict` or `RegridOperator`
                 The field containing the new grid or a dictionary with
                 the axes specifiers as keys referencing dimension
                 coordinates.  If dst is a field list the first field
@@ -16320,8 +16320,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{inplace: `bool`, optional}}
 
-            {{i: deprecated at version 3.0.0}}
-
             _compute_field_mass: `dict`, optional
                 If this is a dictionary then the field masses of the
                 source and destination fields are computed and
@@ -16332,6 +16330,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 field construct's mass. The calculation is only done
                 if conservative regridding is being performed. This is
                 for debugging purposes.
+
+            return_operator: `bool`, optional
+                TODO
+
+                .. versionadded:: 3.10.0
+
+            {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
@@ -16367,13 +16372,39 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
 
         """
-        # Initialise ESMPy for regridding if found
-        Regrid.initialize()
+        try:
+            import ESMF
+        except ModuleNotFoundError as error:
+            raise ModuleNotFoundError(
+                f"Can't find module ESMF for regridding: {error}"
+            )
+
+        # Check the method
+        regrid_check_method(method)
+
+        # Initialise ESMF for regridding
+        regrid_initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # If dst is a dictionary set flag
-        dst_dict = not isinstance(dst, f.__class__)
+        dst_dict = isinstance(dst, dict)
+        dst_field = isinstance(dst, self.__class__)
+        dst_regrid = isinstance(dst, RegridOperator)
+
+        # Check the method
+        regrid_check_method(method)
+
+        if dst_regrid:
+            if not dst.check_method(method):
+                raise ("TODO")
+
+            if return_operator:
+                # Return the input RegridOperator instance
+                return dst.copy()
+
+            regrid = dst.regrid
+            dst = dst.dst
+            dst_field = True
 
         # Get the number of axes
         if isinstance(axes, str):
@@ -16386,8 +16417,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Retrieve the source axis keys and dimension coordinates
-        src_axis_keys, src_coords = regrid_get_cartesian_coords(f,
-            "source", axes
+        src_axis_keys, src_coords = regrid_get_cartesian_coords(
+            f, "source", axes
         )
 
         # Retrieve the destination axis keys and dimension coordinates
@@ -16401,8 +16432,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             dst_axis_keys = None
         else:
-            dst_axis_keys, dst_coords = regrid_get_cartesian_coords(dst,
-                "destination", axes
+            dst_axis_keys, dst_coords = regrid_get_cartesian_coords(
+                dst, "destination", axes
             )
 
         # Check that the units of the source and the destination
@@ -16422,8 +16453,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the axis indices and their order for the destination field.
         if not dst_dict:
-            dst_axis_indices, dst_order = regrid_get_axis_indices(dst,
-                dst_axis_keys
+            dst_axis_indices, dst_order = regrid_get_axis_indices(
+                dst, dst_axis_keys
             )
 
         # Pad out a single dimension with an extra one (see comments
@@ -16438,7 +16469,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if n_axes == 1 and f.squeeze().ndim > 1:
             # Find the length and index of the longest axis not including
             # the axis along which regridding will be performed.
-            src_shape = numpy_array(f.shape)
+            src_shape = np.array(f.shape)
             tmp = src_shape.copy()
             tmp[src_axis_indices] = -1
             max_length = -1
@@ -16447,14 +16478,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if length > max_length:
                     max_length = length
                     max_ind = ind
+
             # If adding this extra dimension to the regridding axis will not
             # create sections that exceed 1 chunk of memory proceed to get
             # the coordinate and associated data for the extra dimension.
             if src_shape[src_axis_indices].prod() * max_length * 8 < (
                 float(chunksize())
             ):
-                axis_keys_ext, coords_ext = regrid_get_cartesian_coords(f,
-                    "source", [max_ind]
+                axis_keys_ext, coords_ext = regrid_get_cartesian_coords(
+                    f, "source", [max_ind]
                 )
                 (
                     src_axis_indices_ext,
@@ -16462,13 +16494,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ) = regrid_get_axis_indices(f, axis_keys_ext + src_axis_keys)
 
         # Calculate shape of each regridded section
-        shape = regrid_get_section_shape(f,
+        shape = regrid_get_section_shape(
+            f,
             [coord.size for coord in coords_ext + dst_coords],
             src_axis_indices_ext,
         )
-
-        # Check the method
-        regrid_check_method(method)
 
         # Check that use_src_mask is True for all methods other than
         # nearest_stod
@@ -16478,7 +16508,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # higher order patch recovery
         if method == "patch" and n_axes != 2:
             raise ValueError(
-                "Higher order patch recovery is only available in 2D."
+                "Higher order patch recovery is only available in 2-d."
             )
 
         # Check the bounds of the coordinates
@@ -16486,7 +16516,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coords, dst_coords, method, ext_coords=coords_ext
         )
 
-        # Deal with case of 1D nonconservative regridding
+        # Deal with case of 1-d non-conservative regridding
         nonconservative1D = False
         if (
             method not in conservative_regridding_methods
@@ -16513,8 +16543,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # will not have any effect as all the items in the keys will be None.
         # Therefore it is only checked if the axes specified in axis_order
         # are in the regridding axes as this is informative to the user.
-        section_keys, sections = regrid_get_reordered_sections(f,
-            axis_order, src_axis_keys, src_axis_indices_ext
+        section_keys, sections = regrid_get_reordered_sections(
+            f, axis_order, src_axis_keys, src_axis_indices_ext
         )
 
         # Use bounds if the regridding method is conservative.
@@ -16523,7 +16553,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
-            dst_mask = regrid_get_destination_mask(dst,
+            dst_mask = regrid_get_destination_mask(
+                dst,
                 dst_order,
                 axes=dst_axis_keys,
                 cartesian=True,
@@ -16531,15 +16562,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Create the destination ESMPy grid and fields
-        dstgrid = Regrid.create_grid(
+        dstgrid = create_Grid(
             coords_ext + dst_coords, use_bounds, mask=dst_mask, cartesian=True
         )
-        dstfield = Regrid.create_field(dstgrid, "dstfield")
-        dstfracfield = Regrid.create_field(dstgrid, "dstfracfield")
+        dstfield = create_Field(dstgrid, "dstfield")
+        dstfracfield = create_Field(dstgrid, "dstfracfield")
 
         # Regrid each section
         old_mask = None
         unmasked_grid_created = False
+        destroy_old_Regrid = False
         for k in section_keys:
             d = sections[k]
             subsections = d.data.section(
@@ -16560,31 +16592,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     if not numpy_array_equal(mask, old_mask):
                         # Release old memory
                         if old_mask is not None:
-                            regridSrc2Dst.destroy()  # noqa: F821
                             srcfracfield.destroy()  # noqa: F821
                             srcfield.destroy()  # noqa: F821
                             srcgrid.destroy()  # noqa: F821
 
                         # (Re)create the source ESMPy grid and fields
-                        srcgrid = Regrid.create_grid(
+                        srcgrid = create_Grid(
                             coords_ext + src_coords,
                             use_bounds,
                             mask=mask,
                             cartesian=True,
                         )
-                        srcfield = Regrid.create_field(srcgrid, "srcfield")
-                        srcfracfield = Regrid.create_field(
-                            srcgrid, "srcfracfield"
-                        )
+                        srcfield = create_Field(srcgrid, "srcfield")
+                        srcfracfield = create_Field(srcgrid, "srcfracfield")
+
                         # (Re)initialise the regridder
-                        regridSrc2Dst = Regrid(
-                            srcfield,
-                            dstfield,
-                            srcfracfield,
-                            dstfracfield,
-                            method,
-                            ignore_degenerate=ignore_degenerate,
-                        )
+                        create_new_regridder = not dst_regrid
+                        if dst_regrid:
+                            create_new_regridder = not grids_have_same_mask(
+                                srcgrid, regridSrc2Dst.srcfield.grid
+                            )
+
+                        if create_new_regridder:
+                            if destroy_old_Regrid:
+                                regridSrc2Dst.destroy()  # noqa: F821
+
+                            regridSrc2Dst = create_Regrid(
+                                srcfield,
+                                dstfield,
+                                srcfracfield,
+                                dstfracfield,
+                                method,
+                                ignore_degenerate=ignore_degenerate,
+                            )
+                            destroy_old_Regrid = True
+
                         old_mask = mask
                 else:
                     if not unmasked_grid_created or old_mask is not None:
@@ -16596,31 +16638,52 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         srcfracfield = Regrid.create_field(
                             srcgrid, "srcfracfield"
                         )
+
                         # Initialise the regridder
-                        regridSrc2Dst = Regrid(
-                            srcfield,
-                            dstfield,
-                            srcfracfield,
-                            dstfracfield,
-                            method,
-                            ignore_degenerate=ignore_degenerate,
-                        )
+                        if dst_regrid:
+                            create_new_regridder = not grids_have_same_mask(
+                                srcgrid, regridSrc2Dst.srcfield.grid
+                            )
+
+                        if create_new_regridder:
+                            if destroy_old_Regrid:
+                                regridSrc2Dst.destroy()  # noqa: F821
+
+                            regridSrc2Dst = Regrid(
+                                srcfield,
+                                dstfield,
+                                srcfracfield,
+                                dstfracfield,
+                                method,
+                                ignore_degenerate=ignore_degenerate,
+                            )
+                            destroy_old_Regrid = True
+
                         unmasked_grid_created = True
                         old_mask = None
 
+                if return_operator:
+                    # Return the first created Regrid instance
+                    return RegridOperator(regrid=regridSrc2Dst, dst=dst.copy())
+
                 # Fill the source and destination fields
-                regrid_fill_fields(src_data, srcfield, dstfield,
-                                   self.fill_value(default="netCDF"))
+                regrid_fill_fields(
+                    src_data,
+                    srcfield,
+                    dstfield,
+                    self.fill_value(default="netCDF"),
+                )
 
                 # Run regridding
-                dstfield = regridSrc2Dst.run_regridding(srcfield, dstfield)
+                dstfield = run_Regrid(regridSrc2Dst, srcfield, dstfield)
 
                 # Compute field mass if requested for conservative regridding
                 if (
                     _compute_field_mass is not None
                     and method in conservative_regridding_methods
                 ):
-                    regrid_compute_field_mass(f,
+                    regrid_compute_field_mass(
+                        f,
                         _compute_field_mass,
                         k,
                         srcgrid,
@@ -16631,8 +16694,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     )
 
                 # Get the regridded data or frac field as a numpy array
-                regridded_data = regrid_get_regridded_data(f,
-                    method, fracfield, dstfield, dstfracfield
+                regridded_data = regrid_get_regridded_data(
+                    f, method, fracfield, dstfield, dstfracfield
                 )
 
                 if nonconservative1D:
@@ -16661,7 +16724,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_axis_sizes = [c.size for c in dst_coords]
 
         # Update coordinate references of new field
-        regrid_update_coordinate_references(f,
+        regrid_update_coordinate_references(
+            f,
             dst,
             src_axis_keys,
             dst_axis_sizes,
@@ -16673,7 +16737,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         # Update coordinates of new field
-        regrid_update_coordinates(f,
+        regrid_update_coordinates(
+            f,
             dst,
             dst_dict,
             dst_coords,
@@ -16690,13 +16755,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f.set_data(new_data, axes=self.get_data_axes())
 
         # Release old memory
-        regridSrc2Dst.destroy()
-        dstfracfield.destroy()
-        srcfracfield.destroy()
-        dstfield.destroy()
-        srcfield.destroy()
-        dstgrid.destroy()
-        srcgrid.destroy()
+        if destroy_old_Regrid:
+            regridSrc2Dst.destroy()
+            dstfracfield.destroy()
+            srcfracfield.destroy()
+            dstfield.destroy()
+            srcfield.destroy()
+            dstgrid.destroy()
+            srcgrid.destroy()
 
         return f
 

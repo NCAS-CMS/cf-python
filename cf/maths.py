@@ -2,7 +2,7 @@ from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from . import Units
 
 from .data.data import Data
-
+from regrid import get_cartesian_coords
 
 def relative_vorticity(
     u, v, wrap=None, one_sided_at_boundary=False, radius=6371229.0, cyclic=None
@@ -98,10 +98,10 @@ def relative_vorticity(
     v = v.copy()
 
     # Get the X and Y coordinates
-    (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords(
+    (u_x_key, u_y_key), (u_x, u_y) = get_cartesian_coords(u
         "u", ("X", "Y")
     )
-    (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords(
+    (v_x_key, v_y_key), (v_x, v_y) = get_cartesian_coords(v
         "v", ("X", "Y")
     )
 

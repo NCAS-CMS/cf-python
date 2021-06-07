@@ -1,7 +1,16 @@
-from .regrid import Regrid
+from .regridoperator import (
+    RegridOperator,
+    regrid_method_map,
+    regrid_method_map_inverse,
+)
 from .utils import (
+    create_Grid,
+    create_Field,
+    create_Regrid,
+    get_cartesian_coords,
+    grids_have_same_coords,
+    grids_have_same_mask,
     regrid_get_latlong,
-    regrid_get_cartesian_coords,
     regrid_get_axis_indices,
     regrid_get_coord_order,
     regrid_get_section_shape,
@@ -17,4 +26,6 @@ from .utils import (
     regrid_copy_coordinate_references,
     regrid_use_bounds,
     regrid_update_coordinates,
+    regrid_initialize,
+    run_Regrid,
 )
