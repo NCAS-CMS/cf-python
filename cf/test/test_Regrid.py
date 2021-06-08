@@ -42,7 +42,7 @@ class RegridTest(unittest.TestCase):
 
     chunk_sizes = (300, 10000, 100000)[::-1]
 
-    @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regrids(self):
         self.assertFalse(cf.regrid_logging())
         with cf.atol(1e-12):
@@ -106,7 +106,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f1.regridc(f6, axes="T", method="linear")
 
-    @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regridc(self):
         self.assertFalse(cf.regrid_logging())
         with cf.atol(1e-11):

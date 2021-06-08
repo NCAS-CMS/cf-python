@@ -23,32 +23,48 @@ regrid_method_map = {
 
 regrid_method_map_inverse = {v: k for k, v in regrid_method_map.items()}
 
+conservative_regridding_methods = (
+    "conservative",
+    "conservative_1st",
+    "conservative_2nd",
+)
+
+regridding_methods = (
+    "linear",  # prefer over 'bilinear' as of v3.2.0
+    "bilinear",  # only for backward compatibility, use & document 'linear'
+    "patch",
+    "nearest_stod",
+    "nearest_dtos",
+) + conservative_regridding_methods
+
 
 class RegridOperator:
-    """Class containing all the methods required for accessing ESMF
-    regridding through ESMPY and the associated utility methods."""
+    """A regridding operator between two fields.
+
+    Stores an `ESMF.Regrid` regridding operator and its associated
+    destination `Field` construct.
+
+    """
 
     def __init__(self, regrid, dst):
-        """Creates a handle for regridding fields from a source grid to
-        a destination grid that can then be used by the run_regridding
-        method.
+        """**Initialization**
 
         :Parameters:
 
             regrid: `ESMF.Regrid`
-                The source field with an associated grid to be used
-                for regridding.
+                The `ESMF.Regrid` regridding operator between two
+                fields.
 
             dst: `Field`
-                The destination field construct with an associated
-                grid to be used for regridding.
+                The destination field construct associated with the
+                `ESMF.Rerid` regriddinging operator.
 
         """
         self._regrid = regrid
         self._dst = dst
 
     def __del__(self):
-        """TODO"""
+        """Call the `ESMF.Regrid` destroy method."""
         self._regrid.destroy()
 
     @property
@@ -58,7 +74,7 @@ class RegridOperator:
         **Examples:**
 
         >>> type(r.dst)
-        TODO
+        cf.field.Field
 
         """
         return self._dst
@@ -73,7 +89,11 @@ class RegridOperator:
         'conservative'
 
         """
-        return regrid_method_map_inverse[self._regrid.regrid_method]
+        method = regrid_method_map_inverse[self._regrid.regrid_method]
+        if method == "bilinear":
+            method = "linear"
+
+        return method
 
     @property
     def regrid(self):
@@ -82,23 +102,36 @@ class RegridOperator:
         **Examples:**
 
         >>> type(r.regrid)
-        TODO
+        ESMF.api.regrid.Regrid
 
         """
         return self._regrid
 
     def check_method(self, method):
-        """Check the given method against the ESMF regrid method.
+        """Whether the given method is equivalent to the regridding
+        method.
 
         :Parameters:
 
             method: `str`
-                TODO
+                A regridding method, such as ``'conservative'``.
 
         :Returns:
 
             `bool`
-                TODO
+                Whether or not method is equivalent to the regridding
+                method.
+
+        **Examples:**
+
+        >>> r.method
+        'conservative'
+        >>> r.check_method('conservative')
+        True
+        >>> r.check_method('conservative_1st')
+        True
+        >>> r.check_method('conservative_2nd')
+        False
 
         """
         return regrid_method_map.get(method) == self._regrid.regrid_method
@@ -124,7 +157,8 @@ class RegridOperator:
         return type(self)(regrid=self._regrid.copy(), dst=self._dst.copy())
 
     def destroy(self):
-        """Free the memory allocated by the contained `ESMF.Regrid` instance.
+        """Free the memory allocated by the contained `ESMF.Regrid`
+        instance.
 
         **Examples:**
 

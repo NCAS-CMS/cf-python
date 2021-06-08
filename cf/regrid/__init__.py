@@ -1,16 +1,18 @@
 from .regridoperator import (
     RegridOperator,
+    conservative_regridding_methods,
     regrid_method_map,
     regrid_method_map_inverse,
+    regridding_methods,
 )
 from .utils import (
-    conservative_regridding_methods,
     create_Grid,
     create_Field,
     create_Regrid,
     get_cartesian_coords,
     grids_have_same_coords,
     grids_have_same_mask,
+    regrid_parse_operator,
     regrid_get_latlong,
     regrid_get_axis_indices,
     regrid_get_coord_order,
@@ -28,6 +30,5 @@ from .utils import (
     regrid_use_bounds,
     regrid_update_coordinates,
     regrid_initialize,
-    regridding_methods,
     run_Regrid,
 )

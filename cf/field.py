@@ -80,6 +80,7 @@ from .regrid import (
     get_cartesian_coords,
     grids_have_same_coords,
     grids_have_same_mask,
+    regrid_parse_operator,
     RegridOperator,
     regrid_get_latlong,
     regrid_get_axis_indices,
@@ -15214,17 +15215,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples:**
 
-        Section a field into 2D longitude/time slices, checking the units:
+        Section a field into 2-d longitude/time slices, checking the
+        units:
 
         >>> f.section({None: 'longitude', units: 'radians'},
-        ...           {None: 'time', 'units': 'days since 2006-01-01 00:00:00'})
+        ...           {None: 'time',
+        ...            'units': 'days since 2006-01-01 00:00:00'})
 
-        Section a field into 2D longitude/latitude slices, requiring
+        Section a field into 2-d longitude/latitude slices, requiring
         exact names:
 
         >>> f.section(['latitude', 'longitude'], exact=True)
 
-        Section a field into 2D longitude/latitude slices, showing
+        Section a field into 2-d longitude/latitude slices, showing
         the results:
 
         >>> f
@@ -15245,7 +15248,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def regrids(
         self,
         dst,
-        method,
+        method=None,
         src_cyclic=None,
         dst_cyclic=None,
         use_src_mask=True,
@@ -15388,104 +15391,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 list the first field in the list is
                 used. Alternatively a dictionary can be passed
                 containing the keywords 'longitude' and 'latitude'
-                with either two 1D dimension coordinates or two 2D
-                auxiliary coordinates. In the 2D case both coordinates
-                must have their axes in the same order and this must
-                be specified by the keyword 'axes' as either of the
-                tuples ``('X', 'Y')`` or ``('Y', 'X')``.
+                with either two 1-d dimension coordinates or two 2-d
+                auxiliary coordinates. In the 2-d case both
+                coordinates must have their axes in the same order and
+                this must be specified by the keyword 'axes' as either
+                of the tuples ``('X', 'Y')`` or ``('Y', 'X')``.
 
-            method: `str`
-                Specify the regridding method. The *method* parameter
-                must be one of the following:
-
-                ======================  ==================================
-                Method                  Description
-                ======================  ==================================
-                ``'linear'``            Bilinear interpolation.
-
-                ``'bilinear'``          Deprecated alias for ``'linear'``.
-
-                ``'conservative_1st'``  First order conservative
-                                        interpolation.
-
-                                        Preserve the area integral of
-                                        the data across the
-                                        interpolation from source to
-                                        destination. It uses the
-                                        proportion of the area of the
-                                        overlapping source and
-                                        destination cells to determine
-                                        appropriate weights.
-
-                                        In particular, the weight of a
-                                        source cell is the ratio of
-                                        the area of intersection of
-                                        the source and destination
-                                        cells to the area of the whole
-                                        destination cell.
-
-                                        It does not account for the
-                                        field gradient across the
-                                        source cell, unlike the
-                                        second-order conservative
-                                        method (see below).
-
-                ``'conservative_2nd'``  Second-order conservative
-                                        interpolation.
-
-                                        As with first order (see
-                                        above), preserves the area
-                                        integral of the field between
-                                        source and destination using a
-                                        weighted sum, with weights
-                                        based on the proportionate
-                                        area of intersection.
-
-                                        Unlike first-order, the
-                                        second-order method
-                                        incorporates further terms to
-                                        take into consideration the
-                                        gradient of the field across
-                                        the source cell, thereby
-                                        typically producing a smoother
-                                        result of higher accuracy.
-
-                ``'conservative'``      Alias for ``'conservative_1st'``
-
-                ``'patch'``             Higher-order patch recovery
-                                        interpolation.
-
-                                        A second degree polynomial
-                                        regridding method, which uses
-                                        a least squares algorithm to
-                                        calculate the polynomial.
-
-                                        This method gives better
-                                        derivatives in the resulting
-                                        destination data than the
-                                        linear method.
-
-                ``'nearest_stod'``      Nearest neighbour interpolation
-                                        for which each destination point
-                                        is mapped to the closest source
-                                        point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                ``'nearest_dtos'``      Nearest neighbour interpolation
-                                        for which each source point is
-                                        mapped to the destination point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                                        A given destination point may
-                                        receive input from multiple
-                                        source points, but no source
-                                        point will map to more than
-                                        one destination point.
-                ======================  ==================================
+            {{method: `str`, optional}}
 
             src_cyclic: `bool`, optional
                 Specifies whether the longitude for the source grid is
@@ -15513,7 +15425,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 grid is not taken into account when performing
                 regridding. If this option is set to true then it
                 is. If the destination field has more than two
-                dimensions then the first 2D slice in index space is
+                dimensions then the first 2-d slice in index space is
                 used for the mask e.g. for an field varying with (X,
                 Y, Z, T) the mask is taken from the slice (X, Y, 0,
                 0).
@@ -15525,9 +15437,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if this is True. Otherwise this is ignored.
 
             src_axes: `dict`, optional
-                A dictionary specifying the axes of the 2D latitude
+                A dictionary specifying the axes of the 2-d latitude
                 and longitude coordinates of the source field when no
-                1D dimension coordinates are present. It must have
+                1-d dimension coordinates are present. It must have
                 keys ``'X'`` and ``'Y'``. TODO
 
                 *Parameter example:*
@@ -15537,7 +15449,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   ``src_axes={'X': 1, 'Y': 0}``
 
             dst_axes: `dict`, optional
-                A dictionary specifying the axes of the 2D latitude
+                A dictionary specifying the axes of the 2-d latitude
                 and longitude coordinates of the destination field
                 when no dimension coordinates are present. It must
                 have keys ``'X'`` and ``'Y'``.
@@ -15581,7 +15493,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 for debugging purposes.
 
             return_operator: `bool`, optional
-                TODO
+                If True then do not perform the regridding, rather
+                return a `RegridOperator` instance that defines the
+                regridding operation, including the destination grid,
+                and which can be used in subsequent calls to
+                `regrids`.
 
                 .. versionadded:: 3.10.0
 
@@ -15589,8 +15505,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Returns:
 
-            `Field`
-                The regridded field construct.
+            `Field` or `None` or `RegridOperator`
+                The regridded field construct, or `None` if the
+                operation was in-place, or the regridding operator if
+                *return_operator* is True.
 
         **Examples:**
 
@@ -15608,7 +15526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
 
-        Regrid f to 2D auxiliary coordinates lat and lon, which have
+        Regrid f to 2-d auxiliary coordinates lat and lon, which have
         their dimensions ordered "Y" first then "X".
 
         >>> lat
@@ -15634,36 +15552,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
         """
-        #        try:
-        #            import ESMF
-        #        except ModuleNotFoundError as error:
-        #            raise ModuleNotFoundError(
-        #                f"Can't find module ESMF for regridding: {error}"
-        #            )
-
-        # Check the method
-        regrid_check_method(method)
-
         # Initialise ESMF for regridding
         regrid_initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        dst_field = isinstance(dst, self.__class__)
-        dst_dict = not dst_field and isinstance(dst, dict)
-        dst_regrid = not dst_field and isinstance(dst, RegridOperator)
+        dst_regrid = isinstance(dst, RegridOperator)
+        dst_field = not dst_regrid and isinstance(dst, self.__class__)
+        dst_dict = not dst_regrid and not dst_field and isinstance(dst, dict)
 
         if dst_regrid:
-            if not dst.check_method(method):
-                raise ("TODO")
+            (operator, regridSrc2Dst, dst, method) = regrid_parse_operator(
+                dst, method
+            )
+            dst_field = True
 
             if return_operator:
                 # Return the input RegridOperator instance
-                return dst.copy()
+                return operator.copy()
 
-            regrid = dst.regrid
-            dst = dst.dst
-            dst_field = True
+        # Check the method
+        regrid_check_method(method)
 
         # Retrieve the source field's latitude and longitude
         # coordinates
@@ -15704,7 +15613,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     dst_axes = dst["axes"]
                 except KeyError:
                     raise ValueError(
-                        "Key 'axes' must be specified for 2D "
+                        "Key 'axes' must be specified for 2-d "
                         "latitude/longitude coordinates."
                     )
                 dst_coords_2D = True
@@ -15760,7 +15669,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst, dst_axis_keys
             )
 
-        # Get the order of the X and Y axes for each 2D auxiliary
+        # Get the order of the X and Y axes for each 2-d auxiliary
         # coordinate.
         src_coord_order = None
         dst_coord_order = None
@@ -15800,7 +15709,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Check the bounds of the coordinates
         regrid_check_bounds(src_coords, dst_coords, method)
 
-        # Slice the source data into 2D latitude/longitude sections,
+        # Slice the source data into 2-d latitude/longitude sections,
         # also getting a list of dictionary keys in the order
         # requested. If axis_order has not been set, then the order is
         # random, and so in this case the order in which sections are
@@ -15825,15 +15734,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coords_2D=src_coords_2D,
                 coord_order=src_coord_order,
             )
-            if not grids_have_same_coords(srcgrid, regrid.srcfield.grid):
-                raise ValueError("TODO")
+            if not grids_have_same_coords(
+                srcgrid, regridSrc2Dst.srcfield.grid
+            ):
+                raise ValueError(
+                    f"Can't regrid {self!r} with regridding operator "
+                    f"{operator!r}: Source grid coordinates do not match."
+                )
 
         # Get the destination ESMF Grid, Field and fractional Field
         if dst_regrid:
-            dstgrid = regrid.dstfield.grid
-            dstfield = regrid.dstfield
-            dstfracfield = regrid.dst_frac_field
-            regridSrc2Dst = regrid
+            dstgrid = regridSrc2Dst.dstfield.grid
+            dstfield = regridSrc2Dst.dstfield
+            dstfracfield = regridSrc2Dst.dst_frac_field
+        #            regridSrc2Dst = regrid
         else:
             dstgrid = create_Grid(
                 dst_coords,
@@ -16073,7 +15987,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         self,
         dst,
         axes,
-        method,
+        method=None,
         use_src_mask=True,
         use_dst_mask=False,
         fracfield=False,
@@ -16110,7 +16024,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         compared to the latter, but the weight matrix can be larger
         than the linear matrix, which can be an issue when regridding
         close to the memory limit on a machine. It is only available
-        in 2D. Nearest neighbour interpolation is also
+        in 2-d. Nearest neighbour interpolation is also
         available. Nearest source to destination is particularly
         useful for regridding integer fields such as land use.
 
@@ -16172,107 +16086,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 must be the same as the number of specifiers passed
                 in.
 
-            method: `str`
-                Specify the regridding method. The *method* parameter
-                must be one of the following:
-
-                ======================  ==================================
-                Method                  Description
-                ======================  ==================================
-                ``'linear'``            Linear interpolation in the number
-                                        of dimensions being regridded.
-
-                                        For two dimensional regridding
-                                        this is bilinear
-                                        interpolation, and for three
-                                        dimensional regridding this is
-                                        trilinear
-                                        interpolation.Bilinear
-                                        interpolation.
-
-                ``'bilinear'``          Deprecated alias for ``'linear'``.
-
-                ``'conservative_1st'``  First order conservative
-                                        interpolation.
-
-                                        Preserve the area integral of
-                                        the data across the
-                                        interpolation from source to
-                                        destination. It uses the
-                                        proportion of the area of the
-                                        overlapping source and
-                                        destination cells to determine
-                                        appropriate weights.
-
-                                        In particular, the weight of a
-                                        source cell is the ratio of
-                                        the area of intersection of
-                                        the source and destination
-                                        cells to the area of the whole
-                                        destination cell.
-
-                                        It does not account for the
-                                        field gradient across the
-                                        source cell, unlike the
-                                        second-order conservative
-                                        method (see below).
-
-                ``'conservative_2nd'``  Second-order conservative
-                                        interpolation.
-
-                                        As with first order (see
-                                        above), preserves the area
-                                        integral of the field between
-                                        source and destination using a
-                                        weighted sum, with weights
-                                        based on the proportionate
-                                        area of intersection.
-
-                                        Unlike first-order, the
-                                        second-order method
-                                        incorporates further terms to
-                                        take into consideration the
-                                        gradient of the field across
-                                        the source cell, thereby
-                                        typically producing a smoother
-                                        result of higher accuracy.
-
-                ``'conservative'``      Alias for ``'conservative_1st'``
-
-                ``'patch'``             Higher-order patch recovery
-                                        interpolation.
-
-                                        A second degree polynomial
-                                        regridding method, which uses
-                                        a least squares algorithm to
-                                        calculate the polynomial.
-
-                                        This method gives better
-                                        derivatives in the resulting
-                                        destination data than the
-                                        linear method.
-
-                ``'nearest_stod'``      Nearest neighbour interpolation
-                                        for which each destination point
-                                        is mapped to the closest source
-                                        point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                ``'nearest_dtos'``      Nearest neighbour interpolation
-                                        for which each source point is
-                                        mapped to the destination point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                                        A given destination point may
-                                        receive input from multiple
-                                        source points, but no source
-                                        point will map to more than
-                                        one destination point.
-                ======================  ==================================
+            {{method: `str`, optional}}
 
             use_src_mask: `bool`, optional
                 For all methods other than 'nearest_stod', this must
@@ -16333,7 +16147,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 for debugging purposes.
 
             return_operator: `bool`, optional
-                TODO
+                If True then do not perform the regridding, rather
+                return a `RegridOperator` instance that defines the
+                regridding operation, including the destination grid,
+                and which can be used in subsequent calls to
+                `regridc`.
 
                 .. versionadded:: 3.10.0
 
@@ -16341,9 +16159,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Returns:
 
-            `Field` or `None`
-                The regridded field construct, or `None` if the operation
-                was in-place.
+            `Field` or `None` or `RegridOperator`
+                The regridded field construct, or `None` if the
+                operation was in-place, or the regridding operator if
+                *return_operator* is True.
 
         **Examples:**
 
@@ -16373,39 +16192,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
 
         """
-        #        try:
-        #            import ESMF
-        #        except ModuleNotFoundError as error:
-        #            raise ModuleNotFoundError(
-        #                f"Can't find module ESMF for regridding: {error}"
-        #           )
-
-        # Check the method
-        regrid_check_method(method)
-
         # Initialise ESMF for regridding
         regrid_initialize()
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        dst_dict = isinstance(dst, dict)
-        dst_field = isinstance(dst, self.__class__)
         dst_regrid = isinstance(dst, RegridOperator)
-
-        # Check the method
-        regrid_check_method(method)
+        dst_field = not dst_regrid and isinstance(dst, self.__class__)
+        dst_dict = not dst_regrid and not dst_field and isinstance(dst, dict)
 
         if dst_regrid:
-            if not dst.check_method(method):
-                raise ("TODO")
+            (operator, regridSrc2Dst, dst, method) = regrid_parse_operator(
+                dst, method
+            )
+            dst_field = True
 
             if return_operator:
                 # Return the input RegridOperator instance
-                return dst.copy()
+                return operator.copy()
 
-            regrid = dst.regrid
-            dst = dst.dst
-            dst_field = True
+        # Check the method
+        regrid_check_method(method)
 
         # Get the number of axes
         if isinstance(axes, str):
@@ -16421,11 +16228,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         src_axis_keys, src_coords = get_cartesian_coords(f, "source", axes)
 
         # Retrieve the destination axis keys and dimension coordinates
-        if dst_field:
-            dst_axis_keys, dst_coords = get_cartesian_coords(
-                dst, "destination", axes
-            )
-        elif dst_dict:
+        if dst_dict:
             dst_coords = []
             for axis in axes:
                 try:
@@ -16434,12 +16237,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     raise ValueError(f"Axis {axis!r} not specified in dst.")
 
             dst_axis_keys = None
+        elif dst_field:
+            dst_axis_keys, dst_coords = get_cartesian_coords(
+                dst, "destination", axes
+            )
         else:
             raise TypeError(
                 "'dst' parameter must be Field, dict or RegridOperator. "
                 f"Got {type(dst)}"
             )
-
         # Check that the units of the source and the destination
         # coords are equivalent and if so set the units of the source
         # coords to those of the destination coords
@@ -16462,17 +16268,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Pad out a single dimension with an extra one (see comments
-        # in _regrid_check_bounds). Variables ending in _ext pertain
+        # in regrid_check_bounds). Variables ending in _ext pertain
         # the extra dimension.
         axis_keys_ext = []
         coords_ext = []
         src_axis_indices_ext = src_axis_indices
         src_order_ext = src_order
-        # Proceed if there is only one regridding dimension, but more than
-        # one dimension to the field that is not of size one.
+        # Proceed if there is only one regridding dimension, but more
+        # than one dimension to the field that is not of size one.
         if n_axes == 1 and f.squeeze().ndim > 1:
-            # Find the length and index of the longest axis not including
-            # the axis along which regridding will be performed.
+            # Find the length and index of the longest axis not
+            # including the axis along which regridding will be
+            # performed.
             src_shape = np.array(f.shape)
             tmp = src_shape.copy()
             tmp[src_axis_indices] = -1
@@ -16483,9 +16290,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     max_length = length
                     max_ind = ind
 
-            # If adding this extra dimension to the regridding axis will not
-            # create sections that exceed 1 chunk of memory proceed to get
-            # the coordinate and associated data for the extra dimension.
+            # If adding this extra dimension to the regridding axis
+            # will not create sections that exceed 1 chunk of memory
+            # proceed to get the coordinate and associated data for
+            # the extra dimension.
             if src_shape[src_axis_indices].prod() * max_length * 8 < (
                 float(chunksize())
             ):
@@ -16520,16 +16328,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coords, dst_coords, method, ext_coords=coords_ext
         )
 
-        # Deal with case of 1-d non-conservative regridding
+        # Deal with case of 1D nonconservative regridding
         nonconservative1D = False
         if (
             method not in conservative_regridding_methods
             and n_axes == 1
             and coords_ext == []
         ):
-            # Method is not conservative, regridding is to be done along
-            # one dimension and that dimension has not been padded out with
-            # an extra one.
+            # Method is not conservative, regridding is to be done
+            # along one dimension and that dimension has not been
+            # padded out with an extra one.
             nonconservative1D = True
             coords_ext = [
                 DimensionCoordinate(
@@ -16542,13 +16350,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
             ]
 
-        # Section the data into slices of up to three dimensions getting a
-        # list of reordered keys if required. Reordering on an extended axis
-        # will not have any effect as all the items in the keys will be None.
-        # Therefore it is only checked if the axes specified in axis_order
-        # are in the regridding axes as this is informative to the user.
+        # Section the data into slices of up to three dimensions
+        # getting a list of reordered keys if required. Reordering on
+        # an extended axis will not have any effect as all the items
+        # in the keys will be None. Therefore it is only checked if
+        # the axes specified in axis_order are in the regridding axes
+        # as this is informative to the user.
         section_keys, sections = regrid_get_reordered_sections(
-            f, axis_order, src_axis_keys, src_axis_indices_ext
+            self, axis_order, src_axis_keys, src_axis_indices_ext
         )
 
         # Use bounds if the regridding method is conservative.
@@ -16558,29 +16367,29 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
             # TODODASK: Just get the mask?
-            dst_mask = regrid_get_destination_mask(
-                dst,
+            dst_mask = dst._regrid_get_destination_mask(
                 dst_order,
                 axes=dst_axis_keys,
                 cartesian=True,
                 coords_ext=coords_ext,
             )
 
+        # Get the destination ESMF Grid, Field and fractional Field
         if dst_regrid:
             srcgrid = create_Grid(
-                coords_ext + src_coords,
-                use_bounds,
-                cartesian=True,
+                coords_ext + src_coords, use_bounds, cartesian=True
             )
-            if not grids_have_same_coords(srcgrid, regrid.srcfield.grid):
-                raise ValueError("TODO")
+            if not grids_have_same_coords(
+                srcgrid, regridSrc2Dst.srcfield.grid
+            ):
+                raise ValueError(
+                    f"Can't regrid {self!r} with regridding operator "
+                    f"{operator!r}: Source grid coordinates do not match."
+                )
 
-        # Create the destination ESMF Grid, Field and fractional Field
-        if dst_regrid:
-            dstgrid = regrid.dstfield.grid
-            dstfield = regrid.dstfield
-            dstfracfield = regrid.dst_frac_field
-            regridSrc2Dst = regrid
+            dstgrid = regridSrc2Dst.dstfield.grid
+            dstfield = regridSrc2Dst.dstfield
+            dstfracfield = regridSrc2Dst.dst_frac_field
         else:
             dstgrid = create_Grid(
                 coords_ext + dst_coords,
@@ -16588,6 +16397,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 mask=dst_mask,
                 cartesian=True,
             )
+
+            # dstfield will be reused to receive the regridded source
+            # data for each section, one after the other
             dstfield = create_Field(dstgrid, "dstfield")
             dstfracfield = create_Field(dstgrid, "dstfracfield")
 
@@ -16602,8 +16414,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             for k2 in subsections.keys():
                 d2 = subsections[k2]
-                # Retrieve the source field's grid, create the ESMPy grid
-                # and a handle to regridding.
+                # Retrieve the source field's grid, create the ESMPy
+                # grid and a handle to regridding.
                 src_data = d2.squeeze().transpose(src_order_ext).array
                 if nonconservative1D:
                     src_data = numpy_tile(src_data, (2, 1))
@@ -16645,7 +16457,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 dstfield,
                                 srcfracfield,
                                 dstfracfield,
-                                method,
+                                method=method,
                                 ignore_degenerate=ignore_degenerate,
                             )
                             destroy_old_Regrid = True
@@ -16660,7 +16472,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         srcfield = create_Field(srcgrid, "srcfield")
                         srcfracfield = create_Field(srcgrid, "srcfracfield")
 
-                        # Initialise the regridder
                         create_new_regridder = not dst_regrid
                         if dst_regrid:
                             create_new_regridder = not grids_have_same_mask(
@@ -16676,7 +16487,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 dstfield,
                                 srcfracfield,
                                 dstfracfield,
-                                method,
+                                method=method,
                                 ignore_degenerate=ignore_degenerate,
                             )
                             destroy_old_Regrid = True
@@ -16684,16 +16495,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         unmasked_grid_created = True
                         old_mask = None
 
-                if return_operator:
-                    # Return the first created Regrid instance
-                    return RegridOperator(regrid=regridSrc2Dst, dst=dst.copy())
+                    if return_operator:
+                        # Return the first created Regrid instance
+                        return RegridOperator(
+                            regrid=regridSrc2Dst, dst=dst.copy()
+                        )
 
                 # Fill the source and destination fields
                 regrid_fill_fields(
                     src_data,
                     srcfield,
                     dstfield,
-                    self.fill_value(default="netCDF"),
+                    f.fill_value(default="netCDF"),
                 )
 
                 # Run regridding
@@ -16715,16 +16528,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dstfield,
                     )
 
-                # Get the regridded data or frac field as a numpy array
+                # Get the regridded data or frac field as a numpy
+                # array
                 regridded_data = regrid_get_regridded_data(
                     f, method, fracfield, dstfield, dstfracfield
                 )
 
                 if nonconservative1D:
-                    # For nonconservative regridding along one dimension
-                    # where that dimension has not been padded out take
-                    # only one of the two rows of data as they should be
-                    # nearly identical.
+                    # For nonconservative regridding along one
+                    # dimension where that dimension has not been
+                    # padded out take only one of the two rows of data
+                    # as they should be nearly identical.
                     regridded_data = regridded_data[0]
 
                 # Insert regridded data, with axes in correct order
@@ -16769,7 +16583,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             cartesian=True,
         )
 
-        # Copy across destination fields coordinate references if necessary
+        # Copy across destination fields coordinate references if
+        # necessary
         if not dst_dict:
             regrid_copy_coordinate_references(f, dst, dst_axis_keys)
 

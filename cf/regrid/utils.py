@@ -14,40 +14,11 @@ if _found_ESMF:
     except Exception as error:
         print(f"WARNING: Can not import ESMF for regridding: {error}")
 
-from .regridoperator import regrid_method_map
-
-from ..decorators import _deprecated_kwarg_check
-
-
-conservative_regridding_methods = (
-    "conservative",
-    "conservative_1st",
-    "conservative_2nd",
+from .regridoperator import (
+    conservative_regridding_methods,
+    regrid_method_map,
+    regridding_methods,
 )
-
-regridding_methods = (
-    "linear",  # prefer over 'bilinear' as of v3.2.0
-    "bilinear",  # only for backward compatibility, use & document 'linear'
-    "patch",
-    "nearest_stod",
-    "nearest_dtos",
-) + conservative_regridding_methods
-
-
-# Create a handle to the regridding method
-# regrid_method_map = {
-#    "linear": ESMF.RegridMethod.BILINEAR,  # see comment below...
-#    "bilinear": ESMF.RegridMethod.BILINEAR,  # (for back compat)
-#    "conservative": ESMF.RegridMethod.CONSERVE,
-#    "conservative_1st": ESMF.RegridMethod.CONSERVE,
-#    "conservative_2nd": ESMF.RegridMethod.CONSERVE_2ND,
-#    "nearest_dtos": ESMF.RegridMethod.NEAREST_DTOS,
-#    "nearest_stod": ESMF.RegridMethod.NEAREST_STOD,
-#    "patch": ESMF.RegridMethod.PATCH,
-# }
-# ... diverge from ESMF with respect to name for bilinear method by
-# using 'linear' because 'bi' implies 2D linear interpolation, which
-# could mislead or confuse for Cartesian regridding in 1D or 3D.
 
 
 def regrid_compute_mass_grid(
@@ -60,7 +31,6 @@ def regrid_compute_mass_grid(
     """Compute the mass of an ESMF Field.
 
     :Parameters:
-
 
         valuefield: `ESMF.Field`
             This contains data values of a field built on the cells of
@@ -102,8 +72,8 @@ def regrid_compute_mass_grid(
 
 def regrid_get_latlong(f, name, axes=None):
     """Retrieve the latitude and longitude coordinates of this field and
-    associated information. If 1D lat/long coordinates are found then
-    these are returned. Otherwise, 2D lat/long coordinates are searched
+    associated information. If 1-d lat/long coordinates are found then
+    these are returned. Otherwise, 2-d lat/long coordinates are searched
     for and if found returned.
 
     :Parameters:
@@ -134,15 +104,15 @@ def regrid_get_latlong(f, name, axes=None):
             The sizes of the x and y dimension coordinates.
 
         coord_keys: `list`
-            The keys of the x and y coordinate (1D dimension
-            coordinate, or 2D auxilliary coordinates).
+            The keys of the x and y coordinate (1-d dimension
+            coordinate, or 2-d auxilliary coordinates).
 
         coords: `list`
-            The x and y coordinates (1D dimension coordinates or 2D
+            The x and y coordinates (1-d dimension coordinates or 2-d
             auxilliary coordinates).
 
         coords_2D: `bool`
-            True if 2D auxiliary coordinates are returned or if 1D X
+            True if 2-d auxiliary coordinates are returned or if 1-d X
             and Y coordinates are returned, which are not long/lat.
 
     """
@@ -317,7 +287,7 @@ def get_cartesian_coords(f, name, axes):
 
         axes: sequence of `str`
             Specifiers for the dimension coordinates to be
-            retrieved. See cf.Field.axes for details.
+            retrieved. See `cf.Field.domain_axes` for details.
 
     :Returns:
 
@@ -348,8 +318,7 @@ def get_cartesian_coords(f, name, axes):
     return axis_keys, coords
 
 
-@_deprecated_kwarg_check("i")
-def regrid_get_axis_indices(f, axis_keys, i=False):
+def regrid_get_axis_indices(f, axis_keys):
     """Get axis indices and their orders in rank of this field.
 
     :Parameters:
@@ -360,8 +329,6 @@ def regrid_get_axis_indices(f, axis_keys, i=False):
 
         axis_keys: sequence
             A sequence of axis specifiers.
-
-        i: deprecated at version 3.0.0
 
     :Returns:
 
@@ -519,75 +486,6 @@ def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
                 )
 
 
-# def regrid_check_dst_Grid_has_corners(regrid, method):
-#    """Check the bounds of the coordinates for regridding and reassign the
-#    regridding method if auto is selected.
-#
-#    :Parameters:
-#
-#        src_coords: sequence
-#            A sequence of the source coordinates.
-#
-#        dst_coords: sequence
-#            A sequence of the destination coordinates.
-#
-#        method: `str`
-#            A string indicating the regrid method.
-#
-#        ext_coords: `None` or sequence
-#            If a sequence of extension coordinates is present these
-#            are also checked. Only used for cartesian regridding when
-#            regridding only 1 (only 1!) dimension of a n>2 dimensional
-#            field. In this case we need to provided the coordinates of
-#            the dimensions that aren't being regridded (that are the
-#            same in both src and dst grids) so that we can create a
-#            sensible ESMF grid object.
-#
-#    :Returns:
-#
-#        `None`
-#
-#    """
-#    if method not in conservative_regridding_methods:
-#        return
-#
-#    if not regrid.regridSrc2Dst.dstfield.grid.has_corners:
-#        raise ValueError(
-#            f"cf.{dst.__class__.__name__} {coord!r}  must have destintion "
-#            "grid corners for conservative regridding."
-#        )
-#    for name, coords in zip(
-#        ("Source", "Destination"), (src_coords, dst_coords)
-#    ):
-#        for coord in coords:
-#            if not coord.has_bounds():
-#                raise ValueError(
-#                    f"{name} {coord!r} coordinates must have bounds "
-#                    "for conservative regridding."
-#                )
-#
-#            if not coord.contiguous(overlap=False):
-#                raise ValueError(
-#                    f"{name} {coord!r} coordinates must have "
-#                    "contiguous, non-overlapping bounds "
-#                    "for conservative regridding."
-#                )
-#
-#    if ext_coords is not None:
-#        for coord in ext_coords:
-#            if not coord.has_bounds():
-#                raise ValueError(
-#                    f"{coord!r} dimension coordinates must have "
-#                    "bounds for conservative regridding."
-#                )
-#            if not coord.contiguous(overlap=False):
-#                raise ValueError(
-#                    f"{coord!r} dimension coordinates must have "
-#                    "contiguous, non-overlapping bounds "
-#                    "for conservative regridding."
-#                )
-
-
 def regrid_check_method(method):
     """Check the regrid method is valid and if not raise an error.
 
@@ -597,12 +495,11 @@ def regrid_check_method(method):
             The regridding method.
 
     """
-    if method is None:
-        raise ValueError("Can't regrid: Must select a regridding method")
-
-    elif method not in regridding_methods:
-        raise ValueError(f"Can't regrid: Invalid method: {method!r}")
-
+    if method not in regridding_methods:
+        raise ValueError(
+            "Can't regrid: Must select a valid regridding method. "
+            f"Got: {method!r}"
+        )
     elif method == "bilinear":  # TODO use logging.info() once have logging
         print(
             "Note the 'bilinear' method argument has been renamed to "
@@ -627,8 +524,8 @@ def regrid_check_use_src_mask(use_src_mask, method):
     """
     if not use_src_mask and not method == "nearest_stod":
         raise ValueError(
-            "use_src_mask can only be False when using the "
-            "nearest_stod method."
+            "The use_src_mask parameter can only be False when using the "
+            "'nearest_stod' regridding method."
         )
 
 
@@ -664,11 +561,11 @@ def regrid_get_reordered_sections(
             A dictionary of the data sections for regridding.
 
     """
-    # If we had dynamic masking, we wouldn't need this method, we could
-    # sdimply replace it in regrid[sc] with a call to
+    # If we had dynamic masking, we wouldn't need this method, we
+    # could sdimply replace it in the clling function with a call to
     # Data.section. However, we don't have it, so this allows us to
-    # possibibly reduce the number of trasnistions between different masks
-    # - each change is slow.
+    # possibibly reduce the number of trasnistions between different
+    # masks - each change is slow.
     data_axes = f.get_data_axes()
 
     axis_indices = []
@@ -763,10 +660,10 @@ def regrid_fill_fields(src_data, srcfield, dstfield, fill_value):
         src_data: ndarray
             The data to fill the source field with.
 
-        srcfield: ESMPy Field
+        srcfield: `ESMF.Field`
             The source field.
 
-        dstfield: ESMPy Field
+        dstfield: `ESMF.Field`
             The destination field. This get always gets initialised with
             missing values.
 
@@ -801,20 +698,20 @@ def regrid_compute_field_mass(
         k: `tuple`
             A key identifying the section of the field being regridded.
 
-        srcgrid: ESMPy grid
+        srcgrid: `ESMF.Grid`
             The source grid.
 
-        srcfield: ESMPy grid
+        srcfield: `ESMF.Grid`
             The source field.
 
-        srcfracfield: ESMPy field
+        srcfracfield: `ESMF.Field`
             Information about the fraction of each cell of the source
             field used in regridding.
 
-        dstgrid: ESMPy grid
+        dstgrid: `ESMF.Grid`
             The destination grid.
 
-        dstfield: ESMPy field
+        dstfield: `ESMF.Field`
             The destination field.
 
     """
@@ -845,7 +742,7 @@ def regrid_compute_field_mass(
 
 def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
     """Get the regridded data of frac field as a numpy array from the
-    ESMPy fields.
+    ESMF Fields.
 
     :Parameters:
 
@@ -859,10 +756,10 @@ def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
             Whether to return the frac field or not in the case of
             conservative regridding.
 
-        dstfield: ESMPy field
+        dstfield: `ESMF.Field`
             The destination field.
 
-        dstfracfield: ESMPy field
+        dstfracfield: `ESMF.Field`
             Information about the fraction of each of the destination
             field cells involved in the regridding. For conservative
             regridding this must be taken into account.
@@ -1117,12 +1014,12 @@ def regrid_update_coordinates(
             The sizes of the destination axes.
 
         dst_coords_2D: `bool`, optional
-            Whether the destination coordinates are 2D, currently only
+            Whether the destination coordinates are 2-d, currently only
             applies to spherical regridding.
 
         dst_coord_order: `list`, optional
             A list of lists specifying the ordering of the axes for
-            each 2D destination coordinate.
+            each 2-d destination coordinate.
 
     """
     # NOTE: May be common ground between cartesian and shperical that
@@ -1221,7 +1118,7 @@ def regrid_update_coordinates(
 
 
 def grids_have_same_mask(grid0, grid1):
-    """TODO.
+    """Whether two `ESMF.Grid` instances have identical masks.
 
     :Parameters:
 
@@ -1251,7 +1148,7 @@ def grids_have_same_mask(grid0, grid1):
 
 
 def grids_have_same_coords(grid0, grid1):
-    """TODO.
+    """Whether two `ESMF.Grid` instances have identical coordinates.
 
     :Parameters:
 
@@ -1286,14 +1183,14 @@ def grids_have_same_coords(grid0, grid1):
 
 def regrid_initialize():
     """Check whether ESMF has been found. If not raise an import error.
-    Initialise the ESMPy manager. Whether logging is enabled or not is
+    Initialise the ESMF manager. Whether logging is enabled or not is
     determined by cf.regrid_logging. If it is then logging takes place
-    after every call to ESMPy.
+    after every call to ESMF.
 
     :Returns:
 
         `ESMF.Manager`
-            A singleton instance of the ESMPy manager.
+            A singleton instance of the `ESMF` manager.
 
     """
     return ESMF.Manager(debug=bool(regrid_logging()))
@@ -1417,17 +1314,17 @@ def create_Grid(
             bounds. None by default.
 
         coords_2D: `bool`, optional
-            Whether the coordinates are 2D or not. Presently only
+            Whether the coordinates are 2-d or not. Presently only
             works for spherical coordinates. False by default.
 
         coord_order: sequence, optional
             Two tuples one indicating the order of the x and y axes
-            for 2D longitude, one for 2D latitude.
+            for 2-d longitude, one for 2-d latitude.
 
     :Returns:
 
         `ESMF.Grid`
-            The resulting `ESMPy` grid for use as a source or
+            The resulting `ESMF` grid for use as a source or
             destination grid in regridding.
 
     """
@@ -1557,11 +1454,13 @@ def create_Grid(
                 "Cartesian grid must have between 1 and 3 dimensions."
             )
 
-        # For 1D conservative regridding add an extra dimension of size 1
+        # For 1-d conservative regridding add an extra dimension of
+        # size 1
         if ndim == 1:
             if not use_bounds:
-                # For 1D nonconservative regridding the extra dimension
-                # should already have been added in cf.Field.regridc.
+                # For 1-d non-conservative regridding, the extra
+                # dimension should already have been added in the
+                # calling function.
                 raise ValueError(
                     "Cannot create a Cartesian grid from "
                     "one dimension coordinate with no bounds."
@@ -1679,5 +1578,43 @@ def create_Field(grid, name):
 
 
 def run_Regrid(regrid, srcfield, dstfield):
-    """TODO."""
+    """Call an `ESMF.Regrid` instance to perform regridding.
+
+    :Parameters:
+
+    :Returns:
+
+        `ESMF.Field`
+
+    """
     return regrid(srcfield, dstfield, zero_region=ESMF.Region.SELECT)
+
+
+def regrid_parse_operator(operator, method):
+    """TODO.
+
+    :Parameters:
+
+        operator: `RegridOperator`
+            The `ESMF` grid to use in creating the field.
+
+        method: `str`
+            The regridding method.
+
+    :Returns:
+
+        `RegridOperator`, `ESMF.Regrid`, `Field`, `string`
+            The regridding operator and its components: The input
+            regridding operator and its `regrid`, `dst` and `method`
+            attributes.
+
+    """
+    if method is None:
+        method = operator.method
+    elif not operator.check_method(method):
+        raise ValueError(
+            f"Method {method!r} does not match the method of the "
+            f"regridding operator: {operator.method!r}"
+        )
+
+    return operator, operator.regrid, operator.dst, method
