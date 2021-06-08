@@ -2235,6 +2235,12 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.convert("qwerty")
 
+        # Test some constructs which can never have data
+        with self.assertRaises(ValueError):
+            f.convert("cellmethod0")
+        with self.assertRaises(ValueError):
+            f.convert("domainaxis0")
+
     def test_Field_section(self):
         f = cf.read(self.filename2)[0][0:10]
         g = f.section(("X", "Y"))
