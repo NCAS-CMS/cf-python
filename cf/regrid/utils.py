@@ -15,6 +15,7 @@ if _found_ESMF:
         print(f"WARNING: Can not import ESMF for regridding: {error}")
 
 from .regridoperator import (
+    RegridOperator,
     conservative_regridding_methods,
     regrid_method_map,
     regridding_methods,
@@ -28,7 +29,7 @@ def regrid_compute_mass_grid(
     fracfield=None,
     uninitval=422397696.0,
 ):
-    """Compute the mass of an ESMF Field.
+    """Compute the mass of an `ESMF` Field.
 
     :Parameters:
 
@@ -52,7 +53,7 @@ def regrid_compute_mass_grid(
     :Returns:
 
         `float`
-            The mass of the data field is computed.
+            The mass of the data field.
 
     """
     mass = 0.0
@@ -70,7 +71,7 @@ def regrid_compute_mass_grid(
     return mass
 
 
-def regrid_get_latlong(f, name, axes=None):
+def regrid_get_latlon(f, name, axes=None):
     """Retrieve the latitude and longitude coordinates of this field and
     associated information. If 1-d lat/long coordinates are found then
     these are returned. Otherwise, 2-d lat/long coordinates are searched
@@ -79,7 +80,7 @@ def regrid_get_latlong(f, name, axes=None):
     :Parameters:
 
         f: `Field`
-            TODO
+            The source or destination field.
 
         name: `str`
             A name to identify the field in error messages. Either
@@ -97,23 +98,20 @@ def regrid_get_latlong(f, name, axes=None):
 
     :Returns:
 
-        axis_keys: `list`
-            The keys of the x and y dimension coordinates.
+        `list`, `list`, `list`, `list`, `bool`
+            * The keys of the x and y dimension coordinates.
 
-        axis_sizes: `list`
-            The sizes of the x and y dimension coordinates.
+            * The sizes of the x and y dimension coordinates.
 
-        coord_keys: `list`
-            The keys of the x and y coordinate (1-d dimension
-            coordinate, or 2-d auxilliary coordinates).
+            * The keys of the x and y coordinate (1-d dimension
+              coordinate, or 2-d auxilliary coordinates).
 
-        coords: `list`
-            The x and y coordinates (1-d dimension coordinates or 2-d
-            auxilliary coordinates).
+            * The x and y coordinates (1-d dimension coordinates or
+              2-d auxilliary coordinates).
 
-        coords_2D: `bool`
-            True if 2-d auxiliary coordinates are returned or if 1-d X
-            and Y coordinates are returned, which are not long/lat.
+            * True if 2-d auxiliary coordinates are returned or if 1-d
+              X and Y coordinates are returned, which are not
+              long/lat.
 
     """
     data_axes = f.constructs.data_axes()
@@ -280,7 +278,7 @@ def get_cartesian_coords(f, name, axes):
     :Parameters:
 
         f: `Field`
-           TODO
+           The field from which to get the coordinates.
 
         name: `str`
             A name to identify the field in error messages.
@@ -291,12 +289,9 @@ def get_cartesian_coords(f, name, axes):
 
     :Returns:
 
-        axis_keys: `list`
-            A list of the keys of the dimension coordinates
-            retrieved.
-
-        coords: `list`
-            A list of the dimension coordinates retrieved.
+        `list`, `list`
+            A list of the keys of the dimension coordinates; and a
+            list of the dimension coordinates retrieved.
 
     """
     axis_keys = []
@@ -324,19 +319,17 @@ def regrid_get_axis_indices(f, axis_keys):
     :Parameters:
 
          f: `Field`
-            TODO. The field construct may have size-1 dimensions
-            inserted into its data in-place.
+            The source or destination field. This field might get
+            size-1 dimensions inserted into its data in-place.
 
         axis_keys: sequence
             A sequence of axis specifiers.
 
     :Returns:
 
-        axis_indices: list
-            A list of the indices of the specified axes.
-
-        order: `numpy.ndarray`
-            A numpy array of the rank order of the axes.
+        `list`, `numpy.ndarray`
+            A list of the indices of the specified axes; and the rank
+            order of the axes.
 
     """
     data_axes = f.get_data_axes()
@@ -368,7 +361,7 @@ def regrid_get_coord_order(f, axis_keys, coord_keys):
     :Parameters:
 
          f: `Field`
-            TODO.
+            The source or destination field.
 
         axis_keys: sequence
             A sequence of axis keys.
@@ -393,13 +386,13 @@ def regrid_get_coord_order(f, axis_keys, coord_keys):
     return coord_order
 
 
-def regrid_get_section_shape(f, axis_sizes, axis_indices):
+def regrid_get_section_shape(src, axis_sizes, axis_indices):
     """Get the shape of each regridded section.
 
     :Parameters:
 
-        f: `Field`
-            TODO.
+        src: `Field`
+            The source field.
 
         axis_sizes: sequence
             A sequence of the sizes of each axis along which the
@@ -411,11 +404,11 @@ def regrid_get_section_shape(f, axis_sizes, axis_indices):
 
     :Returns:
 
-        shape: `list`
+        `list`
             A list of integers defining the shape of each section.
 
     """
-    shape = [1] * f.ndim
+    shape = [1] * src.ndim
     for i, axis_index in enumerate(axis_indices):
         shape[axis_index] = axis_sizes[i]
 
@@ -423,8 +416,7 @@ def regrid_get_section_shape(f, axis_sizes, axis_indices):
 
 
 def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
-    """Check the bounds of the coordinates for regridding and reassign
-    the regridding method if auto is selected.
+    """Check the bounds of the coordinates for regridding.
 
     :Parameters:
 
@@ -440,11 +432,11 @@ def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
         ext_coords: `None` or sequence
             If a sequence of extension coordinates is present these
             are also checked. Only used for cartesian regridding when
-            regridding only 1 (only 1!) dimension of a n>2 dimensional
-            field. In this case we need to provided the coordinates of
-            the dimensions that aren't being regridded (that are the
-            same in both src and dst grids) so that we can create a
-            sensible ESMF grid object.
+            regridding only 1 (only 1!) dimension of an N>2
+            dimensional field. In this case we need to provided the
+            coordinates of the dimensions that aren't being regridded
+            (that are the same in both src and dst grids) so that we
+            can create a sensible ESMF grid object.
 
     :Returns:
 
@@ -452,6 +444,7 @@ def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
 
     """
     if method not in conservative_regridding_methods:
+        # Bounds are only not needed for conservative methods
         return
 
     for name, coords in zip(
@@ -487,12 +480,18 @@ def regrid_check_bounds(src_coords, dst_coords, method, ext_coords=None):
 
 
 def regrid_check_method(method):
-    """Check the regrid method is valid and if not raise an error.
+    """Check that the regrid method is valid.
+
+    If it is not valid then an exception is raised.
 
     :Parameters:
 
         method: `str`
             The regridding method.
+
+    :Returns:
+
+        `None`
 
     """
     if method not in regridding_methods:
@@ -505,13 +504,15 @@ def regrid_check_method(method):
             "Note the 'bilinear' method argument has been renamed to "
             "'linear' at version 3.2.0. It is still supported for now "
             "but please use 'linear' in future. "
-            "'bilinear' will be removed at version 4.0.0"
+            "'bilinear' will be removed at version 4.0.0."
         )
 
 
 def regrid_check_use_src_mask(use_src_mask, method):
-    """Check that use_src_mask is True for all methods other than
-    nearest_stod and if not raise an error.
+    """Check the setting of the use_src_mask parameter.
+
+    An exception is raised is the setting is incorrect relative to the
+    regridding method.
 
     :Parameters:
 
@@ -520,6 +521,10 @@ def regrid_check_use_src_mask(use_src_mask, method):
 
         method: `str`
             The regridding method.
+
+    :Returns:
+
+        `None`
 
     """
     if not use_src_mask and not method == "nearest_stod":
@@ -530,7 +535,7 @@ def regrid_check_use_src_mask(use_src_mask, method):
 
 
 def regrid_get_reordered_sections(
-    f, axis_order, regrid_axes, regrid_axis_indices
+    src, axis_order, regrid_axes, regrid_axis_indices
 ):
     """Get a dictionary of the data sections for regridding and a list
     of its keys reordered if necessary so that they will be looped over
@@ -538,8 +543,8 @@ def regrid_get_reordered_sections(
 
     :Parameters:
 
-        f: `Field`
-            TODO.
+        src: `Field`
+            The source field.
 
         axis_order: `None` or sequence of axes specifiers.
             If `None` then the sections keys will not be reordered. If
@@ -554,11 +559,9 @@ def regrid_get_reordered_sections(
 
     :Returns:
 
-        section_keys: `list`
-            An ordered list of the section keys.
-
-        sections: `dict`
-            A dictionary of the data sections for regridding.
+        `list`, `dict`
+            An ordered list of the section keys; and a dictionary of
+            the data sections for regridding.
 
     """
     # If we had dynamic masking, we wouldn't need this method, we
@@ -566,12 +569,12 @@ def regrid_get_reordered_sections(
     # Data.section. However, we don't have it, so this allows us to
     # possibibly reduce the number of trasnistions between different
     # masks - each change is slow.
-    data_axes = f.get_data_axes()
+    data_axes = src.get_data_axes()
 
     axis_indices = []
     if axis_order is not None:
         for axis in axis_order:
-            axis_key = f.dimension_coordinate(
+            axis_key = src.dimension_coordinate(
                 filter_by_axis=(axis,),
                 default=None,
                 key=True,
@@ -587,10 +590,10 @@ def regrid_get_reordered_sections(
                     pass
 
             else:
-                raise ValueError(f"Axis not found: {axis!r}")
+                raise ValueError(f"Source field axis not found: {axis!r}")
 
     # Section the data
-    sections = f.data.section(regrid_axis_indices)
+    sections = src.data.section(regrid_axis_indices)
 
     # Reorder keys correspondingly if required
     if axis_indices:
@@ -609,7 +612,7 @@ def regrid_get_destination_mask(
     :Parameters:
 
         f: `Field`
-            TODO.
+            The destination field.
 
         dst_order: sequence, optional
             The order of the destination axes.
@@ -626,8 +629,8 @@ def regrid_get_destination_mask(
 
     :Returns:
 
-        dst_mask: `numpy.ndarray`
-            A numpy array with the mask.
+        `numpy.ndarray`
+            The mask.
 
     """
     data_axes = f.get_data_axes()
@@ -649,13 +652,12 @@ def regrid_get_destination_mask(
 
 
 def regrid_fill_fields(src_data, srcfield, dstfield, fill_value):
-    """Fill the source field with data and the destination field with
+    """Fill the source and destination Fields.
+
+    Fill the source Field with data and the destination Field with
     fill values.
 
     :Parameters:
-
-        f: `Field`
-            TODO.
 
         src_data: ndarray
             The data to fill the source field with.
@@ -666,6 +668,13 @@ def regrid_fill_fields(src_data, srcfield, dstfield, fill_value):
         dstfield: `ESMF.Field`
             The destination field. This get always gets initialised with
             missing values.
+
+        fill_value:
+            The fill value with which to fill *dstfield*
+
+    :Returns:
+
+        `None`
 
     """
     srcfield.data[...] = np.ma.MaskedArray(src_data, copy=False).filled(
@@ -684,13 +693,14 @@ def regrid_compute_field_mass(
     dstgrid,
     dstfield,
 ):
-    """Compute the field mass for conservative regridding. The mass
-    should be the same before and after regridding.
+    """Compute the field mass for conservative regridding.
+
+    The mass should be the same before and after regridding.
 
     :Parameters:
 
         f: `Field`
-            TODO.
+            The source field.
 
         _compute_field_mass: `dict`
             A dictionary for the results.
@@ -713,6 +723,10 @@ def regrid_compute_field_mass(
 
         dstfield: `ESMF.Field`
             The destination field.
+
+    :Returns:
+
+        `None`
 
     """
     if not isinstance(_compute_field_mass, dict):
@@ -741,13 +755,12 @@ def regrid_compute_field_mass(
 
 
 def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
-    """Get the regridded data of frac field as a numpy array from the
-    ESMF Fields.
+    """Get the regridded data.
 
     :Parameters:
 
         f: `Field`
-            TODO.
+            The source field.
 
         method: `str`
             The regridding method.
@@ -763,6 +776,11 @@ def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
             Information about the fraction of each of the destination
             field cells involved in the regridding. For conservative
             regridding this must be taken into account.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The regridded data.
 
     """
     if method in conservative_regridding_methods:
@@ -797,13 +815,12 @@ def regrid_update_coordinate_references(
     src_cyclic=False,
     dst_cyclic=False,
 ):
-    """Update the coordinate references of the new field after
-    regridding.
+    """Update the coordinate references of the regridded field.
 
     :Parameters:
 
         f: `Field`
-            TODO. Updated in-place.
+            The regridded field. Updated in-place.
 
         dst: `Field` or `dict`
             The object with the destination grid for regridding.
@@ -819,9 +836,6 @@ def regrid_update_coordinate_references(
 
         use_dst_mask: `bool`
             Whether to use the destination mask in regridding.
-
-        i: `bool`
-            Whether to do the regridding in place.
 
         cartesian: `bool`, optional
             Whether to do Cartesian regridding or spherical
@@ -839,6 +853,10 @@ def regrid_update_coordinate_references(
         dst_cyclic: `bool`, optional
             Whether the destination longitude is cyclic for spherical
             regridding.
+
+    :Returns:
+
+        `None`
 
     """
     domain_ancillaries = f.domain_ancillaries(todict=True)
@@ -984,12 +1002,12 @@ def regrid_update_coordinates(
     dst_coords_2D=False,
     dst_coord_order=None,
 ):
-    """Update the coordinates of the new field.
+    """Update the coordinates of the regridded field.
 
     :Parameters:
 
         f: `Field`
-            TODO. Updated in-place.
+            The regridded field. Updated in-place.
 
         dst: Field or `dict`
             The object containing the destination grid.
@@ -1020,6 +1038,10 @@ def regrid_update_coordinates(
         dst_coord_order: `list`, optional
             A list of lists specifying the ordering of the axes for
             each 2-d destination coordinate.
+
+    :Returns:
+
+        `None`
 
     """
     # NOTE: May be common ground between cartesian and shperical that
@@ -1117,21 +1139,18 @@ def regrid_update_coordinates(
                 domain_axes[src_axis_key].nc_set_dimension(ncdim)
 
 
-def grids_have_same_mask(grid0, grid1):
+def grids_have_same_masks(grid0, grid1):
     """Whether two `ESMF.Grid` instances have identical masks.
 
     :Parameters:
 
-        grid0: `ESMF.Grid`
-            TODO.
-
-        grid1: `ESMF.Grid`
-            TODO.
+        grid0, grid1: `ESMF.Grid`, `ESMF.Grid`
+            The `ESMF` Grid instances to be compared
 
     :Returns:
 
         `bool`
-            TODO
+            Whether or not the Grids have identical masks.
 
     """
     mask0 = grid0.mask
@@ -1152,16 +1171,13 @@ def grids_have_same_coords(grid0, grid1):
 
     :Parameters:
 
-        grid0: `ESMF.Grid`
-            TODO.
-
-        grid1: `ESMF.Grid`
-            TODO.
+        grid0, grid1: `ESMF.Grid`, `ESMF.Grid`
+            The `ESMF` Grid instances to be compared
 
     :Returns:
 
         `bool`
-            TODO
+            Whether or not the Grids have identical coordinates.
 
     """
     coords0 = grid0.coords
@@ -1182,10 +1198,11 @@ def grids_have_same_coords(grid0, grid1):
 
 
 def regrid_initialize():
-    """Check whether ESMF has been found. If not raise an import error.
-    Initialise the ESMF manager. Whether logging is enabled or not is
-    determined by cf.regrid_logging. If it is then logging takes place
-    after every call to ESMF.
+    """Initialize `ESMF`.
+
+    Initialise the `ESMF` manager. Whether logging is enabled or not
+    is determined by cf.regrid_logging. If it is then logging takes
+    place after every call to `ESMF`.
 
     :Returns:
 
@@ -1202,27 +1219,26 @@ def create_Regrid(
     srcfracfield,
     dstfracfield,
     method,
-    ignore_degenerate=False,
+    ignore_degenerate,
 ):
-    """Creates a handle for regridding fields from a source grid to a
-    destination grid that can then be used by the run_regridding method.
+    """Create an `ESMF` regrid operator.
 
     :Parameters:
 
         srcfield: `ESMF.Field`
-            The source field with an associated grid to be used
+            The source Field with an associated grid to be used
             for regridding.
 
         dstfield: `ESMF.Field`
-            The destination field with an associated grid to be
+            The destination Field with an associated grid to be
             used for regridding.
 
         srcfracfield: `ESMF.Field`
-            A field to hold the fraction of the source field that
+            A Field to hold the fraction of the source field that
             contributes to conservative regridding.
 
         dstfracfield: `ESMF.Field`
-            A field to hold the fraction of the source field that
+            A Field to hold the fraction of the source field that
             contributes to conservative regridding.
 
         method: `str`
@@ -1252,8 +1268,13 @@ def create_Regrid(
                                  source interpolation.
             ===================  =================================
 
-        ignore_degenerate: `bool`, optional
+        ignore_degenerate: `bool`
             Whether to check for degenerate points.
+
+    :Returns:
+
+        `ESMF.Regrid`
+            The `ESMF` regrid operator.
 
     """
     regrid_method = regrid_method_map.get(method)
@@ -1284,10 +1305,7 @@ def create_Grid(
     coords_2D=False,
     coord_order=None,
 ):
-    """Create an `ESMF` grid given a sequence of coordinates for use as
-    a source or destination grid in regridding.
-
-    Optionally the grid may have an associated mask.
+    """Create an `ESMF` Grid.
 
     :Parameters:
 
@@ -1324,8 +1342,7 @@ def create_Grid(
     :Returns:
 
         `ESMF.Grid`
-            The resulting `ESMF` grid for use as a source or
-            destination grid in regridding.
+            The `ESMF` grid.
 
     """
     if not cartesian:
@@ -1444,6 +1461,7 @@ def create_Grid(
                 if cyclic:
                     x_bounds = x_bounds[:-1, :]
                     y_bounds = y_bounds[:-1, :]
+
                 gridCorner[x][...] = x_bounds
                 gridCorner[y][...] = y_bounds
     else:
@@ -1556,8 +1574,7 @@ def create_Grid(
 
 
 def create_Field(grid, name):
-    """Create an `ESMF` field for use as a source or destination field
-    in regridding given an `ESMF` grid and a name.
+    """Create an `ESMF` Field.
 
     :Parameters:
 
@@ -1570,8 +1587,8 @@ def create_Field(grid, name):
     :Returns:
 
         `ESMF.Field`
-            The resulting `ESMF` Field for use as a source or
-            destination Field in regridding.
+            The `ESMF` Field for use as a source or destination Field
+            in regridding.
 
     """
     return ESMF.Field(grid, name)
@@ -1582,31 +1599,63 @@ def run_Regrid(regrid, srcfield, dstfield):
 
     :Parameters:
 
+        regrid: `ESMF.Regrid`
+            The `ESMF` regrid operator
+
+        srcfield: `ESMF.Field`
+            The source Field with an associated grid to be used for
+            regridding.
+
+        dstfield: `ESMF.Field`
+            The destination Field with an associated grid to be used
+            for regridding.
+
     :Returns:
 
         `ESMF.Field`
+            The regridded Field
 
     """
     return regrid(srcfield, dstfield, zero_region=ESMF.Region.SELECT)
 
 
-def regrid_parse_operator(operator, method):
+def regrid_create_operator(regrid, parameters):
     """TODO.
 
     :Parameters:
 
-        operator: `RegridOperator`
-            The `ESMF` grid to use in creating the field.
+        regrid: `ESMF.Regrid`
+            TODO
 
-        method: `str`
-            The regridding method.
+        parameters: `dict`
+            TODO
 
     :Returns:
 
-        `RegridOperator`, `ESMF.Regrid`, `Field`, `string`
-            The regridding operator and its components: The input
-            regridding operator and its `regrid`, `dst` and `method`
-            attributes.
+        `RegridOperator`
+           TODO
+
+    """
+    return RegridOperator(regrid, **parameters)
+
+
+def regrid_get_operator_method(operator, method):
+    """Return the regridding method of a regridding operator.
+
+    :Parameters:
+
+        operator: `RegridOperator`
+            The regridding operator.
+
+        method: `str` or `None`
+            A regridding method. If `None` then ignored. If a `str`
+            then an exception is raised if it not equivalent to the
+            regridding operator's method.
+
+    :Returns:
+
+        `string`
+            The operator's regridding method.
 
     """
     if method is None:
@@ -1617,4 +1666,4 @@ def regrid_parse_operator(operator, method):
             f"regridding operator: {operator.method!r}"
         )
 
-    return operator, operator.regrid, operator.dst, method
+    return method

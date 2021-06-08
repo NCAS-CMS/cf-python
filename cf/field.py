@@ -79,10 +79,9 @@ from .regrid import (
     create_Regrid,
     get_cartesian_coords,
     grids_have_same_coords,
-    grids_have_same_mask,
-    regrid_parse_operator,
+    grids_have_same_masks,
     RegridOperator,
-    regrid_get_latlong,
+    regrid_get_latlon,
     regrid_get_axis_indices,
     regrid_get_coord_order,
     regrid_get_section_shape,
@@ -99,6 +98,8 @@ from .regrid import (
     regrid_use_bounds,
     regrid_update_coordinates,
     regrid_initialize,
+    regrid_get_operator_method,
+    regrid_create_operator,
     run_Regrid,
 )
 
@@ -15373,8 +15374,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Tripolar grids are logically rectangular and so may be able to
         be regridded. If no dimension coordinates are present it will
         be necessary to specify which netCDF dimensions are the X and
-        Y axes using the *src_axes* or *dst_axes*
-        keywords. Connections across the bipole fold are not currently
+        Y axes using the *src_axes* or *dst_axes* keywords.
+        Connections across the bipole fold are not currently
         supported, but are not be necessary in some cases, for example
         if the points on either side are together without a gap. It
         will also be necessary to specify *src_cyclic* or *dst_cyclic*
@@ -15558,18 +15559,29 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f = _inplace_enabled_define_and_cleanup(self)
 
         dst_regrid = isinstance(dst, RegridOperator)
-        dst_field = not dst_regrid and isinstance(dst, self.__class__)
-        dst_dict = not dst_regrid and not dst_field and isinstance(dst, dict)
-
         if dst_regrid:
-            (operator, regridSrc2Dst, dst, method) = regrid_parse_operator(
-                dst, method
-            )
-            dst_field = True
+            operator = dst
+            method = regrid_get_operator_method(operator, method)
 
             if return_operator:
-                # Return the input RegridOperator instance
                 return operator.copy()
+
+            regridSrc2Dst = operator.regrid
+
+            # Override input arguments with those stored in the regrid
+            # operator
+            dst = operator.get_parameter("dst")
+            axis_order = operator.get_parameter("axis_order")
+            dst_axes = operator.get_parameter("dst_axes")
+            dst_cyclic = operator.get_parameter("dst_cyclic")
+            src_cyclic = operator.get_parameter("src_cyclic")
+            ignore_degenerate = operator.get_parameter("ignore_degenerate")
+            src_axes = operator.get_parameter("src_axes")
+            use_dst_mask = operator.get_parameter("use_dst_mask")
+            use_src_mask = operator.get_parameter("use_src_mask")
+
+        dst_field = isinstance(dst, self.__class__)
+        dst_dict = not dst_field and isinstance(dst, dict)
 
         # Check the method
         regrid_check_method(method)
@@ -15582,7 +15594,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coord_keys,
             src_coords,
             src_coords_2D,
-        ) = regrid_get_latlong(f, "source", axes=src_axes)
+        ) = regrid_get_latlon(f, "source", axes=src_axes)
 
         # Retrieve the destination field's latitude and longitude
         # coordinates
@@ -15594,7 +15606,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_coord_keys,
                 dst_coords,
                 dst_coords_2D,
-            ) = regrid_get_latlong(dst, "destination", axes=dst_axes)
+            ) = regrid_get_latlon(dst, "destination", axes=dst_axes)
         elif dst_dict:
             # dst is a dictionary
             try:
@@ -15640,8 +15652,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_axis_keys = None
         else:
             raise TypeError(
-                "'dst' parameter must be Field, dict or RegridOperator. "
-                f"Got {type(dst)}"
+                "dst parameter must be Field, dict or RegridOperator. "
+                f"Got: {type(dst)}"
             )
 
         # Automatically detect the cyclicity of the source longitude
@@ -15747,7 +15759,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dstgrid = regridSrc2Dst.dstfield.grid
             dstfield = regridSrc2Dst.dstfield
             dstfracfield = regridSrc2Dst.dst_frac_field
-        #            regridSrc2Dst = regrid
         else:
             dstgrid = create_Grid(
                 dst_coords,
@@ -15799,7 +15810,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # (Re)initialise the regridder
                     create_new_regridder = not dst_regrid
                     if dst_regrid:
-                        create_new_regridder = not grids_have_same_mask(
+                        create_new_regridder = not grids_have_same_masks(
                             srcgrid, regridSrc2Dst.srcfield.grid
                         )
 
@@ -15838,7 +15849,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # weights needed for the regridding.
                     create_new_regridder = not dst_regrid
                     if dst_regrid:
-                        create_new_regridder = not grids_have_same_mask(
+                        create_new_regridder = not grids_have_same_masks(
                             srcgrid, regridSrc2Dst.srcfield.grid
                         )
 
@@ -15859,9 +15870,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     unmasked_grid_created = True
                     old_mask = None
 
-                if return_operator:
-                    # Return the first created Regrid instance
-                    return RegridOperator(regrid=regridSrc2Dst, dst=dst.copy())
+            if return_operator:
+                # Return the first created regrid operator, which
+                # contaions the ESMF regrid operator and the input
+                # parameters.
+                parameters = {
+                    "dst": dst.copy(),
+                    "axis_order": axis_order,
+                    "dst_axes": dst_axes,
+                    "dst_cyclic": dst_cyclic,
+                    "src_cyclic": src_cyclic,
+                    "ignore_degenerate": ignore_degenerate,
+                    "src_axes": src_axes,
+                    "use_dst_mask": use_dst_mask,
+                    "use_src_mask": use_src_mask,
+                }
+                return regrid_create_operator(regridSrc2Dst, parameters)
 
             # Fill the source and destination fields (the destination
             # field gets filled with a fill value, the source field
@@ -15986,7 +16010,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def regridc(
         self,
         dst,
-        axes,
+        axes=None,
         method=None,
         use_src_mask=True,
         use_dst_mask=False,
@@ -16078,13 +16102,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coordinates.  If dst is a field list the first field
                 in the list is used.
 
-            axes:
+            axes: optional
                 Select dimension coordinates from the source and
                 destination fields for regridding. See `cf.Field.axes`
                 TODO for options for selecting specific axes. However,
                 the number of axes returned by `cf.Field.axes` TODO
                 must be the same as the number of specifiers passed
-                in.
+                in. TODO Can only be None  if regridoperator
 
             {{method: `str`, optional}}
 
@@ -16198,18 +16222,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f = _inplace_enabled_define_and_cleanup(self)
 
         dst_regrid = isinstance(dst, RegridOperator)
-        dst_field = not dst_regrid and isinstance(dst, self.__class__)
-        dst_dict = not dst_regrid and not dst_field and isinstance(dst, dict)
 
         if dst_regrid:
-            (operator, regridSrc2Dst, dst, method) = regrid_parse_operator(
-                dst, method
-            )
-            dst_field = True
+            operator = dst
+            method = regrid_get_operator_method(operator, method)
 
             if return_operator:
-                # Return the input RegridOperator instance
                 return operator.copy()
+
+            regridSrc2Dst = operator.regrid
+
+            # Override input arguments with those stored in the regrid
+            # operator
+            dst = operator.get_parameter("dst")
+            axes = operator.get_parameter("axes")
+            axis_order = operator.get_parameter("axis_order")
+            ignore_degenerate = operator.get_parameter("ignore_degenerate")
+            use_dst_mask = operator.get_parameter("use_dst_mask")
+            use_src_mask = operator.get_parameter("use_src_mask")
+
+        dst_field = isinstance(dst, self.__class__)
+        dst_dict = not dst_field and isinstance(dst, dict)
 
         # Check the method
         regrid_check_method(method)
@@ -16243,8 +16276,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         else:
             raise TypeError(
-                "'dst' parameter must be Field, dict or RegridOperator. "
-                f"Got {type(dst)}"
+                "dst parameter must be Field, dict or RegridOperator. "
+                f"Got: {type(dst)}"
             )
         # Check that the units of the source and the destination
         # coords are equivalent and if so set the units of the source
@@ -16367,7 +16400,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
             # TODODASK: Just get the mask?
-            dst_mask = dst._regrid_get_destination_mask(
+            dst_mask = regrid_get_destination_mask(
+                dst,
                 dst_order,
                 axes=dst_axis_keys,
                 cartesian=True,
@@ -16444,7 +16478,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         # (Re)initialise the regridder
                         create_new_regridder = not dst_regrid
                         if dst_regrid:
-                            create_new_regridder = not grids_have_same_mask(
+                            create_new_regridder = not grids_have_same_masks(
                                 srcgrid, regridSrc2Dst.srcfield.grid
                             )
 
@@ -16474,7 +16508,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                         create_new_regridder = not dst_regrid
                         if dst_regrid:
-                            create_new_regridder = not grids_have_same_mask(
+                            create_new_regridder = not grids_have_same_masks(
                                 srcgrid, regridSrc2Dst.srcfield.grid
                             )
 
@@ -16495,11 +16529,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         unmasked_grid_created = True
                         old_mask = None
 
-                    if return_operator:
-                        # Return the first created Regrid instance
-                        return RegridOperator(
-                            regrid=regridSrc2Dst, dst=dst.copy()
-                        )
+                if return_operator:
+                    # Return the first created regrid operator, which
+                    # contaions the ESMF regrid operator and the input
+                    # parameters.
+                    parameters = {
+                        "dst": dst.copy(),
+                        "axes": axes,
+                        "axis_order": axis_order,
+                        "ignore_degenerate": ignore_degenerate,
+                        "use_dst_mask": use_dst_mask,
+                        "use_src_mask": use_src_mask,
+                    }
+                    return regrid_create_operator(regridSrc2Dst, parameters)
 
                 # Fill the source and destination fields
                 regrid_fill_fields(
