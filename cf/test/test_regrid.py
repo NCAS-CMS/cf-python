@@ -168,6 +168,10 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(op)
             self.assertTrue(f3.equals(r))
 
+            # Repeat
+            r = f1.regrids(op)
+            self.assertTrue(f3.equals(r))
+
             dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
             op = f1.regrids(
                 dst, "conservative", dst_cyclic=True, return_operator=True
