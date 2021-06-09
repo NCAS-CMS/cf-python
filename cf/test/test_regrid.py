@@ -189,6 +189,12 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(op)
             self.assertTrue(f4.equals(r))
 
+        # Raise exception when the source grid does not match that of
+        # the regrid operator
+        op = f1.regrids(f2, "conservative", return_operator=True)
+        with self.assertRaises(ValueError):
+            f2.regrids(op)
+
     @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regridc_operator(self):
         self.assertFalse(cf.regrid_logging())
@@ -235,6 +241,12 @@ class RegridTest(unittest.TestCase):
 
             self.assertTrue(f6.equals(f4.regridc(op)))
             self.assertTrue(f6.equals(f4.regridc(op)))
+
+        # Raise exception when the source grid does not match that of
+        # the regrid operator
+        op = f1.regridc(f2, axes="T", method="linear", return_operator=True)
+        with self.assertRaises(ValueError):
+            f2.regrids(op)
 
 
 if __name__ == "__main__":

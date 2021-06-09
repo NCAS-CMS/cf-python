@@ -169,16 +169,16 @@ _docstring_substitution_definitions = {
                                         one destination point.
 
                 `None`                  This is the default and can
-                                        only be the new grid is
+                                        only be used the new grid is
                                         specified by a regridding
                                         operator, which stores its own
                                         method.
                 ======================  ==============================
 
-                If the new grid is specified by a regridding operator,
-                then the *method* parameter may be `None` (the
-                default), or may be set to a method that is same, or
-                an alias of, the regridding operator's method.""",
+                .. note:: When *dst* is a regrid operator then the
+                          *method* may still be set, but must have the
+                          value `None` or else agree with the
+                          regridding operator's method.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.

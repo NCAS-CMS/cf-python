@@ -90,9 +90,10 @@ Miscellaneous classes
    cf.Query
    cf.TimeDuration
    cf.Units
+   cf.RegridOperator
    cf.Constant
    cf.Configuration
-   
+  
 
 Data compression classes
 ------------------------

@@ -15334,7 +15334,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Implementation**
 
-        The interpolation is carried out using the `ESMPy` package, a
+        The interpolation is carried out using the `ESMF` package, a
         Python interface to the Earth System Modeling Framework (ESMF)
         `regridding utility
         <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
@@ -15388,15 +15388,43 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             dst: `Field` or `dict` or `RegridOperator`
-                The field containing the new grid. If dst is a field
-                list the first field in the list is
-                used. Alternatively a dictionary can be passed
-                containing the keywords 'longitude' and 'latitude'
-                with either two 1-d dimension coordinates or two 2-d
-                auxiliary coordinates. In the 2-d case both
-                coordinates must have their axes in the same order and
-                this must be specified by the keyword 'axes' as either
-                of the tuples ``('X', 'Y')`` or ``('Y', 'X')``.
+                The destination grid. Must be one of:
+
+                * `Field`. The grid is defined by the field constuct's
+                  domain.
+
+                * `dict`. The grid is defined by a dictionary with
+                  keys ``'latitude'`` and ``'longitude'`` whose values
+                  are with either both 1-d dimension coordinates
+                  constructs, or both 2-d auxiliary coordinate
+                  constructs. In the 2-d case, both coordinate
+                  constructs must have their axes in the same order
+                  and this must be specified with the ``'axes'`` key
+                  as either of the tuples ``('X', 'Y')`` or ``('Y',
+                  'X')``.
+
+                * `RegridOperator`. The grid is defined by a regrid
+                  operator that has been returned by a previous call
+                  to `regrids` with ``return_operator=True``.
+
+                  This option can give large performance increases, as
+                  greastest computiotnal expense is often the creation
+                  of the regrid operator, rather than running the
+                  regrid operator to regrid the data.
+
+                  The regrid operator defines the source grid and the
+                  regridding weights, so the *method*, *axes*,
+                  *ignore_degenerate*, *use_src_mask*, and
+                  *use_dst_mask* parameters are not required and are
+                  ignored if set.
+
+                  An exception will be raised if the domain of the
+                  source field being regridded is inconsistent with
+                  source grid of the regrid operator.
+
+                  The source field being regridded may, however, have
+                  a different data mask to that of the source grid in
+                  the regrid operator.
 
             {{method: `str`, optional}}
 
@@ -15412,6 +15440,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 this is determined automatically otherwise it defaults
                 to False.
 
+                .. note:: When *dst* is a regrid operator then
+                          *dst_cyclic* is ignored, and its value is
+                          set by the regrid operator's parameters.
+
             use_src_mask: `bool`, optional
                 For all methods other than 'nearest_stod', this must
                 be True as it does not make sense to set it to
@@ -15420,6 +15452,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 source point are masked. Otherwise, if it is False,
                 then these points are interpolated to the nearest
                 unmasked source points.
+
+                .. note:: When *dst* is a regrid operator then
+                          *use_src_mask* is ignored, and its value is
+                          set by the regridding operator's parameters.
 
             use_dst_mask: `bool`, optional
                 By default the mask of the data on the destination
@@ -15430,6 +15466,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 used for the mask e.g. for an field varying with (X,
                 Y, Z, T) the mask is taken from the slice (X, Y, 0,
                 0).
+
+                .. note:: When *dst* is a regrid operator then
+                          *use_dst_mask* is ignored, and its value is
+                          set by the regrid operator's parameters.
 
             fracfield: `bool`, optional
                 If the method of regridding is conservative the
@@ -15451,12 +15491,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             dst_axes: `dict`, optional
                 A dictionary specifying the axes of the 2-d latitude
-                and longitude coordinates of the destination field
-                when no dimension coordinates are present. It must
-                have keys ``'X'`` and ``'Y'``.
+                and longitude auxiliary coordinates of the destination
+                grid when no dimension coordinates are present. It
+                must have keys ``'X'`` and ``'Y'``.
 
                 *Parameter example:*
                   ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+
+                .. note:: When *dst* is a regrid operator then
+                          *dst_axes* is ignored, and its value is
+                          set by the regrid operator's parameters.
 
             axis_order: sequence, optional
                 A sequence of items specifying dimension coordinates
@@ -15467,18 +15511,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 regridding weights are recalculated every time the
                 mask of an X-Y slice changes with respect to the
                 previous one, so this option allows the user to
-                minimise how frequently the mask changes.
+                minimise how frequently the mask changes. TODO.
 
             ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMPy to ignore degenerate
+                True by default. Instructs ESMF to ignore degenerate
                 cells when checking the grids for errors. Regridding
                 will proceed and degenerate cells will be skipped, not
                 producing a result, when set to True. Otherwise an
                 error will be produced if degenerate cells are
-                found. This will be present in the ESMPy log files if
+                found. This will be present in the ESMF log files if
                 `cf.regrid_logging` is set to True. As of ESMF 7.0.0
                 this only applies to conservative regridding.  Other
                 methods always skip degenerate cells.
+
+                .. note:: When *dst* is a regrid operator then
+                          *ignore_degenerate* is ignored, and its
+                          value is set by the regrid operator's
+                          parameters.
 
             {{inplace: `bool`, optional}}
 
@@ -15552,6 +15601,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
+        Store the regrid operator and use it for a subsequent regrids:
+
+        >>> op = f.regrids(g, method='conservative', return_operator=True)
+        >>> h = f.regrids(op)
+        >>> h2 = f2.regrids(op)
+
         """
         # Initialise ESMF for regridding
         regrid_initialize()
@@ -15571,14 +15626,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Override input arguments with those stored in the regrid
             # operator
             dst = operator.get_parameter("dst")
-            axis_order = operator.get_parameter("axis_order")
             dst_axes = operator.get_parameter("dst_axes")
             dst_cyclic = operator.get_parameter("dst_cyclic")
-            src_cyclic = operator.get_parameter("src_cyclic")
             ignore_degenerate = operator.get_parameter("ignore_degenerate")
-            src_axes = operator.get_parameter("src_axes")
             use_dst_mask = operator.get_parameter("use_dst_mask")
             use_src_mask = operator.get_parameter("use_src_mask")
+            operator_src_cyclic = operator.get_parameter("src_cyclic")
 
         dst_field = isinstance(dst, self.__class__)
         dst_dict = not dst_field and isinstance(dst, dict)
@@ -15622,16 +15675,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_axis_sizes = [coord.size for coord in dst_coords]
             elif dst_coords[0].ndim == 2:
                 try:
-                    dst_axes = dst["axes"]
+                    axis_order = dst["axes"]
                 except KeyError:
                     raise ValueError(
                         "Key 'axes' must be specified for 2-d "
                         "latitude/longitude coordinates."
                     )
                 dst_coords_2D = True
-                if dst_axes == ("X", "Y"):
+                if axis_order == ("X", "Y"):
                     dst_axis_sizes = dst_coords[0].shape
-                elif dst_axes == ("Y", "X"):
+                elif axis_order == ("Y", "X"):
                     dst_axis_sizes = dst_coords[0].shape[::-1]
                 else:
                     raise ValueError(
@@ -15657,9 +15710,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Automatically detect the cyclicity of the source longitude
-        # if src_cyclic is None
+        # axis if src_cyclic is None
         if src_cyclic is None:
             src_cyclic = f.iscyclic(src_axis_keys[0])
+
+        # Check that src_cyclic agrees with that of the regrid
+        # operator
+        if dst_regrid and bool(src_cyclic) != bool(operator_src_cyclic):
+            raise ValueError(
+                f"Can't regrid {self!r} with regridding operator "
+                f"{operator!r}: Cyclicity of the source field "
+                "longitude axis does not match that of the "
+                "regridding operator"
+            )
 
         # Automatically detect the cyclicity of the destination
         # longitude if dst is not a dictionary and dst_cyclic is None
@@ -15692,9 +15755,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if dst_coords_2D:
             if dst_dict:
-                if dst_axes == ("X", "Y"):
+                if axis_order == ("X", "Y"):
                     dst_coord_order = [[0, 1], [0, 1]]
-                elif dst_axes == ("Y", "X"):
+                elif axis_order == ("Y", "X"):
                     dst_coord_order = [[1, 0], [1, 0]]
                 else:
                     raise ValueError(
@@ -15795,7 +15858,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         srcfield.destroy()  # noqa: F821
                         srcgrid.destroy()  # noqa: F821
 
-                    # (Re)create the source ESMPy grid and fields
+                    # (Re)create the source ESMF Grid and Fields
                     srcgrid = create_Grid(
                         src_coords,
                         use_bounds,
@@ -15834,7 +15897,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # masked or b) has the same mask as the previous
                 # section.
                 if not unmasked_grid_created or old_mask is not None:
-                    # Create the source ESMPy grid and fields
+                    # Create the source ESMF Grid and Fields
                     srcgrid = create_Grid(
                         src_coords,
                         use_bounds,
@@ -15876,16 +15939,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # parameters.
                 parameters = {
                     "dst": dst.copy(),
-                    "axis_order": axis_order,
                     "dst_axes": dst_axes,
                     "dst_cyclic": dst_cyclic,
                     "src_cyclic": src_cyclic,
                     "ignore_degenerate": ignore_degenerate,
-                    "src_axes": src_axes,
                     "use_dst_mask": use_dst_mask,
                     "use_src_mask": use_src_mask,
                 }
-                return regrid_create_operator(regridSrc2Dst, parameters)
+                return regrid_create_operator(
+                    regridSrc2Dst, "regrids", parameters
+                )
 
             # Fill the source and destination fields (the destination
             # field gets filled with a fill value, the source field
@@ -16080,7 +16143,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Implementation**
 
-        The interpolation is carried out using the `ESMPy` package, a
+        The interpolation is carried out using the `ESMF` package, a
         Python interface to the Earth System Modeling Framework (ESMF)
         `regridding utility
         <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
@@ -16097,10 +16160,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             dst: `Field` or `dict` or `RegridOperator`
+                The destination grid. Must be one of:
+
+                * `Field`. The grid is defined by the field constuct's
+                  domain.
+
+                * `dict`. The grid is defined by a dictionary with
+                  keys ``'latitude'`` and ``'longitude'`` whose values
+                  are with either both 1-d dimension coordinates
+                  constructs, or both 2-d auxiliary coordinate
+                  constructs. In the 2-d case, both coordinate
+                  constructs must have their axes in the same order
+                  and this must be specified with the ``'axes'`` key
+                  as either of the tuples ``('X', 'Y')`` or ``('Y',
+                  'X')``.
+
+                * `RegridOperator`. The grid is defined by a regrid
+                  operator that has been returned by a previous call
+                  to `regridc` with ``return_operator=True``.
+
+                  This option can give large performance increases, as
+                  greastest computiotnal expense is often the creation
+                  of the regrid operator, rather than running the
+                  regrid operator to regrid the data.
+
+                  The regrid operator defines the source grid and the
+                  regridding weights, so the *method*, *axes*,
+                  *ignore_degenerate*, *use_src_mask*, and
+                  *use_dst_mask* parameters are not required and are
+                  ignored if set.
+
+                  An exception will be raised if the domain of the
+                  source field being regridded is inconsistent with
+                  source grid of the regrid operator.
+
+                  The source field being regridded may, however, have
+                  a different data mask to that of the source grid in
+                  the regrid operator.
+
+            dst: `Field` or `dict` or `RegridOperator`
                 The field containing the new grid or a dictionary with
                 the axes specifiers as keys referencing dimension
-                coordinates.  If dst is a field list the first field
-                in the list is used.
+                coordinates.
 
             axes: optional
                 Select dimension coordinates from the source and
@@ -16110,23 +16211,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 must be the same as the number of specifiers passed
                 in. TODO Can only be None  if regridoperator
 
+                .. note:: When *dst* is a regrid operator then *axes*
+                          is ignored, and its value is set by the
+                          regrid operator's parameters.
+
             {{method: `str`, optional}}
 
             use_src_mask: `bool`, optional
                 For all methods other than 'nearest_stod', this must
                 be True as it does not make sense to set it to
-                False. For the
+                False. For the 'nearest_stod' method if it is True
+                then points in the result that are nearest to a masked
+                source point are masked. Otherwise, if it is False,
+                then these points are interpolated to the nearest
+                unmasked source points.
 
-                'nearest_stod' method if it is True then points in the
-                result that are nearest to a masked source point are
-                masked. Otherwise, if it is False, then these points
-                are interpolated to the nearest unmasked source
-                points.
+                .. note:: When *dst* is a regrid operator then
+                          *use_src_mask* is ignored, and its value is
+                          set by the regrid operator's parameters.
 
             use_dst_mask: `bool`, optional
                 By default the mask of the data on the destination
                 grid is not taken into account when performing
                 regridding. If this option is set to True then it is.
+
+                .. note:: When *dst* is a regrid operator then
+                          *use_dst_mask* is ignored, and its value is
+                          set by the regrid operator's parameters.
 
             fracfield: `bool`, optional
                 If the method of regridding is conservative the
@@ -16143,19 +16254,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 regridding weights are recalculated every time the
                 mask of a slice changes with respect to the previous
                 one, so this option allows the user to minimise how
-                frequently the mask changes.
+                frequently the mask changes. TODO.
 
             ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMPy to ignore degenerate
+                True by default. Instructs ESMF to ignore degenerate
                 cells when checking the grids for errors. Regridding
                 will proceed and degenerate cells will be skipped, not
                 producing a result, when set to True. Otherwise an
                 error will be produced if degenerate cells are
-                found. This will be present in the ESMPy log files if
+                found. This will be present in the ESMF log files if
                 cf.regrid_logging is set to True. As of ESMF 7.0.0
                 this only applies to conservative regridding.  Other
                 methods always skip degenerate cells.
 
+                .. note:: When *dst* is a regrid operator then
+                          *ignore_degenerate* is ignored, and its
+                          value is set by the regrid operator's
+                          parameters.
 
             {{inplace: `bool`, optional}}
 
@@ -16213,7 +16328,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Regrid the X and T axes of field ``f`` conservatively onto a grid
         contained in field ``g`` using the destination mask:
 
-        >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
+        >>> h = f.regridc(g, axes=('X','Y'), method='linear',
+        ...               use_dst_mask=True)
+
+        Store the regrid operator and use it for a subsequent regrids:
+
+        >>> op = f.regridc(g, axes='T', method='conservative',
+        ...                return_operator=True)
+        >>> h = f.regridc(op)
+        >>> h2 = f2.regridc(op)
 
         """
         # Initialise ESMF for regridding
@@ -16236,10 +16359,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # operator
             dst = operator.get_parameter("dst")
             axes = operator.get_parameter("axes")
-            axis_order = operator.get_parameter("axis_order")
             ignore_degenerate = operator.get_parameter("ignore_degenerate")
             use_dst_mask = operator.get_parameter("use_dst_mask")
             use_src_mask = operator.get_parameter("use_src_mask")
+        elif axes is None:
+            raise ValueError(
+                "Must set the axes parameter when the dst parameter is a "
+                f"{dst.__class__.__name__}"
+            )
 
         dst_field = isinstance(dst, self.__class__)
         dst_dict = not dst_field and isinstance(dst, dict)
@@ -16448,7 +16575,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             for k2 in subsections.keys():
                 d2 = subsections[k2]
-                # Retrieve the source field's grid, create the ESMPy
+                # Retrieve the source field's grid, create the ESMF
                 # grid and a handle to regridding.
                 src_data = d2.squeeze().transpose(src_order_ext).array
                 if nonconservative1D:
@@ -16465,7 +16592,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             srcfield.destroy()  # noqa: F821
                             srcgrid.destroy()  # noqa: F821
 
-                        # (Re)create the source ESMPy grid and fields
+                        # (Re)create the source ESMF Grid and fields
                         srcgrid = create_Grid(
                             coords_ext + src_coords,
                             use_bounds,
@@ -16499,7 +16626,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         old_mask = mask
                 else:
                     if not unmasked_grid_created or old_mask is not None:
-                        # Create the source ESMPy grid and fields
+                        # Create the source ESMF Grid and Fields
                         srcgrid = create_Grid(
                             coords_ext + src_coords, use_bounds, cartesian=True
                         )
@@ -16536,12 +16663,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     parameters = {
                         "dst": dst.copy(),
                         "axes": axes,
-                        "axis_order": axis_order,
                         "ignore_degenerate": ignore_degenerate,
                         "use_dst_mask": use_dst_mask,
                         "use_src_mask": use_src_mask,
                     }
-                    return regrid_create_operator(regridSrc2Dst, parameters)
+                    return regrid_create_operator(
+                        regridSrc2Dst, "regridc", parameters
+                    )
 
                 # Fill the source and destination fields
                 regrid_fill_fields(

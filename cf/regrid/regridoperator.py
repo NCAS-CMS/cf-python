@@ -47,30 +47,45 @@ class RegridOperator:
 
     """
 
-    def __init__(self, regrid, **parameters):
+    def __init__(self, regrid, name, **parameters):
         """**Initialization**
 
         :Parameters:
 
             regrid: `ESMF.Regrid`
-                The `ESMF.Regrid` regridding operator between two
-                fields.
+                The `ESMF` regridding operator between two fields.
+
+            name: `str`
+                A name that defines the context of the destination
+                grid parameters.
 
             parameters: `dict`
                Parameters that describe the complete coordinate system
                of the destination grid.
 
+               Any parameter names and values are allowed, and it is
+               assumed that the these are well defined during the
+               creation and subsequent use of a `RegridOperator`
+               instance.
+
         """
         self._regrid = regrid
+        self._name = name
         self._parameters = parameters
 
     def __del__(self):
         """Calls the `ESMF.Regrid` destroy method."""
         self._regrid.destroy()
 
+    def __repr__(self):
+        return (
+            f"<CF {self.__class__.__name__}: "
+            f"{self._name}, method={self.method}>"
+        )
+
     @property
     def method(self):
-        """The name of the regrid method.
+        """The regridding method.
 
         **Examples:**
 
@@ -85,8 +100,24 @@ class RegridOperator:
         return method
 
     @property
+    def name(self):
+        """The name of the regrid method.
+
+        **Examples:**
+
+        >>> r.name
+        'regrids'
+
+        """
+        return self._name
+
+    @property
     def parameters(self):
-        """TODO.
+        """The parameters that describe the destination grid.
+
+        Any parameter names and values are allowed, and it is assumed
+        that the these are well defined during the creation and
+        subsequent use of a `RegridOperator` instance.
 
         **Examples:**
 
@@ -140,19 +171,18 @@ class RegridOperator:
     def copy(self):
         """Return a copy.
 
-                The contained `ESMF.Regrid` instance (see `regrid`) is shallow
-                copied and the contained `Field` instance (see `dst`) is deep
-                copied.
-        TODO
-                :Returns:
+        The contained `ESMF.Regrid` instance (see `regrid`) is shallow
+        copied and the "dst" parameter, which is a `Field` or `dict`
+        instance, is copied with its `!copy` method.
 
-                    `RegridOperator`
+        :Returns:
 
-                        The copy.
+            `RegridOperator`
+                The copy.
 
-                **Examples:**
+        **Examples:**
 
-                >>> s = r.copy()
+        >>> s = r.copy()
 
         """
         parameters = self._parameters
@@ -160,11 +190,12 @@ class RegridOperator:
             parameters = parameters.copy()
             parameters["dst"] = parameters["dst"].copy()
 
-        return type(self)(regrid=self._regrid.copy(), **parameters)
+        return type(self)(
+            regrid=self._regrid.copy(), name=self._name, **parameters
+        )
 
     def destroy(self):
-        """Free the memory allocated by the contained `ESMF.Regrid`
-        instance.
+        """Free the memory allocated by the `ESMF.Regrid` instance.
 
         **Examples:**
 
@@ -183,7 +214,7 @@ class RegridOperator:
         >>> r.get_parameter('x')
         Traceback
             ...
-        ValueError: RegridOperator has no 'x' parameter"
+        ValueError: RegridOperator has no 'x' parameter
 
         """
         try:

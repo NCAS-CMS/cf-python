@@ -145,7 +145,7 @@ def regrid_get_latlon(f, name, axes=None):
         y_size = y.size
     else:
         # --------------------------------------------------------
-        # Source axes have been provided
+        # Axes have been provided
         # --------------------------------------------------------
         for key in ("X", "Y"):
             if key not in axes:
@@ -496,8 +496,8 @@ def regrid_check_method(method):
     """
     if method not in regridding_methods:
         raise ValueError(
-            "Can't regrid: Must select a valid regridding method. "
-            f"Got: {method!r}"
+            "Can't regrid: Must set a valid regridding method from "
+            f"{regridding_methods}. Got: {method!r}"
         )
     elif method == "bilinear":  # TODO use logging.info() once have logging
         print(
@@ -947,7 +947,7 @@ def regrid_copy_coordinate_references(f, dst, dst_axis_keys):
     :Parameters:
 
         f: `Field`
-            TODO.
+            The source field.
 
         dst: `Field`
             The destination field.
@@ -1619,24 +1619,28 @@ def run_Regrid(regrid, srcfield, dstfield):
     return regrid(srcfield, dstfield, zero_region=ESMF.Region.SELECT)
 
 
-def regrid_create_operator(regrid, parameters):
-    """TODO.
+def regrid_create_operator(regrid, name, parameters):
+    """Create a new `RegridOperator` instance.
 
     :Parameters:
 
         regrid: `ESMF.Regrid`
-            TODO
+            The `ESMF` regridding operator between two fields.
+
+        name: `str`
+            A descriptive name for the operator.
 
         parameters: `dict`
-            TODO
+            Parameters that describe the complete coordinate system of
+            the destination grid.
 
     :Returns:
 
         `RegridOperator`
-           TODO
+            The new regrid operator.
 
     """
-    return RegridOperator(regrid, **parameters)
+    return RegridOperator(regrid, name, **parameters)
 
 
 def regrid_get_operator_method(operator, method):

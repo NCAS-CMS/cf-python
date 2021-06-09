@@ -627,9 +627,9 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class regrid_logging(ConstantAccess):
-    """Whether or not to enable ESMPy regridding logging.
+    """Whether or not to enable `ESMF` regridding logging.
 
-    If it is logging is performed after every call to ESMPy.
+    If it is logging is performed after every call to `ESMF`.
 
     :Parameters:
 
