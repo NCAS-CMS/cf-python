@@ -15424,7 +15424,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                   The source field being regridded may, however, have
                   a different data mask to that of the source grid in
-                  the regrid operator.
+                  the regrid operator. In this case a new regrid
+                  operator is automatically created, with the
+                  associated loss in performance.
 
             {{method: `str`, optional}}
 
@@ -16196,7 +16198,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                   The source field being regridded may, however, have
                   a different data mask to that of the source grid in
-                  the regrid operator.
+                  the regrid operator. In this case a new regrid
+                  operator is automatically created, with the
+                  associated loss in performance.
 
             dst: `Field` or `dict` or `RegridOperator`
                 The field containing the new grid or a dictionary with
