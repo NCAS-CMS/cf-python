@@ -1044,7 +1044,7 @@ def regrid_update_coordinates(
         `None`
 
     """
-    # NOTE: May be common ground between cartesian and shperical that
+    # NOTE: May be common ground between cartesian and spherical that
     # could save some lines of code.
 
     # Remove the source coordinates of new field
