@@ -6,7 +6,7 @@ version NEXT
 
 * Improve performance by allowing a saved `RegridOperator` instance to
   define the regrid operator in `cf.Field.regridc` and
-  `cf.Field.regrids` (https://github.com/NCAS-CMS/cfdm/issues/222)
+  `cf.Field.regrids` (https://github.com/NCAS-CMS/cf-python/issues/222)
 * Fix for incorrectly formatted `logging.info` statement sometimes
   causing a hang in `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cfdm/issues/217)
