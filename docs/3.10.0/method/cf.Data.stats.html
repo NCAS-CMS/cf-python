@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Data.stats &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Data.sum_of_weights" href="cf.Data.sum_of_weights.html" />
+    <link rel="prev" title="cf.Data.sample_size" href="cf.Data.sample_size.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Data.html">cf.Data</a><ul>
+      <li>Previous: <a href="cf.Data.sample_size.html" title="previous chapter">cf.Data.sample_size</a></li>
+      <li>Next: <a href="cf.Data.sum_of_weights.html" title="next chapter">cf.Data.sum_of_weights</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-data-stats">
+<h1>cf.Data.stats<a class="headerlink" href="#cf-data-stats" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Data.stats">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">stats</code><span class="sig-paren">(</span><em class="sig-param">all=False</em>, <em class="sig-param">minimum=True</em>, <em class="sig-param">mean=True</em>, <em class="sig-param">median=True</em>, <em class="sig-param">maximum=True</em>, <em class="sig-param">range=True</em>, <em class="sig-param">mid_range=True</em>, <em class="sig-param">standard_deviation=True</em>, <em class="sig-param">root_mean_square=True</em>, <em class="sig-param">sample_size=True</em>, <em class="sig-param">minimum_absolute_value=False</em>, <em class="sig-param">maximum_absolute_value=False</em>, <em class="sig-param">mean_absolute_value=False</em>, <em class="sig-param">mean_of_upper_decile=False</em>, <em class="sig-param">sum=False</em>, <em class="sig-param">sum_of_squares=False</em>, <em class="sig-param">variance=False</em>, <em class="sig-param">weights=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/data/data.py#L13027-L13229"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate statistics of the data.</p>
+<p>By default the minimum, mean, median, maximum, range, mid-range,
+standard deviation, root mean square, and sample size are
+calculated. But this selection may be edited, and other metrics
+are available.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Data.minimum.html#cf.Data.minimum" title="cf.Data.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a>, <a class="reference internal" href="cf.Data.mean.html#cf.Data.mean" title="cf.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Data.median.html#cf.Data.median" title="cf.Data.median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code></a>, <a class="reference internal" href="cf.Data.maximum.html#cf.Data.maximum" title="cf.Data.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a>, <a class="reference internal" href="cf.Data.range.html#cf.Data.range" title="cf.Data.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>,
+<a class="reference internal" href="cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>, <a class="reference internal" href="cf.Data.standard_deviation.html#cf.Data.standard_deviation" title="cf.Data.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a>,
+<a class="reference internal" href="cf.Data.root_mean_square.html#cf.Data.root_mean_square" title="cf.Data.root_mean_square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root_mean_square</span></code></a>, <a class="reference internal" href="cf.Data.sample_size.html#cf.Data.sample_size" title="cf.Data.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>,
+<a class="reference internal" href="cf.Data.minimum_absolute_value.html#cf.Data.minimum_absolute_value" title="cf.Data.minimum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code></a>, <a class="reference internal" href="cf.Data.maximum_absolute_value.html#cf.Data.maximum_absolute_value" title="cf.Data.maximum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code></a>,
+<a class="reference internal" href="cf.Data.mean_absolute_value.html#cf.Data.mean_absolute_value" title="cf.Data.mean_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_absolute_value</span></code></a>, <a class="reference internal" href="cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile" title="cf.Data.mean_of_upper_decile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code></a>, <a class="reference internal" href="cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>,
+<a class="reference internal" href="cf.Data.sum_of_squares.html#cf.Data.sum_of_squares" title="cf.Data.sum_of_squares"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_squares</span></code></a>, <a class="reference internal" href="cf.Data.variance.html#cf.Data.variance" title="cf.Data.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate all possible statistics, regardless of the value
+of individual metric parameters.</p>
+</dd>
+<dt>minimum: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the minimum of the values.</p>
+</dd>
+<dt>maximum: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the maximum of the values.</p>
+</dd>
+<dt>maximum_absolute_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the maximum of the absolute values.</p>
+</dd>
+<dt>minimum_absolute_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the minimum of the absolute values.</p>
+</dd>
+<dt>mid_range: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the average of the maximum and the minimum of
+the values.</p>
+</dd>
+<dt>median: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the median of the values.</p>
+</dd>
+<dt>range: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the absolute difference between the maximum and
+the minimum of the values.</p>
+</dd>
+<dt>sum: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the sum of the values.</p>
+</dd>
+<dt>sum_of_squares: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the sum of the squares of values.</p>
+</dd>
+<dt>sample_size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the sample size, i.e. the number of non-missing
+values.</p>
+</dd>
+<dt>mean: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the weighted or unweighted mean of the values.</p>
+</dd>
+<dt>mean_absolute_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the mean of the absolute values.</p>
+</dd>
+<dt>mean_of_upper_decile: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the mean of the upper group of data values
+defined by the upper tenth of their distribution.</p>
+</dd>
+<dt>variance: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the weighted or unweighted variance of the
+values, with a given number of degrees of freedom.</p>
+</dd>
+<dt>standard_deviation: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the square root of the weighted or unweighted
+variance.</p>
+</dd>
+<dt>root_mean_square: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Calculate the square root of the weighted or unweighted
+mean of the squares of the values.</p>
+</dd>
+<dt>weights: data-like or dict, optional</dt><dd><p>The weights to apply to the calculations. By default the
+statistics are unweighted.</p>
+<p>The weights may be contained in any scalar or array-like
+object (such as a numpy array or <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
+broadcastable to the shape of the data. If <em>weights</em> is a
+dictionary then each key is axes of the array (an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) with a corresponding data-like value of
+weights for those axes. In this case, the implied weights
+array is the outer product of the dictionary’s values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The statistics.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0  1  2]</span>
+<span class="go"> [3 --  5]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+<span class="go">{&#39;minimum&#39;: &lt;CF Data(): 0&gt;,</span>
+<span class="go"> &#39;mean&#39;: &lt;CF Data(): 2.2&gt;,</span>
+<span class="go"> &#39;median&#39;: &lt;CF Data(): 2.0&gt;,</span>
+<span class="go"> &#39;maximum&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;range&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;mid_range&#39;: &lt;CF Data(): 2.5&gt;,</span>
+<span class="go"> &#39;standard_deviation&#39;: &lt;CF Data(): 1.7204650534085253&gt;,</span>
+<span class="go"> &#39;root_mean_square&#39;: &lt;CF Data(): 2.792848008753788&gt;,</span>
+<span class="go"> &#39;sample_size&#39;: 5}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{&#39;minimum&#39;: &lt;CF Data(): 0&gt;,</span>
+<span class="go"> &#39;mean&#39;: &lt;CF Data(): 2.2&gt;,</span>
+<span class="go"> &#39;median&#39;: &lt;CF Data(): 2.0&gt;,</span>
+<span class="go"> &#39;maximum&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;range&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;mid_range&#39;: &lt;CF Data(): 2.5&gt;,</span>
+<span class="go"> &#39;standard_deviation&#39;: &lt;CF Data(): 1.7204650534085253&gt;,</span>
+<span class="go"> &#39;root_mean_square&#39;: &lt;CF Data(): 2.792848008753788&gt;,</span>
+<span class="go"> &#39;minimum_absolute_value&#39;: &lt;CF Data(): 0&gt;,</span>
+<span class="go"> &#39;maximum_absolute_value&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;mean_absolute_value&#39;: &lt;CF Data(): 2.2&gt;,</span>
+<span class="go"> &#39;mean_of_upper_decile&#39;: &lt;CF Data(): 5.0&gt;,</span>
+<span class="go"> &#39;sum&#39;: &lt;CF Data(): 11&gt;,</span>
+<span class="go"> &#39;sum_of_squares&#39;: &lt;CF Data(): 39&gt;,</span>
+<span class="go"> &#39;variance&#39;: &lt;CF Data(): 2.96&gt;,</span>
+<span class="go"> &#39;sample_size&#39;: 5}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">mean_of_upper_decile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">{&#39;minimum&#39;: &lt;CF Data(): 0&gt;,</span>
+<span class="go"> &#39;mean&#39;: &lt;CF Data(): 2.2&gt;,</span>
+<span class="go"> &#39;median&#39;: &lt;CF Data(): 2.0&gt;,</span>
+<span class="go"> &#39;maximum&#39;: &lt;CF Data(): 5&gt;,</span>
+<span class="go"> &#39;mid_range&#39;: &lt;CF Data(): 2.5&gt;,</span>
+<span class="go"> &#39;standard_deviation&#39;: &lt;CF Data(): 1.7204650534085253&gt;,</span>
+<span class="go"> &#39;root_mean_square&#39;: &lt;CF Data(): 2.792848008753788&gt;,</span>
+<span class="go"> &#39;mean_of_upper_decile&#39;: &lt;CF Data(): 5.0&gt;,</span>
+<span class="go"> &#39;sample_size&#39;: 5}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-06-10.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

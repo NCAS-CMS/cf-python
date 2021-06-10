@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Field.compute_vertical_coordinates &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.dataset_compliance" href="cf.Field.dataset_compliance.html" />
+    <link rel="prev" title="cf.Field.copy" href="cf.Field.copy.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.copy.html" title="previous chapter">cf.Field.copy</a></li>
+      <li>Next: <a href="cf.Field.dataset_compliance.html" title="next chapter">cf.Field.dataset_compliance</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-compute-vertical-coordinates">
+<h1>cf.Field.compute_vertical_coordinates<a class="headerlink" href="#cf-field-compute-vertical-coordinates" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.compute_vertical_coordinates">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">compute_vertical_coordinates</code><span class="sig-paren">(</span><em class="sig-param">default_to_zero=True</em>, <em class="sig-param">strict=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L11566-L11727"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.compute_vertical_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute non-parametric vertical coordinates.</p>
+<blockquote>
+<div><p>When vertical coordinates are a function of horizontal location as
+well as parameters which depend on vertical location, they cannot
+be stored in a vertical dimension coordinate construct. In such
+cases a parametric vertical dimension coordinate construct is
+stored and a coordinate reference construct contains the formula
+for computing the required non-parametric vertical coordinates.</p>
+<p>See the parametric vertical coordinate sections of the CF</p>
+</div></blockquote>
+<p>conventions for more details:</p>
+<p><a class="reference external" href="https://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#parametric-vertical-coordinate">4.3.3. Parametric Vertical Coordinate</a></p>
+<p><a class="reference external" href="https://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#parametric-v-coord">Appendix D: Parametric Vertical Coordinates</a></p>
+<blockquote>
+<div><p>For example, multi-dimensional non-parametric parametric ocean
+altitude coordinates can be computed from one-dimensional
+parametric ocean sigma coordinates.</p>
+<p>Coordinate reference systems based on parametric vertical
+coordinates are identified from the coordinate reference
+constructs and, if possible, the corresponding non-parametric
+vertical coordinates are computed and stored in a new auxiliary
+coordinate construct.</p>
+<p>If there are no appropriate coordinate reference constructs then
+the field construct is unchanged.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.8.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../class/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>default_to_zero: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not assume that missing terms have a
+value of zero. By default a missing term is assumed to
+be zero.</p>
+</dd>
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If False then allow the computation to occur when</p>
+<ul class="simple">
+<li><p>A domain ancillary construct has no standard name, but
+the corresponding term has a standard name that is
+prescribed</p></li>
+<li><p>When the computed standard name can not be found by
+inference from the standard names of the domain
+ancillary constructs, nor from the
+<code class="docutils literal notranslate"><span class="pre">computed_standard_name</span></code> parameter of the relevant
+coordinate reference construct.</p></li>
+</ul>
+<p>By default an exception is raised in these cases.</p>
+<p>If a domain ancillary construct does have a standard name,
+but one that is inconsistent with any prescribed standard
+names, then an exception is raised regardless of the value
+of <em>strict</em>.</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+string equal ignoring case to one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'INFO'</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
+</ul>
+<p>set for the duration of the method call only as the
+minimum cut-off for the verboseness level of displayed
+output (log) messages, regardless of the
+globally-configured <a class="reference internal" href="../function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>. Note that
+increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
+case of maximal and extreme verbosity.</p>
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
+messages will be shown according to the value of the
+<a class="reference internal" href="../function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer or
+equivalent string that is set (up to a maximum of
+<code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for increasing verbosity, the more
+description that is printed to convey information
+about the operation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with the new non-parametric vertical
+coordinates, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum</span>
+<span class="go">Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
+<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
+<span class="go">                : grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
+<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
+<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
+<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
+<span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
+<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinate</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">compute_vertical_coordinates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">auxiliary_coordinates</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;CF AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;CF AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate2&#39;: &lt;CF AuxiliaryCoordinate: long_name=Grid latitude name(10) &gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate3&#39;: &lt;CF AuxiliaryCoordinate: altitude(1, 10, 9) m&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">auxiliary_coordinate</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">Auxiliary coordinate: altitude</span>
+<span class="go">    long_name = &#39;Computed from parametric atmosphere_hybrid_height_coordinate</span>
+<span class="go">                 vertical coordinates&#39;</span>
+<span class="go">    standard_name = &#39;altitude&#39;</span>
+<span class="go">    units = &#39;m&#39;</span>
+<span class="go">    Data(1, 10, 9) = [[[10.0, ..., 5410.0]]] m</span>
+<span class="go">    Bounds:units = &#39;m&#39;</span>
+<span class="go">    Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-06-10.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

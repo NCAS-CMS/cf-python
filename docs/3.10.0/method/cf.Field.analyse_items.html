@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Field.analyse_items &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.autocyclic" href="cf.Field.autocyclic.html" />
+    <link rel="prev" title="cf.Field.nc_clear_component_sample_dimension_groups" href="cf.Field.nc_clear_component_sample_dimension_groups.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.nc_clear_component_sample_dimension_groups.html" title="previous chapter">cf.Field.nc_clear_component_sample_dimension_groups</a></li>
+      <li>Next: <a href="cf.Field.autocyclic.html" title="next chapter">cf.Field.autocyclic</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-analyse-items">
+<h1>cf.Field.analyse_items<a class="headerlink" href="#cf-field-analyse-items" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.analyse_items">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">analyse_items</code><span class="sig-paren">(</span><em class="sig-param">relaxed_identities=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L627-L846"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.analyse_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyse a domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A description of the domain.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian</span>
+<span class="go">               : air_pressure(5) = [850.000061035, ..., 50.0000038147] hPa</span>
+<span class="go">               : grid_longitude(106) = [-20.5400109887, ..., 25.6599887609] degrees</span>
+<span class="go">               : grid_latitude(110) = [23.3200002313, ..., -24.6399995089] degrees</span>
+<span class="go">Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.1246607722, ..., 22.8886948065]] degrees_N</span>
+<span class="go">               : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98136251, ..., 35.2925499052]] degrees_E</span>
+<span class="go">Coord refs     : &lt;CF CoordinateReference: rotated_latitude_longitude&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">analyse_items</span><span class="p">()</span>
+<span class="go">{</span>
+<span class="go"> &#39;dim_coords&#39;: {&#39;dim0&#39;: &lt;CF Dim ....&gt;,</span>
+<span class="go"> &#39;aux_coords&#39;: {&#39;N-d&#39;: {&#39;aux0&#39;: &lt;CF AuxiliaryCoordinate: latitude(110, 106) degrees_N&gt;,</span>
+<span class="go">                        &#39;aux1&#39;: &lt;CF AuxiliaryCoordinate: longitude(110, 106) degrees_E&gt;},</span>
+<span class="go">                &#39;dim0&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                         &#39;N-d&#39;: {},},</span>
+<span class="go">                &#39;dim1&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                         &#39;N-d&#39;: {},},</span>
+<span class="go">                &#39;dim2&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                         &#39;N-d&#39;: {&#39;aux0&#39;: &lt;CF AuxiliaryCoordinate: latitude(110, 106) degrees_N&gt;,</span>
+<span class="go">                                 &#39;aux1&#39;: &lt;CF AuxiliaryCoordinate: longitude(110, 106) degrees_E&gt;},},</span>
+<span class="go">                &#39;dim3&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                         &#39;N-d&#39;: {&#39;aux0&#39;: &lt;CF AuxiliaryCoordinate: latitude(110, 106) degrees_N&gt;,</span>
+<span class="go">                                 &#39;aux1&#39;: &lt;CF AuxiliaryCoordinate: longitude(110, 106) degrees_E&gt;},},},</span>
+<span class="go"> &#39;axis_to_coord&#39;: {&#39;dim0&#39;: &lt;CF DimensionCoordinate: time(3) gregorian&gt;,</span>
+<span class="go">                   &#39;dim1&#39;: &lt;CF DimensionCoordinate: air_pressure(5) hPa&gt;,</span>
+<span class="go">                   &#39;dim2&#39;: &lt;CF DimensionCoordinate: grid_latitude(110) degrees&gt;,</span>
+<span class="go">                   &#39;dim3&#39;: &lt;CF DimensionCoordinate: grid_longitude(106) degrees&gt;},</span>
+<span class="go"> &#39;axis_to_id&#39;: {&#39;dim0&#39;: &#39;time&#39;,</span>
+<span class="go">                &#39;dim1&#39;: &#39;air_pressure&#39;,</span>
+<span class="go">                &#39;dim2&#39;: &#39;grid_latitude&#39;,</span>
+<span class="go">                &#39;dim3&#39;: &#39;grid_longitude&#39;},</span>
+<span class="go"> &#39;cell_measures&#39;: {&#39;N-d&#39;: {},</span>
+<span class="go">                   &#39;dim0&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                            &#39;N-d&#39;: {},},</span>
+<span class="go">                   &#39;dim1&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                            &#39;N-d&#39;: {},},</span>
+<span class="go">                   &#39;dim2&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                            &#39;N-d&#39;: {},},</span>
+<span class="go">                   &#39;dim3&#39;: {&#39;1-d&#39;: {},</span>
+<span class="go">                            &#39;N-d&#39;: {},},</span>
+<span class="go">    },</span>
+<span class="go"> &#39;id_to_aux&#39;: {},</span>
+<span class="go"> &#39;id_to_axis&#39;: {&#39;air_pressure&#39;: &#39;dim1&#39;,</span>
+<span class="go">                &#39;grid_latitude&#39;: &#39;dim2&#39;,</span>
+<span class="go">                &#39;grid_longitude&#39;: &#39;dim3&#39;,</span>
+<span class="go">                &#39;time&#39;: &#39;dim0&#39;},</span>
+<span class="go"> &#39;id_to_coord&#39;: {&#39;air_pressure&#39;: &lt;CF DimensionCoordinate: air_pressure(5) hPa&gt;,</span>
+<span class="go">                 &#39;grid_latitude&#39;: &lt;CF DimensionCoordinate: grid_latitude(110) degrees&gt;,</span>
+<span class="go">                 &#39;grid_longitude&#39;: &lt;CF DimensionCoordinate: grid_longitude(106) degrees&gt;,</span>
+<span class="go">                 &#39;time&#39;: &lt;CF DimensionCoordinate: time(3) gregorian&gt;},</span>
+<span class="go"> &#39;id_to_key&#39;: {&#39;air_pressure&#39;: &#39;dim1&#39;,</span>
+<span class="go">               &#39;grid_latitude&#39;: &#39;dim2&#39;,</span>
+<span class="go">               &#39;grid_longitude&#39;: &#39;dim3&#39;,</span>
+<span class="go">               &#39;time&#39;: &#39;dim0&#39;},</span>
+<span class="go"> &#39;undefined_axes&#39;: [],</span>
+<span class="go"> &#39;warnings&#39;: [],</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-06-10.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

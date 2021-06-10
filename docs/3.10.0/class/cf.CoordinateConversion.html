@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.CoordinateConversion &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.CoordinateConversion.del_parameter" href="../method/cf.CoordinateConversion.del_parameter.html" />
+    <link rel="prev" title="cf.Bounds.unsafe_array" href="../method/cf.Bounds.unsafe_array.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.Bounds.unsafe_array.html" title="previous chapter">cf.Bounds.unsafe_array</a></li>
+      <li>Next: <a href="../method/cf.CoordinateConversion.del_parameter.html" title="next chapter">cf.CoordinateConversion.del_parameter</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-coordinateconversion">
+<h1>cf.CoordinateConversion<a class="headerlink" href="#cf-coordinateconversion" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.CoordinateConversion">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CoordinateConversion</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">domain_ancillaries=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/coordinateconversion.py#L4-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.coordinateconversion.CoordinateConversion</span></code></p>
+<p>A coordinate conversion component of a coordinate reference
+construct of the CF data model.</p>
+<p>A coordinate conversion formula converting coordinate values taken
+from the dimension or auxiliary coordinate constructs to a
+different coordinate system. A term of the conversion formula can
+be a scalar or vector parameter which does not depend on any
+domain axis constructs, may have units, or may be a descriptive
+string (such as the projection name “mercator”), or it can be a
+reference to a domain ancillary construct (such as one containing
+spatially varying orography data). A coordinate reference
+construct relates the coordinate values of the field to locations
+in a planetary reference frame.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are term names,
+with corresponding parameter values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Parameters may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.CoordinateConversion.set_parameters.html#cf.CoordinateConversion.set_parameters" title="cf.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateConversion.set_parameter.html#cf.CoordinateConversion.set_parameter" title="cf.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set references to domain ancillary constructs. The
+dictionary keys are term names, with corresponding
+domain ancillary construct keys. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Domain ancillaries may also be set after initialisation
+with the <a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillaries.html#cf.CoordinateConversion.set_domain_ancillaries" title="cf.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a> and
+<a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillary.html#cf.CoordinateConversion.set_domain_ancillary" title="cf.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={'orog':</span> <span class="pre">'domainancillary2'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Initialise the parameters and domain ancillary terms
+from those of <em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.CoordinateConversion" title="cf.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.CoordinateConversion(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="parameter-terms">
+<h2>Parameter terms<a class="headerlink" href="#parameter-terms" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.del_parameter.html#cf.CoordinateConversion.del_parameter" title="cf.CoordinateConversion.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></p></td>
+<td><p>Delete a parameter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.get_parameter.html#cf.CoordinateConversion.get_parameter" title="cf.CoordinateConversion.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></p></td>
+<td><p>Get a parameter value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.has_parameter.html#cf.CoordinateConversion.has_parameter" title="cf.CoordinateConversion.has_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></a></p></td>
+<td><p>Whether a parameter has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.set_parameter.html#cf.CoordinateConversion.set_parameter" title="cf.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></p></td>
+<td><p>Set a parameter-valued term.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.parameters.html#cf.CoordinateConversion.parameters" title="cf.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<td><p>Return all parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.clear_parameters.html#cf.CoordinateConversion.clear_parameters" title="cf.CoordinateConversion.clear_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></a></p></td>
+<td><p>Remove all parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.set_parameters.html#cf.CoordinateConversion.set_parameters" title="cf.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></p></td>
+<td><p>Set parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="domain-ancillary-terms">
+<h2>Domain ancillary terms<a class="headerlink" href="#domain-ancillary-terms" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.del_domain_ancillary.html#cf.CoordinateConversion.del_domain_ancillary" title="cf.CoordinateConversion.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a></p></td>
+<td><p>Delete a domain ancillary.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.get_domain_ancillary.html#cf.CoordinateConversion.get_domain_ancillary" title="cf.CoordinateConversion.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a></p></td>
+<td><p>Return a domain ancillary term.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.has_domain_ancillary.html#cf.CoordinateConversion.has_domain_ancillary" title="cf.CoordinateConversion.has_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_ancillary</span></code></a></p></td>
+<td><p>Whether a domain ancillary has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillary.html#cf.CoordinateConversion.set_domain_ancillary" title="cf.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></p></td>
+<td><p>Set an domain ancillary-valued term.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.domain_ancillaries.html#cf.CoordinateConversion.domain_ancillaries" title="cf.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></p></td>
+<td><p>Return all domain_ancillaries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.clear_domain_ancillaries.html#cf.CoordinateConversion.clear_domain_ancillaries" title="cf.CoordinateConversion.clear_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_domain_ancillaries</span></code></a></p></td>
+<td><p>Remove all domain_ancillaries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillaries.html#cf.CoordinateConversion.set_domain_ancillaries" title="cf.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a></p></td>
+<td><p>Set domain_ancillaries.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.copy.html#cf.CoordinateConversion.copy" title="cf.CoordinateConversion.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.equals.html#cf.CoordinateConversion.equals" title="cf.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.__bool__.html#cf.CoordinateConversion.__bool__" title="cf.CoordinateConversion.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.__deepcopy__.html#cf.CoordinateConversion.__deepcopy__" title="cf.CoordinateConversion.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateConversion.__nonzero__</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.__repr__.html#cf.CoordinateConversion.__repr__" title="cf.CoordinateConversion.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.__str__.html#cf.CoordinateConversion.__str__" title="cf.CoordinateConversion.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-06-10.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
