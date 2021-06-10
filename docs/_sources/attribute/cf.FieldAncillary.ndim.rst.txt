@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.ndim
+cf.FieldAncillary.ndim
 ======================
 
 .. currentmodule:: cf

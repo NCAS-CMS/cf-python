@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.array
+cf.DimensionCoordinate.array
 ============================
 
 .. currentmodule:: cf

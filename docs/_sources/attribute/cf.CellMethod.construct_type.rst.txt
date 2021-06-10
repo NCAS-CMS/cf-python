@@ -1,4 +1,4 @@
-﻿cf.CellMethod.construct_type
+cf.CellMethod.construct_type
 ============================
 
 .. currentmodule:: cf

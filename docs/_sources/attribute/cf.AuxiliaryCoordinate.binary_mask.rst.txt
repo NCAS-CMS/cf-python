@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.binary_mask
+cf.AuxiliaryCoordinate.binary_mask
 ==================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.valid_min
+cf.AuxiliaryCoordinate.valid_min
 ================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.year
+cf.DimensionCoordinate.year
 ===========================
 
 .. currentmodule:: cf

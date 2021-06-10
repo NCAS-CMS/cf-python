@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.dtarray
+cf.FieldAncillary.dtarray
 =========================
 
 .. currentmodule:: cf

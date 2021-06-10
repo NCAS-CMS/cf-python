@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.lower_bounds
+cf.DomainAncillary.lower_bounds
 ===============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Field.varray
+cf.Field.varray
 ===============
 
 .. currentmodule:: cf

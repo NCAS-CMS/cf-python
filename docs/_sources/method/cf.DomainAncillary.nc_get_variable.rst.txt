@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DomainAncillary.nc_get_variable
 ==================================

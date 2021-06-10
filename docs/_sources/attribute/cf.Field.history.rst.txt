@@ -1,4 +1,4 @@
-﻿cf.Field.history
+cf.Field.history
 ================
 
 .. currentmodule:: cf

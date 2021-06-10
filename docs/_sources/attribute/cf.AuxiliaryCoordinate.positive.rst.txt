@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.positive
+cf.AuxiliaryCoordinate.positive
 ===============================
 
 .. currentmodule:: cf

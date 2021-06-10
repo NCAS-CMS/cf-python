@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.hardmask
+cf.FieldAncillary.hardmask
 ==========================
 
 .. currentmodule:: cf

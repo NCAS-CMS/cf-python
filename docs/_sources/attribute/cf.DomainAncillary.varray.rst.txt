@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.varray
+cf.DomainAncillary.varray
 =========================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.djf
+cf.djf
 ======
 
 .. currentmodule:: cf

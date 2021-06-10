@@ -1,4 +1,4 @@
-﻿cf.Domain.coordinate_references
+cf.Domain.coordinate_references
 ===============================
 
 .. currentmodule:: cf

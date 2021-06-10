@@ -1,4 +1,4 @@
-﻿cf.Bounds.month
+cf.Bounds.month
 ===============
 
 .. currentmodule:: cf

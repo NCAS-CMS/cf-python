@@ -1,4 +1,4 @@
-﻿cf.Data.binary_mask
+cf.Data.binary_mask
 ===================
 
 .. currentmodule:: cf

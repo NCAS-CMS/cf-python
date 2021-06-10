@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.second
+cf.AuxiliaryCoordinate.second
 =============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Field.construct_type
+cf.Field.construct_type
 =======================
 
 .. currentmodule:: cf

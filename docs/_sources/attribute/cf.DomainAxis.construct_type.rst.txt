@@ -1,4 +1,4 @@
-﻿cf.DomainAxis.construct_type
+cf.DomainAxis.construct_type
 ============================
 
 .. currentmodule:: cf

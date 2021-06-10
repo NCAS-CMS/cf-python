@@ -1,4 +1,4 @@
-﻿cf.CellMeasure.add_offset
+cf.CellMeasure.add_offset
 =========================
 
 .. currentmodule:: cf

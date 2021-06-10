@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.valid_max
+cf.DomainAncillary.valid_max
 ============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.positive
+cf.DimensionCoordinate.positive
 ===============================
 
 .. currentmodule:: cf

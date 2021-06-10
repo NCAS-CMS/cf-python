@@ -1,4 +1,4 @@
-﻿cf.Count.Y
+cf.Count.Y
 ==========
 
 .. currentmodule:: cf

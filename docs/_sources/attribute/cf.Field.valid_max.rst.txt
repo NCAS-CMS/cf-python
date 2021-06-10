@@ -1,4 +1,4 @@
-﻿cf.Field.valid_max
+cf.Field.valid_max
 ==================
 
 .. currentmodule:: cf

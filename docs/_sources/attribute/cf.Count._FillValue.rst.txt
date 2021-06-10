@@ -1,4 +1,4 @@
-﻿cf.Count._FillValue
+cf.Count._FillValue
 ===================
 
 .. currentmodule:: cf

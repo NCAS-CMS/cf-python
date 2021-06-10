@@ -1,4 +1,4 @@
-﻿cf.Field.cell_measures
+cf.Field.cell_measures
 ======================
 
 .. currentmodule:: cf

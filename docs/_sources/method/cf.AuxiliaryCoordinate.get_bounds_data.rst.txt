@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.AuxiliaryCoordinate.get_bounds_data
 ======================================

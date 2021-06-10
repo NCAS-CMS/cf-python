@@ -1,4 +1,4 @@
-﻿cf.Index.valid_range
+cf.Index.valid_range
 ====================
 
 .. currentmodule:: cf

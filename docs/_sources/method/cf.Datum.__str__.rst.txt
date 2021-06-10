@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.Datum.__str__
 ================

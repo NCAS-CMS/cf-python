@@ -1,4 +1,4 @@
-﻿cf.TEMPDIR
+cf.TEMPDIR
 ==========
 
 .. currentmodule:: cf

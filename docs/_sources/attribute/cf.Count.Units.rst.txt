@@ -1,4 +1,4 @@
-﻿cf.Count.Units
+cf.Count.Units
 ==============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Count.mask
+cf.Count.mask
 =============
 
 .. currentmodule:: cf

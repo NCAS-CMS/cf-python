@@ -1,4 +1,4 @@
-﻿cf.Field.mask_invalid
+cf.Field.mask_invalid
 =====================
 
 .. currentmodule:: cf

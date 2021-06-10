@@ -1,4 +1,4 @@
-﻿cf.Bounds.add_offset
+cf.Bounds.add_offset
 ====================
 
 .. currentmodule:: cf

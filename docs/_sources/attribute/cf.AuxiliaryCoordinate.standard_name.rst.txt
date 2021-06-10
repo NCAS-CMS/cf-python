@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.standard_name
+cf.AuxiliaryCoordinate.standard_name
 ====================================
 
 .. currentmodule:: cf

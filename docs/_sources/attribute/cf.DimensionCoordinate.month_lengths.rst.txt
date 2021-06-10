@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.month_lengths
+cf.DimensionCoordinate.month_lengths
 ====================================
 
 .. currentmodule:: cf

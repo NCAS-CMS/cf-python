@@ -1,4 +1,4 @@
-﻿cf.CellMeasure.hour
+cf.CellMeasure.hour
 ===================
 
 .. currentmodule:: cf

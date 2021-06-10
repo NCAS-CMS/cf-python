@@ -1,4 +1,4 @@
-﻿cf.Data.dtype
+cf.Data.dtype
 =============
 
 .. currentmodule:: cf

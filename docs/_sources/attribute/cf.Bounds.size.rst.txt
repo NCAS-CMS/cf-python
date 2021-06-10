@@ -1,4 +1,4 @@
-﻿cf.Bounds.size
+cf.Bounds.size
 ==============
 
 .. currentmodule:: cf

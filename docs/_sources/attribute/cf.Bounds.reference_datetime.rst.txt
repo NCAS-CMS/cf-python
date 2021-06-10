@@ -1,4 +1,4 @@
-﻿cf.Bounds.reference_datetime
+cf.Bounds.reference_datetime
 ============================
 
 .. currentmodule:: cf

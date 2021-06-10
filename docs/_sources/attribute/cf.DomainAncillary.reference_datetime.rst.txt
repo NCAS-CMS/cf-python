@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.reference_datetime
+cf.DomainAncillary.reference_datetime
 =====================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.example_field
+cf.example_field
 ================
 
 .. currentmodule:: cf

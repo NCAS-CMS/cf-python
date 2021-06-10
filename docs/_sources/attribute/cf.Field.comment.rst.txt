@@ -1,4 +1,4 @@
-﻿cf.Field.comment
+cf.Field.comment
 ================
 
 .. currentmodule:: cf

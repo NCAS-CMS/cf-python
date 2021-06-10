@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.construct_type
+cf.DimensionCoordinate.construct_type
 =====================================
 
 .. currentmodule:: cf

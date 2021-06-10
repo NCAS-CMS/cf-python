@@ -1,4 +1,4 @@
-﻿cf.RaggedIndexedContiguousArray.shape
+cf.RaggedIndexedContiguousArray.shape
 =====================================
 
 .. currentmodule:: cf

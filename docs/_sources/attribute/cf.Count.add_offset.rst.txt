@@ -1,4 +1,4 @@
-﻿cf.Count.add_offset
+cf.Count.add_offset
 ===================
 
 .. currentmodule:: cf

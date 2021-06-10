@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.size
+cf.FieldAncillary.size
 ======================
 
 .. currentmodule:: cf

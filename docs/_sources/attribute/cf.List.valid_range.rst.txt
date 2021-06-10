@@ -1,4 +1,4 @@
-﻿cf.List.valid_range
+cf.List.valid_range
 ===================
 
 .. currentmodule:: cf

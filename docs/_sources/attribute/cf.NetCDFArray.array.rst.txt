@@ -1,4 +1,4 @@
-﻿cf.NetCDFArray.array
+cf.NetCDFArray.array
 ====================
 
 .. currentmodule:: cf

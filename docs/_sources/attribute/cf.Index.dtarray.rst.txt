@@ -1,4 +1,4 @@
-﻿cf.Index.dtarray
+cf.Index.dtarray
 ================
 
 .. currentmodule:: cf

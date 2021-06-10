@@ -1,4 +1,4 @@
-﻿cf.Field.standard_error_multiplier
+cf.Field.standard_error_multiplier
 ==================================
 
 .. currentmodule:: cf

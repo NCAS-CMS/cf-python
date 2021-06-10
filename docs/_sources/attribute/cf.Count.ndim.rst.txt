@@ -1,4 +1,4 @@
-﻿cf.Count.ndim
+cf.Count.ndim
 =============
 
 .. currentmodule:: cf

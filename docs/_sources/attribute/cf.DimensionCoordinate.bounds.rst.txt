@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.bounds
+cf.DimensionCoordinate.bounds
 =============================
 
 .. currentmodule:: cf

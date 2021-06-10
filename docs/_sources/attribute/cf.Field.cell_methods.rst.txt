@@ -1,4 +1,4 @@
-﻿cf.Field.cell_methods
+cf.Field.cell_methods
 =====================
 
 .. currentmodule:: cf

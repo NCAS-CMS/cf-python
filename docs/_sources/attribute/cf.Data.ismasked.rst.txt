@@ -1,4 +1,4 @@
-﻿cf.Data.ismasked
+cf.Data.ismasked
 ================
 
 .. currentmodule:: cf

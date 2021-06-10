@@ -1,4 +1,4 @@
-﻿cf.Domain.constructs
+cf.Domain.constructs
 ====================
 
 .. currentmodule:: cf

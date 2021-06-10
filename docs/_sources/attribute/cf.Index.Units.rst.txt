@@ -1,4 +1,4 @@
-﻿cf.Index.Units
+cf.Index.Units
 ==============
 
 .. currentmodule:: cf

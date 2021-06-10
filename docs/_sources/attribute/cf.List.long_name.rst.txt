@@ -1,4 +1,4 @@
-﻿cf.List.long_name
+cf.List.long_name
 =================
 
 .. currentmodule:: cf

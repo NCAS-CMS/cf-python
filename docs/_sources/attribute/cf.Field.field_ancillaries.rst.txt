@@ -1,4 +1,4 @@
-﻿cf.Field.field_ancillaries
+cf.Field.field_ancillaries
 ==========================
 
 .. currentmodule:: cf

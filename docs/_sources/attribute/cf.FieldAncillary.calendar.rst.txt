@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.calendar
+cf.FieldAncillary.calendar
 ==========================
 
 .. currentmodule:: cf

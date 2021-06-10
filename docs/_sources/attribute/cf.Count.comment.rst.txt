@@ -1,4 +1,4 @@
-﻿cf.Count.comment
+cf.Count.comment
 ================
 
 .. currentmodule:: cf

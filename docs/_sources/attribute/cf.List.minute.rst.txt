@@ -1,4 +1,4 @@
-﻿cf.List.minute
+cf.List.minute
 ==============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.ndim
+cf.AuxiliaryCoordinate.ndim
 ===========================
 
 .. currentmodule:: cf

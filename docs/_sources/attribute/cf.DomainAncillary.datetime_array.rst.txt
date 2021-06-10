@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.datetime_array
+cf.DomainAncillary.datetime_array
 =================================
 
 .. currentmodule:: cf

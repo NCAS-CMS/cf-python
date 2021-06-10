@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary._FillValue
+cf.FieldAncillary._FillValue
 ============================
 
 .. currentmodule:: cf

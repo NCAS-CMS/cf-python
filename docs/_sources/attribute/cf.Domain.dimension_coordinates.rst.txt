@@ -1,4 +1,4 @@
-﻿cf.Domain.dimension_coordinates
+cf.Domain.dimension_coordinates
 ===============================
 
 .. currentmodule:: cf

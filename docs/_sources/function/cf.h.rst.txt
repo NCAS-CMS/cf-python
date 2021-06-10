@@ -1,4 +1,4 @@
-﻿cf.h
+cf.h
 ====
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Data.month
+cf.Data.month
 =============
 
 .. currentmodule:: cf

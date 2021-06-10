@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.add_offset
+cf.DomainAncillary.add_offset
 =============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.List.T
+cf.List.T
 =========
 
 .. currentmodule:: cf

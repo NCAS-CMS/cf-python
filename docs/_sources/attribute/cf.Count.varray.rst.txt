@@ -1,4 +1,4 @@
-﻿cf.Count.varray
+cf.Count.varray
 ===============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.valid_min
+cf.FieldAncillary.valid_min
 ===========================
 
 .. currentmodule:: cf

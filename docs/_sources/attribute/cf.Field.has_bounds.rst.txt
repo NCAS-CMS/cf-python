@@ -1,4 +1,4 @@
-﻿cf.Field.has_bounds
+cf.Field.has_bounds
 ===================
 
 .. currentmodule:: cf

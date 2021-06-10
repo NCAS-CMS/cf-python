@@ -1,4 +1,4 @@
-﻿cf.RELAXED_IDENTITIES
+cf.RELAXED_IDENTITIES
 =====================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Query.value
+cf.Query.value
 ==============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.List.missing_value
+cf.List.missing_value
 =====================
 
 .. currentmodule:: cf

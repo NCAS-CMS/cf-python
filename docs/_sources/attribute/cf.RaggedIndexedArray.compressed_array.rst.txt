@@ -1,4 +1,4 @@
-﻿cf.RaggedIndexedArray.compressed_array
+cf.RaggedIndexedArray.compressed_array
 ======================================
 
 .. currentmodule:: cf

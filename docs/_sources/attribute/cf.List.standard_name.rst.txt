@@ -1,4 +1,4 @@
-﻿cf.List.standard_name
+cf.List.standard_name
 =====================
 
 .. currentmodule:: cf

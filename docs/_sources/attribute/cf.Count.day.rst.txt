@@ -1,4 +1,4 @@
-﻿cf.Count.day
+cf.Count.day
 ============
 
 .. currentmodule:: cf

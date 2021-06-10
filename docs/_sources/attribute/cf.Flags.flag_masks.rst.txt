@@ -1,4 +1,4 @@
-﻿cf.Flags.flag_masks
+cf.Flags.flag_masks
 ===================
 
 .. currentmodule:: cf

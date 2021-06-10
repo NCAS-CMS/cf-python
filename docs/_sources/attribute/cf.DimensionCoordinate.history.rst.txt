@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.history
+cf.DimensionCoordinate.history
 ==============================
 
 .. currentmodule:: cf

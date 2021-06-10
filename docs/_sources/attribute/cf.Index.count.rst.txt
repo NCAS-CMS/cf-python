@@ -1,4 +1,4 @@
-﻿cf.Index.count
+cf.Index.count
 ==============
 
 .. currentmodule:: cf

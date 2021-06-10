@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.upper_bounds
+cf.DimensionCoordinate.upper_bounds
 ===================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DomainAncillary.set_property
 ===============================

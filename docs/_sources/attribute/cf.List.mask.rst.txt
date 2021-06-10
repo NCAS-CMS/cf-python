@@ -1,4 +1,4 @@
-﻿cf.List.mask
+cf.List.mask
 ============
 
 .. currentmodule:: cf
