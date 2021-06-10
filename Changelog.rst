@@ -1,8 +1,8 @@
-version NEXT
-------------
+version 3.10.0
+--------------
 ----
 
-**2021-??-??**
+**2021-06-10**
 
 * Improve performance by allowing a saved `RegridOperator` instance to
   define the regrid operator in `cf.Field.regridc` and
