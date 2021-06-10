@@ -42,7 +42,7 @@ class RegridTest(unittest.TestCase):
 
     chunk_sizes = (300, 10000, 100000)[::-1]
 
-    @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regrids(self):
         self.assertFalse(cf.regrid_logging())
         with cf.atol(1e-12):
@@ -55,16 +55,6 @@ class RegridTest(unittest.TestCase):
                     f5 = cf.read(self.filename5)[0]
 
                     r = f1.regrids(f2, "conservative")
-
-                    self.assertTrue(
-                        f3.equals(r),
-                        "destination=global Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
-                    )
-
-                    r = f1.regrids(f2, method="conservative")
-
                     self.assertTrue(
                         f3.equals(r),
                         "destination=global Field, CHUNKSIZE={}".format(
@@ -73,9 +63,7 @@ class RegridTest(unittest.TestCase):
                     )
 
                     dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
-
                     r = f1.regrids(dst, "conservative", dst_cyclic=True)
-
                     self.assertTrue(
                         f3.equals(r),
                         "destination=global dict, CHUNKSIZE={}".format(
@@ -84,7 +72,6 @@ class RegridTest(unittest.TestCase):
                     )
 
                     r = f1.regrids(dst, method="conservative", dst_cyclic=True)
-
                     self.assertTrue(
                         f3.equals(r),
                         "destination=global dict, CHUNKSIZE={}".format(
@@ -94,7 +81,6 @@ class RegridTest(unittest.TestCase):
 
                     # Regrid global to regional roated pole
                     r = f1.regrids(f5, method="linear")
-
                     self.assertTrue(
                         f4.equals(r, verbose=3),
                         "destination=regional Field, CHUNKSIZE={}".format(
@@ -106,7 +92,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f1.regridc(f6, axes="T", method="linear")
 
-    @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regridc(self):
         self.assertFalse(cf.regrid_logging())
         with cf.atol(1e-11):
@@ -166,6 +152,105 @@ class RegridTest(unittest.TestCase):
                             chunksize
                         ),
                     )
+
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
+    def test_Field_regrids_operator(self):
+        self.assertFalse(cf.regrid_logging())
+
+        with cf.atol(1e-12):
+            f1 = cf.read(self.filename1)[0]
+            f2 = cf.read(self.filename2)[0]
+            f3 = cf.read(self.filename3)[0]
+            f4 = cf.read(self.filename4)[0]
+            f5 = cf.read(self.filename5)[0]
+
+            op = f1.regrids(f2, "conservative", return_operator=True)
+            r = f1.regrids(op)
+            self.assertTrue(f3.equals(r))
+
+            # Repeat
+            r = f1.regrids(op)
+            self.assertTrue(f3.equals(r))
+
+            dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
+            op = f1.regrids(
+                dst, "conservative", dst_cyclic=True, return_operator=True
+            )
+            r = f1.regrids(op)
+            self.assertTrue(f3.equals(r))
+
+            op = f1.regrids(
+                dst,
+                method="conservative",
+                dst_cyclic=True,
+                return_operator=True,
+            )
+            r = f1.regrids(op)
+            self.assertTrue(f3.equals(r))
+
+            # Regrid global to regional rotated pole
+            op = f1.regrids(f5, method="linear", return_operator=True)
+            r = f1.regrids(op)
+            self.assertTrue(f4.equals(r))
+
+        # Raise exception when the source grid does not match that of
+        # the regrid operator
+        op = f1.regrids(f2, "conservative", return_operator=True)
+        with self.assertRaises(ValueError):
+            f2.regrids(op)
+
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
+    def test_Field_regridc_operator(self):
+        self.assertFalse(cf.regrid_logging())
+
+        with cf.atol(1e-12):
+            f1 = cf.read(self.filename7)[0]
+            f2 = cf.read(self.filename8)[0]
+            f3 = cf.read(self.filename9)[0]
+            f4 = cf.read(self.filename1)[0]
+            f5 = cf.read(self.filename2)[0]
+            f6 = cf.read(self.filename10)[0]
+
+            op = f1.regridc(
+                f2, axes="T", method="linear", return_operator=True
+            )
+            self.assertTrue(f3.equals(f1.regridc(op)))
+
+            op = f4.regridc(
+                f5,
+                axes=("X", "Y"),
+                method="conservative",
+                return_operator=True,
+            )
+            self.assertTrue(f6.equals(f4.regridc(op)))
+
+            op = f4.regridc(
+                f5,
+                axes=("X", "Y"),
+                method="conservative",
+                return_operator=True,
+            )
+            self.assertTrue(f6.equals(f4.regridc(op)))
+
+            dst = {
+                "X": f5.dimension_coordinate("X"),
+                "Y": f5.dimension_coordinate("Y"),
+            }
+            op = f4.regridc(
+                dst,
+                axes=("X", "Y"),
+                method="conservative",
+                return_operator=True,
+            )
+
+            self.assertTrue(f6.equals(f4.regridc(op)))
+            self.assertTrue(f6.equals(f4.regridc(op)))
+
+        # Raise exception when the source grid does not match that of
+        # the regrid operator
+        op = f1.regridc(f2, axes="T", method="linear", return_operator=True)
+        with self.assertRaises(ValueError):
+            f2.regrids(op)
 
 
 if __name__ == "__main__":

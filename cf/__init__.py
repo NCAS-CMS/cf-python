@@ -81,8 +81,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.8"
-__date__ = "2021-05-25"
-__version__ = "3.9.0"
+__date__ = "2021-??-??"
+__version__ = "3.10.0"
 
 _requires = (
     "numpy",
@@ -289,10 +289,11 @@ from .functions import *  # noqa: F403
 from .maths import relative_vorticity, histogram
 from .examplefield import example_field, example_fields, example_domain
 
-
 from .cfimplementation import CFImplementation, implementation
 
 from .read_write import read, write
+
+from .regrid import RegridOperator
 
 
 # Set up basic logging for the full project with a root logger

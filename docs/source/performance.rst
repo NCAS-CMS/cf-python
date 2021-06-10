@@ -41,6 +41,34 @@ of Massive Arrays) <LAMA>` functionality.
 
 ----
 
+**Regridding**
+--------------
+
+When regridding multiple field constructs with their
+`cf.Field.regrids` or `cf.Field.regridc` methods, the regridding
+weights are calculated for each field's operation, and these
+calculations are often the main expense of the operation, sometimes
+close to 100% of the cost.
+
+This can be avoided for cases when all of the fields are being
+regridded to the same destination grid, and all share a common source
+grid. In such cases, the regridding operator that defines the grids
+and the weights can be calculated once and then used to regrid each
+field construct, giving potentially very large performance
+improvements.
+
+.. code-block:: python
+   :caption: *Regrid every field construct in the field list 'fl' to a
+             common destination grid defined by the field construct
+             'dst'.*
+		
+   >>> operator = fl[0].regrids(dst, method='conservative',
+   ...                          return_operator=True)
+   >>> fl_regridded = cf.FieldList(f.regrids(operator) for f in fl)
+   
+
+----
+
 .. _LAMA:
 
 **Large Amounts of Massive Arrays (LAMA)**

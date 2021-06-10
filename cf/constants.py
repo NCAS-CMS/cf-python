@@ -40,64 +40,62 @@ _TOTAL_MEMORY = float(virtual_memory().total)
 #     _meminfo_file.close()
 
 
-"""
-A dictionary of useful constants.
+"""A dictionary of useful constants.
 
 Whilst the dictionary may be modified directly, it is safer to
 retrieve and set the values with a function where one is
 provided. This is due to interdependencies between some values.
 
-Note ATOL and RTOL are constants that in essence belong in this
-dict, but since they can be read and manipulated directly from cfdm,
-it is safest to work with cfdm.constants.CONSTANTS['ATOL'] (and
-'RTOL' equivalent) instead of storing separately and synchronising
-them here in cf.
+Note ATOL and RTOL are constants that in essence belong in this dict,
+but since they can be read and manipulated directly from cfdm, it is
+safest to work with ``cfdm.constants.CONSTANTS['ATOL']`` (and 'RTOL'
+equivalent) instead of storing separately and synchronising them here
+in cf.
 
 :Keys:
 
-    TOTAL_MEMORY : float
+    TOTAL_MEMORY: `float`
       Find the total amount of physical memory (in bytes).
 
-    CHUNKSIZE : float
-      The chunk size (in bytes) for data storage and
-      processing.
+    CHUNKSIZE: `float`
+      The chunk size (in bytes) for data storage and processing.
 
-    FM_THRESHOLD : float
-      The minimum amount of memory (in bytes) to be kept free
-      for temporary work space. This should always be
-      MINNCFM*CHUNKSIZE.
+    FM_THRESHOLD: `float`
+      The minimum amount of memory (in bytes) to be kept free for
+      temporary work space. This should always be MINNCFM*CHUNKSIZE.
 
-    MINNCFM : int
-      The number of chunk sizes to be kept free for temporary
-      work space.
+    MINNCFM: `int`
+      The number of chunk sizes to be kept free for temporary work
+      space.
 
-    OF_FRACTION : float
-      The fraction of the maximum number of concurrently open
-      files which may be used for files containing data
-      arrays.
+    OF_FRACTION: `float`
+      The fraction of the maximum number of concurrently open files
+      which may be used for files containing data arrays.
 
-    TEMPDIR : str
-      The location to store temporary files. By default it is
-      the default directory used by the :mod:`tempfile` module.
+    TEMPDIR: `str`
+      The location to store temporary files. By default it is the
+      default directory used by the :mod:`tempfile` module.
 
-    REGRID_LOGGING : bool
-      Whether or not to enable ESMPy logging. If it is logging
-      is performed after every call to ESMPy. By default logging
-      is disabled.
+    REGRID_LOGGING: `bool`
+      Whether or not to enable `ESMF` logging. If it is logging is
+      performed after every call to `ESMF`. By default logging is
+      disabled.
 
-    FREE_MEMORY_FACTOR : int
-      Factor to divide the free memory by. If MPI is on this is
-      equal to the number of PEs. Otherwise it is equal to 1 and
-      is ignored in any case.
+    FREE_MEMORY_FACTOR: `int`
+      Factor to divide the free memory by. If MPI is on this is equal
+      to the number of PEs. Otherwise it is equal to 1 and is ignored
+      in any case.
 
-    COLLAPSE_PARALLEL_MODE : int
-      The mode to use when parallelising collapse. By default
-      this is 0 to try and automatically determine which mode to
-      use.
+    COLLAPSE_PARALLEL_MODE: `int`
+      The mode to use when parallelising collapse. By default this is
+      0 to try and automatically determine which mode to use.
 
-    LOG_LEVEL : str
-      The minimal level of seriousness for which log messages are shown.
-      See cf.log_level().
+      Deprecated at version 3.9.0
+
+    LOG_LEVEL: `str`
+      The minimal level of seriousness for which log messages are
+      shown. See `cf.log_level`.
+
 """
 CONSTANTS = {
     "ATOL": sys.float_info.epsilon,
