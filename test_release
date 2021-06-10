@@ -24,7 +24,7 @@ tar zxvf cf-python-$vn.tar.gz
 cd cf-python-$vn
 python setup.py install --home=~/tmp
 
-export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
+export PYTHONPATH=~/tmp/lib/python/cf_python-${vn}-py${py}.egg:$PYTHONPATH
 export PATH=~/tmp/bin:$PATH
 
 cd ~/tmp/lib/python/cf_python-${vn}-py${py}.egg/cf/test
