@@ -3316,8 +3316,10 @@ def environment(display=True, paths=True):
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
-    if paths:  # include path information, else exclude, when unpacking tuple
+    if paths:
+        # Include path information, else exclude, when unpacking tuple
         string += " {2!s}"
+
     out = [
         string.format(dep, *info)
         for dep, info in dependency_version_paths_mapping.items()
