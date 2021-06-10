@@ -188,7 +188,7 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(op)
             self.assertTrue(f3.equals(r))
 
-            # Regrid global to regional roated pole
+            # Regrid global to regional rotated pole
             op = f1.regrids(f5, method="linear", return_operator=True)
             r = f1.regrids(op)
             self.assertTrue(f4.equals(r))
