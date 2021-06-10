@@ -9,7 +9,7 @@ version 3.10.0
   `cf.Field.regrids` (https://github.com/NCAS-CMS/cf-python/issues/222)
 * Fix for incorrectly formatted `logging.info` statement sometimes
   causing a hang in `cf.Field.collapse`
-  (https://github.com/NCAS-CMS/cfdm/issues/217)
+  (https://github.com/NCAS-CMS/cf-python/issues/217)
 
 version 3.9.0
 -------------
