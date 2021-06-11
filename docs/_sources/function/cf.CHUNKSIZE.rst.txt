@@ -1,4 +1,4 @@
-﻿cf.CHUNKSIZE
+cf.CHUNKSIZE
 ============
 
 .. currentmodule:: cf

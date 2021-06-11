@@ -1,4 +1,4 @@
-﻿cf.GatheredArray.ndim
+cf.GatheredArray.ndim
 =====================
 
 .. currentmodule:: cf

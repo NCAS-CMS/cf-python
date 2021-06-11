@@ -1,4 +1,4 @@
-﻿cf.close_one_file
+cf.close_one_file
 =================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Data.shape
+cf.Data.shape
 =============
 
 .. currentmodule:: cf

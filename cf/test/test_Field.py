@@ -2237,6 +2237,14 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.convert("qwerty")
 
+        print("Don't forget to reinstate commented tests at 3.11.0")
+        # Reinstate at 3.11.0
+        #        # Test some constructs which can never have data
+        #        with self.assertRaises(ValueError):
+        #            f.convert("cellmethod0")
+        #        with self.assertRaises(ValueError):
+        #            f.convert("domainaxis0")
+
     def test_Field_section(self):
         f = cf.read(self.filename2)[0][0:10]
         g = f.section(("X", "Y"))

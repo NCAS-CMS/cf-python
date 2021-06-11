@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.varray
+cf.AuxiliaryCoordinate.varray
 =============================
 
 .. currentmodule:: cf

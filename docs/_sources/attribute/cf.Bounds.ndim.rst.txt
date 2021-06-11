@@ -1,4 +1,4 @@
-﻿cf.Bounds.ndim
+cf.Bounds.ndim
 ==============
 
 .. currentmodule:: cf

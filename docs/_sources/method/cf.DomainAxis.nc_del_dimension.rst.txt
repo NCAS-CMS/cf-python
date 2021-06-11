@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DomainAxis.nc_del_dimension
 ==============================

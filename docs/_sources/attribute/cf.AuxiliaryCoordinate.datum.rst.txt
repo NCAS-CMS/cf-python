@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.datum
+cf.AuxiliaryCoordinate.datum
 ============================
 
 .. currentmodule:: cf

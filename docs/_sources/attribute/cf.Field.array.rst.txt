@@ -1,4 +1,4 @@
-﻿cf.Field.array
+cf.Field.array
 ==============
 
 .. currentmodule:: cf

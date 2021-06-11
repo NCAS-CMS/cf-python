@@ -1,4 +1,4 @@
-﻿cf.Index.year
+cf.Index.year
 =============
 
 .. currentmodule:: cf

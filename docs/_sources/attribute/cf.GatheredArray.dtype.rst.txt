@@ -1,4 +1,4 @@
-﻿cf.GatheredArray.dtype
+cf.GatheredArray.dtype
 ======================
 
 .. currentmodule:: cf

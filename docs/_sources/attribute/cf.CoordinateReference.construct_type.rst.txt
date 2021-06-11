@@ -1,4 +1,4 @@
-﻿cf.CoordinateReference.construct_type
+cf.CoordinateReference.construct_type
 =====================================
 
 .. currentmodule:: cf

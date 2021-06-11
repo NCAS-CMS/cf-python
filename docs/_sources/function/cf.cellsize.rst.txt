@@ -1,4 +1,4 @@
-﻿cf.cellsize
+cf.cellsize
 ===========
 
 .. currentmodule:: cf

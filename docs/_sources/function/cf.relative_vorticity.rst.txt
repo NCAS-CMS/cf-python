@@ -1,4 +1,4 @@
-﻿cf.relative_vorticity
+cf.relative_vorticity
 =====================
 
 .. currentmodule:: cf

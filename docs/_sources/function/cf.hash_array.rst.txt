@@ -1,4 +1,4 @@
-﻿cf.hash_array
+cf.hash_array
 =============
 
 .. currentmodule:: cf

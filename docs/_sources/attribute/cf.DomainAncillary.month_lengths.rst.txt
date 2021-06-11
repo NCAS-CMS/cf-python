@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.month_lengths
+cf.DomainAncillary.month_lengths
 ================================
 
 .. currentmodule:: cf

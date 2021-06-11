@@ -1,4 +1,4 @@
-﻿cf.DomainAxis.size
+cf.DomainAxis.size
 ==================
 
 .. currentmodule:: cf

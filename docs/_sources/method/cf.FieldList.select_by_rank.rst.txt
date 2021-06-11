@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.FieldList.select_by_rank
 ===========================

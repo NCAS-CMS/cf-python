@@ -1,4 +1,4 @@
-﻿cf.Flags.flag_meanings
+cf.Flags.flag_meanings
 ======================
 
 .. currentmodule:: cf

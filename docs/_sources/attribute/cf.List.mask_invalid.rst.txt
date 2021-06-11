@@ -1,4 +1,4 @@
-﻿cf.List.mask_invalid
+cf.List.mask_invalid
 ====================
 
 .. currentmodule:: cf

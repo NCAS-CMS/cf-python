@@ -1,4 +1,4 @@
-﻿cf.cellge
+cf.cellge
 =========
 
 .. currentmodule:: cf

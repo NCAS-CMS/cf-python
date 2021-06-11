@@ -1,4 +1,4 @@
-﻿cf.Bounds.valid_max
+cf.Bounds.valid_max
 ===================
 
 .. currentmodule:: cf

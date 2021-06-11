@@ -1,4 +1,4 @@
-﻿cf.Bounds.varray
+cf.Bounds.varray
 ================
 
 .. currentmodule:: cf

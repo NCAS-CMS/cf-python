@@ -1,4 +1,4 @@
-﻿cf.open_files
+cf.open_files
 =============
 
 .. currentmodule:: cf

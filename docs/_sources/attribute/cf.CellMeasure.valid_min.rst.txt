@@ -1,4 +1,4 @@
-﻿cf.CellMeasure.valid_min
+cf.CellMeasure.valid_min
 ========================
 
 .. currentmodule:: cf

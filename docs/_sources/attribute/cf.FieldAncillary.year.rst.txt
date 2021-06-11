@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.year
+cf.FieldAncillary.year
 ======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.mam
+cf.mam
 ======
 
 .. currentmodule:: cf

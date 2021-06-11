@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.Y
+cf.FieldAncillary.Y
 ===================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Bounds._FillValue
+cf.Bounds._FillValue
 ====================
 
 .. currentmodule:: cf

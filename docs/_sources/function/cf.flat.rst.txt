@@ -1,4 +1,4 @@
-﻿cf.flat
+cf.flat
 =======
 
 .. currentmodule:: cf

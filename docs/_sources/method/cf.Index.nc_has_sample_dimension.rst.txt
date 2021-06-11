@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.Index.nc_has_sample_dimension
 ================================

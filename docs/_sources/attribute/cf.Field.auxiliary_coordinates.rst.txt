@@ -1,4 +1,4 @@
-﻿cf.Field.auxiliary_coordinates
+cf.Field.auxiliary_coordinates
 ==============================
 
 .. currentmodule:: cf

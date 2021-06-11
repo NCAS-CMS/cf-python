@@ -1,4 +1,4 @@
-﻿cf.Field.month_lengths
+cf.Field.month_lengths
 ======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.datetime_array
+cf.FieldAncillary.datetime_array
 ================================
 
 .. currentmodule:: cf

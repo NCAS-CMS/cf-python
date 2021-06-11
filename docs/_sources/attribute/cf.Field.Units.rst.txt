@@ -1,4 +1,4 @@
-﻿cf.Field.Units
+cf.Field.Units
 ==============
 
 .. currentmodule:: cf

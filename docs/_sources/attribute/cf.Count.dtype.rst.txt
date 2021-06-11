@@ -1,4 +1,4 @@
-﻿cf.Count.dtype
+cf.Count.dtype
 ==============
 
 .. currentmodule:: cf

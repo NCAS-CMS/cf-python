@@ -1,4 +1,4 @@
-﻿cf.dump
+cf.dump
 =======
 
 .. currentmodule:: cf

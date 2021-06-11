@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.valid_range
+cf.AuxiliaryCoordinate.valid_range
 ==================================
 
 .. currentmodule:: cf

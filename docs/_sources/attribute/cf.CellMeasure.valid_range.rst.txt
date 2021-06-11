@@ -1,4 +1,4 @@
-﻿cf.CellMeasure.valid_range
+cf.CellMeasure.valid_range
 ==========================
 
 .. currentmodule:: cf

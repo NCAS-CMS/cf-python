@@ -1,4 +1,4 @@
-﻿cf.NetCDFArray.file_pointer
+cf.NetCDFArray.file_pointer
 ===========================
 
 .. currentmodule:: cf

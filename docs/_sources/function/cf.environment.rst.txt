@@ -1,4 +1,4 @@
-﻿cf.environment
+cf.environment
 ==============
 
 .. currentmodule:: cf

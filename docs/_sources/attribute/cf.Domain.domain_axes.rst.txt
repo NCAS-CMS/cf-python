@@ -1,4 +1,4 @@
-﻿cf.Domain.domain_axes
+cf.Domain.domain_axes
 =====================
 
 .. currentmodule:: cf

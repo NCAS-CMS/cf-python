@@ -1,4 +1,4 @@
-﻿cf.List.size
+cf.List.size
 ============
 
 .. currentmodule:: cf

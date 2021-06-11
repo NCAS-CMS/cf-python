@@ -1,4 +1,4 @@
-﻿cf.List.valid_min
+cf.List.valid_min
 =================
 
 .. currentmodule:: cf

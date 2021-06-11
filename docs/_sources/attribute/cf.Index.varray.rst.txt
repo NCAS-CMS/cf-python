@@ -1,4 +1,4 @@
-﻿cf.Index.varray
+cf.Index.varray
 ===============
 
 .. currentmodule:: cf

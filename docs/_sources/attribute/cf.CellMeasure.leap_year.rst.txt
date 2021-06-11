@@ -1,4 +1,4 @@
-﻿cf.CellMeasure.leap_year
+cf.CellMeasure.leap_year
 ========================
 
 .. currentmodule:: cf

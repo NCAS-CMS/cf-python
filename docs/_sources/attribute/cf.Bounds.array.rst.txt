@@ -1,4 +1,4 @@
-﻿cf.Bounds.array
+cf.Bounds.array
 ===============
 
 .. currentmodule:: cf

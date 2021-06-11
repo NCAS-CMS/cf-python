@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.valid_range
+cf.DimensionCoordinate.valid_range
 ==================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.default_netCDF_fillvals
+cf.default_netCDF_fillvals
 ==========================
 
 .. currentmodule:: cf

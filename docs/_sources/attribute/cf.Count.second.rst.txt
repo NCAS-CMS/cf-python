@@ -1,4 +1,4 @@
-﻿cf.Count.second
+cf.Count.second
 ===============
 
 .. currentmodule:: cf

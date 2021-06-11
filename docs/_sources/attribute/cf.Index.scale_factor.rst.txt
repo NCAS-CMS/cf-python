@@ -1,4 +1,4 @@
-﻿cf.Index.scale_factor
+cf.Index.scale_factor
 =====================
 
 .. currentmodule:: cf

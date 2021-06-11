@@ -1,4 +1,4 @@
-﻿cf.NetCDFArray.size
+cf.NetCDFArray.size
 ===================
 
 .. currentmodule:: cf

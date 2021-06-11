@@ -1,4 +1,4 @@
-﻿cf.dirname
+cf.dirname
 ==========
 
 .. currentmodule:: cf

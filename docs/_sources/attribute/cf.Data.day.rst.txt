@@ -1,4 +1,4 @@
-﻿cf.Data.day
+cf.Data.day
 ===========
 
 .. currentmodule:: cf

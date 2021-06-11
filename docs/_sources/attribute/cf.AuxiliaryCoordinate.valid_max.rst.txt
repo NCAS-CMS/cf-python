@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.valid_max
+cf.AuxiliaryCoordinate.valid_max
 ================================
 
 .. currentmodule:: cf

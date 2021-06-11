@@ -1,4 +1,4 @@
-﻿cf.Query.operator
+cf.Query.operator
 =================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.inspect
+cf.inspect
 ==========
 
 .. currentmodule:: cf

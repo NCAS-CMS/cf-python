@@ -81,7 +81,7 @@ installation and source code.
 """
 __Conventions__ = "CF-1.9"
 __date__ = "2021-??-??"
-__version__ = "3.10.0"
+__version__ = "3.?.0"
 
 _requires = (
     "numpy",
@@ -293,6 +293,8 @@ from .examplefield import example_field, example_fields, example_domain
 from .cfimplementation import CFImplementation, implementation
 
 from .read_write import read, write
+
+from .regrid import RegridOperator
 
 
 # Set up basic logging for the full project with a root logger

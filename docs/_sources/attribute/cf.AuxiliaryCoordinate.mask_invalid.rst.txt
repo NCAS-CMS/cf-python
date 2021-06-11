@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.mask_invalid
+cf.AuxiliaryCoordinate.mask_invalid
 ===================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Data.hardmask
+cf.Data.hardmask
 ================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.missing_value
+cf.DomainAncillary.missing_value
 ================================
 
 .. currentmodule:: cf

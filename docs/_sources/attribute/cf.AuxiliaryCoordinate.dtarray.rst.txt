@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.dtarray
+cf.AuxiliaryCoordinate.dtarray
 ==============================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Bounds.dtarray
+cf.Bounds.dtarray
 =================
 
 .. currentmodule:: cf

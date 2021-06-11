@@ -1,4 +1,4 @@
-﻿cf.RTOL
+cf.RTOL
 =======
 
 .. currentmodule:: cf

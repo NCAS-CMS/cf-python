@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.AuxiliaryCoordinate.override_calendar
 ========================================

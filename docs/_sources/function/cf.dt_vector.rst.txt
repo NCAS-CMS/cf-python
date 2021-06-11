@@ -1,4 +1,4 @@
-﻿cf.dt_vector
+cf.dt_vector
 ============
 
 .. currentmodule:: cf

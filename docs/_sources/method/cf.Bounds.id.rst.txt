@@ -1,4 +1,4 @@
-﻿cf.Bounds.id
+cf.Bounds.id
 ============
 
 .. currentmodule:: cf

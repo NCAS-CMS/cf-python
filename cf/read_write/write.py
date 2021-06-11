@@ -148,32 +148,32 @@ def write(
         fmt: `str`, optional
             The format of the output file. One of:
 
-              ==========================  ================================
-              *fmt*                       Output file type
-              ==========================  ================================
-              ``'NETCDF4'``               NetCDF4 format file. This is the
-                                          default.
+            ==========================  ================================
+            *fmt*                       Output file type
+            ==========================  ================================
+            ``'NETCDF4'``               NetCDF4 format file. This is the
+                                        default.
 
-              ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
-                                          below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
+                                        below)
 
-              ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
-                                          (limited to file sizes less
-                                          than 2GB).
+            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
+                                        (limited to file sizes less
+                                        than 2GB).
 
-              ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                          file
+            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
+                                        file
 
-              ``'NETCDF3_64BIT'``         An alias for
-                                          ``'NETCDF3_64BIT_OFFSET'``
+            ``'NETCDF3_64BIT'``         An alias for
+                                        ``'NETCDF3_64BIT_OFFSET'``
 
-              ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                          file with extensions (see below)
+            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
+                                        file with extensions (see below)
 
-              ``'CFA'`` or ``'CFA4'``     CFA-netCDF4 format file
+            ``'CFA'`` or ``'CFA4'``     CFA-netCDF4 format file
 
-              ``'CFA3'``                  CFA-netCDF3 classic format file
-              ==========================  ================================
+            ``'CFA3'``                  CFA-netCDF3 classic format file
+            ==========================  ================================
 
             By default the format is ``'NETCDF4'``.
 

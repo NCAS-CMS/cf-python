@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.hardmask
+cf.AuxiliaryCoordinate.hardmask
 ===============================
 
 .. currentmodule:: cf

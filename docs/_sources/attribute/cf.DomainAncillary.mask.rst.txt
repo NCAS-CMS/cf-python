@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.mask
+cf.DomainAncillary.mask
 =======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.List.leap_month
+cf.List.leap_month
 ==================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.missing_value
+cf.DimensionCoordinate.missing_value
 ====================================
 
 .. currentmodule:: cf

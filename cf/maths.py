@@ -2,6 +2,7 @@ from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from . import Units
 
 from .data.data import Data
+from .regrid import get_cartesian_coords
 
 
 def relative_vorticity(
@@ -98,12 +99,8 @@ def relative_vorticity(
     v = v.copy()
 
     # Get the X and Y coordinates
-    (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords(
-        "u", ("X", "Y")
-    )
-    (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords(
-        "v", ("X", "Y")
-    )
+    (u_x_key, u_y_key), (u_x, u_y) = get_cartesian_coords(u, "u", ("X", "Y"))
+    (v_x_key, v_y_key), (v_x, v_y) = get_cartesian_coords(v, "v", ("X", "Y"))
 
     if not u_x.equals(v_x) or not u_y.equals(v_y):
         raise ValueError("u and v must be on the same grid.")

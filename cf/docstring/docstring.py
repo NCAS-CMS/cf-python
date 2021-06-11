@@ -71,6 +71,117 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
+    # method: `str`, optional
+    "{{method: `str`, optional}}": """method: `str`, optional
+                Specify the regridding method. This parameter must be
+                set unless the new grid is specified by a regridding
+                operator, which stores its own method. See the *dst*
+                parameter.
+
+                The *method* parameter may be one of the following:
+
+                ======================  ==============================
+                Method                  Description
+                ======================  ==============================
+                ``'linear'``            Bilinear interpolation.
+
+                ``'bilinear'``          Deprecated alias for
+                                        ``'linear'``.
+
+                ``'conservative_1st'``  First order conservative
+                                        interpolation.
+
+                                        Preserve the area integral of
+                                        the data across the
+                                        interpolation from source to
+                                        destination. It uses the
+                                        proportion of the area of the
+                                        overlapping source and
+                                        destination cells to determine
+                                        appropriate weights.
+
+                                        In particular, the weight of a
+                                        source cell is the ratio of
+                                        the area of intersection of
+                                        the source and destination
+                                        cells to the area of the whole
+                                        destination cell.
+
+                                        It does not account for the
+                                        field gradient across the
+                                        source cell, unlike the
+                                        second-order conservative
+                                        method (see below).
+
+                ``'conservative_2nd'``  Second-order conservative
+                                        interpolation.
+
+                                        As with first order (see
+                                        above), preserves the area
+                                        integral of the field between
+                                        source and destination using a
+                                        weighted sum, with weights
+                                        based on the proportionate
+                                        area of intersection.
+
+                                        Unlike first-order, the
+                                        second-order method
+                                        incorporates further terms to
+                                        take into consideration the
+                                        gradient of the field across
+                                        the source cell, thereby
+                                        typically producing a smoother
+                                        result of higher accuracy.
+
+                ``'conservative'``      Alias for
+                                        ``'conservative_1st'``
+
+                ``'patch'``             Higher-order patch recovery
+                                        interpolation.
+
+                                        A second degree polynomial
+                                        regridding method, which uses
+                                        a least squares algorithm to
+                                        calculate the polynomial.
+
+                                        This method gives better
+                                        derivatives in the resulting
+                                        destination data than the
+                                        linear method.
+
+                ``'nearest_stod'``      Nearest neighbour
+                                        interpolation for which each
+                                        destination point is mapped to
+                                        the closest source point.
+
+                                        Useful for extrapolation of
+                                        categorical data.
+
+                ``'nearest_dtos'``      Nearest neighbour
+                                        interpolation for which each
+                                        source point is mapped to the
+                                        destination point.
+
+                                        Useful for extrapolation of
+                                        categorical data.
+
+                                        A given destination point may
+                                        receive input from multiple
+                                        source points, but no source
+                                        point will map to more than
+                                        one destination point.
+
+                `None`                  This is the default and can
+                                        only be used the new grid is
+                                        specified by a regridding
+                                        operator, which stores its own
+                                        method.
+                ======================  ==============================
+
+                .. note:: When *dst* is a regrid operator then the
+                          *method* may still be set, but must have the
+                          value `None` or else agree with the
+                          regridding operator's method.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.

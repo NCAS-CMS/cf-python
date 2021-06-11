@@ -1,4 +1,4 @@
-﻿cf.Field.shape
+cf.Field.shape
 ==============
 
 .. currentmodule:: cf

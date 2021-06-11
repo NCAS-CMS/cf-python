@@ -1,4 +1,4 @@
-﻿cf.Bounds.dtype
+cf.Bounds.dtype
 ===============
 
 .. currentmodule:: cf

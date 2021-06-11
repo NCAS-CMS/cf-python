@@ -1,4 +1,4 @@
-﻿cf.Count.year
+cf.Count.year
 =============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DimensionCoordinate.nc_has_variable
 ======================================

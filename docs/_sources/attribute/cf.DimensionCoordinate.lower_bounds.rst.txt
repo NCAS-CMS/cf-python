@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.lower_bounds
+cf.DimensionCoordinate.lower_bounds
 ===================================
 
 .. currentmodule:: cf

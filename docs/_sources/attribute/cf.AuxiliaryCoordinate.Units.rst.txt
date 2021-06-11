@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.Units
+cf.AuxiliaryCoordinate.Units
 ============================
 
 .. currentmodule:: cf
