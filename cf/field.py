@@ -16003,6 +16003,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 units=f.Units,
             )
 
+            # Release memory for source grid/fields
+            # created for this data section
+            srcfracfield.destroy()
+            srcfield.destroy()
+            srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -16062,16 +16068,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 config={"coord": x, "period": Data(360.0, "degrees")},
             )
 
-        # Release old memory from ESMF (this ought to happen garbage
-        # collection, but it doesn't seem to work there!)
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            if not return_operator:
+                # explicitly release memory for ESMF Regrid and its
+                # associated objects which is safe to do so since the
+                # regrid operator was not returned so the weights will
+                # not be used anymore
+                del regridSrc2Dst
 
         return f
 
@@ -16730,6 +16742,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             sections[k] = Data.reconstruct_sectioned_data(subsections)
 
+            # Release memory for source grid/fields
+            # created for this data section
+            srcfracfield.destroy()
+            srcfield.destroy()
+            srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -16770,15 +16788,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Insert regridded data into new field
         f.set_data(new_data, axes=self.get_data_axes())
 
-        # Release old memory
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            if not return_operator:
+                # explicitly release memory for ESMF Regrid and its
+                # associated objects which is safe to do so since the
+                # regrid operator was not returned so the weights will
+                # not be used anymore
+                del regridSrc2Dst
 
         return f
 
