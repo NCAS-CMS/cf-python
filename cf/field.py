@@ -16740,13 +16740,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     units=f.Units,
                 )
 
-            sections[k] = Data.reconstruct_sectioned_data(subsections)
+                # Release memory for source grid/fields
+                # created for this data subsection
+                srcfracfield.destroy()
+                srcfield.destroy()
+                srcgrid.destroy()
 
-            # Release memory for source grid/fields
-            # created for this data section
-            srcfracfield.destroy()
-            srcfield.destroy()
-            srcgrid.destroy()
+            sections[k] = Data.reconstruct_sectioned_data(subsections)
 
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
