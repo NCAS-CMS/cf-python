@@ -753,6 +753,10 @@ def regrid_compute_field_mass(
     # Insert the two masses into the dictionary for comparison
     _compute_field_mass[k] = (srcmass, dstmass)
 
+    # Release memory
+    srcareafield.destroy()
+    dstareafield.destroy()
+
 
 def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
     """Get the regridded data.

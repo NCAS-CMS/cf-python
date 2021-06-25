@@ -15823,6 +15823,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
         # Get the destination ESMF Grid, Field and fractional Field
         if dst_regrid:
@@ -16568,6 +16569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
             dstgrid = regridSrc2Dst.dstfield.grid
             dstfield = regridSrc2Dst.dstfield
