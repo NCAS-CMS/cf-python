@@ -15819,6 +15819,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
@@ -16564,6 +16565,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
