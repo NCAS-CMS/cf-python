@@ -16741,12 +16741,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     units=f.Units,
                 )
 
-                # Release memory for source grid/fields
-                # created for this data subsection
-                srcfracfield.destroy()
-                srcfield.destroy()
-                srcgrid.destroy()
-
             sections[k] = Data.reconstruct_sectioned_data(subsections)
 
         # Release memory for source grid/fields created for data subsections
