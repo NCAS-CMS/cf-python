@@ -16079,12 +16079,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dstfield.destroy()
             dstgrid.destroy()
 
-            if not return_operator:
-                # explicitly release memory for ESMF Regrid and its
-                # associated objects which is safe to do so since the
-                # regrid operator was not returned so the weights will
-                # not be used anymore
-                del regridSrc2Dst
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 
@@ -16800,12 +16799,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dstfield.destroy()
             dstgrid.destroy()
 
-            if not return_operator:
-                # explicitly release memory for ESMF Regrid and its
-                # associated objects which is safe to do so since the
-                # regrid operator was not returned so the weights will
-                # not be used anymore
-                del regridSrc2Dst
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 
