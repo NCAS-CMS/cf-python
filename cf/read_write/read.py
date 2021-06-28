@@ -50,6 +50,7 @@ def read(
     squeeze=False,
     unsqueeze=False,
     fmt=None,
+    cdl_string=False,
     select=None,
     extra=None,
     recursive=False,
@@ -207,6 +208,10 @@ def read(
             be raised, unless the *ignore_read_error* parameter is
             True.
 
+            As a special case, if the `cdl_string` parameter is set to
+            True, the interpretation of `files` changes so that it
+            should be a string of CDL input rather than the above.
+
         external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
@@ -312,6 +317,19 @@ def read(
             ``'CFA'`` for CFA-netCDF files, ``'UM'`` for PP or UM
             fields files, and ``'CDL'`` for CDL text files. By default
             files of any of these formats are read.
+
+        cdl_string: `bool`, optional
+            If True and the format to read is CDL, read a string
+            input rather than from file, where in this case (only)
+            the `files` parameter will be interpreted as a string of
+            valid CDL rather than a string providing the file location,
+            as standard.
+
+            By default, input is read from file and not from a string,
+            including when the `fmt` parameter is given as CDL. Note that
+            when `cdl_string` is True, the `fmt` parameter is ignored
+            as the format is assumed to be CDL, so it is not necessary to
+            also specify ``fmt='CDL'``.
 
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
