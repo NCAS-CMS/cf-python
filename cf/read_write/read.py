@@ -1,5 +1,6 @@
 import logging
 import os
+import tempfile
 
 from glob import glob
 from os.path import isdir
@@ -627,6 +628,17 @@ def read(
     # files
     field_counter = -1
     file_counter = 0
+
+    if cdl_string:
+        # Create a temporary CDL file from the CDL string.
+        # The validity of the CDL is tested later with attempt to
+        # convert it to netCDF.
+        c = tempfile.NamedTemporaryFile(
+            mode="wb", dir=tempfile.gettempdir(), prefix="cfdm_", suffix=".cdl"
+        )
+        with open(c.name, "w") as f:
+            f.write(files)
+        files = c.name
 
     for file_glob in flat(files):
         # Expand variables
