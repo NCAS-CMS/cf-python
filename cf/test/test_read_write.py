@@ -746,6 +746,41 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.read("test_read_write.py")
 
+    def test_read_cdl_string(self):
+        """Test the `cdl_string` keyword of the `read` function."""
+        # Test CDL in full, header-only and coordinate-only formats:
+        tempfile_to_option_mapping = {
+            tmpfile: None,
+            tmpfileh: "-h",
+            tmpfilec: "-c",
+        }
+
+        for tempf, option in tempfile_to_option_mapping.items():
+            # Set up the CDL string to test...
+            command_to_run = ["ncdump", self.filename, ">", tempf]
+            if option:
+                command_to_run.insert(1, option)
+            subprocess.run(
+                " ".join(command_to_run),
+                shell=True,
+                check=True,
+            )
+            with open(tempf, "r") as file:
+                cdl_string_1 = file.read()
+
+            # ... and now test it
+            f_from_str = cf.read(cdl_string_1, cdl_string=True)
+            f_from_file = cf.read(tempf)  # len 1 so only one field to check
+            self.assertEqual(len(f_from_str), len(f_from_file))
+            self.assertEqual(f_from_str[0], f_from_file[0])
+
+        # If the user forgets the cdl_string=True argument they will
+        # accidentally attempt to create a file with a very long name of
+        # the CDL string, which will in most, if not all, cases result in
+        # an "OSError: [Errno 36] File name too long" error:
+        with self.assertRaises(OSError):
+            cf.read(cdl_string_1)
+
     def test_read_write_string(self):
         f = cf.read(self.string_filename)
 
