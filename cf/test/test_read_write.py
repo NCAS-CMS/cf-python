@@ -748,7 +748,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_cdl_string(self):
         """Test the `cdl_string` keyword of the `read` function."""
-        # Test CDL in full, header-only and coordinate-only formats:
+        # Test CDL in full, header-only and coordinate-only type:
         tempfile_to_option_mapping = {
             tmpfile: None,
             tmpfileh: "-h",
@@ -773,6 +773,17 @@ class read_writeTest(unittest.TestCase):
             f_from_file = cf.read(tempf)  # len 1 so only one field to check
             self.assertEqual(len(f_from_str), len(f_from_file))
             self.assertEqual(f_from_str[0], f_from_file[0])
+
+            # Check compatibility with the `fmt` kwarg.
+            f0 = cf.read(cdl_string_1, cdl_string=True, fmt="CDL")  # fine
+            self.assertEqual(len(f0), len(f_from_file))
+            self.assertEqual(f0[0], f_from_file[0])
+            # If the 'fmt' and 'cdl_string' values contradict each other,
+            # alert the user to this. Note that the default fmt is None but
+            # it then gets interpreted as NETCDF, so default fmt is fine and
+            # it is tested in f_from_str above where fmt is not set.
+            with self.assertRaises(ValueError):
+                f0 = cf.read(cdl_string_1, cdl_string=True, fmt="NETCDF")
 
         # If the user forgets the cdl_string=True argument they will
         # accidentally attempt to create a file with a very long name of

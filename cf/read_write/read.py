@@ -596,9 +596,20 @@ def read(
         if isinstance(select, (str, Query, Pattern)):
             select = (select,)
 
+    # Manage input parameters where contradictions are possible:
+    if cdl_string and fmt:
+        if fmt == "CDL":
+            logger.info(
+                "It is not necessary to set the cf.read fmt as 'CDL' when "
+                "cdl_string is True, since that implies CDL is the format."
+            )  # pragma: no cover
+        else:
+            raise ValueError(
+                "cdl_string can only be True when the format is CDL, though "
+                "fmt is ignored in that case so there is no need to set it."
+            )
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
-
     if follow_symlinks and not recursive:
         raise ValueError(
             "Can't set follow_symlinks={0} when recursive={1}".format(
