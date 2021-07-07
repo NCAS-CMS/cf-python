@@ -1,3 +1,12 @@
+version 3.?.?
+-------------
+----
+
+**2021-??-??**
+
+* New keyword parameter to `cf.read`: ``cdl_string``
+  (https://github.com/NCAS-CMS/cf-python/issues/171)
+
 version 3.10.0
 --------------
 ----
