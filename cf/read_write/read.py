@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 import tempfile
 
 from glob import glob
@@ -972,20 +971,7 @@ def _read_a_file(
         # Create a temporary netCDF file from input CDL
         ftype = "netCDF"
         cdl_filename = filename
-        try:
-            filename = netcdf.cdl_to_netcdf(filename)
-        except subprocess.CalledProcessError as error:
-            msg = str(error)
-            if msg.startswith(
-                "Command '['ncgen', '-knc4', '-o'"
-            ) and msg.endswith("returned non-zero exit status 1."):
-                raise ValueError(
-                    "The CDL provided is invalid so cannot be converted "
-                    "to netCDF."
-                )
-            else:
-                raise
-
+        filename = netcdf.cdl_to_netcdf(filename)
         extra_read_vars["fmt"] = "NETCDF"
 
         if not netcdf.is_netcdf_file(filename):
