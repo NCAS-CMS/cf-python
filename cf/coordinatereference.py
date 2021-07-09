@@ -26,6 +26,26 @@ _units = {}
 logger = logging.getLogger(__name__)
 
 
+def _totuple(a):
+    """Return an N-d (N>0) array as a nested tuple of Python scalars.
+
+    :Parameters:
+
+        a: numpy.ndarray
+            The numpy array
+
+    :Returns:
+
+        `tuple`
+            The array as an nested tuple of Python scalars.
+
+    """
+    try:
+        return tuple(_totuple(i) for i in a)
+    except TypeError:
+        return a
+
+
 class CoordinateReference(cfdm.CoordinateReference):
     """A coordinate reference construct of the CF data model.
 
@@ -708,6 +728,14 @@ class CoordinateReference(cfdm.CoordinateReference):
                 ):
                     # Do not add a default value to the structural signature
                     continue
+
+                # Convert value to a Python scalar if it's 0-d, or a
+                # tuple if it's N-d.
+                value = value.array
+                if not value.ndim:
+                    value = value.item()
+                else:
+                    value = _totuple(value)
 
                 append(
                     (
