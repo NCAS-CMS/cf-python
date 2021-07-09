@@ -1,3 +1,13 @@
+version 3.??.?
+--------------
+----
+
+**2021-??-??**
+
+* Fix for `cf.aggregate` failures when a datum or coordinate
+  conversion parameter has an array value
+  (https://github.com/NCAS-CMS/cf-python/issues/230)
+
 version 3.10.0
 --------------
 ----
