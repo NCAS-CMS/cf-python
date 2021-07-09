@@ -1,3 +1,12 @@
+version 3.??.?
+--------------
+----
+
+**2021-??-??**
+
+* Improved verbose information output from `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/228)
+
 version 3.10.0
 --------------
 ----
