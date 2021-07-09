@@ -1843,6 +1843,22 @@ def aggregate(
 
             continue
 
+        if not meta[0].units.isvalid:
+            if is_log_level_info(logger):
+                x = ", ".join(set(repr(m.units) for m in meta))
+                logger.info(
+                    f"Unaggregatable {meta[0].field.identity()!r} fields "
+                    f"have{exclude} been output: Non-valid units {x}"
+                )
+
+            if not exclude:
+                if copy:
+                    output_fields.extend((m.field.copy() for m in meta))
+                else:
+                    output_fields.extend((m.field for m in meta))
+
+            continue
+
         # ------------------------------------------------------------
         # Still here? Then there are 2 or more fields with this
         # signature which may be aggregatable. These fields need to be
