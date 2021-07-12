@@ -1,0 +1,11 @@
+BootStrap: docker
+From: continuumio/miniconda3
+
+%post
+
+#Update
+apt-get -y update
+export LC_ALL=C
+
+/opt/conda/bin/conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
+/opt/conda/bin/conda install -c conda-forge mpich esmpy
