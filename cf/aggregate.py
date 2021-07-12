@@ -1853,9 +1853,9 @@ def aggregate(
 
             if not exclude:
                 if copy:
-                    output_fields.extend((m.field.copy() for m in meta))
+                    output_fields.extend(m.field.copy() for m in meta)
                 else:
-                    output_fields.extend((m.field for m in meta))
+                    output_fields.extend(m.field for m in meta)
 
             continue
 
