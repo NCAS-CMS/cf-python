@@ -146,10 +146,6 @@ _stash2standard_name = {}
 # ---------------------------------------------------------------------
 cr_canonical_units = {
     "earth_radius": Units("m"),
-    "false_easting": Units("m"),
-    "projection_x_coordinate": Units("m"),
-    "false_northing": Units("m"),
-    "projection_y_coordinate": Units("m"),
     "grid_north_pole_latitude": Units("degrees_north"),
     "grid_north_pole_longitude": Units("degrees_east"),
     "inverse_flattening": Units("1"),
