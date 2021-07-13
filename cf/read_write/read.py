@@ -27,6 +27,8 @@ else:
     python36 = False
 
 
+_cached_temporary_files = {}
+
 # --------------------------------------------------------------------
 # Create an implementation container and initialize a read object for
 # each format
@@ -659,8 +661,16 @@ def read(
                 prefix="cf_",
                 suffix=".cdl",
             )
-            with open(c.name, "w") as f:
+
+            c_name = c.name
+            with open(c_name, "w") as f:
                 f.write(cdl_file)
+
+            # ----------------------------------------------------------------
+            # Need to cache the TemporaryFile object so that it doesn't get
+            # deleted too soon
+            # ----------------------------------------------------------------
+            _cached_temporary_files[c_name] = c
 
             files2.append(c.name)
 

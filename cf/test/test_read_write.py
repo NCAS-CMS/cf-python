@@ -768,11 +768,18 @@ class read_writeTest(unittest.TestCase):
             with open(tempf, "r") as file:
                 cdl_string_1 = file.read()
 
-            # ... and now test it
+            # ... and now test it as an individual string input
             f_from_str = cf.read(cdl_string_1, cdl_string=True)
             f_from_file = cf.read(tempf)  # len 1 so only one field to check
             self.assertEqual(len(f_from_str), len(f_from_file))
             self.assertEqual(f_from_str[0], f_from_file[0])
+
+            # ... and test further by inputting it in duplicate as a sequence
+            f_from_str = cf.read([cdl_string_1, cdl_string_1], cdl_string=True)
+            f_from_file = cf.read(tempf)  # len 1 so only one field to check
+            self.assertEqual(len(f_from_str), 2 * len(f_from_file))
+            self.assertEqual(f_from_str[0], f_from_file[0])
+            self.assertEqual(f_from_str[1], f_from_file[0])
 
             # Check compatibility with the `fmt` kwarg.
             f0 = cf.read(cdl_string_1, cdl_string=True, fmt="CDL")  # fine
