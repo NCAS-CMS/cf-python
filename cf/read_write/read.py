@@ -210,8 +210,9 @@ def read(
             True.
 
             As a special case, if the `cdl_string` parameter is set to
-            True, the interpretation of `files` changes so that it
-            should be a string of CDL input rather than the above.
+            True, the interpretation of `files` changes so that each
+            value is assumed to be a string of CDL input rather
+            than the above.
 
         external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
@@ -321,16 +322,19 @@ def read(
 
         cdl_string: `bool`, optional
             If True and the format to read is CDL, read a string
-            input rather than from file, where in this case (only)
-            the `files` parameter will be interpreted as a string of
-            valid CDL rather than a string providing the file location,
-            as standard.
+            input, or sequence of string inputs, each being interpreted
+            as a string of CDL rather than names of locations from
+            which field constructs can be read from, as standard.
 
-            By default, input is read from file and not from a string,
-            including when the `fmt` parameter is given as CDL. Note that
-            when `cdl_string` is True, the `fmt` parameter is ignored
-            as the format is assumed to be CDL, so it is not necessary to
-            also specify ``fmt='CDL'``.
+            By default, each string input or string element in the input
+            sequence is taken to be a file or directory name or an
+            OPenDAP URL from which to read field constructs, rather
+            than a string of CDL input, including when the `fmt`
+            parameter is set as CDL.
+
+            Note that when `cdl_string` is True, the `fmt` parameter is
+            ignored as the format is assumed to be CDL, so in that case
+            it is not necessary to also specify ``fmt='CDL'``.
 
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
@@ -641,15 +645,26 @@ def read(
     file_counter = 0
 
     if cdl_string:
-        # Create a temporary CDL file from the CDL string.
-        # The validity of the CDL is tested later with attempt to
-        # convert it to netCDF.
-        c = tempfile.NamedTemporaryFile(
-            mode="wb", dir=tempfile.gettempdir(), prefix="cfdm_", suffix=".cdl"
-        )
-        with open(c.name, "w") as f:
-            f.write(files)
-        files = c.name
+        files2 = []
+
+        # 'files' input may be a single string or a sequence of them and to
+        # handle both cases it is easiest to convert former to a one-item seq.
+        if isinstance(files, str):
+            files = [files]
+
+        for cdl_file in files:
+            c = tempfile.NamedTemporaryFile(
+                mode="w",
+                dir=tempfile.gettempdir(),
+                prefix="cf_",
+                suffix=".cdl",
+            )
+            with open(c.name, "w") as f:
+                f.write(cdl_file)
+
+            files2.append(c.name)
+
+        files = files2
 
     for file_glob in flat(files):
         # Expand variables
