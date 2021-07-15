@@ -2262,9 +2262,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
-        logger.info("\naxes_added_from_field1= {}\n", axes_added_from_field1)
+        logger.info(f"\naxes_added_from_field1= {axes_added_from_field1}\n")
         logger.info(
-            "axes_to_replace_from_field1= {}", axes_to_replace_from_field1
+            f"axes_to_replace_from_field1= {axes_to_replace_from_field1}"
         )
 
         already_copied = {}
@@ -2291,7 +2291,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_axes = set(axes_added_from_field1).union(
             axes_to_replace_from_field1
         )
-        logger.info("\nnew_axes =", new_axes)
+        logger.info(f"\nnew_axes ={new_axes}")
 
         if new_axes:
             constructs = field1.constructs.filter(
@@ -2330,7 +2330,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             elif axes.intersection(axes_to_replace_from_field1):
                 refs_to_add_from_field1.append(ref)
 
-        logger.info("\nrefs_to_add_from_field1=", refs_to_add_from_field1)
+        logger.info("\nrefs_to_add_from_field1={refs_to_add_from_field1}")
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
