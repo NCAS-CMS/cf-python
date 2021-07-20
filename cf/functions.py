@@ -1837,7 +1837,15 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            out = _numpy_ma_all(a == b)
+            # To prevent a bug causing some header/coord-only CDL reads or
+            # aggregations to error. See also TODO comment below.
+            if a.dtype == b.dtype:
+                out = _numpy_ma_all(a == b)
+            else:
+                # TODO: is this most sensible? Or should we attempt dtype
+                # conversion and then compare? Probably we should avoid
+                # altogether by catching the different dtypes upstream?
+                out = False
             if out is _numpy_ma_masked:
                 return True
             else:
