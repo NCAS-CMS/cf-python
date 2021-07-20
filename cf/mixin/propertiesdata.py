@@ -5154,12 +5154,12 @@ class PropertiesData(Properties):
         <Units: hPa>
         >>> f.datum(0)
         100000.0
-        >>> f.override_units('km')
+        >>> f.override_units('km', inplace=True)
         >>> f.Units
         <Units: km>
         >>> f.datum(0)
         100000.0
-        >>> f.override_units(Units('watts'))
+        >>> f.override_units(Units('watts'), inplace=True)
         >>> f.Units
         <Units: watts>
         >>> f.datum(0)
