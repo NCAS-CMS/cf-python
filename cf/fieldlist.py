@@ -220,7 +220,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 return
 
             return self._default(
-                default, "select_field() can't return {n} fields"
+                default, f"select_field() can't return {n} fields"
             )
 
         return out[0]
