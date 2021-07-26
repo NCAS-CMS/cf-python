@@ -17,7 +17,7 @@ import cfdm
 import cftime
 import numpy
 
-# from numpy import arctan2 as numpy_arctan2  AT2
+# from numpy import arctan2 as numpy_arctan2  TODO AT2
 from numpy import arange as numpy_arange
 from numpy import arccos as numpy_arccos
 from numpy import arccosh as numpy_arccosh
@@ -92,8 +92,7 @@ from numpy.ma import nomask as numpy_ma_nomask
 from numpy.ma import where as numpy_ma_where
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
-# TODODASK - Remove the next 6 lines when the move to dask is complete
-from .. import mpi_on
+from .. import mpi_on  # TODODASK : remove when move to dask is complete
 from ..cfdatetime import dt as cf_dt
 from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..constants import masked as cf_masked
@@ -131,8 +130,6 @@ from . import (
     RaggedIndexedSubarray,
     UMArray,
 )
-
-# TODO SB post-186: decide how best to import these whilst avoiding 'import *'
 from .collapse_functions import (
     max_abs_f,
     max_abs_ffinalise,
@@ -183,13 +180,11 @@ from .collapse_functions import (
     var_ffinalise,
     var_fpartial,
 )
-
-#                       CompressedArray)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 
-if mpi_on:
+if mpi_on:  # TODODASK : remove when move to dask is complete
     from mpi4py.MPI import SUM as mpi_sum
 
     from .. import mpi_comm, mpi_rank, mpi_size
