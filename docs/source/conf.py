@@ -13,12 +13,13 @@
 # out serve to show the default.
 
 import datetime
-import sys
 import os
 import re
-import cf
+import sys
 
 import cfdm
+
+import cf
 
 print("\ncf environment:")
 print("-----------------")
@@ -437,8 +438,9 @@ toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
 # corresponding to the object in given domain with given information.
 
 import inspect
+from os.path import dirname, relpath
+
 import cf
-from os.path import relpath, dirname
 
 link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 
