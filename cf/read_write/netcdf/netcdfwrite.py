@@ -1,21 +1,17 @@
 import json
 import random
-
 from os.path import isfile
-
 from string import hexdigits
 
-import numpy
-
 import cfdm
-
-from ... import DomainAncillary, Coordinate, Bounds
-from ...functions import relpath
-
+import numpy
 from netCDF4 import Dataset as netCDF4_Dataset
+
+from ... import Bounds, Coordinate, DomainAncillary
 
 # TODO: is it OK to import from here? Maybe best move these to '...functions'?
 from ...data.functions import _close_netcdf_file, _file_to_Dataset
+from ...functions import relpath
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):

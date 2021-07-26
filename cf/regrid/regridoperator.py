@@ -1,6 +1,5 @@
 from .. import _found_ESMF
 
-
 if _found_ESMF:
     try:
         import ESMF

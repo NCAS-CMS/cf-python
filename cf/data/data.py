@@ -1,34 +1,33 @@
 import itertools
+import logging
 import operator
-
 from functools import reduce as functools_reduce
-from operator import itemgetter
-from operator import mul as operator_mul
-
 from json import dumps as json_dumps
 from json import loads as json_loads
-
 from math import ceil as math_ceil
-
-import logging
+from operator import itemgetter
+from operator import mul as operator_mul
 
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
 except ImportError:
     pass
 
+import cfdm
+import cftime
 import numpy
+
+# from numpy import arctan2 as numpy_arctan2  TODO AT2
 from numpy import arange as numpy_arange
 from numpy import arccos as numpy_arccos
 from numpy import arccosh as numpy_arccosh
 from numpy import arcsin as numpy_arcsin
 from numpy import arcsinh as numpy_arcsinh
 from numpy import arctan as numpy_arctan
-
-# from numpy import arctan2 as numpy_arctan2  AT2
 from numpy import arctanh as numpy_arctanh
 from numpy import array as numpy_array
 from numpy import asanyarray as numpy_asanyarray
+from numpy import bool_ as numpy_bool_
 from numpy import ceil as numpy_ceil
 from numpy import cos as numpy_cos
 from numpy import cosh as numpy_cosh
@@ -40,23 +39,25 @@ from numpy import empty as numpy_empty
 from numpy import errstate as numpy_errstate
 from numpy import exp as numpy_exp
 from numpy import expand_dims as numpy_expand_dims
-from numpy import floor as numpy_floor
 from numpy import finfo as numpy_finfo
+from numpy import floating as numpy_floating
+from numpy import floor as numpy_floor
+from numpy import integer as numpy_integer
 from numpy import isnan as numpy_isnan
 from numpy import linspace as numpy_linspace
 from numpy import log as numpy_log
-from numpy import log10 as numpy_log10
 from numpy import log2 as numpy_log2
+from numpy import log10 as numpy_log10
 from numpy import nan as numpy_nan
 from numpy import nanpercentile as numpy_nanpercentile
 from numpy import ndarray as numpy_ndarray
 from numpy import ndenumerate as numpy_ndenumerate
-from numpy import ndindex as numpy_ndindex
 from numpy import ndim as numpy_ndim
+from numpy import ndindex as numpy_ndindex
 from numpy import newaxis as numpy_newaxis
 from numpy import ones as numpy_ones
-from numpy import prod as numpy_prod
 from numpy import percentile as numpy_percentile
+from numpy import prod as numpy_prod
 from numpy import ravel_multi_index as numpy_ravel_multi_index
 from numpy import reshape as numpy_reshape
 from numpy import result_type as numpy_result_type
@@ -73,13 +74,10 @@ from numpy import tile as numpy_tile
 from numpy import trunc as numpy_trunc
 from numpy import unique as numpy_unique
 from numpy import unravel_index as numpy_unravel_index
-from numpy import where as numpy_where
 from numpy import vectorize as numpy_vectorize
+from numpy import where as numpy_where
 from numpy import zeros as numpy_zeros
-from numpy import floating as numpy_floating
-from numpy import bool_ as numpy_bool_
-from numpy import integer as numpy_integer
-
+from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import count as numpy_ma_count
 from numpy.ma import empty as numpy_ma_empty
@@ -90,126 +88,106 @@ from numpy.ma import masked as numpy_ma_masked
 from numpy.ma import masked_all as numpy_ma_masked_all
 from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 from numpy.ma import masked_where as numpy_ma_masked_where
-from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import nomask as numpy_ma_nomask
 from numpy.ma import where as numpy_ma_where
-
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
-import cftime
-import cfdm
-
-from ..cfdatetime import dt2rt, rt2dt, st2rt
+from .. import mpi_on  # TODODASK : remove when move to dask is complete
 from ..cfdatetime import dt as cf_dt
-from ..units import Units
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..constants import masked as cf_masked
-
-from ..functions import (
-    fm_threshold as cf_fm_threshold,
-    free_memory,
-    collapse_parallel_mode,
-    parse_indices,
-    _numpy_allclose,
-    _numpy_isclose,
-    pathjoin,
-    hash_array,
-    broadcast_array,
-    default_netCDF_fillvals,
-    abspath,
-)
-from ..functions import (
-    atol as cf_atol,
-    chunksize as cf_chunksize,
-    rtol as cf_rtol,
-)
-from ..functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR_ATTRIBUTE
-from ..functions import inspect as cf_inspect
-from ..functions import _section
-
-from ..mixin_container import Container
-
 from ..decorators import (
+    _deprecated_kwarg_check,
+    _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
-    _display_or_return,
 )
-
-#                       CompressedArray)
+from ..functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
+    _numpy_allclose,
+    _numpy_isclose,
+    _section,
+    abspath,
+)
+from ..functions import atol as cf_atol
+from ..functions import broadcast_array
+from ..functions import chunksize as cf_chunksize
+from ..functions import collapse_parallel_mode, default_netCDF_fillvals
+from ..functions import fm_threshold as cf_fm_threshold
+from ..functions import free_memory, hash_array
+from ..functions import inspect as cf_inspect
+from ..functions import parse_indices, pathjoin
+from ..functions import rtol as cf_rtol
+from ..mixin_container import Container
+from ..units import Units
+from . import (
+    GatheredSubarray,
+    NetCDFArray,
+    RaggedContiguousSubarray,
+    RaggedIndexedContiguousSubarray,
+    RaggedIndexedSubarray,
+    UMArray,
+)
+from .collapse_functions import (
+    max_abs_f,
+    max_abs_ffinalise,
+    max_abs_fpartial,
+    max_f,
+    max_ffinalise,
+    max_fpartial,
+    mean_abs_f,
+    mean_abs_ffinalise,
+    mean_abs_fpartial,
+    mean_f,
+    mean_ffinalise,
+    mean_fpartial,
+    mid_range_f,
+    mid_range_ffinalise,
+    mid_range_fpartial,
+    min_abs_f,
+    min_abs_ffinalise,
+    min_abs_fpartial,
+    min_f,
+    min_ffinalise,
+    min_fpartial,
+    range_f,
+    range_ffinalise,
+    range_fpartial,
+    root_mean_square_f,
+    root_mean_square_ffinalise,
+    root_mean_square_fpartial,
+    sample_size_f,
+    sample_size_ffinalise,
+    sample_size_fpartial,
+    sd_f,
+    sd_ffinalise,
+    sd_fpartial,
+    sum_f,
+    sum_ffinalise,
+    sum_fpartial,
+    sum_of_squares_f,
+    sum_of_squares_ffinalise,
+    sum_of_squares_fpartial,
+    sw2_f,
+    sw2_ffinalise,
+    sw2_fpartial,
+    sw_f,
+    sw_ffinalise,
+    sw_fpartial,
+    var_f,
+    var_ffinalise,
+    var_fpartial,
+)
 from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 
-# TODO SB post-186: decide how best to import these whilst avoiding 'import *'
-from .collapse_functions import (
-    max_f,
-    max_fpartial,
-    max_ffinalise,
-    min_f,
-    min_fpartial,
-    min_ffinalise,
-    max_abs_f,
-    max_abs_fpartial,
-    max_abs_ffinalise,
-    min_abs_f,
-    min_abs_fpartial,
-    min_abs_ffinalise,
-    mean_f,
-    mean_fpartial,
-    mean_ffinalise,
-    mean_abs_f,
-    mean_abs_fpartial,
-    mean_abs_ffinalise,
-    root_mean_square_f,
-    root_mean_square_fpartial,
-    root_mean_square_ffinalise,
-    mid_range_f,
-    mid_range_fpartial,
-    mid_range_ffinalise,
-    range_f,
-    range_fpartial,
-    range_ffinalise,
-    sample_size_f,
-    sample_size_fpartial,
-    sample_size_ffinalise,
-    sum_f,
-    sum_fpartial,
-    sum_ffinalise,
-    sum_of_squares_f,
-    sum_of_squares_fpartial,
-    sum_of_squares_ffinalise,
-    sw_f,
-    sw_fpartial,
-    sw_ffinalise,
-    sw2_f,
-    sw2_fpartial,
-    sw2_ffinalise,
-    var_f,
-    var_fpartial,
-    var_ffinalise,
-    sd_f,
-    sd_fpartial,
-    sd_ffinalise,
-)
-
-from . import (
-    NetCDFArray,
-    UMArray,
-    GatheredSubarray,
-    RaggedContiguousSubarray,
-    RaggedIndexedSubarray,
-    RaggedIndexedContiguousSubarray,
-)
-
-# TODODASK - Remove the next 6 lines when the move to dask is complete
-from .. import mpi_on
-
-if mpi_on:
-    from .. import mpi_comm
-    from .. import mpi_size
-    from .. import mpi_rank
+if mpi_on:  # TODODASK : remove when move to dask is complete
     from mpi4py.MPI import SUM as mpi_sum
+
+    from .. import mpi_comm, mpi_rank, mpi_size
 
 
 logger = logging.getLogger(__name__)

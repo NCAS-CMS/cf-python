@@ -3,10 +3,10 @@ from operator import itemgetter
 
 import numpy as np
 
-from ..functions import regrid_logging
-from ..dimensioncoordinate import DimensionCoordinate
-from ..data import Data
 from .. import _found_ESMF
+from ..data import Data
+from ..dimensioncoordinate import DimensionCoordinate
+from ..functions import regrid_logging
 
 if _found_ESMF:
     try:

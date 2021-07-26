@@ -2,19 +2,16 @@ import logging
 
 import cfdm
 
-from .mixin_container import Container
-
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_DICT,
-)
-
 from .decorators import (
     _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from .functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_DICT,
+    _DEPRECATION_ERROR_KWARGS,
+)
+from .mixin_container import Container
 
 logger = logging.getLogger(__name__)
 

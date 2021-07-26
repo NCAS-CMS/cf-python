@@ -1,12 +1,10 @@
-import os
-
 import ctypes as CT
+import os
 
 import numpy
 import numpy.ctypeslib
 
 from . import umfile
-
 
 _len_real_hdr = 19
 _len_int_hdr = 45

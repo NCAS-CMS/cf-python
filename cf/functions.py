@@ -1,18 +1,30 @@
 import atexit
 import csv
+import ctypes.util
 import importlib
 import os
 import platform
 import re
 import resource
 import sys
-import ctypes.util
+import urllib.parse
+import warnings
+from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from hashlib import md5 as hashlib_md5
+from marshal import dumps as marshal_dumps
+from math import ceil as math_ceil
+from os import getpid, listdir, mkdir
+from os.path import abspath as _os_path_abspath
+from os.path import dirname as _os_path_dirname
+from os.path import expanduser as _os_path_expanduser
+from os.path import expandvars as _os_path_expandvars
+from os.path import join as _os_path_join
+from os.path import relpath as _os_path_relpath
+
+import cfdm
 
 # import cPickle
 import netCDF4
-import warnings
-
-
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
@@ -28,42 +40,22 @@ from numpy import size as _numpy_size
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
 from numpy import where as _numpy_where
-
 from numpy.ma import all as _numpy_ma_all
 from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA as _numpy_ma_isMA
 from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
+from psutil import Process, virtual_memory
 
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
-from hashlib import md5 as hashlib_md5
-from marshal import dumps as marshal_dumps
-from math import ceil as math_ceil
-from os import getpid, listdir, mkdir
-from os.path import abspath as _os_path_abspath
-from os.path import expanduser as _os_path_expanduser
-from os.path import expandvars as _os_path_expandvars
-from os.path import dirname as _os_path_dirname
-from os.path import join as _os_path_join
-from os.path import relpath as _os_path_relpath
-from psutil import virtual_memory, Process
-import urllib.parse
-
-import cfdm
-
-from . import __version__, __file__
-
+from . import __file__, __version__, mpi_size
 from .constants import (
     CONSTANTS,
+    OperandBoundsCombination,
     _file_to_fh,
     _stash2standard_name,
-    OperandBoundsCombination,
 )
-
 from .docstring import _docstring_substitution_definitions
-
-from . import mpi_size
 
 
 # Instruction to close /proc/mem at exit.

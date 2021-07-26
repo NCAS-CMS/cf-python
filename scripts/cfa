@@ -3,11 +3,12 @@
 
 if __name__ == "__main__":
 
-    from getopt import getopt, GetoptError
-    import sys
     import os
-    import cf
+    import sys
+    from getopt import GetoptError, getopt
     from re import sub as re_sub
+
+    import cf
 
     library_path = os.path.dirname(os.path.abspath(cf.__file__))
 

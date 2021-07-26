@@ -1,7 +1,6 @@
 import cfdm
 
 from . import mixin
-
 from .decorators import _deprecated_kwarg_check
 
 

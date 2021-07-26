@@ -14,7 +14,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-
 n_tmpfiles = 8
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]

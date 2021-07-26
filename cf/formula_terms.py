@@ -2,19 +2,16 @@ import logging
 
 import cfdm
 
-from .units import Units
-
-from .functions import bounds_combination_mode
-
 from .constants import (
-    formula_terms_standard_names,
-    formula_terms_max_dimensions,
-    formula_terms_units,
     formula_terms_computed_standard_names,
     formula_terms_D1,
+    formula_terms_max_dimensions,
+    formula_terms_standard_names,
+    formula_terms_units,
 )
-
 from .docstring import _docstring_substitution_definitions
+from .functions import bounds_combination_mode
+from .units import Units
 
 logger = logging.getLogger(__name__)
 

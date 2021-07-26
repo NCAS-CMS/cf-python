@@ -1,21 +1,19 @@
 import logging
+from copy import deepcopy
 
 from numpy import argsort as numpy_argsort
 from numpy import atleast_1d as numpy_atleast_1d
 from numpy import ndarray as numpy_ndarray
 
-from copy import deepcopy
-
-from .functions import equals as cf_equals
-from .functions import atol as cf_atol, rtol as cf_rtol
-from .functions import inspect as cf_inspect
-
 from .decorators import (
     _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
     _display_or_return,
+    _manage_log_level_via_verbosity,
 )
-
+from .functions import atol as cf_atol
+from .functions import equals as cf_equals
+from .functions import inspect as cf_inspect
+from .functions import rtol as cf_rtol
 
 logger = logging.getLogger(__name__)
 

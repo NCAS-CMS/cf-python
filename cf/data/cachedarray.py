@@ -1,18 +1,15 @@
 from os import close
-from tempfile import mkstemp
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mkstemp
 
 from numpy import load as numpy_load
 from numpy import ndarray as numpy_ndarray
 from numpy import save as numpy_save
-
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import is_masked as numpy_ma_is_masked
 
-from . import abstract
-
-from ..functions import parse_indices, get_subspace
 from ..constants import CONSTANTS
+from ..functions import get_subspace, parse_indices
+from . import abstract
 
 
 class CachedArray(abstract.FileArray):
