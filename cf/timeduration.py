@@ -1,23 +1,18 @@
 import logging
-
-from operator import __add__, __sub__
-
 from collections import namedtuple
+from operator import __add__, __sub__
 
 import numpy
 
-from .cfdatetime import elements
 from .cfdatetime import dt as cf_dt
-from .functions import inspect as cf_inspect
-from .units import Units
-
+from .cfdatetime import elements
 from .data.data import Data
-
 from .decorators import (
     _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from .functions import inspect as cf_inspect
+from .units import Units
 
 logger = logging.getLogger(__name__)
 

@@ -1,21 +1,17 @@
 import logging
 import sys
-
 from enum import Enum, auto
-from psutil import virtual_memory
 from tempfile import gettempdir
 
 from numpy.ma import masked as numpy_ma_masked
+from psutil import virtual_memory
 
-from . import mpi_on
-from . import mpi_size
-
+from . import mpi_on, mpi_size
 
 if mpi_on:
     from . import mpi_comm
 
 from .units import Units
-
 
 # platform = sys.platform
 # if platform == 'darwin':

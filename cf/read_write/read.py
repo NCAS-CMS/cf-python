@@ -1,19 +1,17 @@
 import logging
 import os
 import tempfile
-
 from glob import glob
 from os.path import isdir
 
 from numpy.ma.core import MaskError
 
-from ..cfimplementation import implementation
-from ..fieldlist import FieldList
 from ..aggregate import aggregate as cf_aggregate
+from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
+from ..fieldlist import FieldList
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from ..query import Query
-from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
-
 from .netcdf import NetCDFRead
 from .um import UMRead
 

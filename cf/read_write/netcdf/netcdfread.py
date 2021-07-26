@@ -1,13 +1,11 @@
 import json
-
 from ast import literal_eval as ast_literal_eval
 
+import cfdm
 from numpy import dtype as numpy_dtype
 
-import cfdm
-
 from ...constants import _file_to_fh
-from ...functions import pathjoin, dirname
+from ...functions import dirname, pathjoin
 from ...units import Units
 
 

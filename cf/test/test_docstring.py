@@ -5,8 +5,9 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import cf
 import cfdm
+
+import cf
 
 
 def _recurse_on_subclasses(klass):

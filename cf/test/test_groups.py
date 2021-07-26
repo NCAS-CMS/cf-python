@@ -11,7 +11,6 @@ import netCDF4
 
 import cf
 
-
 n_tmpfiles = 8
 tmpfiles = [
     tempfile.mkstemp("_test_groups.nc", dir=os.getcwd())[1]

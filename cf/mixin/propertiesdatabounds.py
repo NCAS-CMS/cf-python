@@ -2,29 +2,24 @@ import logging
 
 import numpy as np
 
-from . import PropertiesData
-
+from ..data.data import Data
+from ..decorators import (
+    _deprecated_kwarg_check,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 from ..functions import (
-    bounds_combination_mode,
-    parse_indices,
-    _DEPRECATION_ERROR_METHOD,
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
+    bounds_combination_mode,
 )
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
-
-from ..decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-)
-
+from ..functions import parse_indices
 from ..query import Query
 from ..units import Units
-
-from ..data.data import Data
-
+from . import PropertiesData
 
 _units_None = Units()
 

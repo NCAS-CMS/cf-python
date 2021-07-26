@@ -1,24 +1,18 @@
-import re
-
-from ast import literal_eval as ast_literal_eval
-
 import logging
+import re
+from ast import literal_eval as ast_literal_eval
 
 import cfdm
 
 from .data.data import Data
-
-from .functions import inspect as cf_inspect
-
-from .functions import _DEPRECATION_ERROR_METHOD
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from .functions import _DEPRECATION_ERROR_METHOD
+from .functions import inspect as cf_inspect
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,4 @@
 import logging
-
 from numbers import Integral
 
 import numpy as np
@@ -9,22 +8,20 @@ try:
 except ImportError:
     pass
 
-from ..query import Query
 from ..data import Data
-from ..units import Units
-
-from ..functions import (
-    parse_indices,
-    bounds_combination_mode,
-    _DEPRECATION_ERROR_KWARGS,
-)
-
 from ..decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
-    _deprecated_kwarg_check,
 )
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+    parse_indices,
+)
+from ..query import Query
+from ..units import Units
 
 logger = logging.getLogger(__name__)
 

@@ -1,23 +1,21 @@
+import logging
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
-
-import logging
 
 try:
     from matplotlib.path import Path
 except ImportError:
     pass
 
+import cfdm
 import numpy as np
-
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-
 from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
-from numpy import diff as numpy_diff
 from numpy import delete as numpy_delete
+from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
@@ -32,95 +30,87 @@ from numpy import squeeze as numpy_squeeze
 from numpy import tile as numpy_tile
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-
 from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
-
 from numpy.ma import where as numpy_ma_where
 
-import cfdm
-
-from . import AuxiliaryCoordinate
-from . import Bounds
-from . import CellMethod
-from . import DimensionCoordinate
-from . import Domain
-from . import DomainAncillary
-from . import DomainAxis
-from . import Flags
-from . import Constructs
-from . import FieldList
-
-from . import Count
-from . import Index
-from . import List
-
+from . import (
+    AuxiliaryCoordinate,
+    Bounds,
+    CellMethod,
+    Constructs,
+    Count,
+    DimensionCoordinate,
+    Domain,
+    DomainAncillary,
+    DomainAxis,
+    FieldList,
+    Flags,
+    Index,
+    List,
+    mixin,
+)
 from .constants import masked as cf_masked
-
-from .functions import parse_indices, chunksize, _section
+from .data import (
+    Data,
+    GatheredArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+from .formula_terms import FormulaTerms
+from .functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_KWARG_VALUE,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
+    _section,
+    chunksize,
+    parse_indices,
+)
 from .functions import relaxed_identities as cf_relaxed_identities
-from .query import Query, ge, gt, le, lt, eq
-from .timeduration import TimeDuration
-from .units import Units
-from .subspacefield import SubspaceField
-
-from .data import Data
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
-
-from . import mixin
-
+from .query import Query, eq, ge, gt, le, lt
 from .regrid import (
+    RegridOperator,
     conservative_regridding_methods,
-    create_Grid,
     create_Field,
+    create_Grid,
     create_Regrid,
     get_cartesian_coords,
     grids_have_same_coords,
     grids_have_same_masks,
-    RegridOperator,
-    regrid_get_latlon,
-    regrid_get_axis_indices,
-    regrid_get_coord_order,
-    regrid_get_section_shape,
     regrid_check_bounds,
     regrid_check_method,
     regrid_check_use_src_mask,
-    regrid_get_reordered_sections,
-    regrid_get_destination_mask,
-    regrid_fill_fields,
     regrid_compute_field_mass,
-    regrid_get_regridded_data,
-    regrid_update_coordinate_references,
     regrid_copy_coordinate_references,
-    regrid_use_bounds,
-    regrid_update_coordinates,
-    regrid_initialize,
-    regrid_get_operator_method,
     regrid_create_operator,
+    regrid_fill_fields,
+    regrid_get_axis_indices,
+    regrid_get_coord_order,
+    regrid_get_destination_mask,
+    regrid_get_latlon,
+    regrid_get_operator_method,
+    regrid_get_regridded_data,
+    regrid_get_reordered_sections,
+    regrid_get_section_shape,
+    regrid_initialize,
+    regrid_update_coordinate_references,
+    regrid_update_coordinates,
+    regrid_use_bounds,
     run_Regrid,
 )
-
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_ARG,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_KWARG_VALUE,
-    DeprecationError,
-)
-
-from .formula_terms import FormulaTerms
-
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-)
-
+from .subspacefield import SubspaceField
+from .timeduration import TimeDuration
+from .units import Units
 
 logger = logging.getLogger(__name__)
 

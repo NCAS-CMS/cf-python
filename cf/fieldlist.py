@@ -1,6 +1,4 @@
-from . import mixin
-from . import ConstructList
-
+from . import ConstructList, mixin
 from .functions import _DEPRECATION_ERROR_METHOD
 
 

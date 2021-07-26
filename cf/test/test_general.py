@@ -11,7 +11,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-
 tmpfile = tempfile.mkstemp(".nc")[1]
 tmpfile2 = tempfile.mkstemp(".nca")[1]
 tmpfiles = [tmpfile, tmpfile2, "delme.nc", "delme.nca"]

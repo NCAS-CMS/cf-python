@@ -1,5 +1,6 @@
-import sys
 import string
+import sys
+
 import numpy
 
 
