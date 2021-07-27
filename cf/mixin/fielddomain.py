@@ -2207,7 +2207,7 @@ class FieldDomain:
         )
 
     def get_coordinate_reference(
-        self, identity=None, key=False, construct=None, default=ValueError()
+        self, *identity, key=False, construct=None, default=ValueError()
     ):
         """TODO.
 
@@ -2277,8 +2277,8 @@ class FieldDomain:
 
         """
         if construct is None:
-            return self.coordinate_reference(
-                identity=identity, key=key, default=default
+            return self.coordinate_references(
+                *identity, key=key, default=default
             )
 
         out = []
@@ -2287,7 +2287,6 @@ class FieldDomain:
         if c_key is None:
             if default is None:
                 return
-
             return self._default(
                 default, f"Can't identify construct from {construct!r}"
             )
