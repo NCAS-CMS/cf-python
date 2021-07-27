@@ -2337,6 +2337,31 @@ class FieldTest(unittest.TestCase):
             key,
         )
 
+        # Get
+        self.assertEqual(len(f.get_coordinate_reference()), 2)
+        self.assertEqual(
+            len(f.get_coordinate_reference("coordinatereference0")), 1
+        )
+        self.assertEqual(
+            len(f.get_coordinate_reference("coordinatereference1")), 1
+        )
+
+        for identity in (
+            "coordinatereference1",
+            "key%coordinatereference0",
+            "standard_name:atmosphere_hybrid_height_coordinate",
+            "grid_mapping_name:rotated_latitude_longitude",
+        ):
+            key = f.construct_key(identity)
+            c = f.construct(identity)
+
+            self.assertTrue(
+                f.get_coordinate_reference(identity).equals(c, verbose=2)
+            )
+            self.assertEqual(
+                f.get_coordinate_reference(identity, key=True), key
+            )
+
         # Delete
         self.assertIsNone(f.del_coordinate_reference("qwerty", default=None))
 
