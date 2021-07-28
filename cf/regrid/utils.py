@@ -565,9 +565,9 @@ def regrid_get_reordered_sections(
 
     """
     # If we had dynamic masking, we wouldn't need this method, we
-    # could sdimply replace it in the clling function with a call to
+    # could simply replace it in the calling function with a call to
     # Data.section. However, we don't have it, so this allows us to
-    # possibibly reduce the number of trasnistions between different
+    # possibly reduce the number of transitions between different
     # masks - each change is slow.
     data_axes = src.get_data_axes()
 
@@ -752,6 +752,10 @@ def regrid_compute_field_mass(
 
     # Insert the two masses into the dictionary for comparison
     _compute_field_mass[k] = (srcmass, dstmass)
+
+    # Release memory
+    srcareafield.destroy()
+    dstareafield.destroy()
 
 
 def regrid_get_regridded_data(f, method, fracfield, dstfield, dstfracfield):
