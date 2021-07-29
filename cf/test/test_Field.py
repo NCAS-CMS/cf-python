@@ -2338,14 +2338,6 @@ class FieldTest(unittest.TestCase):
         )
 
         # Get
-        self.assertEqual(len(f.get_coordinate_reference()), 2)
-        self.assertEqual(
-            len(f.get_coordinate_reference("coordinatereference0")), 1
-        )
-        self.assertEqual(
-            len(f.get_coordinate_reference("coordinatereference1")), 1
-        )
-
         for identity in (
             "coordinatereference1",
             "key%coordinatereference0",
@@ -2361,6 +2353,12 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(
                 f.get_coordinate_reference(identity, key=True), key
             )
+
+        with self.assertRaises(ValueError):
+            f.get_coordinate_reference()  # since has two CR constructs
+        g = f.copy()
+        g.del_coordinate_reference("coordinatereference1")
+        g.get_coordinate_reference()  # should work here as has only one CR
 
         # Delete
         self.assertIsNone(f.del_coordinate_reference("qwerty", default=None))

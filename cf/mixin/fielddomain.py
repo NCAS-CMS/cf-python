@@ -2277,7 +2277,7 @@ class FieldDomain:
 
         """
         if construct is None:
-            return self.coordinate_references(
+            return self.coordinate_reference(
                 *identity, key=key, default=default
             )
 
