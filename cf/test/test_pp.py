@@ -75,7 +75,7 @@ class ppTest(unittest.TestCase):
         e = cf.stash2standard_name()
         self.assertNotEqual(d, e)
 
-    def test_PP_select(self):
+    def test_PP_read_select(self):
         f = cf.read(self.ppfile, select="lbproc=0")
         self.assertEqual(len(f), 1)
 

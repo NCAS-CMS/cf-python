@@ -1183,11 +1183,7 @@ class UMField:
             [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
             dtype=float,
         )
-
-        bounds = np.empty((bounds0, 2), dtype=bounds0.dtype)
-        bounds[:, 0] = bounds0
-        bounds[:, 1] = bounds1
-        #        bounds = np.column_stack((bounds0, bounds1)) # slow!
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -1240,7 +1236,7 @@ class UMField:
         bounds1 = np.array(
             [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
         )
-        bounds = np.column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units["1"])
@@ -1294,7 +1290,7 @@ class UMField:
         bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs], dtype=float
         )
-        bounds = np.column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -1324,7 +1320,7 @@ class UMField:
         bounds1 = np.array(
             [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
         )
-        bounds = np.column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1450,6 +1446,34 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_sigma_pressure_coordinate_bk"
 
         return dc
+
+    def create_bounds_array(self, bounds0, bounds1):
+        """Stack two 1-d arrays to create a bounds array.
+
+        The returned array will have a trailing dimension of size 2.
+
+        The leading dimension size and data type are taken from
+        *bounds0*.
+
+        :Parameters:
+
+            bounds0: `numpy.ndarray`
+                The bounds which are to occupy ``[:, 0]`` in the
+                returned bounds array.
+
+            bounds1: `numpy.ndarray`
+                The bounds which are to occupy ``[:, 1]`` in the
+                returned bounds array.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        bounds = np.empty((bounds0.size, 2), dtype=bounds0.dtype)
+        bounds[:, 0] = bounds0
+        bounds[:, 1] = bounds1
+        return bounds
 
     def create_cell_methods(self):
         """Create the cell methods.
@@ -2627,11 +2651,13 @@ class UMField:
             # from LBYR to LBYRD
             ctimes = np.array([self.ctime(rec) for rec in recs])
             array = 0.5 * (vtimes + ctimes)
-            bounds = np.column_stack((vtimes, dtimes))
+            bounds = self.create_bounds_array(vtimes, dtimes)
+
             climatology = True
         else:
             array = 0.5 * (vtimes + dtimes)
-            bounds = np.column_stack((vtimes, dtimes))
+            bounds = self.create_bounds_array(vtimes, dtimes)
+
             climatology = False
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -2990,9 +3016,12 @@ class UMField:
                 bounds = None
             else:
                 delta_by_2 = 0.5 * delta
-                bounds = np.empty((size, 2), dtype=float)
-                bounds[:, 0] = array - delta_by_2
-                bounds[:, 1] = array + delta_by_2
+                bounds = self.create_bounds_array(
+                    array - delta_by_2, array + delta_by_2
+                )
+        #                bounds = np.empty((size, 2), dtype=float)
+        #                bounds[:, 0] = array - delta_by_2
+        #                bounds[:, 1] = array + delta_by_2
 
         else:
             # Create coordinate from extra data
@@ -3000,9 +3029,10 @@ class UMField:
             lower_bounds = self.extra.get(axis + "_lower_bound", None)
             upper_bounds = self.extra.get(axis + "_upper_bound", None)
             if lower_bounds is not None and upper_bounds is not None:
-                bounds = np.empty((array.size, 2), dtype=float)
-                bounds[:, 0] = lower_bounds
-                bounds[:, 1] = upper_bounds
+                bounds = self.create_bounds_array(lower_bounds, upper_bounds)
+            #                bounds = np.empty((array.size, 2), dtype=float)
+            #                bounds[:, 0] = lower_bounds
+            #                bounds[:, 1] = upper_bounds
             else:
                 bounds = None
 
@@ -3042,14 +3072,12 @@ class UMField:
         ):
             lower_bounds = self.extra.get(axis + "_domain_lower_bound", None)
             upper_bounds = self.extra.get(axis + "_domain_upper_bound", None)
-            if lower_bounds is not None and upper_bounds is not None:
-                bounds = np.empty((lower_bounds.size, 2), dtype=float)
-                bounds[:, 0] = lower_bounds
-                bounds[:, 1] = upper_bounds
-                array = np.average(bounds, axis=1)
-            else:
-                array = None
-                bounds = None
+            if lower_bounds is None or upper_bounds is None:
+                continue
+
+            # Still here?
+            bounds = self.create_bounds_array(lower_bounds, upper_bounds)
+            array = np.average(bounds, axis=1)
 
             ac = self.implementation.initialise_AuxiliaryCoordinate()
             ac = self.coord_data(ac, array, bounds, units=units)
@@ -3121,12 +3149,12 @@ class UMField:
         array = np.array(array, dtype=float)
         bounds0 = np.array(bounds0, dtype=float)
         bounds1 = np.array(bounds1, dtype=float)
-        bounds = np.column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         if (bounds0 == bounds1).all():
             bounds = None
         else:
-            bounds = np.column_stack((bounds0, bounds1))
+            bounds = self.create_bounds_array(bounds0, bounds1)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
         axisZ = self.implementation.set_domain_axis(self.field, da)
