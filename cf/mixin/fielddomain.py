@@ -1784,9 +1784,6 @@ class FieldDomain:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                For an identity starting with ``grid_mapping_name:``
-                or ``standard_name:``, that prefix may be omitted.
-
                 If no identities are provided then all coordinate
                 reference constructs are selected.
 
@@ -1817,15 +1814,6 @@ class FieldDomain:
         **Examples:**
 
         """
-        # Replace a bare name with both types of prefix
-        #        identities = []
-        #        for i in identity:
-        #            if ":" not in i and '%' not in i:
-        #                identities.append("grid_mapping_name:" + i)
-        #                identities.append("standard_name:" + i)
-        #            else:
-        #                identities.append(i)
-
         return self._construct(
             "coordinate_reference",
             "coordinate_references",
