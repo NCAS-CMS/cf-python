@@ -2,21 +2,15 @@ from os.path import abspath
 
 import numpy
 
-from .netcdf import NetCDFWrite
-
 from ..cfimplementation import implementation
-
 from ..decorators import _manage_log_level_via_verbosity
-
-from ..functions import flat
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
+from .netcdf import NetCDFWrite
 
 # from . import mpi_on
 mpi_on = False
 if mpi_on:
-    from . import mpi_comm
-    from . import mpi_size
-    from . import mpi_rank
+    from . import mpi_comm, mpi_rank, mpi_size
 
 
 netcdf = NetCDFWrite(implementation())

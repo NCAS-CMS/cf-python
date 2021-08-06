@@ -1,12 +1,10 @@
 from numpy import empty as numpy_empty
 from numpy import full as numpy_full
-
 from numpy.ma import masked_all as numpy_ma_masked_all
 
-from . import abstract
-
-from ..functions import parse_indices
 from ..constants import masked as cf_masked
+from ..functions import parse_indices
+from . import abstract
 
 
 class FilledArray(abstract.Array):

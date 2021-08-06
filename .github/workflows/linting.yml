@@ -20,8 +20,8 @@ jobs:
   # *The config. applied here is from our .pre-commit-config.yaml*
   #
   # Note the pre-commit linting includes all of the other linters configured
-  # to run as pre-commit hooks, namely black, flake8, docformatter and
-  # pydocstyle, so there is no need to set these up individually!
+  # to run as pre-commit hooks, namely black, flake8 and docformatter etc.,
+  # so there is no need to set these up individually!
   pre-commit:
     runs-on: ubuntu-latest
     steps:

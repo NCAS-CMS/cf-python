@@ -6,7 +6,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-
 # Note: it is important we test on the cf logging config rather than the
 # generic Python module logging (i.e. 'cf.logging' not just 'logging').
 # Also, mimic the use in the codebase by using a module-specific logger:

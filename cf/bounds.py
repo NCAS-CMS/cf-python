@@ -1,11 +1,9 @@
 import cfdm
 
-from .data import Data
-from .units import Units
-
 from . import mixin
-
+from .data import Data
 from .decorators import _deprecated_kwarg_check
+from .units import Units
 
 
 class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):

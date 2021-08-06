@@ -1,11 +1,10 @@
 import datetime
 import doctest
-import importlib
 import faulthandler
+import importlib
 import os
 import pkgutil
 import unittest
-
 from argparse import ArgumentParser
 from random import choice, shuffle
 

@@ -1,20 +1,17 @@
 from cfdm.core.functions import deepcopy
 
-from ..functions import atol as cf_atol, rtol as cf_rtol
-
-from ..query import Query
-from ..units import Units
-
 from ..data import Data
-
 from ..functions import (
+    _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_DICT,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR,
 )
-
+from ..functions import atol as cf_atol
+from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
+from ..query import Query
+from ..units import Units
 
 
 class Properties(Container):

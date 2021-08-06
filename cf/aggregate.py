@@ -1,40 +1,27 @@
 import logging
+from collections import namedtuple
+from operator import itemgetter
 
+from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
 from numpy import argsort as numpy_argsort
 from numpy import dtype as numpy_dtype
 from numpy import sort as numpy_sort
 
-from collections import namedtuple
-from operator import itemgetter
-
-from cfdm import (
-    is_log_level_info,
-    is_log_level_debug,
-    is_log_level_detail,
-)
-
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .domainaxis import DomainAxis
-from .fieldlist import FieldList
-from .query import gt
-from .units import Units
-
+from .data.data import Data
 from .decorators import (
-    _manage_log_level_via_verbosity,
     _manage_log_level_via_verbose_attr,
+    _manage_log_level_via_verbosity,
     _reset_log_emergence_level,
 )
-
-from .functions import (
-    flat,
-    hash_array,
-    _DEPRECATION_ERROR_FUNCTION_KWARGS,
-    _numpy_allclose,
-)
-from .functions import rtol as cf_rtol, atol as cf_atol
-
-from .data.data import Data
-
+from .domainaxis import DomainAxis
+from .fieldlist import FieldList
+from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, _numpy_allclose
+from .functions import atol as cf_atol
+from .functions import flat, hash_array
+from .functions import rtol as cf_rtol
+from .query import gt
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -1840,6 +1827,22 @@ def aggregate(
                 output_fields_append(meta[0].field)
             else:
                 output_fields_append(meta[0].field.copy())
+
+            continue
+
+        if not meta[0].units.isvalid:
+            if is_log_level_info(logger):
+                x = ", ".join(set(repr(m.units) for m in meta))
+                logger.info(
+                    f"Unaggregatable {meta[0].field.identity()!r} fields "
+                    f"have{exclude} been output: Non-valid units {x}"
+                )
+
+            if not exclude:
+                if copy:
+                    output_fields.extend(m.field.copy() for m in meta)
+                else:
+                    output_fields.extend(m.field for m in meta)
 
             continue
 

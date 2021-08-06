@@ -1,9 +1,12 @@
 import itertools
 import logging
 import textwrap
-
 from datetime import datetime
 
+import cfdm
+import cftime
+from cfdm import Constructs
+from netCDF4 import date2num as netCDF4_date2num
 from numpy import arange as numpy_arange
 from numpy import arccos as numpy_arccos
 from numpy import arcsin as numpy_arcsin
@@ -24,33 +27,20 @@ from numpy import sin as numpy_sin
 from numpy import transpose as numpy_transpose
 from numpy import where as numpy_where
 
-from netCDF4 import date2num as netCDF4_date2num
-
-import cftime
-
-import cfdm
-from cfdm import Constructs
-
-from ... import __version__, __Conventions__
-from ...decorators import (
-    _manage_log_level_via_verbosity,
-    _manage_log_level_via_verbose_attr,
-)
-from ...functions import (
-    abspath,
-    load_stash2standard_name,
-)
-from ...functions import atol as cf_atol, rtol as cf_rtol
-
+from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
-
-from ...units import Units
-
-from ...data.data import Data, Partition, PartitionMatrix
-
 from ...data import UMArray
-from ...data.functions import _open_um_file, _close_um_file
-
+from ...data.data import Data, Partition, PartitionMatrix
+from ...data.functions import _close_um_file, _open_um_file
+from ...decorators import (
+    _manage_log_level_via_verbose_attr,
+    _manage_log_level_via_verbosity,
+)
+from ...functions import abspath
+from ...functions import atol as cf_atol
+from ...functions import load_stash2standard_name
+from ...functions import rtol as cf_rtol
+from ...units import Units
 
 logger = logging.getLogger(__name__)
 
