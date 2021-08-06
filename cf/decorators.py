@@ -1,17 +1,15 @@
 from functools import wraps
 
-from .constants import ValidLogLevels
-
-from .functions import (
-    log_level,
-    _DEPRECATION_ERROR_KWARGS,
-    _disable_logging,
-    _reset_log_emergence_level,
-    _is_valid_log_level_int,
-)
-
 import cfdm
 
+from .constants import ValidLogLevels
+from .functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    _disable_logging,
+    _is_valid_log_level_int,
+    _reset_log_emergence_level,
+    log_level,
+)
 
 # Decorators (and helper functions for these) inherited from cfdm:
 _inplace_enabled = cfdm._inplace_enabled

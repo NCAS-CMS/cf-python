@@ -235,6 +235,21 @@ class aggregateTest(unittest.TestCase):
                     ),
                 )
 
+    def test_aggregate_bad_units(self):
+        f = cf.read(self.filename, squeeze=True)[0]
+
+        g = cf.FieldList(f[0])
+        g.append(f[1:])
+
+        h = cf.aggregate(g)
+        self.assertEqual(len(h), 1)
+
+        g[0].override_units(cf.Units("apples!"), inplace=True)
+        g[1].override_units(cf.Units("oranges!"), inplace=True)
+
+        h = cf.aggregate(g)
+        self.assertEqual(len(h), 2)
+
     def test_aggregate_domain(self):
         f = cf.example_field(0)
         g = f[0:3].domain

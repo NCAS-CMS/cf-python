@@ -2,28 +2,48 @@ import logging
 
 import cfdm
 
-from .constants import cr_coordinates, cr_canonical_units, cr_default_values
-from .functions import allclose
-from .functions import inspect as cf_inspect, atol as cf_atol, rtol as cf_rtol
-from .query import Query
-
-from . import CoordinateConversion
-from . import Datum
-
+from . import CoordinateConversion, Datum
+from .constants import cr_canonical_units, cr_coordinates, cr_default_values
 from .data.data import Data
-
-from .functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR_ATTRIBUTE
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
+from .functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
+    allclose,
+)
+from .functions import atol as cf_atol
+from .functions import inspect as cf_inspect
+from .functions import rtol as cf_rtol
+from .query import Query
 
 _units = {}
 
 logger = logging.getLogger(__name__)
+
+
+def _totuple(a):
+    """Return an N-d (N>0) array as a nested tuple of Python scalars.
+
+    :Parameters:
+
+        a: numpy.ndarray
+            The numpy array
+
+    :Returns:
+
+        `tuple`
+            The array as an nested tuple of Python scalars.
+
+    """
+    try:
+        return tuple(_totuple(i) for i in a)
+    except TypeError:
+        return a
 
 
 class CoordinateReference(cfdm.CoordinateReference):
@@ -708,6 +728,14 @@ class CoordinateReference(cfdm.CoordinateReference):
                 ):
                     # Do not add a default value to the structural signature
                     continue
+
+                # Convert value to a Python scalar if it's 0-d, or a
+                # tuple if it's N-d.
+                value = value.array
+                if not value.ndim:
+                    value = value.item()
+                else:
+                    value = _totuple(value)
 
                 append(
                     (

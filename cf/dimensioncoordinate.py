@@ -1,24 +1,17 @@
+import cfdm
 from numpy import empty as numpy_empty
 from numpy import result_type as numpy_result_type
 
-import cfdm
-
-from . import Bounds
-
-from .timeduration import TimeDuration
-from .units import Units
-
+from . import Bounds, mixin
 from .data.data import Data
-
-from . import mixin
-
-from .functions import _DEPRECATION_ERROR_KWARGS, _DEPRECATION_ERROR_ATTRIBUTE
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
 )
+from .functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_KWARGS
+from .timeduration import TimeDuration
+from .units import Units
 
 
 class DimensionCoordinate(

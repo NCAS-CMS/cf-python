@@ -1,26 +1,21 @@
 import logging
-
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
+from .data import Data
+from .decorators import (
+    _deprecated_kwarg_check,
+    _display_or_return,
+    _manage_log_level_via_verbosity,
+)
+from .functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_FUNCTION,
+    _DEPRECATION_ERROR_FUNCTION_KWARGS,
+)
 from .functions import equals as _equals
 from .functions import inspect as _inspect
 from .units import Units
-
-from .data import Data
-
-from .functions import (
-    _DEPRECATION_ERROR_FUNCTION_KWARGS,
-    _DEPRECATION_ERROR_ATTRIBUTE,
-    _DEPRECATION_ERROR_FUNCTION,
-)
-
-from .decorators import (
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-    _display_or_return,
-)
-
 
 logger = logging.getLogger(__name__)
 

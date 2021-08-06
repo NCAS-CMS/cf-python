@@ -1,23 +1,21 @@
+import logging
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
-
-import logging
 
 try:
     from matplotlib.path import Path
 except ImportError:
     pass
 
+import cfdm
 import numpy as np
-
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-
 from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
-from numpy import diff as numpy_diff
 from numpy import delete as numpy_delete
+from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
@@ -32,95 +30,87 @@ from numpy import squeeze as numpy_squeeze
 from numpy import tile as numpy_tile
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-
 from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
-
 from numpy.ma import where as numpy_ma_where
 
-import cfdm
-
-from . import AuxiliaryCoordinate
-from . import Bounds
-from . import CellMethod
-from . import DimensionCoordinate
-from . import Domain
-from . import DomainAncillary
-from . import DomainAxis
-from . import Flags
-from . import Constructs
-from . import FieldList
-
-from . import Count
-from . import Index
-from . import List
-
+from . import (
+    AuxiliaryCoordinate,
+    Bounds,
+    CellMethod,
+    Constructs,
+    Count,
+    DimensionCoordinate,
+    Domain,
+    DomainAncillary,
+    DomainAxis,
+    FieldList,
+    Flags,
+    Index,
+    List,
+    mixin,
+)
 from .constants import masked as cf_masked
-
-from .functions import parse_indices, chunksize, _section
+from .data import (
+    Data,
+    GatheredArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+from .formula_terms import FormulaTerms
+from .functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_KWARG_VALUE,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
+    _section,
+    chunksize,
+    parse_indices,
+)
 from .functions import relaxed_identities as cf_relaxed_identities
-from .query import Query, ge, gt, le, lt, eq
-from .timeduration import TimeDuration
-from .units import Units
-from .subspacefield import SubspaceField
-
-from .data import Data
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
-
-from . import mixin
-
+from .query import Query, eq, ge, gt, le, lt
 from .regrid import (
+    RegridOperator,
     conservative_regridding_methods,
-    create_Grid,
     create_Field,
+    create_Grid,
     create_Regrid,
     get_cartesian_coords,
     grids_have_same_coords,
     grids_have_same_masks,
-    RegridOperator,
-    regrid_get_latlon,
-    regrid_get_axis_indices,
-    regrid_get_coord_order,
-    regrid_get_section_shape,
     regrid_check_bounds,
     regrid_check_method,
     regrid_check_use_src_mask,
-    regrid_get_reordered_sections,
-    regrid_get_destination_mask,
-    regrid_fill_fields,
     regrid_compute_field_mass,
-    regrid_get_regridded_data,
-    regrid_update_coordinate_references,
     regrid_copy_coordinate_references,
-    regrid_use_bounds,
-    regrid_update_coordinates,
-    regrid_initialize,
-    regrid_get_operator_method,
     regrid_create_operator,
+    regrid_fill_fields,
+    regrid_get_axis_indices,
+    regrid_get_coord_order,
+    regrid_get_destination_mask,
+    regrid_get_latlon,
+    regrid_get_operator_method,
+    regrid_get_regridded_data,
+    regrid_get_reordered_sections,
+    regrid_get_section_shape,
+    regrid_initialize,
+    regrid_update_coordinate_references,
+    regrid_update_coordinates,
+    regrid_use_bounds,
     run_Regrid,
 )
-
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_ARG,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_KWARG_VALUE,
-    DeprecationError,
-)
-
-from .formula_terms import FormulaTerms
-
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-)
-
+from .subspacefield import SubspaceField
+from .timeduration import TimeDuration
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -2262,9 +2252,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
-        logger.info("\naxes_added_from_field1= {}\n", axes_added_from_field1)
+        logger.info(f"\naxes_added_from_field1= {axes_added_from_field1}\n")
         logger.info(
-            "axes_to_replace_from_field1= {}", axes_to_replace_from_field1
+            f"axes_to_replace_from_field1= {axes_to_replace_from_field1}"
         )
 
         already_copied = {}
@@ -2291,7 +2281,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_axes = set(axes_added_from_field1).union(
             axes_to_replace_from_field1
         )
-        logger.info("\nnew_axes =", new_axes)
+        logger.info(f"\nnew_axes ={new_axes}")
 
         if new_axes:
             constructs = field1.constructs.filter(
@@ -2330,7 +2320,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             elif axes.intersection(axes_to_replace_from_field1):
                 refs_to_add_from_field1.append(ref)
 
-        logger.info("\nrefs_to_add_from_field1=", refs_to_add_from_field1)
+        logger.info("\nrefs_to_add_from_field1={refs_to_add_from_field1}")
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
@@ -15665,10 +15655,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
         # Get the destination ESMF Grid, Field and fractional Field
         if dst_regrid:
@@ -15849,6 +15841,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 units=f.Units,
             )
 
+        # Release memory for source grid/fields in the data sections
+        srcfracfield.destroy()
+        srcfield.destroy()
+        srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -15908,16 +15905,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 config={"coord": x, "period": Data(360.0, "degrees")},
             )
 
-        # Release old memory from ESMF (this ought to happen garbage
-        # collection, but it doesn't seem to work there!)
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 
@@ -16398,10 +16400,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
             dstgrid = regridSrc2Dst.dstfield.grid
             dstfield = regridSrc2Dst.dstfield
@@ -16576,6 +16580,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             sections[k] = Data.reconstruct_sectioned_data(subsections)
 
+        # Release memory for source grid/fields created for data subsections
+        srcfracfield.destroy()
+        srcfield.destroy()
+        srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -16616,15 +16625,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Insert regridded data into new field
         f.set_data(new_data, axes=self.get_data_axes())
 
-        # Release old memory
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 

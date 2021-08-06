@@ -1,19 +1,14 @@
-import numpy
-
-from numpy import ndenumerate as numpy_ndenumerate
-from numpy import empty as numpy_empty
-from numpy import expand_dims as numpy_expand_dims
-from numpy import squeeze as numpy_squeeze
-
 from copy import deepcopy
 
-
-from .partition import Partition
-
-from ..functions import _DEPRECATION_ERROR_METHOD
+import numpy
+from numpy import empty as numpy_empty
+from numpy import expand_dims as numpy_expand_dims
+from numpy import ndenumerate as numpy_ndenumerate
+from numpy import squeeze as numpy_squeeze
 
 from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
-
+from ..functions import _DEPRECATION_ERROR_METHOD
+from .partition import Partition
 
 _empty_matrix = numpy_empty((), dtype=object)
 

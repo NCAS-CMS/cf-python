@@ -115,5 +115,6 @@ ideas, code, and documentation to the cf library:
 * Klaus Zimmermann
 * Kristian Sebastián
 * Michael Decker
-* Sadie Bartholomew  
+* Sadie Bartholomew
+* Thibault Hallouin
 * Tim Bradshaw

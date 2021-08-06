@@ -1,6 +1,5 @@
 from .. import _found_ESMF
 
-
 if _found_ESMF:
     try:
         import ESMF
@@ -202,6 +201,17 @@ class RegridOperator:
         >>> r.destroy()
 
         """
+        # explicitly release memory for source ESMF objects
+        self._regrid.srcfield.grid.destroy()
+        self._regrid.srcfield.destroy()
+        self._regrid.src_frac_field.destroy()
+
+        # explicitly release memory for destination ESMF objects
+        self._regrid.dstfield.grid.destroy()
+        self._regrid.dstfield.destroy()
+        self._regrid.dst_frac_field.destroy()
+
+        # explicitly release memory for ESMF Regrid
         self._regrid.destroy()
 
     def get_parameter(self, parameter):

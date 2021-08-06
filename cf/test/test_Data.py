@@ -2,11 +2,10 @@ import datetime
 import faulthandler
 import inspect
 import itertools
-from operator import mul
 import os
 import unittest
-
 from functools import reduce
+from operator import mul
 
 import numpy
 

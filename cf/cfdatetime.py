@@ -1,11 +1,10 @@
 import datetime
 from functools import partial
 
-import numpy as np
 import cftime
+import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
-
 
 _default_calendar = "gregorian"
 

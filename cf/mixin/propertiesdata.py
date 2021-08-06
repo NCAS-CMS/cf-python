@@ -1,35 +1,29 @@
+import logging
 from functools import partial as functools_partial
 from itertools import chain
-
-import logging
 
 from numpy import array as numpy_array
 from numpy import result_type as numpy_result_type
 from numpy import vectorize as numpy_vectorize
 
 from ..cfdatetime import dt
-from ..functions import equivalent as cf_equivalent
-from ..functions import inspect as cf_inspect
-from ..functions import default_netCDF_fillvals
-from ..timeduration import TimeDuration
-from ..units import Units
-
 from ..data import Data
-
-from . import Properties
-
-from ..functions import (
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_ATTRIBUTE,
-)
-
 from ..decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from ..functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
+    default_netCDF_fillvals,
+)
+from ..functions import equivalent as cf_equivalent
+from ..functions import inspect as cf_inspect
+from ..timeduration import TimeDuration
+from ..units import Units
+from . import Properties
 
 _units_None = Units()
 
@@ -5153,12 +5147,12 @@ class PropertiesData(Properties):
         <Units: hPa>
         >>> f.datum(0)
         100000.0
-        >>> f.override_units('km')
+        >>> f.override_units('km', inplace=True)
         >>> f.Units
         <Units: km>
         >>> f.datum(0)
         100000.0
-        >>> f.override_units(Units('watts'))
+        >>> f.override_units(Units('watts'), inplace=True)
         >>> f.Units
         <Units: watts>
         >>> f.datum(0)

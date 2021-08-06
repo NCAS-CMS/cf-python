@@ -2,7 +2,6 @@ import cfdm
 
 from .cfimplementation import implementation
 
-
 _implementation = implementation()
 
 
