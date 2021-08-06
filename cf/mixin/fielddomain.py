@@ -1825,7 +1825,7 @@ class FieldDomain:
         )
 
     def coordinate_reference_domain_axes(self, identity=None):
-        """Return the domain axesthat apply to a coordinate reference
+        """Return the domain axes that apply to a coordinate reference
         construct.
 
                 :Parameters:
