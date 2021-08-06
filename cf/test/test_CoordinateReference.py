@@ -5,6 +5,8 @@ import os
 import tempfile
 import unittest
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -261,6 +263,29 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertEqual(self.hcr.get("qwerty", 12), 12)
         with self.assertRaises(Exception):
             self.hcr["qwerty"]
+
+    def test_CoordinateReference_structural_signature(self):
+        c = self.hcr.copy()
+
+        self.assertIsInstance(c.structural_signature(), tuple)
+
+        c.datum.set_parameter("test", [23])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", (23.0,), None))
+
+        c.datum.set_parameter("test", [23, 45])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", (23.0, 45.0), None))
+
+        c.datum.set_parameter("test", [[23, 45]])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", ((23.0, 45.0),), None))
+
+        c.datum.set_parameter("test", np.array([[23, 45], [67, 89]]))
+        s = c.structural_signature()
+        self.assertEqual(
+            s[2], ("datum:test", ((23.0, 45.0), (67.0, 89.0)), None)
+        )
 
 
 if __name__ == "__main__":
