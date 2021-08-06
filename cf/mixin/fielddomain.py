@@ -1768,20 +1768,24 @@ class FieldDomain:
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_references`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_references`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
         :Parameters:
 
-            identities: optional
+            identity: optional
                 Select coordinate reference constructs that have an
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
+
+                For an identity starting with ``grid_mapping_name:``
+                or ``standard_name:``, that prefix may be omitted.
 
                 If no identities are provided then all coordinate
                 reference constructs are selected.
@@ -1813,6 +1817,15 @@ class FieldDomain:
         **Examples:**
 
         """
+        # Replace a bare name with both types of prefix
+        #        identities = []
+        #        for i in identity:
+        #            if ":" not in i and '%' not in i:
+        #                identities.append("grid_mapping_name:" + i)
+        #                identities.append("standard_name:" + i)
+        #            else:
+        #                identities.append(i)
+
         return self._construct(
             "coordinate_reference",
             "coordinate_references",
@@ -1824,7 +1837,7 @@ class FieldDomain:
         )
 
     def coordinate_reference_domain_axes(self, identity=None):
-        """Return the domain axes that apply to a coordinate reference
+        """Return the domain axesthat apply to a coordinate reference
         construct.
 
                 :Parameters:
