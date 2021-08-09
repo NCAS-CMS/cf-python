@@ -2337,6 +2337,29 @@ class FieldTest(unittest.TestCase):
             key,
         )
 
+        # Get
+        for identity in (
+            "coordinatereference1",
+            "key%coordinatereference0",
+            "standard_name:atmosphere_hybrid_height_coordinate",
+            "grid_mapping_name:rotated_latitude_longitude",
+        ):
+            key = f.construct_key(identity)
+            c = f.construct(identity)
+
+            self.assertTrue(
+                f.get_coordinate_reference(identity).equals(c, verbose=2)
+            )
+            self.assertEqual(
+                f.get_coordinate_reference(identity, key=True), key
+            )
+
+        with self.assertRaises(ValueError):
+            f.get_coordinate_reference()  # since has two CR constructs
+        g = f.copy()
+        g.del_coordinate_reference("coordinatereference1")
+        g.get_coordinate_reference()  # should work here as has only one CR
+
         # Delete
         self.assertIsNone(f.del_coordinate_reference("qwerty", default=None))
 
