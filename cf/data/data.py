@@ -9877,6 +9877,7 @@ class Data(Container, cfdm.Data):
         8
 
         """
+        # TODODASK - daskify, previously parallelise=mpi_on (not =False)
         config = self.partition_configuration(readonly=True)
 
         n = 0
@@ -9902,7 +9903,7 @@ class Data(Container, cfdm.Data):
         # are distributed to every rank and processed_partitions now
         # contains all the processed partitions from every rank.
         processed_partitions = self._share_partitions(
-            processed_partitions, parallelise=mpi_on
+            processed_partitions, parallelise=False
         )
 
         # Put the processed partitions back in the partition matrix
@@ -9915,12 +9916,12 @@ class Data(Container, cfdm.Data):
         # Share the lock files created by each rank for each partition
         # now in a temporary file so that __del__ knows which lock
         # files to check if present
-        self._share_lock_files(parallelise=mpi_on)
+        self._share_lock_files(parallelise=False)
 
         # Aggregate the results on each process and return on all
         # processes
-        if mpi_on:
-            n = mpi_comm.allreduce(n, op=mpi_sum)
+        # if mpi_on:
+        #     n = mpi_comm.allreduce(n, op=mpi_sum)
         # --- End: if
 
         return n
