@@ -5,7 +5,6 @@ import numpy as np
 
 from ..functions import get_subspace, parse_indices
 from . import abstract
-
 from .utils import is_small
 
 

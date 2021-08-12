@@ -22,11 +22,19 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+# TODODASK: these can be moved into the lone tests that use them now
+a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+ma = np.ma.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+ma[:, 1, 4, 4] = np.ma.masked
+ma[0, :, 2, 3] = np.ma.masked
+ma[0, 3, :, 3] = np.ma.masked
+ma[1, 2, 3, :] = np.ma.masked
+
 
 def reshape_array(a, axes):
     new_order = [i for i in range(a.ndim) if i not in axes]
     new_order.extend(axes)
-    b = numpy.transpose(a, new_order)
+    b = np.transpose(a, new_order)
     new_shape = b.shape[: b.ndim - len(axes)]
     new_shape += (reduce(mul, b.shape[b.ndim - len(axes) :]),)
     b = b.reshape(new_shape)
@@ -55,11 +63,15 @@ class DataTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
     )
 
+    # TODODASK: these can be moved into the lone tests that use them now
+    a = a
+    ma = ma
+
     test_only = []
     #    test_only = ['NOTHING!!!!!']
-    test_only = [
-        "test_Data___setitem__",
-    ]
+    # test_only = [
+    #    "test_Data___setitem__",
+    # ]
     #        'test_Data_trigonometric_hyperbolic'
     #        'test_Data_AUXILIARY_MASK',
     #        'test_Data_datum',
@@ -1082,7 +1094,6 @@ class DataTest(unittest.TestCase):
             [1.0, 2],
             units=cf.Units("years since 2000-1-1", calendar="360_day"),
         )
-        e = d * 31
         d *= 31
 
     def test_Data_datetime_array(self):
@@ -2010,7 +2021,6 @@ class DataTest(unittest.TestCase):
             return
 
         a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
-        ones = np.ones(a.shape, dtype=float)
 
         for h in (
             "sample_size",
@@ -2106,7 +2116,7 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
-                for np, h in zip(
+                for _np, h in zip(
                     (np.sum, np.amin, np.amax, np.sum),
                     ("sum", "min", "max", "sum_of_squares"),
                 ):
@@ -2115,7 +2125,7 @@ class DataTest(unittest.TestCase):
                         if h == "sum_of_squares":
                             b = b ** 2
 
-                        b = np(b, axis=-1)
+                        b = _np(b, axis=-1)
                         e = getattr(d, h)(
                             axes=axes, squeeze=True, _preserve_partitions=pp
                         )
@@ -2128,7 +2138,7 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
-                for np, h in zip(
+                for _np, h in zip(
                     (np.ma.sum, np.ma.amin, np.ma.amax, np.ma.sum),
                     ("sum", "min", "max", "sum_of_squares"),
                 ):
@@ -2137,7 +2147,7 @@ class DataTest(unittest.TestCase):
                         if h == "sum_of_squares":
                             b = b ** 2
 
-                        b = np(b, axis=-1)
+                        b = _np(b, axis=-1)
                         b = np.ma.asanyarray(b)
                         e = getattr(d, h)(
                             axes=axes, squeeze=True, _preserve_partitions=pp
@@ -2763,11 +2773,11 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 # unweighted, unmasked
                 d = cf.Data(self.a, units="K")
-                for np, h in zip((np.var, np.std), ("var", "sd")):
+                for _np, h in zip((np.var, np.std), ("var", "sd")):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.a, axes)
-                            b = np(b, axis=-1, ddof=ddof)
+                            b = _np(b, axis=-1, ddof=ddof)
                             e = getattr(d, h)(
                                 axes=axes,
                                 squeeze=True,
@@ -2785,11 +2795,11 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, masked
                 d = cf.Data(self.ma, units="K")
-                for np, h in zip((np.ma.var, np.ma.std), ("var", "sd")):
+                for _np, h in zip((np.ma.var, np.ma.std), ("var", "sd")):
                     for ddof in ddofs:
                         for axes in self.axes_combinations:
                             b = reshape_array(self.ma, axes)
-                            b = np(b, axis=-1, ddof=ddof)
+                            b = _np(b, axis=-1, ddof=ddof)
                             e = getattr(d, h)(
                                 axes=axes,
                                 squeeze=True,

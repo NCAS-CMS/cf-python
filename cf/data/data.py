@@ -1,36 +1,27 @@
+import logging
 import operator
-
-from functools import partial
-from functools import reduce
+from functools import partial, reduce
 from itertools import product
-from operator import itemgetter
-from operator import mul
-
 from json import dumps as json_dumps
 from json import loads as json_loads
-
-import logging
+from operator import mul
 
 try:
     from scipy.ndimage.filters import convolve1d as scipy_convolve1d
 except ImportError:
     pass
 
+import cfdm
+import cftime
+import dask.array as da
 import numpy as np
 
-import dask.array as da
+# from dask.array.core import slices_from_chunks
 from dask.base import is_dask_collection
-from dask.array.core import slices_from_chunks
-from dask.array import Array
-
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
-
-import cftime
-import cfdm
-
 from ..cfdatetime import dt as cf_dt
-from ..cfdatetime import dt2rt, rt2dt, st2rt
+from ..cfdatetime import dt2rt, rt2dt  # , st2rt
 from ..constants import masked as cf_masked
 from ..decorators import (
     _deprecated_kwarg_check,
@@ -46,40 +37,26 @@ from ..functions import (
     _numpy_isclose,
     _section,
     abspath,
-    log_level,
 )
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
-from ..functions import collapse_parallel_mode, default_netCDF_fillvals
+from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
 from ..functions import free_memory, hash_array
 from ..functions import inspect as cf_inspect
-from ..functions import parse_indices, pathjoin
+from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import (
-    GatheredSubarray,
+from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
     NetCDFArray,
-    RaggedContiguousSubarray,
-    RaggedIndexedContiguousSubarray,
-    RaggedIndexedSubarray,
     UMArray,
 )
-
-from .abstract import Array
-from .filledarray import FilledArray
-from .partition import Partition
-from .partitionmatrix import PartitionMatrix
-
-from .collapse_functions import (
+from .collapse_functions import (  # max_f,; max_ffinalise,; max_fpartial,
     max_abs_f,
     max_abs_ffinalise,
     max_abs_fpartial,
-    max_f,
-    max_ffinalise,
-    max_fpartial,
     mean_abs_f,
     mean_abs_ffinalise,
     mean_abs_fpartial,
@@ -123,25 +100,25 @@ from .collapse_functions import (
     var_ffinalise,
     var_fpartial,
 )
-from .filledarray import FilledArray
-from .partition import Partition
-from .partitionmatrix import PartitionMatrix
-
-from .utils import (
-    convert_to_reftime,
-    convert_to_datetime,
-    dask_compatible,
-    new_axis_identifier,
-    is_small,
-    is_very_small,
-)
-
 from .creation import (
-    to_dask,
     compressed_to_dask,
     convert_to_builtin_type,
     generate_axis_identifiers,
+    to_dask,
 )
+from .filledarray import FilledArray
+from .partition import Partition
+from .partitionmatrix import PartitionMatrix
+from .utils import (  # is_small,; is_very_small,
+    convert_to_datetime,
+    convert_to_reftime,
+    dask_compatible,
+    first_non_missing_value,
+    new_axis_identifier,
+)
+
+# from dask.array import Array
+
 
 logger = logging.getLogger(__name__)
 
@@ -629,7 +606,7 @@ class Data(Container, cfdm.Data):
 
         def contains_chunk(a, value):
             out = value in a
-            return numpy.array(out).reshape((1,) * a.ndim)
+            return np.array(out).reshape((1,) * a.ndim)
 
         if isinstance(value, self.__class__):  # TODDASK chek aother type stoo
             self_units = self.Units
@@ -1754,7 +1731,7 @@ class Data(Container, cfdm.Data):
 
             # Diff each section
             for key, data in sections.items():
-                output_array = numpy_diff(data.array, axis=axis)
+                output_array = np.diff(data.array, axis=axis)
 
                 sections[key] = type(self)(
                     output_array, units=self.Units, fill_value=self.fill_value
@@ -1792,7 +1769,7 @@ class Data(Container, cfdm.Data):
                 p["units"] = str(p.pop("Units"))
         # --- End: for
 
-        return json_dumps(d, default=_convert_to_builtin_type)
+        return json_dumps(d, default=convert_to_builtin_type)
 
     def digitize(
         self,
@@ -1968,7 +1945,7 @@ class Data(Container, cfdm.Data):
         else:
             bin_units = org_units
 
-        bins = numpy_asanyarray(bins)
+        bins = np.asanyarray(bins)
 
         if bins.ndim > 2:
             raise ValueError(
@@ -2003,7 +1980,7 @@ class Data(Container, cfdm.Data):
             # --- End: for
 
             two_d_bins = bins
-            bins = numpy_unique(bins)
+            bins = np.unique(bins)
 
             # Find the bins that were omitted from the original 2-d
             # bins array. Note that this includes the left-open and
@@ -2040,7 +2017,7 @@ class Data(Container, cfdm.Data):
 
             mx = self.max().datum()
             mn = self.min().datum()
-            bins = numpy_linspace(mn, mx, int(bins) + 1, dtype=float)
+            bins = np.linspace(mn, mx, int(bins) + 1, dtype=float)
 
             delete_bins = []
 
@@ -2053,7 +2030,7 @@ class Data(Container, cfdm.Data):
 
             bins = bins.astype(float, copy=True)
 
-            epsilon = numpy_finfo(float).eps
+            epsilon = np.finfo(float).eps
             ndim = bins.ndim
             if upper:
                 mn = bins[(0,) * ndim]
@@ -2068,7 +2045,7 @@ class Data(Container, cfdm.Data):
             delete_bins.append(bins.size)
 
         if return_bins and two_d_bins is None:
-            x = numpy_empty((bins.size - 1, 2), dtype=bins.dtype)
+            x = np.empty((bins.size - 1, 2), dtype=bins.dtype)
             x[:, 0] = bins[:-1]
             x[:, 1] = bins[1:]
             two_d_bins = x
@@ -2080,20 +2057,20 @@ class Data(Container, cfdm.Data):
             array = partition.array
 
             mask = None
-            if numpy_ma_isMA(array):
+            if np.ma.isMA(array):
                 mask = array.mask.copy()
 
-            array = numpy_digitize(array, bins, right=upper)
+            array = np.digitize(array, bins, right=upper)
 
             if delete_bins:
                 for n, d in enumerate(delete_bins):
                     d -= n
-                    array = numpy_ma_where(array == d, numpy_ma_masked, array)
-                    array = numpy_ma_where(array > d, array - 1, array)
+                    array = np.ma.where(array == d, np.ma.masked, array)
+                    array = np.ma.where(array > d, array - 1, array)
             # --- End: if
 
             if mask is not None:
-                array = numpy_ma_where(mask, numpy_ma_masked, array)
+                array = np.ma.where(mask, np.ma.masked, array)
 
             partition.subarray = array
             partition.Units = _units_None
@@ -2334,7 +2311,7 @@ class Data(Container, cfdm.Data):
          [2 2 3 3]]
 
         """
-        ranks = numpy_array(ranks).flatten()
+        ranks = np.array(ranks).flatten()
         ranks.sort()
 
         if ranks[0] < 0 or ranks[-1] > 100:
@@ -2368,14 +2345,14 @@ class Data(Container, cfdm.Data):
         for key, data in sections.items():
             array = data.array
 
-            masked = numpy_ma_is_masked(array)
+            masked = np.ma.is_masked(array)
             if masked:
                 if array.dtype != _dtype_float:
                     # Can't assign NaNs to integer arrays
                     array = array.astype(float, copy=True)
 
-                array = numpy_ma_filled(array, numpy_nan)
-                func = numpy_nanpercentile
+                array = np.ma.filled(array, np.nan)
+                func = np.nanpercentile
 
                 with numpy_testing_suppress_warnings() as sup:
                     sup.filter(
@@ -2391,9 +2368,9 @@ class Data(Container, cfdm.Data):
                     )
 
                 # Replace NaNs with missing data
-                p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)
+                p = np.ma.masked_where(np.isnan(p), p, copy=False)
             else:
-                func = numpy_percentile
+                func = np.percentile
                 p = func(
                     array,
                     ranks,
@@ -2476,7 +2453,7 @@ class Data(Container, cfdm.Data):
 
         # Convert dtype to numpy.dtype
         if "dtype" in d:
-            d["dtype"] = numpy_dtype(d["dtype"])
+            d["dtype"] = np.dtype(d["dtype"])
 
         # Convert units to Units
         if "units" in d:
@@ -2772,7 +2749,7 @@ class Data(Container, cfdm.Data):
         # Initialise an empty partition array
         # ------------------------------------------------------------
         partition_matrix = PartitionMatrix(
-            numpy_empty(d.get("_pmshape", ()), dtype=object),
+            np.empty(d.get("_pmshape", ()), dtype=object),
             list(d.get("_pmaxes", ())),
         )
         pmndim = partition_matrix.ndim
@@ -3022,7 +2999,7 @@ class Data(Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        return self.func(numpy_ceil, out=True, inplace=inplace)
+        return self.func(np.ceil, out=True, inplace=inplace)
 
     @_inplace_enabled(default=False)
     def convolution_filter(
@@ -3173,7 +3150,7 @@ class Data(Container, cfdm.Data):
         # Set cval to NaN if it is currently None, so that the edges
         # will be filled with missing data if the mode is 'constant'
         if cval is None:
-            cval = numpy_nan
+            cval = np.nan
 
         # Section the data into sections up to a chunk in size
         sections = self.section([iaxis], chunks=True)
@@ -3183,9 +3160,9 @@ class Data(Container, cfdm.Data):
         for key, data in sections.items():
             data.dtype = float
             input_array = data.array
-            masked = numpy_ma_is_masked(input_array)
+            masked = np.ma.is_masked(input_array)
             if masked:
-                input_array = input_array.filled(numpy_nan)
+                input_array = input_array.filled(np.nan)
 
             output_array = scipy_convolve1d(
                 input_array,
@@ -3195,9 +3172,9 @@ class Data(Container, cfdm.Data):
                 cval=cval,
                 origin=origin,
             )
-            if masked or (mode == "constant" and numpy_isnan(cval)):
-                with numpy_errstate(invalid="ignore"):
-                    output_array = numpy_ma_masked_invalid(output_array)
+            if masked or (mode == "constant" and np.isnan(cval)):
+                with np.errstate(invalid="ignore"):
+                    output_array = np.ma.masked_invalid(output_array)
             # --- End: if
 
             sections[key] = type(self)(
@@ -3300,21 +3277,21 @@ class Data(Container, cfdm.Data):
             array = data.array
 
             filled = False
-            if masked_as_zero and numpy_ma_is_masked(array):
+            if masked_as_zero and np.ma.is_masked(array):
                 mask = array.mask
                 array = array.filled(0)
                 filled = True
 
-            array = numpy_cumsum(array, axis=axis)
+            array = np.cumsum(array, axis=axis)
 
             if filled:
                 size = array.shape[axis]
                 shape = [1] * array.ndim
                 shape[axis] = size
-                new_mask = numpy_cumsum(mask, axis=axis) == numpy_arange(
+                new_mask = np.cumsum(mask, axis=axis) == np.arange(
                     1, size + 1
                 ).reshape(shape)
-                array = numpy.ma.array(array, mask=new_mask, copy=False)
+                array = np.ma.array(array, mask=new_mask, copy=False)
 
             sections[key] = type(self)(
                 array, units=self.Units, fill_value=self.fill_value
@@ -4483,14 +4460,14 @@ class Data(Container, cfdm.Data):
         # Set the data-type of the result
         # ------------------------------------------------------------
         if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-            new_dtype = numpy_dtype(bool)
+            new_dtype = np.dtype(bool)
             rtol = self._rtol
             atol = self._atol
         else:
             if "true" in method:
-                new_dtype = numpy_dtype(float)
+                new_dtype = np.dtype(float)
             elif not inplace:
-                new_dtype = numpy_result_type(data0.dtype, other.dtype)
+                new_dtype = np.result_type(data0.dtype, other.dtype)
             else:
                 new_dtype = data0.dtype
         # --- End: if
@@ -4527,7 +4504,7 @@ class Data(Container, cfdm.Data):
         #            pda_args['update'] = False
         #            pda_args['dtype']  = None
 
-        original_numpy_seterr = numpy_seterr(**_seterr)
+        original_numpy_seterr = np.seterr(**_seterr)
 
         # Think about dtype, here.
 
@@ -4592,10 +4569,10 @@ class Data(Container, cfdm.Data):
                 if _mask_fpe[0]:
                     # Redo the calculation ignoring the errors and
                     # then set invalid numbers to missing data
-                    numpy_seterr(**_seterr_raise_to_ignore)
+                    np.seterr(**_seterr_raise_to_ignore)
                     array0 = getattr(array0, method)(array1)
-                    array0 = numpy_ma_masked_invalid(array0, copy=False)
-                    numpy_seterr(**_seterr)
+                    array0 = np.ma.masked_invalid(array0, copy=False)
+                    np.seterr(**_seterr)
                 else:
                     # Raise the floating point error exception
                     raise FloatingPointError(error)
@@ -4604,7 +4581,7 @@ class Data(Container, cfdm.Data):
                     raise TypeError(
                         "Incompatible result data-type ({0!r}) for "
                         "in-place {1!r} arithmetic".format(
-                            numpy_result_type(array0.dtype, array1.dtype).name,
+                            np.result_type(array0.dtype, array1.dtype).name,
                             array0.dtype.name,
                         )
                     )
@@ -4613,14 +4590,14 @@ class Data(Container, cfdm.Data):
             # --- End: try
 
             if array0 is NotImplemented:
-                array0 = numpy_zeros(partition.shape, dtype=bool)
-            elif not array0.ndim and not isinstance(array0, numpy_ndarray):
-                array0 = numpy_asanyarray(array0)
+                array0 = np.zeros(partition.shape, dtype=bool)
+            elif not array0.ndim and not isinstance(array0, np.ndarray):
+                array0 = np.asanyarray(array0)
 
             if not inplace:
                 p_datatype = array0.dtype
                 if new_dtype != p_datatype:
-                    new_dtype = numpy_result_type(p_datatype, new_dtype)
+                    new_dtype = np.result_type(p_datatype, new_dtype)
 
             partition.subarray = array0
             partition.Units = new_Units
@@ -4641,7 +4618,7 @@ class Data(Container, cfdm.Data):
         # --- End: for
 
         # Reset numpy.seterr
-        numpy_seterr(**original_numpy_seterr)
+        np.seterr(**original_numpy_seterr)
 
         source = result.source(None)
         if source is not None and source.get_compression_type():
@@ -4960,7 +4937,7 @@ class Data(Container, cfdm.Data):
             new_pmshape[0] += matrix1.shape[0]
 
             # Initialise an empty partition matrix with the new shape
-            new_matrix = numpy_empty(new_pmshape, dtype=object)
+            new_matrix = np.empty(new_pmshape, dtype=object)
 
             # Insert the data0 partition matrix
             new_matrix[: matrix0.shape[0]] = matrix0
@@ -4976,7 +4953,7 @@ class Data(Container, cfdm.Data):
             # ------------------------------------------------------------
             # 7. Update the size, shape and dtype of data0
             # ------------------------------------------------------------
-            original_shape0 = data0._shape
+            #    original_shape0 = data0._shape
 
             data0._size += data1._size
 
@@ -4987,7 +4964,7 @@ class Data(Container, cfdm.Data):
             dtype0 = data0.dtype
             dtype1 = data1.dtype
             if dtype0 != dtype1:
-                data0.dtype = numpy_result_type(dtype0, dtype1)
+                data0.dtype = np.result_type(dtype0, dtype1)
 
         #            # --------------------------------------------------------
         #            # 8. Concatenate the auxiliary mask
@@ -5766,7 +5743,7 @@ class Data(Container, cfdm.Data):
                 # shape of the data array then the weights are assumed
                 # to span the collapse axes in the order in which they
                 # are given
-                if numpy_shape(weights) == self_shape:
+                if np.shape(weights) == self_shape:
                     weights = {tuple(self_axes): weights}
                 else:
                     weights = {tuple([self_axes[i] for i in axes]): weights}
@@ -5791,12 +5768,12 @@ class Data(Container, cfdm.Data):
             # --- End: if
 
             for key, weight in tuple(weights.items()):
-                if weight is None or numpy_size(weight) == 1:
+                if weight is None or np.size(weight) == 1:
                     # Ignore undefined weights and size 1 weights
                     del weights[key]
                     continue
 
-                weight_ndim = numpy_ndim(weight)
+                weight_ndim = np.ndim(weight)
                 if weight_ndim != len(key):
                     raise ValueError(
                         "Can't collapse: Incorrect number of weights "
@@ -5809,11 +5786,11 @@ class Data(Container, cfdm.Data):
                         "axes (%d > %d)" % (weight.ndim, ndim)
                     )
 
-                for n, axis in zip(numpy_shape(weight), key):
+                for n, axis in zip(np.shape(weight), key):
                     if n != self_shape[self_axes.index(axis)]:
                         raise ValueError(
                             "Can't collapse: Incorrect weights "
-                            "shape {!r}".format(numpy_shape(weight))
+                            "shape {!r}".format(np.shape(weight))
                         )
                 # --- End: for
 
@@ -5969,7 +5946,7 @@ class Data(Container, cfdm.Data):
         #        new._flag_partitions_for_processing(_parallelise_collapse)
 
         processed_partitions = []
-        for pmindex, partition in numpy_ndenumerate(new.partitions.matrix):
+        for pmindex, partition in np.ndenumerate(new.partitions.matrix):
             if partition._process_partition:
                 # Only process the partition if it is flagged
                 partition.open(config)
@@ -6002,7 +5979,7 @@ class Data(Container, cfdm.Data):
                     Nmax,
                     mtol,
                     _preserve_partitions=_preserve_partitions,
-                    _parallelise_collapse_subspace=_parallelise_collapse_sub,
+                    _parallelise_collapse_subspace=False,
                     **kwargs,
                 )
 
@@ -6020,7 +5997,7 @@ class Data(Container, cfdm.Data):
         # are distributed to every rank and processed_partitions now
         # contains all the processed partitions from every rank.
         processed_partitions = self._share_partitions(
-            processed_partitions, _parallelise_collapse
+            processed_partitions, False
         )
 
         # Put the processed partitions back in the partition matrix
@@ -6031,7 +6008,7 @@ class Data(Container, cfdm.Data):
 
             p_datatype = partition.subarray.dtype
             if datatype != p_datatype:
-                datatype = numpy_result_type(p_datatype, datatype)
+                datatype = np.result_type(p_datatype, datatype)
         # --- End: for
 
         #        # Share the lock files created by each rank for each partition
@@ -6199,7 +6176,7 @@ class Data(Container, cfdm.Data):
 
                     if wmin == 0:
                         # Mask the array where the weights are zero
-                        array = numpy_ma_masked_where(w == 0, array, copy=True)
+                        array = np.ma.masked_where(w == 0, array, copy=True)
                         if array.mask.all():
                             # The array is all missing data
                             partition.close()
@@ -6218,7 +6195,7 @@ class Data(Container, cfdm.Data):
                     ndim = array.ndim
                     new_shape = shape[:n_non_collapse_axes]
                     new_shape += (reduce(mul, shape[n_non_collapse_axes:]),)
-                    array = numpy_reshape(array.copy(), new_shape)
+                    array = np.reshape(array.copy(), new_shape)
 
                     if weights is not None:
                         w = kwargs["weights"]
@@ -6227,7 +6204,7 @@ class Data(Container, cfdm.Data):
                             # opposed to spanning all axes)
                             new_shape = (w.size,)
 
-                        kwargs["weights"] = numpy_reshape(w, new_shape)
+                        kwargs["weights"] = np.reshape(w, new_shape)
                 # --- End: if
 
                 p_out = func(array, masked=p_masked, **kwargs)
@@ -6450,7 +6427,7 @@ class Data(Container, cfdm.Data):
             out = cls._collapse_mask(out, masked, N, Nmax, mtol)
         else:
             # no data - return all masked
-            out = numpy_ma_masked_all(
+            out = np.ma.masked_all(
                 data.shape[:n_non_collapse_axes], data.dtype
             )
 
@@ -6480,7 +6457,7 @@ class Data(Container, cfdm.Data):
         if masked and mtol < 1:
             x = N < (1 - mtol) * Nmax
             if x.any():
-                array = numpy_ma_masked_where(x, array, copy=False)
+                array = np.ma.masked_where(x, array, copy=False)
         # --- End: if
 
         return array
@@ -6565,7 +6542,7 @@ class Data(Container, cfdm.Data):
 
             zero_weights = zero_weights or (weight.min() <= 0)
 
-            masked = masked or numpy_ma_isMA(weight)
+            masked = masked or np.ma.isMA(weight)
 
             if weight.ndim != array_ndim:
                 # Make sure that the weight has the same number of
@@ -6611,7 +6588,7 @@ class Data(Container, cfdm.Data):
                 # axes or b) The weights contain masked values
                 weights_out = broadcast_array(weights_out, array_shape)
 
-            if masked and numpy_ma_isMA(array):
+            if masked and np.ma.isMA(array):
                 if not (array.mask | weights_out.mask == array.mask).all():
                     raise ValueError(
                         "The output weights mask {} is not compatible with "
@@ -7917,7 +7894,7 @@ class Data(Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arctan, units=_units_radians, inplace=True)
+        d.func(np.arctan, units=_units_radians, inplace=True)
 
         return d
 
@@ -8006,7 +7983,7 @@ class Data(Container, cfdm.Data):
 
         # preserve_invalid necessary because arctanh has a restricted domain
         d.func(
-            numpy_arctanh,
+            np.arctanh,
             units=_units_radians,
             inplace=True,
             preserve_invalid=True,
@@ -8058,7 +8035,7 @@ class Data(Container, cfdm.Data):
 
         # preserve_invalid necessary because arcsin has a restricted domain
         d.func(
-            numpy_arcsin,
+            np.arcsin,
             units=_units_radians,
             inplace=True,
             preserve_invalid=True,
@@ -8106,7 +8083,7 @@ class Data(Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arcsinh, units=_units_radians, inplace=True)
+        d.func(np.arcsinh, units=_units_radians, inplace=True)
 
         return d
 
@@ -8155,7 +8132,7 @@ class Data(Container, cfdm.Data):
 
         # preserve_invalid necessary because arccos has a restricted domain
         d.func(
-            numpy_arccos,
+            np.arccos,
             units=_units_radians,
             inplace=True,
             preserve_invalid=True,
@@ -8207,7 +8184,7 @@ class Data(Container, cfdm.Data):
 
         # preserve_invalid necessary because arccosh has a restricted domain
         d.func(
-            numpy_arccosh,
+            np.arccosh,
             units=_units_radians,
             inplace=True,
             preserve_invalid=True,
@@ -8284,7 +8261,7 @@ class Data(Container, cfdm.Data):
             partition.open(config)
             array = partition.array
             a = array.all()
-            if not a and a is not numpy_ma_masked:
+            if not a and a is not np.ma.masked:
                 partition.close()
                 return False
 
@@ -8756,7 +8733,7 @@ class Data(Container, cfdm.Data):
             for partition in self.partitions.matrix.flat:
                 partition.open(config)
                 array = partition.array
-                index = numpy_unravel_index(array.argmax(), array.shape)
+                index = np.unravel_index(array.argmax(), array.shape)
                 mx = array[index]
                 index = [x[0] + i for x, i in zip(partition.location, index)]
                 out.append((mx, index))
@@ -8767,7 +8744,7 @@ class Data(Container, cfdm.Data):
             if unravel:
                 return tuple(index)
 
-            return numpy_ravel_multi_index(index, self.shape)
+            return np.ravel_multi_index(index, self.shape)
 
         # Parse axis
         ndim = self._ndim
@@ -8782,7 +8759,7 @@ class Data(Container, cfdm.Data):
         sections = self.section(axis, chunks=True)
         for key, d in sections.items():
             array = d.varray.argmax(axis=axis)
-            array = numpy_expand_dims(array, axis)
+            array = np.expand_dims(array, axis)
             sections[key] = type(self)(
                 array, self.Units, fill_value=self.fill_value
             )
@@ -9557,10 +9534,10 @@ class Data(Container, cfdm.Data):
             array = array.astype(bool)
             if partition.masked:
                 # data is masked
-                partition.subarray = numpy_ma_array(array, "int32")
+                partition.subarray = np.ma.array(array, "int32")
             else:
                 # data is not masked
-                partition.subarray = numpy_array(array, "int32")
+                partition.subarray = np.array(array, "int32")
 
             partition.Units = _units_1
 
@@ -9687,10 +9664,10 @@ class Data(Container, cfdm.Data):
         data = data()
         if copy:
             data = data.copy()
-            if dtype is not None and numpy_dtype(dtype) != data.dtype:
+            if dtype is not None and np.dtype(dtype) != data.dtype:
                 data.dtype = dtype
         else:
-            if dtype is not None and numpy_dtype(dtype) != data.dtype:
+            if dtype is not None and np.dtype(dtype) != data.dtype:
                 data = data.copy()
                 data.dtype = dtype
         # --- End: if
@@ -9789,7 +9766,7 @@ class Data(Container, cfdm.Data):
                 break
 
             array = d[i : i + n].array
-            if numpy_ma_isMA(array):
+            if np.ma.isMA(array):
                 array = array.compressed()
 
             size = array.size
@@ -9862,7 +9839,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_cos, units=_units_1, inplace=True)
+        d.func(np.cos, units=_units_1, inplace=True)
 
         return d
 
@@ -9912,7 +9889,7 @@ class Data(Container, cfdm.Data):
                 partition.open(config)
                 partition._pmindex = pmindex
                 array = partition.array
-                n += numpy_ma_count(array)
+                n += np.ma.count(array)
                 partition.close()
                 processed_partitions.append(partition)
             # --- End: if
@@ -10260,7 +10237,7 @@ class Data(Container, cfdm.Data):
         for partition in self.partitions.matrix.flat:
             partition.open(config)
             array = partition.array
-            array = numpy_unique(array)
+            array = np.unique(array)
 
             if partition.masked:
                 # Note that compressing a masked array may result in
@@ -10275,7 +10252,7 @@ class Data(Container, cfdm.Data):
 
             partition.close()
 
-        u = numpy.unique(numpy_array(u, dtype=self.dtype))
+        u = np.unique(np.array(u, dtype=self.dtype))
 
         return type(self)(u, units=self.Units)
 
@@ -10481,7 +10458,7 @@ class Data(Container, cfdm.Data):
         if d.Units:
             d.Units = _units_1
 
-        d.func(numpy_exp, inplace=True)
+        d.func(np.exp, inplace=True)
 
         return d
 
@@ -10513,7 +10490,7 @@ class Data(Container, cfdm.Data):
 
         # Parse position
         if not isinstance(position, int):
-            raise ValueError(f"position parameter must be an integer")
+            raise ValueError("Position parameter must be an integer")
 
         ndim = d.ndim
         if -ndim - 1 <= position < 0:
@@ -11386,7 +11363,7 @@ class Data(Container, cfdm.Data):
             return d
 
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
-        new_shape.insert(axes[0], numpy_prod([shape[i] for i in axes]))
+        new_shape.insert(axes[0], np.prod([shape[i] for i in axes]))
 
         out = d.empty(new_shape, dtype=d.dtype, units=d.Units, chunk=True)
         out.hardmask = False
@@ -11442,7 +11419,7 @@ class Data(Container, cfdm.Data):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(numpy_floor, out=True, inplace=inplace)
+        return self.func(np.floor, out=True, inplace=inplace)
 
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
@@ -11495,14 +11472,14 @@ class Data(Container, cfdm.Data):
           [18 21 24 27]]]
 
         """
-        e_ndim = numpy_ndim(e)
+        e_ndim = np.ndim(e)
         if e_ndim:
             if inplace:
                 d = self
             else:
                 d = self.copy()
 
-            for j in range(numpy_ndim(e)):
+            for j in range(np.ndim(e)):
                 d.insert_dimension(-1, inplace=True)
         else:
             d = self
@@ -11861,7 +11838,7 @@ class Data(Container, cfdm.Data):
                     if index < 0:
                         index += self._size
 
-                    index = numpy_unravel_index(index, self.shape)
+                    index = np.unravel_index(index, self.shape)
                 elif len(index) == self.ndim:
                     index = tuple(index)
                 else:
@@ -11888,11 +11865,11 @@ class Data(Container, cfdm.Data):
                 "Python scalar".format(self.__class__.__name__)
             )
 
-        if not numpy_ma_isMA(array):
+        if not np.ma.isMA(array):
             return array.item()
 
         mask = array.mask
-        if mask is numpy_ma_nomask or not mask.item():
+        if mask is np.ma.nomask or not mask.item():
             return array.item()
 
         return cf_masked
@@ -11961,9 +11938,9 @@ class Data(Container, cfdm.Data):
             partition.open(config)
             array = partition.array
 
-            array = numpy_ma_masked_invalid(array, copy=False)
+            array = np.ma.masked_invalid(array, copy=False)
             array.shrink_mask()
-            if array.mask is numpy_ma_nomask:
+            if array.mask is np.ma.nomask:
                 array = array.data
 
             partition.subarray = array
@@ -12105,7 +12082,7 @@ class Data(Container, cfdm.Data):
             shape=tuple(shape),
             size=reduce(mul, shape, 1),
             ndim=len(shape),
-            dtype=numpy_dtype(dtype),
+            dtype=np.dtype(dtype),
             fill_value=cf_masked,
         )
 
@@ -12365,7 +12342,7 @@ class Data(Container, cfdm.Data):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
-        return self.func(numpy_rint, out=True, inplace=inplace)
+        return self.func(np.rint, out=True, inplace=inplace)
 
     def root_mean_square(
         self,
@@ -12491,7 +12468,7 @@ class Data(Container, cfdm.Data):
 
         """
         return self.func(
-            numpy_round, out=True, inplace=inplace, decimals=decimals
+            np.round, out=True, inplace=inplace, decimals=decimals
         )
 
     def stats(
@@ -13163,7 +13140,7 @@ class Data(Container, cfdm.Data):
             else:
                 c = _slice_to_partition(condition, indices)
 
-            c_masked = numpy_ma_isMA(c) and numpy_ma_is_masked(c)
+            c_masked = np.ma.isMA(c) and np.ma.is_masked(c)
 
             # --------------------------------------------------------
             # Find value to use where condition is True for this
@@ -13179,7 +13156,7 @@ class Data(Container, cfdm.Data):
                     T_masked = x is cf_masked
             else:
                 T = _slice_to_partition(x, indices)
-                T_masked = numpy_ma_isMA(T) and numpy_ma_is_masked(T)
+                T_masked = np.ma.isMA(T) and np.ma.is_masked(T)
 
             # --------------------------------------------------------
             # Find value to use where condition is False for this
@@ -13195,7 +13172,7 @@ class Data(Container, cfdm.Data):
                     F_masked = y is cf_masked
             else:
                 F = _slice_to_partition(y, indices)
-                F_masked = numpy_ma_isMA(F) and numpy_ma_is_masked(F)
+                F_masked = np.ma.isMA(F) and np.ma.is_masked(F)
 
             # --------------------------------------------------------
             # Make sure that at least one of the arrays is the same
@@ -13205,12 +13182,10 @@ class Data(Container, cfdm.Data):
                 if x is cf_masked or y is cf_masked:
                     c = _broadcast(c, shape)
                 else:
-                    max_sizes = max(
-                        (numpy_size(c), numpy_size(T), numpy_size(F))
-                    )
-                    if numpy_size(c) == max_sizes:
+                    max_sizes = max((np.size(c), np.size(T), np.size(F)))
+                    if np.size(c) == max_sizes:
                         c = _broadcast(c, shape)
-                    elif numpy_size(T) == max_sizes:
+                    elif np.size(T) == max_sizes:
                         T = _broadcast(T, shape)
                     else:
                         F = _broadcast(F, shape)
@@ -13227,9 +13202,9 @@ class Data(Container, cfdm.Data):
             # --------------------------------------------------------
             if T_masked or F_masked:
                 # T and/or F have missing data
-                new = numpy_ma_where(c, T, F)
+                new = np.ma.where(c, T, F)
                 if c_masked:
-                    new = numpy_ma_where(c.mask, array, new)
+                    new = np.ma.where(c.mask, array, new)
 
                 if partition.masked:
                     if hardmask:
@@ -13237,14 +13212,14 @@ class Data(Container, cfdm.Data):
                         # a hardmask, so apply the original
                         # partition's mask to the new array.
                         new.mask |= array.mask
-                    elif not numpy_ma_is_masked(new):
+                    elif not np.ma.is_masked(new):
                         # The original partition has missing data and
                         # a softmask and the new array doesn't have
                         # missing data, so turn the new array into an
                         # unmasked array.
                         new = new.data[...]
 
-                elif not numpy_ma_is_masked(new):
+                elif not np.ma.is_masked(new):
                     # The original partition doesn't have missing data
                     # and neither does the new array, so turn the new
                     # array into an unmasked array.
@@ -13252,15 +13227,15 @@ class Data(Container, cfdm.Data):
 
             else:
                 # Neither T nor F have missing data
-                new = numpy_where(c, T, F)
+                new = np.where(c, T, F)
                 if c_masked:
-                    new = numpy_ma_where(c.mask, array, new)
+                    new = np.ma.where(c.mask, array, new)
 
                 if partition.masked and hardmask:
                     # The original partition has missing data and a
                     # hardmask, so apply the original partition's mask
                     # to the new array.
-                    new = numpy_ma_masked_where(array.mask, new, copy=False)
+                    new = np.ma.masked_where(array.mask, new, copy=False)
             # --- End: if
 
             # --------------------------------------------------------
@@ -13328,7 +13303,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_sin, units=_units_1, inplace=True)
+        d.func(np.sin, units=_units_1, inplace=True)
 
         return d
 
@@ -13385,8 +13360,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_sinh, units=_units_1, inplace=True)
-
+        d.func(np.sinh, units=_units_1, inplace=True)
         return d
 
     @_inplace_enabled(default=False)
@@ -13440,7 +13414,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_cosh, units=_units_1, inplace=True)
+        d.func(np.cosh, units=_units_1, inplace=True)
 
         return d
 
@@ -13498,7 +13472,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_tanh, units=_units_1, inplace=True)
+        d.func(np.tanh, units=_units_1, inplace=True)
 
         return d
 
@@ -13523,14 +13497,14 @@ class Data(Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         if base is None:
-            d.func(numpy_log, units=_units_1, inplace=True)
+            d.func(np.log, units=_units_1, inplace=True)
         elif base == 10:
-            d.func(numpy_log10, units=_units_1, inplace=True)
+            d.func(np.log10, units=_units_1, inplace=True)
         elif base == 2:
-            d.func(numpy_log2, units=_units_1, inplace=True)
+            d.func(np.log2, units=_units_1, inplace=True)
         else:
-            d.func(numpy_log, units=_units_1, inplace=True)
-            d /= numpy_log(base)
+            d.func(np.log, units=_units_1, inplace=True)
+            d /= np.log(base)
 
         return d
 
@@ -13699,7 +13673,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(numpy_tan, units=_units_1, inplace=True)
+        d.func(np.tan, units=_units_1, inplace=True)
 
         return d
 
@@ -13849,7 +13823,7 @@ class Data(Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(numpy_trunc, out=True, inplace=inplace)
+        return self.func(np.trunc, out=True, inplace=inplace)
 
     @classmethod
     def empty(
@@ -13959,9 +13933,9 @@ class Data(Container, cfdm.Data):
         """
         array = FilledArray(
             shape=tuple(shape),
-            size=reduce(operator_mul, shape, 1),
+            size=reduce(mul, shape, 1),
             ndim=len(shape),
-            dtype=numpy_dtype(dtype),
+            dtype=np.dtype(dtype),
             fill_value=fill_value,
         )
 
@@ -14063,7 +14037,7 @@ class Data(Container, cfdm.Data):
 
             # Steps for masked data when want to preserve invalid values:
             # Step 1. extract the non-masked data and the mask separately
-            detach_mask = preserve_invalid and numpy_ma_isMA(array)
+            detach_mask = preserve_invalid and np.ma.isMA(array)
             if detach_mask:
                 mask = array.mask  # must store mask before detach it below
                 array = array.data  # mask detached
@@ -14076,11 +14050,11 @@ class Data(Container, cfdm.Data):
 
             p_datatype = array.dtype
             if datatype != p_datatype:
-                datatype = numpy_result_type(p_datatype, datatype)
+                datatype = np.result_type(p_datatype, datatype)
 
             if detach_mask:
                 # Step 3: reattach original mask onto the output data
-                array = numpy_ma_array(array, mask=mask)
+                array = np.ma_array(array, mask=mask)
 
             partition.subarray = array
 
@@ -14929,7 +14903,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         partition.new_part(p_indices, axis_to_position, master_flip)
         partition.shape = shape
 
-        new_partition_matrix = numpy_empty(partitions.shape, dtype=object)
+        new_partition_matrix = np.empty(partitions.shape, dtype=object)
         new_partition_matrix[...] = partition
 
         return new_partition_matrix
@@ -14971,10 +14945,10 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
 
     new_shape = [
         len(set(s))
-        for s in numpy_unravel_index(flat_pm_indices, partitions.shape)
+        for s in np.unravel_index(flat_pm_indices, partitions.shape)
     ]
 
-    new_partition_matrix = numpy_empty((len(flat_pm_indices),), dtype=object)
+    new_partition_matrix = np.empty((len(flat_pm_indices),), dtype=object)
     new_partition_matrix[...] = partitions_list
     new_partition_matrix.resize(new_shape)
 
@@ -15016,14 +14990,14 @@ def _broadcast(a, shape):
     """
     # Replace with numpy.broadcast_to v1.10 ??/ TODO
 
-    a_shape = numpy_shape(a)
+    a_shape = np.shape(a)
     if a_shape == shape:
         return a
 
     tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
-    return numpy_tile(a, tile)
+    return np.tile(a, tile)
 
 
 # class AuxiliaryMask:

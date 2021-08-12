@@ -1,14 +1,15 @@
 import itertools
 import logging
 import textwrap
-
-from uuid import uuid4
-
 from datetime import datetime
+from uuid import uuid4
 
 import cfdm
 import cftime
+import dask.array as da
 from cfdm import Constructs
+from dask.array.core import getter, normalize_chunks
+from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
 from numpy import arange as numpy_arange
 from numpy import arccos as numpy_arccos
@@ -30,21 +31,12 @@ from numpy import sin as numpy_sin
 from numpy import transpose as numpy_transpose
 from numpy import where as numpy_where
 
-import numpy as np
-
-import dask.array as da
-from dask.array.core import (
-    getter,
-    normalize_chunks,
-)
-from dask.base import tokenize
-
-from netCDF4 import date2num as netCDF4_date2num
-
-import cftime
-import cfdm
-
-from ... import __version__, __Conventions__
+from ... import __Conventions__, __version__
+from ...constants import _stash2standard_name
+from ...data import UMArray
+from ...data.creation import get_lock
+from ...data.data import Data
+from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
@@ -55,11 +47,7 @@ from ...functions import load_stash2standard_name
 from ...functions import rtol as cf_rtol
 from ...units import Units
 
-from ...data.data import Data
-from ...data.creation import get_lock
-
-from ...data import UMArray
-from ...data.functions import _open_um_file, _close_um_file
+# import numpy as np
 
 
 logger = logging.getLogger(__name__)
@@ -1844,6 +1832,9 @@ class UMField:
             # --------------------------------------------------------
             # 0-d partition matrix
             # --------------------------------------------------------
+            # TODODASK, check with DH the below is right (was a missing var)
+            file_data_types = set()
+
             rec = recs[0]
 
             fill_value = rec.real_hdr.item(
@@ -1857,7 +1848,7 @@ class UMField:
             subarray = UMArray(
                 filename=filename,
                 ndim=2,
-                shape=yz_shape,
+                shape=yx_shape,
                 size=yx_size,
                 dtype=data_type_in_file(rec),
                 header_offset=rec.hdr_offset,
