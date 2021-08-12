@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.FieldList &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.FieldList.select_by_construct" href="../method/cf.FieldList.select_by_construct.html" />
+    <link rel="prev" title="cf.Field.unsafe_array" href="../attribute/cf.Field.unsafe_array.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.9.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../attribute/cf.Field.unsafe_array.html" title="previous chapter">cf.Field.unsafe_array</a></li>
+      <li>Next: <a href="../method/cf.FieldList.select_by_construct.html" title="next chapter">cf.FieldList.select_by_construct</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-fieldlist">
+<span id="fieldlist"></span><h1>cf.FieldList<a class="headerlink" href="#cf-fieldlist" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.FieldList">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldList</code><span class="sig-paren">(</span><em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.9.0/cf/fieldlist.py#L7-L272"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomainlist.FieldDomainList</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.constructlist.ConstructList</span></code></p>
+<p>An ordered sequence of fields.</p>
+<p>Each element of a field list is a field construct.</p>
+<p>A field list supports the python list-like operations (such as
+indexing and methods like <code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code>). These methods provide
+functionality similar to that of a <a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html#tut-morelists" title="(in Python v3.9)"><span class="xref std std-ref">built-in list</span></a>. The main difference is that when a field
+construct element needs to be assessed for equality its
+<a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
+operator.</p>
+<p><strong>Initialization</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>fields: (sequence of) <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, optional</dt><dd><p>Create a new list with these field constructs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="selecting">
+<h2>Selecting<a class="headerlink" href="#selecting" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_construct.html#cf.FieldList.select_by_construct" title="cf.FieldList.select_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_construct</span></code></a></p></td>
+<td><p>Select elements by their metadata constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_identity</span></code></a></p></td>
+<td><p>Select list elements constructs by identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_naxes.html#cf.FieldList.select_by_naxes" title="cf.FieldList.select_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_naxes</span></code></a></p></td>
+<td><p>Select field constructs by property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_ncvar.html#cf.FieldList.select_by_ncvar" title="cf.FieldList.select_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_ncvar</span></code></a></p></td>
+<td><p>Select list elements by netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_property.html#cf.FieldList.select_by_property" title="cf.FieldList.select_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_property</span></code></a></p></td>
+<td><p>Select list elements by property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_rank.html#cf.FieldList.select_by_rank" title="cf.FieldList.select_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_rank</span></code></a></p></td>
+<td><p>Select list elements by the number of domain axis constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_by_units.html#cf.FieldList.select_by_units" title="cf.FieldList.select_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_units</span></code></a></p></td>
+<td><p>Select field constructs by units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.select.html#cf.FieldList.select" title="cf.FieldList.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Alias of <a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_identity</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_field</span></code></a></p></td>
+<td><p>Select a unique field construct by its identity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__call__.html#cf.FieldList.__call__" title="cf.FieldList.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a></p></td>
+<td><p>Alias for <a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_identity</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparison">
+<h2>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two lists are the same.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.close.html#cf.FieldList.close" title="cf.FieldList.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by each construct in the list.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.concatenate.html#cf.FieldList.concatenate" title="cf.FieldList.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join the sequence of fields together.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.copy.html#cf.FieldList.copy" title="cf.FieldList.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select.html#cf.FieldList.select" title="cf.FieldList.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Alias of <a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_identity</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__call__.html#cf.FieldList.__call__" title="cf.FieldList.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a></p></td>
+<td><p>Alias for <a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_identity</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="list-like-operations">
+<h2>List-like operations<a class="headerlink" href="#list-like-operations" title="Permalink to this headline">¶</a></h2>
+<p>These methods provide functionality identical to that of a Python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, with one exception:</p>
+<ul class="simple">
+<li><p>When a field construct element needs to be assessed for equality,
+its <a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal notranslate"><span class="pre">==</span></code>
+operator. This affects the <a class="reference internal" href="../method/cf.FieldList.count.html#cf.FieldList.count" title="cf.FieldList.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>,
+<a class="reference internal" href="../method/cf.FieldList.index.html#cf.FieldList.index" title="cf.FieldList.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>, <a class="reference internal" href="../method/cf.FieldList.remove.html#cf.FieldList.remove" title="cf.FieldList.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>,
+<a class="reference internal" href="../method/cf.FieldList.__contains__.html#cf.FieldList.__contains__" title="cf.FieldList.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a>, <a class="reference internal" href="../method/cf.FieldList.__eq__.html#cf.FieldList.__eq__" title="cf.FieldList.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a> and
+<a class="reference internal" href="../method/cf.FieldList.__ne__.html#cf.FieldList.__ne__" title="cf.FieldList.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a> methods.</p></li>
+</ul>
+<p>For example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a></p></td>
+<td><p>Append object to the end of the list.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.clear.html#cf.FieldList.clear" title="cf.FieldList.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a></p></td>
+<td><p>Remove all items from list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.count.html#cf.FieldList.count" title="cf.FieldList.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Return number of occurrences of value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.extend.html#cf.FieldList.extend" title="cf.FieldList.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a></p></td>
+<td><p>Extend list by appending elements from the iterable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.index.html#cf.FieldList.index" title="cf.FieldList.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a></p></td>
+<td><p>Return first index of value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.insert.html#cf.FieldList.insert" title="cf.FieldList.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a></p></td>
+<td><p>Insert object before index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.pop.html#cf.FieldList.pop" title="cf.FieldList.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a></p></td>
+<td><p>Remove and return item at index (default last).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.remove.html#cf.FieldList.remove" title="cf.FieldList.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a></p></td>
+<td><p>Remove first occurrence of value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.reverse.html#cf.FieldList.reverse" title="cf.FieldList.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a></p></td>
+<td><p>Reverse <em>IN PLACE</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.sort.html#cf.FieldList.sort" title="cf.FieldList.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a></p></td>
+<td><p>Sort of the list in place.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__add__.html#cf.FieldList.__add__" title="cf.FieldList.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__contains__.html#cf.FieldList.__contains__" title="cf.FieldList.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></p></td>
+<td><p>Called to implement membership test operators.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__eq__.html#cf.FieldList.__eq__" title="cf.FieldList.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__ge__.html#cf.FieldList.__ge__" title="cf.FieldList.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></p></td>
+<td><p>Return self&gt;=value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__getitem__.html#cf.FieldList.__getitem__" title="cf.FieldList.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Called to implement evaluation of f[index]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__getslice__.html#cf.FieldList.__getslice__" title="cf.FieldList.__getslice__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getslice__</span></code></a></p></td>
+<td><p>Called to implement evaluation of f[i:j]</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__gt__.html#cf.FieldList.__gt__" title="cf.FieldList.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></p></td>
+<td><p>Return self&gt;value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__iter__.html#cf.FieldList.__iter__" title="cf.FieldList.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></p></td>
+<td><p>Implement iter(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__iadd__.html#cf.FieldList.__iadd__" title="cf.FieldList.__iadd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iadd__</span></code></a></p></td>
+<td><p>Implement self+=value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__imul__.html#cf.FieldList.__imul__" title="cf.FieldList.__imul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imul__</span></code></a></p></td>
+<td><p>Implement self*=value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__le__.html#cf.FieldList.__le__" title="cf.FieldList.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></p></td>
+<td><p>Return self&lt;=value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__len__.html#cf.FieldList.__len__" title="cf.FieldList.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a></p></td>
+<td><p>Return len(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__lt__.html#cf.FieldList.__lt__" title="cf.FieldList.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></p></td>
+<td><p>Return self&lt;value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__mul__.html#cf.FieldList.__mul__" title="cf.FieldList.__mul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__ne__.html#cf.FieldList.__ne__" title="cf.FieldList.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__repr__.html#cf.FieldList.__repr__" title="cf.FieldList.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__rmul__.html#cf.FieldList.__rmul__" title="cf.FieldList.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
+<td><p>Return value*self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__setitem__.html#cf.FieldList.__setitem__" title="cf.FieldList.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Set self[key] to value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__str__.html#cf.FieldList.__str__" title="cf.FieldList.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special-methods">
+<h2>Special methods<a class="headerlink" href="#special-methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.__call__.html#cf.FieldList.__call__" title="cf.FieldList.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a></p></td>
+<td><p>Alias for <a class="reference internal" href="../method/cf.FieldList.select_by_identity.html#cf.FieldList.select_by_identity" title="cf.FieldList.select_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_identity</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.__deepcopy__.html#cf.FieldList.__deepcopy__" title="cf.FieldList.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> standard library function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldList.select1.html#cf.FieldList.select1" title="cf.FieldList.select1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select1</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldList.set_equals.html#cf.FieldList.set_equals" title="cf.FieldList.set_equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_equals</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-05-25.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

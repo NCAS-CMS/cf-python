@@ -2,19 +2,16 @@ import logging
 
 import cfdm
 
-from .units import Units
-
-from .functions import bounds_combination_mode
-
 from .constants import (
-    formula_terms_standard_names,
-    formula_terms_max_dimensions,
-    formula_terms_units,
     formula_terms_computed_standard_names,
     formula_terms_D1,
+    formula_terms_max_dimensions,
+    formula_terms_standard_names,
+    formula_terms_units,
 )
-
 from .docstring import _docstring_substitution_definitions
+from .functions import bounds_combination_mode
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -295,7 +292,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                         if term_standard_name == x:
                             computed_standard_name = y
                             break
-        # --- End: if
 
         if computed_standard_name is None:
             # ------------------------------------------------------------
@@ -326,7 +322,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     "computed_standard_name", None
                 )
                 break
-        # --- End: if
 
         logger.detail(
             "computed_standard_name: {}".format(
@@ -637,7 +632,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                         "{!r} term {!r} has invalid "
                         "standard name: {!r}".format(term, var, standard_name)
                     )
-        # --- End: for
 
         if strict and not indices:
             raise ValueError(
@@ -2175,10 +2169,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     computed_axes,
                     k_axis,
                 )
-        # --- End: if
 
         # Still here?
         return (None,) * 5
-
-
-# --- End: class

@@ -1,12 +1,16 @@
 # Configure pre-commit hooks to check for Python code validity, formatting and
 # style issues and prompt for these to be corrected before committing.
 
+# Excludes for *all* pre-commit hooks as listed below:
+# (these are documentation files, either old ones or aut-generated ones)
+exclude: docs\/3\..*\d\/|docs\/_downloads\/|docs\/.*\/tutorial\.py
+
 repos:
 
   # Use specific format-enforcing pre-commit hooks from the core library
   # with the default configuration (see pre-commit.com for documentation)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v3.4.0
     hooks:
       - id: check-ast
       - id: debug-statements
@@ -19,7 +23,7 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cf-python pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: 20.8b1
+    rev: 21.5b0
     hooks:
       - id: black
         language_version: python3
@@ -44,6 +48,22 @@ repos:
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cf-python .flake8 file for our custom flake8 configuration)
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.3
+    rev: 3.9.1
     hooks:
       - id: flake8
+
+  # Apply the 'isort' tool to sort Python import statements systematically
+  # (see https://pycqa.github.io/isort/ for documentation). It is fully
+  # compatible with 'black' with the lines set to ensure so in the repo's
+  # pyproject.toml. Other than that and the below, no extra config is required.
+  - repo: https://github.com/pycqa/isort
+    rev: 5.8.0
+    hooks:
+      - id: isort
+        name: isort (python)
+      - id: isort
+        name: isort (cython)
+        types: [cython]
+      - id: isort
+        name: isort (pyi)
+        types: [pyi]

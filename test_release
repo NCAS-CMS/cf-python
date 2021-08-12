@@ -7,30 +7,24 @@
 set -x
 
 if [[ ! $1 ]] ; then 
-  echo "Must set version as \$1 (e.g. 3.2.0)"
+  echo "Must set version as \$1 (e.g. 3.10.0)"
   exit 1
 fi
 
 vn=$1
 
-mkdir -p ~/tmp
-cp dist/cf-python-$vn.tar.gz ~/tmp
-cd ~/tmp
-rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cf-python-$vn
-tar zxvf cf-python-$vn.tar.gz
-cd cf-python-$vn
-python setup.py install --home=~/tmp
+dir=~/tmp/test_cf-python
+rm -fr $dir
 
-export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
-export PATH=~/tmp/bin:$PATH
+pip install dist/cf-python-$vn.tar.gz -t $dir --no-deps
 
-cd ~/tmp/lib/python/cf/test
+export PYTHONPATH=$dir:$PYTHONAPTH
+export PATH=$dir/bin:$PATH
+
+cd $dir/cf/test
+
 python run_tests.py
 test_result_status=$?
-
-#mpirun -n 3 python run_tests.py
-#mpirun -n 2 python run_tests.py
-#mpirun -n 1 python run_tests.py
 
 set -x
 

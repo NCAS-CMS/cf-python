@@ -1,21 +1,19 @@
 import logging
+from copy import deepcopy
 
 from numpy import argsort as numpy_argsort
 from numpy import atleast_1d as numpy_atleast_1d
 from numpy import ndarray as numpy_ndarray
 
-from copy import deepcopy
-
-from .functions import equals as cf_equals
-from .functions import atol as cf_atol, rtol as cf_rtol
-from .functions import inspect as cf_inspect
-
 from .decorators import (
     _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
     _display_or_return,
+    _manage_log_level_via_verbosity,
 )
-
+from .functions import atol as cf_atol
+from .functions import equals as cf_equals
+from .functions import inspect as cf_inspect
+from .functions import rtol as cf_rtol
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +86,6 @@ class Flags:
         for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 return True
-        # --- End: for
 
         return False
 
@@ -293,7 +290,6 @@ class Flags:
             value = getattr(self, attr, None)
             if value is not None:
                 string.append("%s%s = %s" % (indent1, attr[1:], list(value)))
-        # --- End: for
 
         return "\n".join(string)
 
@@ -406,7 +402,6 @@ class Flags:
                     % (self.__class__.__name__, attr[1:])
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         return True
 
@@ -450,13 +445,8 @@ class Flags:
             if hasattr(self, attr):
                 indices = numpy_argsort(getattr(self, attr))
                 break
-        # --- End: for
 
         for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
                 array = getattr(self, attr).view()
                 array[...] = array[indices]
-        # --- End: for
-
-
-# --- End: class

@@ -1,9 +1,9 @@
 import numpy as np
+from numpy import full as numpy_full
 
-from . import abstract
-
-from ..functions import parse_indices
 from ..constants import masked as cf_masked
+from ..functions import parse_indices
+from . import abstract
 
 
 class FilledArray(abstract.Array):

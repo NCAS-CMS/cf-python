@@ -2,11 +2,10 @@ import datetime
 import faulthandler
 import inspect
 import itertools
-from operator import mul
 import os
 import unittest
-
 from functools import reduce
+from operator import mul
 
 import numpy as np
 
@@ -3161,8 +3160,63 @@ class DataTest(unittest.TestCase):
         d = cf.Data(["a", "b", "c"], mask=[1, 0, 0])
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
+    def test_Data_del_units(self):
+        d = cf.Data(1)
+        with self.assertRaises(ValueError):
+            d.del_units()
 
-# --- End: class
+        d = cf.Data(1, "")
+        self.assertEqual(d.del_units(), "")
+        d = cf.Data(1, "m")
+        self.assertEqual(d.del_units(), "m")
+
+        d = cf.Data(1, "days since 2000-1-1")
+        self.assertTrue(d.del_units(), "days since 2000-1-1")
+
+        d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        with self.assertRaises(ValueError):
+            d.del_units()
+
+    def test_Data_del_calendar(self):
+        d = cf.Data(1)
+        with self.assertRaises(ValueError):
+            d.del_calendar()
+
+        d = cf.Data(1, "")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
+
+        d = cf.Data(1, "m")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
+
+        d = cf.Data(1, "days since 2000-1-1")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
+
+        d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertTrue(d.del_calendar(), "noleap")
+
+    def test_Data_has_units(self):
+        d = cf.Data(1)
+        self.assertFalse(d.has_units())
+        d = cf.Data(1, "")
+        self.assertTrue(d.has_units())
+        d = cf.Data(1, "m")
+        self.assertTrue(d.has_units())
+
+    def test_Data_has_calendar(self):
+        d = cf.Data(1)
+        self.assertFalse(d.has_calendar())
+        d = cf.Data(1, "")
+        self.assertFalse(d.has_calendar())
+        d = cf.Data(1, "m")
+        self.assertFalse(d.has_calendar())
+
+        d = cf.Data(1, "days since 2000-1-1")
+        self.assertFalse(d.has_calendar())
+        d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertTrue(d.has_calendar())
 
 
 if __name__ == "__main__":

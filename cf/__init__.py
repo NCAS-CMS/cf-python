@@ -22,7 +22,7 @@ The `cf` package can:
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 
 * incorporate, and create, metadata stored in external files (*new in
   version 3.0.0*),
@@ -94,9 +94,8 @@ _requires = (
     "psutil",
 )
 
-_error0 = "cf v{} requires the modules {}. ".format(
-    __version__, ", ".join(_requires)
-)
+x = ", ".join(_requires)
+_error0 = f"cf v{ __version__} requires the modules {x}. "
 
 try:
     import cfdm
@@ -113,31 +112,21 @@ import platform
 _minimum_vn = "3.6.0"
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "Bad python version: cf requires python version {} or later. "
-        "Got {}".format(_minimum_vn, platform.python_version())
+        f"Bad python version: cf requires python version {_minimum_vn} "
+        f"or later. Got {platform.python_version()}"
+    )
+
+if LooseVersion(platform.python_version()) < LooseVersion("3.7.0"):
+    print(
+        "\nDeprecation Warning: Python 3.6 support will be removed at "
+        "the next version of cf\n"
     )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
-if importlib.util.find_spec("mpi4py"):
-    from mpi4py import MPI
-
-    mpi_comm = MPI.COMM_WORLD
-    mpi_size = mpi_comm.Get_size()
-    mpi_rank = mpi_comm.Get_rank()
-
-    if mpi_size > 1:
-        mpi_on = True
-        if mpi_rank == 0:
-            print("===============================================")
-            print("WARNING: MPI support is an experimental feature")
-            print("  and is not recommended for operational use.")
-            print("===============================================")
-    else:
-        mpi_on = False
-else:
-    mpi_on = False
-    mpi_size = 1
+# TODODASK - Remove the next 2 lines when the move to dask is complete
+mpi_on = False
+mpi_size = 1
 
 try:
     import netCDF4
@@ -168,40 +157,40 @@ except ImportError as error1:
 _minimum_vn = "0.6.0"
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad psutil version: cf requires psutil>={}. "
-        "Got {} at {}".format(_minimum_vn, psutil.__version__, psutil.__file__)
+        f"Bad psutil version: cf requires psutil>={_minimum_vn}. "
+        f"Got {psutil.__version__} at {psutil.__file__}"
     )
 
 # Check the version of netCDF4
-_minimum_vn = "1.5.3"
+_minimum_vn = "1.5.4"
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad netCDF4 version: cf requires netCDF4>={}. Got {} "
-        "at {}".format(_minimum_vn, netCDF4.__version__, netCDF4.__file__)
+        f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
+        f"Got {netCDF4.__version__} at {netCDF4.__file__}"
     )
 
 # Check the version of cftime
-_minimum_vn = "1.4.0"
+_minimum_vn = "1.5.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad cftime version: cf requires cftime>={}. "
-        "Got {} at {}".format(_minimum_vn, cftime.__version__, cftime.__file__)
+        f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
+        f"Got {cftime.__version__} at {cftime.__file__}"
     )
 
 # Check the version of numpy
 _minimum_vn = "1.15"
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad numpy version: cf requires numpy>={}. Got {} "
-        "at {}".format(_minimum_vn, numpy.__version__, numpy.__file__)
+        f"Bad numpy version: cf requires numpy>={_minimum_vn}. "
+        f"Got {numpy.__version__} at {numpy.__file__}"
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.1"
+_minimum_vn = "3.3.3"
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad cfunits version: cf requires cfunits>={}. Got {} "
-        "at {}".format(_minimum_vn, cfunits.__version__, cfunits.__file__)
+        f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
+        f"Got {cfunits.__version__} at {cfunits.__file__}"
     )
 
 # Check the version of cfdm
@@ -210,13 +199,12 @@ _maximum_vn = "1.8.10.0"
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
-        "Bad cfdm version: cf requires {}<=cfdm<{}. Got {} "
-        "at {}".format(_minimum_vn, _maximum_vn, _cfdm_version, cfdm.__file__)
+        f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
+        f"Got {_cfdm_version} at {cfdm.__file__}"
     )
 
 from .constructs import Constructs
 
-# from .abstract import Coordinate
 from .mixin import Coordinate
 
 from .count import Count
@@ -236,6 +224,7 @@ from .flags import Flags
 from .timeduration import TimeDuration, Y, M, D, h, m, s
 from .units import Units
 
+from .constructlist import ConstructList
 from .fieldlist import FieldList
 
 from .dimensioncoordinate import DimensionCoordinate
@@ -299,12 +288,13 @@ from .query import (
 from .constants import *  # noqa: F403
 from .functions import *  # noqa: F403
 from .maths import relative_vorticity, histogram
-from .examplefield import example_field
-
+from .examplefield import example_field, example_fields, example_domain
 
 from .cfimplementation import CFImplementation, implementation
 
 from .read_write import read, write
+
+from .regrid import RegridOperator
 
 
 # Set up basic logging for the full project with a root logger

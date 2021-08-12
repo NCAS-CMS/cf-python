@@ -1,8 +1,6 @@
 import cfdm
 
-from . import Bounds
-
-from . import mixin
+from . import Bounds, mixin
 
 
 class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
@@ -30,7 +28,7 @@ class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
@@ -42,6 +40,3 @@ class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

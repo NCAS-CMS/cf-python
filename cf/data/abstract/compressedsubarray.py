@@ -1,5 +1,4 @@
 import abc
-
 from functools import reduce
 from operator import mul
 

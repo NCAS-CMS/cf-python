@@ -1,12 +1,10 @@
-import os
-
 import ctypes as CT
+import os
 
 import numpy
 import numpy.ctypeslib
 
 from . import umfile
-
 
 _len_real_hdr = 19
 _len_int_hdr = 45
@@ -18,9 +16,6 @@ class File_type(CT.Structure):
         ("byte_ordering", CT.c_int),
         ("word_size", CT.c_int),
     ]
-
-
-# -- End: class
 
 
 def _get_ctypes_array(dtype, size=None):
@@ -117,9 +112,6 @@ class Enum:
             return val
 
         return self.names.index(val)
-
-
-# -- End: class
 
 
 enum_file_format = Enum("PP", "FF")
@@ -604,9 +596,6 @@ class CInterface:
             raise umfile.UMFileException("Error reading record data")
 
         return data
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

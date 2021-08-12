@@ -13,12 +13,13 @@
 # out serve to show the default.
 
 import datetime
-import sys
 import os
 import re
-import cf
+import sys
 
 import cfdm
+
+import cf
 
 print("\ncf environment:")
 print("-----------------")
@@ -57,7 +58,7 @@ def _get_cf_version():
 
 
 def _get_year():
-    """"""
+    """TODO."""
     return str(datetime.datetime.now().year)
 
 
@@ -148,6 +149,7 @@ intersphinx_mapping = {
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
     "cfplot": ("https://ajheaps.github.io/cf-plot", None),
+    "dask": ("https://docs.dask.org/en/latest", None),
 }
 
 # This extension is meant to help with the common pattern of having
@@ -332,7 +334,7 @@ html_sidebars = {
         "searchbox.html",
         "globaltoc.html",
         "relations.html",
-        # 'sourcelink.html',
+        "sponsors.html",
     ]
 }
 
@@ -436,8 +438,9 @@ toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
 # corresponding to the object in given domain with given information.
 
 import inspect
+from os.path import dirname, relpath
+
 import cf
-from os.path import relpath, dirname
 
 link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 

@@ -1,6 +1,5 @@
 import datetime
 import faulthandler
-import inspect
 import os
 import stat
 import subprocess
@@ -13,7 +12,6 @@ import cf
 
 class cfaTest(unittest.TestCase):
     def setUp(self):
-        self.test_only = ()
         self.test_file = "cfa_test.sh"
         self.test_path = os.path.join(os.getcwd(), self.test_file)
 
@@ -30,11 +28,9 @@ class cfaTest(unittest.TestCase):
         )
 
     def test_cfa(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # In the script, STDERR from cfa commands is redirected to (overwrite)
-        # its STDOUT, so Popen's stdout is really the cfa commands' stderr:
+        # In the script, STDERR from cfa commands is redirected to
+        # (overwrite) its STDOUT, so Popen's stdout is really the cfa
+        # commands' stderr:
         cfa_test = subprocess.Popen(
             ["./" + self.test_file],
             stdout=subprocess.PIPE,
@@ -44,15 +40,12 @@ class cfaTest(unittest.TestCase):
         returncode = cfa_test.returncode
         if returncode != 0:
             self.fail(
-                "A cfa command failed (see script's 'exit {}' point) with "
-                "error:\n{}".format(
-                    returncode, cfa_stderr_via_stdout_channel.decode("utf-8")
-                )
+                f"A cfa command failed (see script's 'exit {returncode}' "
+                "point) with error:\n"
+                f"{cfa_stderr_via_stdout_channel.decode('utf-8')}"
             )
         # else: (passes by default)
 
-
-# --- End: class
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

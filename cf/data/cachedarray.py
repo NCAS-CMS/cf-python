@@ -1,18 +1,15 @@
 from os import close
-from tempfile import mkstemp
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mkstemp
 
 from numpy import load as numpy_load
 from numpy import ndarray as numpy_ndarray
 from numpy import save as numpy_save
-
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import is_masked as numpy_ma_is_masked
 
-from . import abstract
-
-from ..functions import parse_indices, get_subspace
 from ..constants import CONSTANTS
+from ..functions import get_subspace, parse_indices
+from . import abstract
 
 
 class CachedArray(abstract.FileArray):
@@ -53,29 +50,29 @@ class CachedArray(abstract.FileArray):
         close(fd)
 
         # The name of the temporary file storing the array
-        self._set_component("_partition_dir", _partition_dir)
-        self._set_component("_partition_file", _partition_file)
+        self._set_component("_partition_dir", _partition_dir, copy=False)
+        self._set_component("_partition_file", _partition_file, copy=False)
 
         # Numpy data type of the array
-        self._set_component("dtype", array.dtype)
+        self._set_component("dtype", array.dtype, copy=False)
 
         # Tuple of the array's dimension sizes
-        self._set_component("shape", array.shape)
+        self._set_component("shape", array.shape, copy=False)
 
         # Number of elements in the array
-        self._set_component("size", array.size)
+        self._set_component("size", array.size, copy=False)
 
         # Number of dimensions in the array
-        self._set_component("ndim", array.ndim)
+        self._set_component("ndim", array.ndim, copy=False)
 
         if numpy_ma_is_masked(array):
             # Array is a masked array. Save it as record array with
             # 'data' and 'mask' elements because this seems much
             # faster than using numpy.ma.dump.
-            self._set_component("_masked_as_record", True)
+            self._set_component("_masked_as_record", True, copy=False)
             numpy_save(_partition_file, array.toflex())
         else:
-            self._set_component("_masked_as_record", False)
+            self._set_component("_masked_as_record", False, copy=False)
             if hasattr(array, "mask"):
                 # Array is a masked array with no masked elements
                 numpy_save(_partition_file, array.view(numpy_ndarray))

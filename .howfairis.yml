@@ -1,0 +1,11 @@
+# Configuration file for the FAIR software compliance checker relating to
+# the badge on the README with a rating out of five. For more detail, see:
+#   https://github.com/fair-software/howfairis
+
+# Skips on certain checks
+skip_citation_checks_reason: >-
+  cf-python is cited on Zenodo and a README badge links to the citation, but
+  that is not picked up by the howfairis compliance checker because the
+  badge in question is a generic website badge linking to the Zenodo page
+  rather than a formal Zenodo badge, purely so the badge colour could be
+  changed to be consistent with our other references.

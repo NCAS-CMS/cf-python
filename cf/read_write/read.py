@@ -1,22 +1,31 @@
 import logging
 import os
-
+import tempfile
 from glob import glob
 from os.path import isdir
 
+from numpy.ma.core import MaskError
+
+from ..aggregate import aggregate as cf_aggregate
+from ..cfimplementation import implementation
+from ..decorators import _manage_log_level_via_verbosity
+from ..fieldlist import FieldList
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
+from ..query import Query
 from .netcdf import NetCDFRead
 from .um import UMRead
 
-from ..cfimplementation import implementation
+# TODO - replace the try block with "from re import Pattern" when
+#        Python 3.6 is deprecated
+try:
+    from re import Pattern
+except ImportError:  # pragma: no cover
+    python36 = True  # pragma: no cover
+else:
+    python36 = False
 
-from ..fieldlist import FieldList
 
-from ..aggregate import aggregate as cf_aggregate
-
-from ..decorators import _manage_log_level_via_verbosity
-
-from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
-
+_cached_temporary_files = {}
 
 # --------------------------------------------------------------------
 # Create an implementation container and initialize a read object for
@@ -42,6 +51,7 @@ def read(
     squeeze=False,
     unsqueeze=False,
     fmt=None,
+    cdl_string=False,
     select=None,
     extra=None,
     recursive=False,
@@ -200,6 +210,11 @@ def read(
             be raised, unless the *ignore_read_error* parameter is
             True.
 
+            As a special case, if the `cdl_string` parameter is set to
+            True, the interpretation of `files` changes so that each
+            value is assumed to be a string of CDL input rather
+            than the above.
+
         external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
@@ -306,6 +321,22 @@ def read(
             fields files, and ``'CDL'`` for CDL text files. By default
             files of any of these formats are read.
 
+        cdl_string: `bool`, optional
+            If True and the format to read is CDL, read a string
+            input, or sequence of string inputs, each being interpreted
+            as a string of CDL rather than names of locations from
+            which field constructs can be read from, as standard.
+
+            By default, each string input or string element in the input
+            sequence is taken to be a file or directory name or an
+            OPenDAP URL from which to read field constructs, rather
+            than a string of CDL input, including when the `fmt`
+            parameter is set as CDL.
+
+            Note that when `cdl_string` is True, the `fmt` parameter is
+            ignored as the format is assumed to be CDL, so in that case
+            it is not necessary to also specify ``fmt='CDL'``.
+
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
             then aggregate the field constructs read in from all input
@@ -335,13 +366,12 @@ def read(
             ``f.match_by_identity(*select)`` is `True`. See
             `cf.Field.match_by_identity` for details.
 
-            This is equivalent to, but possibly faster than, not using
-            the *select* parameter but applying its value to the
-            returned field list with its
-            `cf.FieldList.select_by_identity` method. For example,
-            ``fl = cf.read(file, select='air_temperature')`` is
-            equivalent to
-            ``fl = cf.read(file).select_by_identity('air_temperature')``.
+            This is equivalent to, but faster than, not using the
+            *select* parameter but applying its value to the returned
+            field list with its `cf.FieldList.select_by_identity`
+            method. For example, ``fl = cf.read(file,
+            select='air_temperature')`` is equivalent to ``fl =
+            cf.read(file).select_by_identity('air_temperature')``.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -574,12 +604,31 @@ def read(
         )  # pragma: no cover
 
     # Parse select
-    if isinstance(select, str):
-        select = (select,)
+    # TODO - delete the "if python36:" clause when Python 3.6 is
+    #        deprecated
+    if python36:
+        if isinstance(select, (str, Query)) or hasattr(
+            select, "search"
+        ):  # pragma: no cover
+            select = (select,)  # pragma: no cover
+    else:
+        if isinstance(select, (str, Query, Pattern)):
+            select = (select,)
 
+    # Manage input parameters where contradictions are possible:
+    if cdl_string and fmt:
+        if fmt == "CDL":
+            logger.info(
+                "It is not necessary to set the cf.read fmt as 'CDL' when "
+                "cdl_string is True, since that implies CDL is the format."
+            )  # pragma: no cover
+        else:
+            raise ValueError(
+                "cdl_string can only be True when the format is CDL, though "
+                "fmt is ignored in that case so there is no need to set it."
+            )
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
-
     if follow_symlinks and not recursive:
         raise ValueError(
             f"Can't set follow_symlinks={follow_symlinks!r} "
@@ -610,6 +659,36 @@ def read(
     field_counter = -1
     file_counter = 0
 
+    if cdl_string:
+        files2 = []
+
+        # 'files' input may be a single string or a sequence of them and to
+        # handle both cases it is easiest to convert former to a one-item seq.
+        if isinstance(files, str):
+            files = [files]
+
+        for cdl_file in files:
+            c = tempfile.NamedTemporaryFile(
+                mode="w",
+                dir=tempfile.gettempdir(),
+                prefix="cf_",
+                suffix=".cdl",
+            )
+
+            c_name = c.name
+            with open(c_name, "w") as f:
+                f.write(cdl_file)
+
+            # ----------------------------------------------------------------
+            # Need to cache the TemporaryFile object so that it doesn't get
+            # deleted too soon
+            # ----------------------------------------------------------------
+            _cached_temporary_files[c_name] = c
+
+            files2.append(c.name)
+
+        files = files2
+
     for file_glob in flat(files):
         # Expand variables
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
@@ -636,7 +715,6 @@ def read(
                             break
                 else:
                     files3.append(x)
-            # --- End: for
 
             files2 = files3
 
@@ -672,7 +750,6 @@ def read(
                     )  # pragma: no cover
 
                     continue
-            # --- End: if
 
             ftypes.add(ftype)
 
@@ -696,10 +773,11 @@ def read(
                 chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,
+                select=select,
             )
 
             # --------------------------------------------------------
-            # Select matching fields (not from UM files)
+            # Select matching fields (not from UM files, yet)
             # --------------------------------------------------------
             if select and ftype != "UM":
                 fields = fields.select_by_identity(*select)
@@ -712,8 +790,6 @@ def read(
 
             field_counter = len(field_list)
             file_counter += 1
-        # --- End: for
-    # --- End: for
 
     logger.info(
         "Read {0} field{1} from {2} file{3}".format(
@@ -734,11 +810,9 @@ def read(
 
         n = len(field_list)  # pragma: no cover
         logger.info(
-            "{0} input field{1} aggregated into {2} field{3}".format(
-                org_len, _plural(org_len), n, _plural(n)
-            )
+            f"{org_len} input field{_plural(org_len)} aggregated into "
+            f"{n} field{ _plural(n)}"
         )  # pragma: no cover
-    # --- End: if
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
@@ -752,9 +826,8 @@ def read(
     for f in field_list:
         standard_name = f._custom.get("standard_name", None)
         if standard_name is not None:
-            f.set_property("standard_name", standard_name)
+            f.set_property("standard_name", standard_name, copy=False)
             del f._custom["standard_name"]
-    # --- End: for
 
     # ----------------------------------------------------------------
     # Select matching fields from UM/PP fields (post setting of
@@ -780,7 +853,6 @@ def read(
     elif unsqueeze:
         for f in field_list:
             f.unsqueeze(inplace=True)
-    # --- End: if
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
@@ -869,6 +941,9 @@ def _read_a_file(
             that is set (up to a maximum of ``3``/``'DETAIL'``) for
             increasing verbosity, the more description that is printed.
 
+        select: optional
+            For `read. Ignored for a netCDF file.
+
     :Returns:
 
         `FieldList`
@@ -901,7 +976,6 @@ def _read_a_file(
 
             if endian is None:
                 endian = "big"
-        # --- End: if
 
         if umversion is not None:
             umversion = float(str(umversion).replace(".", "0", 1))
@@ -915,7 +989,6 @@ def _read_a_file(
     #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
     #
     #            return FieldList()
-    # --- End: if
 
     extra_read_vars = {
         "chunk": chunk,
@@ -931,7 +1004,8 @@ def _read_a_file(
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    if ftype == "CDL":
+    originally_cdl = ftype == "CDL"
+    if originally_cdl:
         # Create a temporary netCDF file from input CDL
         ftype = "netCDF"
         cdl_filename = filename
@@ -951,19 +1025,36 @@ def _read_a_file(
                     "Can't determine format of file {} generated from CDL "
                     "file {}".format(filename, cdl_filename)
                 )
-    # --- End: if
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
-        fields = netcdf.read(
-            filename,
-            external=external,
-            extra=extra,
-            verbose=verbose,
-            warnings=warnings,
-            extra_read_vars=extra_read_vars,
-            mask=mask,
-            warn_valid=warn_valid,
-        )
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
+        # try/except here, which acts as a temporary fix pending decisions on
+        # the best way to handle CDL with only header or coordinate info.
+        try:
+            fields = netcdf.read(
+                filename,
+                external=external,
+                extra=extra,
+                verbose=verbose,
+                warnings=warnings,
+                extra_read_vars=extra_read_vars,
+                mask=mask,
+                warn_valid=warn_valid,
+            )
+        except MaskError:
+            # Some data required for field interpretation is missing,
+            # manifesting downstream as a NumPy MaskError.
+            if originally_cdl:
+                raise ValueError(
+                    "Unable to convert CDL without data to field construct(s) "
+                    "because there is insufficient information provided by "
+                    "the header and/or coordinates alone in this case."
+                )
+            else:
+                raise ValueError(
+                    "Unable to convert netCDF to field construct(s) because "
+                    "there is missing data."
+                )
 
     elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
         fields = UM.read(
@@ -985,12 +1076,6 @@ def _read_a_file(
                 aggregate_options["relaxed_units"] = True
     else:
         fields = ()
-
-    # ----------------------------------------------------------------
-    # Check for cyclic dimensions
-    # ----------------------------------------------------------------
-    for f in fields:
-        f.autocyclic()
 
     # ----------------------------------------------------------------
     # Return the fields

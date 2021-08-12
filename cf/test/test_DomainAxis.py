@@ -12,8 +12,8 @@ class DomainAxisTest(unittest.TestCase):
         x = cf.DomainAxis(size=56)
         x.nc_set_dimension("tas")
 
-        _ = repr(x)
-        _ = str(x)
+        repr(x)
+        str(x)
 
     def test_DomainAxis(self):
         x = cf.DomainAxis(size=111)
@@ -45,10 +45,7 @@ class DomainAxisTest(unittest.TestCase):
         self.assertLessEqual(x, 100)
         self.assertNotEqual(x, 100)
 
-        _ = hash(x)
-
-
-# --- End: class
+        hash(x)
 
 
 if __name__ == "__main__":

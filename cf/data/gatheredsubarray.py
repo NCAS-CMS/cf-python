@@ -3,8 +3,7 @@ from operator import mul
 
 import numpy as np
 
-from ..functions import parse_indices, get_subspace
-
+from ..functions import get_subspace, parse_indices
 from . import abstract
 
 from .utils import is_small

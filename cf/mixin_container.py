@@ -1,9 +1,7 @@
-""".. note:: This class is not in the cf.mixin package because it
-             needs to be imported by cf.Data, and some of the other
-             mixin classes in cf.mixin themsleves import cf.Data,
-             which would lead to a circular import situation.
-
-"""
+"""This class is not in the cf.mixin package because it needs to be
+imported by cf.Data, and some of the other mixin classes in cf.mixin
+themsleves import cf.Data, which would lead to a circular import
+situation."""
 from .docstring import _docstring_substitution_definitions
 
 
@@ -43,6 +41,3 @@ class Container:
 
         """
         return 0
-
-
-# --- End: class

@@ -1,6 +1,4 @@
-'''Extract tutorial python code into a executable python scripts.
-
-'''
+"""Extract tutorial python code into a executable python scripts."""
 import re
 import sys
 
@@ -16,54 +14,54 @@ for tutorial_rst in tutorials_rst:
     code_block = False
     caption = False
 
-    with open(tutorial_rst, mode='r') as f:
+    with open(tutorial_rst, mode="r") as f:
         for line in f.readlines():
             line = line.strip()
-            
-            code = re.split('^\s*>>>\s', line)
-            
+
+            code = re.split("^\s*>>>\s", line)
+
             if len(code) == 2:
-                if re.findall('# Raises Exception\s*$', line):
-                    code[1] = 'try:\n    ' + code[1]+ '\nexcept:\n    pass'
+                if re.findall("# Raises Exception\s*$", line):
+                    code[1] = "try:\n    " + code[1] + "\nexcept:\n    pass"
             else:
-                code = re.split('^\s*\.\.\.\s', line)
-    
+                code = re.split("^\s*\.\.\.\s", line)
+
             if len(code) == 2:
                 tutorial.append(code[1])
                 continue
 
-            if re.match('\s*\.\. Code Block Start', line):
+            if re.match("\s*\.\. Code Block Start", line):
                 code_block = True
-                tutorial.append('# Start of code block')
+                tutorial.append("# Start of code block")
                 continue
-    
+
             if code_block:
-                if re.match('\s*\.\. code-block::', line):
+                if re.match("\s*\.\. code-block::", line):
                     continue
-                
-                if not caption and re.match('\s*:caption:', line):
+
+                if not caption and re.match("\s*:caption:", line):
                     caption = True
                     continue
-                
+
                 if caption:
                     # Blank line marks end of caption
-                    if re.match('\s*$', line):
+                    if re.match("\s*$", line):
                         caption = False
-    
+
                     continue
-                        
-                if re.match('\.\. Code Block End', line):
+
+                if re.match("\.\. Code Block End", line):
                     code_block = False
-                    tutorial.append('# End of code block')
+                    tutorial.append("# End of code block")
                     continue
-                
-                tutorial.append(line.replace('   ', '', 1))
+
+                tutorial.append(line.replace("   ", "", 1))
     # --- End: with
 
-    tutorial.append('')
+    tutorial.append("")
 
-    tutorial_py = tutorial_rst.replace('.rst', '.py')
-     
-    with open(tutorial_py, 'w') as f:
-        f.write('\n'.join(tutorial))
+    tutorial_py = tutorial_rst.replace(".rst", ".py")
+
+    with open(tutorial_py, "w") as f:
+        f.write("\n".join(tutorial))
 # --- End: for

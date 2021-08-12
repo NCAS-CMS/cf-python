@@ -1,8 +1,6 @@
 import cfdm
 
-from . import Bounds
-
-from . import mixin
+from . import Bounds, mixin
 
 
 class AuxiliaryCoordinate(
@@ -45,7 +43,7 @@ class AuxiliaryCoordinate(
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
@@ -57,6 +55,3 @@ class AuxiliaryCoordinate(
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-# --- End: class

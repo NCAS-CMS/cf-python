@@ -14,7 +14,6 @@ from numpy import maximum as numpy_maximum
 from numpy import minimum as numpy_minimum
 from numpy import ndim as numpy_ndim
 from numpy import sum as numpy_sum
-
 from numpy.ma import array as numpy_ma_array
 from numpy.ma import average as numpy_ma_average
 from numpy.ma import expand_dims as numpy_ma_expand_dims

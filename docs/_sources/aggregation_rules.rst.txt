@@ -8,7 +8,9 @@
 
 ----
 
-*David Hassell and Jonathan Gregory*
+*David Hassell and Jonathan Gregory (2012)*
+
+https://cf-trac.llnl.gov/trac/ticket/78
 
 Version |release| for version |version| of the CF conventions.
 
@@ -18,7 +20,7 @@ means combining the two field constructs so that their data are
 concatenated along one or more domain axis constructs, as are the data
 of their metadata constructs which span those domain axis constructs.
 
-These rules are be used for deciding whether or not two arbitrary
+These rules are to be used for deciding whether or not two arbitrary
 field constructs may be aggregated into one, larger field construct.
 The rules are based solely on the field constructs' metadata as
 recognised by the :ref:`CF-data-model` [#cfdm]_. For example, netCDF

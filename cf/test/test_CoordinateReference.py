@@ -5,10 +5,11 @@ import os
 import tempfile
 import unittest
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
-
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -31,9 +32,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class CoordinateReferenceTest(unittest.TestCase):
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-    )
+    f = cf.example_field(1)
 
     datum = cf.Datum(parameters={"earth_radius": 6371007})
 
@@ -66,9 +65,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         coordinates=["x", "y", "lat", "lon"],
     )
 
-    def setUp(self):
-        self.f = cf.read(self.filename)[0]
-
     def test_CoordinateReference__repr__str__dump(self):
         coordinate_conversion = cf.CoordinateConversion(
             parameters={
@@ -86,17 +82,17 @@ class CoordinateReferenceTest(unittest.TestCase):
             datum=datum,
         )
 
-        _ = repr(t)
-        _ = str(t)
-        _ = t.dump(display=False)
+        repr(t)
+        str(t)
+        t.dump(display=False)
 
         self.assertFalse(t.has_bounds())
 
-        _ = repr(datum)
-        _ = str(datum)
+        repr(datum)
+        str(datum)
 
-        _ = repr(coordinate_conversion)
-        _ = str(coordinate_conversion)
+        repr(coordinate_conversion)
+        str(coordinate_conversion)
 
     def test_CoordinateReference_equals(self):
         # Create a vertical grid mapping coordinate reference
@@ -230,9 +226,9 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.vcr["standard_name"],
             self.vconversion.get_parameter("standard_name"),
         )
-        self.assertTrue(
-            self.vcr.get("earth_radius")
-            is self.datum.get_parameter("earth_radius")
+        self.assertEqual(
+            self.vcr.get("earth_radius"),
+            self.datum.get_parameter("earth_radius"),
         )
         self.assertIsNone(self.vcr.get("orog"))
         self.assertEqual(self.vcr.get("orog", "qwerty"), "qwerty")
@@ -242,7 +238,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.vconversion.get_parameter("standard_name"),
         )
         with self.assertRaises(Exception):
-            _ = self.vcr["orog"]
+            self.vcr["orog"]
 
         self.assertEqual(
             self.hcr["earth_radius"], self.datum.get_parameter("earth_radius")
@@ -255,21 +251,41 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.hcr["grid_mapping_name"],
             self.hconversion.get_parameter("grid_mapping_name"),
         )
-        self.assertIs(
+        self.assertEqual(
             self.hcr.get("earth_radius"),
             self.datum.get_parameter("earth_radius"),
         )
-        self.assertIs(
+        self.assertEqual(
             self.hcr.get("grid_north_pole_latitude", "qwerty"),
             self.hconversion.get_parameter("grid_north_pole_latitude"),
         )
         self.assertIsNone(self.hcr.get("qwerty"))
         self.assertEqual(self.hcr.get("qwerty", 12), 12)
         with self.assertRaises(Exception):
-            _ = self.hcr["qwerty"]
+            self.hcr["qwerty"]
 
+    def test_CoordinateReference_structural_signature(self):
+        c = self.hcr.copy()
 
-# --- End: class
+        self.assertIsInstance(c.structural_signature(), tuple)
+
+        c.datum.set_parameter("test", [23])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", (23.0,), None))
+
+        c.datum.set_parameter("test", [23, 45])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", (23.0, 45.0), None))
+
+        c.datum.set_parameter("test", [[23, 45]])
+        s = c.structural_signature()
+        self.assertEqual(s[2], ("datum:test", ((23.0, 45.0),), None))
+
+        c.datum.set_parameter("test", np.array([[23, 45], [67, 89]]))
+        s = c.structural_signature()
+        self.assertEqual(
+            s[2], ("datum:test", ((23.0, 45.0), (67.0, 89.0)), None)
+        )
 
 
 if __name__ == "__main__":

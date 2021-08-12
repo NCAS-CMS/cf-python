@@ -1,5 +1,4 @@
 from ...functions import inspect as cf_inspect
-
 from .array import Array
 
 
@@ -12,7 +11,7 @@ class FileArray(Array):
     """
 
     def __getitem__(self, indices):
-        """"""
+        """TODO."""
         pass
 
     def __str__(self):

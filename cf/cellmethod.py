@@ -1,24 +1,18 @@
-import re
-
-from ast import literal_eval as ast_literal_eval
-
 import logging
+import re
+from ast import literal_eval as ast_literal_eval
 
 import cfdm
 
 from .data.data import Data
-
-from .functions import inspect as cf_inspect
-
-from .functions import _DEPRECATION_ERROR_METHOD
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from .functions import _DEPRECATION_ERROR_METHOD
+from .functions import inspect as cf_inspect
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +122,7 @@ class CellMethod(cfdm.CellMethod):
                 axis = cell_methods.pop(0)[:-1]
 
                 axes.append(axis)
-            # --- End: while
+
             cm.set_axes(axes)
 
             if not cell_methods:
@@ -149,7 +143,7 @@ class CellMethod(cfdm.CellMethod):
                 cm.set_qualifier(attr, cell_methods.pop(0))
                 if not cell_methods:
                     break
-            # --- End: while
+
             if not cell_methods:
                 out.append(cm)
                 break
@@ -190,7 +184,6 @@ class CellMethod(cfdm.CellMethod):
 
                         intervals.append(data)
                         continue
-                    # --- End: if
 
                     if term == "comment":
                         comment = []
@@ -200,13 +193,11 @@ class CellMethod(cfdm.CellMethod):
                             if cell_methods[0].endswith(":"):
                                 break
                             comment.append(cell_methods.pop(0))
-                        # --- End: while
+
                         cm.set_qualifier("comment", " ".join(comment))
-                # --- End: while
 
                 if cell_methods[0].endswith(")"):
                     cell_methods.pop(0)
-            # --- End: if
 
             n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
@@ -220,7 +211,6 @@ class CellMethod(cfdm.CellMethod):
                 cm.set_qualifier("interval", intervals)
 
             out.append(cm)
-        # --- End: while
 
         return out
 
@@ -404,7 +394,7 @@ class CellMethod(cfdm.CellMethod):
 
         >>> c
         <CF CellMethod: lat: lon: mean>
-        >>> c.intervals = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
+        >>> c.intervals = ['0.2 degree_N', cf.Data(0.1, 'degree_E')]
         >>> c
         <CF CellMethod: lat: lon: mean (interval: 0.1 degree_N interval: 0.2 degree_E)>
 
@@ -448,7 +438,6 @@ class CellMethod(cfdm.CellMethod):
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval)
                     )
-            # --- End: if
 
             if d.size != 1:
                 raise ValueError(
@@ -459,7 +448,6 @@ class CellMethod(cfdm.CellMethod):
                 d.squeeze(inplace=True)
 
             values.append(d)
-        # --- End: for
 
         self.set_qualifier("interval", tuple(values))
 
@@ -644,7 +632,6 @@ class CellMethod(cfdm.CellMethod):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # Still here? Then they are equivalent
         return True
@@ -686,6 +673,3 @@ class CellMethod(cfdm.CellMethod):
         _DEPRECATION_ERROR_METHOD(
             self, "remove_axes", "Use method 'del_axes' instead."
         )  # pragma: no cover
-
-
-# --- End: class

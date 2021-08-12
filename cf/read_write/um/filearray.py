@@ -1,15 +1,10 @@
 from numpy.ma import masked_where as numpy_ma_masked_where
 
 from ...constants import _file_to_fh
-from ...functions import (
-    parse_indices,
-    get_subspace,
-)
 from ...data.abstract.filearray import FileArray
-
-from .functions import _open_um_file, _close_um_file
-
+from ...functions import get_subspace, parse_indices
 from ...umread_lib.umfile import Rec
+from .functions import _close_um_file, _open_um_file
 
 _filename_to_file = _file_to_fh.setdefault("UM", {})
 
@@ -124,7 +119,6 @@ class UMFileArray(FileArray):
             mask = array == fill_value
             if mask.any():
                 array = numpy_ma_masked_where(mask, array, copy=False)
-        # --- End: if
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
@@ -194,6 +188,3 @@ class UMFileArray(FileArray):
             word_size=getattr(self, "word_size", None),
             byte_ordering=getattr(self, "byte_ordering", None),
         )
-
-
-# --- End: class

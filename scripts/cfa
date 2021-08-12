@@ -3,17 +3,20 @@
 
 if __name__ == "__main__":
 
-    from getopt import getopt, GetoptError
-    import sys
     import os
-    import cf
+    import sys
+    from getopt import GetoptError, getopt
     from re import sub as re_sub
 
-    def print_help(version, date):
+    import cf
+
+    library_path = os.path.dirname(os.path.abspath(cf.__file__))
+
+    def print_help():
         import subprocess
 
-        manpage = """\
-.TH "CFA" "1" "{0}" "{1}" "cfa"
+        manpage = f"""\
+.TH "CFA" "1" "{cf.__version__}" "{cf.__date__}" "cfa"
 .
 .
 .
@@ -889,7 +892,7 @@ PP conditions which need to be satisfied for
                          this translation
 
       The default mappings are found in the file
-      {2}/etc/STASH_to_CF.txt
+      {library_path}/etc/STASH_to_CF.txt
       and any new mappings will replace any entries which already
       exist.
 
@@ -972,12 +975,13 @@ cfdump(1), ncdump(1)
 .
 .
 .SH LIBRARY
-cf\-python library version {0} at {2}
+cf\-python library version {cf.__version__} at {library_path}
 .
 .
 .
 .SH BUGS
-Reports of bugs are welcome at https://github.com/NCAS-CMS/cf-python
+New feature suggestions and reports of bugs are welcome at
+https://github.com/NCAS-CMS/cf-python
 .
 .
 .
@@ -988,9 +992,7 @@ Open Source Initiative MIT License
 .
 .SH AUTHOR
 Written by David Hassell
-""".format(
-            version, date, os.path.dirname(os.path.abspath(cf.__file__))
-        )
+"""
 
         p = subprocess.Popen(
             [
@@ -1006,29 +1008,29 @@ Written by David Hassell
         p.communicate(input=manpage)
 
     def _check_overwrite(outfile, files, overwrite):
-        """"""
+        """TODO."""
         if not os.path.isfile(outfile):
             return
 
         if not overwrite:
             print(
-                "{} ERROR: Can't overwrite output file {} unless "
-                "--overwrite is set".format(iam, outfile),
+                f"{iam} ERROR: Can't overwrite output file {outfile} unless "
+                "--overwrite is set",
                 file=sys.stderr,
             )
             sys.exit(2)
 
         if not os.access(outfile, os.W_OK):
             print(
-                "{} ERROR: Can't overwrite output file {} without "
-                "permission".format(iam, outfile),
+                f"{iam} ERROR: Can't overwrite output file {outfile} without "
+                "permission",
                 file=sys.stderr,
             )
             sys.exit(2)
 
         if set((outfile,)).intersection(files):
             print(
-                "{} ERROR: Can't overwrite input file {}".format(iam, outfile),
+                f"{iam} ERROR: Can't overwrite input file {outfile}",
                 file=sys.stderr,
             )
             sys.exit(2)
@@ -1038,13 +1040,13 @@ Written by David Hassell
 
     iam = os.path.basename(sys.argv[0])
     usage = (
-        "USAGE: {0} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] "
+        f"USAGE: {iam} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] "
         "[-n] [-o file] [-s property] [-u] [-v mode] [-x] [OPTIONS] "
-        "INPUTS".format(iam)
+        "INPUTS"
     )
 
-    short_help = """\
-{0}
+    short_help = f"""\
+{usage}
   [-1]                   View all input files as a single dataset
   [-D]                   Write to the same directories as its input files
   [-d dir]               Directory for output files
@@ -1089,9 +1091,7 @@ Written by David Hassell
   [--um=option]          Extra decoding instructions for PP and fields files
   INPUTS                 Input files and directories
 
-Using cf-python library version {1} at {2}""".format(
-        usage, cf.__version__, os.path.dirname(os.path.abspath(cf.__file__))
-    )
+Using cf-python library version {cf.__version__} at {library_path}"""
 
     # --------------------------------------------------------------------
     # Parse command line options
@@ -1154,7 +1154,7 @@ Using cf-python library version {1} at {2}""".format(
         )
     except GetoptError as err:
         # print help information and exit:
-        print("{} ERROR: {}".format(iam, str(err)), file=sys.stderr)
+        print(f"{iam} ERROR: {err}", file=sys.stderr)
         sys.exit(2)
 
     if not (infiles or opts):
@@ -1186,7 +1186,7 @@ Using cf-python library version {1} at {2}""".format(
 
     for option, arg in opts:
         if option in ("-h", "--help"):
-            print_help(cf.__version__, cf.__date__)
+            print_help()
             sys.exit(0)
         elif option in ("-o", "--outfile"):
             outfile = arg
@@ -1251,8 +1251,8 @@ Using cf-python library version {1} at {2}""".format(
             read_options["squeeze"] = True
         elif option == "--um_version":
             print(
-                "{} ERROR: The {} option has been removed. Use "
-                "--um=version=VN instead.".format(iam, option),
+                f"{iam} ERROR: The {option} option has been removed. Use "
+                "--um=version=VN instead.",
                 file=sys.stderr,
             )
             sys.exit(2)
@@ -1282,17 +1282,15 @@ Using cf-python library version {1} at {2}""".format(
             view = arg
             if view not in "smc":
                 print(
-                    "{} ERROR: The {} option must have an argument of "
-                    "either s, m or c".format(iam, option),
+                    f"{iam} ERROR: The {option} option must have a value "
+                    "of either s, m or c",
                     file=sys.stderr,
                 )
                 sys.exit(2)
         elif option in ("-a", "--all"):
             print(
-                "{} ERROR: The {} option has been deprecated and is now "
-                "the default behaviour. See the -x option.".format(
-                    iam, option
-                ),
+                f"{iam} ERROR: The {option} option has been deprecated and "
+                "is now the default behaviour. See the -x option.",
                 file=sys.stderr,
             )
             sys.exit(2)
@@ -1305,16 +1303,13 @@ Using cf-python library version {1} at {2}""".format(
             "--verbose",
         ):
             print(
-                "{} ERROR: The {} option has been deprecated.".format(
-                    iam, option
-                ),
+                f"{iam} ERROR: The {option} option has been deprecated.",
                 file=sys.stderr,
             )
             sys.exit(2)
         else:
             print(usage)
             assert False, "Unknown option: " + option
-    # --- End: for
 
     if outfile is None and not directory_output and view is None:
         # No output file or directory options are set, then output a
@@ -1323,8 +1318,8 @@ Using cf-python library version {1} at {2}""".format(
 
     if one and view is None:
         print(
-            "{} ERROR: Can only set the -1 option if the -v option is "
-            "also set.".format(iam),
+            f"{iam} ERROR: Can only set the -1 option if the -v option is "
+            "also set.",
             file=sys.stderr,
         )
         sys.exit(2)
@@ -1380,12 +1375,11 @@ Using cf-python library version {1} at {2}""".format(
                     )
                 except Exception as error:
                     print(
-                        "{} ERROR: Can't load STASH table: {}".format(
-                            iam, error
-                        )
+                        f"{iam} ERROR: Can't load STASH table {stash_table}: "
+                        f"{error}",
+                        file=sys.stderr,
                     )
                     sys.exit(2)
-    # --- End: if
 
     write_options["fmt"] = fmt
 
@@ -1394,16 +1388,16 @@ Using cf-python library version {1} at {2}""".format(
 
     if fmt == "CFA":
         print(
-            "{} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
+            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
             "'-f CFA4' for netCDF3 classic and netCDF4 CFA output formats "
-            "respectively".format(iam),
+            "respectively",
             file=sys.stderr,
         )
         sys.exit(2)
 
     if not infiles:
         print(
-            "{} ERROR: Must provide at least one input file".format(iam),
+            f"{iam} ERROR: Must provide at least one input file",
             file=sys.stderr,
         )
         sys.exit(2)
@@ -1415,8 +1409,7 @@ Using cf-python library version {1} at {2}""".format(
         > 1
     ):
         print(
-            "{} ERROR: Can only set one of the -o, -d and -D "
-            "options".format(iam),
+            f"{iam} ERROR: Can only set one of the -o, -d and -D options",
             file=sys.stderr,
         )
         sys.exit(2)
@@ -1426,8 +1419,7 @@ Using cf-python library version {1} at {2}""".format(
         # absolute, normalised path.
         if not os.path.isdir(directory) or not os.access(directory, os.W_OK):
             print(
-                "{} ERROR: Can't write to output directory "
-                "{}".format(iam, directory),
+                f"{iam} ERROR: Can't write to output directory {directory}",
                 file=sys.stderr,
             )
             sys.exit(2)
@@ -1440,8 +1432,8 @@ Using cf-python library version {1} at {2}""".format(
     follow_symlinks = read_options.get("follow_symlinks", False)
     if follow_symlinks and not recursive:
         print(
-            "{} ERROR: Can't set --follow_symlinks without setting "
-            "--recursive".format(iam),
+            f"{iam} ERROR: Can't set --follow_symlinks without setting "
+            "--recursive",
             file=sys.stderr,
         )
         sys.exit(2)
@@ -1458,7 +1450,7 @@ Using cf-python library version {1} at {2}""".format(
                 infiles2.extend([os.path.join(path, f) for f in filenames])
                 if not recursive:
                     break
-    # --- End: for
+
     infiles = infiles2
 
     # Initialise the set of all input and output files
@@ -1497,7 +1489,7 @@ Using cf-python library version {1} at {2}""".format(
             f = cf.read(infile, **read_options)
         except Exception as error:
             print(
-                "{} ERROR reading {}: {}".format(iam, infile, error),
+                f"{iam} ERROR reading {infile}: {error}",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -1525,8 +1517,7 @@ Using cf-python library version {1} at {2}""".format(
                 cf.write(f, outfile, **write_options)
             except Exception as error:
                 print(
-                    "{} ERROR writing {}: {}".format(iam, outfile, error),
+                    f"{iam} ERROR writing {outfile}: {error}",
                     file=sys.stderr,
                 )
                 sys.exit(1)
-    # --- End: for

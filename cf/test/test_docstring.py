@@ -5,8 +5,9 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import cf
 import cfdm
+
+import cf
 
 
 def _recurse_on_subclasses(klass):
@@ -189,9 +190,6 @@ class DocstringTest(unittest.TestCase):
                 d = x._docstring_substitutions(klass)
                 self.assertIsInstance(d, dict)
                 self.assertIn("{{repr}}", d, "\nCLASS: {}".format(klass))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

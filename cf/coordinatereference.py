@@ -2,28 +2,48 @@ import logging
 
 import cfdm
 
-from .constants import cr_coordinates, cr_canonical_units, cr_default_values
-from .functions import allclose
-from .functions import inspect as cf_inspect, atol as cf_atol, rtol as cf_rtol
-from .query import Query
-
-from . import CoordinateConversion
-from . import Datum
-
+from . import CoordinateConversion, Datum
+from .constants import cr_canonical_units, cr_coordinates, cr_default_values
 from .data.data import Data
-
-from .functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR_ATTRIBUTE
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
+from .functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
+    allclose,
+)
+from .functions import atol as cf_atol
+from .functions import inspect as cf_inspect
+from .functions import rtol as cf_rtol
+from .query import Query
 
 _units = {}
 
 logger = logging.getLogger(__name__)
+
+
+def _totuple(a):
+    """Return an N-d (N>0) array as a nested tuple of Python scalars.
+
+    :Parameters:
+
+        a: numpy.ndarray
+            The numpy array
+
+    :Returns:
+
+        `tuple`
+            The array as an nested tuple of Python scalars.
+
+    """
+    try:
+        return tuple(_totuple(i) for i in a)
+    except TypeError:
+        return a
 
 
 class CoordinateReference(cfdm.CoordinateReference):
@@ -84,7 +104,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """TODO."""
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum = Datum
@@ -111,20 +131,19 @@ class CoordinateReference(cfdm.CoordinateReference):
                 out.append(self.datum.get_parameter(key))
             except ValueError:
                 pass
-        # --- End: try
 
         if len(out) == 1:
             return out[0]
 
         if not out:
             raise KeyError(
-                "No {!r} parameter exists in the coordinate conversion nor "
-                "the datum".format(key)
+                f"No {key!r} parameter exists in the coordinate conversion  "
+                "nor the datum"
             )
 
         raise KeyError(
-            "{!r} parameter exists in both the coordinate conversion and "
-            "the datum".format(key)
+            f"{key!r} parameter exists in both the coordinate conversion and "
+            "the datum"
         )
 
     def __hash__(self):
@@ -149,7 +168,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _matching_values(self, value0, value1):
+    def _matching_values(self, value0, value1, basic=False):
         """Whether two coordinate reference construct identity values
         match.
 
@@ -174,7 +193,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             # re.compile object
             return value0.search(value1)
         except (AttributeError, TypeError):
-            return self._equals(value1, value0)
+            return self._equals(value1, value0, basic=basic)
 
     # ----------------------------------------------------------------
     # Private attributes
@@ -217,7 +236,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     #                # units is a standard_name of a coordinate
     #                if field is None:
     #                    raise ValueError("Set the field parameter")
-    #                coord = field.coord(canonical_units, exact=True)
+    #                coord = field.coordinate(canonical_units, exact=True)
     #                if coord is not None:
     #                    canonical_units = coord.Units
     #
@@ -227,7 +246,6 @@ class CoordinateReference(cfdm.CoordinateReference):
     #                    if not canonical_units.equivalent(units):
     #                        raise ValueError("xasdddddddddddddd 87236768 TODO")
     #                    value.Units = canonical_units
-    #        # --- End: for
     #
     #        return ref
 
@@ -384,7 +402,6 @@ class CoordinateReference(cfdm.CoordinateReference):
                     "term {!r}".format(self.__class__.__name__, term)
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         # ------------------------------------------------------------
         # Check the parameter terms and their values
@@ -420,7 +437,6 @@ class CoordinateReference(cfdm.CoordinateReference):
                     "valued term {!r}".format(self.__class__.__name__, term)
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         parameters0 = self.datum.parameters()
         parameters1 = other.datum.parameters()
@@ -447,7 +463,6 @@ class CoordinateReference(cfdm.CoordinateReference):
                     "term {!r}".format(self.__class__.__name__, term)
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         # Still here?
         return True
@@ -560,14 +575,12 @@ class CoordinateReference(cfdm.CoordinateReference):
         ok = False
         for value0 in identities:
             for value1 in self_identities:
-                ok = self._matching_values(value0, value1)
+                ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break
-            # --- End: for
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -618,7 +631,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         >>> r.coordinates
         {'atmosphere_hybrid_height_coordinate'}
         >>> r.change_coord_identitiers({
-        ...     'atmosphere_hybrid_height_coordinate', 'dim1', 'ncvar:ak': 'aux0'
+        ...     'atmosphere_hybrid_height_coordinate', 'dim1', 'ncvar:ak', 'aux0'
         ... })
         >>> r.coordinates
         {'dim1', 'aux0'}
@@ -644,7 +657,6 @@ class CoordinateReference(cfdm.CoordinateReference):
                 r.coordinate_conversion.set_domain_ancillary(
                     term, identity_map.get(identifier, default), copy=False
                 )
-        # --- End: if
 
         if coordinate:
             for identifier in r.coordinates():
@@ -653,7 +665,6 @@ class CoordinateReference(cfdm.CoordinateReference):
 
                 r.del_coordinate(identifier)
                 r.set_coordinate(identity_map.get(identifier, default))
-        # --- End: if
 
         r.del_coordinate(None, None)
 
@@ -718,6 +729,14 @@ class CoordinateReference(cfdm.CoordinateReference):
                     # Do not add a default value to the structural signature
                     continue
 
+                # Convert value to a Python scalar if it's 0-d, or a
+                # tuple if it's N-d.
+                value = value.array
+                if not value.ndim:
+                    value = value.item()
+                else:
+                    value = _totuple(value)
+
                 append(
                     (
                         component + ":" + term,
@@ -725,7 +744,6 @@ class CoordinateReference(cfdm.CoordinateReference):
                         cu.formatted(definition=True),
                     )
                 )
-        # --- End: for
 
         # Add the domain ancillary-valued terms which have been set
         terms = self.coordinate_conversion.domain_ancillaries()
@@ -859,6 +877,3 @@ class CoordinateReference(cfdm.CoordinateReference):
             "'coordinate_conversion.set_parameter' or "
             "'coordinate_conversion.set_domain_ancillary' instead.",
         )  # pragma: no cover
-
-
-# --- End: class

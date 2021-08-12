@@ -3,10 +3,8 @@ from os.path import isfile
 from netCDF4 import Dataset as netCDF4_Dataset
 
 from ..constants import _file_to_fh
-from ..functions import open_files_threshold_exceeded, close_one_file
-
+from ..functions import close_one_file, open_files_threshold_exceeded
 from ..umread_lib.umfile import File
-
 
 _file_to_UM = _file_to_fh.setdefault("UM", {})
 _file_to_Dataset = _file_to_fh.setdefault("netCDF", {})
@@ -49,7 +47,7 @@ def _open_netcdf_file(filename, mode, fmt="NETCDF4"):  # set_auto_mask=True):
         # Close a random data file to make way for this one
         close_one_file()
 
-    if mode in ("a", "r+"):
+    if mode == "a":
         if not isfile(filename):
             nc = netCDF4_Dataset(filename, "w", format=fmt)
             nc.close()

@@ -1,13 +1,11 @@
 import json
-
 from ast import literal_eval as ast_literal_eval
 
+import cfdm
 from numpy import dtype as numpy_dtype
 
-import cfdm
-
 from ...constants import _file_to_fh
-from ...functions import pathjoin, dirname
+from ...functions import dirname, pathjoin
 from ...units import Units
 
 
@@ -209,7 +207,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if strlen > 1:
                 ncdimensions.pop()
                 dtype = numpy_dtype("S{0}".format(strlen))
-        # --- End: if
 
         cfa_data["dtype"] = dtype
         cfa_data["_axes"] = ncdimensions
@@ -264,10 +261,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                             p.append(slice(x[0], x[1] - 1, x[2]))
                     else:
                         p.append(list(x))
-                # --- End: for
 
                 attrs["part"] = p
-        # --- End: for
 
         construct.del_property("cf_role")
         construct.del_property("cfa_array")
@@ -340,7 +335,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     == "cfa_private"
                 ):
                     g["do_not_create_field"].add(ncvar)
-        # --- End: if
 
         # ------------------------------------------------------------
         #
@@ -390,6 +384,3 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         out = super().file_open(filename, flatten=flatten, verbose=verbose)
         _file_to_fh["netCDF"].pop(filename, None)
         return out
-
-
-# --- End: class

@@ -2,7 +2,6 @@ from ctypes.util import find_library
 
 from cfunits import Units as cfUnits
 
-
 _libpath = find_library("udunits2")
 if _libpath is None:
     raise FileNotFoundError(
@@ -28,6 +27,3 @@ class Units:
     @staticmethod
     def conform(*args, **kwargs):
         return cfUnits.conform(*args, **kwargs)
-
-
-# --- End: class

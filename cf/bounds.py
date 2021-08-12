@@ -1,11 +1,9 @@
 import cfdm
 
-from .data import Data
-from .units import Units
-
 from . import mixin
-
+from .data import Data
 from .decorators import _deprecated_kwarg_check
+from .units import Units
 
 
 class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
@@ -48,65 +46,45 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
     def contiguous(self, overlap=True, direction=None, period=None, verbose=1):
         """Return True if the bounds are contiguous.
 
-         Bounds are contiguous if the cell boundaries match up, or overlap,
-         with the boundaries of adjacent cells.
+         Bounds are contiguous if the cell boundaries match up, or
+         overlap, with the boundaries of adjacent cells.
 
-         In general, it is only possible for 1 or 0 variable dimensional
-         variables with bounds to be contiguous, but size 1 variables with
-         any number of dimensions are always contiguous.
+         In general, it is only possible for 1 or 0 variable
+         dimensional variables with bounds to be contiguous, but size
+         1 variables with any number of dimensions are always
+         contiguous.
 
-         An exception is raised if the variable is multidimensional and has
-         more than one element.
+         An exception is raised if the variable is multidimensional
+         and has more than one element.
 
-         .. versionadded:: 2.0
+        .. versionadded:: 2.0
 
         :Parameters:
 
              overlap: `bool`, optional
-                 If False then 1-d cells with two bounds vertices are not
-                 considered contiguous if any adjacent cells overlap each
-                 other. By default such cells are considered contiguous.
+                 If False then 1-d cells with two bounds vertices are
+                 not considered contiguous if any adjacent cells
+                 overlap each other. By default such cells are
+                 considered contiguous.
 
              direction:
-                 Specify the direction of 1-d coordinates with two bounds
-                 vertices. Either True for increasing coordinates, or False
-                 for decreasing coordinates. By default the direction is
-                 inferred from whether the first bound of the first cell is
-                 less than its second bound (direction is True), or not
-                 (direction is False).
+                 Specify the direction of 1-d coordinates with two
+                 bounds vertices. Either True for increasing
+                 coordinates, or False for decreasing coordinates. By
+                 default the direction is inferred from whether the
+                 first bound of the first cell is less than its second
+                 bound (direction is True), or not (direction is
+                 False).
 
              period: optional
-                 Define the period of cyclic values so that the test for
-                 contiguousness can be carried out with modulo
+                 Define the period of cyclic values so that the test
+                 for contiguousness can be carried out with modulo
                  arithmetic. By default the data are assumed to be
-                 non-cyclic, unless the bounds have units of longitude (or
-                 have units of ``'degrees'``), in which case a period of
-                 360 degrees is assumed.
+                 non-cyclic, unless the bounds have units of longitude
+                 (or have units of ``'degrees'``), in which case a
+                 period of 360 degrees is assumed.
 
-             verbose: `int` or `str` or `None`, optional
-                 If an integer from ``-1`` to ``3``, or an equivalent string
-                 equal ignoring case to one of:
-
-                 * ``'DISABLE'`` (``0``)
-                 * ``'WARNING'`` (``1``)
-                 * ``'INFO'`` (``2``)
-                 * ``'DETAIL'`` (``3``)
-                 * ``'DEBUG'`` (``-1``)
-
-                 set for the duration of the method call only as the minimum
-                 cut-off for the verboseness level of displayed output (log)
-                 messages, regardless of the globally-configured `cf.log_level`.
-                 Note that increasing numerical value corresponds to increasing
-                 verbosity, with the exception of ``-1`` as a special case of
-                 maximal and extreme verbosity.
-
-                 Otherwise, if `None` (the default value), output messages will
-                 be shown according to the value of the `cf.log_level` setting.
-
-                 Overall, the higher a non-negative integer or equivalent string
-                 that is set (up to a maximum of ``3``/``'DETAIL'``) for
-                 increasing verbosity, the more description that is printed to
-                 convey information about the test for contiguity.
+             {{verbose: `int` or `str` or `None`, optional}}
 
          :Returns:
 
@@ -137,7 +115,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
          False
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _fill_value=False)
         if data is None:
             return False
 
@@ -152,15 +130,15 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
                 period = Data(360.0, "degrees_east")
             elif self.Units.equals(Units("degrees")):
                 period = Data(360.0, "degrees")
-        # --- End: if
+
         if verbose >= 2:
-            print("Period = {!r}".format(period))
+            print(f"Period = {period!r}")
 
         if ndim == 2:
             if nbounds != 4:
                 raise ValueError(
-                    "Can't tell if {}-d cells with {} vertices "
-                    "are contiguous".format(ndim, nbounds)
+                    f"Can't tell if {ndim}-d cells with {nbounds} vertices "
+                    "are contiguous"
                 )
 
             # --------------------------------------------------------
@@ -212,19 +190,16 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
             #                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
             #                            bnd[j, i, 2] != bnd[j+1, i, 1]):
             #                        return False
-            #            # --- End: for
 
             return True
 
         if ndim > 2:
-            raise ValueError(
-                "Can't tell if {}-d cells " "are contiguous".format(ndim)
-            )
+            raise ValueError(f"Can't tell if {ndim}-d cells are contiguous")
 
         if nbounds != 2:
             raise ValueError(
-                "Can't tell if {}-d cells with {} vertices "
-                "are contiguous".format(ndim, nbounds)
+                f"Can't tell if {ndim}-d cells with {nbounds} vertices "
+                "are contiguous"
             )
 
         if not overlap:
@@ -320,6 +295,3 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
         return super().identity(
             default=default, strict=strict, relaxed=relaxed, nc_only=nc_only
         )
-
-
-# --- End: class

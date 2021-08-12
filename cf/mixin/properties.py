@@ -1,20 +1,17 @@
-from copy import deepcopy
-
-from ..functions import atol as cf_atol, rtol as cf_rtol
-
-from ..query import Query
-from ..units import Units
+from cfdm.core.functions import deepcopy
 
 from ..data import Data
-
 from ..functions import (
+    _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_DICT,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR,
 )
-
+from ..functions import atol as cf_atol
+from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
+from ..query import Query
+from ..units import Units
 
 
 class Properties(Container):
@@ -30,8 +27,8 @@ class Properties(Container):
         """Store component classes.
 
         .. note:: If a child class requires a different component
-        classes           than the ones defined here, then they must be
-        redefined           in the child class.
+        classes than the ones defined here, then they must           be
+        redefined in the child class.
 
         """
         instance = super().__new__(cls)
@@ -64,7 +61,7 @@ class Properties(Container):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _matching_values(self, value0, value1, units=False):
+    def _matching_values(self, value0, value1, units=False, basic=False):
         """Whether two values match.
 
         The definition of "match" depends on the types of *value0* and
@@ -102,7 +99,7 @@ class Properties(Container):
             if units and isinstance(value0, str):
                 return Units(value0).equals(Units(value1))
 
-            return self._equals(value1, value0)
+            return self._equals(value1, value0, basic=basic)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -112,24 +109,25 @@ class Properties(Container):
         """An identity for the {{class}} object.
 
         The `id` attribute can be used to unambiguously identify
-        constructs. This can be useful when identification is not possible
-        from the existing properties, either because they are missing or
-        because they do not provide sufficiently unique information.
+        constructs. This can be useful when identification is not
+        possible from the existing properties, either because they are
+        missing or because they do not provide sufficiently unique
+        information.
 
-        In general it will only be defined if explicitly set by the user.
+        In general it will only be defined if explicitly set by the
+        user.
 
-        Note that `id` is not a CF property and so is not read from, nor
-        written to, datasets.
+        Note that `id` is not a CF property and so is not read from,
+        nor written to, datasets.
 
-        .. seealso:: `identity`, `identities`, `match_by_identity`
+        .. seealso:: `identity`, `identities`
 
         **Examples:**
 
-        >>> f.id = 'um01002'
+        >>> f = {{package}}.{{class}}()
+        >>> f.id = "foo"
         >>> f.id
-        'um01002'
-        >>> f.match_by_identity('id%um10002')
-        True
+        'foo'
         >>> del f.id
 
         """
@@ -186,7 +184,7 @@ class Properties(Container):
 
     @calendar.setter
     def calendar(self, value):
-        self.set_property("calendar", value)
+        self.set_property("calendar", value, copy=False)
 
     @calendar.deleter
     def calendar(self):
@@ -218,7 +216,7 @@ class Properties(Container):
 
     @comment.setter
     def comment(self, value):
-        self.set_property("comment", value)
+        self.set_property("comment", value, copy=False)
 
     @comment.deleter
     def comment(self):
@@ -250,7 +248,7 @@ class Properties(Container):
 
     @history.setter
     def history(self, value):
-        self.set_property("history", value)
+        self.set_property("history", value, copy=False)
 
     @history.deleter
     def history(self):
@@ -283,7 +281,7 @@ class Properties(Container):
 
     @leap_month.setter
     def leap_month(self, value):
-        self.set_property("leap_month", value)
+        self.set_property("leap_month", value, copy=False)
 
     @leap_month.deleter
     def leap_month(self):
@@ -350,7 +348,7 @@ class Properties(Container):
 
     @long_name.setter
     def long_name(self, value):
-        self.set_property("long_name", value)
+        self.set_property("long_name", value, copy=False)
 
     @long_name.deleter
     def long_name(self):
@@ -387,7 +385,7 @@ class Properties(Container):
 
     @month_lengths.setter
     def month_lengths(self, value):
-        self.set_property("month_lengths", tuple(value))
+        self.set_property("month_lengths", tuple(value), copy=False)
 
     @month_lengths.deleter
     def month_lengths(self):
@@ -421,7 +419,7 @@ class Properties(Container):
 
     @standard_name.setter
     def standard_name(self, value):
-        self.set_property("standard_name", value)
+        self.set_property("standard_name", value, copy=False)
 
     @standard_name.deleter
     def standard_name(self):
@@ -455,7 +453,7 @@ class Properties(Container):
 
     @units.setter
     def units(self, value):
-        self.set_property("units", value)
+        self.set_property("units", value, copy=False)
 
     @units.deleter
     def units(self):
@@ -555,7 +553,7 @@ class Properties(Container):
 
     @valid_range.setter
     def valid_range(self, value):
-        self.set_property("valid_range", tuple(value))
+        self.set_property("valid_range", tuple(value), copy=False)
 
     @valid_range.deleter
     def valid_range(self):
@@ -613,9 +611,11 @@ class Properties(Container):
         if prop in self._special_properties:
             try:
                 return getattr(self, prop)
-            except AttributeError as err:
-                return self._default(default, err)
-        # --- End: if
+            except AttributeError as error:
+                if default is None:
+                    return
+
+                return self._default(default, error)
 
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
@@ -714,12 +714,14 @@ class Properties(Container):
         if prop in self._special_properties:
             try:
                 out = getattr(self, prop)
-            except AttributeError as err:
-                return self._default(default, err)
+            except AttributeError as error:
+                if default is None:
+                    return
+
+                return self._default(default, error)
             else:
                 delattr(self, prop)
                 return out
-        # --- End: if
 
         # Still here? Then del a non-special attribute
         return super().del_property(prop, default=default)
@@ -737,18 +739,20 @@ class Properties(Container):
                 Define one or more conditions on the identities.
 
                 A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time', ``'ncvar%lat'``,
-                etc.); a `Query` object (e.g. ``cf.eq('longitude')``); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``) that is compared with
-                the construct's identities via `re.search`.
+                (e.g. ``'latitude'``, ``'long_name=time',
+                ``'ncvar%lat'``, etc.); a `Query` object
+                (e.g. ``cf.eq('longitude')``); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``) that
+                is compared with the construct's identities via
+                `re.search`.
 
-                A construct has a number of identities, and the condition
-                is satisfied if any of the construct's identities, as
-                returned by the `identities` method, equals the condition
-                value. A construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has six identities:
+                A construct has a number of identities, and the
+                condition is satisfied if any of the construct's
+                identities, as returned by the `identities` method,
+                equals the condition value. A construct's identities
+                are those returned by its `!identities` method. In the
+                following example, the construct ``x`` has six
+                identities:
 
                    >>> x.identities()
                    ['time',
@@ -777,19 +781,15 @@ class Properties(Container):
         if not identities:
             return True
 
-        self_identities = self.identities()
-
         ok = False
-        for value0 in identities:
-            for value1 in self_identities:
-                ok = self._matching_values(value0, value1)
+        for value1 in self.identities(generator=True):
+            for value0 in identities:
+                ok = self._matching_values(value0, value1, basic=True)
                 if ok:
                     break
-            # --- End: for
 
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -850,10 +850,9 @@ class Properties(Container):
 
         ok = False
         for value0 in ncvars:
-            ok = self._matching_values(value0, ncvar)
+            ok = self._matching_values(value0, ncvar, basic=True)
             if ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -916,7 +915,7 @@ class Properties(Container):
         >>> f.match_by_property(standard_name='longitude')
 
         >>> f.match_by_property(
-        ...     standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
+        ...     standard_name='longitude', foo=cf.set(['bar', 'not_bar']))
 
         >>> f.match_by_property(long_name=re.compile('^lon'))
 
@@ -936,7 +935,6 @@ class Properties(Container):
                     "Positional argument, if provided, must one of 'or', "
                     "'and'"
                 )
-        # --- End: if
 
         if not properties:
             return True
@@ -958,7 +956,6 @@ class Properties(Container):
                     break
             elif not ok:
                 break
-        # --- End: for
 
         return ok
 
@@ -1004,7 +1001,6 @@ class Properties(Container):
                 out.pop(prop, None)
             else:
                 out[prop] = value
-        # --- End: for
 
         return out
 
@@ -1137,7 +1133,6 @@ class Properties(Container):
                 _DEPRECATION_ERROR_DICT(
                     "Use 'match_by_*' methods instead."
                 )  # pragma: no cover
-        # --- End: for
 
         return self.match_by_identity(*identities)
 
@@ -1171,6 +1166,3 @@ class Properties(Container):
         _DEPRECATION_ERROR_METHOD(
             self, "getprop", "Use method 'get_property' instead"
         )  # pragma: no cover
-
-
-# --- End: class

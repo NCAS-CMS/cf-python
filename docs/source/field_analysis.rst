@@ -1548,12 +1548,12 @@ pressure coordinates after the regridding operation.
    >>> z_ln_p.axis = 'Z'
    >>> print(z_ln_p.array)
    [6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]
-   >>> _ = v.replace_construct('Z', z_ln_p)
+   >>> _ = v.replace_construct('Z', new=z_ln_p)
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
    >>> new_z_ln_p.axis = 'Z'
    >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
-   >>> new_v.replace_construct('Z', new_z_p)
+   >>> new_v.replace_construct('Z', new=new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
    -------------------------------

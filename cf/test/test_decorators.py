@@ -1,12 +1,10 @@
 import datetime
 import faulthandler
-import inspect
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
-
 
 # Note: it is important we test on the cf logging config rather than the
 # generic Python module logging (i.e. 'cf.logging' not just 'logging').
@@ -69,9 +67,6 @@ class dummyClass:
         logger.warning(self.warning_message)
 
 
-# --- End: class
-
-
 class DecoratorsTest(unittest.TestCase):
     """Test decorators module.
 
@@ -86,9 +81,6 @@ class DecoratorsTest(unittest.TestCase):
         self.test_only = []
 
     def test_deprecated_kwarg_check(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         test_class = dummyClass()
 
         # Test without (or with default) deprecated keyword argument
@@ -96,7 +88,7 @@ class DecoratorsTest(unittest.TestCase):
         res_2 = test_class.decorated_func_2(good_kwarg="good")
         res_3 = test_class.func_2(good_kwarg="good", traceback=False)
         res_4 = test_class.decorated_func_2(good_kwarg="good", traceback=False)
-        _ = test_class.multikwarg_decorated_func_2(
+        test_class.multikwarg_decorated_func_2(
             good_kwarg="good", traceback=False
         )
         self.assertEqual(res_1, res_2)
@@ -117,9 +109,6 @@ class DecoratorsTest(unittest.TestCase):
             )
 
     def test_manage_log_level_via_verbose_attr(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Order of decreasing severity/verbosity is crucial to one test below
         levels = ["WARNING", "INFO", "DETAIL", "DEBUG"]
 
@@ -216,9 +205,6 @@ class DecoratorsTest(unittest.TestCase):
                 test_class.decorated_logging_func()
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

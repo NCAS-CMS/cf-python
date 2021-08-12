@@ -1,15 +1,12 @@
 import atexit
 import logging
-
 from copy import deepcopy
 from functools import reduce
-from sys import getrefcount
-from os import close
-from os import remove
-from os import rmdir
-from os.path import isfile
-from operator import mul
 from itertools import product as itertools_product
+from operator import mul
+from os import close, remove, rmdir
+from os.path import isfile
+from sys import getrefcount
 from tempfile import mkstemp
 
 from numpy import array as numpy_array
@@ -19,24 +16,23 @@ from numpy import ndarray as numpy_ndarray
 from numpy import number as numpy_number
 from numpy import transpose as numpy_transpose
 from numpy import vectorize as numpy_vectorize
-
+from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
 from numpy.ma import masked_all as numpy_ma_masked_all
-from numpy.ma import MaskedArray as numpy_ma_MaskedArray
 from numpy.ma import nomask as numpy_ma_nomask
 
-# from cfunits import Units
-
+from ..functions import fm_threshold as cf_fm_threshold
+from ..functions import free_memory, get_subspace
+from ..functions import inspect as cf_inspect
 from ..units import Units
-from ..functions import get_subspace, free_memory
-from ..functions import inspect as cf_inspect, fm_threshold as cf_fm_threshold
+from .abstract import FileArray
 
 # from .filearray import  (_TempFileArray #, SharedMemoryArray,
 #                          _shared_memory_array,FileArray)
 from .cachedarray import CachedArray
 
-from .abstract import FileArray
+# from cfunits import Units
 
 
 logger = logging.getLogger(__name__)

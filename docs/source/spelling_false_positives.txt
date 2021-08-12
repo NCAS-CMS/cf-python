@@ -29,6 +29,7 @@ autodetected
 autoperiod
 aux
 AuxiliaryCoordinate
+auxiliarycoordinate
 auxs
 basenames
 bilinear
@@ -70,10 +71,8 @@ climatological
 Climatological
 Colour
 conda
+config
 conformant
-consective
-constuct
-constucts
 contigious
 contiguousness
 contruct
@@ -174,6 +173,7 @@ hasbounds
 hasdata
 hashable
 hasprop
+Hassell
 hdf
 HDF
 Hovmuller
@@ -223,6 +223,7 @@ Januarys
 Javier
 jja
 kB
+Kinoshita
 Kristian
 kwargs
 lat
@@ -362,6 +363,7 @@ TimeDuration
 timeseries
 timeSeries
 timeSeriesProfile
+todict
 tolist
 trac
 trajectoryProfile

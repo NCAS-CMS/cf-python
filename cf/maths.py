@@ -1,7 +1,7 @@
-from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from . import Units
-
 from .data.data import Data
+from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+from .regrid import get_cartesian_coords
 
 
 def relative_vorticity(
@@ -98,12 +98,8 @@ def relative_vorticity(
     v = v.copy()
 
     # Get the X and Y coordinates
-    (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords(
-        "u", ("X", "Y")
-    )
-    (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords(
-        "v", ("X", "Y")
-    )
+    (u_x_key, u_y_key), (u_x, u_y) = get_cartesian_coords(u, "u", ("X", "Y"))
+    (v_x_key, v_y_key), (v_x, v_y) = get_cartesian_coords(v, "v", ("X", "Y"))
 
     if not u_x.equals(v_x) or not u_y.equals(v_y):
         raise ValueError("u and v must be on the same grid.")
@@ -119,7 +115,6 @@ def relative_vorticity(
             wrap = u.iscyclic(u_x_key)
         else:
             wrap = False
-    # --- End: if
 
     # Find the relative vorticity
     if is_latlong:
@@ -128,10 +123,11 @@ def relative_vorticity(
         y_units = u_y.Units
 
         # Change the units of the lat/longs to radians
-        u_x.Units = Units("radians")
-        u_y.Units = Units("radians")
-        v_x.Units = Units("radians")
-        v_y.Units = Units("radians")
+        radians = Units("radians")
+        u_x.Units = radians
+        u_y.Units = radians
+        v_x.Units = radians
+        v_y.Units = radians
 
         # Find cos and tan of latitude
         cos_lat = u_y.cos()
@@ -165,14 +161,12 @@ def relative_vorticity(
         radius = Data.asdata(radius).squeeze()
         radius.dtype = float
         if radius.size != 1:
-            raise ValueError("Multiple radii: radius={!r}".format(radius))
+            raise ValueError(f"Multiple radii: radius={radius!r}")
 
         if not radius.Units:
             radius.override_units(Units("metres"), inplace=True)
         elif not radius.Units.equivalent(Units("metres")):
-            raise ValueError(
-                "Invalid units for radius: {!r}".format(radius.Units)
-            )
+            raise ValueError(f"Invalid units for radius: {radius.Units!r}")
 
         # Calculate the relative vorticity. Do v-(u-corr) rather than
         # v-u+corr to be nice with coordinate reference corner cases.
@@ -180,8 +174,8 @@ def relative_vorticity(
         rv.data /= radius
 
         # Convert the units of latitude and longitude to canonical units
-        rv.dim("X").Units = x_units
-        rv.dim("Y").Units = y_units
+        rv.dimension_coordinate("X").Units = x_units
+        rv.dimension_coordinate("Y").Units = y_units
 
     else:
         v.derivative(

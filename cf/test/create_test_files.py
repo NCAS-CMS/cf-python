@@ -607,7 +607,7 @@ def _make_indexed_contiguous_file(filename):
 
 
 def _make_external_files():
-    """"""
+    """TODO."""
 
     def _pp(
         filename,
@@ -616,7 +616,7 @@ def _make_external_files():
         combined=False,
         external_missing=False,
     ):
-        """"""
+        """TODO."""
         nc = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
         nc.createDimension("grid_latitude", 10)
@@ -694,8 +694,6 @@ def _make_external_files():
 
         nc.close()
 
-    # --- End: def
-
     parent_file = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "parent.nc"
     )
@@ -718,7 +716,7 @@ def _make_external_files():
 
 
 def _make_gathered_file(filename):
-    """"""
+    """TODO."""
 
     def _jj(shape, list_values):
         array = numpy.ma.masked_all(shape)
@@ -726,8 +724,6 @@ def _make_gathered_file(filename):
             if i in list_values:
                 array[index] = i
         return array
-
-    # --- End: def
 
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
@@ -1532,6 +1528,6 @@ broken_bounds_file = _make_broken_bounds_cdl("broken_bounds.cdl")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    print(cf.environment())
+    cf.environment()
     print()
     unittest.main(verbosity=2)

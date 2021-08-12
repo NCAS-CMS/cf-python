@@ -1,18 +1,30 @@
 import atexit
 import csv
+import ctypes.util
 import importlib
 import os
 import platform
 import re
 import resource
 import sys
-import ctypes.util
+import urllib.parse
+import warnings
+from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from hashlib import md5 as hashlib_md5
+from marshal import dumps as marshal_dumps
+from math import ceil as math_ceil
+from os import getpid, listdir, mkdir
+from os.path import abspath as _os_path_abspath
+from os.path import dirname as _os_path_dirname
+from os.path import expanduser as _os_path_expanduser
+from os.path import expandvars as _os_path_expandvars
+from os.path import join as _os_path_join
+from os.path import relpath as _os_path_relpath
+
+import cfdm
 
 # import cPickle
 import netCDF4
-import warnings
-
-
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
@@ -28,42 +40,22 @@ from numpy import size as _numpy_size
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
 from numpy import where as _numpy_where
-
 from numpy.ma import all as _numpy_ma_all
 from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA as _numpy_ma_isMA
 from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
+from psutil import Process, virtual_memory
 
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
-from hashlib import md5 as hashlib_md5
-from marshal import dumps as marshal_dumps
-from math import ceil as math_ceil
-from os import getpid, listdir, mkdir
-from os.path import abspath as _os_path_abspath
-from os.path import expanduser as _os_path_expanduser
-from os.path import expandvars as _os_path_expandvars
-from os.path import dirname as _os_path_dirname
-from os.path import join as _os_path_join
-from os.path import relpath as _os_path_relpath
-from psutil import virtual_memory, Process
-import urllib.parse
-
-import cfdm
-
-from . import __version__, __file__
-
+from . import __file__, __version__, mpi_size
 from .constants import (
     CONSTANTS,
+    OperandBoundsCombination,
     _file_to_fh,
     _stash2standard_name,
-    OperandBoundsCombination,
 )
-
 from .docstring import _docstring_substitution_definitions
-
-from . import mpi_size
 
 
 # Instruction to close /proc/mem at exit.
@@ -167,7 +159,6 @@ if _linux:
                 n += 1
                 if n > 3:
                     break
-        # --- End: for
 
         free_bytes = free_KiB * 1024
 
@@ -198,6 +189,7 @@ else:
 # --- End: if
 
 
+# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
 def configuration(
     atol=None,
     rtol=None,
@@ -627,9 +619,9 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class regrid_logging(ConstantAccess):
-    """Whether or not to enable ESMPy regridding logging.
+    """Whether or not to enable `ESMF` regridding logging.
 
-    If it is logging is performed after every call to ESMPy.
+    If it is logging is performed after every call to `ESMF`.
 
     :Parameters:
 
@@ -679,6 +671,7 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
+# TODODASK - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
@@ -1243,7 +1236,7 @@ class bounds_combination_mode(ConstantAccess):
 
 
 def CF():
-    """"""
+    """TODO."""
     return cfdm.CF()
 
 
@@ -1328,7 +1321,6 @@ def set_performance(chunksize=None, free_memory_factor=None):
         except ValueError:
             _cf_free_memory_factor(old[1])
             raise
-    # --- End: if
 
     return old
 
@@ -1386,6 +1378,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
+# TODODASK - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)
@@ -1579,9 +1572,6 @@ else:
         )
 
 
-# --- End: if
-
-
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
@@ -1626,7 +1616,6 @@ def close_files(file_format=None):
                 fh.close()
 
             _file_to_fh[file_format].clear()
-    # --- End: if
 
 
 def close_one_file(file_format=None):
@@ -1837,15 +1826,18 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
                 return False
 
-        #            if verbose:
-        #                print('Different masks 4')
-        #
-        #            return False
-
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            out = _numpy_ma_all(a == b)
+            # To prevent a bug causing some header/coord-only CDL reads or
+            # aggregations to error. See also TODO comment below.
+            if a.dtype == b.dtype:
+                out = _numpy_ma_all(a == b)
+            else:
+                # TODO: is this most sensible? Or should we attempt dtype
+                # conversion and then compare? Probably we should avoid
+                # altogether by catching the different dtypes upstream?
+                out = False
             if out is _numpy_ma_masked:
                 return True
             else:
@@ -1923,7 +1915,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
     #        if isinstance(arg0, str) and arg0 == 'mask':
     #            mask_indices = indices[1]
     #            indices = indices[2:]
-    #    # --- End: if
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -1968,8 +1959,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
             "Scalar array can only be indexed with () or Ellipsis"
         )
 
-    # --- End: if
-
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
         if isinstance(index, slice):
@@ -2012,7 +2001,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                     # 3:6:-1 => 3:-4:-1
                     # 3:9:-1 => 3:-1:-1
                     stop -= size
-            # --- End: if
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2173,8 +2161,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                             parsed_indices, shape
                         )
                     )
-            # --- End: if
-        # --- End: if
 
         if is_slice:
             #            if reverse and index.step < 0:
@@ -2213,7 +2199,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                 div, mod = divmod(stop - start - 1, step)
                 stop = start + div * step + 1
                 index = slice(start, stop, step)
-            # --- End: if
 
             #
         #            if envelope:
@@ -2225,7 +2210,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
         # --- End: if
 
         parsed_indices[i] = index
-    # --- End: for
 
     #    if not (cyclic or reverse or envelope or mask):
     if not cyclic:
@@ -2307,7 +2291,7 @@ _equals = cfdm.Data()._equals
 
 
 def equals(x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs):
-    """"""
+    """TODO."""
     if rtol is None:
         rtol = _cf_rtol()
 
@@ -2573,7 +2557,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
             stash2sn[key] += line
         else:
             stash2sn[key] = line
-    # --- End: for
 
     if not merge:
         _stash2standard_name.clear()
@@ -2617,7 +2600,7 @@ def flat(x):
     [1, 2, 3, 4]
 
     >>> import numpy
-    >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
+    >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])])))
     [1, 2, 3, 4, 5, 6]
 
     >>> for a in cf.flat([1, [2, [3, 4]]]):
@@ -2655,7 +2638,7 @@ def flat(x):
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
 
-    >>> fl = cf.FieldList(cf.flat([f, [f, [f, f]]])
+    >>> fl = cf.FieldList(cf.flat([f, [f, [f, f]]]))
     >>> fl
     [<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
      <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
@@ -2672,7 +2655,6 @@ def flat(x):
                 yield sub
         else:
             yield a
-    # --- End: for
 
 
 def abspath(filename):
@@ -2823,7 +2805,7 @@ def pathjoin(path1, path2):
     '/data/archive/../archive/file.nc'
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
     '/data/archive/../archive/file.nc'
-    >>> cf.abspath(cf.pathjoin('/data/', 'archive/')
+    >>> cf.abspath(cf.pathjoin('/data/', 'archive/'))
     '/data/archive'
     >>> cf.pathjoin('http://data', 'archive/file.nc')
     'http://data/archive/file.nc'
@@ -2904,7 +2886,6 @@ def hash_array(array):
             array = array.filled()
         else:
             array = array.data
-    # --- End: if
 
     if not array.flags.c_contiguous:
         # array = array.copy()
@@ -3173,8 +3154,6 @@ def _section(
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(x, current_index - 1, axis_indices, indices)
 
-    # --- End: def
-
     # Retrieve the index of each axis defining the sections
     if data:
         if isinstance(axes, int):
@@ -3192,7 +3171,6 @@ def _section(
                 axis_indices.append(x.get_data_axes().index(key))
             except ValueError:
                 pass
-    # --- End: if
 
     # find the size of each dimension
     sizes = x.shape
@@ -3342,8 +3320,10 @@ def environment(display=True, paths=True):
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
-    if paths:  # include path information, else exclude, when unpacking tuple
+    if paths:
+        # Include path information, else exclude, when unpacking tuple
         string += " {2!s}"
+
     out = [
         string.format(dep, *info)
         for dep, info in dependency_version_paths_mapping.items()
@@ -3391,7 +3371,7 @@ def _DEPRECATION_ERROR(message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
         "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available. {3}".format(
+        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
             instance.__class__.__name__, method, arg, message, version
         )
     )
@@ -3419,7 +3399,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available. {2}".format(
+            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
                 func, key, message, version
             )
         )
@@ -3450,7 +3430,7 @@ def _DEPRECATION_ERROR_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
-            "version {4} and is no longer available. {3}".format(
+            "version {4} and is no longer available and will be removed at version 4.0.0. {3}".format(
                 instance.__class__.__name__, method, key, message, version
             )
         )
@@ -3461,7 +3441,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 ):
     raise DeprecationError(
         "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
-        "version {} and is no longer available. {}".format(
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
             value, kwarg, method, instance.__class__.__name__, version, message
         )
     )
@@ -3470,7 +3450,7 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
 def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
         "{} method {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(
+        "available and will be removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         )
     )
@@ -3479,25 +3459,30 @@ def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
 def _DEPRECATION_ERROR_ATTRIBUTE(
     instance, attribute, message="", version="3.0.0"
 ):
-    raise DeprecationError(
-        "{} attribute {!r} has been deprecate at version {} and is no longer "
-        "available. {}".format(
+    warnings.warn(
+        "{} attribute {!r} has been deprecated at version {} and will be "
+        "removed at version 4.0.0. {}".format(
             instance.__class__.__name__, attribute, version, message
-        )
+        ),
+        DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
         "Function {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(func, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            func, version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
         "Class {!r} has been deprecated at version {} and is no longer "
-        "available. {}".format(cls, version, message)
+        "available and will be removed at version 4.0.0. {}".format(
+            cls, version, message
+        )
     )
 
 
@@ -3506,7 +3491,7 @@ def _DEPRECATION_WARNING_METHOD(
 ):
     warnings.warn(
         "{} method {!r} has been deprecated at version {} and will be "
-        "removed in a future version. {}".format(
+        "removed at version 4.0.0. {}".format(
             instance.__class__.__name__, method, version, message
         ),
         DeprecationWarning,
@@ -3516,14 +3501,16 @@ def _DEPRECATION_WARNING_METHOD(
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available. {}".format(version, message)
+        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
+            version, message
+        )
     )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated at version "
-        "{} and is no longer available. Use the * operator to unpack the "
+        "{} and is no longer available and will be removed at version 4.0.0. Use the * operator to unpack the "
         "arguments instead.".format(instance.__class__.__name__, version)
     )
 

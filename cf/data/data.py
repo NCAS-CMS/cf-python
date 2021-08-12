@@ -30,40 +30,42 @@ import cftime
 import cfdm
 
 from ..cfdatetime import dt as cf_dt
-from ..units import Units
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..constants import masked as cf_masked
-
+from ..decorators import (
+    _deprecated_kwarg_check,
+    _display_or_return,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 from ..functions import (
-    fm_threshold as cf_fm_threshold,
-    free_memory,
-    collapse_parallel_mode,
-    parse_indices,
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_allclose,
     _numpy_isclose,
-    pathjoin,
-    hash_array,
-    broadcast_array,
-    default_netCDF_fillvals,
+    _section,
     abspath,
     log_level,
 )
-from ..functions import (
-    atol as cf_atol,
-    chunksize as cf_chunksize,
-    rtol as cf_rtol,
-)
-from ..functions import _DEPRECATION_ERROR_METHOD, _DEPRECATION_ERROR_ATTRIBUTE
+from ..functions import atol as cf_atol
+from ..functions import broadcast_array
+from ..functions import chunksize as cf_chunksize
+from ..functions import collapse_parallel_mode, default_netCDF_fillvals
+from ..functions import fm_threshold as cf_fm_threshold
+from ..functions import free_memory, hash_array
 from ..functions import inspect as cf_inspect
-from ..functions import _section
-
+from ..functions import parse_indices, pathjoin
+from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
-
-from ..decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-    _display_or_return,
+from ..units import Units
+from . import (
+    GatheredSubarray,
+    NetCDFArray,
+    RaggedContiguousSubarray,
+    RaggedIndexedContiguousSubarray,
+    RaggedIndexedSubarray,
+    UMArray,
 )
 
 from .abstract import Array
@@ -71,66 +73,59 @@ from .filledarray import FilledArray
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 
-# TODO SB post-186: decide how best to import these whilst avoiding 'import *'
 from .collapse_functions import (
-    max_f,
-    max_fpartial,
-    max_ffinalise,
-    min_f,
-    min_fpartial,
-    min_ffinalise,
     max_abs_f,
-    max_abs_fpartial,
     max_abs_ffinalise,
-    min_abs_f,
-    min_abs_fpartial,
-    min_abs_ffinalise,
-    mean_f,
-    mean_fpartial,
-    mean_ffinalise,
+    max_abs_fpartial,
+    max_f,
+    max_ffinalise,
+    max_fpartial,
     mean_abs_f,
-    mean_abs_fpartial,
     mean_abs_ffinalise,
-    root_mean_square_f,
-    root_mean_square_fpartial,
-    root_mean_square_ffinalise,
+    mean_abs_fpartial,
+    mean_f,
+    mean_ffinalise,
+    mean_fpartial,
     mid_range_f,
-    mid_range_fpartial,
     mid_range_ffinalise,
+    mid_range_fpartial,
+    min_abs_f,
+    min_abs_ffinalise,
+    min_abs_fpartial,
+    min_f,
+    min_ffinalise,
+    min_fpartial,
     range_f,
-    range_fpartial,
     range_ffinalise,
+    range_fpartial,
+    root_mean_square_f,
+    root_mean_square_ffinalise,
+    root_mean_square_fpartial,
     sample_size_f,
-    sample_size_fpartial,
     sample_size_ffinalise,
-    sum_f,
-    sum_fpartial,
-    sum_ffinalise,
-    sum_of_squares_f,
-    sum_of_squares_fpartial,
-    sum_of_squares_ffinalise,
-    sw_f,
-    sw_fpartial,
-    sw_ffinalise,
-    sw2_f,
-    sw2_fpartial,
-    sw2_ffinalise,
-    var_f,
-    var_fpartial,
-    var_ffinalise,
+    sample_size_fpartial,
     sd_f,
-    sd_fpartial,
     sd_ffinalise,
+    sd_fpartial,
+    sum_f,
+    sum_ffinalise,
+    sum_fpartial,
+    sum_of_squares_f,
+    sum_of_squares_ffinalise,
+    sum_of_squares_fpartial,
+    sw2_f,
+    sw2_ffinalise,
+    sw2_fpartial,
+    sw_f,
+    sw_ffinalise,
+    sw_fpartial,
+    var_f,
+    var_ffinalise,
+    var_fpartial,
 )
-
-from . import (
-    NetCDFArray,
-    UMArray,
-    GatheredSubarray,
-    RaggedContiguousSubarray,
-    RaggedIndexedSubarray,
-    RaggedIndexedContiguousSubarray,
-)
+from .filledarray import FilledArray
+from .partition import Partition
+from .partitionmatrix import PartitionMatrix
 
 from .utils import (
     convert_to_reftime,
@@ -147,7 +142,6 @@ from .creation import (
     convert_to_builtin_type,
     generate_axis_identifiers,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -1092,7 +1086,7 @@ class Data(Container, cfdm.Data):
         3
         >>> len(Data([[1, 2, 3]]))
         1
-        >>> len(Data([[1, 2, 3], [4, 5, 6]])
+        >>> len(Data([[1, 2, 3], [4, 5, 6]]))
         2
         >>> len(Data(1))
         TypeError: len() of scalar Data
@@ -3029,8 +3023,6 @@ class Data(Container, cfdm.Data):
 
         """
         return self.func(numpy_ceil, out=True, inplace=inplace)
-        # Retrieve the axis
-        axis_key = self.domain_axis(axis, key=True)
 
     @_inplace_enabled(default=False)
     def convolution_filter(
@@ -3863,7 +3855,6 @@ class Data(Container, cfdm.Data):
 
         if not units0 and not units1:
             return data0, data1, units0
-
         if (
             units0.isreftime
             and units1.isreftime
@@ -4349,7 +4340,6 @@ class Data(Container, cfdm.Data):
             broadcasting = False
 
             align_offset = 0
-            ellipsis = None
 
             new_shape = data0_shape
             new_ndim = data0._ndim
@@ -8366,7 +8356,7 @@ class Data(Container, cfdm.Data):
 
         **Examples:**
 
-        >>> d = cf.Data([[0 0 0]])
+        >>> d = cf.Data([[0, 0, 0]])
         >>> d.any()
         False
         >>> d[0, 0] = cf.masked
@@ -8803,7 +8793,7 @@ class Data(Container, cfdm.Data):
 
         return out
 
-    def get_data(self, default=ValueError()):
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
         .. versionadded:: 3.0.0
@@ -8946,7 +8936,7 @@ class Data(Container, cfdm.Data):
     def set_units(self, value):
         """Set the units.
 
-        .. seealso:: `del_units`, `get_units`
+        .. seealso:: `del_units`, `get_units`, `has_units`
 
         :Parameters:
 
@@ -9863,7 +9853,7 @@ class Data(Container, cfdm.Data):
         >>> d.cos(inplace=True)
         >>> d.Units
         <Units: 1>
-        >>> print9d.array)
+        >>> print(d.array)
         [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         """
@@ -9872,7 +9862,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_cos, units=_units_1, inplace=True)
+        d.func(numpy_cos, units=_units_1, inplace=True)
 
         return d
 
@@ -9906,7 +9896,7 @@ class Data(Container, cfdm.Data):
         [2 2 2 2]
         >>> print(d.count(1).array)
         [0 4 4]
-        >>> print(d.count((0, 1))
+        >>> print(d.count((0, 1)))
         8
 
         """
@@ -11982,6 +11972,106 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    def del_calendar(self, default=ValueError()):
+        """Delete the calendar.
+
+        .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
+                     `del_units`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                calendar has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The value of the deleted calendar.
+
+        **Examples:**
+
+        >>> d.set_calendar('360_day')
+        >>> d.has_calendar()
+        True
+        >>> d.get_calendar()
+        '360_day'
+        >>> d.del_calendar()
+        >>> d.has_calendar()
+        False
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
+        >>> print(d.del_calendar(None))
+        None
+
+        """
+        calendar = getattr(self.Units, "calendar", None)
+
+        if calendar is not None:
+            self.override_calendar(None, inplace=True)
+            return calendar
+
+        raise self._default(
+            default, f"{self.__class__.__name__} has no 'calendar' component"
+        )
+
+    def del_units(self, default=ValueError()):
+        """Delete the units.
+
+        .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the units
+                has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The value of the deleted units.
+
+        **Examples:**
+
+        >>> d.set_units('metres')
+        >>> d.has_units()
+        True
+        >>> d.get_units()
+        'metres'
+        >>> d.del_units()
+        >>> d.has_units()
+        False
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+        >>> print(d.del_units(None))
+        None
+
+        """
+        out = self.Units
+
+        units = getattr(out, "units", None)
+        calendar = getattr(out, "calendar", None)
+
+        if calendar is not None:
+            self.Units = Units(None, calendar)
+        else:
+            del self.Units
+
+        if units is not None:
+            return units
+
+        return self._default(
+            default, f"{self.__class__.__name__} has no 'units' component"
+        )
+
     @classmethod
     def masked_all(cls, shape, dtype=None, units=None, chunk=True):
         """Return a new data array of given shape and type with all
@@ -12079,8 +12169,8 @@ class Data(Container, cfdm.Data):
 
             axes: (sequence of) `int`
                 Select the axes. By default all axes are flipped. Each
-                axis is identified by its integer position. No axes are
-                flipped if *axes* is an empty sequence.
+                axis is identified by its integer position. No axes
+                are flipped if *axes* is an empty sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -12126,7 +12216,7 @@ class Data(Container, cfdm.Data):
         return d
 
     def HDF_chunks(self, *chunks):
-        """"""
+        """TODO."""
         _HDF_chunks = self._HDF_chunks
 
         if _HDF_chunks is None:
@@ -13238,7 +13328,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_sin, units=_units_1, inplace=True)
+        d.func(numpy_sin, units=_units_1, inplace=True)
 
         return d
 
@@ -13295,7 +13385,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_sinh, units=_units_1, inplace=True)
+        d.func(numpy_sinh, units=_units_1, inplace=True)
 
         return d
 
@@ -13350,7 +13440,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_cosh, units=_units_1, inplace=True)
+        d.func(numpy_cosh, units=_units_1, inplace=True)
 
         return d
 
@@ -13408,7 +13498,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_tanh, units=_units_1, inplace=True)
+        d.func(numpy_tanh, units=_units_1, inplace=True)
 
         return d
 
@@ -13441,16 +13531,6 @@ class Data(Container, cfdm.Data):
         else:
             d.func(numpy_log, units=_units_1, inplace=True)
             d /= numpy_log(base)
-
-        #        if base is None:
-        #            d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
-        #        elif base == 10:
-        #            d.func(numpy_log10, units=d.Units.log(10), inplace=True)
-        #        elif base == 2:
-        #            d.func(numpy_log2, units=d.Units.log(2), inplace=True)
-        #        else:
-        #            d.func(numpy_log, units=d.Units.log(base), inplace=True)
-        #            d /= numpy_log(base)
 
         return d
 
@@ -13619,7 +13699,7 @@ class Data(Container, cfdm.Data):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        out = d.func(numpy_tan, units=_units_1, inplace=True)
+        d.func(numpy_tan, units=_units_1, inplace=True)
 
         return d
 
@@ -13640,7 +13720,7 @@ class Data(Container, cfdm.Data):
         >>> d.tolist()
         [1, 2]
 
-        >>> d = cf.Data(([[1, 2], [3, 4]])
+        >>> d = cf.Data(([[1, 2], [3, 4]]))
         >>> list(d)
         [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
@@ -14570,10 +14650,11 @@ class Data(Container, cfdm.Data):
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
-        """Return a dictionary of Data objects, which are the m
-        dimensional sections of this n dimensional Data object, where m.
+        """Returns a dictionary of sections of the Data object.
 
-        <= n. The keys of the dictionary are the indices of the sections
+        Specifically, returns a dictionary of Data objects which are the
+        m-dimensional sections of this n-dimensional Data object, where
+        m <= n. The dictionary keys are the indices of the sections
         in the original Data object. The m dimensions that are not
         sliced are marked with None as a placeholder making it possible
         to reconstruct the original data object. The corresponding
@@ -14818,7 +14899,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
 
     **Examples:**
 
-    >>> type f.Data
+    >>> type(f.Data)
     <class 'cf.data.Data'>
     >>> d._axes
     ['dim1', 'dim2', 'dim0']

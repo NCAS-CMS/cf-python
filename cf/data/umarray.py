@@ -6,6 +6,7 @@ from .functions import _open_um_file, _close_um_file
 from ..umread_lib.umfile import File, Rec
 
 from . import abstract
+from .functions import _close_um_file, _open_um_file
 
 
 class UMArray(abstract.FileArray):
