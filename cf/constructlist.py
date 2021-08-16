@@ -314,9 +314,7 @@ class ConstructList(list, Container, cfdm.Container):
             if f.equals(value):
                 return i + start
 
-        raise ValueError(
-            "{0!r} is not in {1}".format(value, self.__class__.__name__)
-        )
+        raise ValueError(f"{value!r} is not in {self.__class__.__name__}")
 
     def remove(self, value):
         """Remove first occurrence of value.
@@ -332,7 +330,8 @@ class ConstructList(list, Container, cfdm.Container):
                 return
 
         raise ValueError(
-            "{0}.remove(x): x not in {0}".format(self.__class__.__name__)
+            f"{self.__class__.__name__}.remove(x): x not in "
+            f"{self.__class__.__name__}"
         )
 
     def sort(self, key=None, reverse=False):
@@ -513,9 +512,8 @@ class ConstructList(list, Container, cfdm.Container):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             logger.info(
-                "{0}: Incompatible type: {1}".format(
-                    self.__class__.__name__, other.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Incompatible type: "
+                f"{other.__class__.__name__}"
             )  # pragma: no cover
             return False
 
@@ -523,10 +521,8 @@ class ConstructList(list, Container, cfdm.Container):
         len_self = len(self)
         if len_self != len(other):
             logger.info(
-                "{0}: Different numbers of constructs: "
-                "{1}, {2}".format(
-                    self.__class__.__name__, len_self, len(other)
-                )
+                f"{self.__class__.__name__}: Different numbers of constructs: "
+                f"{len_self}, {len(other)}"
             )  # pragma: no cover
             return False
 
@@ -547,8 +543,8 @@ class ConstructList(list, Container, cfdm.Container):
                     verbose=verbose,
                 ):
                     logger.info(
-                        "{0}: Different constructs at element {1}: "
-                        "{2!r}, {3!r}".format(self.__class__.__name__, i, f, g)
+                        f"{self.__class__.__name__}: Different constructs at "
+                        f"element {i}: {f!r}, {g!r}"
                     )  # pragma: no cover
                     return False
         else:
@@ -567,11 +563,8 @@ class ConstructList(list, Container, cfdm.Container):
             # Check that there are the same identities
             if set(self_identity) != set(other_identity):
                 logger.info(
-                    "{}: Different sets of identities: {}, {}".format(
-                        self.__class__.__name__,
-                        set(self_identity),
-                        set(other_identity),
-                    )
+                    f"{self.__class__.__name__}: Different sets of "
+                    f"identities: {set(self_identity)}, {set(other_identity)}"
                 )  # pragma: no cover
                 return False
 
@@ -581,14 +574,9 @@ class ConstructList(list, Container, cfdm.Container):
                 gl = other_identity[identity]
                 if len(fl) != len(gl):
                     logger.info(
-                        "{0}: Different numbers of {1!r} {2}s: "
-                        "{3}, {4}".format(
-                            self.__class__.__name__,
-                            identity,
-                            fl[0].__class__.__name__,
-                            len(fl),
-                            len(gl),
-                        )
+                        f"{self.__class__.__name__}: Different numbers of "
+                        f"{identity!r} {fl[0].__class__.__name__}s: "
+                        f"{len(fl)}, {len(gl)}"
                     )  # pragma: no cover
                     return False
 
@@ -617,9 +605,8 @@ class ConstructList(list, Container, cfdm.Container):
 
                 if not found_match:
                     logger.info(
-                        "{0}: No {1} equal to: {2!r}".format(
-                            self.__class__.__name__, g.__class__.__name__, f
-                        )
+                        f"{self.__class__.__name__}: No "
+                        f"{g.__class__.__name__} equal to: {f!r}"
                     )  # pragma: no cover
                     return False
 
@@ -710,10 +697,9 @@ class ConstructList(list, Container, cfdm.Container):
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__
-                )
+                f"Use of a {identities[0].__class__.__name__!r} for "
+                "identities has been deprecated. Use the * operator to "
+                "unpack the arguments instead."
             )  # pragma: no cover
 
         for i in identities:
@@ -733,10 +719,9 @@ class ConstructList(list, Container, cfdm.Container):
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at "
-                        "version 3.0.0. Try {!r} instead.".format(
-                            i, i.replace(":", "=", 1)
-                        )
+                        f"The identity format {i!r} has been deprecated at "
+                        f"version 3.0.0. Try {i.replace(':', '=', 1)!r} "
+                        "instead."
                     )  # pragma: no cover
 
         return self.select_by_identity(*identities)
