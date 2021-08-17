@@ -362,11 +362,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             logger.info(
-                "{}: Different types ({!r} != {!r})".format(
-                    self.__class__.__name__,
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                )
+                f"{self.__class__.__name__}: Different types "
+                f"({self.__class__.__name__!r} != "
+                f"{other.__class__.__name__!r})"
             )  # pragma: no cover
             return False
 
@@ -375,9 +373,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         # ------------------------------------------------------------
         if self.identity() != other.identity():
             logger.info(
-                "{}: Different identities ({!r} != {!r})".format(
-                    self.__class__.__name__, self.identity(), other.identity()
-                )
+                f"{self.__class__.__name__}: Different identities "
+                f"({self.identity()!r} != {other.identity()!r})"
             )  # pragma: no cover
             return False
 
@@ -388,9 +385,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         ancillaries1 = other.coordinate_conversion.domain_ancillaries()
         if set(ancillaries0) != set(ancillaries1):
             logger.info(
-                "{}: Non-equivalent domain ancillary terms".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Non-equivalent domain ancillary "
+                "terms"
             )  # pragma: no cover
             return False
 
@@ -398,8 +394,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         for term, value0 in ancillaries0.items():
             if (value0 is None) != (ancillaries1[term] is None):
                 logger.info(
-                    "{}: Non-equivalent domain ancillary-valued "
-                    "term {!r}".format(self.__class__.__name__, term)
+                    f"{self.__class__.__name__}: Non-equivalent domain "
+                    f"ancillary-valued term {term!r}"
                 )  # pragma: no cover
                 return False
 
@@ -433,8 +429,8 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
                 logger.info(
-                    "{}: Non-equivalent coordinate conversion parameter-"
-                    "valued term {!r}".format(self.__class__.__name__, term)
+                    f"{self.__class__.__name__}: Non-equivalent coordinate "
+                    f"conversion parameter-valued term {term!r}"
                 )  # pragma: no cover
                 return False
 
@@ -459,8 +455,8 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
                 logger.info(
-                    "{}: Non-equivalent datum parameter-valued "
-                    "term {!r}".format(self.__class__.__name__, term)
+                    f"{self.__class__.__name__}: Non-equivalent datum "
+                    f"parameter-valued term {term!r}"
                 )  # pragma: no cover
                 return False
 
