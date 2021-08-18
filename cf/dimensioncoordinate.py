@@ -562,9 +562,7 @@ class DimensionCoordinate(
                 if not self.Units.isreftime:
                     raise ValueError(
                         "Can't create reference time bounds for "
-                        "non-reference time coordinates: {0!r}".format(
-                            self.Units
-                        )
+                        f"non-reference time coordinates: {self.Units!r}"
                     )
 
                 bounds = numpy_empty((size, 2), dtype=object)
@@ -821,9 +819,8 @@ class DimensionCoordinate(
                 return self.copy()
         elif period is None:
             raise ValueError(
-                "Can't roll {} when no period has been set".format(
-                    self.__class__.__name__
-                )
+                f"Can't roll {self.__class__.__name__} when no period has "
+                "been set"
             )
 
         direction = self.direction()
@@ -832,7 +829,7 @@ class DimensionCoordinate(
 
         if axis not in [0, -1]:
             raise ValueError(
-                "Can't roll axis {} when there is only one axis".format(axis)
+                f"Can't roll axis {axis} when there is only one axis"
             )
 
         c = _inplace_enabled_define_and_cleanup(self)
