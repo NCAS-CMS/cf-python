@@ -738,7 +738,7 @@ class collapse_parallel_mode(ConstantAccess):
         if arg not in allowed_values:
             raise ValueError(
                 "Invalid collapse parallel mode. Valid values are "
-                "{}".format(allowed_values)
+                f"{allowed_values}"
             )
 
         return arg
@@ -862,11 +862,11 @@ class chunksize(ConstantAccess):
         arg = float(arg)
         if arg > upper_chunksize and mpi_size > 1:
             raise ValueError(
-                "Specified chunk size ({}) is too large for the given "
-                "free memory factor ({})".format(arg, upper_chunksize)
+                f"Specified chunk size ({arg}) is too large for the given "
+                f"free memory factor ({upper_chunksize})"
             )
         elif arg <= 0:
-            raise ValueError("Chunk size ({}) must be positive".format(arg))
+            raise ValueError(f"Chunk size ({arg}) must be positive")
 
         return arg
 
@@ -1010,12 +1010,12 @@ class of_fraction(ConstantAccess):
         try:
             arg = float(arg)
         except (ValueError, TypeError):
-            raise ValueError("Fraction must be a float. Got {!r}".format(arg))
+            raise ValueError(f"Fraction must be a float. Got {arg!r}")
 
         if arg <= 0.0 or arg >= 1.0:
             raise ValueError(
                 "Fraction must be between 0.0 and 1.0 not inclusive. "
-                "Got {!r}".format(arg)
+                f"Got {arg!r}"
             )
 
         return arg
@@ -1068,7 +1068,7 @@ class free_memory_factor(ConstantAccess):
             arg = float(arg)
         except (ValueError, TypeError):
             raise ValueError(
-                "Free memory factor must be a float. Got {!r}".format(arg)
+                f"Free memory factor must be a float. Got {arg!r}"
             )
 
         if not (0 < arg < 1):
@@ -1223,13 +1223,11 @@ class bounds_combination_mode(ConstantAccess):
             valid = False
 
         if not valid:
+            valid_vals = ", ".join(
+                [repr(val.name) for val in OperandBoundsCombination]
+            )
             raise ValueError(
-                "{!r} is not one of the valid values: {}".format(
-                    arg,
-                    ", ".join(
-                        [repr(val.name) for val in OperandBoundsCombination]
-                    ),
-                )
+                f"{arg!r} is not one of the valid values: {valid_vals}"
             )
 
         return arg
@@ -1935,9 +1933,7 @@ def parse_indices(
 
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
-            "Invalid indices {} for array with shape {}".format(
-                parsed_indices, shape
-            )
+            f"Invalid indices {parsed_indices} for array with shape {shape}"
         )
 
     if len_parsed_indices < ndim:
@@ -2042,9 +2038,7 @@ def parse_indices(
                     or (start > stop and step > 0)
                 ):
                     raise IndexError(
-                        "Invalid indices dimension with size {}: {}".format(
-                            size, index
-                        )
+                        f"Invalid indices dimension with size {size}: {index}"
                     )
 
                 if step < 0 and stop < 0:
@@ -2073,10 +2067,8 @@ def parse_indices(
                 # has a size attribute.
                 if _numpy_size(index) != size:
                     raise IndexError(
-                        "Incorrect number ({}) of boolean indices for "
-                        "dimension with size {}: {}".format(
-                            _numpy_size(index), size, index
-                        )
+                        f"Incorrect number ({_numpy_size(index)}) of boolean "
+                        f"indices for dimension with size {size}: {index}"
                     )
 
                 index = _numpy_where(index)[0]
@@ -2125,7 +2117,7 @@ def parse_indices(
                         ):
                             raise ValueError(
                                 "Bad index (not strictly monotonic): "
-                                "{}".format(index)
+                                f"{index}"
                             )
 
                         if reverse and step < 0:
@@ -2155,9 +2147,8 @@ def parse_indices(
                             is_slice = True
                 else:
                     raise IndexError(
-                        "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape
-                        )
+                        f"Invalid indices {parsed_indices} for array with "
+                        f"shape {shape}"
                     )
 
         if is_slice:
@@ -2905,7 +2896,7 @@ def inspect(self):
 
     if hasattr(self, "__dict__"):
         for key, value in sorted(self.__dict__.items()):
-            out.append("{}: {!r}".format(key, value))
+            out.append(f"{key}: {value!r}")
 
     print("\n".join(out))
 
@@ -3361,15 +3352,14 @@ def default_netCDF_fillvals():
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError("{}".format(message))
+    raise DeprecationError(f"{message}")
 
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
-        "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
-            instance.__class__.__name__, method, arg, message, version
-        )
+        f"Argument {arg!r} of method '{instance.__class__.__name__}.{method}' "
+        f"has been deprecated at version {version} and is no longer available "
+        f"and will be removed at version 4.0.0. {message}"
     )
 
 
@@ -3394,10 +3384,9 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
 
     for key in kwargs.keys():
         raise DeprecationError(
-            "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
-                func, key, message, version
-            )
+            f"Keyword {key!r} of function '{func}' has been deprecated at "
+            f"version {version} and is no longer available and will be "
+            f"removed at version 4.0.0. {message}"
         )
 
 
