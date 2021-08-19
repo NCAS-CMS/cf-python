@@ -12779,7 +12779,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes by calculating their standard deviation.
+        r"""Collapse axes by calculating their standard deviation.
 
         The standard deviation may be adjusted for the number of degrees of
         freedom and may be calculated with weighted values.
