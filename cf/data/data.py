@@ -1,6 +1,6 @@
 import logging
 import operator
-from functools import partial, reduce
+from functools import partial, reduce, wraps
 from itertools import product
 from json import dumps as json_dumps
 from json import loads as json_loads
@@ -121,6 +121,48 @@ from .utils import (  # is_small,; is_very_small,
 
 
 logger = logging.getLogger(__name__)
+
+
+def daskified(apply_temp_log_level=None):
+    def decorator(method):
+        """Temporary decorator to mark and log methods migrated to Dask.
+
+        A log level argument will set the log level throughout the call of
+        the method to that level and then reset it back to the previous
+        global level. A message will also be emitted to indicate whenever
+        the method is called, unless no argument is given [daskified()]
+        in which case the decorator does nothing except mark methods
+        which are considered to be daskified, a main purpose for this
+        decorator.
+
+        Note: for properties the decorator must be placed underneath the
+        property decorator so it is called before and not after it.
+
+        """
+
+        @wraps(method)
+        def wrapper(*args, **kwargs):
+            if apply_temp_log_level is None:  # distingush from 0
+                return method(*args, **kwargs)
+
+            original_global_log_level = log_level()
+            # Switch log level for the duration of the method call, with an
+            # initial message to indicate a run first guaranteed to show
+            log_level(apply_temp_log_level)
+            # Not actually a warning, but setting as warning ensures it shows
+            # (unless logging is disabled, but ignore that complication for
+            # this temporary and informal decorator!)
+            logger.warning(f"%%%%% Running daskified {method.__name__} %%%%%")
+
+            out = method(*args, **kwargs)
+
+            # ... then return the log level to the global level afterwards
+            log_level(original_global_log_level)
+            return out
+
+        return wrapper
+
+    return decorator
 
 
 # --------------------------------------------------------------------
@@ -573,6 +615,7 @@ class Data(Container, cfdm.Data):
 
         return ca._get_dask().copy()
 
+    @daskified(1)
     def __contains__(self, value):
         """Membership test operator ``in``
 
@@ -864,6 +907,7 @@ class Data(Container, cfdm.Data):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
+    @daskified(1)
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 
@@ -970,6 +1014,7 @@ class Data(Container, cfdm.Data):
 
         return new
 
+    @daskified(1)
     def __setitem__(self, indices, value):
         """Implement indexed assignment.
 
@@ -5458,6 +5503,7 @@ class Data(Container, cfdm.Data):
         del self._custom["_hardmask"]
 
     @property
+    @daskified(1)
     def _axes(self):
         """Storage for the axis identifiers.
 
@@ -5515,6 +5561,7 @@ class Data(Container, cfdm.Data):
     # Attributes
     # ----------------------------------------------------------------
     @property
+    @daskified(1)
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
 
@@ -5594,6 +5641,7 @@ class Data(Container, cfdm.Data):
         return self
 
     @property
+    @daskified(1)
     def dtype(self):
         """The `numpy` data-type of the data.
 
@@ -5669,6 +5717,7 @@ class Data(Container, cfdm.Data):
         self.del_fill_value(None)
 
     @property
+    @daskified(1)
     def hardmask(self):
         """Hardness of the mask.
 
@@ -5742,6 +5791,7 @@ class Data(Container, cfdm.Data):
         _DEPRECATION_ERROR_METHOD("TODODASK use is_masked instead")
 
     @property
+    @daskified(1)
     def is_masked(self):
         """True if the data array has any masked values.
 
@@ -5819,6 +5869,7 @@ class Data(Container, cfdm.Data):
         return not self.ndim
 
     @property
+    @daskified(1)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 
@@ -5846,6 +5897,7 @@ class Data(Container, cfdm.Data):
     # TODODASK - what about nans (e.g. after da.unique)
 
     @property
+    @daskified(1)
     def ndim(self):
         """Number of dimensions in the data array.
 
@@ -5876,6 +5928,7 @@ class Data(Container, cfdm.Data):
         return dx.ndim
 
     @property
+    @daskified(1)
     def shape(self):
         """Tuple of the data array's dimension sizes.
 
@@ -5905,6 +5958,7 @@ class Data(Container, cfdm.Data):
     # TODODASK - what about nans (e.g. after da.unique  dx.shape -> (nan,))
 
     @property
+    @daskified(1)
     def size(self):
         """Number of elements in the data array.
 
@@ -5937,6 +5991,7 @@ class Data(Container, cfdm.Data):
     # TODODASK - what about nans (e.g. after da.unique)
 
     @property
+    @daskified(1)
     def array(self):
         """A numpy array copy the data array.
 
@@ -5980,6 +6035,7 @@ class Data(Container, cfdm.Data):
         return a
 
     @property
+    @daskified(1)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
@@ -6713,6 +6769,7 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    @daskified()
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
 
@@ -8938,6 +8995,7 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    @daskified(1)
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
@@ -10584,6 +10642,7 @@ class Data(Container, cfdm.Data):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(1)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
@@ -11952,6 +12011,7 @@ class Data(Container, cfdm.Data):
 
         return d
 
+    @daskified(1)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -12554,6 +12614,7 @@ class Data(Container, cfdm.Data):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(1)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def roll(self, axis, shift, inplace=False, i=False):
