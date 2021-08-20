@@ -12184,6 +12184,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.array.tolist()
 
+    @daskified(1)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
@@ -12224,9 +12225,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = d._ndim
-
         # Parse the axes. By default, reverse the order of the axes.
+        ndim = d.ndim
         if axes is None:
             if ndim <= 1:
                 return d
@@ -12247,21 +12247,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 )
         # --- End: if
 
-        # Permute the axes.
-        data_axes = d._axes
-        d._axes = [data_axes[i] for i in iaxes]
+        # TODODASK Q) is d._axes still relevant? Or can the following go?
+        # Test passes with it commented out, but it could still be important?
+        # data_axes = d._axes
+        # d._axes = [data_axes[i] for i in iaxes]
 
-        # Permute the shape
-        shape = d._shape
-        d._shape = tuple([shape[i] for i in iaxes])
-
-        # Permute the locations map
-        for partition in d.partitions.matrix.flat:
-            location = partition.location
-            shape = partition.shape
-
-            partition.location = [location[i] for i in iaxes]
-            partition.shape = [shape[i] for i in iaxes]
+        dx = d._get_dask()
+        dx = da.transpose(dx, axes=axes)
+        d._set_dask(dx)
 
         return d
 
