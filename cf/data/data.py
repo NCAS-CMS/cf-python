@@ -30,14 +30,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import (
-    _DEPRECATION_ERROR_ATTRIBUTE,
-    _DEPRECATION_ERROR_METHOD,
-    _numpy_allclose,
-    _numpy_isclose,
-    _section,
-    abspath,
-)
+from ..functions import _numpy_allclose, _numpy_isclose, _section, abspath
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
@@ -107,6 +100,7 @@ from .creation import (
     to_dask,
 )
 from .filledarray import FilledArray
+from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
@@ -216,7 +210,7 @@ _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
 
-class Data(Container, cfdm.Data):
+class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -2960,35 +2954,6 @@ class Data(Container, cfdm.Data):
         d._set_dask(dx, delete_source=False)
 
         return d
-
-    def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
-        """Partition the data array.
-
-        :Parameters:
-
-            chunksize: `int`, optional
-                The
-
-            total: sequence of `int`, optional
-
-            omit_axes: sequence of `int`, optional
-
-            pmshape: sequence of `int`, optional
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d.chunk()
-        >>> d.chunk(100000)
-        >>> d.chunk(100000, )
-        >>> d.chunk(100000, total=[2])
-        >>> d.chunk(100000, omit_axes=[3, 4])
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK. Use 'rechunk' instead")
 
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
@@ -5773,24 +5738,6 @@ class Data(Container, cfdm.Data):
         raise AttributeError("TODODASK - use harden_mask/soften_mask instead")
 
     @property
-    def ismasked(self):
-        """True if the data array has any masked values.
-
-        TODODASK
-
-        **Examples:**
-
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
-        >>> print(d.ismasked)
-        False
-        >>> d[0, ...] = cf.masked
-        >>> d.ismasked
-        True
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK use is_masked instead")
-
-    @property
     @daskified(1)
     def is_masked(self):
         """True if the data array has any masked values.
@@ -5829,25 +5776,6 @@ class Data(Container, cfdm.Data):
         )
 
         return bool(dx.any())
-
-    @property
-    def ispartitioned(self):
-        """True if the data array is partitioned.
-
-        **Examples:**
-
-        >>> d._pmsize
-        1
-        >>> d.ispartitioned
-        False
-
-        >>> d._pmsize
-        2
-        >>> d.ispartitioned
-        False
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
 
     @property
     def isscalar(self):
@@ -6106,29 +6034,6 @@ class Data(Container, cfdm.Data):
         # --- End: if
 
         return a
-
-    @property
-    def varray(self):
-        """A numpy array view the data array.
-
-        Note that making changes to elements of the returned view changes
-        the underlying data.
-
-        .. seealso:: `array`, `datetime_array`
-
-        **Examples:**
-
-        >>> a = d.varray
-        >>> type(a)
-        <type 'numpy.ndarray'>
-        >>> a
-        array([0, 1, 2, 3, 4])
-        >>> a[0] = 999
-        >>> d.varray
-        array([999, 1, 2, 3, 4])
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
 
     @property
     def mask(self):
@@ -6768,29 +6673,6 @@ class Data(Container, cfdm.Data):
         )
 
         return d
-
-    @daskified()
-    def add_partitions(self, extra_boundaries, pdim):
-        """Add partition boundaries.
-
-        :Parameters:
-
-            extra_boundaries: `list` of `int`
-                The boundaries of the new partitions.
-
-            pdim: `str`
-                The name of the axis to have the new partitions.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d.add_partitions(    )
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK Consider using rechunk instead")
 
     def all(self):
         """Test whether all data array elements evaluate to True.
@@ -10224,19 +10106,6 @@ class Data(Container, cfdm.Data):
 
         return True
 
-    def partition_boundaries(self):
-        """Return the partition boundaries for each partition matrix
-        dimension.
-
-        :Returns:
-
-            `dict`
-
-        **Examples:**
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK - consider using 'chunks' instead")
-
     def datum(self, *index):
         """Return an element of the data array as a standard Python
         scalar.
@@ -12910,7 +12779,7 @@ class Data(Container, cfdm.Data):
         i=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes by calculating their standard deviation.
+        r"""Collapse axes by calculating their standard deviation.
 
         The standard deviation may be adjusted for the number of degrees of
         freedom and may be calculated with weighted values.
@@ -13268,48 +13137,6 @@ class Data(Container, cfdm.Data):
             _preserve_partitions=_preserve_partitions,
         )
 
-    # ----------------------------------------------------------------
-    # Deprecated attributes and methods
-    # ----------------------------------------------------------------
-    @property
-    def Data(self):
-        """Deprecated at version 3.0.0, use attribute `data` instead."""
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use attribute 'data' instead."
-        )  # pragma: no cover
-
-    @property
-    def dtvarray(self):
-        """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
-
-    def files(self):
-        """Deprecated at version 3.4.0, use method `get_` instead."""
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "files",
-            "Use method `get_filenames` instead.",
-            version="3.4.0",
-        )  # pragma: no cover
-
-    @property
-    def unsafe_array(self):
-        """Deprecated at version 3.0.0, use `array` attribute
-        instead."""
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "unsafe_array", "Use 'array' attribute instead."
-        )  # pragma: no cover
-
-    def expand_dims(self, position=0, i=False):
-        """Deprecated at version 3.0.0, use method `insert_dimension`
-        instead."""
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "expand_dims",
-            "Use method 'insert_dimension' instead.",
-            version="3.0.0",
-        )  # pragma: no cover
-
 
 # --- End: class
 
@@ -13456,7 +13283,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
 
 
 # --------------------------------------------------------------------
-#
+# ???
 # --------------------------------------------------------------------
 def _getattr(x, attr):
     if not x:
