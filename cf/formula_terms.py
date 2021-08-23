@@ -135,7 +135,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if units is None:
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
-                "{!r} is not a valid term".format(term)
+                f"{term!r} is not a valid term"
             )
 
         units = Units(units)
@@ -148,9 +148,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
         if var is not None:
             logger.detail(
-                "Formula term {!r}:\n{}".format(
-                    term, var.dump(display=False, _level=1)
-                )
+                f"Formula term {term!r}:\n{var.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
             valid_standard_names = formula_terms_standard_names[standard_name][
@@ -165,50 +163,43 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     and vsn not in valid_standard_names
                     and len(valid_standard_names) > 1
                 ):
+                    expected_names = ", ".join(
+                        repr(x) for x in valid_standard_names
+                    )
                     raise ValueError(
                         "Can't calculate non-parametric vertical coordinates: "
-                        "{!r} term {!r} has no standard name. "
-                        "Expected one of {}".format(
-                            term,
-                            var,
-                            ", ".join(repr(x) for x in valid_standard_names),
-                        )
+                        f"{term!r} term {var!r} has no standard name. "
+                        f"Expected one of {expected_names}"
                     )
             elif vsn not in valid_standard_names:
+                expected_names = ", ".join(
+                    repr(x) for x in valid_standard_names
+                )
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has invalid "
-                    "standard name: {!r}. Expected one of {}".format(
-                        term,
-                        var,
-                        vsn,
-                        ", ".join(repr(x) for x in valid_standard_names),
-                    )
+                    f"{term!r} term {var!r} has invalid standard name: "
+                    f"{vsn!r}. Expected one of {expected_names}"
                 )
 
             if var.ndim > formula_terms_max_dimensions[standard_name][term]:
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has incorrect "
-                    "number of dimensions. Expected at most {}".format(
-                        term, var, var.ndim
-                    )
+                    f"{term!r} term {var!r} has incorrect "
+                    f"number of dimensions. Expected at most {var.ndim}"
                 )
 
             if not var.Units.equivalent(units):
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has incorrect units: {!r} "
-                    "Expected units equivalent to {!r}".format(
-                        term, var, var.Units, units
-                    )
+                    f"{term!r} term {var!r} has incorrect units: "
+                    f"{var.Units!r}. Expected units equivalent to {units!r}"
                 )
         else:
             if not default_to_zero:
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "No {!r} term domain ancillary construct and "
-                    "default_to_zero=False".format(term)
+                    f"No {term!r} term domain ancillary construct and "
+                    "default_to_zero=False"
                 )
             # ----------------------------------------------------
             # Create a default zero-valued domain ancillary
