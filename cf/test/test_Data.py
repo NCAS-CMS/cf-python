@@ -22,8 +22,16 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-# TODODASK: these can be moved into the lone tests that use them now
+# Variables for _collapse
 a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+
+w = np.arange(1, 301.0, dtype=float).reshape(a.shape)
+w[-1, -1, ...] = w[-1, -1, ...] * 2
+w /= w.min()
+
+ones = np.ones(a.shape, dtype=float)
+
+# TODODASK: these can be moved into the lone tests that use them now
 ma = np.ma.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
 ma[:, 1, 4, 4] = np.ma.masked
 ma[0, :, 2, 3] = np.ma.masked
@@ -49,15 +57,11 @@ def reshape_array(a, axes):
 
 class DataTest(unittest.TestCase):
 
-    #    axes_permutations = [
-    #        axes
-    #        for n in range(1, a.ndim+1)
-    #        for axes in itertools.permutations(range(a.ndim), n)]
-    #
-    #    axes_combinations = [
-    #        axes
-    #        for n in range(1, a.ndim+1)
-    #        for axes in itertools.combinations(range(a.ndim), n)]
+    axes_combinations = [
+        axes
+        for n in range(1, a.ndim + 1)
+        for axes in itertools.combinations(range(a.ndim), n)
+    ]
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -71,7 +75,9 @@ class DataTest(unittest.TestCase):
 
     # TODODASK: these can be moved into the lone tests that use them now
     a = a
+    w = w
     ma = ma
+    ones = ones
 
     test_only = []
     #    test_only = ['NOTHING!!!!!']
@@ -763,7 +769,7 @@ class DataTest(unittest.TestCase):
             )
         )
 
-    # @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute 'chunk_sizes'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_squeeze_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2027,7 +2033,7 @@ class DataTest(unittest.TestCase):
             )
         # --- End: for
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_max_min_sum_sum_of_squares(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2084,7 +2090,7 @@ class DataTest(unittest.TestCase):
                         "\ne={}, \nb={}".format(h, axes, e.array, b),
                     )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2160,7 +2166,7 @@ class DataTest(unittest.TestCase):
         # TODO: add loop to check get same shape and close enough data
         # for every possible axes combo (as with test_Data_median above).
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_mean_of_upper_decile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2226,7 +2232,7 @@ class DataTest(unittest.TestCase):
                     "\ne={}, \nb={}".format(axes, e.array, b),
                 )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_range_mid_range(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2343,7 +2349,7 @@ class DataTest(unittest.TestCase):
                     "axis={}, masked \ne={}, \nb={}".format(axes, e.array, b),
                 )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_sum_of_weights_sum_of_weights2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2456,7 +2462,7 @@ class DataTest(unittest.TestCase):
                         ),
                     )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_mean_mean_absolute_value(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2543,7 +2549,7 @@ class DataTest(unittest.TestCase):
                 )
         # --- End: for
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_root_mean_square(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2619,7 +2625,7 @@ class DataTest(unittest.TestCase):
                 ),
             )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_sample_size(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
