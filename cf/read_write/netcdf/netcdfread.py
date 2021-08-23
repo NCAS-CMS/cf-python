@@ -291,16 +291,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 The netCDF variable from which to get units and calendar.
 
         """
-        try:
-            compressed = array.get_compression_type()  # TODO
-        except AttributeError:
-            compressed = False
+        chunks = self.read_vars.get("chunks", "auto")
 
-        if not compressed:
-            # Do not chunk compressed data (for now ...)
-            chunk = False
-        else:
-            chunk = self.read_vars.get("chunk", True)
+        #        dask_from_array = {'lock': array._dask_lock,
+        #                           'asarray': array._dask_asarray}
+
+        # TODODASK - is this necessar given that each NetCDFArray.__getitem__ could open (and then close) it's own netCDF4.Dataset instance?
 
         return super()._create_Data(
             array=array,
@@ -308,7 +304,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=calendar,
             ncvar=ncvar,
             loadd=loadd,
-            chunk=chunk,
+            chunks=chunks,
             **kwargs
         )
 

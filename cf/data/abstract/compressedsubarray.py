@@ -1,9 +1,6 @@
 import abc
 from functools import reduce
 from operator import mul
-from sys import getrefcount
-
-from ...functions import inspect as cf_inspect
 
 
 class CompressedSubarray(abc.ABC):
@@ -52,10 +49,24 @@ class CompressedSubarray(abc.ABC):
         shape = str(array.shape)
         shape = shape.replace(",)", ")")
 
-        return "<CF {}{}: {}>".format(
-            self.__class__.__name__, shape, str(array)
-        )
+        return f"<CF {self.__class__.__name__}{shape}: {array}>"
 
+    # ----------------------------------------------------------------
+    # Dask attributes
+    # ----------------------------------------------------------------
+    @property
+    def dask_lock(self):
+        """TODODASK."""
+        return self.array.dask_lock
+
+    @property
+    def dask_asarray(self):
+        """TODODASK."""
+        return False
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def dtype(self):
         return self.array.dtype
@@ -73,6 +84,9 @@ class CompressedSubarray(abc.ABC):
         """
         return getattr(self.array, "file", None)
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def close(self):
         """Close all referenced open files.
 
@@ -119,14 +133,12 @@ class CompressedSubarray(abc.ABC):
         """
         return not hasattr(self.array, "__array_interface__")
 
-    def unique(self):
-        """True if there is only one permanent reference to the array
-        instance."""
-        # Note, from the Python docs for sys.getrefcount:
-        # "The count returned is generally one higher than you might expect,
-        # because it includes the (temporary) reference as an argument to
-        # getrefcount", hence <= 2 to test for uniqueness rather than <= 1.
-        return getrefcount(self.array) <= 2
+
+#    def unique(self):
+#        '''TODO
+#
+#        '''
+#        return getrefcount(self.array) <= 2
 
 
 # --- End: class

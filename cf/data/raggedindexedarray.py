@@ -17,5 +17,9 @@ class RaggedIndexedArray(cfdm.RaggedIndexedArray):
 
     """
 
+    @property
+    def dask_asarray(self):
+        return False
+
 
 # --- End: class

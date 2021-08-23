@@ -20,5 +20,9 @@ class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
 
     """
 
+    @property
+    def dask_asarray(self):
+        return False
+
 
 # --- End: class

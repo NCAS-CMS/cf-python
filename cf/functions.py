@@ -1875,10 +1875,11 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
         return a == b
 
 
-def parse_indices(
-    shape, indices, cyclic=False, reverse=False, envelope=False, mask=False
-):
-    """TODO.
+# TODODASK - sort out the "numpy" environment
+
+
+def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
+    """TODODASK.
 
     :Parameters:
 
@@ -1907,11 +1908,11 @@ def parse_indices(
     if not isinstance(indices, tuple):
         indices = (indices,)
 
-    if mask and indices:
-        arg0 = indices[0]
-        if isinstance(arg0, str) and arg0 == "mask":
-            mask_indices = indices[1]
-            indices = indices[2:]
+    #    if mask and indices:
+    #        arg0 = indices[0]
+    #        if isinstance(arg0, str) and arg0 == 'mask':
+    #            mask_indices = indices[1]
+    #            indices = indices[2:]
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -2010,7 +2011,7 @@ def parse_indices(
                 # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
                 # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                if cyclic:
+                if cyclic and not numpy_indexing:
                     index = slice(0, stop - start, step)
                     roll[i] = -start
                 else:
@@ -2024,7 +2025,7 @@ def parse_indices(
                 # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
                 # 0:-2:-1  => [0, 9]
                 # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                if cyclic:
+                if cyclic and not numpy_indexing:
                     index = slice(start - stop - 1, None, step)
                     roll[i] = -1 - stop
                 else:
@@ -2052,8 +2053,9 @@ def parse_indices(
             if index < 0:
                 index += size
 
-            index = slice(index, index + 1, 1)
-            is_slice = True
+            if not numpy_indexing:
+                index = slice(index, index + 1, 1)
+                is_slice = True
         else:
             convert2positve = True
             if getattr(
@@ -2120,31 +2122,31 @@ def parse_indices(
                                 f"{index}"
                             )
 
-                        if reverse and step < 0:
-                            # The array is strictly monotonically
-                            # decreasing, so reverse it so that it's
-                            # strictly monotonically increasing.  Make
-                            # a note that this dimension will need
-                            # flipping later
-                            index = index[::-1]
-                            flip.append(i)
-                            step = -step
-
-                        if envelope:
-                            # Create an envelope slice for a parsed
-                            # index of a numpy array of integers
-                            compressed_indices.append(index)
-
-                            step = _numpy_sign(step)
-                            if step > 0:
-                                stop = index[-1] + 1
-                            else:
-                                stop = index[-1] - 1
-                                if stop < 0:
-                                    stop = None
-
-                            index = slice(index[0], stop, step)
-                            is_slice = True
+                #                        if reverse and step < 0:
+                #                            # The array is strictly monotonically
+                #                            # decreasing, so reverse it so that it's
+                #                            # strictly monotonically increasing.  Make
+                #                            # a note that this dimension will need
+                #                            # flipping later
+                #                            index = index[::-1]
+                #                            flip.append(i)
+                #                            step = -step
+                #
+                #                        if envelope:
+                #                            # Create an envelope slice for a parsed
+                #                            # index of a numpy array of integers
+                #                            compressed_indices.append(index)
+                #
+                #                            step = _numpy_sign(step)
+                #                            if step > 0:
+                #                                stop = index[-1] + 1
+                #                            else:
+                #                                stop = index[-1] - 1
+                #                                if stop < 0:
+                #                                    stop = None
+                #
+                #                            index = slice(index[0], stop, step)
+                #                            is_slice = True
                 else:
                     raise IndexError(
                         f"Invalid indices {parsed_indices} for array with "
@@ -2152,33 +2154,34 @@ def parse_indices(
                     )
 
         if is_slice:
-            if reverse and index.step < 0:
-                # If the slice step is negative, then transform
-                # the original slice to a new slice with a
-                # positive step such that the result of the new
-                # slice is the reverse of the result of the
-                # original slice.
-                #
-                # For example, if the original slice is
-                # slice(6,0,-2) then the new slice will be
-                # slice(2,7,2):
-                #
-                # >>> a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # >>> a[slice(6, 0, -2)]
-                # [6, 4, 2]
-                # >>> a[slice(2, 7, 2)]
-                # [2, 4, 6]
-                # a[slice(6, 0, -2)] == list(reversed(a[slice(2, 7, 2)]))
-                # True
-                start, stop, step = index.indices(size)
-                step *= -1
-                div, mod = divmod(start - stop - 1, step)
-                div_step = div * step
-                start -= div_step
-                stop = start + div_step + 1
-
-                index = slice(start, stop, step)
-                flip.append(i)
+            #            if reverse and index.step < 0:
+            #                # If the slice step is negative, then transform
+            #                # the original slice to a new slice with a
+            #                # positive step such that the result of the new
+            #                # slice is the reverse of the result of the
+            #                # original slice.
+            #                #
+            #                # For example, if the original slice is
+            #                # slice(6,0,-2) then the new slice will be
+            #                # slice(2,7,2):
+            #                #
+            #                # >>> a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            #                # >>> a[slice(6, 0, -2)]
+            #                # [6, 4, 2]
+            #                # >>> a[slice(2, 7, 2)]
+            #                # [2, 4, 6]
+            #                # a[slice(6, 0, -2)] == list(reversed(a[slice(2, 7, 2)]))
+            #                # True
+            #                start, stop, step = index.indices(size)
+            #                step *= -1
+            #                div, mod = divmod(start-stop-1, step)
+            #                div_step = div*step
+            #                start -= div_step
+            #                stop = start + div_step + 1
+            #
+            #                index = slice(start, stop, step)
+            #                flip.append(i)
+            #            # --- End: if
 
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
@@ -2189,17 +2192,18 @@ def parse_indices(
                 index = slice(start, stop, step)
 
             #
-            if envelope:
-                # Create an envelope slice for a parsed
-                # index of a numpy array of integers
-                compressed_indices.append(index)
-                index = slice(
-                    start, stop, (1 if reverse else _numpy_sign(step))
-                )
+        #            if envelope:
+        #                # Create an envelope slice for a parsed
+        #                # index of a numpy array of integers
+        #                compressed_indices.append(index)
+        #                index = slice(
+        #                    start, stop, (1 if reverse else _numpy_sign(step)))
+        # --- End: if
 
         parsed_indices[i] = index
 
-    if not (cyclic or reverse or envelope or mask):
+    #    if not (cyclic or reverse or envelope or mask):
+    if not cyclic:
         return parsed_indices
 
     out = [parsed_indices]
@@ -2207,14 +2211,14 @@ def parse_indices(
     if cyclic:
         out.append(roll)
 
-    if reverse:
-        out.append(flip)
-
-    if envelope:
-        out.append(compressed_indices)
-
-    if mask:
-        out.append(mask_indices)
+    #    if reverse:
+    #        out.append(flip)
+    #
+    #    if envelope:
+    #       out.append(compressed_indices)
+    #
+    #    if mask:
+    #        out.append(mask_indices)
 
     return out
 

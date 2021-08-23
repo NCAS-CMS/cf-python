@@ -81,8 +81,9 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.8"
-__date__ = "2021-06-10"
-__version__ = "3.10.0"
+__author__ = "David Hassell"
+__date__ = "2021-??-??"
+__version__ = "4.0.0"
 
 _requires = (
     "numpy",

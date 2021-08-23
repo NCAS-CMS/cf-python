@@ -64,6 +64,7 @@ def read(
     follow_symlinks=False,
     mask=True,
     warn_valid=False,
+    chunks="auto",
 ):
     """Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
@@ -502,6 +503,10 @@ def read(
 
             .. versionadded:: 1.5
 
+        chunks: TODO
+
+            .. versionadded:: 4.0.0
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -516,6 +521,9 @@ def read(
 
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
+
+        chunk: deprecated at version 4.0.0
+            Use the *chunks* parameter instead.
 
     :Returns:
 
@@ -587,6 +595,14 @@ def read(
             "Use keyword 'um' instead.",
         )  # pragma: no cover
 
+    if chunk is not True:
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            "cf.read",
+            {"chunk": chunk},
+            "Use keyword 'chunks' instead.",
+            version="4.0.0",
+        )  # pragma: no cover
+
     # Parse select
     # TODO - delete the "if python36:" clause when Python 3.6 is
     #        deprecated
@@ -615,9 +631,8 @@ def read(
         raise ValueError("squeeze and unsqueeze can not both be True")
     if follow_symlinks and not recursive:
         raise ValueError(
-            "Can't set follow_symlinks={0} when recursive={1}".format(
-                follow_symlinks, recursive
-            )
+            f"Can't set follow_symlinks={follow_symlinks!r} "
+            f"when recursive={recursive!r}"
         )
 
     # Initialize the output list of fields
@@ -754,7 +769,8 @@ def read(
                 um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                chunk=chunk,
+                #                chunk=chunk,
+                chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,
                 select=select,
@@ -870,10 +886,9 @@ def _read_a_file(
     um=None,
     extra=None,
     height_at_top_of_model=None,
-    chunk=True,
     mask=True,
     warn_valid=False,
-    select=None,
+    chunks="auto",
 ):
     """Read the contents of a single file into a field list.
 
@@ -1051,9 +1066,7 @@ def _read_a_file(
             fmt=fmt,
             word_size=word_size,
             endian=endian,
-            chunk=chunk,
-            select=select,
-        )  # , mask=mask, warn_valid=warn_valid)
+        )
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation

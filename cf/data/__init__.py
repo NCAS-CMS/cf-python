@@ -1,7 +1,8 @@
 from .cachedarray import CachedArray
 from .netcdfarray import NetCDFArray
-from .filledarray import FilledArray
 from .umarray import UMArray
+
+from .filledarray import FilledArray
 
 from .gatheredarray import GatheredArray
 from .raggedcontiguousarray import RaggedContiguousArray

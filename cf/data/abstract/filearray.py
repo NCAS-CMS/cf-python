@@ -16,7 +16,18 @@ class FileArray(Array):
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
-        return "%s in %s" % (self.shape, self.file)
+        return f"{self.shape} in {self.file}"
+
+    # ----------------------------------------------------------------
+    # Dask attributes
+    # ----------------------------------------------------------------
+    @property
+    def dask_lock(self):
+        return getattr(self._get_Array(), "dask_lock", False)
+
+    @property
+    def dask_asarray(self):
+        return False
 
     # ----------------------------------------------------------------
     # Attributes
