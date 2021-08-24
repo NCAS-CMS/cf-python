@@ -214,9 +214,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 var.set_bounds(bounds)
 
             logger.detail(
-                "Formula term {!r} (default):\n{}".format(
-                    term, var.dump(display=False, _level=1)
-                )
+                f"Formula term {term!r} (default):\n"
+                f"{var.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
         return var, key
@@ -258,7 +257,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             # There is a unique computed standard name for this formula
             # ------------------------------------------------------------
             logger.detail(
-                "computed_standard_name: {!r}".format(computed_standard_name)
+                f"computed_standard_name: {computed_standard_name!r}"
             )  # pragma: no cover
 
             return computed_standard_name
@@ -355,7 +354,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             axis = f.get_data_axes(key)
             break
 
-        logger.detail("Vertical axis: {!r}".format(axis))  # pragma: no cover
+        logger.detail(f"Vertical axis: {axis!r}")  # pragma: no cover
 
         return axis
 
@@ -405,8 +404,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             if not set(eta_axes).issuperset(depth_axes):
                 raise ValueError(
                     "Can't calculate non-parametric coordinates: "
-                    "'depth' term {!r} axes must be a subset of "
-                    "'eta' term {!r} axes.".format(depth, eta)
+                    f"'depth' term {depth!r} axes must be a subset of "
+                    f"'eta' term {eta!r} axes."
                 )
 
             eta_axes2 = depth_axes
@@ -420,10 +419,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             eta_axes = eta_axes2
 
         logger.debug(
-            "Transposed domain ancillary 'eta': {!r}\n"
-            "Transposed domain ancillary 'eta' axes: {!r}".format(
-                eta, eta_axes
-            )
+            f"Transposed domain ancillary 'eta': {eta!r}\n"
+            f"Transposed domain ancillary 'eta' axes: {eta_axes!r}"
         )  # pragma: no cover
 
         return eta, eta_axes
@@ -494,7 +491,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             computed_axes = tuple([computed_axes[i] for i in iaxes])
 
         logger.detail(
-            "Non-parametric coordinate axes: {!r}".format(computed_axes)
+            f"Non-parametric coordinate axes: {computed_axes!r}"
         )  # pragma: no cover
 
         return computed, computed_axes
@@ -542,8 +539,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if units != ref_units:
             if not units.equivalent(ref_units):
                 raise ValueError(
-                    "Terms {!r} and {!r} have incompatible units: "
-                    "{!r}, {!r} ".format(ref_term2, term, ref_units, units)
+                    f"Terms {ref_term2!r} and {term!r} have incompatible "
+                    f"units: {ref_units!r}, {units!r}"
                 )
 
             var = var.copy()
@@ -620,8 +617,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 # been ensured by `_domain_ancillary_term`
                 if strict:
                     raise ValueError(
-                        "{!r} term {!r} has invalid "
-                        "standard name: {!r}".format(term, var, standard_name)
+                        f"{term!r} term {var!r} has invalid "
+                        f"standard name: {standard_name!r}"
                     )
 
         if strict and not indices:
@@ -669,8 +666,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if var.size != 1 or var.dtype.kind != "i":
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
-                "{!r} term {!r} doen't contain exactly one "
-                "integer value".format(term, var)
+                f"{term!r} term {var!r} doen't contain exactly one "
+                "integer value"
             )
 
     # ----------------------------------------------------------------
@@ -2127,7 +2124,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
         if standard_name is not None:
             logger.detail(
-                "standard_name: {!r}".format(standard_name)
+                f"standard_name: {standard_name!r}"
             )  # pragma: no cover
 
             if standard_name in cls.standard_names:
