@@ -258,12 +258,15 @@ def regrid_get_latlon(f, name, axes=None):
         coords_2D = True
     else:
         coords_2D = False
-        # Check for size 1 latitude or longitude dimensions
-        if x_size == 1 or y_size == 1:
-            raise ValueError(
-                "Neither the longitude nor latitude dimension coordinates "
-                f"of the {name} field can be of size 1."
-            )
+
+        # Check for size 1 latitude or longitude dimensions if source grid
+        # (a size 1 dimension is only problematic for the source grid in ESMF)
+        if name == "source":
+            if x_size == 1 or y_size == 1:
+                raise ValueError(
+                    "Neither the longitude nor latitude dimension coordinates "
+                    f"of the {name} field can be of size 1."
+                )
 
     coord_keys = [x_key, y_key]
     coords = [x, y]
