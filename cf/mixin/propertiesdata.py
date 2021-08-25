@@ -738,25 +738,22 @@ class PropertiesData(Properties):
 
         if data0.shape != data1.shape:
             logger.info(
-                "{}: Data have different shapes: {}, {}".format(
-                    self.__class__.__name__, data0.shape, data1.shape
-                )
+                f"{self.__class__.__name__}: Data have different shapes: "
+                f"{data0.shape}, {data1.shape}"
             )
             return False
 
         if not data0.Units.equivalent(data1.Units):
             logger.info(
-                "{}: Data have non-equivalent units: {!r}, {!r}".format(
-                    self.__class__.__name__, data0.Units, data1.Units
-                )
+                f"{self.__class__.__name__}: Data have non-equivalent units: "
+                f"{data0.Units!r}, {data1.Units!r}"
             )
             return False
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             logger.info(
-                "{}: Data have non-equivalent values: {!r}, {!r}".format(
-                    self.__class__.__name__, data0, data1
-                )
+                f"{self.__class__.__name__}: Data have non-equivalent values: "
+                f"{data0!r}, {data1!r}"
             )
             return False
 
@@ -5034,8 +5031,8 @@ class PropertiesData(Properties):
             TODO
 
         """
-        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-        _ = "{}.halo(".format(self.__class__.__name__)
+        _kwargs = [f"{k}={v!r}" for k, v in locals().items()]
+        _ = f"{self.__class__.__name__}.halo("
         logger.info("{}{}".format(_, (",\n" + " " * len(_)).join(_kwargs)))
 
         v = _inplace_enabled_define_and_cleanup(self)
