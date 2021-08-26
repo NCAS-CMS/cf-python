@@ -80,16 +80,16 @@ class PropertiesDataBounds(PropertiesData):
 
         cname = self.__class__.__name__
         logger.debug(
-            "{}.__getitem__: shape    = {}".format(cname, self.shape)
+            f"{cname}.__getitem__: shape    = {self.shape}"
         )  # pragma: no cover
         logger.debug(
-            "{}.__getitem__: indices2 = {}".format(cname, indices2)
+            f"{cname}.__getitem__: indices2 = {indices2}"
         )  # pragma: no cover
         logger.debug(
-            "{}.__getitem__: indices  = {}".format(cname, indices)
+            f"{cname}.__getitem__: indices  = {indices}"
         )  # pragma: no cover
         logger.debug(
-            "{}.__getitem__: findices = {}".format(cname, findices)
+            f"{cname}.__getitem__: findices = {findices}"
         )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
@@ -128,9 +128,8 @@ class PropertiesDataBounds(PropertiesData):
                     ]
 
                 logger.debug(
-                    "{}.__getitem__: findices for bounds = {}".format(
-                        self.__class__.__name__, findices
-                    )
+                    f"{self.__class__.__name__}.__getitem__: findices for "
+                    f"bounds = {findices}"
                 )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
@@ -173,13 +172,13 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring[tuple(indices)] = value_interior_ring
         elif interior_ring is not None:
             raise ValueError(
-                "Can't assign {!r} without an interior ring array to "
-                "{!r} with an interior ring array".format(value, self)
+                f"Can't assign {value!r} without an interior ring array to "
+                f"{self!r} with an interior ring array"
             )
         elif value_interior_ring is not None:
             raise ValueError(
-                "Can't assign {!r} with an interior ring array to "
-                "{!r} without an interior ring array".format(value, self)
+                f"Can't assign {value!r} with an interior ring array to "
+                f"{self!r} without an interior ring array"
             )
 
         # Set the bounds, if present (added at v3.8.0).
@@ -641,11 +640,8 @@ class PropertiesDataBounds(PropertiesData):
                 other_bounds, rtol=rtol, atol=atol, verbose=verbose
             ):
                 logger.info(
-                    "{}: Non-equivalent bounds data: {!r}, {!r}".format(
-                        self.__class__.__name__,
-                        self_bounds.data,
-                        other_bounds.data,
-                    )
+                    f"{self.__class__.__name__}: Non-equivalent bounds data: "
+                    f"{self_bounds.data!r}, {other_bounds.data!r}"
                 )  # pragma: no cover
                 return False
 
@@ -823,9 +819,7 @@ class PropertiesDataBounds(PropertiesData):
             if data.shape[-1] != 2:
                 raise ValueError(
                     "Can only calculate cell sizes from bounds when there are "
-                    "exactly two bounds per cell. Got {}".format(
-                        data.shape[-1]
-                    )
+                    f"exactly two bounds per cell. Got {data.shape[-1]}"
                 )
 
             out = abs(data[..., 1] - data[..., 0])
@@ -863,7 +857,7 @@ class PropertiesDataBounds(PropertiesData):
             return bounds.dtype
 
         raise AttributeError(
-            "{} doesn't have attribute 'dtype'".format(self.__class__.__name__)
+            f"{self.__class__.__name__} doesn't have attribute 'dtype'"
         )
 
     @dtype.setter
@@ -1604,11 +1598,8 @@ class PropertiesDataBounds(PropertiesData):
         # Check that each instance is the same type
         if type(self) != type(other):
             print(
-                "{}: Different types: {}, {}".format(
-                    self.__class__.__name__,
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                )
+                f"{self.__class__.__name__}: Different types: "
+                f"{self.__class__.__name__}, {other.__class__.__name__}"
             )
             return False
 
@@ -1645,9 +1636,8 @@ class PropertiesDataBounds(PropertiesData):
             if not result:
                 if traceback:
                     print(
-                        "{}: Different {} attributes: {!r}, {!r}".format(
-                            self.__class__.__name__, attr, x, y
-                        )
+                        f"{self.__class__.__name__}: Different {attr} "
+                        f"attributes: {x!r}, {y!r}"
                     )
                 return False
 
@@ -2637,10 +2627,8 @@ class PropertiesDataBounds(PropertiesData):
 
         if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
-                "Can't set bounds: {!r} units of {!r} are not equivalent "
-                "to {!r}, the units of {!r}".format(
-                    bounds, bounds.Units, self.Units, self
-                )
+                f"Can't set bounds: {bounds!r} units of {bounds.Units!r} are "
+                f"not equivalent to {self.Units!r}, the units of {self!r}"
             )
 
             bounds.Units = self_units
