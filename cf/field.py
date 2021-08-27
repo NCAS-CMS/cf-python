@@ -15644,7 +15644,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coord_keys,
             src_coords,
             src_coords_2D,
-        ) = regrid_get_latlon(f, "source", axes=src_axes)
+        ) = regrid_get_latlon(f, "source", method, axes=src_axes)
 
         # Retrieve the destination field's latitude and longitude
         # coordinates
@@ -15656,7 +15656,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_coord_keys,
                 dst_coords,
                 dst_coords_2D,
-            ) = regrid_get_latlon(dst, "destination", axes=dst_axes)
+            ) = regrid_get_latlon(dst, "destination", method, axes=dst_axes)
         elif dst_dict:
             # dst is a dictionary
             try:
@@ -15845,7 +15845,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Retrieve the source field's grid, create the ESMF Grid
             # and a handle to regridding.dst_dict
-            src_data = d.squeeze().transpose(src_order).array
+            src_data = d.transpose(src_order).array
             if not (
                 method == "nearest_stod" and use_src_mask
             ) and np.ma.is_masked(src_data):
