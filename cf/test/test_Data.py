@@ -131,6 +131,41 @@ class DataTest(unittest.TestCase):
     #    test_only = ['test_Data_clip']
     #    test_only = ['test_Data__init__dtype_mask']
 
+    def test_Data_equals(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        shape = 3, 4
+        a = np.arange(12).reshape(*shape)
+
+        d = cf.Data(a, "m")
+        self.assertTrue(d.equals(d))  # trivial check
+
+        d2 = cf.Data(a.astype(np.float32), "m")
+        self.assertFalse(d2.equals(d))  # due to different datatype
+
+        e = cf.Data(a, "s")
+        self.assertFalse(e.equals(d))  # due to different units
+
+        f = cf.Data(np.arange(12))
+        self.assertFalse(f.equals(d))  # due to different shape
+
+        g = cf.Data(np.ones(shape))
+        self.assertFalse(g.equals(d))  # due to different element value(s)
+
+        # Test NaN and inf values
+        h = cf.Data(np.full(shape, np.nan))
+        self.assertFalse(h.equals(d))
+        i = cf.Data(np.full(shape, np.inf))
+        self.assertFalse(i.equals(d))
+        self.assertFalse(h.equals(i))
+
+        # Test masked arrays
+        j = cf.Data(np.ma.masked_all(shape))
+        self.assertFalse(j.equals(d))
+
+        # TODODASK Test equals method parameters
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
