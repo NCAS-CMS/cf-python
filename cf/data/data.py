@@ -32,7 +32,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_allclose, _numpy_isclose, _section, abspath
+from ..functions import _numpy_isclose, _section, abspath
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
@@ -9034,6 +9034,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return product(*[range(0, r) for r in self.shape])
 
+    @daskified(2)
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(
@@ -9116,26 +9117,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
             return False
 
-        config = self.partition_configuration(readonly=True)
+        # other.to_memory()  # TODODASK is this still required?
 
-        other.to_memory()
+        self_dx = self._get_dask()
+        other_dx = other._get_dask()
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array0 = partition.array
-            array1 = other[partition.indices].varray
-            partition.close()
+        # Finally check that corresponding elements are equal to a tolerance
+        if not da.allclose(
+            self_dx, other_dx, rtol=float(rtol), atol=float(atol)
+        ):
+            logger.info(
+                "{0}: Different array values (atol={1}, "
+                "rtol={2})".format(self.__class__.__name__, atol, rtol)
+            )
 
-            if not _numpy_allclose(
-                array0, array1, rtol=float(rtol), atol=float(atol)
-            ):
-                logger.info(
-                    "{0}: Different array values (atol={1}, "
-                    "rtol={2})".format(self.__class__.__name__, atol, rtol)
-                )
-
-                return False
-        # --- End: for
+            return False
 
         # ------------------------------------------------------------
         # Still here? Then the two instances are equal.
