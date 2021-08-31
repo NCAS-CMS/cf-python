@@ -212,6 +212,68 @@ class DataTest(unittest.TestCase):
                 )
             )
 
+        # Test masked arrays
+        j = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test rtol and atol parameters
+        k1 = cf.Data(np.array([10.0, 20.0]))
+        k2 = cf.Data(np.array([10.01, 20.01]))
+        for ks in [(k1, k2), (k2, k1)]:  # to test symmetry/commutativity
+            k_1, k_2 = ks
+            # Only one log check is sufficient here
+            with self.assertLogs(level=cf.log_level().value) as catch:
+                self.assertFalse(k_1.equals(k_2, atol=0.005, rtol=0))
+                self.assertTrue(
+                    any(
+                        "Data: Different array values (atol=0.005, rtol=0)"
+                        in log_msg
+                        for log_msg in catch.output
+                    )
+                )
+            self.assertTrue(k_1.equals(k_2, atol=0.02, rtol=0))
+            self.assertFalse(k_1.equals(k_2, atol=0, rtol=0.0005))
+            self.assertTrue(k_1.equals(k_2, atol=0, rtol=0.002))
+
+        # Test ignore_fill_value parameter
+        m1 = cf.Data(1, fill_value=1000)
+        m2 = cf.Data(1, fill_value=2000)
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(m1.equals(m2))
+            self.assertTrue(
+                any(
+                    "Data: Different fill value: 1000 != 2000" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+            self.assertTrue(m1.equals(m2, ignore_fill_value=True))
+
+        # Test verbose parameter: 1/'INFO' level is behaviour change boundary
+        for checks in [(1, False), (2, True)]:
+            verbosity_level, expect_to_see_msg = checks
+            with self.assertLogs(level=cf.log_level().value) as catch:
+                self.assertFalse(d2.equals(d, verbose=verbosity_level))
+                self.assertIs(
+                    any(
+                        "Data: Different data types: float32 != int64"
+                        in log_msg
+                        for log_msg in catch.output
+                    ),
+                    expect_to_see_msg,
+                )
+
+        # Test ignore_data_type parameter
+        # TODODASK - this one needs documenting in the method docstring.
+        # Question for DH: is ignore_type an alias?
+        self.assertTrue(d2.equals(d, ignore_data_type=True))
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
