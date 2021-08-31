@@ -182,42 +182,29 @@ class DataTest(unittest.TestCase):
             )
 
         # Test NaN and inf values
-        h = cf.Data(np.full(shape, np.nan, dtype="int"), "m")
+        h = cf.Data(np.full(shape, np.nan), "m")
+        d3 = cf.Data(a.astype(np.float64), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(h.equals(d))
+            # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
+            self.assertFalse(h.equals(d3))
+            print(catch.output)
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
                     for log_msg in catch.output
                 )
             )
-        i = cf.Data(np.full(shape, np.inf, dtype="int"), "m")
+        i = cf.Data(np.full(shape, np.inf), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(i.equals(d))
+            self.assertFalse(i.equals(d3))  # np.inf is also of dtype float64
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
                     for log_msg in catch.output
                 )
             )
-        # TODODASK: the below should eventually pass, currently doesn't since
-        # the two underlying arrays each are filled with the fill_value.
-        #
-        # with self.assertLogs(level=cf.log_level().value) as catch:
-        #     print(h)
-        #     print(i)
-        #     self.assertFalse(h.equals(i))
-        #     self.assertTrue(
-        #         any(
-        #             "Data: Different array values" in log_msg
-        #             for log_msg in catch.output
-        #         )
-        #     )
-
-        # Test masked arrays
-        j = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(j.equals(d))
+            self.assertFalse(h.equals(i))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
