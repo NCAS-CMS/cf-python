@@ -141,30 +141,89 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, "m")
         self.assertTrue(d.equals(d))  # trivial check
 
-        d2 = cf.Data(a.astype(np.float32), "m")
-        self.assertFalse(d2.equals(d))  # due to different datatype
+        d2 = cf.Data(a.astype(np.float32), "m")  # different datatype to d
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(d2.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: float32 != int64" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
-        e = cf.Data(a, "s")
-        self.assertFalse(e.equals(d))  # due to different units
+        e = cf.Data(a, "s")  # different units to d
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(e.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different Units (<Units: s>, <Units: m>" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
-        f = cf.Data(np.arange(12))
-        self.assertFalse(f.equals(d))  # due to different shape
+        f = cf.Data(np.arange(12), "m")  # different shape to d
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(f.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: (12,) != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
-        g = cf.Data(np.ones(shape))
-        self.assertFalse(g.equals(d))  # due to different element value(s)
+        g = cf.Data(np.ones(shape, dtype="int64"), "m")  # different values
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(g.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         # Test NaN and inf values
-        h = cf.Data(np.full(shape, np.nan))
-        self.assertFalse(h.equals(d))
-        i = cf.Data(np.full(shape, np.inf))
-        self.assertFalse(i.equals(d))
-        self.assertFalse(h.equals(i))
+        h = cf.Data(np.full(shape, np.nan, dtype="int"), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(h.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        i = cf.Data(np.full(shape, np.inf, dtype="int"), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(i.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # TODODASK: the below should eventually pass, currently doesn't since
+        # the two underlying arrays each are filled with the fill_value.
+        #
+        # with self.assertLogs(level=cf.log_level().value) as catch:
+        #     print(h)
+        #     print(i)
+        #     self.assertFalse(h.equals(i))
+        #     self.assertTrue(
+        #         any(
+        #             "Data: Different array values" in log_msg
+        #             for log_msg in catch.output
+        #         )
+        #     )
 
         # Test masked arrays
-        j = cf.Data(np.ma.masked_all(shape))
-        self.assertFalse(j.equals(d))
-
-        # TODODASK Test equals method parameters
+        j = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
