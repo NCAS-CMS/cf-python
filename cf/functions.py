@@ -33,6 +33,7 @@ from numpy import allclose as _x_numpy_allclose
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
 from numpy import isclose as _x_numpy_isclose
 from numpy import shape as _numpy_shape
+from numpy import size as _numpy_size
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
 from numpy.ma import all as _numpy_ma_all
@@ -799,7 +800,7 @@ class relaxed_identities(ConstantAccess):
 
 
 class chunksize(ConstantAccess):
-    """Set the chunksize used by LAMA for partitioning the data array.
+    r"""Set the chunksize used by LAMA for partitioning the data array.
 
     This must be smaller than an upper limit determined by the free
     memory factor, which is the fraction of memory kept free as a
@@ -2252,7 +2253,7 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     # 8  PP extra info
 
     # Number matching regular expression
-    number_regex = "([-+]?\d*\.?\d+(e[-+]?\d+)?)"
+    number_regex = r"([-+]?\d*\.?\d+(e[-+]?\d+)?)"
 
     if table is None:
         # Use default conversion table
