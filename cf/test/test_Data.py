@@ -156,7 +156,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(e.equals(d))
             self.assertTrue(
                 any(
-                    "Data: Different Units (<Units: s>, <Units: m>" in log_msg
+                    "Data: Different Units (<Units: s>, <Units: m>)" in log_msg
                     for log_msg in catch.output
                 )
             )

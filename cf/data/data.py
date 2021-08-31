@@ -9111,7 +9111,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         other_Units = other.Units
         if self_Units != other_Units:
             logger.info(
-                "{}: Different Units ({!r}, {!r}".format(
+                "{}: Different Units ({!r}, {!r})".format(
                     self.__class__.__name__, self.Units, other.Units
                 )
             )
