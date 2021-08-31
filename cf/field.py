@@ -477,10 +477,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         else:
             findices = indices
 
-        logger.debug("    shape    = {}".format(shape))  # pragma: no cover
-        logger.debug("    indices  = {}".format(indices))  # pragma: no cover
-        logger.debug("    indices2 = {}".format(indices2))  # pragma: no cover
-        logger.debug("    findices = {}".format(findices))  # pragma: no cover
+        logger.debug(f"    shape    = {shape}")  # pragma: no cover
+        logger.debug(f"    indices  = {indices}")  # pragma: no cover
+        logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
+        logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = new.data[tuple(findices)]
 
@@ -982,13 +982,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
-                "Can't combine {!r} with {!r} due to incompatible data "
-                "shapes: {}, {}".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                    self.shape,
-                    numpy_shape(other),
-                )
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} due to incompatible data "
+                f"shapes: {self.shape}, {numpy_shape(other)}"
             )
 
         # ============================================================
@@ -1015,9 +1011,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if s["warnings"] or v["warnings"]:
             raise ValueError(
-                "Can't combine fields: {}".format(
-                    s["warnings"] or v["warnings"]
-                )
+                f"Can't combine fields: {s['warnings'] or v['warnings']}"
             )
 
         # Check that at most one field has undefined axes
@@ -1040,14 +1034,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Find the axis names which are present in both fields
         matching_ids = set(s["id_to_axis"]).intersection(v["id_to_axis"])
         logger.debug(
-            "s['id_to_axis'] = {}".format(s["id_to_axis"])
+            f"s['id_to_axis'] = {s['id_to_axis']}"
         )  # pragma: no cover
         logger.debug(
-            "v['id_to_axis'] = {}".format(v["id_to_axis"])
+            f"v['id_to_axis'] = {v['id_to_axis']}"
         )  # pragma: no cover
-        logger.debug(
-            "matching_ids    = {}".format(matching_ids)
-        )  # pragma: no cover
+        logger.debug(f"matching_ids    = {matching_ids}")  # pragma: no cover
 
         # Check that any matching axes defined by an auxiliary
         # coordinate are done so in both fields.
@@ -1056,8 +1048,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ):
             if identity in matching_ids:
                 raise ValueError(
-                    "Can't combine fields: {!r} axis defined by auxiliary "
-                    "in only 1 field".format(identity)
+                    f"Can't combine fields: {identity!r} axis defined by "
+                    "auxiliary in only 1 field"
                 )  # TODO ~WRONG
 
         #  ------------------------------------------------------------
@@ -1221,7 +1213,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         # 1
                         raise ValueError(
                             "Can't combine fields: Incompatible coordinate "
-                            "references for {!r} coordinates".format(identity)
+                            f"references for {identity!r} coordinates"
                         )
 
                 elif identity not in s["id_to_aux"]:
@@ -1240,10 +1232,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # The defining coordinates have non-equivalent
                     # data arrays and are both of size > 1
                     raise ValueError(
-                        "Can't combine fields: Incompatible {!r} coordinate "
-                        "values: {}, {}".format(
-                            identity, coord0.data, coord1.data
-                        )
+                        f"Can't combine fields: Incompatible {identity!r} "
+                        f"coordinate values: {coord0.data}, {coord1.data}"
                     )
                 else:
                     # The defining coordinates have non-equivalent
@@ -1252,27 +1242,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     remove_size1_axes0.append(axis0)
 
         logger.debug(
-            "1: s['size1_broadcast_axes'] = {}".format(
-                s["size1_broadcast_axes"]
-            )
+            f"1: s['size1_broadcast_axes'] = {s['size1_broadcast_axes']}"
         )  # pragma: no cover
         logger.debug(
-            "1: v['size1_broadcast_axes'] = {}".format(
-                v["size1_broadcast_axes"]
-            )
+            f"1: v['size1_broadcast_axes'] = {v['size1_broadcast_axes']}"
         )  # pragma: no cover
         logger.debug(
-            "1: remove_size1_axes0 = {}".format(remove_size1_axes0)
+            f"1: remove_size1_axes0 = {remove_size1_axes0}"
         )  # pragma: no cover
 
         matching_axis1_to_axis0 = axis1_to_axis0.copy()
         matching_axis0_to_axis1 = axis0_to_axis1.copy()
 
         logger.debug(
-            "1: axis1_to_axis0 = {}".format(axis1_to_axis0)
+            f"1: axis1_to_axis0 = {axis1_to_axis0}"
         )  # pragma: no cover
         logger.debug(
-            "1: axis0_to_axis1 = {}".format(axis0_to_axis1)
+            f"1: axis0_to_axis1 = {axis0_to_axis1}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1321,9 +1307,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 axes_unM.append(axis0)
 
         logger.debug(
-            "2: axes_unD, axes_unM, axes0_M = {} {} {}".format(
-                axes_unD, axes_unM, axes0_M
-            )
+            "2: axes_unD, axes_unM, axes0_M = "
+            f"{axes_unD} {axes_unM} {axes0_M}"
         )  # pragma: no cover
 
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
@@ -1332,13 +1317,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         start_of_unmatched0 = end_of_undefined0
         start_of_matched0 = start_of_unmatched0 + len(axes_unM)
         logger.debug(
-            "2: end_of_undefined0   = {}".format(end_of_undefined0)
+            f"2: end_of_undefined0   = {end_of_undefined0}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_unmatched0 = {}".format(start_of_unmatched0)
+            f"2: start_of_unmatched0 = {start_of_unmatched0}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_matched0   = {}".format(start_of_matched0)
+            f"2: start_of_matched0   = {start_of_matched0}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
