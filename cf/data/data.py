@@ -4,6 +4,7 @@ from functools import partial, reduce, wraps
 from itertools import product
 from json import dumps as json_dumps
 from json import loads as json_loads
+from numbers import Integral
 from operator import mul
 
 try:
@@ -946,8 +947,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if indices is Ellipsis:
             return self.copy()
 
-        d = self
-
         auxiliary_mask = ()
         try:
             arg = indices[0]
@@ -957,54 +956,125 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if isinstance(arg, str) and arg == "mask":
                 auxiliary_mask = indices[1]
                 indices = indices[2:]
-
+        keepdims = self.__keepdims_indexing__
         indices, roll = parse_indices(
-            d.shape, indices, cyclic=True, numpy_indexing=False
+            self.shape,
+            indices,
+            cyclic=True,
+            keepdims=keepdims,
         )
 
-        # TODODASK - sort out the "numpy" environment
-
-        # TODODASK - multiple list indices
-
-        axes = d._axes
-        cyclic_axes = d._cyclic
-
+        axes = self._axes
+        cyclic_axes = self._cyclic
+        print ('parsed_indices=', indices)
         if roll:
             # Roll axes with cyclic slices. For example, if slice(-2,
-            # 3) has been requested on a cyclic axis (and we're not
-            # using numpy indexing), then we roll that axis by two
-            # points and apply the slice(0, 5) instead.
-            if cyclic_axes.intersection([axes[i] for i in roll]):
+            # 3) has been requested on a cyclic axis, then we roll
+            # that axis by two points and apply the slice(0, 5)
+            # instead.
+            if not cyclic_axes.issuperset([axes[i] for i in roll]):
                 raise IndexError(
                     "Can't take a cyclic slice of a non-cyclic axis"
                 )
 
-            d = d.roll(axis=tuple(roll.keys()), shift=tuple(roll.values()))
-            new = d
+            new = self.roll(
+                axis=tuple(roll.keys()), shift=tuple(roll.values())
+            )
+            dx = new._get_dask()
         else:
-            new = d.copy(array=False)
+            new = self.copy(array=False)
+            dx = self._get_dask()
 
-        # Get the subspaced dask array
-        dx = d._get_dask()
-        dx = dx[tuple(indices)]
+        # Subspace the array
+        if self.__orthogonal_indexing__:
+            # Apply 'orthogonal indexing': indices that are 1-d arrays
+            # or lists subspace along each dimension
+            # independently. This behaviour is similar to Fortran, but
+            # different to dask.
+            axes_with_list_indices = [
+                i
+                for i, x in enumerate(indices)
+                if not isinstance(x, (slice, Integral))
+            ]
+            n_axes_with_list_indices = len(axes_with_list_indices)
+
+            if n_axes_with_list_indices < 2:
+                # At most one axis has a list-of-integers index so do
+                # a normal dask subspace
+                dx = dx[tuple(indices)]
+                print (indices)
+            else:
+                # At least two axes have list-of-integers indices so
+                # we can't do a normal dask subspace
+
+                # Subspace axes which have list-of-integer indices
+                for axis in axes_with_list_indices:
+                    dx = da.take(dx, indices[axis], axis=axis)
+
+                if n_axes_with_list_indices < len(indices):
+                    # Subspace axes which didn't have list-of-integer
+                    # indices. (Do this after subspacing axes which
+                    # have list-of-integer indices in case
+                    # __keepdims_indexing__ is False.)
+                    slice_indices = [
+                        slice(None) if i in axes_with_list_indices else x
+                        for i, x in enumerate(indices)
+                    ]
+                    dx = dx[tuple(slice_indices)]
+
+        else:
+            raise ValueError("Orthogonal indexing is currently required.")
+
+        # ------------------------------------------------------------
+        # Note which axes have not been dropped from the result
+        # (i.e. those indexed with non-integral indices)
+        # ------------------------------------------------------------
+        if keepdims:
+            axes_with_non_integral_indices = axes
+            shape = self.shape
+        else:
+            axes_with_non_integral_indices = [
+                axis
+                for axis, x in zip(axes, indices)
+                if not isinstance(x, Integral)
+            ]
+            if len(axes_with_non_integral_indices) < len(indices):
+                # Never change the _axes attribute in-place
+                new._axes = axes_with_non_integral_indices
+
+                if cyclic_axes:
+                    cyclic_axes = set(
+                        [axis
+                         for axis in cyclic_axes
+                         if axis in axes_with_non_integral_indices]
+                    )
+                    shape = [n
+                             for n, axis in zip(self.shape, axes)
+                             if axis in axes_with_non_integral_indices]
+
+        # Set the subspaced dask array
         new._set_dask(dx)
 
-        # Apply any auxiliary mask
+        # ------------------------------------------------------------
+        # Apply auxiliary masks
+        # ------------------------------------------------------------
         for mask in auxiliary_mask:
             new.where(mask, cf_masked, inplace=True)
 
-        # Cyclic axes which have been reduced in size are no longer
-        # cyclic
+        # ------------------------------------------------------------
+        # Cyclic axes
+        # ------------------------------------------------------------
         if cyclic_axes:
-            x = [
-                axis
-                for axis, n0, n1 in zip(axes, d.shape, new.shape)
-                if n1 != n0 and axis in cyclic_axes
-            ]
+            # Cyclic axes that have been reduced in size are no longer
+            # considered to be cyclic
+            x = [axis
+                 for axis, n0, n1 in zip(axes_with_non_integral_indices,
+                                         shape,
+                                         new.shape)
+                 if n1 != n0 and axis in cyclic_axes]
             if x:
                 # Never change the _cyclic attribute in-place
                 new._cyclic = cyclic_axes.difference(x)
-        # --- End: if
 
         return new
 
@@ -1042,9 +1112,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # TODODASK - sort out the "numpy" environment
 
         indices, roll = parse_indices(
-            self.shape, indices, cyclic=True, numpy_indexing=False
+            self.shape, indices, cyclic=True, keepdims=True
         )
         indices = tuple(indices)
+
+        axes_with_list_indices = [
+            True for x in indices if not isinstance(x, slice)
+        ]
+        if len(axes_with_list_indices) > 1:
+            raise IndexError(
+                "Currently limited to at most one dimension's assignment "
+                "index being a 1-d array of integers or booleans. "
+                f"Got: {indices}"
+            )
 
         if roll:
             # Roll axes with cyclic slices. For example, if assigning
@@ -1081,7 +1161,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     f"Can't assign values with units {value_units!r} "
                     f"to data with units {self_units!r}"
                 )
-        # --- End: try
 
         # Set the mask hardness, in case any previous operations have
         # inadvertently changed it.
@@ -1098,6 +1177,61 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self.roll(axis=roll_axes, shift=shifts, inplace=True)
 
         return
+
+    # ----------------------------------------------------------------
+    # Indexing behaviour attributes
+    # ----------------------------------------------------------------
+    @property
+    @daskified(1)
+    def __orthogonal_indexing__(self):
+        """Flag to indicate that orthogonal indexing is supported.
+
+        Always True, indicating that 'orthogonal indexing' is
+        applied. This means that indices that are 1-d arrays or lists
+        subspace along each dimension independently. This behaviour is
+        similar to Fortran, but different to `numpy`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: __keepdims_indexing__,
+                     netCDF4.Variable.__orthogonal_indexing__
+
+        """
+        return True
+
+    @property
+    @daskified(1)
+    def __keepdims_indexing__(self):
+        """Flag to indicate whether orthogonal indexing is supported.
+
+        If True then providing a single integer as a single-axis index
+        does *not* reduce the number of array dimensions by 1. This
+        behaviour is different to `numpy`.
+
+        If False then providing a single integer as a single-axis
+        index reduces the number of array dimensions by 1. This
+        behaviour is the same as `numpy`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: __orthogonal_indexing__
+
+        **Examples:**
+
+        >>> d = cf.Data([[1, 2], [3, 4]])
+        >>> d.__keepdims_indexing__ = True
+        >>> d[0].shape
+        (1, 2)
+        >>> d.__keepdims_indexing__ = False
+        >>> d[0].shape
+        (2,)
+
+        """
+        return self._custom.get("__keepdims_indexing__", True)
+
+    @__keepdims_indexing__.setter
+    def __keepdims_indexing__(self, value):
+        self._custom["__keepdims_indexing__"] = bool(value)
 
     # ----------------------------------------------------------------
     # Private dask methods
@@ -5472,12 +5606,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _axes(self):
         """Storage for the axis identifiers.
 
-        Contains an ordered sequence of unique (within this `Data`
-        instance) identifiers for each array axis.
+        Contains an ordered sequence of identifiers for each array
+        axis.
 
-        .. note:: When an axis identifier is removed from the `_axes`
-                  attribute then it is automatically also removed from
-                  the `_cyclic` attribute.
+        .. note:: When the axis identifiers are reset, then any axis
+                  identifier named by the `_cyclic` attribute which is
+                  not in the new `_axes` set is automatically removed
+                  `_cyclic` attribute.
 
         """
         return self._custom["_axes"]
@@ -5488,22 +5623,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._custom["_axes"] = value
 
         # Update cyclic: Remove cyclic axes that are not in the new
-        # axes
+        # axes (never update _cyclic in-place)
         cyclic = self._cyclic
         if cyclic:
             self._cyclic = cyclic.intersection(value)
-
-    @property
-    def numpy_indexing(self):
-        """TODODASK - probably thewrong name - need a gneral numpy
-        compatability flag. See also confg settings
-
-        """
-        return self._custom.get("numpy_indexing", False)
-
-    @numpy_indexing.setter
-    def numpy_indexing(self, value):
-        self._custom["numpy_indexing"] = bool(value)
 
     # ----------------------------------------------------------------
     # Dask attributes

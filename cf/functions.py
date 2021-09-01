@@ -13,6 +13,7 @@ from collections.abc import Iterable  # just 'from collections' in Python <3.4
 from hashlib import md5 as hashlib_md5
 from marshal import dumps as marshal_dumps
 from math import ceil as math_ceil
+from numbers import Integral
 from os import getpid, listdir, mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import dirname as _os_path_dirname
@@ -29,14 +30,10 @@ from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
-from numpy import array as _numpy_array
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
-from numpy import integer as _numpy_integer
 from numpy import isclose as _x_numpy_isclose
 from numpy import ndim as _numpy_ndim
 from numpy import shape as _numpy_shape
-from numpy import sign as _numpy_sign
-from numpy import size as _numpy_size
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
 from numpy import where as _numpy_where
@@ -1880,7 +1877,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 # TODODASK - sort out the "numpy" environment
 
 
-def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
+def parse_indices(shape, indices, cyclic=False, keepdims=True):
     """TODODASK.
 
     :Parameters:
@@ -1945,16 +1942,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
         parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
 
     if not ndim and parsed_indices:
-        # # If data is scalar then allow it to be indexed with an
-        # # equivalent to [0]
-        # if (len_parsed_indices == 1 and
-        #     parsed_indices[0] in (0,
-        #                           -1,
-        #                           slice(0, 1),
-        #                           slice(-1, None, -1),
-        #                           slice(None, None, None))):
-        #     parsed_indices = []
-        # else:
         raise IndexError(
             "Scalar array can only be indexed with () or Ellipsis"
         )
@@ -2015,7 +2002,7 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                 # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
                 # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                if cyclic and not numpy_indexing:
+                if cyclic:
                     index = slice(0, stop - start, step)
                     roll[i] = -start
                 else:
@@ -2029,7 +2016,7 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                 # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
                 # 0:-2:-1  => [0, 9]
                 # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                if cyclic and not numpy_indexing:
+                if cyclic:
                     index = slice(start - stop - 1, None, step)
                     roll[i] = -1 - stop
                 else:
@@ -2043,155 +2030,26 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                     or (start > stop and step > 0)
                 ):
                     raise IndexError(
-                        "Invalid indices dimension with size {}: {}".format(
-                            size, index
-                        )
+                        f"Invalid indices dimension with size {size}: {index}"
                     )
 
                 if step < 0 and stop < 0:
                     stop = None
                 index = slice(start, stop, step)
 
-        elif isinstance(index, (int, _numpy_integer)):
+        elif isinstance(index, Integral):
             # --------------------------------------------------------
             # Index is an integer
             # --------------------------------------------------------
             if index < 0:
                 index += size
 
-            if not numpy_indexing:
+            if keepdims:
+                print("CONVERT")
                 index = slice(index, index + 1, 1)
                 is_slice = True
-        else:
-            convert2positve = True
-            if getattr(
-                getattr(index, "dtype", None), "kind", None
-            ) == "b" or isinstance(index[0], bool):
-                # ----------------------------------------------------
-                # Index is a sequence of booleans
-                # ----------------------------------------------------
-                # Convert booleans to non-negative integers. We're
-                # assuming that anything with a dtype attribute also
-                # has a size attribute.
-                if _numpy_size(index) != size:
-                    raise IndexError(
-                        "Incorrect number ({}) of boolean indices for "
-                        "dimension with size {}: {}".format(
-                            _numpy_size(index), size, index
-                        )
-                    )
-
-                index = _numpy_where(index)[0]
-                convert2positve = False
-
-            if not _numpy_ndim(index):
-                if index < 0:
-                    index += size
-
-                index = slice(index, index + 1, 1)
-                is_slice = True
-            else:
-                len_index = len(index)
-                if len_index == 1:
-                    index = index[0]
-                    if index < 0:
-                        index += size
-
-                    index = slice(index, index + 1, 1)
-                    is_slice = True
-                elif len_index:
-                    if convert2positve:
-                        # Convert to non-negative integer numpy array
-                        index = _numpy_array(index)
-                        index = _numpy_where(index < 0, index + size, index)
-
-                    steps = index[1:] - index[:-1]
-                    step = steps[0]
-                    if step and not (steps - step).any():
-                        # Replace the numpy array index with a slice
-                        if step > 0:
-                            start, stop = index[0], index[-1] + 1
-                        elif step < 0:
-                            start, stop = index[0], index[-1] - 1
-
-                        if stop < 0:
-                            stop = None
-
-                        index = slice(start, stop, step)
-                        is_slice = True
-                    else:
-                        if (
-                            (step > 0 and (steps <= 0).any())
-                            or (step < 0 and (steps >= 0).any())
-                            or not step
-                        ):
-                            raise ValueError(
-                                "Bad index (not strictly monotonic): "
-                                "{}".format(index)
-                            )
-
-                #                        if reverse and step < 0:
-                #                            # The array is strictly monotonically
-                #                            # decreasing, so reverse it so that it's
-                #                            # strictly monotonically increasing.  Make
-                #                            # a note that this dimension will need
-                #                            # flipping later
-                #                            index = index[::-1]
-                #                            flip.append(i)
-                #                            step = -step
-                #
-                #                        if envelope:
-                #                            # Create an envelope slice for a parsed
-                #                            # index of a numpy array of integers
-                #                            compressed_indices.append(index)
-                #
-                #                            step = _numpy_sign(step)
-                #                            if step > 0:
-                #                                stop = index[-1] + 1
-                #                            else:
-                #                                stop = index[-1] - 1
-                #                                if stop < 0:
-                #                                    stop = None
-                #
-                #                            index = slice(index[0], stop, step)
-                #                            is_slice = True
-                else:
-                    raise IndexError(
-                        "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape
-                        )
-                    )
 
         if is_slice:
-            #            if reverse and index.step < 0:
-            #                # If the slice step is negative, then transform
-            #                # the original slice to a new slice with a
-            #                # positive step such that the result of the new
-            #                # slice is the reverse of the result of the
-            #                # original slice.
-            #                #
-            #                # For example, if the original slice is
-            #                # slice(6,0,-2) then the new slice will be
-            #                # slice(2,7,2):
-            #                #
-            #                # >>> a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            #                # >>> a[slice(6, 0, -2)]
-            #                # [6, 4, 2]
-            #                # >>> a[slice(2, 7, 2)]
-            #                # [2, 4, 6]
-            #                # a[slice(6, 0, -2)] == list(reversed(a[slice(2, 7, 2)]))
-            #                # True
-            #                start, stop, step = index.indices(size)
-            #                step *= -1
-            #                div, mod = divmod(start-stop-1, step)
-            #                div_step = div*step
-            #                start -= div_step
-            #                stop = start + div_step + 1
-            #
-            #                index = slice(start, stop, step)
-            #                flip.append(i)
-            #            # --- End: if
-
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
             if cyclic and index.step > 1:
@@ -2199,15 +2057,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
                 div, mod = divmod(stop - start - 1, step)
                 stop = start + div * step + 1
                 index = slice(start, stop, step)
-
-            #
-        #            if envelope:
-        #                # Create an envelope slice for a parsed
-        #                # index of a numpy array of integers
-        #                compressed_indices.append(index)
-        #                index = slice(
-        #                    start, stop, (1 if reverse else _numpy_sign(step)))
-        # --- End: if
 
         parsed_indices[i] = index
 
@@ -2219,15 +2068,6 @@ def parse_indices(shape, indices, cyclic=False, numpy_indexing=False):
 
     if cyclic:
         out.append(roll)
-
-    #    if reverse:
-    #        out.append(flip)
-    #
-    #    if envelope:
-    #       out.append(compressed_indices)
-    #
-    #    if mask:
-    #        out.append(mask_indices)
 
     return out
 
