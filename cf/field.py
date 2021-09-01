@@ -1355,9 +1355,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 axes_unM.append(axis1)
 
         logger.debug(
-            "2: axes_unD , axes_unM , axes0_M = {} {} {}".format(
-                axes_unD, axes_unM, axes0_M
-            )
+            "2: axes_unD , axes_unM , axes0_M = "
+            f"{axes_unD} {axes_unM} {axes0_M}"
         )  # pragma: no cover
 
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
@@ -1367,16 +1366,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         undefined_indices1 = slice(None, start_of_unmatched1)
         unmatched_indices1 = slice(start_of_unmatched1, start_of_matched1)
         logger.debug(
-            "2: start_of_unmatched1 = {}".format(start_of_unmatched1)
+            f"2: start_of_unmatched1 = {start_of_unmatched1}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_matched1   = {}".format(start_of_matched1)
+            f"2: start_of_matched1   = {start_of_matched1}"
         )  # pragma: no cover
         logger.debug(
-            "2: undefined_indices1  = {}".format(undefined_indices1)
+            f"2: undefined_indices1  = {undefined_indices1}"
         )  # pragma: no cover
         logger.debug(
-            "2: unmatched_indices1  = {}".format(unmatched_indices1)
+            f"2: unmatched_indices1  = {unmatched_indices1}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1414,9 +1413,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_axis, end_of_undefined0, inplace=True
                 )
                 logger.debug(
-                    "2: axis1, field0.shape = {} {}".format(
-                        axis1, field0.data.shape
-                    )
+                    f"2: axis1, field0.shape = {axis1} {field0.data.shape}"
                 )  # pragma: no cover
 
                 axis0 = (
@@ -1442,7 +1439,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         unmatched_axes0 = data_axes0[start_of_unmatched0:start_of_matched0]
         logger.debug(
-            "2: unmatched_axes0 = {}".format(unmatched_axes0)
+            f"2: unmatched_axes0 = {unmatched_axes0}"
         )  # pragma: no cover
 
         if unmatched_axes0:
@@ -1452,9 +1449,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_axis, start_of_matched1, inplace=True
                 )
                 logger.debug(
-                    "2: axis0, field1.shape = {} {}".format(
-                        axis0, field1.shape
-                    )
+                    f"2: axis0, field1.shape = {axis0} {field1.shape}"
                 )  # pragma: no cover
 
                 axis1 = (
@@ -1495,13 +1490,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 data_axes0 = field0.get_data_axes()
 
         logger.debug(
-            "2: axis0_to_axis1 = {}".format(axis0_to_axis1)
+            f"2: axis0_to_axis1 = {axis0_to_axis1}"
         )  # pragma: no cover
         logger.debug(
-            "2: axis1_to_axis0 = {}".format(axis1_to_axis0)
+            f"2: axis1_to_axis0 = {axis1_to_axis0}"
         )  # pragma: no cover
         logger.debug(
-            "2: s['new_size1_axes']  = {}".format(s["new_size1_axes"])
+            f"2: s['new_size1_axes']  = {s['new_size1_axes']}"
         )  # pragma: no cover
 
         # ============================================================
@@ -1514,10 +1509,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         #                        field1, method).data
 
         logger.debug(
-            "3: new_data0.shape = {}".format(new_data0.shape)
+            f"3: new_data0.shape = {new_data0.shape}"
         )  # pragma: no cover
         logger.debug(
-            "3: field0.shape = {}".format(field0.data.shape)
+            f"3: field0.shape = {field0.data.shape}"
         )  # pragma: no cover
 
         # ============================================================
@@ -1536,14 +1531,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # 4a. Remove selected size 1 axes
         # ------------------------------------------------------------
         logger.debug(
-            "4: field0.constructs.keys() = {}".format(
-                sorted(field0.constructs.keys())
-            )
+            f"4: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
         )  # pragma: no cover
         logger.debug(
-            "4: field1.constructs.keys() = {}".format(
-                sorted(field1.constructs.keys())
-            )
+            f"4: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
         )  # pragma: no cover
 
         # AND HEREIN LIES THE PROBLEM            TODO
@@ -1649,9 +1640,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
         auxs1 = field1_auxiliary_coordinates.copy()
         #        auxs1 = dict(field1_auxiliary_coordinates.items())
-        logger.debug(
-            "5: remove_items = {}".format(remove_items)
-        )  # pragma: no cover
+        logger.debug(f"5: remove_items = {remove_items}")  # pragma: no cover
 
         for key0, aux0 in field0.auxiliary_coordinates(todict=True).items():
             if key0 in remove_items:
@@ -1733,26 +1722,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         key1_to_key0 = {}
 
         logger.debug(
-            "5: insert_dim               = {}".format(insert_dim)
+            f"5: insert_dim               = {insert_dim}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_aux               = {}".format(insert_aux)
+            f"5: insert_aux               = {insert_aux}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_domain_anc        = {}".format(insert_domain_anc)
+            f"5: insert_domain_anc        = {insert_domain_anc}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_ref               = {}".format(insert_ref)
+            f"5: insert_ref               = {insert_ref}"
         )  # pragma: no cover
         logger.debug(
-            "5: field0.constructs.keys() = {}".format(
-                sorted(field0.constructs.keys())
-            )
+            f"5: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
         )  # pragma: no cover
         logger.debug(
-            "5: field1.constructs.keys() = {}".format(
-                sorted(field1.constructs.keys())
-            )
+            f"5: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
         )  # pragma: no cover
 
         for key1, axes0 in insert_dim.items():
