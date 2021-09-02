@@ -9111,9 +9111,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         other_Units = other.Units
         if self_Units != other_Units:
             logger.info(
-                "{}: Different Units ({!r}, {!r})".format(
-                    self.__class__.__name__, self.Units, other.Units
-                )
+                f"{self.__class__.__name__}: Different Units "
+                f"({self.Units!r}, {other.Units!r})"
             )
             return False
 
@@ -9127,8 +9126,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self_dx, other_dx, rtol=float(rtol), atol=float(atol)
         ):
             logger.info(
-                "{0}: Different array values (atol={1}, "
-                "rtol={2})".format(self.__class__.__name__, atol, rtol)
+                f"{self.__class__.__name__}: Different array values "
+                f"(atol={atol}, rtol={rtol})"
             )
 
             return False
