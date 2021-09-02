@@ -1754,7 +1754,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             logger.debug(
                 "axes0, key1, field1.constructs[key1] = "
-                "{}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         for key1, axes0 in insert_aux.items():
@@ -1771,7 +1771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             logger.debug(
                 "axes0, key1, field1.constructs[key1] = "
-                "{}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         #        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
@@ -1785,14 +1785,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # There was some sort of problem with the insertion, so
                 # just ignore this item.
                 logger.debug(
-                    "Domain ancillary insertion problem: {}".format(error)
+                    f"Domain ancillary insertion problem: {error}"
                 )  # pragma: no cover
             else:
                 key1_to_key0[key1] = key0
 
             logger.debug(
                 "domain ancillary axes0, key1, field1.constructs[key1] ="
-                " {}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f" {axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1801,7 +1801,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if remove_items:
             logger.debug(sorted(field0.constructs.keys()))  # pragma: no cover
             logger.debug(
-                "Removing {!r} from field0".format(sorted(remove_items))
+                f"Removing {sorted(remove_items)!r} from field0"
             )  # pragma: no cover
 
             for key in remove_items:
@@ -1814,7 +1814,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for key1 in insert_ref:
             ref1 = field1_coordinate_references[key1]
             logger.debug(
-                "Copying {!r} from field1 to field0".format(ref1)
+                f"Copying {ref1!r} from field1 to field0"
             )  # pragma: no cover
 
             identity_map = dict(
@@ -1924,13 +1924,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
-                "Can't combine {!r} with {!r} due to incompatible data "
-                "shapes: {}, {})".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                    self.shape,
-                    numpy_shape(other),
-                )
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} due to incompatible data "
+                f"shapes: {self.shape}, {numpy_shape(other)})"
             )
 
         # ============================================================
@@ -2099,7 +2095,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
-            logger.info("{} {}".format(identity, y))
+            logger.info(f"{identity} {y}")
             if isinstance(identity, int) or identity not in out0:
                 field1.swapaxes(
                     field1.get_data_axes().index(y.axis), -1, inplace=True
@@ -2107,15 +2103,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             else:
                 # This identity is also in out0
                 a = out0[identity]
-                logger.info("{} {} {}".format(identity, y.axis, a.axis))
+                logger.info(f"{identity} {y.axis} {a.axis}")
                 logger.info(
-                    "{} {} {} {} {}".format(
-                        a,
-                        field0.get_data_axes(),
-                        field1.get_data_axes(),
-                        field1.get_data_axes().index(y.axis),
-                        field0.get_data_axes().index(a.axis),
-                    )
+                    f"{a} {field0.get_data_axes()} {field1.get_data_axes()} "
+                    f"{field1.get_data_axes().index(y.axis)} "
+                    f"{field0.get_data_axes().index(a.axis)}"
                 )
 
                 field1.swapaxes(
@@ -2131,7 +2123,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         }
 
-        logger.info("\naxis_map= {}\n".format(axis_map))
+        logger.info(f"\naxis_map= {axis_map}\n")
 
         # ------------------------------------------------------------
         # Check that the two fields have compatible metadata
@@ -2151,8 +2143,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if y.size != a.size:
                 raise ValueError(
-                    "Can't broadcast size {} {!r} axis to size {} {!r} "
-                    "axis".format(y.size, identity, a.size, identity)
+                    f"Can't broadcast size {y.size} {identity!r} axis to size "
+                    f"{a.size} {identity!r} axis"
                 )
 
             # Ensure matching axis directions
@@ -2162,8 +2154,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Check for matching coordinate values
             if not y.coord._equivalent_data(a.coord):
                 raise ValueError(
-                    "Can't combine size {} {!r} axes with non-matching "
-                    "coordinate values".format(y.size, identity)
+                    f"Can't combine size {y.size} {identity!r} axes with "
+                    f"non-matching coordinate values"
                 )
 
             # Check coord refs
@@ -2423,7 +2415,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if s["warnings"] or v["warnings"]:
             raise ValueError(
-                "Can't setitem: {0}".format(s["warnings"] or v["warnings"])
+                f"Can't setitem: {s['warnings'] or v['warnings']}"
             )
 
         # Find the set of matching axes
@@ -2440,8 +2432,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 identity in v["id_to_aux"]
             ) == 1:
                 raise ValueError(
-                    "Can't assign: {0!r} axis defined by auxiliary in only "
-                    "1 field".format(identity)
+                    f"Can't assign: {identity!r} axis defined by auxiliary in "
+                    "only 1 field"
                 )
 
         copied = False
@@ -2579,9 +2571,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     continue
 
                 raise ValueError(
-                    "Can't broadcast {!r} axes with sizes {} and {}".format(
-                        identity, size0, size1
-                    )
+                    f"Can't broadcast {identity!r} axes with sizes {size0} "
+                    f"and {size1}"
                 )
 
             # Check that equally sized defining coordinate data arrays
@@ -2702,7 +2693,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if item0.has_data() != item1.has_data():
             logger.info(
-                "{0}: Only one item has data".format(self.__class__.__name__)
+                f"{self.__class__.__name__}: Only one item has data"
             )  # pragma: no cover
             return False
 
@@ -2712,18 +2703,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if item0.size != item1.size:
             logger.info(
-                "{}: Different metadata construct data array size: "
-                "{} != {}".format(
-                    self.__class__.__name__, item0.size, item1.size
-                )
+                f"{self.__class__.__name__}: Different metadata construct "
+                f"data array size: {item0.size} != {item1.size}"
             )  # pragma: no cover
             return False
 
         if item0.ndim != item1.ndim:
             logger.info(
-                "{0}: Different data array ranks ({1}, {2})".format(
-                    self.__class__.__name__, item0.ndim, item1.ndim
-                )
+                f"{self.__class__.__name__}: Different data array ranks "
+                f"({item0.ndim}, {item1.ndim})"
             )  # pragma: no cover
             return False
 
