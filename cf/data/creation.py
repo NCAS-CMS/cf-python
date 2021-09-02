@@ -2,33 +2,21 @@
 from functools import lru_cache
 from uuid import uuid4
 
-import numpy as np
-
 import dask.array as da
-from dask.array.core import (
-    getter,
-    normalize_chunks,
-    slices_from_chunks,
-)
-from dask.utils import SerializableLock
+import numpy as np
+from dask.array.core import getter, normalize_chunks, slices_from_chunks
 from dask.base import tokenize
 from dask.config import config
-
-from ..units import Units
-
-from .utils import (
-    chunk_shapes,
-    chunk_positions,
-)
+from dask.utils import SerializableLock
 
 from . import (
     FilledArray,
     GatheredSubarray,
     RaggedContiguousSubarray,
-    RaggedIndexedSubarray,
     RaggedIndexedContiguousSubarray,
+    RaggedIndexedSubarray,
 )
-
+from .utils import chunk_positions, chunk_shapes, is_small, is_very_small
 
 # Cache of axis identities
 _cached_axes = {}
