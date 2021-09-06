@@ -955,11 +955,10 @@ class DataTest(unittest.TestCase):
             else:
                 a.soften_mask()
 
-            d = cf.Data(a, "m", chunks=(2, 2), hardmask=hardmask)
+            d = cf.Data(a.copy(), "metres", hardmask=hardmask)
 
-            # Scalar assignment
-            a[:, 1] = np.ma.masked
-            d[:, 1] = np.ma.masked
+            a[:, 1] = cf.masked
+            d[:, 1] = cf.masked
 
             a[0, 2] = -6
             d[0, 2] = -6
@@ -982,15 +981,36 @@ class DataTest(unittest.TestCase):
             a[8, [8, 6, 5]] = -5
             d[8, [8, 6, 5]] = -5
 
-            self.assertTrue((d.array == a).all())
-            self.assertTrue((d.array.mask == a.mask).all())
+            a[...] = -a
+            d[...] = -d
 
-            # Non-scalar assignment (TODODASK - add more tests)
             a[0] = a[2]
-            d[0] = a[2]
+            d[0] = d[2]
 
             self.assertTrue((d.array == a).all())
             self.assertTrue((d.array.mask == a.mask).all())
+
+        # Units
+        a = np.ma.arange(90).reshape(9, 10)
+        d = cf.Data(a, "metres")
+        d[...] = cf.Data(a * 100, "cm")
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.array.mask == a.mask).all())
+
+        # Cyclic
+        d.cyclic(1)
+        self.assertTrue((d[0].array == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).all())
+        d[0, -1:1] = [-99, -1]
+        self.assertTrue(
+            (d[0].array == [-1, 1, 2, 3, 4, 5, 6, 7, 8, -99]).all()
+        )
+        self.assertEqual(d.cyclic(), set([1]))
+
+        with self.assertRaises(NotImplementedError):
+            d[[1, 2], [0, 4, 1]] = 9
+
+        with self.assertRaises(NotImplementedError):
+            d[[1], [0, 4, 1]] = 9
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_outerproduct(self):

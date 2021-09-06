@@ -105,6 +105,7 @@ from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    conform_units,
     convert_to_datetime,
     convert_to_reftime,
     dask_compatible,
@@ -968,6 +969,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         axes = self._axes
         cyclic_axes = self._cyclic
+
         # ------------------------------------------------------------
         # Roll axes with cyclic slices
         # ------------------------------------------------------------
@@ -1102,6 +1104,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         a subspace. See `__getitem__` for details on how to define
         subspace of the data array.
 
+        .. note:: Currently at most one dimension's assignment index
+                  may be a 1-d array of integers or booleans. This is
+                  is different to `__getitem__`, which applies
+                  'orthogonal indexing' when multiple indices of 1-d
+                  array of integers or booleans are present.
+
         **Missing data**
 
         The treatment of missing data elements during assignment to a
@@ -1116,77 +1124,69 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         the `cf.masked` constant or by assignment to a value which
         contains masked elements.
 
-        .. seealso:: `cf.masked`, `hardmask`, `where`
+        .. seealso:: `__getitem__`, `cf.masked`, `hardmask`, `where`
 
         **Examples:**
 
         """
-        # TODODASK - sort out the "numpy" environment
-
         indices, roll = parse_indices(
             self.shape, indices, cyclic=True, keepdims=True
         )
         indices = tuple(indices)
 
         axes_with_list_indices = [
-            True for x in indices if not isinstance(x, slice)
+            i
+            for i, x in enumerate(indices)
+            if isinstance(x, list) or getattr(x, "shape", False)
         ]
         if len(axes_with_list_indices) > 1:
-            raise IndexError(
+            raise NotImplementedError(
                 "Currently limited to at most one dimension's assignment "
                 "index being a 1-d array of integers or booleans. "
                 f"Got: {indices}"
             )
+            # TODODASK: The inherited algorithm that does assignment
+            #           for multiple list/1-d array indices
+            #           (cfdm.Data._set_subspace) won't work when the
+            #           1-d array is a dask array because the array
+            #           may need to be computed at __setitem__
+            #           runtime, which is not desirable. Until this
+            #           can be fixed, it's easiest to disallow this
+            #           case, that was allowed pre-dask.
 
+        # ------------------------------------------------------------
+        # Roll axes with cyclic slices
+        # ------------------------------------------------------------
         if roll:
-            # Roll axes with cyclic slices. For example, if assigning
-            # to slice(-2, 3) has been requested on a cyclic axis (and
-            # we're not using numpy indexing), then we roll that axis
-            # by two points and assign to slice(0, 5) instead. The
-            # axis is then unrolled by two points afer the assignment
-            # has been made.
+            # For example, if assigning to slice(-2, 3) has been
+            # requested on a cyclic axis (and we're not using numpy
+            # indexing), then we roll that axis by two points and
+            # assign to slice(0, 5) instead. The axis is then unrolled
+            # by two points afer the assignment has been made.
             axes = self._axes
-            if self._cyclic.intersection([axes[i] for i in roll]):
+            if not self._cyclic.issuperset([axes[i] for i in roll]):
                 raise IndexError(
                     "Can't do a cyclic assignment to a non-cyclic axis"
                 )
 
             roll_axes = tuple(roll.keys())
             shifts = tuple(roll.values())
-            self.roll(axis=roll_axes, shift=shifts, inplace=True)
-
-        # TODODASK: multiple lists
+            self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
         # Make sure that the units of value are the same as self
-        try:
-            value_units = value.Units
-        except AttributeError:
-            pass
-        else:
-            self_units = self.Units
-            if value_units.equivalent(self_units):
-                if value_units != self_units:
-                    value = value.copy()
-                    value.Units = self.Units
-            elif value_units and self_units:
-                raise ValueError(
-                    f"Can't assign values with units {value_units!r} "
-                    f"to data with units {self_units!r}"
-                )
-
-        # Set the mask hardness, in case any previous operations have
-        # inadvertently changed it.
-        self._set_mask_hardness()
+        value = conform_units(value, self.Units)
 
         # Do the assignment
         dx = self._get_dask()
         dx[indices] = dask_compatible(value)
 
+        # ------------------------------------------------------------
+        # Unroll any axes that were rolled to enable a cyclic
+        # assignment
+        # ------------------------------------------------------------
         if roll:
-            # Unroll any axes that were rolled to enable a cyclic
-            # assignment
             shifts = [-shift for shift in shifts]
-            self.roll(axis=roll_axes, shift=shifts, inplace=True)
+            self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
         return
 
@@ -5847,8 +5847,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         changes the `hardmask` attribute to `False`. The mask can be
         re-hardened with `harden_mask` method.
 
-        The following operations
-
         .. seealso:: `harden_mask`, `soften_mask`, `where`
 
         **Examples:**
@@ -5897,7 +5895,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Performance**
 
-        `is_masked` causes all delayed operations to be computed.
+        `is_masked` causes all delayed operations to be executed.
 
         **Examples:**
 
@@ -5909,6 +5907,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         True
 
         """
+        # TODODASK: (General point) When we run something that
+        #           executes all of the lazy operations (like
+        #           is_masked), should/could we replace the dask array
+        #           of self with a "persisted" version of the computed
+        #           data? If we did this, we would want to have the
+        #           ability to cache persisted chunks to disk, as they
+        #           came into being on each thread.
 
         def is_masked(a):
             out = np.ma.is_masked(a)
@@ -5916,7 +5921,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self._get_dask()
 
-        out_ind = tuple(dx.ndim)
+        out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
 
         dx = da.blockwise(
@@ -6111,7 +6116,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 a.harden_mask()
             else:
                 a.soften_mask()
-        # --- End: if
 
         return a
 
@@ -12660,6 +12664,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 *Parameter example:*
                   Convolve the last axis: ``axis=-1``.
 
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number. If an `int` while *axis* is a
+                tuple of `int`, then the same value is used for all
+                given axes.
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -12669,21 +12681,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
 
         """
+        # TODODASK - consider matching the numpy/dask api: "shift, axis="
+
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if isinstance(shift, int):
-            shift = (shift,)
-
-        axes = self._parse_axes(axis)
-        if len(axes) != len(shift):
-            raise ValueError("TODODASK")
-
-        if not shift:
-            # Null roll
-            return d
-
         dx = d._get_dask()
-        dx = da.roll(dx, axis=axes, shift=shift)
+        dx = da.roll(dx, shift, axis=axis)
         d._set_dask(dx)
 
         return d

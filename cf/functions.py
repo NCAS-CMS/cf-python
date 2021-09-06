@@ -1886,32 +1886,30 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
 
         indices: `tuple` (not a `list`!)
 
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
     :Returns:
 
         `list` [, `dict`]
+            The parsed indices. If *cyclic* is True the a dictionary
+            is also returned that contains the parameters needed to
+            interpret any cyclic slices.
 
     **Examples:**
 
     >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
     [array([1, 2, 4, 6]), slice(0, 8, 1)]
-    >>> cf.parse_indices((5, 8), ([2, 4, 6],))
-    [slice(2, 7, 2), slice(0, 8, 1)]
+    >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
+    [slice(0, 5, 1), slice(2, 7, 2)]
 
     """
     parsed_indices = []
     roll = {}
-    flip = []
-    compressed_indices = []
-    mask_indices = []
 
     if not isinstance(indices, tuple):
         indices = (indices,)
-
-    #    if mask and indices:
-    #        arg0 = indices[0]
-    #        if isinstance(arg0, str) and arg0 == 'mask':
-    #            mask_indices = indices[1]
-    #            indices = indices[2:]
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -1933,9 +1931,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
 
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
-            "Invalid indices {} for array with shape {}".format(
-                parsed_indices, shape
-            )
+            f"Invalid indices {parsed_indices} for array with shape {shape}"
         )
 
     if len_parsed_indices < ndim:
@@ -2059,16 +2055,10 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
 
         parsed_indices[i] = index
 
-    #    if not (cyclic or reverse or envelope or mask):
     if not cyclic:
         return parsed_indices
 
-    out = [parsed_indices]
-
-    if cyclic:
-        out.append(roll)
-
-    return out
+    return parsed_indices, roll
 
 
 def get_subspace(array, indices):
