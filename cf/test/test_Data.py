@@ -820,7 +820,7 @@ class DataTest(unittest.TestCase):
         a = f.array
         self.assertTrue(np.allclose(a, array))
 
-    def test_Data___getitem__(self):
+    def test_Data__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -858,6 +858,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d[indices].shape, (3, 1, 2))
 
         d.__keepdims_indexing__ = False
+        self.assertFalse(d.__keepdims_indexing__)
         for indices in (
             ([1, 3, 4], -2, [2, -1]),
             (slice(0, 6, 2), -2, [2, -1]),
@@ -868,13 +869,20 @@ class DataTest(unittest.TestCase):
         ):
             self.assertEqual(d[indices].shape, (3, 2))
 
+        self.assertFalse(d.__keepdims_indexing__)
         d.__keepdims_indexing__ = True
+        self.assertTrue(d.__keepdims_indexing__)
+
+        d = cf.Data(np.ma.arange(24).reshape(3, 8))
+        e = d[0, 2:4]
+        print(e.cyclic(), e.shape)
 
         # Cyclic slices
         d = cf.Data(np.ma.arange(24).reshape(3, 8))
         d.cyclic(1)
         self.assertTrue((d[0, :6].array == [[0, 1, 2, 3, 4, 5]]).all())
         e = d[0, -2:4]
+        print(e.cyclic(), e.shape)
         self.assertEqual(e.shape, (1, 6))
         self.assertTrue((e[0].array == [[6, 7, 0, 1, 2, 3]]).all())
         self.assertFalse(e.cyclic())
@@ -906,17 +914,36 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.cyclic(), set([0, 1]))
 
         d.cyclic(0, False)
-        print(d.cyclic())
-        d.__keepdims__indexing__ = False
-        self.assertTrue((d[0, :6].array == [0, 1, 2, 3, 4, 5]).all())
+        d.__keepdims_indexing__ = False
+        e = d[0, :6]
+        self.assertFalse(e.__keepdims_indexing__)
+        self.assertEqual(e.shape, (6,))
+        self.assertTrue((e.array == [0, 1, 2, 3, 4, 5]).all())
+        print("----")
         e = d[0, -2:4]
-        print(e.cyclic())
         self.assertEqual(e.shape, (6,))
         self.assertTrue((e.array == [6, 7, 0, 1, 2, 3]).all())
         self.assertFalse(e.cyclic())
-        d.__keepdims__indexing__ = True
+        d.__keepdims_indexing__ = True
+
+        # Keepdims indexing
+        d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        self.assertEqual(d[0].shape, (1, 3))
+        self.assertEqual(d[:, 1].shape, (2, 1))
+        self.assertEqual(d[0, 1].shape, (1, 1))
+        d.__keepdims_indexing__ = False
+        self.assertEqual(d[0].shape, (3,))
+        self.assertEqual(d[:, 1].shape, (2,))
+        self.assertEqual(d[0, 1].shape, ())
+        d.__keepdims_indexing__ = True
+
+        # Orthogonal indexing
+        self.assertEqual(d[[0], [0, 2]].shape, (1, 2))
+        self.assertEqual(d[[0, 1], [0, 2]].shape, (2, 2))
+        self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
 
         # Ancillary masks
+        #
         # TODODASK: Test __getitem__ with ancillary masks. Can only do
         #           this when cf.Data.where has been daskified
 
