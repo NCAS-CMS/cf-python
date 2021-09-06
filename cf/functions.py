@@ -2045,7 +2045,6 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 index += size
 
             if keepdims:
-                print("CONVERT")
                 index = slice(index, index + 1, 1)
                 is_slice = True
 

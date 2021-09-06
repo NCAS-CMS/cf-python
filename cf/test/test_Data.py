@@ -875,14 +875,12 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data(np.ma.arange(24).reshape(3, 8))
         e = d[0, 2:4]
-        print(e.cyclic(), e.shape)
 
         # Cyclic slices
         d = cf.Data(np.ma.arange(24).reshape(3, 8))
         d.cyclic(1)
         self.assertTrue((d[0, :6].array == [[0, 1, 2, 3, 4, 5]]).all())
         e = d[0, -2:4]
-        print(e.cyclic(), e.shape)
         self.assertEqual(e.shape, (1, 6))
         self.assertTrue((e[0].array == [[6, 7, 0, 1, 2, 3]]).all())
         self.assertFalse(e.cyclic())
@@ -919,7 +917,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse(e.__keepdims_indexing__)
         self.assertEqual(e.shape, (6,))
         self.assertTrue((e.array == [0, 1, 2, 3, 4, 5]).all())
-        print("----")
         e = d[0, -2:4]
         self.assertEqual(e.shape, (6,))
         self.assertTrue((e.array == [6, 7, 0, 1, 2, 3]).all())
