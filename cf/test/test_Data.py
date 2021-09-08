@@ -855,7 +855,9 @@ class DataTest(unittest.TestCase):
             ([1, 4, 3], -2, [2, -1]),
             ([4, 1, 4], -2, [2, -1]),
         ):
-            self.assertEqual(d[indices].shape, (3, 1, 2))
+            e = d[indices]
+            self.assertEqual(e.shape, (3, 1, 2))
+            self.assertEqual(e._axes, d._axes)
 
         d.__keepdims_indexing__ = False
         self.assertFalse(d.__keepdims_indexing__)
@@ -867,7 +869,10 @@ class DataTest(unittest.TestCase):
             ([4, 3, 4], -2, [2, -1]),
             ([1, 4, 4], -2, [2, -1]),
         ):
-            self.assertEqual(d[indices].shape, (3, 2))
+            e = d[indices]
+            self.assertFalse(e.__keepdims_indexing__)
+            self.assertEqual(e.shape, (3, 2))
+            self.assertEqual(e._axes, d._axes[0::2])
 
         self.assertFalse(d.__keepdims_indexing__)
         d.__keepdims_indexing__ = True
@@ -881,9 +886,17 @@ class DataTest(unittest.TestCase):
         d.cyclic(1)
         self.assertTrue((d[0, :6].array == [[0, 1, 2, 3, 4, 5]]).all())
         e = d[0, -2:4]
+        self.assertEqual(e._axes, d._axes)
         self.assertEqual(e.shape, (1, 6))
         self.assertTrue((e[0].array == [[6, 7, 0, 1, 2, 3]]).all())
         self.assertFalse(e.cyclic())
+
+        d.__keepdims_indexing__ = False
+        e = d[:, 4]
+        self.assertEqual(e.shape, (3,))
+        self.assertFalse(e.cyclic())
+        self.assertEqual(e._axes, d._axes[0:1])
+        d.__keepdims_indexing__ = True
 
         e = d[0, -2:6]
         self.assertEqual(e.shape, (1, 8))
@@ -944,7 +957,7 @@ class DataTest(unittest.TestCase):
         # TODODASK: Test __getitem__ with ancillary masks. Can only do
         #           this when cf.Data.where has been daskified
 
-    def test_Data___setitem__(self):
+    def test_Data__setitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -955,9 +968,9 @@ class DataTest(unittest.TestCase):
             else:
                 a.soften_mask()
 
-            d = cf.Data(a.copy(), "metres", hardmask=hardmask)
+            d = cf.Data(a.copy(), "metres", hardmask=hardmask, chunks=(3, 5))
 
-            a[:, 1] = cf.masked
+            a[:, 1] = np.ma.masked
             d[:, 1] = cf.masked
 
             a[0, 2] = -6
@@ -997,7 +1010,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
         self.assertTrue((d.array.mask == a.mask).all())
 
-        # Cyclic
+        # Cyclic axes
         d.cyclic(1)
         self.assertTrue((d[0].array == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).all())
         d[0, -1:1] = [-99, -1]
@@ -1006,6 +1019,7 @@ class DataTest(unittest.TestCase):
         )
         self.assertEqual(d.cyclic(), set([1]))
 
+        # Multiple list/1-d array indices
         with self.assertRaises(NotImplementedError):
             d[[1, 2], [0, 4, 1]] = 9
 

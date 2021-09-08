@@ -32,11 +32,9 @@ from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
 from numpy import isclose as _x_numpy_isclose
-from numpy import ndim as _numpy_ndim
 from numpy import shape as _numpy_shape
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
-from numpy import where as _numpy_where
 from numpy.ma import all as _numpy_ma_all
 from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
@@ -1943,12 +1941,8 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
         )
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-        is_slice = False
-        if isinstance(index, slice):
-            # --------------------------------------------------------
-            # Index is a slice
-            # --------------------------------------------------------
-            is_slice = True
+        if cyclic and isinstance(index, slice):
+            # Check for a cyclic slice
             start = index.start
             stop = index.stop
             step = index.step
@@ -1998,11 +1992,8 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
                 # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                if cyclic:
-                    index = slice(0, stop - start, step)
-                    roll[i] = -start
-                else:
-                    index = slice(start, stop, step)
+                index = slice(0, stop - start, step)
+                roll[i] = -start
 
             elif step < 0 and 0 <= start < size and start - size <= stop < 0:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2012,46 +2003,15 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
                 # 0:-2:-1  => [0, 9]
                 # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                if cyclic:
-                    index = slice(start - stop - 1, None, step)
-                    roll[i] = -1 - stop
-                else:
-                    index = slice(start, stop, step)
+                index = slice(start - stop - 1, None, step)
+                roll[i] = -1 - stop
 
+        elif keepdims and isinstance(index, Integral):
+            # Convert an integral index to a slice
+            if index == -1:
+                index = slice(-1, None, None)
             else:
-                start, stop, step = index.indices(size)
-                if (
-                    start == stop
-                    or (start < stop and step < 0)
-                    or (start > stop and step > 0)
-                ):
-                    raise IndexError(
-                        f"Invalid indices dimension with size {size}: {index}"
-                    )
-
-                if step < 0 and stop < 0:
-                    stop = None
-                index = slice(start, stop, step)
-
-        elif isinstance(index, Integral):
-            # --------------------------------------------------------
-            # Index is an integer
-            # --------------------------------------------------------
-            if index < 0:
-                index += size
-
-            if keepdims:
                 index = slice(index, index + 1, 1)
-                is_slice = True
-
-        if is_slice:
-            # If step is greater than one then make sure that
-            # index.stop isn't bigger than it needs to be
-            if cyclic and index.step > 1:
-                start, stop, step = index.indices(size)
-                div, mod = divmod(stop - start - 1, step)
-                stop = start + div * step + 1
-                index = slice(start, stop, step)
 
         parsed_indices[i] = index
 

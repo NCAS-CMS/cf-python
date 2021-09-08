@@ -460,13 +460,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"{self.constructs.domain_axis_identity(_)!r} axis"
                     )
 
-                logger.debug(
-                    f"    roll, iaxis, shift = {roll} {iaxis} {shift}"
-                )  # pragma: no cover
-
-                new = new.roll(iaxis, shift)
+                new = new.roll(shift=shift, axis=iaxis)
         else:
-            new = self.copy()
+            new = self.copy(array=False)
 
         # ------------------------------------------------------------
         # Subspace the field construct's data
@@ -482,7 +478,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         logger.debug("    indices2 = {}".format(indices2))  # pragma: no cover
         logger.debug("    findices = {}".format(findices))  # pragma: no cover
 
-        new_data = new.data[tuple(findices)]
+        new_data = data[tuple(findices)]
 
         # Set sizes of domain axes
         data_axes = new.get_data_axes()
