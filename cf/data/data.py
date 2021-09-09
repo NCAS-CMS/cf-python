@@ -1382,20 +1382,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
-    def _dask_map_blocks(self, func, **kwargs):
-        """Apply a function to the dask array using `map_blocks`.
+    def _map_blocks(self, func, **kwargs):
+        """Apply a function to the data in-place.
+
+        .. note:: It may be necessary for a call to `_map_blocks` to
+                  be followed by a call to `_reset_mask_hardness`.
 
         .. versionadded:: TODODASK
+
+        .. seealso:: `_reset_mask_hardness`
 
         :Parameters:
 
             func:
-                The funciton to be applied to each chunk of the dask
+                The funciton to be applied to the data, via
+                `dask.Array.map_blocks`, to each chunk of the dask
                 array.
 
             kwargs: optional
                 Keyword arguments passed to the
-                `dask.Array.map_blocks` method of the dask array.
+                `dask.Array.map_blocks` method.
 
         :Returns:
 
@@ -1405,7 +1411,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
-        >>> dx = d._dask_map_blocks(lambda x: x / 2, dtype=float)
+        >>> dx = d._map_blocks(lambda x: x / 2)
         >>> print(d.array)
         [0.5 1.  1.5]
 
@@ -5652,8 +5658,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _hardmask(self):
         """Storage for the mask hardness.
 
-        Contains a `bool`, where `True` denotes a hard mask and `False`
-        denotes a soft mask.
+        Contains a `bool`, where `True` denotes a hard mask and
+        `False` denotes a soft mask.
+
+        See `hardmask` for details.
 
         """
         return self._custom["_hardmask"]
@@ -5661,10 +5669,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_hardmask.setter
     def _hardmask(self, value):
         self._custom["_hardmask"] = value
-
-    @_hardmask.deleter
-    def _hardmask(self):
-        del self._custom["_hardmask"]
 
     @property
     @daskified(1)
@@ -5758,9 +5762,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dtype = _dtype_float32
             else:
                 dtype = _dtype_float
-        # --- End: if
 
-        self._dask_map_blocks(
+        # Apply the units conversion to the data
+        self._map_blocks(
             partial(
                 Units.conform,
                 from_units=old_units,
@@ -5874,18 +5878,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Hardness of the mask.
 
         If the `hardmask` attribute is `True`, i.e. there is a hard
-        mask, then unmasking an entry will silently not occur. This
-        feature prevents overwriting the mask.
+        mask, then unmasking an entry will silently not occur. This is
+        the default, and prevents overwriting the mask.
 
-        To allow the unmasking of an entries when the data has a hard
-        mask, the mask must first to be softened, either by setting
-        the `hardmask` attribute to False or equivalently with the
-        `soften_mask` method.
+        If the `hardmask` attribute is `False`, i.e. there is a soft
+        mask, then masked entries may be overwritten with non-missing
+        values.
+
+        To allow the unmasking of masked values, the mask must be
+        softened by setting the `hardmask` attribute to False, or
+        equivalently with the `soften_mask` method.
 
         The mask can be hardened by setting the `hardmask` attribute
-        to True or equivalently with the `harden_mask` method.
+        to True, or equivalently with the `harden_mask` method.
 
-        .. seealso:: `harden_mask`, `soften_mask`, `where`
+        .. seealso:: `harden_mask`, `soften_mask`, `where`,
+                     `__setitem__`
 
         **Examples:**
 
@@ -5895,29 +5903,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[0] = cf.masked
         >>> print(d.array)
         [-- 2 3]
-        >>> d[...]= 9
+        >>> d[...]= 999
         >>> print(d.array)
-        [-- 9 9]
-        >>> d.soften_mask()
+        [-- 999 999]
+        >>> d.hardmask = False
         >>> d.hardmask
         False
         >>> d[...] = -1
-        False
         >>> print(d.array)
         [-1 -1 -1]
-        >>> d.harden_mask()
-        >>> d.hardmask
-        True
-        >>> d[0] = cf.masked
-        >>> d = d.where(True, 9)
-        >>> print(d.array)
-        [-- 9 9]
-        >>> d.soften_mask()
-        >>> d.hardmask
-        False
-        >>> d = d.where(True, 9)
-        >>> print(d.array)
-        [9 9 9]
 
         """
         return self._hardmask
@@ -9570,7 +9564,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Whether the mask of a masked array is hard or soft is
         determined by its `hardmask` property. `harden_mask` sets
-        `hardmask` to True.
+        `hardmask` to `True`.
 
         .. versionadded:: TODODASK
 
@@ -9593,7 +9587,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [1 -- 3]
 
         """
-        self._dask_map_blocks(_harden_mask_chunk, dtype=self.dtype)
+        self._map_blocks(_harden_mask_chunk, dtype=self.dtype)
         self._hardmask = True
 
     def soften_mask(self):
@@ -9601,7 +9595,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Whether the mask of a masked array is hard or soft is
         determined by its `hardmask` property. `soften_mask` sets
-        `hardmask` to False.
+        `hardmask` to `False`.
 
         .. versionadded:: TODODASK
 
@@ -9621,10 +9615,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         False
         >>> d[1] = 999
         >>> print(d.array)
-        [1  999  3]
+        [  1 999   3]
 
         """
-        self._dask_map_blocks(_soften_mask_chunk, dtype=self.dtype)
+        self._map_blocks(_soften_mask_chunk, dtype=self.dtype)
         self._hardmask = False
 
     @_inplace_enabled(default=False)

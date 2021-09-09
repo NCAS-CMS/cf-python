@@ -824,7 +824,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.ma.arange(450).reshape(9, 10, 5))
+        d = cf.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
 
         for indices in (
             Ellipsis,
