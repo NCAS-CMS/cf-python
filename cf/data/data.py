@@ -1199,7 +1199,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Reset the mask hardness, otherwise it could be incorrect in
         # the case that a chunk that was not a masked array is
         # assigned missing values.
-        self.hardmask = self.hardmask
+        self._reset_mask_hardness()
 
         return
 
@@ -1415,6 +1415,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._set_dask(dx)
 
         return dx
+
+    def _reset_mask_hardness(self):
+        """Re-apply the mask hardness to the dask array.
+
+        .. versionadded:: TODODASK
+
+        :Returns:
+
+            `None`
+
+        """
+        self.hardmask = self.hardmask
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -5936,13 +5948,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         True
 
         """
-        # TODODASK: (General point) When we run something that
-        #           executes all of the lazy operations (like
-        #           is_masked), should/could we replace the dask array
-        #           of self with a "persisted" version of the computed
-        #           data? If we did this, we would want to have the
-        #           ability to cache persisted chunks to disk, as they
-        #           came into being on each thread.
 
         def is_masked(a):
             out = np.ma.is_masked(a)
@@ -10306,7 +10311,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Return an element of the data array as a standard Python
         scalar.
 
-        TODODASK consider renameing/aliasing to 'item'
+        TODODASK: consider renameing/aliasing to 'item'. Might depend
+                  on whether or not the APIs are the same.
 
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
