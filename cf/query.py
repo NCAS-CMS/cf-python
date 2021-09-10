@@ -1,4 +1,5 @@
 import logging
+from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
@@ -273,7 +274,7 @@ class Query:
         new = Q.__new__(Q)
 
         new._operator = None
-        new._compound = (self, other)
+        new._compound = (self.copy(), other.copy())
         new._bitwise_operator = operator_and
         new._attr = ()
 
@@ -332,7 +333,7 @@ class Query:
         attr = ".".join(self._attr)
 
         if not self._compound:
-            out = f"{attr}({self._operator} " + str(self._value)
+            out = f"{attr}({self._operator} {self._value})"
         else:
             bitwise_operator = repr(self._bitwise_operator)
             if "and_" in bitwise_operator:
@@ -465,7 +466,18 @@ class Query:
         >>> r = q.copy()
 
         """
-        return self  # TODO
+        Q = type(self)
+        new = Q.__new__(Q)
+
+        d = self.__dict__.copy()
+        new.__dict__ = d
+
+        if d["_compound"]:
+            d["_compound"] = deepcopy(d["_compound"])
+        else:
+            d["_value"] = deepcopy(d["_value"])
+
+        return new
 
     @_display_or_return
     def dump(self, display=True):
@@ -744,6 +756,83 @@ class Query:
 
         """
         print(_inspect(self))  # pragma: no cover
+
+    def set_condition_units(self, units):
+        """Set units of condition values in-place.
+
+        .. versionadded:: TODO
+
+        :Parameters:
+
+            units: `str` or `Units`
+
+                The units to be set on all condition values.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> q = cf.lt(9)
+        >>> q
+        <CF Query: (lt 9)>
+        >>> q.set_condition_units('km')
+        >>> q
+        <CF Query: (lt 9 km)>
+        >>> q.set_condition_units('seconds')
+            ...
+        ValueError: Units <Units: seconds> are not equivalent to query condition units <Units: m>
+
+        >>> q = cf.lt(9, units='m')
+        >>> q
+        <CF Query: (lt 9 m)>
+        >>> q.set_condition_units('km')
+        >>> q
+        <CF Query: (lt 0.009 km)>
+
+        >>> q = cf.lt(9)
+        >>> r = cf.ge(3000, units='m')
+        >>> s = q & r
+        >>> s
+        <CF Query: [(lt 9) & (ge 3000 m)]>
+        >>> s.set_condition_units('km')
+        >>> s
+        <CF Query: [(lt 9 km) & (ge 3 km)]>
+        >>> q
+        <CF Query: (lt 9)>
+        >>> r
+        <CF Query: (ge 3000 m)>
+
+        """
+        units = Units(units)
+
+        compound = self._compound
+        if compound:
+            for r in compound:
+                r.set_condition_units(units)
+
+            return
+
+        value = self._value
+        if value is None:
+            return
+
+        value_units = getattr(value, "Units", None)
+        if value_units is None:
+            # Value has no units
+            value = Data(value, units=units)
+        else:
+            # Value already has units
+            try:
+                value.Units = units
+            except ValueError:
+                raise ValueError(
+                    f"Units {units!r} are not equivalent to "
+                    f"query condition units {value_units!r}"
+                )
+
+        self._value = value
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

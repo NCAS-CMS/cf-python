@@ -3103,6 +3103,10 @@ class DataTest(unittest.TestCase):
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         self.assertTrue(d.has_calendar())
 
+    def test_Data_where(self):
+        pass
+        # TODODASK: write some more tests!
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -5572,7 +5572,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dtype = _dtype_float32
             else:
                 dtype = _dtype_float
-        # --- End: if
 
         self._dask_map_blocks(
             partial(
@@ -8092,7 +8091,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if dtype is not None and np.dtype(dtype) != data.dtype:
                 data = data.copy()
                 data.dtype = dtype
-        # --- End: if
 
         return data
 
@@ -11171,10 +11169,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
+    @daskified(1)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
-        """Assign to data elements depending on a condition.
+        """Assign to array elements depending on a condition.
 
         Data can be changed by assigning to elements that are selected by
         a condition based on the data values.
@@ -11184,15 +11183,40 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Missing data**
 
-        Data array elements may be set to missing values by assigning them
-        to the `cf.masked` constant, or by assignment missing data
-        elements of array-valued *x* and *y* parameters.
+        Array elements may be set to missing values if either *x* or
+        *y* are the `cf.masked` constant, or by assignment from any
+        missing data elements in *x* or *y*.
 
-        By default the data mask is "hard", meaning that masked values can
-        not be changed by assigning them to another value. This behaviour
-        may be changed by setting the `hardmask` attribute to `False`,
-        thereby making the data mask "soft" and allowing masked elements
-        to be set to non-masked values.
+        If the data mask is hard (see the `hardmask` attribute) then
+        missing data values in the array will not be overwritten,
+        regardless of the content of *x* and *y*.
+
+        If the *condition* contains missing data then the
+        corresponding positions in the array will not be assigned to,
+        regardless of the content of *x* and *y*.
+
+        **Broadcasting**
+
+        In general, the array, and the *condition*, *x* and *y*
+        parameters must all be broadcastable to each other, and the
+        shape of the result will be shape implied by that
+        broadcasting. This may produce a result that has more elements
+        or dimensions that the original array.
+
+        However, if the operation is carried out in-place then the
+        shape of the result must be identical to the original data.
+
+        If *condition* is a `Query` object then for the purposes of
+        broadcasting, the condition is considered to be that which is
+        produced by applying the query to the array.
+
+        **Performance**
+
+        If the operation is in-place and the shape the array, or any
+        of the *condition*, *x*, and *y* parameters is unknown then
+        there is a possibility that an unkown shape will need to be
+        calculated immediately by executing all delayed operations on
+        that object.
 
         .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
 
@@ -11202,29 +11226,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The condition which determines how to assign values to the
                 data.
 
-                In general it may be any scalar or array-like object (such
-                as a numpy array or `Data` instance) that is broadcastable
-                to the shape of the data. Assignment from the *x* and *y*
-                parameters will be done where elements of the condition
-                evaluate to `True` and `False` respectively.
+                Assignment from the *x* and *y* parameters will be
+                done where elements of the condition evaluate to
+                `True` and `False` respectively.
 
                 *Parameter example:*
-                  ``d.where(d.data<0, x=-999)`` will set all data values that
-                  are less than zero to -999.
+                  ``d.where(d < 0, x=-999)`` will set all data
+                  values that are less than zero to -999.
 
                 *Parameter example:*
-                  ``d.where(True, x=-999)`` will set all data values to
-                  -999. This is equivalent to ``d[...] = -999``.
+                  ``d.where(True, x=-999)`` will set all data values
+                  to -999. This is equivalent to ``d[...] = -999``.
 
                 *Parameter example:*
-                  ``d.where(False, y=-999)`` will set all data values to
-                  -999. This is equivalent to ``d[...] = -999``.
+                  ``d.where(False, y=-999)`` will set all data values
+                  to -999. This is equivalent to ``d[...] = -999``.
 
                 *Parameter example:*
-                  If data ``d`` has shape ``(5, 3)`` then ``d.where([True,
+                  If ``d`` has shape ``(5, 3)`` then ``d.where([True,
                   False, True], x=-999, y=cf.masked)`` will set data
-                  values in columns 0 and 2 to -999, and data values in
-                  column 1 to missing data. This works because the
+                  values in columns 0 and 2 to -999, and data values
+                  in column 1 to missing data. This works because the
                   condition has shape ``(3,)`` which broadcasts to the
                   data shape.
 
@@ -11232,24 +11254,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 condition defined by applying the query to the data.
 
                 *Parameter example:*
-                  ``d.where(cf.lt(0), x=-999)`` will set all data values
-                  that are less than zero to -999. This is equivalent to
-                  ``d.where(d<0, x=-999)``.
+                  ``d.where(cf.lt(0), x=-999)`` will set all data
+                  values that are less than zero to -999. This is
+                  equivalent to ``d.where(d < 0, x=-999)``.
 
-            x, y: *optional*
-                Specify the assignment values. Where the condition
-                evaluates to `True`, assign to the data from *x*, and
-                where the condition evaluates to `False`, assign to the
-                data from *y*. The *x* and *y* parameters are each one of:
+            x, y: array-like or `None`
+                Specify the assignment values. Where the condition is
+                True assign to the data from *x*, and where the
+                condition is False assign to the data from *y*.
 
-                * `None`. The appropriate data elements array are
-                  unchanged. This the default.
+                If *x* is `None` (the default) then no assignment is
+                carried out where the condition is True.
 
-                * Any scalar or array-like object (such as a numpy array,
-                  or `Data` instance) that is broadcastable to the shape
-                  of the data.
-
-            ..
+                If *y* is `None` (the default) then no assignment is
+                carried out where the condition is False.
 
                 *Parameter example:*
                   ``d.where(condition)``, for any ``condition``, returns
@@ -11259,6 +11277,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change the
                   sign of all negative data values, and set all other data
                   values to missing data.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d)`` will change the sign of
+                  all negative data values, and leave all other data
+                  values unchanged. This is equivalent to
+                  ``d.where(cf.lt(0), x=-d, y=d)``
 
             {{inplace: `bool`, optional}}
 
@@ -11274,352 +11298,143 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples:**
 
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        >>> e = d.where(d < 5, None, 10 * d)
+        >>> print(e.array)
+        [ 0  1  2  3  4 50 60 70 80 90]
+
+        >>> d = cf.Data([[1, 2,],
+        ...              [3, 4]])
+        >>> print(d.array)
+        [[1 2]
+         [3 4]]
+        >>> e = d.where([[True, False], [True, True]], None, [[9, 8], [7, 6]])
+        >>> print(e.array)
+        [[1 8]
+         [3 4]]
+        >>> e = d.where([[True, False], [True, True]], [[9, 8], [7, 6]])
+        >>> print(e.array)
+        [[9 2]
+         [7 6]]
+
+        In general, the shapes of the original array, *condition*,
+        *x*, and *y* are broadcast together:
+
+        >>> e = d.where([True, False], [9, 8])
+        >>> print(e.array)
+        [[9 2]
+         [9 4]]
+        >>> d = cf.Data(np.array([[0, 1, 2],
+        ...                       [0, 2, 4],
+        ...                       [0, 3, 6]]))
+        >>> d.where(d < 4, None, -1)
+        >>> print(e.array)
+        [[ 0  1  2]
+         [ 0  2 -1]
+         [ 0  3 -1]]
+
+        >>> x, y = np.ogrid[:3, :4]
+        >>> print(x)
+        [[0]
+         [1]
+         [2]]
+        >>> print(y)
+        [[0 1 2 3]]
+        >>> d = cf.Data(x)
+        >>> e = d.where(x < y, d, 10 + y)
+        >>> print(e.array)
+        [[10  0  0  0]
+         [10 11  1  1]
+         [10 11 12  2]]
+
+        For in-place assignments, the reult must have the same shape
+        as the original data:
+
+        >>>  e = d.where(x < y, d, 10 + y, inplace=True)
+            ...
+        ValueError: where: For in-place assignments the 'condition' parameter can't have more dimensions than the data (2 > 1)
+
+        >>> d = cf.Data(np.arange(9).reshape(3, 3))
+        >>> e = d.copy()
+        >>> e[1, 0] = cf.masked
+        >>> f = e.where(d > 5, None, -3.1416)
+        >>> print(f.array)
+        [[-3.1416 -3.1416 -3.1416]
+         [-- -3.1416 -3.1416]
+         [6.0 7.0 8.0]]
+        >>> e.soften_mask()
+        >>> f = e.where(d > 5, None, -3.1416)
+        [[-3.1416 -3.1416 -3.1416]
+         [-3.1416 -3.1416 -3.1416]
+         [ 6.      7.      8.    ]]
+
         """
-
-        def _slice_to_partition(data, indices):
-            """Return a numpy array for the part of the input data which
-            spans the given indices.
-
-            :Parameters:
-
-                data: `cf.Data`
-
-                indices: `tuple`
-
-            :Returns:
-
-                `numpy.ndarray`
-
-            """
-            indices2 = [
-                (slice(0, 1) if n == 1 else i)
-                for n, i in zip(data.shape[::-1], indices[::-1])
-            ]
-
-            return data[tuple(indices2)[::-1]].array
-
-        # --- End: def
-
-        def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
-            """Check that the data1 is broadcastable to data0 and return
-            data1, as a python scalar if possible.
-
-            .. note:: The input lists are updated inplace.
-
-            :Parameters:
-
-                data0: `Data`
-
-                data1: `Data`
-
-                do_not_broadcast: `list`
-
-                is_scalar: `list`
-
-            :Returns:
-
-                `Data` or scalar
-                    Return *data1* or, if possible, ``data1.datum(0)``.
-
-            """
-            shape0 = data0._shape
-            shape1 = data1._shape
-            size1 = data1._size
-
-            if shape1 == shape0:
-                do_not_broadcast.append(True)
-                is_scalar.append(False)
-
-            elif size1 == 1:
-                do_not_broadcast.append(False)
-                is_scalar.append(True)
-                # Replace data1 with its scalar value
-                data1 = data1.datum(0)
-
-            elif data1._ndim <= data0._ndim and size1 < data0._size:
-                do_not_broadcast.append(False)
-                is_scalar.append(False)
-                for n, m in zip(shape1[::-1], shape0[::-1]):
-                    if n != m and n != 1:
-                        raise ValueError(
-                            "where: Can't broadcast data with shape {} to "
-                            "shape {}".format(shape1, shape0)
-                        )
-            else:
-                raise ValueError(
-                    "where: Can't broadcast data with shape {} to "
-                    "shape {}".format(shape1, shape0)
-                )
-
-            return data1
-
-        # --- End: def
-
         d = _inplace_enabled_define_and_cleanup(self)
 
-        logger.debug("    data.shape = {}".format(d.shape))  # pragma: no cover
-        logger.debug(
-            "    condition = {!r}".format(condition)
-        )  # pragma: no cover
+        units = d.Units
+        dx = d._get_dask()
+
+        # Parse condition
+        if getattr(condition, "isquery", False):
+            # Condition is a cf.Query object: Make sure that the
+            # condition units are OK, and convert the condition to a
+            # boolean dask array with the same shape as the data.
+            condition = condition.copy()
+            condition = condition.set_condition_units(units)
+            condition = condition.evaluate(d)
+
+        if inplace:
+            condition = type(self).asdata(condition)
+            _where_broadcastable_inplace(d, condition, "condition")
+
+        # If x or y is self then change it to None. This prevents an
+        # unnecessary copy; and, at compute time, an unncessary numpy
+        # where.
+        if x is self:
+            x = None
+
+        if y is self:
+            y = None
 
         if x is None and y is None:
-            # The data is unchanged regardless of condition
-            if inplace:
-                d = None
+            # The data is unchanged regardless of the condition
             return d
 
-        do_not_broadcast = []
-        is_scalar = []
-
-        #        # ------------------------------------------------------------
-        #        # Make sure that the condition is a cf.Data object
-        #        # ------------------------------------------------------------
-        #
-        #        if not isinstance(condition, d.__class__):
-        #            condition = type(d)(condition)
-
-        # ------------------------------------------------------------
-        # Check that the input condition is broadcastable
-        # ------------------------------------------------------------
-        condition = Data.asdata(condition, copy=False)
-        condition = _is_broadcastable(
-            d, condition, do_not_broadcast, is_scalar
-        )
-
-        #        if isinstance(condition, Query):
-        #        condition = condition.evaluate(f).Data
-        # ------------------------------------------------------------
-        # Parse inputs x and y so that each is one of A) None, B) a
-        # scalar or C) a data array with the same shape as the master
-        # array
-        # ------------------------------------------------------------
+        # Parse x and y
         xy = []
-        for value in (x, y):
-            if value is None or value is cf_masked:
-                do_not_broadcast.append(False)
-                is_scalar.append(True)
+        for arg, name in zip((x, y), ("x", "y")):
+            if arg is None or arg is cf_masked:
+                xy.append(arg)
+                continue
 
-            else:
-                # Make sure that the value is a cf.Data object and has
-                # compatible units
-                if not isinstance(value, d.__class__):
-                    value = type(d)(value)
-                else:
-                    if value.Units.equivalent(d.Units):
-                        if not value.Units.equals(d.Units):
-                            value = value.copy()
-                            value.Units = d.Units
-                    elif value.Units:
-                        raise ValueError(
-                            "where: Can't assign values with "
-                            "units {!r} to data with units {!r}".format(
-                                value.Units, d.Units
-                            )
-                        )
-                # --- End: if
+            arg = type(self).asdata(arg)
+            if inplace:
+                _where_broadcastable_inplace(d, arg, name)
 
-                # Check that the value is broadcastable
-                value = _is_broadcastable(
-                    d, value, do_not_broadcast, is_scalar
-                )
-            # --- End: if
+            if arg.Units:
+                # Make sure that units are OK.
+                arg = arg.copy()
+                try:
+                    arg.Units = units
+                except ValueError:
+                    raise ValueError(
+                        f"where: Assignment value units {arg.Units!r} "
+                        f"are not equivalent to data units {units!r}"
+                    )
 
-            xy.append(value)
-        # --- End: for
+            xy.append(arg._get_dask())
 
-        (x, y) = xy
-        (condition_is_scalar, x_is_scalar, y_is_scalar) = is_scalar
-        broadcast = not any(do_not_broadcast)
+        x, y = xy
 
-        logger.debug("    x = {!r}".format(x))  # pragma: no cover
-        logger.debug("    y = {!r}".format(y))  # pragma: no cover
-        logger.debug(
-            "    condition_is_scalar = {!r}".format(condition_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    x_is_scalar         = {!r}".format(x_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    y_is_scalar         = {!r}".format(y_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    broadcast           = {!r}".format(broadcast)
-        )  # pragma: no cover
+        # Apply the where operation
+        dx = da.core.elemwise(
+            _where_chunk, dx, dask_compatible(condition), x, y, d.hardmask
+        )
+        d._set_dask(dx)
 
-        # -------------------------------------------------------------
-        # Try some short cuts if the condition is a scalar
-        # -------------------------------------------------------------
-        if condition_is_scalar and not getattr(condition, "isquery", False):
-            logger.debug(
-                "    Condition is a scalar: {} {}".format(
-                    condition, type(condition)
-                )
-            )
-            if condition:
-                if x is not None:
-                    d[...] = x
-
-                if inplace:
-                    d = None
-                return d
-            else:
-                if y is not None:
-                    d[...] = y
-
-                if inplace:
-                    d = None
-                return d
-        # --- End: if
-
-        # Still here?
-        hardmask = d.hardmask
-        config = d.partition_configuration(readonly=False)  # or True?
-
-        for partition in d.partitions.matrix.flat:
-            logger.debug("   Partition:")  # pragma: no cover
-
-            partition.open(config)
-            array = partition.array
-            # --------------------------------------------------------
-            # Find the master array indices for this partition
-            # --------------------------------------------------------
-            shape = array.shape
-            indices = partition.indices
-
-            # --------------------------------------------------------
-            # Find the condition for this partition
-            # --------------------------------------------------------
-            if getattr(condition, "isquery", False):
-                if hasattr(condition._value, "_Units"):
-                    # Ensure query data has equal units before evaluation
-                    orig_condition_units = condition._value._Units
-                    p_units = partition.Units
-                    if orig_condition_units.equivalent(p_units):
-                        if not orig_condition_units.equals(p_units):
-                            # Convert equivalent units to equal units
-                            condition._value._Units = p_units
-                    else:
-                        raise ValueError(
-                            "where: Can't apply a query condition with "
-                            "units '{!s}' on data with non-equivalent "
-                            "units '{!s}'".format(
-                                orig_condition_units, p_units
-                            )
-                        )
-                c = condition.evaluate(array)
-            elif condition_is_scalar:
-                c = condition
-            else:
-                c = _slice_to_partition(condition, indices)
-
-            c_masked = np.ma.isMA(c) and np.ma.is_masked(c)
-
-            # --------------------------------------------------------
-            # Find value to use where condition is True for this
-            # partition
-            # --------------------------------------------------------
-            if x_is_scalar:
-                if x is None:
-                    # Use d
-                    T = array
-                    T_masked = partition.masked
-                else:
-                    T = x
-                    T_masked = x is cf_masked
-            else:
-                T = _slice_to_partition(x, indices)
-                T_masked = np.ma.isMA(T) and np.ma.is_masked(T)
-
-            # --------------------------------------------------------
-            # Find value to use where condition is False for this
-            # partition
-            # --------------------------------------------------------
-            if y_is_scalar:
-                if y is None:
-                    # Use d
-                    F = array
-                    F_masked = partition.masked
-                else:
-                    F = y
-                    F_masked = y is cf_masked
-            else:
-                F = _slice_to_partition(y, indices)
-                F_masked = np.ma.isMA(F) and np.ma.is_masked(F)
-
-            # --------------------------------------------------------
-            # Make sure that at least one of the arrays is the same
-            # shape as the partition
-            # --------------------------------------------------------
-            if broadcast:
-                if x is cf_masked or y is cf_masked:
-                    c = _broadcast(c, shape)
-                else:
-                    max_sizes = max((np.size(c), np.size(T), np.size(F)))
-                    if np.size(c) == max_sizes:
-                        c = _broadcast(c, shape)
-                    elif np.size(T) == max_sizes:
-                        T = _broadcast(T, shape)
-                    else:
-                        F = _broadcast(F, shape)
-            # --- End: if
-
-            logger.debug("  array = {}".format(array))  # pragma: no cover
-            logger.debug("      c = {}".format(c))  # pragma: no cover
-            logger.debug("      T = {}".format(T))  # pragma: no cover
-            logger.debug("      F = {}".format(F))  # pragma: no cover
-
-            # --------------------------------------------------------
-            # Create a numpy array which takes vales from T where c
-            # is True and from F where c is False
-            # --------------------------------------------------------
-            if T_masked or F_masked:
-                # T and/or F have missing data
-                new = np.ma.where(c, T, F)
-                if c_masked:
-                    new = np.ma.where(c.mask, array, new)
-
-                if partition.masked:
-                    if hardmask:
-                        # The original partition has missing data and
-                        # a hardmask, so apply the original
-                        # partition's mask to the new array.
-                        new.mask |= array.mask
-                    elif not np.ma.is_masked(new):
-                        # The original partition has missing data and
-                        # a softmask and the new array doesn't have
-                        # missing data, so turn the new array into an
-                        # unmasked array.
-                        new = new.data[...]
-
-                elif not np.ma.is_masked(new):
-                    # The original partition doesn't have missing data
-                    # and neither does the new array, so turn the new
-                    # array into an unmasked array.
-                    new = new.data[...]
-
-            else:
-                # Neither T nor F have missing data
-                new = np.where(c, T, F)
-                if c_masked:
-                    new = np.ma.where(c.mask, array, new)
-
-                if partition.masked and hardmask:
-                    # The original partition has missing data and a
-                    # hardmask, so apply the original partition's mask
-                    # to the new array.
-                    new = np.ma.masked_where(array.mask, new, copy=False)
-            # --- End: if
-
-            # --------------------------------------------------------
-            # Replace the partition's subarray with the new numpy
-            # array
-            # --------------------------------------------------------
-            logger.debug("      new = {}".format(new))  # pragma: no cover
-
-            partition.subarray = new
-
-            partition.close()
-        # --- End: for
+        # Note: No need to run _reset_mask_hardness at this point
+        #       because the mask hardness has already been correctly
+        #       set in _where_chunk.
 
         return d
 
@@ -13325,3 +13140,142 @@ def _broadcast(a, shape):
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
     return np.tile(a, tile)
+
+
+def _where_broadcastable_inplace(data, x, name):
+    """Check broadcastability for in-place `where` assignments.
+
+    Raises an exception if the result of broadcasting *data* and *x*
+    together does not have the same shape as *data*.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `where`
+
+    :Parameters:
+
+        data, x: `Data`
+            The arrays to compare.
+
+        name: `str`
+            A name for *x* that is used in any exception error
+            message.
+
+    :Returns:
+
+        `bool`
+             If *x* is acceptably broadcastable to *data* then `True`
+             is returned, otherwise a `ValueError` is raised.
+
+    """
+    ndim_x = x.ndim
+    if not ndim_x:
+        return True
+
+    ndim_data = data.ndim
+    if ndim_x > ndim_data:
+        raise ValueError(
+            f"where: For in-place assignments the {name!r} parameter "
+            "can't have more dimensions than the data "
+            f"({ndim_x} > {ndim_data})"
+        )
+
+    shape_x = x.shape
+    shape_data = data.shape
+    for n, m in zip(shape_x[::-1], shape_data[::-1]):
+        if n != m and n != 1:
+            raise ValueError(
+                f"where: For in-place assignments the {name!r} parameter "
+                f"with shape {shape_x} can't be broadcast to the data with "
+                f"shape {shape_data}"
+            )
+
+    return True
+
+
+def _where_chunk(array, condition, x, y, hardmask):
+    """Set elements of *array* from *x* or *y* depending on *condition*.
+
+    The input *array* is not changed in-place.
+
+    See `where` for details on the expected functionality.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        array: numnpy.ndarray
+            The array to be assigned to.
+
+        condition: numnpy.ndarray
+            Where False or masked, assign from *y*, otherwise assign
+            from *x*.
+
+        x: numnpy.ndarray or `None`
+            *x* and *y* must not both be `None`.
+
+        y: numnpy.ndarray or `None`
+            *x* and *y* must not both be `None`.
+
+        hardmask: `bool`
+           Set the mask hardness for a returned masked array. If True
+           then a returned masked array will have a hardened mask, and
+           the mask of the input *array* (if there is one) will be
+           applied to the returned array, in addition to any masked
+           elements arising from assignments from *x* or *y*.
+
+    :Returns:
+
+        `numpy.ndarray`
+            A copy of the input *array* with elements from *y* where
+            *condition* is False or masked, and elements from *x*
+            elsewhere.
+
+    """
+    if np.ma.isMA(array):
+        # Do a masked where
+        where = np.ma.where
+        if hardmask:
+            mask = array.mask
+    elif np.ma.isMA(x) or np.ma.isMA(y):
+        # Do a masked where
+        where = np.ma.where
+    else:
+        # Do a non-masked where
+        where = np.where
+        hardmask = False
+
+    condition_is_masked = np.ma.isMA(condition)
+    if condition_is_masked:
+        condition = condition.astype(bool)
+
+    if x is not None:
+        # Assign values from x
+        if condition_is_masked:
+            # Replace masked elements of condition with False, so that
+            # masked locations are assigned from array
+            c = condition.filled(False)
+        else:
+            c = condition
+
+        array = where(c, x, array)
+
+    if y is not None:
+        # Assign values from y
+        if condition_is_masked:
+            # Replace masked elements of condition with True, so that
+            # masked locations are assigned from array
+            c = condition.filled(True)
+        else:
+            c = condition
+
+        array = where(c, array, y)
+
+    if hardmask:
+        if mask.any():
+            # Apply the mask from the input array
+            array.mask |= mask
+
+        array.harden_mask()
+
+    return array

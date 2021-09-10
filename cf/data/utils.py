@@ -2,13 +2,11 @@
 from functools import partial
 from itertools import product
 
+import dask.array as da
 import numpy as np
 
-import dask.array as da
-
-from ..cfdatetime import dt2rt, st2rt, rt2dt
 from ..cfdatetime import dt as cf_dt
-
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..units import Units
 
 
@@ -365,6 +363,6 @@ def dask_compatible(a):
 
     """
     try:
-        return a.data._get_data()
+        return a.data._get_dask()
     except AttributeError:
         return a
