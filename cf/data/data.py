@@ -458,10 +458,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Can't set the 'source' and 'loads' parameters "
                     "at the same time"
                 )
-        # --- End: if
 
         if source is not None:
-            super().__init__(source=source, _use_array=_use_array)
+            try:
+                array = source._get_Array(None)
+            except AttributeError:
+                array = None
+
+            super().__init__(
+                source=source, _use_array=_use_array and array is not None
+            )
+
             if _use_array:
                 try:
                     array = source._get_dask()
@@ -474,9 +481,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             return
 
-        super().__init__(
-            array=array, fill_value=fill_value, _use_array=_use_array
-        )
+        super().__init__(array=array, fill_value=fill_value, _use_array=False)
 
         # Create the _HDF_chunks attribute: defines HDF chunking when
         # writing to disk.
@@ -546,6 +551,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "compressed input arrays"
                 )
 
+            # Save the input compressed array, as this will contain
+            # extra information, such as a count or index variable.
+            self._set_Array(array)
+
             array = compressed_to_dask(array)
 
         elif not is_dask_collection(array):
@@ -558,7 +567,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             first_value = first_non_missing_value(array)
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
-        # --- End: if
 
         # Convert string or object date-times to floating point
         # reference times
