@@ -11173,13 +11173,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
-        """Assign to array elements depending on a condition.
+        """Assign array elements depending on a condition.
 
-        Data can be changed by assigning to elements that are selected by
-        a condition based on the data values.
-
-        Different values can be assigned to where the conditions are, and
-        are not, met.
+        Array elements can be changed by assigning to elements that
+        are identified by a condition. Different values can be
+        acording to where the condition is True (assignment from the
+        *x* parameter) or False (assignment from the *y* parameter).
 
         **Missing data**
 
@@ -11192,12 +11191,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         regardless of the content of *x* and *y*.
 
         If the *condition* contains missing data then the
-        corresponding positions in the array will not be assigned to,
+        corresponding elements in the array will not be assigned to,
         regardless of the content of *x* and *y*.
 
         **Broadcasting**
 
-        In general, the array, and the *condition*, *x* and *y*
+        In general, the array and the *condition*, *x* and *y*
         parameters must all be broadcastable to each other, and the
         shape of the result will be shape implied by that
         broadcasting. This may produce a result that has more elements
@@ -11223,8 +11222,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             condition:
-                The condition which determines how to assign values to the
-                data.
+                The condition which determines how to assign values to
+                the data.
 
                 Assignment from the *x* and *y* parameters will be
                 done where elements of the condition evaluate to
@@ -11281,8 +11280,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 *Parameter example:*
                   ``d.where(cf.lt(0), x=-d)`` will change the sign of
                   all negative data values, and leave all other data
-                  values unchanged. This is equivalent to
-                  ``d.where(cf.lt(0), x=-d, y=d)``
+                  values unchanged. This is equivalent to, but faster
+                  than, ``d.where(cf.lt(0), x=-d, y=d)``
 
             {{inplace: `bool`, optional}}
 
@@ -11352,7 +11351,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>>  e = d.where(x < y, d, 10 + y, inplace=True)
             ...
-        ValueError: where: For in-place assignments the 'condition' parameter can't have more dimensions than the data (2 > 1)
+        ValueError: where: For in-place assignments the 'condition' parameter with shape (3, 4) can't be broadcast to the data with shape (3, 1)
 
         >>> d = cf.Data(np.arange(9).reshape(3, 3))
         >>> e = d.copy()
@@ -13175,7 +13174,7 @@ def _where_broadcastable_inplace(data, x, name):
     ndim_data = data.ndim
     if ndim_x > ndim_data:
         raise ValueError(
-            f"where: For in-place assignments the {name!r} parameter "
+            f"where: For in-place assignments, the {name!r} parameter "
             "can't have more dimensions than the data "
             f"({ndim_x} > {ndim_data})"
         )
@@ -13185,7 +13184,7 @@ def _where_broadcastable_inplace(data, x, name):
     for n, m in zip(shape_x[::-1], shape_data[::-1]):
         if n != m and n != 1:
             raise ValueError(
-                f"where: For in-place assignments the {name!r} parameter "
+                f"where: For in-place assignments, the {name!r} parameter "
                 f"with shape {shape_x} can't be broadcast to the data with "
                 f"shape {shape_data}"
             )
