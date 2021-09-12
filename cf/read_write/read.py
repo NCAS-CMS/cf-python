@@ -503,9 +503,9 @@ def read(
 
             .. versionadded:: 1.5
 
-        chunks: TODO
+        chunks: TODODASK
 
-            .. versionadded:: 4.0.0
+            .. versionadded:: TODODASK
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -522,7 +522,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version 4.0.0
+        chunk: deprecated at version TODODASK
             Use the *chunks* parameter instead.
 
     :Returns:
@@ -600,7 +600,7 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="4.0.0",
+            version="TODODASK",
         )  # pragma: no cover
 
     # Parse select
@@ -889,6 +889,7 @@ def _read_a_file(
     mask=True,
     warn_valid=False,
     chunks="auto",
+    select=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -991,7 +992,7 @@ def _read_a_file(
     #            return FieldList()
 
     extra_read_vars = {
-        "chunk": chunk,
+        "chunks": chunks,
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
         # 'cfa' defaults to False. If the file has
