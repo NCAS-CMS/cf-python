@@ -585,7 +585,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False)
+        self._set_dask(array, delete_source=False, reset_mask_hardness=False)
 
         # Set the mask hardness on each chunk.
         self.hardmask = hardmask
@@ -1049,15 +1049,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     ]
                     dx = dx[tuple(slice_indices)]
         else:
-            raise ValueError("Orthogonal indexing is currently required.")
+            raise NotImplementedError(
+                "Non-orthogonal indexing has not yet been implemented"
+            )
 
         # ------------------------------------------------------------
         # Set the subspaced dask array
         # ------------------------------------------------------------
-        new._set_dask(dx)
+        new._set_dask(dx, reset_mask_hardness=False)
 
         # ------------------------------------------------------------
-        # Set the axis identifiers for the subspace
+        # Get the axis identifiers for the subspace
         # ------------------------------------------------------------
         shape0 = shape
         if keepdims:
@@ -1160,11 +1162,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # TODODASK: The inherited algorithm that does assignment
             #           for multiple list/1-d array indices
             #           (cfdm.Data._set_subspace) won't work when the
-            #           1-d array is a dask array because the array
-            #           may need to be computed at __setitem__
-            #           runtime, which is not desirable. Until this
-            #           can be fixed, it's easiest to disallow this
-            #           case, that was allowed pre-dask.
+            #           1-d array is a dask array because it may need
+            #           to be computed at __setitem__ runtime, which
+            #           is not desirable. Until this can be fixed,
+            #           it's easiest to disallow this case, that was
+            #           allowed pre-dask.
 
         # Roll axes with cyclic slices
         if roll:
@@ -1222,13 +1224,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      `__setitem__`,
                      `netCDF4.Variable.__orthogonal_indexing__`
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
-        >>> d[[0], [0, 2]].shape
+        >>> d = cf.Data([[1, 2, 3],
+        ...              [4, 5, 6]])
+        >>> e = d[[0], [0, 2]]
+        >>> e.shape
         (1, 2)
-        >>> d[[0, 1], [0, 2]].shape
+        >>> print(e.array)
+        [[1 3]]
+        >>> e = d[[0, 1], [0, 2]]
+        >>> e.shape
         (2, 2)
+        >>> print(e.array)
+        [[1 3]
+         [4 6]]
 
         """
         return True
@@ -1251,23 +1261,57 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
-        >>> d.__keepdims_indexing__ = True
-        >>> d[0].shape
+        >>> d = cf.Data([[1, 2, 3],
+        ...              [4, 5, 6]])
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[0]
+        >>> e.shape
         (1, 3)
-        >>> d[:, 1].shape
+        >>> print(e.array)
+        [[1 2 3]]
+
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[:, 1]
+        >>> e.shape
         (2, 1)
-        >>> d[0, 1].shape
+        >>> print(e.array)
+        [[2]
+         [5]]
+
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[0, 1]
+        >>> e.shape
         (1, 1)
+        >>> print(e.array)
+        [[2]]
+
         >>> d.__keepdims_indexing__ = False
-        >>> d[0].shape
+        >>> e = d[0]
+        >>> e.shape
         (3,)
-        >>> d[:, 1].shape
+        >>> print(e.array)
+        [1 2 3]
+
+        >>> d.__keepdims_indexing__
+        False
+        >>> e = d[:, 1]
+        >>> e.shape
         (2,)
-        >>> d[0, 1].shape
+        >>> print(e.array)
+        [2 5]
+
+        >>> d.__keepdims_indexing__
+        False
+        >>> e = d[0, 1]
+        >>> e.shape
         ()
+        >>> print(e.array)
+        2
 
         """
         return self._custom.get("__keepdims_indexing__", True)
@@ -1294,12 +1338,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._custom["dask"]
 
-    def _set_dask(self, array, copy=False, delete_source=True):
+    def _set_dask(
+        self, array, copy=False, delete_source=True, reset_mask_hardness=True
+    ):
         """Set the dask array.
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_get_dask`, `_del_dask`
+        .. seealso:: `_get_dask`, `_del_dask`, `_reset_mask_hardness`
 
         :Parameters:
 
@@ -1311,7 +1357,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 default the dask array is not copied.
 
             delete_source: `bool`, optional
-                TODODASK
+                If False then do not delete a compressed source array,
+                if one exists, after setting the new dask array. By
+                default a compressed source array is deleted.
+
+            reset_mask_hardness: `bool`, optional
+                If False then do not reset the mask hardness after
+                setting the new dask array. By default the mask
+                hardness is re-applied.
 
         :Returns:
 
@@ -1327,6 +1380,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # Remove a source array, on the grounds that we can't
             # guarantee its consistency with the new dask array.
             self._del_Array(None)
+
+        if reset_mask_hardness:
+            self._reset_mask_hardness()
 
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
@@ -1385,8 +1441,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _map_blocks(self, func, **kwargs):
         """Apply a function to the data in-place.
 
-        .. note:: It may be necessary for a call to `_map_blocks` to
-                  be followed by a call to `_reset_mask_hardness`.
+        .. note:: This method does not reset the mask hardness. It may
+                  be necessary for a call to `_map_blocks` to be
+                  followed by a call to `_reset_mask_hardness`.
 
         .. versionadded:: TODODASK
 
@@ -1396,12 +1453,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             func:
                 The funciton to be applied to the data, via
-                `dask.Array.map_blocks`, to each chunk of the dask
-                array.
+                `dask.array.Array.map_blocks`, to each chunk of the
+                dask array.
 
             kwargs: optional
                 Keyword arguments passed to the
-                `dask.Array.map_blocks` method.
+                `dask.array.Array.map_blocks` method.
 
         :Returns:
 
@@ -1418,7 +1475,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self._get_dask()
         dx = dx.map_blocks(func, **kwargs)
-        self._set_dask(dx)
+        self._set_dask(dx, reset_mask_hardness=False)
 
         return dx
 
@@ -1426,6 +1483,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Re-apply the mask hardness to the dask array.
 
         .. versionadded:: TODODASK
+
+        .. seealso:: `hardmask`, `harden_mask`, `soften_mask`
 
         :Returns:
 
@@ -2212,7 +2271,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self._get_dask()
         dx = dx.persist()
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -3151,7 +3210,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
 
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
 
@@ -4417,7 +4476,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         dx = getattr(operator, operation)(dx)
 
-        out._set_dask(dx)
+        out._set_dask(dx, reset_mask_hardness=False)
 
         return out
 
@@ -5840,7 +5899,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # dask array
         if dx.dtype != value:
             dx = dx.astype(value)
-            self._set_dask(dx)
+            self._set_dask(dx, reset_mask_hardness=False)
 
     @property
     def fill_value(self):
@@ -9129,7 +9188,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.reshape(shape)
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -9587,7 +9646,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [1 -- 3]
 
         """
-        self._map_blocks(_harden_mask_chunk, dtype=self.dtype)
+        self._map_blocks(_cf_harden_mask, dtype=self.dtype)
         self._hardmask = True
 
     def soften_mask(self):
@@ -9618,7 +9677,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [  1 999   3]
 
         """
-        self._map_blocks(_soften_mask_chunk, dtype=self.dtype)
+        self._map_blocks(_cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
 
     @_inplace_enabled(default=False)
@@ -10762,7 +10821,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx[tuple(index)]
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -12174,7 +12233,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # one size 1 axis needs squeezing.
         dx = d._get_dask()
         dx = dx.squeeze(axis=tuple(axes))
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
@@ -12726,7 +12785,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = da.roll(dx, shift, axis=axis)
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -13525,7 +13584,7 @@ def _broadcast(a, shape):
 """Dask utilities to be called on chunks"""
 
 
-def _harden_mask_chunk(a):
+def _cf_harden_mask(a):
     """Harden the mask of a masked `numpy` array.
 
     Has no effect if the array is not a masked array.
@@ -13551,7 +13610,7 @@ def _harden_mask_chunk(a):
     return a
 
 
-def _soften_mask_chunk(a):
+def _cf_soften_mask(a):
     """Soften the mask of a maked `numpy` array.
 
     Has no effect if the array is not a masked array.

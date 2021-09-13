@@ -2,13 +2,11 @@
 from functools import lru_cache, partial
 from itertools import product
 
+import dask.array as da
 import numpy as np
 
-import dask.array as da
-
-from ..cfdatetime import dt2rt, st2rt, rt2dt
 from ..cfdatetime import dt as cf_dt
-
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..units import Units
 
 
@@ -379,7 +377,7 @@ def conform_units(value, units):
       unchanged;
 
     * if the value units are equivalent to *units* then a copy of
-      *value* with the same units as data* is returned;
+      *value* convert to *units* is returned;
 
     * if the value units are not equivalent to *units* then an
       exception is raised.
