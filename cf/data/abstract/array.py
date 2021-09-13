@@ -25,6 +25,3 @@ class Array(cfdm.Array):
     def dask_asarray(self):
         """TODODASK."""
         return False
-
-
-# --- End: class

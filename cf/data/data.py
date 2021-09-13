@@ -569,7 +569,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
-        # reference times
+        # reference times, if appropriate.
         if array.dtype.kind in "USO" and (dt or units.isreftime):
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
@@ -1126,7 +1126,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASK
 
         :Parameters:
 
