@@ -3104,8 +3104,86 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.has_calendar())
 
     def test_Data_where(self):
-        pass
-        # TODODASK: write some more tests!
+        a = np.arange(10)
+        d = cf.Data(a)
+        b = np.where(a < 5, a, 10 * a)
+        e = d.where(a < 5, d, 10 * a)
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        d = cf.Data(a, "km")
+        b = np.where(a < 5, a, 10 * a)
+        e = d.where(a < 5, d, cf.Data(10000 * a, "m"))
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        a = np.array(
+            [
+                [
+                    1,
+                    2,
+                ],
+                [3, 4],
+            ]
+        )
+        d = cf.Data(a)
+        b = np.where([[True, False], [True, True]], a, [[9, 8], [7, 6]])
+        e = d.where([[True, False], [True, True]], d, [[9, 8], [7, 6]])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        b = np.where([[True, False], [True, True]], [[9, 8], [7, 6]], a)
+        e = d.where([[True, False], [True, True]], [[9, 8], [7, 6]])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        b = np.where([True, False], [9, 8], a)
+        e = d.where([True, False], [9, 8])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        a = np.array([[0, 1, 2], [0, 2, 4], [0, 3, 6]])
+        d = cf.Data(a)
+        b = np.where(a < 4, a, -1)
+        e = d.where(a < 4, d, -1)
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        x, y = np.ogrid[:3, :4]
+        d = cf.Data(x)
+        b = np.where(x < y, x, 10 + y)
+        e = d.where(x < y, d, 10 + y)
+        self.assertTrue(e.shape == b.shape == (3, 4))
+        self.assertTrue((e.array == b).all())
+
+        with self.assertRaises(ValueError):
+            # Can't change shape in-place
+            d.where(x < y, d, 10 + y, inplace=True)
+
+        a = np.ma.arange(9, dtype=int).reshape(3, 3)
+        d = cf.Data(a, mask=[[0, 0, 0], [1, 0, 0], [0, 0, 0]])
+        e = d.where(a > 5, None, -999)
+        self.assertTrue(e.shape == d.shape)
+        self.assertTrue((e.array.mask == d.array.mask).all())
+        self.assertTrue(
+            (e.array == [[-999, -999, -999], [5, -999, -999], [6, 7, 8]]).all()
+        )
+
+        d.soften_mask()
+        e = d.where(a > 5, None, -999)
+        self.assertTrue(e.shape == d.shape)
+        self.assertTrue((e.array.mask == False).all())
+        self.assertTrue(
+            (
+                e.array == [[-999, -999, -999], [-999, -999, -999], [6, 7, 8]]
+            ).all()
+        )
+
+        a = np.arange(10)
+        d = cf.Data(a)
+        e = d.where(a < 5, cf.masked)
+        self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
+        self.assertTrue((e.array == a).all())
 
 
 if __name__ == "__main__":

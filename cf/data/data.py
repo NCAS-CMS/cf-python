@@ -109,6 +109,7 @@ from .utils import (  # is_small,; is_very_small,
     dask_compatible,
     first_non_missing_value,
     new_axis_identifier,
+    scalar_masked_array,
 )
 
 # from dask.array import Array
@@ -1118,7 +1119,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASK
 
         :Parameters:
 
@@ -1137,6 +1138,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `None`
 
         """
+        if array is NotImplemented:
+            logger.warning(
+                "NotImplemented has been set in the place of a dask array"
+            )
+            # This could occur if any sort of exception is raised by
+            # function that is run on chunks (such as
+            # `cf.Data._cf_where`). Such a function could get run at
+            # definition time in order to ascertain suitability (such
+            # as data type casting, braodcasting, etc.). Note that the
+            # exception may be hard to diagnose, as dask will have
+            # silently trapped it and trapped it and returned
+            # NotImplemented (for instance, see
+            # `dask.array.core.elemwise`). Print statements in a local
+            # copy of dask is prossibly the way to go if the cause of
+            # the error is not obvious by inspection.
+
         if copy:
             array = array.copy()
 
@@ -5573,15 +5590,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 dtype = _dtype_float
 
-        self._dask_map_blocks(
-            partial(
-                Units.conform,
-                from_units=old_units,
-                to_units=value,
-                inplace=False,
-            ),
-            dtype=dtype,
-        )
+        def _cf_units(x):
+            return Units.conform(
+                x=x, from_units=old_units, to_units=value, inplace=False
+            )
+
+        self._dask_map_blocks(_cf_units, dtype=dtype)
 
         self._Units = value
 
@@ -11175,10 +11189,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     ):
         """Assign array elements depending on a condition.
 
-        Array elements can be changed by assigning to elements that
-        are identified by a condition. Different values can be
-        acording to where the condition is True (assignment from the
-        *x* parameter) or False (assignment from the *y* parameter).
+        The elements to be changed are identified by a
+        condition. Different values can be assigned according to where
+        the condition is True (assignment from the *x* parameter) or
+        False (assignment from the *y* parameter).
 
         **Missing data**
 
@@ -11192,7 +11206,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         If the *condition* contains missing data then the
         corresponding elements in the array will not be assigned to,
-        regardless of the content of *x* and *y*.
+        regardless of the contents of *x* and *y*.
 
         **Broadcasting**
 
@@ -11211,23 +11225,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Performance**
 
-        If the operation is in-place and the shape the array, or any
-        of the *condition*, *x*, and *y* parameters is unknown then
-        there is a possibility that an unkown shape will need to be
-        calculated immediately by executing all delayed operations on
-        that object.
+        If the operation is in-place and any of the shapes of the
+        *condition*, *x*, or *y* parameters, or the array, is unknown,
+        then there is a possibility that an unknown shape will need to
+        be calculated immediately by executing all delayed operations
+        on that object.
 
         .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
 
         :Parameters:
 
-            condition:
+            condition: array-like or `Query`
                 The condition which determines how to assign values to
                 the data.
 
                 Assignment from the *x* and *y* parameters will be
                 done where elements of the condition evaluate to
                 `True` and `False` respectively.
+
+                If *condition* is a `Query` object then this implies a
+                condition defined by applying the query to the data.
 
                 *Parameter example:*
                   ``d.where(d < 0, x=-999)`` will set all data
@@ -11248,9 +11265,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   in column 1 to missing data. This works because the
                   condition has shape ``(3,)`` which broadcasts to the
                   data shape.
-
-                If *condition* is a `Query` object then this implies a
-                condition defined by applying the query to the data.
 
                 *Parameter example:*
                   ``d.where(cf.lt(0), x=-999)`` will set all data
@@ -11295,19 +11309,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The new data with updated values, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-        >>> e = d.where(d < 5, None, 10 * d)
+        >>> e = d.where(d < 5, d, 10 * d)
         >>> print(e.array)
         [ 0  1  2  3  4 50 60 70 80 90]
 
+        >>> d = cf.Data(a, 'km')
+        >>> e = d.where(d < 5, d, cf.Data(10000 * d, 'm'))
+        >>> print(e.array)
+        [ 0  1  2  3  4 50 60 70 80 90]
+
+        >>> e = d.where(d < 5, cf.masked)
+        >>> print(e.array)
+        [-- -- -- -- -- 5 6 7 8 9]
+
         >>> d = cf.Data([[1, 2,],
         ...              [3, 4]])
-        >>> print(d.array)
-        [[1 2]
-         [3 4]]
-        >>> e = d.where([[True, False], [True, True]], None, [[9, 8], [7, 6]])
+        >>> e = d.where([[True, False], [True, True]], d, [[9, 8], [7, 6]])
         >>> print(e.array)
         [[1 8]
          [3 4]]
@@ -11402,8 +11422,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Parse x and y
         xy = []
         for arg, name in zip((x, y), ("x", "y")):
-            if arg is None or arg is cf_masked:
+            if arg is None:
                 xy.append(arg)
+                continue
+
+            if arg is cf_masked:
+                # Replace masked constant with array
+                xy.append(scalar_masked_array(self.dtype))
                 continue
 
             arg = type(self).asdata(arg)
@@ -11417,7 +11442,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     arg.Units = units
                 except ValueError:
                     raise ValueError(
-                        f"where: Assignment value units {arg.Units!r} "
+                        f"where: {name!r} parameter units {arg.Units!r} "
                         f"are not equivalent to data units {units!r}"
                     )
 
@@ -11427,13 +11452,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Apply the where operation
         dx = da.core.elemwise(
-            _where_chunk, dx, dask_compatible(condition), x, y, d.hardmask
+            _cf_where, dx, dask_compatible(condition), x, y, d.hardmask
         )
         d._set_dask(dx)
 
         # Note: No need to run _reset_mask_hardness at this point
         #       because the mask hardness has already been correctly
-        #       set in _where_chunk.
+        #       set in _cf_where.
 
         return d
 
@@ -13192,7 +13217,7 @@ def _where_broadcastable_inplace(data, x, name):
     return True
 
 
-def _where_chunk(array, condition, x, y, hardmask):
+def _cf_where(array, condition, x, y, hardmask):
     """Set elements of *array* from *x* or *y* depending on *condition*.
 
     The input *array* is not changed in-place.
@@ -13201,19 +13226,21 @@ def _where_chunk(array, condition, x, y, hardmask):
 
     .. versionadded:: TODODASK
 
+    .. seealso:: `cf.Data.where`
+
     :Parameters:
 
-        array: numnpy.ndarray
+        array: numpy.ndarray
             The array to be assigned to.
 
-        condition: numnpy.ndarray
+        condition: numpy.ndarray
             Where False or masked, assign from *y*, otherwise assign
             from *x*.
 
-        x: numnpy.ndarray or `None`
+        x: numpy.ndarray or `None`
             *x* and *y* must not both be `None`.
 
-        y: numnpy.ndarray or `None`
+        y: numpy.ndarray or `None`
             *x* and *y* must not both be `None`.
 
         hardmask: `bool`
@@ -13231,6 +13258,8 @@ def _where_chunk(array, condition, x, y, hardmask):
             elsewhere.
 
     """
+    mask = None
+
     if np.ma.isMA(array):
         # Do a masked where
         where = np.ma.where
@@ -13271,8 +13300,8 @@ def _where_chunk(array, condition, x, y, hardmask):
         array = where(c, array, y)
 
     if hardmask:
-        if mask.any():
-            # Apply the mask from the input array
+        if mask is not None and mask.any():
+            # Apply the mask from the input array to the result
             array.mask |= mask
 
         array.harden_mask()

@@ -269,15 +269,17 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso:: `chunk_shapes`
 
     :Parameters:
 
         chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
 
-    **Examples:**
+    **Examples**
 
     >>> chunks = ((1, 2), (9,), (44, 55, 66))
     >>> for position in chunk_positions(chunks):
@@ -297,15 +299,17 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso:: `chunk_positions`
 
     :Parameters:
 
         chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
 
-    **Examples:**
+    **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
     >>> for shape in chunk_shapes(chunks):
@@ -366,3 +370,48 @@ def dask_compatible(a):
         return a.data._get_dask()
     except AttributeError:
         return a
+
+
+def scalar_masked_array(dtype=float):
+    """Return a scalar masked array.
+
+     .. versionadded:: TODODASK
+
+     :Parmaeters:
+
+         dtype: data-type, optional
+             Desired output data-type for the array, e.g,
+             `numpy.int8`. Default is `numpy.float64`.
+
+     :Returns:
+
+         `np.ma.core.MaskedArray`
+             The scalar masked array.
+
+     **Examples**
+
+     >>> scalar_masked_array()
+     masked_array(data=--,
+                  mask=True,
+            fill_value=1e+20,
+                 dtype=float64)
+     >>> scalar_masked_array(dtype('int32'))
+     masked_array(data=--,
+                  mask=True,
+            fill_value=999999,
+                 dtype=int32)
+     >>> scalar_masked_array('U45')
+     masked_array(data=--,
+                  mask=True,
+            fill_value='N/A',
+                dtype='<U45')
+    >>> scalar_masked_array(bool)
+    masked_array(data=--,
+                 mask=True,
+            fill_value=True,
+                dtype=bool)
+
+    """
+    a = np.ma.empty((), dtype=dtype)
+    a.mask = True
+    return a
