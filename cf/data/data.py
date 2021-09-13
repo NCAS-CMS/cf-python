@@ -476,6 +476,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     pass
                 else:
                     self._set_dask(array, copy=copy, delete_source=False)
+                    # TODODASK: When PR #257 (dask: Data.__getitem__,
+                    #           Data.__setitem__) is merged, add in a
+                    #           "reset_mask_hardness=False".
             else:
                 self._del_dask(None)
 
