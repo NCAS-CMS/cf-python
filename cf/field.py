@@ -2731,9 +2731,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # TODO: improve message here (make user friendly):
                     logger.info(
                         "t['id_to_axis'] does not have a key "
-                        "s['axis_to_id'][axis0] for {}".format(
-                            self.__class__.__name__
-                        )
+                        f"s['axis_to_id'][axis0] for {self.__class__.__name__}"
                     )  # pragma: no cover
                     return False
 
@@ -2744,9 +2742,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if axis1 is None:
                     # TODO: improve message here (make user friendly):
                     logger.info(
-                        "axis_map[axis0] is None for {}".format(
-                            self.__class__.__name__
-                        )
+                        f"axis_map[axis0] is None for {self.__class__.__name__}"
                     )  # pragma: no cover
                     return False
 
@@ -2984,10 +2980,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if not (components or methods):
             if not self._is_broadcastable(w.shape):
                 raise ValueError(
-                    "The 'Data' weights (shape {}) are not broadcastable "
-                    "to the field construct's data (shape {}).".format(
-                        w.shape, self.shape
-                    )
+                    f"The 'Data' weights (shape {w.shape}) are not "
+                    "broadcastable to the field construct's data "
+                    f"(shape {self.shape})."
                 )
 
             axes0 = field_data_axes[self.ndim - w.ndim :]
@@ -2997,9 +2992,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for axis0 in axes0:
             if axis0 in weights_axes:
                 raise ValueError(
-                    "Multiple weights specified for {!r} axis".format(
-                        self.constructs.domain_axis_identity(axis0)
-                    )
+                    "Multiple weights specified for "
+                    f"{self.constructs.domain_axis_identity(axis0)!r} axis"
                 )
 
         if methods:
@@ -3150,7 +3144,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f = type(self)()
         f.set_data(data, copy=False)
         f.long_name = "weight"
-        f.comment = "Weights for {!r}".format(self)
+        f.comment = f"Weights for {self!r}"
 
         return f
 
@@ -3200,9 +3194,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 raise ValueError("No polygon geometries")
 
             raise ValueError(
-                "No polygon geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domain_axis)
-                )
+                "No polygon geometries for "
+                f"{self.constructs.domain_axis_identity(domain_axis)!r} axis"
             )
 
         if axis in weights_axes:
@@ -3210,9 +3203,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         # Check for interior rings
@@ -3240,9 +3232,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if interior_ring.shape != aux_X.bounds.shape[:-1]:
                 raise ValueError(
                     "Can't find weights: Interior ring variables have "
-                    "incorrect shape. Got {}, expected {}".format(
-                        interior_ring.shape, aux_X.bounds.shape[:-1]
-                    )
+                    f"incorrect shape. Got {interior_ring.shape}, expected "
+                    f"{aux_X.bounds.shape[:-1]}"
                 )
 
         x = aux_X.bounds.data
@@ -3443,9 +3434,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 raise ValueError("No line geometries")
 
             raise ValueError(
-                "No line geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domain_axis)
-                )
+                "No line geometries for "
+                f"{self.constructs.domain_axis_identity(domain_axis)!r} axis"
             )
 
         if axis in weights_axes:
@@ -3453,9 +3443,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         x = aux_X.bounds.data
