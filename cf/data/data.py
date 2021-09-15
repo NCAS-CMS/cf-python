@@ -11210,14 +11210,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Broadcasting**
 
-        In general, the array and the *condition*, *x* and *y*
-        parameters must all be broadcastable to each other, and the
-        shape of the result will be shape implied by that
-        broadcasting. This may produce a result that has more elements
-        or dimensions that the original array.
-
-        However, if the operation is carried out in-place then the
-        shape of the result must be identical to the original data.
+        The array and the *condition*, *x* and *y* parameters must all
+        be broadcastable to each other, such that the shape of the
+        result is identical to the orginal shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -11225,11 +11220,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Performance**
 
-        If the operation is in-place and any of the shapes of the
-        *condition*, *x*, or *y* parameters, or the array, is unknown,
-        then there is a possibility that an unknown shape will need to
-        be calculated immediately by executing all delayed operations
-        on that object.
+        If any of the shapes of the *condition*, *x*, or *y*
+        parameters, or the array, is unknown, then there is a
+        possibility that an unknown shape will need to be calculated
+        immediately by executing all delayed operations on that
+        object.
 
         .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
 
@@ -11336,13 +11331,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [[9 2]
          [7 6]]
 
-        In general, the shapes of the original array, *condition*,
-        *x*, and *y* are broadcast together:
+        The shape of the result must have the same shape as the
+        original data:
 
         >>> e = d.where([True, False], [9, 8])
         >>> print(e.array)
         [[9 2]
          [9 4]]
+
         >>> d = cf.Data(np.array([[0, 1, 2],
         ...                       [0, 2, 4],
         ...                       [0, 3, 6]]))
@@ -11359,19 +11355,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [2]]
         >>> print(y)
         [[0 1 2 3]]
+        >>> condiction = x < y
+        >>> print(condition)
+        [[False  True  True  True]
+         [False False  True  True]
+         [False False False  True]]
         >>> d = cf.Data(x)
-        >>> e = d.where(x < y, d, 10 + y)
-        >>> print(e.array)
-        [[10  0  0  0]
-         [10 11  1  1]
-         [10 11 12  2]]
-
-        For in-place assignments, the reult must have the same shape
-        as the original data:
-
-        >>>  e = d.where(x < y, d, 10 + y, inplace=True)
+        >>> e = d.where(condition, d, 10 + y)
             ...
-        ValueError: where: For in-place assignments the 'condition' parameter with shape (3, 4) can't be broadcast to the data with shape (3, 1)
+        ValueError: where: Broadcasting the 'condition' parameter with shape (3, 4) would change the shape of the data with shape (3, 1)
 
         >>> d = cf.Data(np.arange(9).reshape(3, 3))
         >>> e = d.copy()
@@ -11402,9 +11394,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             condition = condition.set_condition_units(units)
             condition = condition.evaluate(d)
 
-        if inplace:
-            condition = type(self).asdata(condition)
-            _where_broadcastable_inplace(d, condition, "condition")
+        condition = type(self).asdata(condition)
+        _where_broadcastable(d, condition, "condition")
 
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy
@@ -11432,8 +11423,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 continue
 
             arg = type(self).asdata(arg)
-            if inplace:
-                _where_broadcastable_inplace(d, arg, name)
+            _where_broadcastable(d, arg, name)
 
             if arg.Units:
                 # Make sure that units are OK.
@@ -13166,8 +13156,8 @@ def _broadcast(a, shape):
     return np.tile(a, tile)
 
 
-def _where_broadcastable_inplace(data, x, name):
-    """Check broadcastability for in-place `where` assignments.
+def _where_broadcastable(data, x, name):
+    """Check broadcastability for `where` assignments.
 
     Raises an exception if the result of broadcasting *data* and *x*
     together does not have the same shape as *data*.
@@ -13199,9 +13189,9 @@ def _where_broadcastable_inplace(data, x, name):
     ndim_data = data.ndim
     if ndim_x > ndim_data:
         raise ValueError(
-            f"where: For in-place assignments, the {name!r} parameter "
-            "can't have more dimensions than the data "
-            f"({ndim_x} > {ndim_data})"
+            f"where: Broadcasting the {name!r} parameter with {ndim_x} "
+            f"dimensions would change the shape of the data with "
+            f"{ndim_data} dimensions"
         )
 
     shape_x = x.shape
@@ -13209,9 +13199,9 @@ def _where_broadcastable_inplace(data, x, name):
     for n, m in zip(shape_x[::-1], shape_data[::-1]):
         if n != m and n != 1:
             raise ValueError(
-                f"where: For in-place assignments, the {name!r} parameter "
-                f"with shape {shape_x} can't be broadcast to the data with "
-                f"shape {shape_data}"
+                f"where: Broadcasting the {name!r} parameter with shape "
+                f"{shape_x} would change the shape of the data with shape "
+                f"{shape_data}"
             )
 
     return True

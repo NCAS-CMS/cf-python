@@ -3151,14 +3151,13 @@ class DataTest(unittest.TestCase):
 
         x, y = np.ogrid[:3, :4]
         d = cf.Data(x)
-        b = np.where(x < y, x, 10 + y)
-        e = d.where(x < y, d, 10 + y)
-        self.assertTrue(e.shape == b.shape == (3, 4))
-        self.assertTrue((e.array == b).all())
+        with self.assertRaises(ValueError):
+            # Can't change shape
+            d.where(x < y, d, 10 + y)
 
         with self.assertRaises(ValueError):
-            # Can't change shape in-place
-            d.where(x < y, d, 10 + y, inplace=True)
+            # Can't change shape
+            d.where(False, d, 10 + y)
 
         a = np.ma.arange(9, dtype=int).reshape(3, 3)
         d = cf.Data(a, mask=[[0, 0, 0], [1, 0, 0], [0, 0, 0]])
