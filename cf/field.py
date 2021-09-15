@@ -3503,9 +3503,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if interior_angle.min() < 0:
                 raise ValueError(
                     "A spherical line geometry segment has "
-                    "negative length: {!r}".format(
-                        interior_angle.min() * radius
-                    )
+                    f"negative length: {interior_angle.min() * radius!r}"
                 )
 
             all_lengths = interior_angle.sum(-1, squeeze=True)
@@ -3563,9 +3561,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         x = aux_X.bounds.data
@@ -3865,8 +3862,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     return False
 
                 raise ValueError(
-                    "Multiple weights specifications for {!r} "
-                    "axis".format(self.constructs.domain_axis_identity(axis))
+                    "Multiple weights specifications for "
+                    f"{self.constructs.domain_axis_identity(axis)!r} axis"
                 )
 
         clm = clm.get_data(_fill_value=False).copy()
@@ -4082,9 +4079,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._custom["Flags"]
         except KeyError:
             raise AttributeError(
-                "{!r} object has no attribute 'Flags'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__!r} object has no attribute 'Flags'"
             )
 
     @Flags.setter
@@ -4097,9 +4092,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._custom.pop("Flags")
         except KeyError:
             raise AttributeError(
-                "{!r} object has no attribute 'Flags'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__!r} object has no attribute 'Flags'"
             )
 
     @property
@@ -5495,12 +5488,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             missing_axes = set(size_N_axes).difference(weights_axes)
             if missing_axes:
+                missing_axes_id = self.constructs.domain_axis_identity(
+                    missing_axes.pop()
+                )
                 raise ValueError(
-                    "Can't find weights for {!r} axis.".format(
-                        self.constructs.domain_axis_identity(
-                            missing_axes.pop()
-                        )
-                    )
+                    f"Can't find weights for {missing_axes_id!r} axis."
                 )
 
         elif isinstance(weights, dict):
@@ -5511,17 +5503,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 key = [self.domain_axis(i, key=True) for i in key]
                 for k in key:
                     if k not in field_data_axes:
-                        raise ValueError("TODO {!r} domain axis".format(k))
+                        raise ValueError(f"TODO {k!r} domain axis")
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
+                    multiple_weights_id = self.constructs.domain_axis_identity(
+                        multiple_weights.pop()
+                    )
                     raise ValueError(
-                        "Can't find weights: Multiple specifications for {!r} "
-                        "domain axis".format(
-                            self.constructs.domain_axis_identity(
-                                multiple_weights.pop()
-                            )
-                        )
+                        f"Can't find weights: Multiple specifications for "
+                        f"{multiple_weights_id!r} domain axis"
                     )
 
                 weights_axes.update(key)
@@ -5572,9 +5563,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     weights = iter(weights)
                 except TypeError:
                     raise TypeError(
-                        "Invalid type of 'weights' parameter: {}".format(
-                            weights
-                        )
+                        f"Invalid type of 'weights' parameter: {weights}"
                     )
 
                 for w in tuple(weights):
@@ -5631,8 +5620,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 da_key = self.domain_axis(axis, key=True, default=None)
                 if da_key is None:
                     raise ValueError(
-                        "Can't create weights: "
-                        "Can't find axis matching {!r}".format(axis)
+                        "Can't create weights: can't find axis matching "
+                        f"{axis!r}"
                     )
 
                 if self._weights_geometry_area(
@@ -6680,8 +6669,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if not self._is_broadcastable(f.shape):
                 raise ValueError(
-                    "Conformed digitized field {!r} construct must have "
-                    "shape broadcastable to {}.".format(f, self.shape)
+                    f"Conformed digitized field {f!r} construct must have "
+                    f"shape broadcastable to {self.shape}."
                 )
 
             bin_bounds = f.get_property("bin_bounds", None)
@@ -6694,23 +6683,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if bin_count is None:
                 raise ValueError(
-                    "Digitized field construct {!r} must have a 'bin_count' "
-                    "property.".format(f)
+                    f"Digitized field construct {f!r} must have a 'bin_count' "
+                    "property."
                 )
 
             if bin_bounds is None:
                 raise ValueError(
-                    "Digitized field construct {!r} must have a "
-                    "'bin_bounds' property.".format(f)
+                    f"Digitized field construct {f!r} must have a "
+                    "'bin_bounds' property."
                 )
 
             if bin_count != len(bin_bounds) / 2:
                 raise ValueError(
-                    "Digitized field construct {!r} bin_count must equal "
-                    "len(bin_bounds)/2. Got bin_count={}, "
-                    "len(bin_bounds)/2={}".format(
-                        f, bin_count, len(bin_bounds) / 2
-                    )
+                    f"Digitized field construct {f!r} bin_count must equal "
+                    f"len(bin_bounds)/2. Got bin_count={bin_count}, "
+                    f"len(bin_bounds)/2={len(bin_bounds) / 2}"
                 )
 
             # Create dimension coordinate for bins
@@ -8491,7 +8478,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         logger.info(
             "    all_methods, all_axes, all_within, all_over = "
-            "{} {} {} {}".format(all_methods, all_axes, all_within, all_over)
+            f"{all_methods} {all_axes} {all_within} {all_over}"
         )  # pragma: no cover
 
         if group is not None and len(all_axes) > 1:
@@ -8512,9 +8499,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             method2 = _collapse_methods.get(method, None)
             if method2 is None:
-                raise ValueError(
-                    "Unknown collapse method: {!r}".format(method)
-                )
+                raise ValueError(f"Unknown collapse method: {method!r}")
 
             method = method2
 
@@ -8524,15 +8509,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             logger.info(
-                "    axes                    = {}".format(axes)
+                f"    axes                    = {axes}"
             )  # pragma: no cover
             logger.info(
-                "    method                  = {}".format(method)
+                f"    method                  = {method}"
             )  # pragma: no cover
             logger.info(
-                "    collapse_axes_all_sizes = {}".format(
-                    collapse_axes_all_sizes
-                )
+                f"    collapse_axes_all_sizes = {collapse_axes_all_sizes}"
             )  # pragma: no cover
 
             if not collapse_axes_all_sizes:
