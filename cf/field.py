@@ -8542,7 +8542,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             logger.info(
-                "    collapse_axes           = {}".format(collapse_axes)
+                f"    collapse_axes           = {collapse_axes}"
             )  # pragma: no cover
 
             if not collapse_axes:
@@ -8569,7 +8569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             size = reduce(operator_mul, collapse_axes_sizes, 1)
 
             logger.info(
-                "    collapse_axes_sizes     = {}".format(collapse_axes_sizes)
+                f"    collapse_axes_sizes     = {collapse_axes_sizes}"
             )  # pragma: no cover
 
             grouped_collapse = (
@@ -8713,7 +8713,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Calculate weights
             # ------------------------------------------------------------
             logger.info(
-                "    Input weights           = {!r}".format(weights)
+                f"    Input weights           = {weights!r}"
             )  # pragma: no cover
 
             if method not in _collapse_weighted_methods:
@@ -9293,18 +9293,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 iterator = iter(selection)
             except TypeError:
                 raise ValueError(
-                    "Can't collapse: Bad parameter value: {}={!r}".format(
-                        parameter, selection
-                    )
+                    "Can't collapse: Bad parameter value: "
+                    f"{parameter}={selection!r}"
                 )
 
             for condition in iterator:
                 if not isinstance(condition, Query):
                     raise ValueError(
-                        "Can't collapse: {} sequence contains a non-{} "
-                        "object: {!r}".format(
-                            parameter, Query.__name__, condition
-                        )
+                        f"Can't collapse: {parameter} sequence contains a "
+                        f"non-{Query.__name__} object: {condition!r}"
                     )
 
                 if extra_condition is not None:
@@ -9423,8 +9420,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 upper_limit = upper
             else:
                 raise ValueError(
-                    "Can't collapse: {!r} coordinate bounds are required "
-                    "with group_by={!r}".format(coord.identity(), group_by)
+                    f"Can't collapse: {coord.identity()!r} coordinate bounds "
+                    f"are required with group_by={group_by!r}"
                 )
 
             if time_interval:
@@ -9436,10 +9433,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     upper_limit = upper_limit.datetime_array[0]
                 elif not units.istime:
                     raise ValueError(
-                        "Can't group by {} when coordinates have units "
-                        "{!r}".format(
-                            TimeDuration.__class__.__name__, coord.Units
-                        )
+                        f"Can't group by {TimeDuration.__class__.__name__} "
+                        f"when coordinates have units {coord.Units!r}"
                     )
 
             return (lower, upper, lower_limit, upper_limit)
@@ -9490,45 +9485,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # START OF MAIN CODE
 
-        logger.info("    Grouped collapse:")  # pragma: no cover
         logger.info(
-            "        method            = {!r}".format(method)
-        )  # pragma: no cover
-        logger.info(
-            "        axis_in           = {!r}".format(axis_in)
-        )  # pragma: no cover
-        logger.info(
-            "        axis              = {!r}".format(axis)
-        )  # pragma: no cover
-        logger.info(
-            "        over              = {!r}".format(over)
-        )  # pragma: no cover
-        logger.info(
-            "        over_days         = {!r}".format(over_days)
-        )  # pragma: no cover
-        logger.info(
-            "        over_years        = {!r}".format(over_years)
-        )  # pragma: no cover
-        logger.info(
-            "        within            = {!r}".format(within)
-        )  # pragma: no cover
-        logger.info(
-            "        within_days       = {!r}".format(within_days)
-        )  # pragma: no cover
-        logger.info(
-            "        within_years      = {!r}".format(within_years)
-        )  # pragma: no cover
-        logger.info(
-            "        regroup           = {!r}".format(regroup)
-        )  # pragma: no cover
-        logger.info(
-            "        group             = {!r}".format(group)
-        )  # pragma: no cover
-        logger.info(
-            "        group_span        = {!r}".format(group_span)
-        )  # pragma: no cover
-        logger.info(
-            "        group_contiguous  = {!r}".format(group_contiguous)
+            "    Grouped collapse:"
+            f"        method            = {method!r}"
+            f"        axis_in           = {axis_in!r}"
+            f"        axis              = {axis!r}"
+            f"        over              = {over!r}"
+            f"        over_days         = {over_days!r}"
+            f"        over_years        = {over_years!r}"
+            f"        within            = {within!r}"
+            f"        within_days       = {within_days!r}"
+            f"        within_years      = {within_years!r}"
+            f"        regroup           = {regroup!r}"
+            f"        group             = {group!r}"
+            f"        group_span        = {group_span!r}"
+            f"        group_contiguous  = {group_contiguous!r}"
         )  # pragma: no cover
 
         # Size of uncollapsed axis
@@ -9557,14 +9528,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 if classification.dtype.kind != "i":
                     raise ValueError(
-                        "Can't group by numpy array of type {}".format(
-                            classification.dtype.name
-                        )
+                        "Can't group by numpy array of type "
+                        f"{classification.dtype.name}"
                     )
                 elif classification.shape != (axis_size,):
                     raise ValueError(
                         "Can't group by numpy array with incorrect "
-                        "shape: {}".format(classification.shape)
+                        f"shape: {classification.shape}"
                     )
 
                 # Set group to None
