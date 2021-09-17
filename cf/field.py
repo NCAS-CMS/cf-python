@@ -9605,24 +9605,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
-                    raise ValueError("TODO asdas 4444444  dhfdui ")
+                    raise ValueError("TODO")
 
                 if coord.Units.isreftime:
                     raise ValueError(
-                        "Can't group a reference-time axis with {!r}. Use "
-                        "a TimeDuration instance instead.".format(group)
+                        f"Can't group a reference-time axis with {group!r}. "
+                        "Use a TimeDuration instance instead."
                     )
 
                 if group.size != 1:
                     raise ValueError(
-                        "Group must have only one element: "
-                        "{!r}".format(group)
+                        f"Group must have only one element: {group!r}"
                     )
 
                 if group.Units and not group.Units.equivalent(coord.Units):
                     raise ValueError(
-                        "Can't group by {!r} when coordinates have "
-                        "non-equivalent units {!r}".format(group, coord.Units)
+                        f"Can't group by {group!r} when coordinates have "
+                        f"non-equivalent units {coord.Units!r}"
                     )
 
                 classification = numpy_empty((axis_size,), int)
@@ -9764,7 +9763,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         break
 
                     logger.info(
-                        "          HMS  = {!r}".format(HMS)
+                        f"          HMS  = {HMS!r}"
                     )  # pragma: no cover
 
                     if over_days is None:
@@ -9848,7 +9847,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         if not over_years.isint or over_years < 1:
                             raise ValueError(
                                 "over_years is not a whole number of "
-                                "calendar years: {!r}".format(over_years)
+                                f"calendar years: {over_years!r}"
                             )
                     else:
                         raise ValueError(
@@ -10110,7 +10109,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     elif group_span is True:
                         raise ValueError(
                             "Can't collapse: Can't set group_span=True when "
-                            "within_years={!r}".format(within_years)
+                            f"within_years={within_years!r}"
                         )
 
             elif over is not None:
@@ -10321,18 +10320,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         original_cell_methods = self.cell_methods(todict=True)  # .ordered()
-        logger.info("  Update cell methods:")  # pragma: no cover
         logger.info(
-            "    Original cell methods = {}".format(original_cell_methods)
-        )  # pragma: no cover
-        logger.info(
-            "    method        = {!r}".format(method)
-        )  # pragma: no cover
-        logger.info(
-            "    within        = {!r}".format(within)
-        )  # pragma: no cover
-        logger.info(
-            "    over          = {!r}".format(over)
+            "  Update cell methods:"
+            f"    Original cell methods = {original_cell_methods}"
+            f"    method        = {method!r}"
+            f"    within        = {within!r}"
+            f"    over          = {over!r}"
         )  # pragma: no cover
 
         if input_axes and tuple(input_axes) == ("area",):
@@ -10739,11 +10732,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         full = "full" in mode
         compress = "compress" in mode or not (envelope or full)
 
-        logger.debug("Field.indices:")  # pragma: no cover
         logger.debug(
-            "    envelope, full, compress = {} {} {}".format(
-                envelope, full, compress
-            )
+            "Field.indices:"
+            f"    envelope, full, compress = {envelope} {full} {compress}"
         )  # pragma: no cover
 
         auxiliary_mask = []
@@ -10808,9 +10799,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     a = "axes"
 
                 raise ValueError(
-                    "Error: Can't specify {} conditions for {} {}: {}".format(
-                        n_items, n_axes, a, points
-                    )
+                    f"Error: Can't specify {n_items} conditions for "
+                    f"{n_axes} {a}: {points}"
                 )
 
             create_mask = False
@@ -10818,10 +10808,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             item_axes = axes[0]
 
             logger.debug(
-                "    item_axes = {!r}".format(item_axes)
-            )  # pragma: no cover
-            logger.debug(
-                "    keys      = {!r}".format(keys)
+                f"    item_axes = {item_axes!r}" f"    keys      = {keys!r}"
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -10831,7 +10818,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ind = None
 
                 logger.debug(
-                    "    {} 1-d constructs: {!r}".format(n_items, constructs)
+                    f"    {n_items} 1-d constructs: {constructs!r}"
                 )  # pragma: no cover
 
                 axis = item_axes[0]
@@ -10839,10 +10826,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 value = points[0]
 
                 logger.debug(
-                    "    axis      = {!r}".format(axis)
-                )  # pragma: no cover
-                logger.debug(
-                    "    value     = {!r}".format(value)
+                    f"    axis      = {axis!r}" f"    value     = {value!r}"
                 )  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, numpy_ndarray)):
@@ -10939,9 +10923,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     if not item_match.any():
                         raise ValueError(
-                            "No {!r} axis indices found from: {}".format(
-                                identity, value
-                            )
+                            f"No {identity!r} axis indices found from: {value}"
                         )
 
                     index = numpy_asanyarray(item_match)
@@ -10960,9 +10942,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "with data for which to create indices"
                     )
 
-                logger.debug(
-                    "    index = {}".format(index)
-                )  # pragma: no cover
+                logger.debug(f"    index = {index}")  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -10977,13 +10957,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # N-dimensional constructs
                 # -----------------------------------------------------
                 logger.debug(
-                    "    {} N-d constructs: {!r}".format(n_items, constructs)
-                )  # pragma: no cover
-                logger.debug(
-                    "    {} points        : {!r}".format(len(points), points)
-                )  # pragma: no cover
-                logger.debug(
-                    "    field.shape     : {}".format(self.shape)
+                    f"    {n_items} N-d constructs: {constructs!r}"
+                    f"    {len(points)} points        : {points!r}"
+                    f"    field.shape     : {self.shape}"
                 )  # pragma: no cover
 
                 # Make sure that each N-d item has the same relative
@@ -11008,7 +10984,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 constructs = [g.constructs[key] for key in keys]
                 logger.debug(
-                    "    transposed N-d constructs: {!r}".format(constructs)
+                    f"    transposed N-d constructs: {constructs!r}"
                 )  # pragma: no cover
 
                 item_matches = [
@@ -11029,10 +11005,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     ind = numpy_where(item_match)
 
                 logger.debug(
-                    "    item_match  = {}".format(item_match)
-                )  # pragma: no cover
-                logger.debug(
-                    "    ind         = {}".format(ind)
+                    f"    item_match  = {item_match}"
+                    f"    ind         = {ind}"
                 )  # pragma: no cover
 
                 bounds = [
