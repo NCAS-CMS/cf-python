@@ -11045,14 +11045,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     except NameError:
                         raise ImportError(
                             "Must install matplotlib to create indices based "
-                            "on {}-d constructs and a 'contains' Query "
-                            "object".format(constructs[0].ndim)
+                            f"on {constructs[0].ndim}-d constructs and a "
+                            "'contains' Query object"
                         )
 
                     if n_items != 2:
                         raise ValueError(
-                            "Can't index for cell from {}-d coordinate "
-                            "objects".format(n_axes)
+                            f"Can't index for cell from {n_axes}-d coordinate "
+                            "objects"
                         )
 
                     if 0 < len(bounds) < n_items:
@@ -11073,7 +11073,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 mask_shape = [None] * self.ndim
                 masked_subspace_size = 1
                 ind = numpy_array(ind)
-                logger.debug("    ind = {}".format(ind))  # pragma: no cover
+                logger.debug(f"    ind = {ind}")  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(
                     zip(item_axes, ind.min(axis=1), ind.max(axis=1))
@@ -11119,12 +11119,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
             logger.debug(
-                "    create_mask = {}".format(create_mask)
+                f"    create_mask = {create_mask}"
             )  # pragma: no cover
 
             if create_mask:
                 logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
+                    f"    mask_shape  = {mask_shape}"
                 )  # pragma: no cover
 
                 mask = self.data._create_auxiliary_mask_component(
@@ -11132,10 +11132,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
                 auxiliary_mask.append(mask)
                 logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
+                    f"    mask_shape  = {mask_shape}"
                 )  # pragma: no cover
                 logger.debug(
-                    "    mask.shape  = {}".format(mask.shape)
+                    f"    mask.shape  = {mask.shape}"
                 )  # pragma: no cover
 
         indices = tuple(parse_indices(self.shape, tuple(indices)))
@@ -11143,9 +11143,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if auxiliary_mask:
             indices = ("mask", auxiliary_mask) + indices
 
-            logger.debug(
-                "    Final indices = {}".format(indices)
-            )  # pragma: no cover
+            logger.debug(f"    Final indices = {indices}")  # pragma: no cover
 
         # Return the tuple of indices and the auxiliary mask (which
         # may be None)
@@ -11293,9 +11291,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if len(axes) != data.ndim:
                 raise ValueError(
-                    "Can't set data: {} axes provided, but {} needed".format(
-                        len(axes), data.ndim
-                    )
+                    f"Can't set data: {len(axes)} axes provided, but "
+                    f"{data.ndim} needed"
                 )
 
             for axis, size in zip(axes, data.shape):
@@ -11564,16 +11561,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             c = f._AuxiliaryCoordinate(source=computed, copy=False)
             c.clear_properties()
             c.long_name = (
-                "Computed from parametric {} "
-                "vertical coordinates".format(standard_name)
+                f"Computed from parametric {standard_name} "
+                "vertical coordinates"
             )
             if computed_standard_name:
                 c.standard_name = computed_standard_name
 
             logger.detail(
-                "Non-parametric coordinates:\n{}".format(
-                    c.dump(display=False, _level=1)
-                )
+                "Non-parametric coordinates:\n"
+                f"{c.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
             key = f.set_construct(c, axes=computed_axes, copy=False)
