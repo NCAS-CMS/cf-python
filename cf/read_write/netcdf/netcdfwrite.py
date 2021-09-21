@@ -184,7 +184,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 if numpy.intersect1d(unset_values, temp_array).size:
                     raise ValueError(
                         "ERROR: Can't write field when array has _FillValue or"
-                        " missing_value at unmasked point: {!r}".format(ncvar)
+                        f" missing_value at unmasked point: {ncvar!r}"
                     )
             # --- End: if
 
@@ -349,8 +349,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             coord2.reference_datetime = reference_datetime
         except ValueError:
             raise ValueError(
-                "Can't override coordinate reference date-time {0!r} with "
-                "{1!r}".format(coord.reference_datetime, reference_datetime)
+                "Can't override coordinate reference date-time "
+                f"{coord.reference_datetime!r} with {reference_datetime!r}"
             )
         else:
             return coord2
@@ -472,7 +472,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # Get the private CFA netCDF dimensions for the array.
                 cfa_dimensions = [
                     self._netcdf_name(
-                        "cfa{0}".format(size), dimsize=size, role="cfa_private"
+                        f"cfa{size}", dimsize=size, role="cfa_private"
                     )
                     for size in array.shape
                 ]
@@ -670,6 +670,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             return float(x)
 
         raise TypeError(
-            "{!r} object can't be converted to a JSON serializable type: "
-            "{!r}".format(type(x), x)
+            f"{type(x)!r} object can't be converted to a JSON serializable "
+            f"type: {x!r}"
         )

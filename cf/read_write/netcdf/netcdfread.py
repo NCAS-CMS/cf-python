@@ -177,7 +177,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         except ValueError as error:
             raise ValueError(
                 "Error during JSON-decoding of netCDF attribute 'cfa_array': "
-                "{}".format(error)
+                f"{error}"
             )
 
         variable = g["variables"][ncvar]
@@ -206,7 +206,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             strlen = g["nc"].dimensions[ncdimensions[-1]].size
             if strlen > 1:
                 ncdimensions.pop()
-                dtype = numpy_dtype("S{0}".format(strlen))
+                dtype = numpy_dtype(f"S{strlen}")
 
         cfa_data["dtype"] = dtype
         cfa_data["_axes"] = ncdimensions
@@ -279,7 +279,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         calendar=None,
         ncvar=None,
         loadd=None,
-        **kwargs
+        **kwargs,
     ):
         """TODO.
 
@@ -309,7 +309,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar=ncvar,
             loadd=loadd,
             chunk=chunk,
-            **kwargs
+            **kwargs,
         )
 
     def _customize_read_vars(self):

@@ -135,9 +135,7 @@ class Properties(Container):
             return self._custom["id"]
         except KeyError:
             raise AttributeError(
-                "{} doesn't have attribute 'id'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute 'id'"
             )
 
     @id.setter
@@ -150,9 +148,7 @@ class Properties(Container):
             del self._custom["id"]
         except KeyError:
             raise AttributeError(
-                "{} doesn't have attribute 'id'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute 'id'"
             )
 
     # ----------------------------------------------------------------
@@ -1122,10 +1118,9 @@ class Properties(Container):
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__
-                )
+                f"Use of a {identities[0].__class__.__name__!r} for "
+                "identities has been deprecated. Use the "
+                "* operator to unpack the arguments instead."
             )  # pragma: no cover
 
         for i in identities:
