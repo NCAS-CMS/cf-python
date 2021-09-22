@@ -615,9 +615,8 @@ def read(
         raise ValueError("squeeze and unsqueeze can not both be True")
     if follow_symlinks and not recursive:
         raise ValueError(
-            "Can't set follow_symlinks={0} when recursive={1}".format(
-                follow_symlinks, recursive
-            )
+            f"Can't set follow_symlinks={follow_symlinks} when "
+            f"recursive={recursive}"
         )
 
     # Initialize the output list of fields
@@ -704,7 +703,7 @@ def read(
             files2 = files3
 
         for filename in files2:
-            logger.info("File: {0}".format(filename))  # pragma: no cover
+            logger.info(f"File: {filename}")  # pragma: no cover
 
             if um:
                 ftype = "UM"
@@ -730,9 +729,7 @@ def read(
 
                         raise ValueError(message)
 
-                    logger.warning(
-                        "WARNING: {}".format(error)
-                    )  # pragma: no cover
+                    logger.warning(f"WARNING: {error}")  # pragma: no cover
 
                     continue
 
@@ -776,12 +773,8 @@ def read(
             file_counter += 1
 
     logger.info(
-        "Read {0} field{1} from {2} file{3}".format(
-            field_counter,
-            _plural(field_counter),
-            file_counter,
-            _plural(file_counter),
-        )
+        f"Read {field_counter} field{_plural(field_counter)} from "
+        f"{file_counter} file{_plural(file_counter)}"
     )  # pragma: no cover
 
     # ----------------------------------------------------------------
@@ -840,12 +833,8 @@ def read(
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
-            "{} field{} requested but {} fields found in file{}".format(
-                nfields,
-                _plural(nfields),
-                len(field_list),
-                _plural(file_counter),
-            )
+            f"{nfields} field{_plural(nfields)} requested but "
+            f"{len(field_list)} fields found in file{_plural(file_counter)}"
         )
 
     return field_list
@@ -998,18 +987,15 @@ def _read_a_file(
         extra_read_vars["fmt"] = "NETCDF"
 
         if not netcdf.is_netcdf_file(filename):
+            error_msg = (
+                f"Can't determine format of file {filename} generated "
+                f"from CDL file {cdl_filename}"
+            )
             if ignore_read_error:
-                logger.warning(
-                    "WARNING: Can't determine format of file {} generated "
-                    "from CDL file {}".format(filename, cdl_filename)
-                )  # pragma: no cover
-
+                logger.warning(error_msg)  # pragma: no cover
                 return FieldList()
             else:
-                raise IOError(
-                    "Can't determine format of file {} generated from CDL "
-                    "file {}".format(filename, cdl_filename)
-                )
+                raise IOError(error_msg)
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
         # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
@@ -1109,4 +1095,4 @@ def file_type(filename):
         return "CDL"
 
     # Still here?
-    raise IOError("Can't determine format of file {}".format(filename))
+    raise IOError(f"Can't determine format of file {filename}")
