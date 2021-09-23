@@ -4413,7 +4413,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.del_property('featureType')
 
         """
-        return self.get_property("featureType")
+        return self.get_property("featureType", default=AttributeError())
 
     @featureType.setter
     def featureType(self, value):

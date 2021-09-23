@@ -3,22 +3,28 @@ from .. import _found_ESMF
 if _found_ESMF:
     try:
         import ESMF
-    except Exception as error:
-        print(f"WARNING: Can not import ESMF for regridding: {error}")
+    except Exception:
+        _found_ESMF = False
 
-regrid_method_map = {
-    "linear": ESMF.RegridMethod.BILINEAR,  # see comment below...
-    "bilinear": ESMF.RegridMethod.BILINEAR,  # (for back compat)
-    "conservative": ESMF.RegridMethod.CONSERVE,
-    "conservative_1st": ESMF.RegridMethod.CONSERVE,
-    "conservative_2nd": ESMF.RegridMethod.CONSERVE_2ND,
-    "nearest_dtos": ESMF.RegridMethod.NEAREST_DTOS,
-    "nearest_stod": ESMF.RegridMethod.NEAREST_STOD,
-    "patch": ESMF.RegridMethod.PATCH,
-}
-# ... diverge from ESMF with respect to name for bilinear method by
-# using 'linear' because 'bi' implies 2D linear interpolation, which
-# could mislead or confuse for Cartesian regridding in 1D or 3D.
+if _found_ESMF:
+    regrid_method_map = {
+        "linear": ESMF.RegridMethod.BILINEAR,  # see comment below...
+        "bilinear": ESMF.RegridMethod.BILINEAR,  # (for back compat)
+        "conservative": ESMF.RegridMethod.CONSERVE,
+        "conservative_1st": ESMF.RegridMethod.CONSERVE,
+        "conservative_2nd": ESMF.RegridMethod.CONSERVE_2ND,
+        "nearest_dtos": ESMF.RegridMethod.NEAREST_DTOS,
+        "nearest_stod": ESMF.RegridMethod.NEAREST_STOD,
+        "patch": ESMF.RegridMethod.PATCH,
+    }
+    # ... diverge from ESMF with respect to name for bilinear method
+    # by using 'linear' because 'bi' implies 2D linear interpolation,
+    # which could mislead or confuse for Cartesian regridding in 1D or
+    # 3D.
+else:
+    # Initialize a place holder that may be imported when ESMF is not
+    # installed
+    regrid_method_map = {}
 
 regrid_method_map_inverse = {v: k for k, v in regrid_method_map.items()}
 
