@@ -1076,7 +1076,7 @@ class UMField:
 
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
-            logger.info("down_axes = {}".format(down_axes))  # pragma: no cover
+            logger.info(f"down_axes = {down_axes}")  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -1126,7 +1126,7 @@ class UMField:
         )
 
         for attr in attrs:
-            out.append("{0}={1}".format(attr, getattr(self, attr, None)))
+            out.append(f"{attr}={getattr(self, attr, None)}")
 
         out.append("")
 
@@ -1840,9 +1840,7 @@ class UMField:
                 fill_value=fill_value,
             )
 
-            logger.info(
-                "    location = {}".format(yx_shape)
-            )  # pragma: no cover
+            logger.info(f"    location = {yx_shape}")  # pragma: no cover
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1910,9 +1908,8 @@ class UMField:
                     )
 
                     logger.info(
-                        "    header_offset = {}, location = {}".format(
-                            rec.hdr_offset, location
-                        )
+                        f"    header_offset = {rec.hdr_offset}, "
+                        f"location = {location}"
                     )  # pragma: no cover
 
                 # Populate the 1-d partition matrix
@@ -1970,7 +1967,7 @@ class UMField:
                     )
 
                     logger.info(
-                        "    location = {}".format(location)
+                        f"    location = {location}"
                     )  # pragma: no cover
 
                 # Populate the 2-d partition matrix
@@ -2111,10 +2108,10 @@ class UMField:
         """
         out2 = []
         for i, rec in enumerate(self.recs):
-            out = ["Field {0}:".format(i)]
+            out = [f"Field {i}:"]
 
             x = [
-                "{0}::{1}".format(name, value)
+                f"{name}::{value}"
                 for name, value in zip(
                     _header_names, self.int_hdr + self.real_hdr
                 )
@@ -2126,13 +2123,12 @@ class UMField:
             if self.extra:
                 out.append("EXTRA DATA:")
                 for key in sorted(self.extra):
-                    out.append("{0}: {1}".format(key, str(self.extra[key])))
+                    out.append(f"{key}: {str(self.extra[key])}")
 
             out.append("file: " + self.filename)
             out.append(
-                "fmt, byte order, word size: {}, {}, {}".format(
-                    self.fmt, self.byte_ordering, self.word_size
-                )
+                f"fmt, byte order, word size: {self.fmt}, "
+                f"{self.byte_ordering}, {self.word_size}"
             )
 
             out.append("")
@@ -2445,7 +2441,7 @@ class UMField:
     def reference_time_Units(self):
         """TODO."""
         LBYR = self.int_hdr[lbyr]
-        time_units = "days since {0}-1-1".format(LBYR)
+        time_units = f"days since {LBYR}-1-1"
         calendar = self.calendar
 
         key = time_units + " calendar=" + calendar
@@ -2551,7 +2547,7 @@ class UMField:
         else:
             raise ValueError(
                 "Unknown UM condition in STASH code conversion table: "
-                "{!r}".format(um_condition)
+                f"{um_condition!r}"
             )
 
         # Still here? Then the condition has not been satisfied.
@@ -3398,7 +3394,7 @@ class UMRead(cfdm.read_write.IORead):
             "fmt": fmt,
         }
 
-        history = "Converted from UM/PP by cf-python v{}".format(__version__)
+        history = f"Converted from UM/PP by cf-python v{__version__}"
 
         if endian:
             byte_ordering = endian + "_endian"
