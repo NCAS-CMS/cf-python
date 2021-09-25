@@ -11,8 +11,8 @@ from ..functions import regrid_logging
 if _found_ESMF:
     try:
         import ESMF
-    except Exception as error:
-        print(f"WARNING: Can not import ESMF for regridding: {error}")
+    except Exception:
+        _found_ESMF = False
 
 from .regridoperator import (
     RegridOperator,
@@ -1214,6 +1214,12 @@ def regrid_initialize():
             A singleton instance of the `ESMF` manager.
 
     """
+    if not _found_ESMF:
+        raise RuntimeError(
+            "Regridding methods will not work unless "
+            "the ESMF library is installed"
+        )
+
     return ESMF.Manager(debug=bool(regrid_logging()))
 
 
