@@ -1216,7 +1216,7 @@ def regrid_initialize():
     """
     if not _found_ESMF:
         raise RuntimeError(
-            "Regridding methods will work unless "
+            "Regridding methods will not work unless "
             "the ESMF library is installed"
         )
 
