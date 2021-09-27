@@ -191,7 +191,7 @@ class aggregateTest(unittest.TestCase):
                         log_item.startswith(header)
                         for log_item in catch.output
                     ),
-                    "No log entry begins with '{}'".format(header),
+                    f"No log entry begins with '{header}'",
                 )
 
         # ...but with 'DETAIL' (3), should get only the detail-level one.
@@ -202,16 +202,14 @@ class aggregateTest(unittest.TestCase):
                     log_item.startswith(detail_header)
                     for log_item in catch.output
                 ),
-                "No log entry begins with '{}'".format(detail_header),
+                f"No log entry begins with '{detail_header}'",
             )
             self.assertFalse(
                 any(
                     log_item.startswith(debug_header)
                     for log_item in catch.output
                 ),
-                "A log entry begins with '{}' but should not".format(
-                    debug_header
-                ),
+                f"A log entry begins with '{debug_header}' but should not",
             )
 
         # and neither should emerge at the 'WARNING' (1) level.
@@ -230,9 +228,7 @@ class aggregateTest(unittest.TestCase):
                         log_item.startswith(header)
                         for log_item in catch.output
                     ),
-                    "A log entry begins with '{}' but should not".format(
-                        header
-                    ),
+                    f"A log entry begins with '{header}' but should not",
                 )
 
     def test_aggregate_bad_units(self):
