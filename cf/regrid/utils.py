@@ -71,7 +71,7 @@ def regrid_compute_mass_grid(
     return mass
 
 
-def regrid_get_latlon(f, name, axes=None):
+def regrid_get_latlon(f, name, method, axes=None):
     """Retrieve the latitude and longitude coordinates of this field and
     associated information. If 1-d lat/long coordinates are found then
     these are returned. Otherwise, 2-d lat/long coordinates are searched
@@ -85,6 +85,9 @@ def regrid_get_latlon(f, name, axes=None):
         name: `str`
             A name to identify the field in error messages. Either
             ``'source'`` or ``'destination'``.
+
+        method: `str`
+            The regridding method.
 
         axes: `dict`, optional
             A dictionary specifying the X and Y axes, with keys
@@ -259,13 +262,15 @@ def regrid_get_latlon(f, name, axes=None):
     else:
         coords_2D = False
 
-        # Check for size 1 latitude or longitude dimensions if source grid
-        # (a size 1 dimension is only problematic for the source grid in ESMF)
-        if name == "source":
+    # Check for size 1 latitude or longitude dimensions if source grid
+    # (a size 1 dimension is only problematic for the source grid in ESMF)
+    if name == "source":
+        if method in ("linear", "bilinear", "patch"):
             if x_size == 1 or y_size == 1:
                 raise ValueError(
                     "Neither the longitude nor latitude dimension coordinates "
-                    f"of the {name} field can be of size 1."
+                    f"of the {name} field can be of size 1 for {method} "
+                    f"regridding."
                 )
 
     coord_keys = [x_key, y_key]
