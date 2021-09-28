@@ -252,6 +252,26 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f2.regrids(op)
 
+    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
+    def test_Field_regrid_size1_dimensions(self):
+        # Check that non-regridded size 1 axes are handled OK
+        self.assertFalse(cf.regrid_logging())
+
+        f = cf.example_field(0)
+        shape = f.shape
+
+        g = f.regrids(f, method="linear")
+        self.assertEqual(g.shape, (shape))
+        g = f.regridc(f, method="linear", axes="X")
+        self.assertEqual(g.shape, (shape))
+
+        f.insert_dimension("T", position=0, inplace=True)
+        shape = f.shape
+        g = f.regrids(f, method="linear")
+        self.assertEqual(g.shape, shape)
+        g = f.regridc(f, method="linear", axes="X")
+        self.assertEqual(g.shape, shape)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

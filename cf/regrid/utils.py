@@ -331,13 +331,17 @@ def regrid_get_axis_indices(f, axis_keys):
             size-1 dimensions inserted into its data in-place.
 
         axis_keys: sequence
-            A sequence of axis specifiers.
+            A sequence of domain axis identifiers for the axes being
+            regridded.
 
     :Returns:
 
-        `list`, `numpy.ndarray`
-            A list of the indices of the specified axes; and the rank
-            order of the axes.
+        `list`, `list`, `numpy.ndarray`
+            * The indices of the specified axes.
+
+            * The indices of the non-specified field data axes .
+
+            * The rank order of the axes.
 
     """
     data_axes = f.get_data_axes()
@@ -349,7 +353,7 @@ def regrid_get_axis_indices(f, axis_keys):
             axis_index = data_axes.index(axis_key)
         except ValueError:
             f.insert_dimension(axis_key, position=0, inplace=True)
-            axis_index = data_axes.index(axis_key)
+            axis_index = 0
 
         axis_indices.append(axis_index)
 
@@ -360,7 +364,11 @@ def regrid_get_axis_indices(f, axis_keys):
     order = np.empty((n,), dtype=int)
     order[tmp] = np.arange(n)
 
-    return axis_indices, order
+    non_regridding_axis_indices = [
+        i for i in range(f.ndim) if i not in axis_indices
+    ]
+
+    return axis_indices, non_regridding_axis_indices, order
 
 
 def regrid_get_coord_order(f, axis_keys, coord_keys):
