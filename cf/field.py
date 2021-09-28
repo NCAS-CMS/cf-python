@@ -11659,9 +11659,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         n = 0
 
-        # TODO - replace ().ordered() with (todict=True) when Python
-        #        3.6 is deprecated
-        self_cell_methods = self.cell_methods().ordered()
+        #        # TODO - replace ().ordered() with (todict=True) when Python
+        #        #        3.6 is deprecated
+        self_cell_methods = self.cell_methods(todict=True)
 
         for identity in identities:
             cms = False

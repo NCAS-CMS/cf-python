@@ -843,10 +843,9 @@ class _Meta:
         """
         _canonical_cell_methods = self._canonical_cell_methods
 
-        #        cell_methods = self.field.cell_methods.ordered()
-        cell_methods = self.field.constructs.filter_by_type("cell_method")
-        cell_methods = cell_methods.ordered()
-        # TODO get rid or ordered when Python 3.6 has gone, and add a todict=True
+        cell_methods = self.field.constructs.filter_by_type(
+            "cell_method", todict=True
+        )
 
         #        cms = getattr(self.field, 'CellMethods', None) # TODO
         if not cell_methods:

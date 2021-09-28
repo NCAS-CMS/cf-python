@@ -34,6 +34,9 @@ The `cf` package can:
 * read, write, and create coordinates defined by geometry cells (*new
   in version 3.2.0*),
 
+* read netCDF and CDL datasets containing hierarchical groups (new in
+  version 3.6.0),
+
 * combine field constructs arithmetically,
 
 * manipulate field construct data by arithmetical and trigonometrical
@@ -57,16 +60,6 @@ The `cf` package can:
 
 All of the above use LAMA functionality, which allows multiple fields
 larger than the available memory to exist and be manipulated.
-
-
-**Hierarchical groups**
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of `cf` will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version 3.2.0 (even though it is
-allowed in CF-1.8).
-
 
 **Visualization**
 
@@ -107,17 +100,11 @@ import importlib.util
 import platform
 
 # Check the version of Python
-_minimum_vn = "3.6.0"
+_minimum_vn = "3.7.0"
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
         f"or later. Got {platform.python_version()}"
-    )
-
-if LooseVersion(platform.python_version()) < LooseVersion("3.7.0"):
-    print(
-        "\nDeprecation Warning: Python 3.6 support will be removed at "
-        "the next version of cf\n"
     )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))

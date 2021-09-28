@@ -9,7 +9,7 @@ import resource
 import sys
 import urllib.parse
 import warnings
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from collections.abc import Iterable
 from hashlib import md5 as hashlib_md5
 from marshal import dumps as marshal_dumps
 from math import ceil as math_ceil

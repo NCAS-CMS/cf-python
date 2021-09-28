@@ -3,6 +3,7 @@ import os
 import tempfile
 from glob import glob
 from os.path import isdir
+from re import Pattern
 
 from numpy.ma.core import MaskError
 
@@ -15,16 +16,6 @@ from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from ..query import Query
 from .netcdf import NetCDFRead
 from .um import UMRead
-
-# TODO - replace the try block with "from re import Pattern" when
-#        Python 3.6 is deprecated
-try:
-    from re import Pattern
-except ImportError:  # pragma: no cover
-    python36 = True  # pragma: no cover
-else:
-    python36 = False
-
 
 _cached_temporary_files = {}
 
@@ -614,16 +605,8 @@ def read(
         )  # pragma: no cover
 
     # Parse select
-    # TODO - delete the "if python36:" clause when Python 3.6 is
-    #        deprecated
-    if python36:
-        if isinstance(select, (str, Query)) or hasattr(
-            select, "search"
-        ):  # pragma: no cover
-            select = (select,)  # pragma: no cover
-    else:
-        if isinstance(select, (str, Query, Pattern)):
-            select = (select,)
+    if isinstance(select, (str, Query, Pattern)):
+        select = (select,)
 
     # Manage input parameters where contradictions are possible:
     if cdl_string and fmt:
