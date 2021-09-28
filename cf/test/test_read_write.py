@@ -807,11 +807,11 @@ class read_writeTest(unittest.TestCase):
             j = i + n
             self.assertTrue(
                 f[i].data.equals(f[j].data, verbose=1),
-                "{!r} {!r}".format(f[i], f[j]),
+                f"{f[i]!r} {f[j]!r}",
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=1),
-                "{!r} {!r}".format(f[j], f[i]),
+                f"{f[j]!r} {f[i]!r}",
             )
 
         # Note: Don't loop round all netCDF formats for better

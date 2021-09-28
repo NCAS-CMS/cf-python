@@ -89,40 +89,39 @@ class DocstringTest(unittest.TestCase):
 
                     self.assertIsNotNone(
                         f.__doc__,
-                        "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}".format(
-                            klass, name, f, f.__doc__
-                        ),
+                        f"\nCLASS: {klass}"
+                        f"\nMETHOD NAME: {name}"
+                        f"\nMETHOD: {f}"
+                        f"\n__doc__: {f.__doc__}",
                     )
 
                     self.assertNotIn(
                         "{{",
                         f.__doc__,
-                        "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
-                            klass, name, f
-                        ),
+                        f"\nCLASS: {klass}"
+                        f"\nMETHOD NAME: {name}"
+                        f"\nMETHOD: {f}",
                     )
 
     def test_docstring_package(self):
-        string = ">>> f = {}.".format(self.package)
+        string = f">>> f = {self.package}."
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 f = x._has_component
                 self.assertIn(
                     string,
                     f.__doc__,
-                    "\nCLASS: {}\nMETHOD NAME: {}".format(
-                        klass, "_has_component"
-                    ),
+                    "\nCLASS: {klass}\nMETHOD NAME: _has_component",
                 )
 
-        string = ">>> f = {}.".format(self.package)
+        string = f">>> f = {self.package}."
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
     def test_docstring_class(self):
         for klass in self.subclasses_of_Properties:
-            string = ">>> f = {}.{}".format(self.package, klass.__name__)
+            string = f">>> f = {self.package}.{klass.__name__}"
             for x in (klass, klass()):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
@@ -132,34 +131,34 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.copy.__doc__, klass)
 
         for klass in self.subclasses_of_PropertiesDataBounds:
-            string = "{}".format(klass.__name__)
+            string = f"{klass.__name__}"
             for x in (klass, klass()):
                 self.assertIn(
                     string,
                     x.insert_dimension.__doc__,
-                    "\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
-                        klass, klass.__name__, "insert_dimension"
-                    ),
+                    f"\n\nCLASS: {klass}"
+                    f"\nMETHOD NAME: {klass.__name__}"
+                    f"\nMETHOD: insert_dimension",
                 )
 
                 self.assertIn(
                     string,
                     x.swapaxes.__doc__,
-                    "\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
-                        klass, klass.__name__, "swapaxes"
-                    ),
+                    f"\n\nCLASS: {klass}"
+                    f"\nMETHOD NAME: {klass.__name__}"
+                    f"\nMETHOD: swapaxes",
                 )
 
     def test_docstring_repr(self):
-        string = "<{}Data".format(self.repr)
+        string = f"<{self.repr}Data"
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(
                     string,
                     x.has_data.__doc__,
-                    "\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}".format(
-                        klass, "has_data", x.has_data
-                    ),
+                    f"\nCLASS: {klass}"
+                    f"\nMETHOD NAME: has_data"
+                    f"\nMETHOD: {x.has_data}",
                 )
 
     def test_docstring_default(self):
@@ -189,7 +188,7 @@ class DocstringTest(unittest.TestCase):
             for x in (klass,):
                 d = x._docstring_substitutions(klass)
                 self.assertIsInstance(d, dict)
-                self.assertIn("{{repr}}", d, "\nCLASS: {}".format(klass))
+                self.assertIn("{{repr}}", d, f"\nCLASS: {klass}")
 
 
 if __name__ == "__main__":

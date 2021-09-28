@@ -57,35 +57,27 @@ class RegridTest(unittest.TestCase):
                     r = f1.regrids(f2, "conservative")
                     self.assertTrue(
                         f3.equals(r),
-                        "destination=global Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global Field, CHUNKSIZE={chunksize}",
                     )
 
                     dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
                     r = f1.regrids(dst, "conservative", dst_cyclic=True)
                     self.assertTrue(
                         f3.equals(r),
-                        "destination=global dict, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global dict, CHUNKSIZE={chunksize}",
                     )
 
                     r = f1.regrids(dst, method="conservative", dst_cyclic=True)
                     self.assertTrue(
                         f3.equals(r),
-                        "destination=global dict, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global dict, CHUNKSIZE={chunksize}",
                     )
 
                     # Regrid global to regional roated pole
                     r = f1.regrids(f5, method="linear")
                     self.assertTrue(
                         f4.equals(r, verbose=3),
-                        "destination=regional Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=regional Field, CHUNKSIZE={chunksize}",
                     )
 
         f6 = cf.read(self.filename6)[0]
@@ -104,9 +96,7 @@ class RegridTest(unittest.TestCase):
                     f3 = cf.read(self.filename9)[0]
                     self.assertTrue(
                         f3.equals(f1.regridc(f2, axes="T", method="linear")),
-                        "destination=time series, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=time series, CHUNKSIZE={chunksize}",
                     )
                     f4 = cf.read(self.filename1)[0]
                     f5 = cf.read(self.filename2)[0]
@@ -117,9 +107,7 @@ class RegridTest(unittest.TestCase):
                                 f5, axes=("X", "Y"), method="conservative"
                             )
                         ),
-                        "destination=global Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global Field, CHUNKSIZE={chunksize}",
                     )
                     self.assertTrue(
                         f6.equals(
@@ -127,9 +115,7 @@ class RegridTest(unittest.TestCase):
                                 f5, axes=("X", "Y"), method="conservative"
                             )
                         ),
-                        "destination=global Field, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global Field, CHUNKSIZE={chunksize}",
                     )
                     dst = {"X": f5.dim("X"), "Y": f5.dim("Y")}
                     self.assertTrue(
@@ -138,9 +124,7 @@ class RegridTest(unittest.TestCase):
                                 dst, axes=("X", "Y"), method="conservative"
                             )
                         ),
-                        "destination=global dict, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global dict, CHUNKSIZE={chunksize}",
                     )
                     self.assertTrue(
                         f6.equals(
@@ -148,9 +132,7 @@ class RegridTest(unittest.TestCase):
                                 dst, axes=("X", "Y"), method="conservative"
                             )
                         ),
-                        "destination=global dict, CHUNKSIZE={}".format(
-                            chunksize
-                        ),
+                        f"destination=global dict, CHUNKSIZE={chunksize}",
                     )
 
     @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
