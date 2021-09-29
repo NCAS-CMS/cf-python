@@ -72,15 +72,18 @@ def regrid_compute_mass_grid(
 
 
 def regrid_get_latlon(f, name, method, axes=None):
-    """Retrieve the latitude and longitude coordinates of this field and
-    associated information. If 1-d lat/long coordinates are found then
-    these are returned. Otherwise, 2-d lat/long coordinates are searched
-    for and if found returned.
+    """Get latitude and longitude coordinate information.
+
+    Retrieve the latitude and longitude coordinates of a field, as
+    well as some associated information. If 1-d lat/lon coordinates
+    are found then these are returned. Otherwise if 2-d lat/lon
+    coordinates found then these are returned.
 
     :Parameters:
 
         f: `Field`
-            The source or destination field.
+            The source or destination field from which to get the
+            information.
 
         name: `str`
             A name to identify the field in error messages. Either
@@ -102,14 +105,14 @@ def regrid_get_latlon(f, name, method, axes=None):
     :Returns:
 
         `list`, `list`, `list`, `list`, `bool`
-            * The keys of the x and y dimension coordinates.
+            * The keys of the X and Y dimension coordinates.
 
-            * The sizes of the x and y dimension coordinates.
+            * The sizes of the X and Y dimension coordinates.
 
-            * The keys of the x and y coordinate (1-d dimension
+            * The keys of the X and Y coordinate (1-d dimension
               coordinate, or 2-d auxilliary coordinates).
 
-            * The x and y coordinates (1-d dimension coordinates or
+            * The X and Y coordinates (1-d dimension coordinates or
               2-d auxilliary coordinates).
 
             * True if 2-d auxiliary coordinates are returned or if 1-d
@@ -127,7 +130,7 @@ def regrid_get_latlon(f, name, method, axes=None):
             item=True,
             default=ValueError(
                 f"No unique X dimension coordinate found for the {name} "
-                "field. If none is present you "
+                f"field {f!r}. If none is present you "
                 "may need to specify the axes keyword."
             ),
         )
@@ -136,7 +139,7 @@ def regrid_get_latlon(f, name, method, axes=None):
             item=True,
             default=ValueError(
                 f"No unique Y dimension coordinate found for the {name} "
-                "field. If none is present you "
+                f"field {f!r}. If none is present you "
                 "may need to specify the axes keyword."
             ),
         )
@@ -154,7 +157,7 @@ def regrid_get_latlon(f, name, method, axes=None):
             if key not in axes:
                 raise ValueError(
                     f"Key {key!r} must be specified for axes of {name} "
-                    "field."
+                    f"field {f!r}."
                 )
 
         if axes["X"] in (1, 0) and axes["Y"] in (0, 1):
@@ -189,7 +192,7 @@ def regrid_get_latlon(f, name, method, axes=None):
                 axes["X"],
                 key=True,
                 default=ValueError(
-                    f"'X' axis specified for {name} field not found."
+                    f"'X' axis specified for {name} {f!r} field not found."
                 ),
             )
 
@@ -197,7 +200,7 @@ def regrid_get_latlon(f, name, method, axes=None):
                 axes["Y"],
                 key=True,
                 default=ValueError(
-                    f"'Y' axis specified for {name} field not found."
+                    f"'Y' axis specified for {name} field {f!r} not found."
                 ),
             )
 
@@ -221,7 +224,7 @@ def regrid_get_latlon(f, name, method, axes=None):
                 if lon_found:
                     raise ValueError(
                         "The 2-d auxiliary longitude coordinate "
-                        f"of the {name} field is not unique."
+                        f"of the {name} field {f!r} is not unique."
                     )
                 else:
                     lon_found = True
@@ -232,7 +235,7 @@ def regrid_get_latlon(f, name, method, axes=None):
                 if lat_found:
                     raise ValueError(
                         "The 2-d auxiliary latitude coordinate "
-                        f"of the {name} field is not unique."
+                        f"of the {name} field {f!r} is not unique."
                     )
                 else:
                     lat_found = True
@@ -242,20 +245,20 @@ def regrid_get_latlon(f, name, method, axes=None):
         if not lon_found or not lat_found:
             raise ValueError(
                 "Both longitude and latitude coordinates "
-                f"were not found for the {name} field."
+                f"were not found for the {name} field {f!r}."
             )
 
         if axes is not None:
             if set(axis_keys) != set(data_axes[x_key]):
                 raise ValueError(
                     "Axes of longitude do not match "
-                    f"those specified for {name} field."
+                    f"those specified for {name} field {f!r}."
                 )
 
             if set(axis_keys) != set(data_axes[y_key]):
                 raise ValueError(
                     "Axes of latitude do not match "
-                    f"those specified for {name} field."
+                    f"those specified for {name} field {f!r}."
                 )
 
         coords_2D = True
@@ -264,14 +267,15 @@ def regrid_get_latlon(f, name, method, axes=None):
 
     # Check for size 1 latitude or longitude dimensions if source grid
     # (a size 1 dimension is only problematic for the source grid in ESMF)
-    if name == "source":
-        if method in ("linear", "bilinear", "patch"):
-            if x_size == 1 or y_size == 1:
-                raise ValueError(
-                    "Neither the longitude nor latitude dimension coordinates "
-                    f"of the {name} field can be of size 1 for {method} "
-                    f"regridding."
-                )
+    if (
+        name == "source"
+        and method in ("linear", "bilinear", "patch")
+        and (x_size == 1 or y_size == 1)
+    ):
+        raise ValueError(
+            f"Neither the longitude nor latitude dimensions of the {name}"
+            f"field {f!r} can be of size 1 for {method!r} regridding."
+        )
 
     coord_keys = [x_key, y_key]
     coords = [x, y]
