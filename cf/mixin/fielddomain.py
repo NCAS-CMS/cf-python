@@ -1214,6 +1214,9 @@ class FieldDomain:
             period = config.get("period")
             if period is None:
                 has_period = False
+            else:
+                has_period = True
+              
 
         if not has_period:
             if bounds_units.islongitude:
