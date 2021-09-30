@@ -59,32 +59,39 @@ partially conformant may nonetheless be modified in memory.
 
 The cf package can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read :term:`field constructs <field construct>` and :term:`domain
+  constructs <domain construct>` from netCDF, CDL, PP and UM datasets,
 
-* create new field constructs in memory,
+* create new field and domain constructs in memory,
 
-* inspect field constructs,
+* write field and domain constructs to netCDF datasets on disk,
 
-* test whether two field constructs are the same,
+* read, write, and create coordinates defined by geometry cells,
 
-* modify field construct metadata and data,
+* read and write netCDF4 string data-type variables,
 
-* create subspaces of field constructs,
+* read, write, and create netCDF and CDL datasets containing
+  hierarchical groups,
 
-* write and append field constructs to netCDF datasets on disk,
+* inspect field and domain constructs,
 
-* incorporate, and create, metadata stored in external files (*new in
-  version 3.0.0*),
+* test whether two constructs are the same,
+
+* modify field and domain construct metadata and data,
+
+* create subspaces of field and domain constructs,
+
+* incorporate, and create, metadata stored in external files, and
+
+* read, write, and create data that have been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form.
+
+* incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
-
-* read, write, and create coordinates defined by geometry cells (*new
-  in version 3.2.0*),
-
-* read netCDF and CDL datasets containing hierarchical groups (**new
-  in version 3.6.0**),
     
 * combine field constructs arithmetically,
 
@@ -94,7 +101,7 @@ The cf package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs (*new in version 3.0.3*),
+  constructs,
   
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
@@ -102,7 +109,7 @@ The cf package can:
 
 * apply convolution filters to field constructs,
 
-* create moving means from field constructs (*new in version 3.3.0*),
+* create moving means from field constructs,
 
 * calculate derivatives of field constructs,
 
