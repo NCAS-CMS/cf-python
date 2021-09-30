@@ -1207,13 +1207,15 @@ class FieldDomain:
             bounds_units = bounds.Units
 
         period = coord.period()
+
         if period is not None:
             has_period = True
         else:
             period = config.get("period")
-            has_period = False
+            if period is None:
+                has_period = False
 
-        if period is None:
+        if not has_period:
             if bounds_units.islongitude:
                 period = Data(360.0, units="degrees_east")
             elif bounds_units.equivalent(_units_degrees):
@@ -1231,9 +1233,6 @@ class FieldDomain:
             if not noop:
                 self.cyclic(key, iscyclic=False, config=config)
             return False
-
-        if has_period:
-            period = None
 
         config = config.copy()
         config["axis"] = self.get_data_axes(key, default=(None,))[0]
