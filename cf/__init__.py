@@ -10,17 +10,18 @@ nonetheless be modified in memory.
 
 The `cf` package can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs and domain constructs from netCDF, CDL, PP and
+  UM datasets,
 
-* create new field constructs in memory,
+* create new field and domain constructs in memory,
 
-* inspect field constructs,
+* inspect field and domain constructs,
 
-* test whether two field constructs are the same,
+* test whether two constructs are the same,
 
-* modify field construct metadata and data,
+* modify field and domain construct metadata and data,
 
-* create subspaces of field constructs,
+* create subspaces of field and domain constructs,
 
 * write and append field constructs to netCDF datasets on disk,
 
@@ -31,11 +32,9 @@ The `cf` package can:
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
-* read, write, and create coordinates defined by geometry cells (*new
-  in version 3.2.0*),
+* read, write, and create coordinates defined by geometry cells,
 
-* read netCDF and CDL datasets containing hierarchical groups (new in
-  version 3.6.0),
+* read netCDF and CDL datasets containing hierarchical groups,
 
 * combine field constructs arithmetically,
 
@@ -45,7 +44,7 @@ The `cf` package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs (*new in version 3.0.3*),
+  constructs,
 
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
@@ -59,7 +58,10 @@ The `cf` package can:
   vorticity).
 
 All of the above use LAMA functionality, which allows multiple fields
-larger than the available memory to exist and be manipulated.
+larger than the available memory to exist and be manipulated. (Note:
+work is underway to replace this functionality with a dask
+implementation.)
+
 
 **Visualization**
 
