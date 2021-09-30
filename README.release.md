@@ -8,6 +8,8 @@
 
 * Make sure that `README.md` is up to date.
 
+* Make sure that the `long_description` in `setup.py` is up to date.
+
 * Make sure that `Changelog.rst` is up to date.
 
 * Check that the documentation API coverage is complete:
