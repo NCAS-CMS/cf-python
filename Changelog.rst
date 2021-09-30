@@ -1,9 +1,13 @@
-version 3.??.?
+version 3.11.0
 --------------
-----
 
-**2021-??-??**
+**2021-10-??**
 
+* Python 3.6 support removed
+  (https://github.com/NCAS-CMS/cf-python/issues/208)
+* Conversion of `cf.Domain` to a non-abstract that may be read from
+  and written to a netCDF dataset
+  (https://github.com/NCAS-CMS/cf-python/issues/220)
 * New keyword parameter to `cf.read`: ``cdl_string``
   (https://github.com/NCAS-CMS/cf-python/issues/171)
 * Fix bug that causes a failure in `cf.aggregate` when otherwise
@@ -12,7 +16,10 @@ version 3.??.?
 * Fix for `cf.aggregate` failures when a datum or coordinate
   conversion parameter has an array value
   (https://github.com/NCAS-CMS/cf-python/issues/230)
+* Changed dependency: ``1.9.0.1<=cfdm<1.9.1.0``
 
+----
+  
 version 3.10.0
 --------------
 ----
