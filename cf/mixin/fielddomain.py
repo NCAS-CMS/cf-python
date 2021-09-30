@@ -1768,14 +1768,15 @@ class FieldDomain:
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_references`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_references`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
         :Parameters:
 
-            identities: optional
+            identity: optional
                 Select coordinate reference constructs that have an
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
