@@ -1216,7 +1216,6 @@ class FieldDomain:
                 has_period = False
             else:
                 has_period = True
-              
 
         if not has_period:
             if bounds_units.islongitude:
