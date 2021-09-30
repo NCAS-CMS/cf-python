@@ -1,3 +1,13 @@
+version 3.11.0
+--------------
+----
+
+**2021-10-??**
+
+* Fix but that sometimes caused `cf.Field.autocyclic` to fail when the
+  setting a construct that is cyclic and has a defined period
+  (https://github.com/NCAS-CMS/cf-python/issues/237)
+
 version 3.??.?
 --------------
 ----
