@@ -2802,31 +2802,29 @@ cell method constructs to be recorded.
              the use of construct keys instead of netCDF variable
              names for cell method axes identification.*
 	     
-   >>> print(t.cell_methods)
+   >>> print(t.cell_methods())
    Constructs:
    {'cellmethod0': <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
     'cellmethod1': <CF CellMethod: domainaxis3: maximum>}
 
 The application of cell methods is not commutative (e.g. a mean of
-variances is generally not the same as a variance of means), so a
-`cf.Constructs` instance has an `~Constructs.ordered` method to retrieve
-the cell method constructs in the same order that they were were added
-to the field construct during :ref:`field construct creation
-<Field-creation>`.
+variances is generally not the same as a variance of means), and the
+cell methods are assumed to have been applied in the order in which
+they were added to the field construct during :ref:`field construct
+creation <Field-creation>`.
 
 .. code-block:: python
    :caption: *Retrieve the cell method constructs in the same order
              that they were applied.*
 	     
-   >>> t.cell_methods().ordered()
-   OrderedDict([('cellmethod0', <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                ('cellmethod1', <CF CellMethod: domainaxis3: maximum>)])
+   >>> t.cell_methods()
+   {'cellmethod0', <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+    'cellmethod1', <CF CellMethod: domainaxis3: maximum>)}
 
 The axes to which the method applies, the method itself, and any
-qualifying properties are accessed with the
-`~cf.CellMethod.get_axes`, `~cf.CellMethod.get_method`, ,
-`~cf.CellMethod.get_qualifier` and `~cf.CellMethod.qualifiers`
-methods of the cell method construct.
+qualifying properties are accessed with the `~cf.CellMethod.get_axes`,
+`~cf.CellMethod.get_method`, , `~cf.CellMethod.get_qualifier` and
+`~cf.CellMethod.qualifiers` methods of the cell method construct.
 
 .. code-block:: python
    :caption: *Get the domain axes constructs to which the cell method
