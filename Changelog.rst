@@ -14,7 +14,7 @@ version 3.11.0
   (https://github.com/NCAS-CMS/cf-python/issues/230)
 * Allow for regridding using a destination field featuring size 1 dimension(s)
   (https://github.com/NCAS-CMS/cf-python/issues/250)
-* Fix but that sometimes caused `cf.Field.autocyclic` to fail when the
+* Fix bug that sometimes caused `cf.Field.autocyclic` to fail when
   setting a construct that is cyclic and has a defined period
   (https://github.com/NCAS-CMS/cf-python/issues/237)
 
