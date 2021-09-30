@@ -15514,7 +15514,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coord_keys,
             src_coords,
             src_coords_2D,
-        ) = regrid_get_latlon(f, "source", axes=src_axes)
+        ) = regrid_get_latlon(f, "source", method, axes=src_axes)
 
         # Retrieve the destination field's latitude and longitude
         # coordinates
@@ -15526,7 +15526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_coord_keys,
                 dst_coords,
                 dst_coords_2D,
-            ) = regrid_get_latlon(dst, "destination", axes=dst_axes)
+            ) = regrid_get_latlon(dst, "destination", method, axes=dst_axes)
         elif dst_dict:
             # dst is a dictionary
             try:
@@ -15601,13 +15601,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_cyclic = dst["longitude"].isperiodic
 
         # Get the axis indices and their order for the source field
-        src_axis_indices, src_order = regrid_get_axis_indices(f, src_axis_keys)
+        (
+            src_axis_indices,
+            src_non_regridding_axis_indices,
+            src_order,
+        ) = regrid_get_axis_indices(f, src_axis_keys)
 
         # Get the axis indices and their order for the destination
         # field.
         if dst_field:
             dst = dst.copy()
-            dst_axis_indices, dst_order = regrid_get_axis_indices(
+            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
                 dst, dst_axis_keys
             )
 
@@ -15715,7 +15719,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Retrieve the source field's grid, create the ESMF Grid
             # and a handle to regridding.dst_dict
-            src_data = d.squeeze().transpose(src_order).array
+            src_data = d
+            if src_non_regridding_axis_indices:
+                src_data = src_data.squeeze(src_non_regridding_axis_indices)
+
+            src_data = src_data.transpose(src_order).array
+
             if not (
                 method == "nearest_stod" and use_src_mask
             ) and np.ma.is_masked(src_data):
@@ -16300,11 +16309,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
         # Get the axis indices and their order for the source field
-        src_axis_indices, src_order = regrid_get_axis_indices(f, src_axis_keys)
+        (
+            src_axis_indices,
+            src_non_regridding_axis_indices,
+            src_order,
+        ) = regrid_get_axis_indices(f, src_axis_keys)
 
         # Get the axis indices and their order for the destination field.
         if not dst_dict:
-            dst_axis_indices, dst_order = regrid_get_axis_indices(
+            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
                 dst, dst_axis_keys
             )
 
@@ -16343,6 +16356,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
                 (
                     src_axis_indices_ext,
+                    src_non_regridding_axis_indices,
                     src_order_ext,
                 ) = regrid_get_axis_indices(f, axis_keys_ext + src_axis_keys)
 
@@ -16456,11 +16470,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             subsections = d.data.section(
                 src_axis_indices_ext, chunks=True, min_step=2
             )
+
             for k2 in subsections.keys():
                 d2 = subsections[k2]
                 # Retrieve the source field's grid, create the ESMF
                 # grid and a handle to regridding.
-                src_data = d2.squeeze().transpose(src_order_ext).array
+                src_data = d2
+                if src_non_regridding_axis_indices:
+                    src_data = src_data.squeeze(
+                        src_non_regridding_axis_indices
+                    )
+
+                src_data = src_data.transpose(src_order_ext).array
+
                 if nonconservative1D:
                     src_data = numpy_tile(src_data, (2, 1))
 
