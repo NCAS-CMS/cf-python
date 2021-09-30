@@ -2475,6 +2475,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 False.
 
         """
+        # TODODASK: Always return True for now, to aid development.
+        return True
+
         dx = self._get_dask()
 
         # TODODASK fits in memory.
