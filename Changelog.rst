@@ -4,16 +4,6 @@ version 3.11.0
 
 **2021-10-??**
 
-* Fix but that sometimes caused `cf.Field.autocyclic` to fail when the
-  setting a construct that is cyclic and has a defined period
-  (https://github.com/NCAS-CMS/cf-python/issues/237)
-
-version 3.??.?
---------------
-----
-
-**2021-??-??**
-
 * New keyword parameter to `cf.read`: ``cdl_string``
   (https://github.com/NCAS-CMS/cf-python/issues/171)
 * Fix bug that causes a failure in `cf.aggregate` when otherwise
@@ -24,6 +14,9 @@ version 3.??.?
   (https://github.com/NCAS-CMS/cf-python/issues/230)
 * Allow for regridding using a destination field featuring size 1 dimension(s)
   (https://github.com/NCAS-CMS/cf-python/issues/250)
+* Fix but that sometimes caused `cf.Field.autocyclic` to fail when the
+  setting a construct that is cyclic and has a defined period
+  (https://github.com/NCAS-CMS/cf-python/issues/237)
 
 version 3.10.0
 --------------
