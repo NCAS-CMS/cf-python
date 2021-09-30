@@ -32,7 +32,7 @@ More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.
 
-:term:`Domain constructs <domain construct>` may also be
+As of CF-1.9, :term:`Domain constructs <domain construct>` may also be
 aggregated. The cell methds construct and field ancillary constructs
 in the raules are ignore for domain construct aggregation.
 
