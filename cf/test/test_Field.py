@@ -489,9 +489,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in (
@@ -510,9 +509,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in ("integral",):
@@ -524,9 +522,7 @@ class FieldTest(unittest.TestCase):
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
                 self.assertTrue(
                     a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                    "{} weighted axes={}, {!r}, {!r}".format(
-                        method, axes, a, b
-                    ),
+                    f"{method} weighted axes={axes}, {a!r}, {b!r}",
                 )
 
         for axes in axes_combinations(f):
@@ -546,9 +542,8 @@ class FieldTest(unittest.TestCase):
                     )
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in ("mean_of_upper_decile",):
@@ -562,9 +557,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
     def test_Field_all(self):
@@ -665,7 +659,7 @@ class FieldTest(unittest.TestCase):
                 [ac.shape, ae.shape, af.shape],
                 [ac, ae, af],
             ):
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 f.indices(method, time=query1)
 
@@ -717,7 +711,7 @@ class FieldTest(unittest.TestCase):
                 [ac2, ae2, af2],
             ):
 
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 h = f.subspace("full", time=query1)
                 g = h.subspace(method, time=query2)
@@ -768,7 +762,7 @@ class FieldTest(unittest.TestCase):
                 [ac3, ae3, af3],
             ):
 
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 g = f.subspace(method, time=query3)
                 t = g.coordinate("time")
@@ -1031,9 +1025,8 @@ class FieldTest(unittest.TestCase):
                 x0 = g.coordinate("grid_longitude").datum(0)
                 self.assertTrue(
                     x1 > anchor >= x0,
-                    "DECREASING period={}, x0={}, anchor={}, x1={}".format(
-                        period, x1, anchor, x0
-                    ),
+                    f"DECREASING period={period}, x0={x0}, anchor={anchor}, "
+                    f"x1={x1}",
                 )
 
     def test_Field_cell_area(self):
@@ -2246,7 +2239,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_section(self):
         f = cf.read(self.filename2)[0][0:10]
         g = f.section(("X", "Y"))
-        self.assertEqual(len(g), 10, "len(g)={}".format(len(g)))
+        self.assertEqual(len(g), 10, f"len(g)={len(g)}")
 
     def test_Field_squeeze(self):
         f = self.f.copy()
