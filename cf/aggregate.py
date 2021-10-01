@@ -2705,9 +2705,7 @@ def _group_fields(meta, axis):
             # --------------------------------------------------------
             meta[
                 0
-            ].message = (
-                "No corresponding axes have different 1-d coordinate values."
-            )
+            ].message = "Some fields have identical sets of 1-d coordinates."
             return ()
 
         else:
@@ -2798,9 +2796,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                 # Found overlap
                 meta[0].message = (
                     f"{m.axis[axis]['ids'][dim_coord_index]!r} "
-                    "dimension coordinate values overlap "
-                    f"({m0.last_values[axis][dim_coord_index0]} >= "
-                    f"{m1.first_values[axis][dim_coord_index1]})"
+                    "dimension coordinate ranges overlap: "
+                    f"[{m0.first_values[axis][dim_coord_index0]}, "
+                    f"{m0.last_values[axis][dim_coord_index0]}], "
+                    f"[{m1.first_values[axis][dim_coord_index1]}, "
+                    f"{m1.last_values[axis][dim_coord_index1]}]"
                 )
 
                 return False

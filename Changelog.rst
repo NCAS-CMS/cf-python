@@ -6,6 +6,8 @@ version 3.11.0
 
 * New keyword parameter to `cf.read`: ``cdl_string``
   (https://github.com/NCAS-CMS/cf-python/issues/171)
+* Improved verbose information output from `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/228)
 * Fix bug that causes a failure in `cf.aggregate` when otherwise
   aggregatable fields have non-valid units
   (https://github.com/NCAS-CMS/cf-python/issues/229)
