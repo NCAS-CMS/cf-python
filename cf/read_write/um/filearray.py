@@ -1,15 +1,10 @@
 from numpy.ma import masked_where as numpy_ma_masked_where
 
 from ...constants import _file_to_fh
-from ...functions import (
-    parse_indices,
-    get_subspace,
-)
 from ...data.abstract.filearray import FileArray
-
-from .functions import _open_um_file, _close_um_file
-
+from ...functions import get_subspace, parse_indices
 from ...umread_lib.umfile import Rec
+from .functions import _close_um_file, _open_um_file
 
 _filename_to_file = _file_to_fh.setdefault("UM", {})
 

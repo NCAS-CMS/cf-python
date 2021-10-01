@@ -1,5 +1,4 @@
 from ...functions import inspect as cf_inspect
-
 from .array import Array
 
 

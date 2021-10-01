@@ -2,10 +2,8 @@ import logging
 
 from numpy.ma import masked_all as numpy_ma_masked_all
 
-from ..functions import parse_indices, get_subspace
-
+from ..functions import get_subspace, parse_indices
 from . import abstract
-
 
 logger = logging.getLogger(__name__)
 

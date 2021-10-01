@@ -1,26 +1,21 @@
 import logging
-
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
+from .data import Data
+from .decorators import (
+    _deprecated_kwarg_check,
+    _display_or_return,
+    _manage_log_level_via_verbosity,
+)
+from .functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_FUNCTION,
+    _DEPRECATION_ERROR_FUNCTION_KWARGS,
+)
 from .functions import equals as _equals
 from .functions import inspect as _inspect
 from .units import Units
-
-from .data import Data
-
-from .functions import (
-    _DEPRECATION_ERROR_FUNCTION_KWARGS,
-    _DEPRECATION_ERROR_ATTRIBUTE,
-    _DEPRECATION_ERROR_FUNCTION,
-)
-
-from .decorators import (
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-    _display_or_return,
-)
-
 
 logger = logging.getLogger(__name__)
 
@@ -224,10 +219,9 @@ class Query:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError(
-                    "'{}' and '{}' are not equivalent units therefore the "
-                    "query does not make physical sense.".format(
-                        value_units, Units(units)
-                    )
+                    f"'{value_units}' and '{Units(units)}' are not equivalent "
+                    f"units therefore the query does not make physical "
+                    "sense."
                 )
 
         self._operator = operator
@@ -326,7 +320,7 @@ class Query:
         x.__repr__() <==> repr(x)
 
         """
-        return "<CF {}: {}>".format(self.__class__.__name__, self)
+        return f"<CF {self.__class__.__name__}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -345,8 +339,9 @@ class Query:
             elif "or_" in bitwise_operator:
                 bitwise_operator = "|"
 
-            out = "{}[{} {} {}]".format(
-                attr, self._compound[0], bitwise_operator, self._compound[1]
+            out = (
+                f"{attr}[{self._compound[0]} {bitwise_operator} "
+                f"{self._compound[1]}]"
             )
 
         return out
@@ -498,54 +493,39 @@ class Query:
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
         """TODO."""
+        standard_difference_message = (
+            f"{self.__class__.__name__}: Different compound components"
+        )
         if self._compound:
             if not other._compound:
-                logger.info(
-                    "{}: Different compound components".format(
-                        self.__class__.__name__
-                    )
-                )  # pragma: no cover
+                logger.info(standard_difference_message)  # pragma: no cover
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
                 logger.info(
-                    "{}: Different compound operators: {!r}, {!r}".format(
-                        self.__class__.__name__,
-                        self._bitwise_operator,
-                        other._bitwise_operator,
-                    )
+                    f"{self.__class__.__name__}: Different compound "
+                    f"operators: {self._bitwise_operator!r}, "
+                    f"{other._bitwise_operator!r}"
                 )  # pragma: no cover
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
                     logger.info(
-                        "{}: Different compound components".format(
-                            self.__class__.__name__
-                        )
+                        standard_difference_message
                     )  # pragma: no cover
                     return False
                 if not self._compound[1].equals(other._compound[0]):
                     logger.info(
-                        "{}: Different compound components".format(
-                            self.__class__.__name__
-                        )
+                        standard_difference_message
                     )  # pragma: no cover
                     return False
             elif not self._compound[1].equals(other._compound[1]):
-                logger.info(
-                    "{}: Different compound components".format(
-                        self.__class__.__name__
-                    )
-                )  # pragma: no cover
+                logger.info(standard_difference_message)  # pragma: no cover
                 return False
 
         elif other._compound:
-            logger.info(
-                "{}: Different compound components".format(
-                    self.__class__.__name__
-                )
-            )  # pragma: no cover
+            logger.info(standard_difference_message)  # pragma: no cover
             return False
 
         for attr in (
@@ -560,12 +540,9 @@ class Query:
                 verbose=verbose,
             ):
                 logger.info(
-                    "{}: Different {!r} attributes: {!r}, {!r}".format(
-                        self.__class__.__name__,
-                        attr,
-                        getattr(self, attr, None),
-                        getattr(other, attr, None),
-                    )
+                    f"{self.__class__.__name__}: Different {attr!r} "
+                    f"attributes: {getattr(self, attr, None)!r}, "
+                    f"{getattr(other, attr, None)!r}"
                 )  # pragma: no cover
                 return False
 
@@ -643,16 +620,16 @@ class Query:
         operator = self._operator
         value = self._value
 
+        standard_regex_error_msg = (
+            f"Can't perform regular expression search on a non-string: {x!r}"
+        )
         if operator == "eq":
             try:
                 return bool(value.search(x))
             except AttributeError:
                 return x == value
             except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    "non-string: {!r}".format(x)
-                )
+                raise ValueError(standard_regex_error_msg)
 
         if operator == "ne":
             try:
@@ -660,10 +637,7 @@ class Query:
             except AttributeError:
                 return x != value
             except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    "non-string: {!r}".format(x)
-                )
+                raise ValueError(standard_regex_error_msg)
 
         if operator == "lt":
             _lt = getattr(x, "__query_lt__", None)

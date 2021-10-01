@@ -1,23 +1,21 @@
+import logging
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
-
-import logging
 
 try:
     from matplotlib.path import Path
 except ImportError:
     pass
 
+import cfdm
 import numpy as np
-
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-
 from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
-from numpy import diff as numpy_diff
 from numpy import delete as numpy_delete
+from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
@@ -32,95 +30,87 @@ from numpy import squeeze as numpy_squeeze
 from numpy import tile as numpy_tile
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-
 from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
-
 from numpy.ma import where as numpy_ma_where
 
-import cfdm
-
-from . import AuxiliaryCoordinate
-from . import Bounds
-from . import CellMethod
-from . import DimensionCoordinate
-from . import Domain
-from . import DomainAncillary
-from . import DomainAxis
-from . import Flags
-from . import Constructs
-from . import FieldList
-
-from . import Count
-from . import Index
-from . import List
-
+from . import (
+    AuxiliaryCoordinate,
+    Bounds,
+    CellMethod,
+    Constructs,
+    Count,
+    DimensionCoordinate,
+    Domain,
+    DomainAncillary,
+    DomainAxis,
+    FieldList,
+    Flags,
+    Index,
+    List,
+    mixin,
+)
 from .constants import masked as cf_masked
-
-from .functions import parse_indices, chunksize, _section
+from .data import (
+    Data,
+    GatheredArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+)
+from .decorators import (
+    _deprecated_kwarg_check,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+from .formula_terms import FormulaTerms
+from .functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_KWARG_VALUE,
+    _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
+    _section,
+    chunksize,
+    parse_indices,
+)
 from .functions import relaxed_identities as cf_relaxed_identities
-from .query import Query, ge, gt, le, lt, eq
-from .timeduration import TimeDuration
-from .units import Units
-from .subspacefield import SubspaceField
-
-from .data import Data
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
-
-from . import mixin
-
+from .query import Query, eq, ge, gt, le, lt
 from .regrid import (
+    RegridOperator,
     conservative_regridding_methods,
-    create_Grid,
     create_Field,
+    create_Grid,
     create_Regrid,
     get_cartesian_coords,
     grids_have_same_coords,
     grids_have_same_masks,
-    RegridOperator,
-    regrid_get_latlon,
-    regrid_get_axis_indices,
-    regrid_get_coord_order,
-    regrid_get_section_shape,
     regrid_check_bounds,
     regrid_check_method,
     regrid_check_use_src_mask,
-    regrid_get_reordered_sections,
-    regrid_get_destination_mask,
-    regrid_fill_fields,
     regrid_compute_field_mass,
-    regrid_get_regridded_data,
-    regrid_update_coordinate_references,
     regrid_copy_coordinate_references,
-    regrid_use_bounds,
-    regrid_update_coordinates,
-    regrid_initialize,
-    regrid_get_operator_method,
     regrid_create_operator,
+    regrid_fill_fields,
+    regrid_get_axis_indices,
+    regrid_get_coord_order,
+    regrid_get_destination_mask,
+    regrid_get_latlon,
+    regrid_get_operator_method,
+    regrid_get_regridded_data,
+    regrid_get_reordered_sections,
+    regrid_get_section_shape,
+    regrid_initialize,
+    regrid_update_coordinate_references,
+    regrid_update_coordinates,
+    regrid_use_bounds,
     run_Regrid,
 )
-
-from .functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_ARG,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
-    _DEPRECATION_ERROR_KWARG_VALUE,
-    DeprecationError,
-)
-
-from .formula_terms import FormulaTerms
-
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
-    _manage_log_level_via_verbosity,
-)
-
+from .subspacefield import SubspaceField
+from .timeduration import TimeDuration
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -487,10 +477,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         else:
             findices = indices
 
-        logger.debug("    shape    = {}".format(shape))  # pragma: no cover
-        logger.debug("    indices  = {}".format(indices))  # pragma: no cover
-        logger.debug("    indices2 = {}".format(indices2))  # pragma: no cover
-        logger.debug("    findices = {}".format(findices))  # pragma: no cover
+        logger.debug(f"    shape    = {shape}")  # pragma: no cover
+        logger.debug(f"    indices  = {indices}")  # pragma: no cover
+        logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
+        logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = new.data[tuple(findices)]
 
@@ -992,13 +982,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
-                "Can't combine {!r} with {!r} due to incompatible data "
-                "shapes: {}, {}".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                    self.shape,
-                    numpy_shape(other),
-                )
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} due to incompatible data "
+                f"shapes: {self.shape}, {numpy_shape(other)}"
             )
 
         # ============================================================
@@ -1025,9 +1011,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if s["warnings"] or v["warnings"]:
             raise ValueError(
-                "Can't combine fields: {}".format(
-                    s["warnings"] or v["warnings"]
-                )
+                f"Can't combine fields: {s['warnings'] or v['warnings']}"
             )
 
         # Check that at most one field has undefined axes
@@ -1050,14 +1034,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Find the axis names which are present in both fields
         matching_ids = set(s["id_to_axis"]).intersection(v["id_to_axis"])
         logger.debug(
-            "s['id_to_axis'] = {}".format(s["id_to_axis"])
+            f"s['id_to_axis'] = {s['id_to_axis']}"
         )  # pragma: no cover
         logger.debug(
-            "v['id_to_axis'] = {}".format(v["id_to_axis"])
+            f"v['id_to_axis'] = {v['id_to_axis']}"
         )  # pragma: no cover
-        logger.debug(
-            "matching_ids    = {}".format(matching_ids)
-        )  # pragma: no cover
+        logger.debug(f"matching_ids    = {matching_ids}")  # pragma: no cover
 
         # Check that any matching axes defined by an auxiliary
         # coordinate are done so in both fields.
@@ -1066,8 +1048,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ):
             if identity in matching_ids:
                 raise ValueError(
-                    "Can't combine fields: {!r} axis defined by auxiliary "
-                    "in only 1 field".format(identity)
+                    f"Can't combine fields: {identity!r} axis defined by "
+                    "auxiliary in only 1 field"
                 )  # TODO ~WRONG
 
         #  ------------------------------------------------------------
@@ -1231,7 +1213,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         # 1
                         raise ValueError(
                             "Can't combine fields: Incompatible coordinate "
-                            "references for {!r} coordinates".format(identity)
+                            f"references for {identity!r} coordinates"
                         )
 
                 elif identity not in s["id_to_aux"]:
@@ -1250,10 +1232,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # The defining coordinates have non-equivalent
                     # data arrays and are both of size > 1
                     raise ValueError(
-                        "Can't combine fields: Incompatible {!r} coordinate "
-                        "values: {}, {}".format(
-                            identity, coord0.data, coord1.data
-                        )
+                        f"Can't combine fields: Incompatible {identity!r} "
+                        f"coordinate values: {coord0.data}, {coord1.data}"
                     )
                 else:
                     # The defining coordinates have non-equivalent
@@ -1262,27 +1242,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     remove_size1_axes0.append(axis0)
 
         logger.debug(
-            "1: s['size1_broadcast_axes'] = {}".format(
-                s["size1_broadcast_axes"]
-            )
+            f"1: s['size1_broadcast_axes'] = {s['size1_broadcast_axes']}"
         )  # pragma: no cover
         logger.debug(
-            "1: v['size1_broadcast_axes'] = {}".format(
-                v["size1_broadcast_axes"]
-            )
+            f"1: v['size1_broadcast_axes'] = {v['size1_broadcast_axes']}"
         )  # pragma: no cover
         logger.debug(
-            "1: remove_size1_axes0 = {}".format(remove_size1_axes0)
+            f"1: remove_size1_axes0 = {remove_size1_axes0}"
         )  # pragma: no cover
 
         matching_axis1_to_axis0 = axis1_to_axis0.copy()
         matching_axis0_to_axis1 = axis0_to_axis1.copy()
 
         logger.debug(
-            "1: axis1_to_axis0 = {}".format(axis1_to_axis0)
+            f"1: axis1_to_axis0 = {axis1_to_axis0}"
         )  # pragma: no cover
         logger.debug(
-            "1: axis0_to_axis1 = {}".format(axis0_to_axis1)
+            f"1: axis0_to_axis1 = {axis0_to_axis1}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1331,9 +1307,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 axes_unM.append(axis0)
 
         logger.debug(
-            "2: axes_unD, axes_unM, axes0_M = {} {} {}".format(
-                axes_unD, axes_unM, axes0_M
-            )
+            "2: axes_unD, axes_unM, axes0_M = "
+            f"{axes_unD} {axes_unM} {axes0_M}"
         )  # pragma: no cover
 
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
@@ -1342,13 +1317,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         start_of_unmatched0 = end_of_undefined0
         start_of_matched0 = start_of_unmatched0 + len(axes_unM)
         logger.debug(
-            "2: end_of_undefined0   = {}".format(end_of_undefined0)
+            f"2: end_of_undefined0   = {end_of_undefined0}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_unmatched0 = {}".format(start_of_unmatched0)
+            f"2: start_of_unmatched0 = {start_of_unmatched0}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_matched0   = {}".format(start_of_matched0)
+            f"2: start_of_matched0   = {start_of_matched0}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1380,9 +1355,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 axes_unM.append(axis1)
 
         logger.debug(
-            "2: axes_unD , axes_unM , axes0_M = {} {} {}".format(
-                axes_unD, axes_unM, axes0_M
-            )
+            "2: axes_unD , axes_unM , axes0_M = "
+            f"{axes_unD} {axes_unM} {axes0_M}"
         )  # pragma: no cover
 
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
@@ -1392,16 +1366,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         undefined_indices1 = slice(None, start_of_unmatched1)
         unmatched_indices1 = slice(start_of_unmatched1, start_of_matched1)
         logger.debug(
-            "2: start_of_unmatched1 = {}".format(start_of_unmatched1)
+            f"2: start_of_unmatched1 = {start_of_unmatched1}"
         )  # pragma: no cover
         logger.debug(
-            "2: start_of_matched1   = {}".format(start_of_matched1)
+            f"2: start_of_matched1   = {start_of_matched1}"
         )  # pragma: no cover
         logger.debug(
-            "2: undefined_indices1  = {}".format(undefined_indices1)
+            f"2: undefined_indices1  = {undefined_indices1}"
         )  # pragma: no cover
         logger.debug(
-            "2: unmatched_indices1  = {}".format(unmatched_indices1)
+            f"2: unmatched_indices1  = {unmatched_indices1}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1439,9 +1413,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_axis, end_of_undefined0, inplace=True
                 )
                 logger.debug(
-                    "2: axis1, field0.shape = {} {}".format(
-                        axis1, field0.data.shape
-                    )
+                    f"2: axis1, field0.shape = {axis1} {field0.data.shape}"
                 )  # pragma: no cover
 
                 axis0 = (
@@ -1467,7 +1439,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         unmatched_axes0 = data_axes0[start_of_unmatched0:start_of_matched0]
         logger.debug(
-            "2: unmatched_axes0 = {}".format(unmatched_axes0)
+            f"2: unmatched_axes0 = {unmatched_axes0}"
         )  # pragma: no cover
 
         if unmatched_axes0:
@@ -1477,9 +1449,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_axis, start_of_matched1, inplace=True
                 )
                 logger.debug(
-                    "2: axis0, field1.shape = {} {}".format(
-                        axis0, field1.shape
-                    )
+                    f"2: axis0, field1.shape = {axis0} {field1.shape}"
                 )  # pragma: no cover
 
                 axis1 = (
@@ -1520,13 +1490,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 data_axes0 = field0.get_data_axes()
 
         logger.debug(
-            "2: axis0_to_axis1 = {}".format(axis0_to_axis1)
+            f"2: axis0_to_axis1 = {axis0_to_axis1}"
         )  # pragma: no cover
         logger.debug(
-            "2: axis1_to_axis0 = {}".format(axis1_to_axis0)
+            f"2: axis1_to_axis0 = {axis1_to_axis0}"
         )  # pragma: no cover
         logger.debug(
-            "2: s['new_size1_axes']  = {}".format(s["new_size1_axes"])
+            f"2: s['new_size1_axes']  = {s['new_size1_axes']}"
         )  # pragma: no cover
 
         # ============================================================
@@ -1539,10 +1509,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         #                        field1, method).data
 
         logger.debug(
-            "3: new_data0.shape = {}".format(new_data0.shape)
+            f"3: new_data0.shape = {new_data0.shape}"
         )  # pragma: no cover
         logger.debug(
-            "3: field0.shape = {}".format(field0.data.shape)
+            f"3: field0.shape = {field0.data.shape}"
         )  # pragma: no cover
 
         # ============================================================
@@ -1561,14 +1531,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # 4a. Remove selected size 1 axes
         # ------------------------------------------------------------
         logger.debug(
-            "4: field0.constructs.keys() = {}".format(
-                sorted(field0.constructs.keys())
-            )
+            f"4: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
         )  # pragma: no cover
         logger.debug(
-            "4: field1.constructs.keys() = {}".format(
-                sorted(field1.constructs.keys())
-            )
+            f"4: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
         )  # pragma: no cover
 
         # AND HEREIN LIES THE PROBLEM            TODO
@@ -1674,9 +1640,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
         auxs1 = field1_auxiliary_coordinates.copy()
         #        auxs1 = dict(field1_auxiliary_coordinates.items())
-        logger.debug(
-            "5: remove_items = {}".format(remove_items)
-        )  # pragma: no cover
+        logger.debug(f"5: remove_items = {remove_items}")  # pragma: no cover
 
         for key0, aux0 in field0.auxiliary_coordinates(todict=True).items():
             if key0 in remove_items:
@@ -1758,26 +1722,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         key1_to_key0 = {}
 
         logger.debug(
-            "5: insert_dim               = {}".format(insert_dim)
+            f"5: insert_dim               = {insert_dim}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_aux               = {}".format(insert_aux)
+            f"5: insert_aux               = {insert_aux}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_domain_anc        = {}".format(insert_domain_anc)
+            f"5: insert_domain_anc        = {insert_domain_anc}"
         )  # pragma: no cover
         logger.debug(
-            "5: insert_ref               = {}".format(insert_ref)
+            f"5: insert_ref               = {insert_ref}"
         )  # pragma: no cover
         logger.debug(
-            "5: field0.constructs.keys() = {}".format(
-                sorted(field0.constructs.keys())
-            )
+            f"5: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
         )  # pragma: no cover
         logger.debug(
-            "5: field1.constructs.keys() = {}".format(
-                sorted(field1.constructs.keys())
-            )
+            f"5: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
         )  # pragma: no cover
 
         for key1, axes0 in insert_dim.items():
@@ -1794,7 +1754,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             logger.debug(
                 "axes0, key1, field1.constructs[key1] = "
-                "{}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         for key1, axes0 in insert_aux.items():
@@ -1811,7 +1771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             logger.debug(
                 "axes0, key1, field1.constructs[key1] = "
-                "{}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         #        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
@@ -1825,14 +1785,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # There was some sort of problem with the insertion, so
                 # just ignore this item.
                 logger.debug(
-                    "Domain ancillary insertion problem: {}".format(error)
+                    f"Domain ancillary insertion problem: {error}"
                 )  # pragma: no cover
             else:
                 key1_to_key0[key1] = key0
 
             logger.debug(
                 "domain ancillary axes0, key1, field1.constructs[key1] ="
-                " {}, {}, {!r}".format(axes0, key1, field1.constructs[key1])
+                f" {axes0}, {key1}, {field1.constructs[key1]!r}"
             )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -1841,7 +1801,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if remove_items:
             logger.debug(sorted(field0.constructs.keys()))  # pragma: no cover
             logger.debug(
-                "Removing {!r} from field0".format(sorted(remove_items))
+                f"Removing {sorted(remove_items)!r} from field0"
             )  # pragma: no cover
 
             for key in remove_items:
@@ -1854,7 +1814,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for key1 in insert_ref:
             ref1 = field1_coordinate_references[key1]
             logger.debug(
-                "Copying {!r} from field1 to field0".format(ref1)
+                f"Copying {ref1!r} from field1 to field0"
             )  # pragma: no cover
 
             identity_map = dict(
@@ -1964,13 +1924,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
-                "Can't combine {!r} with {!r} due to incompatible data "
-                "shapes: {}, {})".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                    self.shape,
-                    numpy_shape(other),
-                )
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} due to incompatible data "
+                f"shapes: {self.shape}, {numpy_shape(other)})"
             )
 
         # ============================================================
@@ -2139,7 +2095,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
-            logger.info("{} {}".format(identity, y))
+            logger.info(f"{identity} {y}")
             if isinstance(identity, int) or identity not in out0:
                 field1.swapaxes(
                     field1.get_data_axes().index(y.axis), -1, inplace=True
@@ -2147,15 +2103,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             else:
                 # This identity is also in out0
                 a = out0[identity]
-                logger.info("{} {} {}".format(identity, y.axis, a.axis))
+                logger.info(f"{identity} {y.axis} {a.axis}")
                 logger.info(
-                    "{} {} {} {} {}".format(
-                        a,
-                        field0.get_data_axes(),
-                        field1.get_data_axes(),
-                        field1.get_data_axes().index(y.axis),
-                        field0.get_data_axes().index(a.axis),
-                    )
+                    f"{a} {field0.get_data_axes()} {field1.get_data_axes()} "
+                    f"{field1.get_data_axes().index(y.axis)} "
+                    f"{field0.get_data_axes().index(a.axis)}"
                 )
 
                 field1.swapaxes(
@@ -2171,7 +2123,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         }
 
-        logger.info("\naxis_map= {}\n".format(axis_map))
+        logger.info(f"\naxis_map= {axis_map}\n")
 
         # ------------------------------------------------------------
         # Check that the two fields have compatible metadata
@@ -2191,8 +2143,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if y.size != a.size:
                 raise ValueError(
-                    "Can't broadcast size {} {!r} axis to size {} {!r} "
-                    "axis".format(y.size, identity, a.size, identity)
+                    f"Can't broadcast size {y.size} {identity!r} axis to size "
+                    f"{a.size} {identity!r} axis"
                 )
 
             # Ensure matching axis directions
@@ -2202,8 +2154,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Check for matching coordinate values
             if not y.coord._equivalent_data(a.coord):
                 raise ValueError(
-                    "Can't combine size {} {!r} axes with non-matching "
-                    "coordinate values".format(y.size, identity)
+                    f"Can't combine size {y.size} {identity!r} axes with "
+                    f"non-matching coordinate values"
                 )
 
             # Check coord refs
@@ -2262,9 +2214,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
-        logger.info("\naxes_added_from_field1= {}\n", axes_added_from_field1)
+        logger.info(f"\naxes_added_from_field1= {axes_added_from_field1}\n")
         logger.info(
-            "axes_to_replace_from_field1= {}", axes_to_replace_from_field1
+            f"axes_to_replace_from_field1= {axes_to_replace_from_field1}"
         )
 
         already_copied = {}
@@ -2291,7 +2243,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_axes = set(axes_added_from_field1).union(
             axes_to_replace_from_field1
         )
-        logger.info("\nnew_axes =", new_axes)
+        logger.info(f"\nnew_axes ={new_axes}")
 
         if new_axes:
             constructs = field1.constructs.filter(
@@ -2330,7 +2282,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             elif axes.intersection(axes_to_replace_from_field1):
                 refs_to_add_from_field1.append(ref)
 
-        logger.info("\nrefs_to_add_from_field1=", refs_to_add_from_field1)
+        logger.info("\nrefs_to_add_from_field1={refs_to_add_from_field1}")
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
@@ -2463,7 +2415,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if s["warnings"] or v["warnings"]:
             raise ValueError(
-                "Can't setitem: {0}".format(s["warnings"] or v["warnings"])
+                f"Can't setitem: {s['warnings'] or v['warnings']}"
             )
 
         # Find the set of matching axes
@@ -2480,8 +2432,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 identity in v["id_to_aux"]
             ) == 1:
                 raise ValueError(
-                    "Can't assign: {0!r} axis defined by auxiliary in only "
-                    "1 field".format(identity)
+                    f"Can't assign: {identity!r} axis defined by auxiliary in "
+                    "only 1 field"
                 )
 
         copied = False
@@ -2619,9 +2571,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     continue
 
                 raise ValueError(
-                    "Can't broadcast {!r} axes with sizes {} and {}".format(
-                        identity, size0, size1
-                    )
+                    f"Can't broadcast {identity!r} axes with sizes {size0} "
+                    f"and {size1}"
                 )
 
             # Check that equally sized defining coordinate data arrays
@@ -2742,7 +2693,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if item0.has_data() != item1.has_data():
             logger.info(
-                "{0}: Only one item has data".format(self.__class__.__name__)
+                f"{self.__class__.__name__}: Only one item has data"
             )  # pragma: no cover
             return False
 
@@ -2752,18 +2703,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if item0.size != item1.size:
             logger.info(
-                "{}: Different metadata construct data array size: "
-                "{} != {}".format(
-                    self.__class__.__name__, item0.size, item1.size
-                )
+                f"{self.__class__.__name__}: Different metadata construct "
+                f"data array size: {item0.size} != {item1.size}"
             )  # pragma: no cover
             return False
 
         if item0.ndim != item1.ndim:
             logger.info(
-                "{0}: Different data array ranks ({1}, {2})".format(
-                    self.__class__.__name__, item0.ndim, item1.ndim
-                )
+                f"{self.__class__.__name__}: Different data array ranks "
+                f"({item0.ndim}, {item1.ndim})"
             )  # pragma: no cover
             return False
 
@@ -2783,9 +2731,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # TODO: improve message here (make user friendly):
                     logger.info(
                         "t['id_to_axis'] does not have a key "
-                        "s['axis_to_id'][axis0] for {}".format(
-                            self.__class__.__name__
-                        )
+                        f"s['axis_to_id'][axis0] for {self.__class__.__name__}"
                     )  # pragma: no cover
                     return False
 
@@ -2796,9 +2742,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if axis1 is None:
                     # TODO: improve message here (make user friendly):
                     logger.info(
-                        "axis_map[axis0] is None for {}".format(
-                            self.__class__.__name__
-                        )
+                        f"axis_map[axis0] is None for {self.__class__.__name__}"
                     )  # pragma: no cover
                     return False
 
@@ -3036,10 +2980,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if not (components or methods):
             if not self._is_broadcastable(w.shape):
                 raise ValueError(
-                    "The 'Data' weights (shape {}) are not broadcastable "
-                    "to the field construct's data (shape {}).".format(
-                        w.shape, self.shape
-                    )
+                    f"The 'Data' weights (shape {w.shape}) are not "
+                    "broadcastable to the field construct's data "
+                    f"(shape {self.shape})."
                 )
 
             axes0 = field_data_axes[self.ndim - w.ndim :]
@@ -3049,9 +2992,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for axis0 in axes0:
             if axis0 in weights_axes:
                 raise ValueError(
-                    "Multiple weights specified for {!r} axis".format(
-                        self.constructs.domain_axis_identity(axis0)
-                    )
+                    "Multiple weights specified for "
+                    f"{self.constructs.domain_axis_identity(axis0)!r} axis"
                 )
 
         if methods:
@@ -3202,7 +3144,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f = type(self)()
         f.set_data(data, copy=False)
         f.long_name = "weight"
-        f.comment = "Weights for {!r}".format(self)
+        f.comment = f"Weights for {self!r}"
 
         return f
 
@@ -3252,9 +3194,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 raise ValueError("No polygon geometries")
 
             raise ValueError(
-                "No polygon geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domain_axis)
-                )
+                "No polygon geometries for "
+                f"{self.constructs.domain_axis_identity(domain_axis)!r} axis"
             )
 
         if axis in weights_axes:
@@ -3262,9 +3203,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         # Check for interior rings
@@ -3292,9 +3232,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if interior_ring.shape != aux_X.bounds.shape[:-1]:
                 raise ValueError(
                     "Can't find weights: Interior ring variables have "
-                    "incorrect shape. Got {}, expected {}".format(
-                        interior_ring.shape, aux_X.bounds.shape[:-1]
-                    )
+                    f"incorrect shape. Got {interior_ring.shape}, expected "
+                    f"{aux_X.bounds.shape[:-1]}"
                 )
 
         x = aux_X.bounds.data
@@ -3495,9 +3434,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 raise ValueError("No line geometries")
 
             raise ValueError(
-                "No line geometries for {!r} axis".format(
-                    self.constructs.domain_axis_identity(domain_axis)
-                )
+                "No line geometries for "
+                f"{self.constructs.domain_axis_identity(domain_axis)!r} axis"
             )
 
         if axis in weights_axes:
@@ -3505,9 +3443,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         x = aux_X.bounds.data
@@ -3566,9 +3503,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if interior_angle.min() < 0:
                 raise ValueError(
                     "A spherical line geometry segment has "
-                    "negative length: {!r}".format(
-                        interior_angle.min() * radius
-                    )
+                    f"negative length: {interior_angle.min() * radius!r}"
                 )
 
             all_lengths = interior_angle.sum(-1, squeeze=True)
@@ -3626,9 +3561,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return False
 
             raise ValueError(
-                "Multiple weights specifications for {!r} axis".format(
-                    self.constructs.domain_axis_identity(axis)
-                )
+                "Multiple weights specifications for "
+                f"{self.constructs.domain_axis_identity(axis)!r} axis"
             )
 
         x = aux_X.bounds.data
@@ -3928,8 +3862,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     return False
 
                 raise ValueError(
-                    "Multiple weights specifications for {!r} "
-                    "axis".format(self.constructs.domain_axis_identity(axis))
+                    "Multiple weights specifications for "
+                    f"{self.constructs.domain_axis_identity(axis)!r} axis"
                 )
 
         clm = clm.get_data(_fill_value=False).copy()
@@ -4145,9 +4079,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._custom["Flags"]
         except KeyError:
             raise AttributeError(
-                "{!r} object has no attribute 'Flags'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__!r} object has no attribute 'Flags'"
             )
 
     @Flags.setter
@@ -4160,9 +4092,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._custom.pop("Flags")
         except KeyError:
             raise AttributeError(
-                "{!r} object has no attribute 'Flags'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__!r} object has no attribute 'Flags'"
             )
 
     @property
@@ -4465,7 +4395,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.del_property('featureType')
 
         """
-        return self.get_property("featureType")
+        return self.get_property("featureType", default=AttributeError())
 
     @featureType.setter
     def featureType(self, value):
@@ -5558,12 +5488,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             missing_axes = set(size_N_axes).difference(weights_axes)
             if missing_axes:
+                missing_axes_id = self.constructs.domain_axis_identity(
+                    missing_axes.pop()
+                )
                 raise ValueError(
-                    "Can't find weights for {!r} axis.".format(
-                        self.constructs.domain_axis_identity(
-                            missing_axes.pop()
-                        )
-                    )
+                    f"Can't find weights for {missing_axes_id!r} axis."
                 )
 
         elif isinstance(weights, dict):
@@ -5574,17 +5503,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 key = [self.domain_axis(i, key=True) for i in key]
                 for k in key:
                     if k not in field_data_axes:
-                        raise ValueError("TODO {!r} domain axis".format(k))
+                        raise ValueError(f"TODO {k!r} domain axis")
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
+                    multiple_weights_id = self.constructs.domain_axis_identity(
+                        multiple_weights.pop()
+                    )
                     raise ValueError(
-                        "Can't find weights: Multiple specifications for {!r} "
-                        "domain axis".format(
-                            self.constructs.domain_axis_identity(
-                                multiple_weights.pop()
-                            )
-                        )
+                        f"Can't find weights: Multiple specifications for "
+                        f"{multiple_weights_id!r} domain axis"
                     )
 
                 weights_axes.update(key)
@@ -5635,9 +5563,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     weights = iter(weights)
                 except TypeError:
                     raise TypeError(
-                        "Invalid type of 'weights' parameter: {}".format(
-                            weights
-                        )
+                        f"Invalid type of 'weights' parameter: {weights}"
                     )
 
                 for w in tuple(weights):
@@ -5694,8 +5620,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 da_key = self.domain_axis(axis, key=True, default=None)
                 if da_key is None:
                     raise ValueError(
-                        "Can't create weights: "
-                        "Can't find axis matching {!r}".format(axis)
+                        "Can't create weights: can't find axis matching "
+                        f"{axis!r}"
                     )
 
                 if self._weights_geometry_area(
@@ -6743,8 +6669,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if not self._is_broadcastable(f.shape):
                 raise ValueError(
-                    "Conformed digitized field {!r} construct must have "
-                    "shape broadcastable to {}.".format(f, self.shape)
+                    f"Conformed digitized field {f!r} construct must have "
+                    f"shape broadcastable to {self.shape}."
                 )
 
             bin_bounds = f.get_property("bin_bounds", None)
@@ -6757,23 +6683,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if bin_count is None:
                 raise ValueError(
-                    "Digitized field construct {!r} must have a 'bin_count' "
-                    "property.".format(f)
+                    f"Digitized field construct {f!r} must have a 'bin_count' "
+                    "property."
                 )
 
             if bin_bounds is None:
                 raise ValueError(
-                    "Digitized field construct {!r} must have a "
-                    "'bin_bounds' property.".format(f)
+                    f"Digitized field construct {f!r} must have a "
+                    "'bin_bounds' property."
                 )
 
             if bin_count != len(bin_bounds) / 2:
                 raise ValueError(
-                    "Digitized field construct {!r} bin_count must equal "
-                    "len(bin_bounds)/2. Got bin_count={}, "
-                    "len(bin_bounds)/2={}".format(
-                        f, bin_count, len(bin_bounds) / 2
-                    )
+                    f"Digitized field construct {f!r} bin_count must equal "
+                    f"len(bin_bounds)/2. Got bin_count={bin_count}, "
+                    f"len(bin_bounds)/2={len(bin_bounds) / 2}"
                 )
 
             # Create dimension coordinate for bins
@@ -8554,7 +8478,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         logger.info(
             "    all_methods, all_axes, all_within, all_over = "
-            "{} {} {} {}".format(all_methods, all_axes, all_within, all_over)
+            f"{all_methods} {all_axes} {all_within} {all_over}"
         )  # pragma: no cover
 
         if group is not None and len(all_axes) > 1:
@@ -8575,9 +8499,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             method2 = _collapse_methods.get(method, None)
             if method2 is None:
-                raise ValueError(
-                    "Unknown collapse method: {!r}".format(method)
-                )
+                raise ValueError(f"Unknown collapse method: {method!r}")
 
             method = method2
 
@@ -8587,15 +8509,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             logger.info(
-                "    axes                    = {}".format(axes)
+                f"    axes                    = {axes}"
             )  # pragma: no cover
             logger.info(
-                "    method                  = {}".format(method)
+                f"    method                  = {method}"
             )  # pragma: no cover
             logger.info(
-                "    collapse_axes_all_sizes = {}".format(
-                    collapse_axes_all_sizes
-                )
+                f"    collapse_axes_all_sizes = {collapse_axes_all_sizes}"
             )  # pragma: no cover
 
             if not collapse_axes_all_sizes:
@@ -8622,7 +8542,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             logger.info(
-                "    collapse_axes           = {}".format(collapse_axes)
+                f"    collapse_axes           = {collapse_axes}"
             )  # pragma: no cover
 
             if not collapse_axes:
@@ -8649,7 +8569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             size = reduce(operator_mul, collapse_axes_sizes, 1)
 
             logger.info(
-                "    collapse_axes_sizes     = {}".format(collapse_axes_sizes)
+                f"    collapse_axes_sizes     = {collapse_axes_sizes}"
             )  # pragma: no cover
 
             grouped_collapse = (
@@ -8793,7 +8713,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Calculate weights
             # ------------------------------------------------------------
             logger.info(
-                "    Input weights           = {!r}".format(weights)
+                f"    Input weights           = {weights!r}"
             )  # pragma: no cover
 
             if method not in _collapse_weighted_methods:
@@ -9373,18 +9293,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 iterator = iter(selection)
             except TypeError:
                 raise ValueError(
-                    "Can't collapse: Bad parameter value: {}={!r}".format(
-                        parameter, selection
-                    )
+                    "Can't collapse: Bad parameter value: "
+                    f"{parameter}={selection!r}"
                 )
 
             for condition in iterator:
                 if not isinstance(condition, Query):
                     raise ValueError(
-                        "Can't collapse: {} sequence contains a non-{} "
-                        "object: {!r}".format(
-                            parameter, Query.__name__, condition
-                        )
+                        f"Can't collapse: {parameter} sequence contains a "
+                        f"non-{Query.__name__} object: {condition!r}"
                     )
 
                 if extra_condition is not None:
@@ -9503,8 +9420,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 upper_limit = upper
             else:
                 raise ValueError(
-                    "Can't collapse: {!r} coordinate bounds are required "
-                    "with group_by={!r}".format(coord.identity(), group_by)
+                    f"Can't collapse: {coord.identity()!r} coordinate bounds "
+                    f"are required with group_by={group_by!r}"
                 )
 
             if time_interval:
@@ -9516,10 +9433,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     upper_limit = upper_limit.datetime_array[0]
                 elif not units.istime:
                     raise ValueError(
-                        "Can't group by {} when coordinates have units "
-                        "{!r}".format(
-                            TimeDuration.__class__.__name__, coord.Units
-                        )
+                        f"Can't group by {TimeDuration.__class__.__name__} "
+                        f"when coordinates have units {coord.Units!r}"
                     )
 
             return (lower, upper, lower_limit, upper_limit)
@@ -9570,45 +9485,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # START OF MAIN CODE
 
-        logger.info("    Grouped collapse:")  # pragma: no cover
         logger.info(
-            "        method            = {!r}".format(method)
-        )  # pragma: no cover
-        logger.info(
-            "        axis_in           = {!r}".format(axis_in)
-        )  # pragma: no cover
-        logger.info(
-            "        axis              = {!r}".format(axis)
-        )  # pragma: no cover
-        logger.info(
-            "        over              = {!r}".format(over)
-        )  # pragma: no cover
-        logger.info(
-            "        over_days         = {!r}".format(over_days)
-        )  # pragma: no cover
-        logger.info(
-            "        over_years        = {!r}".format(over_years)
-        )  # pragma: no cover
-        logger.info(
-            "        within            = {!r}".format(within)
-        )  # pragma: no cover
-        logger.info(
-            "        within_days       = {!r}".format(within_days)
-        )  # pragma: no cover
-        logger.info(
-            "        within_years      = {!r}".format(within_years)
-        )  # pragma: no cover
-        logger.info(
-            "        regroup           = {!r}".format(regroup)
-        )  # pragma: no cover
-        logger.info(
-            "        group             = {!r}".format(group)
-        )  # pragma: no cover
-        logger.info(
-            "        group_span        = {!r}".format(group_span)
-        )  # pragma: no cover
-        logger.info(
-            "        group_contiguous  = {!r}".format(group_contiguous)
+            "    Grouped collapse:"
+            f"        method            = {method!r}"
+            f"        axis_in           = {axis_in!r}"
+            f"        axis              = {axis!r}"
+            f"        over              = {over!r}"
+            f"        over_days         = {over_days!r}"
+            f"        over_years        = {over_years!r}"
+            f"        within            = {within!r}"
+            f"        within_days       = {within_days!r}"
+            f"        within_years      = {within_years!r}"
+            f"        regroup           = {regroup!r}"
+            f"        group             = {group!r}"
+            f"        group_span        = {group_span!r}"
+            f"        group_contiguous  = {group_contiguous!r}"
         )  # pragma: no cover
 
         # Size of uncollapsed axis
@@ -9637,14 +9528,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 if classification.dtype.kind != "i":
                     raise ValueError(
-                        "Can't group by numpy array of type {}".format(
-                            classification.dtype.name
-                        )
+                        "Can't group by numpy array of type "
+                        f"{classification.dtype.name}"
                     )
                 elif classification.shape != (axis_size,):
                     raise ValueError(
                         "Can't group by numpy array with incorrect "
-                        "shape: {}".format(classification.shape)
+                        f"shape: {classification.shape}"
                     )
 
                 # Set group to None
@@ -9715,24 +9605,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
-                    raise ValueError("TODO asdas 4444444  dhfdui ")
+                    raise ValueError("TODO")
 
                 if coord.Units.isreftime:
                     raise ValueError(
-                        "Can't group a reference-time axis with {!r}. Use "
-                        "a TimeDuration instance instead.".format(group)
+                        f"Can't group a reference-time axis with {group!r}. "
+                        "Use a TimeDuration instance instead."
                     )
 
                 if group.size != 1:
                     raise ValueError(
-                        "Group must have only one element: "
-                        "{!r}".format(group)
+                        f"Group must have only one element: {group!r}"
                     )
 
                 if group.Units and not group.Units.equivalent(coord.Units):
                     raise ValueError(
-                        "Can't group by {!r} when coordinates have "
-                        "non-equivalent units {!r}".format(group, coord.Units)
+                        f"Can't group by {group!r} when coordinates have "
+                        f"non-equivalent units {coord.Units!r}"
                     )
 
                 classification = numpy_empty((axis_size,), int)
@@ -9874,7 +9763,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         break
 
                     logger.info(
-                        "          HMS  = {!r}".format(HMS)
+                        f"          HMS  = {HMS!r}"
                     )  # pragma: no cover
 
                     if over_days is None:
@@ -9958,7 +9847,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         if not over_years.isint or over_years < 1:
                             raise ValueError(
                                 "over_years is not a whole number of "
-                                "calendar years: {!r}".format(over_years)
+                                f"calendar years: {over_years!r}"
                             )
                     else:
                         raise ValueError(
@@ -10220,7 +10109,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     elif group_span is True:
                         raise ValueError(
                             "Can't collapse: Can't set group_span=True when "
-                            "within_years={!r}".format(within_years)
+                            f"within_years={within_years!r}"
                         )
 
             elif over is not None:
@@ -10431,18 +10320,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         original_cell_methods = self.cell_methods(todict=True)  # .ordered()
-        logger.info("  Update cell methods:")  # pragma: no cover
         logger.info(
-            "    Original cell methods = {}".format(original_cell_methods)
-        )  # pragma: no cover
-        logger.info(
-            "    method        = {!r}".format(method)
-        )  # pragma: no cover
-        logger.info(
-            "    within        = {!r}".format(within)
-        )  # pragma: no cover
-        logger.info(
-            "    over          = {!r}".format(over)
+            "  Update cell methods:"
+            f"    Original cell methods = {original_cell_methods}"
+            f"    method        = {method!r}"
+            f"    within        = {within!r}"
+            f"    over          = {over!r}"
         )  # pragma: no cover
 
         if input_axes and tuple(input_axes) == ("area",):
@@ -10849,11 +10732,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         full = "full" in mode
         compress = "compress" in mode or not (envelope or full)
 
-        logger.debug("Field.indices:")  # pragma: no cover
         logger.debug(
-            "    envelope, full, compress = {} {} {}".format(
-                envelope, full, compress
-            )
+            "Field.indices:"
+            f"    envelope, full, compress = {envelope} {full} {compress}"
         )  # pragma: no cover
 
         auxiliary_mask = []
@@ -10918,9 +10799,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     a = "axes"
 
                 raise ValueError(
-                    "Error: Can't specify {} conditions for {} {}: {}".format(
-                        n_items, n_axes, a, points
-                    )
+                    f"Error: Can't specify {n_items} conditions for "
+                    f"{n_axes} {a}: {points}"
                 )
 
             create_mask = False
@@ -10928,10 +10808,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             item_axes = axes[0]
 
             logger.debug(
-                "    item_axes = {!r}".format(item_axes)
-            )  # pragma: no cover
-            logger.debug(
-                "    keys      = {!r}".format(keys)
+                f"    item_axes = {item_axes!r}" f"    keys      = {keys!r}"
             )  # pragma: no cover
 
             if n_axes == 1:
@@ -10941,7 +10818,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ind = None
 
                 logger.debug(
-                    "    {} 1-d constructs: {!r}".format(n_items, constructs)
+                    f"    {n_items} 1-d constructs: {constructs!r}"
                 )  # pragma: no cover
 
                 axis = item_axes[0]
@@ -10949,10 +10826,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 value = points[0]
 
                 logger.debug(
-                    "    axis      = {!r}".format(axis)
-                )  # pragma: no cover
-                logger.debug(
-                    "    value     = {!r}".format(value)
+                    f"    axis      = {axis!r}" f"    value     = {value!r}"
                 )  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, numpy_ndarray)):
@@ -11049,9 +10923,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     if not item_match.any():
                         raise ValueError(
-                            "No {!r} axis indices found from: {}".format(
-                                identity, value
-                            )
+                            f"No {identity!r} axis indices found from: {value}"
                         )
 
                     index = numpy_asanyarray(item_match)
@@ -11070,9 +10942,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "with data for which to create indices"
                     )
 
-                logger.debug(
-                    "    index = {}".format(index)
-                )  # pragma: no cover
+                logger.debug(f"    index = {index}")  # pragma: no cover
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -11087,13 +10957,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # N-dimensional constructs
                 # -----------------------------------------------------
                 logger.debug(
-                    "    {} N-d constructs: {!r}".format(n_items, constructs)
-                )  # pragma: no cover
-                logger.debug(
-                    "    {} points        : {!r}".format(len(points), points)
-                )  # pragma: no cover
-                logger.debug(
-                    "    field.shape     : {}".format(self.shape)
+                    f"    {n_items} N-d constructs: {constructs!r}"
+                    f"    {len(points)} points        : {points!r}"
+                    f"    field.shape     : {self.shape}"
                 )  # pragma: no cover
 
                 # Make sure that each N-d item has the same relative
@@ -11118,7 +10984,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 constructs = [g.constructs[key] for key in keys]
                 logger.debug(
-                    "    transposed N-d constructs: {!r}".format(constructs)
+                    f"    transposed N-d constructs: {constructs!r}"
                 )  # pragma: no cover
 
                 item_matches = [
@@ -11139,10 +11005,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     ind = numpy_where(item_match)
 
                 logger.debug(
-                    "    item_match  = {}".format(item_match)
-                )  # pragma: no cover
-                logger.debug(
-                    "    ind         = {}".format(ind)
+                    f"    item_match  = {item_match}"
+                    f"    ind         = {ind}"
                 )  # pragma: no cover
 
                 bounds = [
@@ -11181,14 +11045,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     except NameError:
                         raise ImportError(
                             "Must install matplotlib to create indices based "
-                            "on {}-d constructs and a 'contains' Query "
-                            "object".format(constructs[0].ndim)
+                            f"on {constructs[0].ndim}-d constructs and a "
+                            "'contains' Query object"
                         )
 
                     if n_items != 2:
                         raise ValueError(
-                            "Can't index for cell from {}-d coordinate "
-                            "objects".format(n_axes)
+                            f"Can't index for cell from {n_axes}-d coordinate "
+                            "objects"
                         )
 
                     if 0 < len(bounds) < n_items:
@@ -11209,7 +11073,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 mask_shape = [None] * self.ndim
                 masked_subspace_size = 1
                 ind = numpy_array(ind)
-                logger.debug("    ind = {}".format(ind))  # pragma: no cover
+                logger.debug(f"    ind = {ind}")  # pragma: no cover
 
                 for i, (axis, start, stop) in enumerate(
                     zip(item_axes, ind.min(axis=1), ind.max(axis=1))
@@ -11255,12 +11119,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
             logger.debug(
-                "    create_mask = {}".format(create_mask)
+                f"    create_mask = {create_mask}"
             )  # pragma: no cover
 
             if create_mask:
                 logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
+                    f"    mask_shape  = {mask_shape}"
                 )  # pragma: no cover
 
                 mask = self.data._create_auxiliary_mask_component(
@@ -11268,10 +11132,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
                 auxiliary_mask.append(mask)
                 logger.debug(
-                    "    mask_shape  = {}".format(mask_shape)
+                    f"    mask_shape  = {mask_shape}"
                 )  # pragma: no cover
                 logger.debug(
-                    "    mask.shape  = {}".format(mask.shape)
+                    f"    mask.shape  = {mask.shape}"
                 )  # pragma: no cover
 
         indices = tuple(parse_indices(self.shape, tuple(indices)))
@@ -11279,9 +11143,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if auxiliary_mask:
             indices = ("mask", auxiliary_mask) + indices
 
-            logger.debug(
-                "    Final indices = {}".format(indices)
-            )  # pragma: no cover
+            logger.debug(f"    Final indices = {indices}")  # pragma: no cover
 
         # Return the tuple of indices and the auxiliary mask (which
         # may be None)
@@ -11429,9 +11291,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if len(axes) != data.ndim:
                 raise ValueError(
-                    "Can't set data: {} axes provided, but {} needed".format(
-                        len(axes), data.ndim
-                    )
+                    f"Can't set data: {len(axes)} axes provided, but "
+                    f"{data.ndim} needed"
                 )
 
             for axis, size in zip(axes, data.shape):
@@ -11700,16 +11561,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             c = f._AuxiliaryCoordinate(source=computed, copy=False)
             c.clear_properties()
             c.long_name = (
-                "Computed from parametric {} "
-                "vertical coordinates".format(standard_name)
+                f"Computed from parametric {standard_name} "
+                "vertical coordinates"
             )
             if computed_standard_name:
                 c.standard_name = computed_standard_name
 
             logger.detail(
-                "Non-parametric coordinates:\n{}".format(
-                    c.dump(display=False, _level=1)
-                )
+                "Non-parametric coordinates:\n"
+                f"{c.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
             key = f.set_construct(c, axes=computed_axes, copy=False)
@@ -15654,7 +15514,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_coord_keys,
             src_coords,
             src_coords_2D,
-        ) = regrid_get_latlon(f, "source", axes=src_axes)
+        ) = regrid_get_latlon(f, "source", method, axes=src_axes)
 
         # Retrieve the destination field's latitude and longitude
         # coordinates
@@ -15666,7 +15526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_coord_keys,
                 dst_coords,
                 dst_coords_2D,
-            ) = regrid_get_latlon(dst, "destination", axes=dst_axes)
+            ) = regrid_get_latlon(dst, "destination", method, axes=dst_axes)
         elif dst_dict:
             # dst is a dictionary
             try:
@@ -15741,13 +15601,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_cyclic = dst["longitude"].isperiodic
 
         # Get the axis indices and their order for the source field
-        src_axis_indices, src_order = regrid_get_axis_indices(f, src_axis_keys)
+        (
+            src_axis_indices,
+            src_non_regridding_axis_indices,
+            src_order,
+        ) = regrid_get_axis_indices(f, src_axis_keys)
 
         # Get the axis indices and their order for the destination
         # field.
         if dst_field:
             dst = dst.copy()
-            dst_axis_indices, dst_order = regrid_get_axis_indices(
+            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
                 dst, dst_axis_keys
             )
 
@@ -15819,10 +15683,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
         # Get the destination ESMF Grid, Field and fractional Field
         if dst_regrid:
@@ -15853,7 +15719,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Retrieve the source field's grid, create the ESMF Grid
             # and a handle to regridding.dst_dict
-            src_data = d.squeeze().transpose(src_order).array
+            src_data = d
+            if src_non_regridding_axis_indices:
+                src_data = src_data.squeeze(src_non_regridding_axis_indices)
+
+            src_data = src_data.transpose(src_order).array
+
             if not (
                 method == "nearest_stod" and use_src_mask
             ) and np.ma.is_masked(src_data):
@@ -16003,6 +15874,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 units=f.Units,
             )
 
+        # Release memory for source grid/fields in the data sections
+        srcfracfield.destroy()
+        srcfield.destroy()
+        srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -16062,16 +15938,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 config={"coord": x, "period": Data(360.0, "degrees")},
             )
 
-        # Release old memory from ESMF (this ought to happen garbage
-        # collection, but it doesn't seem to work there!)
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 
@@ -16428,11 +16309,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
         # Get the axis indices and their order for the source field
-        src_axis_indices, src_order = regrid_get_axis_indices(f, src_axis_keys)
+        (
+            src_axis_indices,
+            src_non_regridding_axis_indices,
+            src_order,
+        ) = regrid_get_axis_indices(f, src_axis_keys)
 
         # Get the axis indices and their order for the destination field.
         if not dst_dict:
-            dst_axis_indices, dst_order = regrid_get_axis_indices(
+            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
                 dst, dst_axis_keys
             )
 
@@ -16471,6 +16356,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
                 (
                     src_axis_indices_ext,
+                    src_non_regridding_axis_indices,
                     src_order_ext,
                 ) = regrid_get_axis_indices(f, axis_keys_ext + src_axis_keys)
 
@@ -16552,10 +16438,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if not grids_have_same_coords(
                 srcgrid, regridSrc2Dst.srcfield.grid
             ):
+                srcgrid.destroy()
                 raise ValueError(
                     f"Can't regrid {self!r} with regridding operator "
                     f"{operator!r}: Source grid coordinates do not match."
                 )
+            srcgrid.destroy()
 
             dstgrid = regridSrc2Dst.dstfield.grid
             dstfield = regridSrc2Dst.dstfield
@@ -16582,11 +16470,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             subsections = d.data.section(
                 src_axis_indices_ext, chunks=True, min_step=2
             )
+
             for k2 in subsections.keys():
                 d2 = subsections[k2]
                 # Retrieve the source field's grid, create the ESMF
                 # grid and a handle to regridding.
-                src_data = d2.squeeze().transpose(src_order_ext).array
+                src_data = d2
+                if src_non_regridding_axis_indices:
+                    src_data = src_data.squeeze(
+                        src_non_regridding_axis_indices
+                    )
+
+                src_data = src_data.transpose(src_order_ext).array
+
                 if nonconservative1D:
                     src_data = numpy_tile(src_data, (2, 1))
 
@@ -16730,6 +16626,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             sections[k] = Data.reconstruct_sectioned_data(subsections)
 
+        # Release memory for source grid/fields created for data subsections
+        srcfracfield.destroy()
+        srcfield.destroy()
+        srcgrid.destroy()
+
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
 
@@ -16770,15 +16671,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Insert regridded data into new field
         f.set_data(new_data, axes=self.get_data_axes())
 
-        # Release old memory
-        if destroy_old_Regrid:
-            regridSrc2Dst.destroy()
+        # Explicitly release all the memory that will not be needed anymore
+        if not dst_regrid:
+            # explicitly release memory for destination ESMF objects
+            # as they were only created locally (i.e. not originating
+            # from an existing regrid operator) and they will not be
+            # used anymore
             dstfracfield.destroy()
-            srcfracfield.destroy()
             dstfield.destroy()
-            srcfield.destroy()
             dstgrid.destroy()
-            srcgrid.destroy()
+
+            # explicitly release memory for ESMF Regrid and its
+            # associated objects which is safe to do so since the
+            # regrid operator was not returned so the weights will
+            # not be used anymore
+            del regridSrc2Dst
 
         return f
 

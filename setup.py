@@ -1,10 +1,10 @@
-from setuptools import setup
-
-from distutils.command.build import build
-import os
 import fnmatch
+import os
 import re
 import subprocess
+from distutils.command.build import build
+
+from setuptools import setup
 
 
 def find_package_data_files(directory):

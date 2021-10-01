@@ -14,7 +14,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-
 n_tmpfiles = 8
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
@@ -746,6 +745,59 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.read("test_read_write.py")
 
+    def test_read_cdl_string(self):
+        """Test the `cdl_string` keyword of the `read` function."""
+        # Test CDL in full, header-only and coordinate-only type:
+        tempfile_to_option_mapping = {
+            tmpfile: None,
+            tmpfileh: "-h",
+            tmpfilec: "-c",
+        }
+
+        for tempf, option in tempfile_to_option_mapping.items():
+            # Set up the CDL string to test...
+            command_to_run = ["ncdump", self.filename, ">", tempf]
+            if option:
+                command_to_run.insert(1, option)
+            subprocess.run(
+                " ".join(command_to_run),
+                shell=True,
+                check=True,
+            )
+            with open(tempf, "r") as file:
+                cdl_string_1 = file.read()
+
+            # ... and now test it as an individual string input
+            f_from_str = cf.read(cdl_string_1, cdl_string=True)
+            f_from_file = cf.read(tempf)  # len 1 so only one field to check
+            self.assertEqual(len(f_from_str), len(f_from_file))
+            self.assertEqual(f_from_str[0], f_from_file[0])
+
+            # ... and test further by inputting it in duplicate as a sequence
+            f_from_str = cf.read([cdl_string_1, cdl_string_1], cdl_string=True)
+            f_from_file = cf.read(tempf)  # len 1 so only one field to check
+            self.assertEqual(len(f_from_str), 2 * len(f_from_file))
+            self.assertEqual(f_from_str[0], f_from_file[0])
+            self.assertEqual(f_from_str[1], f_from_file[0])
+
+            # Check compatibility with the `fmt` kwarg.
+            f0 = cf.read(cdl_string_1, cdl_string=True, fmt="CDL")  # fine
+            self.assertEqual(len(f0), len(f_from_file))
+            self.assertEqual(f0[0], f_from_file[0])
+            # If the 'fmt' and 'cdl_string' values contradict each other,
+            # alert the user to this. Note that the default fmt is None but
+            # it then gets interpreted as NETCDF, so default fmt is fine and
+            # it is tested in f_from_str above where fmt is not set.
+            with self.assertRaises(ValueError):
+                f0 = cf.read(cdl_string_1, cdl_string=True, fmt="NETCDF")
+
+        # If the user forgets the cdl_string=True argument they will
+        # accidentally attempt to create a file with a very long name of
+        # the CDL string, which will in most, if not all, cases result in
+        # an "OSError: [Errno 36] File name too long" error:
+        with self.assertRaises(OSError):
+            cf.read(cdl_string_1)
+
     def test_read_write_string(self):
         f = cf.read(self.string_filename)
 
@@ -755,11 +807,11 @@ class read_writeTest(unittest.TestCase):
             j = i + n
             self.assertTrue(
                 f[i].data.equals(f[j].data, verbose=1),
-                "{!r} {!r}".format(f[i], f[j]),
+                f"{f[i]!r} {f[j]!r}",
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=1),
-                "{!r} {!r}".format(f[j], f[i]),
+                f"{f[j]!r} {f[i]!r}",
             )
 
         # Note: Don't loop round all netCDF formats for better

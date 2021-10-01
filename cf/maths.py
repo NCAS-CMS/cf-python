@@ -1,7 +1,6 @@
-from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from . import Units
-
 from .data.data import Data
+from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .regrid import get_cartesian_coords
 
 

@@ -1,56 +1,28 @@
 import itertools
 import logging
 import textwrap
-
 from datetime import datetime
 
-from numpy import arange as numpy_arange
-from numpy import arccos as numpy_arccos
-from numpy import arcsin as numpy_arcsin
-from numpy import array as numpy_array
-from numpy import clip as numpy_clip
-from numpy import column_stack as numpy_column_stack
-from numpy import cos as numpy_cos
-from numpy import deg2rad as numpy_deg2rad
-from numpy import dtype as numpy_dtype
-from numpy import empty as numpy_empty
-from numpy import isnan as numpy_isnan
-from numpy import nan as numpy_nan
-from numpy import pi as numpy_pi
-from numpy import rad2deg as numpy_rad2deg
-from numpy import resize as numpy_resize
-from numpy import result_type as numpy_result_type
-from numpy import sin as numpy_sin
-from numpy import transpose as numpy_transpose
-from numpy import where as numpy_where
-
+import cfdm
+import cftime
+import numpy as np
+from cfdm import Constructs
 from netCDF4 import date2num as netCDF4_date2num
 
-import cftime
-
-import cfdm
-from cfdm import Constructs
-
-from ... import __version__, __Conventions__
-from ...decorators import (
-    _manage_log_level_via_verbosity,
-    _manage_log_level_via_verbose_attr,
-)
-from ...functions import (
-    abspath,
-    load_stash2standard_name,
-)
-from ...functions import atol as cf_atol, rtol as cf_rtol
-
+from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
-
-from ...units import Units
-
-from ...data.data import Data, Partition, PartitionMatrix
-
 from ...data import UMArray
-from ...data.functions import _open_um_file, _close_um_file
-
+from ...data.data import Data, Partition, PartitionMatrix
+from ...data.functions import _close_um_file, _open_um_file
+from ...decorators import (
+    _manage_log_level_via_verbose_attr,
+    _manage_log_level_via_verbosity,
+)
+from ...functions import abspath
+from ...functions import atol as cf_atol
+from ...functions import load_stash2standard_name
+from ...functions import rtol as cf_rtol
+from ...units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +38,7 @@ _cached_model_level_number_coordinate = {}
 # --------------------------------------------------------------------
 # Constants
 # --------------------------------------------------------------------
-_pi_over_180 = numpy_pi / 180.0
+_pi_over_180 = np.pi / 180.0
 
 # PP missing data indicator
 _pp_rmdi = -1.0e30
@@ -305,7 +277,7 @@ _coord_standard_name = {
     10: "latitude",  # Latitude (degrees N).
     11: "longitude",  # Longitude (degrees E).
     # Site number (set of parallel rows or columns e.g.Time series):
-    13: "region",
+    13: None,  # "region",
     14: "atmosphere_hybrid_height_coordinate",
     15: "height",
     20: "time",  # Time (days) (Gregorian calendar (not 360 day year))
@@ -322,7 +294,9 @@ _coord_standard_name = {
 # --------------------------------------------------------------------
 # Map PP axis codes to CF long names
 # --------------------------------------------------------------------
-_coord_long_name = {}
+_coord_long_name = {
+    13: "site",
+}
 
 # --------------------------------------------------------------------
 # Map PP axis codes to UDUNITS strings
@@ -954,6 +928,9 @@ class UMField:
                             )
                 else:
                     ykey, yc, yaxis = self.xy_coordinate(axiscode, "y")
+                    if axiscode == 13:
+                        _axis["site_axis"] = yaxis
+                        self.site_coordinates_from_extra_data()
 
             # --------------------------------------------------------
             # Create the 'X' dimension coordinate
@@ -975,6 +952,9 @@ class UMField:
                             )
                 else:
                     xkey, xc, xaxis = self.xy_coordinate(axiscode, "x")
+                    if axiscode == 13:
+                        _axis["site_axis"] = xaxis
+                        self.site_coordinates_from_extra_data()
 
             # -10: rotated latitude  (not an official axis code)
             # -11: rotated longitude (not an official axis code)
@@ -1086,7 +1066,7 @@ class UMField:
 
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
-            logger.info("down_axes = {}".format(down_axes))  # pragma: no cover
+            logger.info(f"down_axes = {down_axes}")  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -1136,7 +1116,7 @@ class UMField:
         )
 
         for attr in attrs:
-            out.append("{0}={1}".format(attr, getattr(self, attr, None)))
+            out.append(f"{attr}={getattr(self, attr, None)}")
 
         out.append("")
 
@@ -1192,18 +1172,18 @@ class UMField:
         field = self.field
 
         # "a" domain ancillary
-        array = numpy_array(
+        array = np.array(
             [rec.real_hdr[blev] for rec in self.z_recs], dtype=float  # Zsea
         )
-        bounds0 = numpy_array(
+        bounds0 = np.array(
             [rec.real_hdr[brlev] for rec in self.z_recs],  # Zsea lower
             dtype=float,
         )
-        bounds1 = numpy_array(
+        bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
             dtype=float,
         )
-        bounds = numpy_column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -1247,16 +1227,16 @@ class UMField:
             )
 
         # "b" domain ancillary
-        array = numpy_array(
+        array = np.array(
             [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
         )
-        bounds0 = numpy_array(
+        bounds0 = np.array(
             [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
         )
-        bounds1 = numpy_array(
+        bounds1 = np.array(
             [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
         )
-        bounds = numpy_column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units["1"])
@@ -1301,16 +1281,16 @@ class UMField:
 
         field = self.field
 
-        array = numpy_array(
+        array = np.array(
             [rec.real_hdr[blev] for rec in self.z_recs], dtype=float
         )
-        bounds0 = numpy_array(
+        bounds0 = np.array(
             [rec.real_hdr[brlev] for rec in self.z_recs], dtype=float
         )
-        bounds1 = numpy_array(
+        bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs], dtype=float
         )
-        bounds = numpy_column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -1331,16 +1311,16 @@ class UMField:
             autocyclic=_autocyclic_false,
         )
 
-        array = numpy_array(
+        array = np.array(
             [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
         )
-        bounds0 = numpy_array(
+        bounds0 = np.array(
             [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
         )
-        bounds1 = numpy_array(
+        bounds1 = np.array(
             [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
         )
-        bounds = numpy_column_stack((bounds0, bounds1))
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         # ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
@@ -1405,12 +1385,12 @@ class UMField:
             bk_array.append(BLEV)
             bk_bounds.append((BRLEV, BULEV))
 
-        array = numpy_array(array, dtype=float)
-        bounds = numpy_array(bounds, dtype=float)
-        ak_array = numpy_array(ak_array, dtype=float)
-        ak_bounds = numpy_array(ak_bounds, dtype=float)
-        bk_array = numpy_array(bk_array, dtype=float)
-        bk_bounds = numpy_array(bk_bounds, dtype=float)
+        array = np.array(array, dtype=float)
+        bounds = np.array(bounds, dtype=float)
+        ak_array = np.array(ak_array, dtype=float)
+        ak_bounds = np.array(ak_bounds, dtype=float)
+        bk_array = np.array(bk_array, dtype=float)
+        bk_bounds = np.array(bk_bounds, dtype=float)
 
         field = self.field
 
@@ -1466,6 +1446,34 @@ class UMField:
         ac.long_name = "atmosphere_hybrid_sigma_pressure_coordinate_bk"
 
         return dc
+
+    def create_bounds_array(self, bounds0, bounds1):
+        """Stack two 1-d arrays to create a bounds array.
+
+        The returned array will have a trailing dimension of size 2.
+
+        The leading dimension size and data type are taken from
+        *bounds0*.
+
+        :Parameters:
+
+            bounds0: `numpy.ndarray`
+                The bounds which are to occupy ``[:, 0]`` in the
+                returned bounds array.
+
+            bounds1: `numpy.ndarray`
+                The bounds which are to occupy ``[:, 1]`` in the
+                returned bounds array.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        bounds = np.empty((bounds0.size, 2), dtype=bounds0.dtype)
+        bounds[:, 0] = bounds0
+        bounds[:, 1] = bounds1
+        return bounds
 
     def create_cell_methods(self):
         """Create the cell methods.
@@ -1850,9 +1858,7 @@ class UMField:
                 fill_value=fill_value,
             )
 
-            logger.info(
-                "    location = {}".format(yx_shape)
-            )  # pragma: no cover
+            logger.info(f"    location = {yx_shape}")  # pragma: no cover
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1920,13 +1926,12 @@ class UMField:
                     )
 
                     logger.info(
-                        "    header_offset = {}, location = {}".format(
-                            rec.hdr_offset, location
-                        )
+                        f"    header_offset = {rec.hdr_offset}, "
+                        f"location = {location}"
                     )  # pragma: no cover
 
                 # Populate the 1-d partition matrix
-                matrix = numpy_array(partitions, dtype=object)
+                matrix = np.array(partitions, dtype=object)
             else:
                 # ----------------------------------------------------
                 # 2-d partition matrix
@@ -1980,11 +1985,11 @@ class UMField:
                     )
 
                     logger.info(
-                        "    location = {}".format(location)
+                        f"    location = {location}"
                     )  # pragma: no cover
 
                 # Populate the 2-d partition matrix
-                matrix = numpy_array(partitions, dtype=object)
+                matrix = np.array(partitions, dtype=object)
                 matrix.resize(pmshape)
 
             data_axes = pmaxes + data_axes
@@ -2003,7 +2008,7 @@ class UMField:
             data._ndim = data_ndim
             data._size = data_size
             data.partitions = PartitionMatrix(matrix, pmaxes)
-            data.dtype = numpy_result_type(*file_data_types)
+            data.dtype = np.result_type(*file_data_types)
 
         self.data = data
         self.data_axes = data_axes
@@ -2105,7 +2110,7 @@ class UMField:
 
                 _cached_date2num[key] = time
             except ValueError:
-                time = numpy_nan  # ppp
+                time = np.nan  # ppp
 
         return time
 
@@ -2121,10 +2126,10 @@ class UMField:
         """
         out2 = []
         for i, rec in enumerate(self.recs):
-            out = ["Field {0}:".format(i)]
+            out = [f"Field {i}:"]
 
             x = [
-                "{0}::{1}".format(name, value)
+                f"{name}::{value}"
                 for name, value in zip(
                     _header_names, self.int_hdr + self.real_hdr
                 )
@@ -2136,13 +2141,12 @@ class UMField:
             if self.extra:
                 out.append("EXTRA DATA:")
                 for key in sorted(self.extra):
-                    out.append("{0}: {1}".format(key, str(self.extra[key])))
+                    out.append(f"{key}: {str(self.extra[key])}")
 
             out.append("file: " + self.filename)
             out.append(
-                "fmt, byte order, word size: {}, {}, {}".format(
-                    self.fmt, self.byte_ordering, self.word_size
-                )
+                f"fmt, byte order, word size: {self.fmt}, "
+                f"{self.byte_ordering}, {self.word_size}"
             )
 
             out.append("")
@@ -2192,11 +2196,11 @@ class UMField:
                 cache_key, (None, None)
             )
             if lat_bounds is None:
-                xb = numpy_empty(xc.size + 1)
+                xb = np.empty(xc.size + 1)
                 xb[:-1] = xc.bounds.subspace[:, 0].squeeze(1).array
                 xb[-1] = xc.bounds.datum(-1, 1)
 
-                yb = numpy_empty(yc.size + 1)
+                yb = np.empty(yc.size + 1)
                 yb[:-1] = yc.bounds.subspace[:, 0].squeeze(1).array
                 yb[-1] = yc.bounds.datum(-1, 1)
 
@@ -2204,8 +2208,8 @@ class UMField:
                     yb, xb, BPLAT, BPLON
                 )
 
-                lat_bounds = numpy_empty(lat.shape + (4,))
-                lon_bounds = numpy_empty(lon.shape + (4,))
+                lat_bounds = np.empty(lat.shape + (4,))
+                lon_bounds = np.empty(lon.shape + (4,))
 
                 lat_bounds[..., 0] = temp_lat_bounds[0:-1, 0:-1]
                 lon_bounds[..., 0] = temp_lon_bounds[0:-1, 0:-1]
@@ -2288,12 +2292,12 @@ class UMField:
                     autocyclic=_autocyclic_false,
                 )
         else:
-            array = numpy_array(array, dtype=self.int_hdr_dtype)
+            array = np.array(array, dtype=self.int_hdr_dtype)
 
             if array.min() < 0:
                 return
 
-            array = numpy_where(array == 9999, 0, array)
+            array = np.where(array == 9999, 0, array)
 
             axiscode = 5
 
@@ -2346,7 +2350,7 @@ class UMField:
             == 3
         ):
             # Boolean
-            return numpy_dtype(bool)
+            return np.dtype(bool)
         else:
             # Int or float
             return rec.get_type_and_num_words()[0]
@@ -2362,7 +2366,7 @@ class UMField:
     #                # Float
     #                data_type = 'float%d' % (rec_file.word_size * 8)
     #
-    #        return numpy_dtype(data_type)
+    #        return np.dtype(data_type)
 
     def printfdr(self, display=False):
         """Print out the contents of PP field headers.
@@ -2384,10 +2388,10 @@ class UMField:
     def pseudolevel_coordinate(self, LBUSER5):
         """TODO."""
         if self.nz == 1:
-            array = numpy_array((LBUSER5,), dtype=self.int_hdr_dtype)
+            array = np.array((LBUSER5,), dtype=self.int_hdr_dtype)
         else:
             # 'Z' aggregation has been done along the pseudolevel axis
-            array = numpy_array(
+            array = np.array(
                 [
                     rec.int_hdr.item(
                         lbuser5,
@@ -2425,8 +2429,8 @@ class UMField:
 
     def radiation_wavelength_coordinate(self, rwl, rwl_units):
         """TODO."""
-        array = numpy_array((rwl,), dtype=float)
-        bounds = numpy_array(((0.0, rwl)), dtype=float)
+        array = np.array((rwl,), dtype=float)
+        bounds = np.array(((0.0, rwl)), dtype=float)
 
         units = _Units.get(rwl_units, None)
         if units is None:
@@ -2455,7 +2459,7 @@ class UMField:
     def reference_time_Units(self):
         """TODO."""
         LBYR = self.int_hdr[lbyr]
-        time_units = "days since {0}-1-1".format(LBYR)
+        time_units = f"days since {LBYR}-1-1"
         calendar = self.calendar
 
         key = time_units + " calendar=" + calendar
@@ -2489,7 +2493,7 @@ class UMField:
                 height_units = Units(units)
                 _Units[units] = height_units
 
-            array = numpy_array((height,), dtype=float)
+            array = np.array((height,), dtype=float)
 
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, units=height_units)
@@ -2561,7 +2565,7 @@ class UMField:
         else:
             raise ValueError(
                 "Unknown UM condition in STASH code conversion table: "
-                "{!r}".format(um_condition)
+                f"{um_condition!r}"
             )
 
         # Still here? Then the condition has not been satisfied.
@@ -2624,10 +2628,10 @@ class UMField:
         """
         recs = self.t_recs
 
-        vtimes = numpy_array([self.vtime(rec) for rec in recs], dtype=float)
-        dtimes = numpy_array([self.dtime(rec) for rec in recs], dtype=float)
+        vtimes = np.array([self.vtime(rec) for rec in recs], dtype=float)
+        dtimes = np.array([self.dtime(rec) for rec in recs], dtype=float)
 
-        if numpy_isnan(vtimes.sum()) or numpy_isnan(dtimes.sum()):
+        if np.isnan(vtimes.sum()) or np.isnan(dtimes.sum()):
             return  # ppp
 
         IB = self.lbtim_ib
@@ -2641,13 +2645,15 @@ class UMField:
         elif IB == 3:
             # The field is a time mean from T1 to T2 for each year
             # from LBYR to LBYRD
-            ctimes = numpy_array([self.ctime(rec) for rec in recs])
+            ctimes = np.array([self.ctime(rec) for rec in recs])
             array = 0.5 * (vtimes + ctimes)
-            bounds = numpy_column_stack((vtimes, dtimes))
+            bounds = self.create_bounds_array(vtimes, dtimes)
+
             climatology = True
         else:
             array = 0.5 * (vtimes + dtimes)
-            bounds = numpy_column_stack((vtimes, dtimes))
+            bounds = self.create_bounds_array(vtimes, dtimes)
+
             climatology = False
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
@@ -2671,8 +2677,15 @@ class UMField:
         return dc
 
     def time_coordinate_from_extra_data(self, axiscode, axis):
-        """TODO."""
+        """TODO.
+
+        :Returns:
+
+            `DimensionCoordinate`
+
+        """
         extra = self.extra
+
         array = extra[axis]
         bounds = extra.get(axis + "_bounds", None)
 
@@ -2686,14 +2699,23 @@ class UMField:
         else:
             units = None
 
+        # Create time domain axis.
+        #
+        # Note that `axis` might not be "t". For instance, it could be
+        # "y" if the time coordinates are coming from extra data.
+        da = self.implementation.initialise_DomainAxis(size=array.size)
+        axisT = self.implementation.set_domain_axis(self.field, da)
+        _axis[axis] = axisT
+
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, bounds, units=units)
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
+
         self.implementation.set_dimension_coordinate(
             self.field,
             dc,
-            axes=[_axis[axis]],
+            axes=(axisT,),
             copy=False,
             autocyclic=_autocyclic_false,
         )
@@ -2722,7 +2744,7 @@ class UMField:
         else:
             units = None
 
-        array = numpy_arange(vtime, vtime + delta * size, size, dtype=float)
+        array = np.arange(vtime, vtime + delta * size, size, dtype=float)
 
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, units=units)
@@ -2774,7 +2796,7 @@ class UMField:
 
                 _cached_date2num[key] = time
             except ValueError:
-                time = numpy_nan  # ppp
+                time = np.nan  # ppp
 
         return time
 
@@ -2844,7 +2866,7 @@ class UMField:
     #                            axis_code,
     #                            p=p,
     #                            aux=True,
-    #                            array=numpy_array(data),
+    #                            array=np.array(data),
     #                            pubattr={"axis": None},
     #                            dimensions=[xdim],
     #                        )  # DCH xdim?
@@ -2874,8 +2896,8 @@ class UMField:
         pole_lon *= _pi_over_180
         pole_lat *= _pi_over_180
 
-        cos_pole_lat = numpy_cos(pole_lat)
-        sin_pole_lat = numpy_sin(pole_lat)
+        cos_pole_lat = np.cos(pole_lat)
+        sin_pole_lat = np.sin(pole_lat)
 
         # Create appropriate copies of the input rotated arrays
         rot_lon = rotated_lon.copy()
@@ -2883,42 +2905,40 @@ class UMField:
 
         # Make sure rotated longitudes are between -180 and 180
         rot_lon %= 360.0
-        rot_lon = numpy_where(rot_lon < 180.0, rot_lon, rot_lon - 360)
+        rot_lon = np.where(rot_lon < 180.0, rot_lon, rot_lon - 360)
 
         # Create 2-d arrays of rotated latitudes and longitudes in radians
         nlat = rot_lat.size
         nlon = rot_lon.size
-        rot_lon = numpy_resize(numpy_deg2rad(rot_lon), (nlat, nlon))
-        rot_lat = numpy_resize(numpy_deg2rad(rot_lat), (nlon, nlat))
-        rot_lat = numpy_transpose(rot_lat, axes=(1, 0))
+        rot_lon = np.resize(np.deg2rad(rot_lon), (nlat, nlon))
+        rot_lat = np.resize(np.deg2rad(rot_lat), (nlon, nlat))
+        rot_lat = np.transpose(rot_lat, axes=(1, 0))
 
         # Find unrotated latitudes
-        CPART = numpy_cos(rot_lon) * numpy_cos(rot_lat)
-        sin_rot_lat = numpy_sin(rot_lat)
+        CPART = np.cos(rot_lon) * np.cos(rot_lat)
+        sin_rot_lat = np.sin(rot_lat)
         x = cos_pole_lat * CPART + sin_pole_lat * sin_rot_lat
-        x = numpy_clip(x, -1.0, 1.0)
-        unrotated_lat = numpy_arcsin(x)
+        x = np.clip(x, -1.0, 1.0)
+        unrotated_lat = np.arcsin(x)
 
         # Find unrotated longitudes
         x = -cos_pole_lat * sin_rot_lat + sin_pole_lat * CPART
-        x /= numpy_cos(unrotated_lat)
+        x /= np.cos(unrotated_lat)
         # dch /0 or overflow here? surely lat could be ~+-pi/2? if so,
         # does x ~ cos(lat)?
-        x = numpy_clip(x, -1.0, 1.0)
-        unrotated_lon = -numpy_arccos(x)
+        x = np.clip(x, -1.0, 1.0)
+        unrotated_lon = -np.arccos(x)
 
-        unrotated_lon = numpy_where(
-            rot_lon > 0.0, -unrotated_lon, unrotated_lon
-        )
+        unrotated_lon = np.where(rot_lon > 0.0, -unrotated_lon, unrotated_lon)
         if pole_lon >= self.atol:
-            SOCK = pole_lon - numpy_pi
+            SOCK = pole_lon - np.pi
         else:
             SOCK = 0
         unrotated_lon += SOCK
 
         # Convert unrotated latitudes and longitudes to degrees
-        unrotated_lat = numpy_rad2deg(unrotated_lat)
-        unrotated_lon = numpy_rad2deg(unrotated_lon)
+        unrotated_lat = np.rad2deg(unrotated_lat)
+        unrotated_lon = np.rad2deg(unrotated_lon)
 
         # Return unrotated latitudes and longitudes
         return (unrotated_lat, unrotated_lon)
@@ -2974,7 +2994,7 @@ class UMField:
                 while origin + delta * size < -360.0:
                     origin += 360.0
 
-            array = numpy_arange(
+            array = np.arange(
                 origin + delta,
                 origin + delta * (size + 0.5),
                 delta,
@@ -2992,14 +3012,25 @@ class UMField:
                 bounds = None
             else:
                 delta_by_2 = 0.5 * delta
-                bounds = numpy_empty((size, 2), dtype=float)
-                bounds[:, 0] = array - delta_by_2
-                bounds[:, 1] = array + delta_by_2
+                bounds = self.create_bounds_array(
+                    array - delta_by_2, array + delta_by_2
+                )
+        #                bounds = np.empty((size, 2), dtype=float)
+        #                bounds[:, 0] = array - delta_by_2
+        #                bounds[:, 1] = array + delta_by_2
 
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
-            bounds = self.extra.get(axis + "_bounds", None)
+            lower_bounds = self.extra.get(axis + "_lower_bound", None)
+            upper_bounds = self.extra.get(axis + "_upper_bound", None)
+            if lower_bounds is not None and upper_bounds is not None:
+                bounds = self.create_bounds_array(lower_bounds, upper_bounds)
+            #                bounds = np.empty((array.size, 2), dtype=float)
+            #                bounds[:, 0] = lower_bounds
+            #                bounds[:, 1] = upper_bounds
+            else:
+                bounds = None
 
         units = _axiscode_to_Units.setdefault(axiscode, None)
 
@@ -3020,6 +3051,56 @@ class UMField:
         )
 
         return key, dc, axis_key
+
+    def site_coordinates_from_extra_data(self):
+        """Create site-related coordinates from extra data.
+
+        :Returns:
+
+            `None`
+
+        """
+        # Create coordinate from extra data
+        for axis, standard_name, units in zip(
+            ("x", "y"),
+            ("longitude", "latitude"),
+            (_Units["degrees_east"], _Units["degrees_north"]),
+        ):
+            lower_bounds = self.extra.get(axis + "_domain_lower_bound", None)
+            upper_bounds = self.extra.get(axis + "_domain_upper_bound", None)
+            if lower_bounds is None or upper_bounds is None:
+                continue
+
+            # Still here?
+            bounds = self.create_bounds_array(lower_bounds, upper_bounds)
+            array = np.average(bounds, axis=1)
+
+            ac = self.implementation.initialise_AuxiliaryCoordinate()
+            ac = self.coord_data(ac, array, bounds, units=units)
+
+            ac.standard_name = standard_name
+            ac.long_name = "region limit"
+            self.implementation.set_auxiliary_coordinate(
+                self.field,
+                ac,
+                axes=[_axis["site_axis"]],
+                copy=False,
+                autocyclic=_autocyclic_false,
+            )
+
+        array = self.extra.get("domain_title", None)
+        if array is not None:
+            ac = self.implementation.initialise_AuxiliaryCoordinate()
+            ac = self.coord_data(ac, array, None, units=None)
+
+            ac.standard_name = "region"
+            self.implementation.set_auxiliary_coordinate(
+                self.field,
+                ac,
+                axes=[_axis["site_axis"]],
+                copy=False,
+                autocyclic=_autocyclic_false,
+            )
 
     @_manage_log_level_via_verbose_attr
     def z_coordinate(self, axiscode):
@@ -3061,15 +3142,15 @@ class UMField:
         #            copy = True
         #        else:
         copy = False
-        array = numpy_array(array, dtype=float)
-        bounds0 = numpy_array(bounds0, dtype=float)
-        bounds1 = numpy_array(bounds1, dtype=float)
-        bounds = numpy_column_stack((bounds0, bounds1))
+        array = np.array(array, dtype=float)
+        bounds0 = np.array(bounds0, dtype=float)
+        bounds1 = np.array(bounds1, dtype=float)
+        bounds = self.create_bounds_array(bounds0, bounds1)
 
         if (bounds0 == bounds1).all():
             bounds = None
         else:
-            bounds = numpy_column_stack((bounds0, bounds1))
+            bounds = self.create_bounds_array(bounds0, bounds1)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
         axisZ = self.implementation.set_domain_axis(self.field, da)
@@ -3105,7 +3186,7 @@ class UMField:
             "Creating Z reference coordinates from BRLEV"
         )  # pragma: no cover
 
-        array = numpy_array(
+        array = np.array(
             [
                 rec.real_hdr.item(
                     brlev,
@@ -3143,7 +3224,7 @@ class UMField:
                 bounds = None
 
             if bounds:
-                bounds = numpy_array((bounds,), dtype=float)
+                bounds = np.array((bounds,), dtype=float)
 
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(
@@ -3408,7 +3489,7 @@ class UMRead(cfdm.read_write.IORead):
             "fmt": fmt,
         }
 
-        history = "Converted from UM/PP by cf-python v{}".format(__version__)
+        history = f"Converted from UM/PP by cf-python v{__version__}"
 
         if endian:
             byte_ordering = endian + "_endian"

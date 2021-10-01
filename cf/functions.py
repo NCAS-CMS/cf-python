@@ -1,18 +1,30 @@
 import atexit
 import csv
+import ctypes.util
 import importlib
 import os
 import platform
 import re
 import resource
 import sys
-import ctypes.util
+import urllib.parse
+import warnings
+from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from hashlib import md5 as hashlib_md5
+from marshal import dumps as marshal_dumps
+from math import ceil as math_ceil
+from os import getpid, listdir, mkdir
+from os.path import abspath as _os_path_abspath
+from os.path import dirname as _os_path_dirname
+from os.path import expanduser as _os_path_expanduser
+from os.path import expandvars as _os_path_expandvars
+from os.path import join as _os_path_join
+from os.path import relpath as _os_path_relpath
+
+import cfdm
 
 # import cPickle
 import netCDF4
-import warnings
-
-
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
@@ -28,42 +40,22 @@ from numpy import size as _numpy_size
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
 from numpy import where as _numpy_where
-
 from numpy.ma import all as _numpy_ma_all
 from numpy.ma import allclose as _numpy_ma_allclose
 from numpy.ma import is_masked as _numpy_ma_is_masked
 from numpy.ma import isMA as _numpy_ma_isMA
 from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
+from psutil import Process, virtual_memory
 
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
-from hashlib import md5 as hashlib_md5
-from marshal import dumps as marshal_dumps
-from math import ceil as math_ceil
-from os import getpid, listdir, mkdir
-from os.path import abspath as _os_path_abspath
-from os.path import expanduser as _os_path_expanduser
-from os.path import expandvars as _os_path_expandvars
-from os.path import dirname as _os_path_dirname
-from os.path import join as _os_path_join
-from os.path import relpath as _os_path_relpath
-from psutil import virtual_memory, Process
-import urllib.parse
-
-import cfdm
-
-from . import __version__, __file__
-
+from . import __file__, __version__, mpi_size
 from .constants import (
     CONSTANTS,
+    OperandBoundsCombination,
     _file_to_fh,
     _stash2standard_name,
-    OperandBoundsCombination,
 )
-
 from .docstring import _docstring_substitution_definitions
-
-from . import mpi_size
 
 
 # Instruction to close /proc/mem at exit.
@@ -746,7 +738,7 @@ class collapse_parallel_mode(ConstantAccess):
         if arg not in allowed_values:
             raise ValueError(
                 "Invalid collapse parallel mode. Valid values are "
-                "{}".format(allowed_values)
+                f"{allowed_values}"
             )
 
         return arg
@@ -870,11 +862,11 @@ class chunksize(ConstantAccess):
         arg = float(arg)
         if arg > upper_chunksize and mpi_size > 1:
             raise ValueError(
-                "Specified chunk size ({}) is too large for the given "
-                "free memory factor ({})".format(arg, upper_chunksize)
+                f"Specified chunk size ({arg}) is too large for the given "
+                f"free memory factor ({upper_chunksize})"
             )
         elif arg <= 0:
-            raise ValueError("Chunk size ({}) must be positive".format(arg))
+            raise ValueError(f"Chunk size ({arg}) must be positive")
 
         return arg
 
@@ -1018,12 +1010,12 @@ class of_fraction(ConstantAccess):
         try:
             arg = float(arg)
         except (ValueError, TypeError):
-            raise ValueError("Fraction must be a float. Got {!r}".format(arg))
+            raise ValueError(f"Fraction must be a float. Got {arg!r}")
 
         if arg <= 0.0 or arg >= 1.0:
             raise ValueError(
                 "Fraction must be between 0.0 and 1.0 not inclusive. "
-                "Got {!r}".format(arg)
+                f"Got {arg!r}"
             )
 
         return arg
@@ -1076,7 +1068,7 @@ class free_memory_factor(ConstantAccess):
             arg = float(arg)
         except (ValueError, TypeError):
             raise ValueError(
-                "Free memory factor must be a float. Got {!r}".format(arg)
+                f"Free memory factor must be a float. Got {arg!r}"
             )
 
         if not (0 < arg < 1):
@@ -1231,13 +1223,11 @@ class bounds_combination_mode(ConstantAccess):
             valid = False
 
         if not valid:
+            valid_vals = ", ".join(
+                [repr(val.name) for val in OperandBoundsCombination]
+            )
             raise ValueError(
-                "{!r} is not one of the valid values: {}".format(
-                    arg,
-                    ", ".join(
-                        [repr(val.name) for val in OperandBoundsCombination]
-                    ),
-                )
+                f"{arg!r} is not one of the valid values: {valid_vals}"
             )
 
         return arg
@@ -1837,7 +1827,15 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            out = _numpy_ma_all(a == b)
+            # To prevent a bug causing some header/coord-only CDL reads or
+            # aggregations to error. See also TODO comment below.
+            if a.dtype == b.dtype:
+                out = _numpy_ma_all(a == b)
+            else:
+                # TODO: is this most sensible? Or should we attempt dtype
+                # conversion and then compare? Probably we should avoid
+                # altogether by catching the different dtypes upstream?
+                out = False
             if out is _numpy_ma_masked:
                 return True
             else:
@@ -1935,9 +1933,7 @@ def parse_indices(
 
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
-            "Invalid indices {} for array with shape {}".format(
-                parsed_indices, shape
-            )
+            f"Invalid indices {parsed_indices} for array with shape {shape}"
         )
 
     if len_parsed_indices < ndim:
@@ -2042,9 +2038,7 @@ def parse_indices(
                     or (start > stop and step > 0)
                 ):
                     raise IndexError(
-                        "Invalid indices dimension with size {}: {}".format(
-                            size, index
-                        )
+                        f"Invalid indices dimension with size {size}: {index}"
                     )
 
                 if step < 0 and stop < 0:
@@ -2073,10 +2067,8 @@ def parse_indices(
                 # has a size attribute.
                 if _numpy_size(index) != size:
                     raise IndexError(
-                        "Incorrect number ({}) of boolean indices for "
-                        "dimension with size {}: {}".format(
-                            _numpy_size(index), size, index
-                        )
+                        f"Incorrect number ({_numpy_size(index)}) of boolean "
+                        f"indices for dimension with size {size}: {index}"
                     )
 
                 index = _numpy_where(index)[0]
@@ -2125,7 +2117,7 @@ def parse_indices(
                         ):
                             raise ValueError(
                                 "Bad index (not strictly monotonic): "
-                                "{}".format(index)
+                                f"{index}"
                             )
 
                         if reverse and step < 0:
@@ -2155,9 +2147,8 @@ def parse_indices(
                             is_slice = True
                 else:
                     raise IndexError(
-                        "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape
-                        )
+                        f"Invalid indices {parsed_indices} for array with "
+                        f"shape {shape}"
                     )
 
         if is_slice:
@@ -2905,7 +2896,7 @@ def inspect(self):
 
     if hasattr(self, "__dict__"):
         for key, value in sorted(self.__dict__.items()):
-            out.append("{}: {!r}".format(key, value))
+            out.append(f"{key}: {value!r}")
 
     print("\n".join(out))
 
@@ -3361,15 +3352,14 @@ def default_netCDF_fillvals():
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError("{}".format(message))
+    raise DeprecationError(f"{message}")
 
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
-        "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
-            instance.__class__.__name__, method, arg, message, version
-        )
+        f"Argument {arg!r} of method '{instance.__class__.__name__}.{method}' "
+        f"has been deprecated at version {version} and is no longer available "
+        f"and will be removed at version 4.0.0. {message}"
     )
 
 
@@ -3394,10 +3384,9 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
 
     for key in kwargs.keys():
         raise DeprecationError(
-            "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
-                func, key, message, version
-            )
+            f"Keyword {key!r} of function '{func}' has been deprecated at "
+            f"version {version} and is no longer available and will be "
+            f"removed at version 4.0.0. {message}"
         )
 
 
@@ -3425,10 +3414,10 @@ def _DEPRECATION_ERROR_KWARGS(
 
     for key in kwargs.keys():
         raise DeprecationError(
-            "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
-            "version {4} and is no longer available and will be removed at version 4.0.0. {3}".format(
-                instance.__class__.__name__, method, key, message, version
-            )
+            f"Keyword {key!r} of method "
+            f"'{instance.__class__.__name__}.{method}' has been deprecated "
+            f"at version {version} and is no longer available and will be "
+            f"removed at version 4.0.0. {message}"
         )
 
 
@@ -3436,19 +3425,18 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
     instance, method, kwarg, value, message="", version="3.0.0"
 ):
     raise DeprecationError(
-        "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
-        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
-            value, kwarg, method, instance.__class__.__name__, version, message
-        )
+        f"Value {value!r} of keyword {kwarg!r} of method "
+        f"'{instance.__class__.__name__}.{method}' has been deprecated at "
+        f"version {version} and is no longer available and will be removed "
+        f"at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
-        "{} method {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, method, version, message
-        )
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and is no longer available and will be "
+        f"removed at version 4.0.0. {message}"
     )
 
 
@@ -3456,29 +3444,24 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
     instance, attribute, message="", version="3.0.0"
 ):
     warnings.warn(
-        "{} attribute {!r} has been deprecated at version {} and will be "
-        "removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, attribute, version, message
-        ),
+        f"{instance.__class__.__name__} attribute {attribute!r} has been "
+        f"deprecated at version {version} and will be removed at version "
+        f"4.0.0. {message}",
         DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
-        "Function {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            func, version, message
-        )
+        f"Function {func!r} has been deprecated at version {version} and is "
+        f"no longer available and will be removed at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
-        "Class {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            cls, version, message
-        )
+        f"Class {cls!r} has been deprecated at version {version} and is no "
+        f"longer available and will be removed at version 4.0.0. {message}"
     )
 
 
@@ -3486,10 +3469,9 @@ def _DEPRECATION_WARNING_METHOD(
     instance, method, message="", new=None, version="3.0.0"
 ):
     warnings.warn(
-        "{} method {!r} has been deprecated at version {} and will be "
-        "removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, method, version, message
-        ),
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and will be removed at version 4.0.0. "
+        f"{message}",
         DeprecationWarning,
     )
 
@@ -3497,17 +3479,17 @@ def _DEPRECATION_WARNING_METHOD(
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
-            version, message
-        )
+        f"version {version} and is no longer available and will be removed "
+        f"at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
-        "Use of a {!r} to identify constructs has been deprecated at version "
-        "{} and is no longer available and will be removed at version 4.0.0. Use the * operator to unpack the "
-        "arguments instead.".format(instance.__class__.__name__, version)
+        f"Use of a {instance.__class__.__name__!r} to identify constructs "
+        f"has been deprecated at version {version} and is no longer available "
+        "and will be removed at version 4.0.0. Use the * operator to unpack "
+        "the arguments instead."
     )
 
 

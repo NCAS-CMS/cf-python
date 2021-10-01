@@ -1,21 +1,17 @@
 import logging
 import sys
-
 from enum import Enum, auto
-from psutil import virtual_memory
 from tempfile import gettempdir
 
 from numpy.ma import masked as numpy_ma_masked
+from psutil import virtual_memory
 
-from . import mpi_on
-from . import mpi_size
-
+from . import mpi_on, mpi_size
 
 if mpi_on:
     from . import mpi_comm
 
 from .units import Units
-
 
 # platform = sys.platform
 # if platform == 'darwin':
@@ -146,10 +142,6 @@ _stash2standard_name = {}
 # ---------------------------------------------------------------------
 cr_canonical_units = {
     "earth_radius": Units("m"),
-    "false_easting": Units("m"),
-    "projection_x_coordinate": Units("m"),
-    "false_northing": Units("m"),
-    "projection_y_coordinate": Units("m"),
     "grid_north_pole_latitude": Units("degrees_north"),
     "grid_north_pole_longitude": Units("degrees_east"),
     "inverse_flattening": Units("1"),

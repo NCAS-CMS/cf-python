@@ -307,14 +307,14 @@ class functionTest(unittest.TestCase):
             self.assertIn(component, e)
             self.assertIn(component, ep)
         for component in [
-            "cf: {} {}".format(cf.__version__, os.path.abspath(cf.__file__)),
-            "Python: {} {}".format(platform.python_version(), sys.executable),
+            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}",
+            f"Python: {platform.python_version()} {sys.executable}",
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
         for component in [
-            "cf: {}".format(cf.__version__),
-            "Python: {}".format(platform.python_version()),
+            f"cf: {cf.__version__}",
+            f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
 

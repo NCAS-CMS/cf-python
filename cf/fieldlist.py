@@ -1,6 +1,4 @@
-from . import mixin
-from . import ConstructList
-
+from . import ConstructList, mixin
 from .functions import _DEPRECATION_ERROR_METHOD
 
 
@@ -220,7 +218,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 return
 
             return self._default(
-                default, "select_field() can't return {n} fields"
+                default, f"select_field() can't return {n} fields"
             )
 
         return out[0]

@@ -1,24 +1,18 @@
-import re
-
-from ast import literal_eval as ast_literal_eval
-
 import logging
+import re
+from ast import literal_eval as ast_literal_eval
 
 import cfdm
 
 from .data.data import Data
-
-from .functions import inspect as cf_inspect
-
-from .functions import _DEPRECATION_ERROR_METHOD
-
 from .decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from .functions import _DEPRECATION_ERROR_METHOD
+from .functions import inspect as cf_inspect
 
 logger = logging.getLogger(__name__)
 
@@ -176,7 +170,7 @@ class CellMethod(cfdm.CellMethod):
                             parsed_interval = ast_literal_eval(interval)
                         except (SyntaxError, ValueError):
                             raise ValueError(
-                                "{}: {!r}".format(incorrect_interval, interval)
+                                f"{incorrect_interval}: {interval!r}"
                             )
 
                         try:
@@ -185,7 +179,7 @@ class CellMethod(cfdm.CellMethod):
                             )
                         except Exception:
                             raise ValueError(
-                                "{}: {!r}".format(incorrect_interval, interval)
+                                f"{incorrect_interval}: {interval!r}"
                             )
 
                         intervals.append(data)
@@ -208,9 +202,7 @@ class CellMethod(cfdm.CellMethod):
             n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
                 raise ValueError(
-                    "{} (doesn't match axes): {!r}".format(
-                        incorrect_interval, interval
-                    )
+                    f"{incorrect_interval} (doesn't match axes): {interval!r}"
                 )
 
             if intervals:
@@ -410,8 +402,10 @@ class CellMethod(cfdm.CellMethod):
     @intervals.setter
     def intervals(self, value):
         if not isinstance(value, (tuple, list)):
-            msg = "intervals attribute must be a tuple or list, not {0!r}"
-            raise ValueError(msg.format(value.__class__.__name__))
+            raise ValueError(
+                "intervals attribute must be a tuple or list, not "
+                f"{value.__class__.__name__!r}"
+            )
 
         # Parse the intervals
         values = []
@@ -422,9 +416,7 @@ class CellMethod(cfdm.CellMethod):
                 try:
                     x = ast_literal_eval(i.pop(0))
                 except Exception:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval)
-                    )
+                    raise ValueError(f"Unparseable interval: {interval!r}")
 
                 if interval:
                     units = " ".join(i)
@@ -434,21 +426,15 @@ class CellMethod(cfdm.CellMethod):
                 try:
                     d = Data(x, units)
                 except Exception:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval)
-                    )
+                    raise ValueError(f"Unparseable interval: {interval!r}")
             else:
                 try:
                     d = Data.asdata(interval, copy=True)
                 except Exception:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval)
-                    )
+                    raise ValueError(f"Unparseable interval: {interval!r}")
 
             if d.size != 1:
-                raise ValueError(
-                    "Unparseable interval: {0!r}".format(interval)
-                )
+                raise ValueError(f"Unparseable interval: {interval!r}")
 
             if d.ndim > 1:
                 d.squeeze(inplace=True)
@@ -470,9 +456,8 @@ class CellMethod(cfdm.CellMethod):
     def axes(self, value):
         if not isinstance(value, (tuple, list)):
             raise ValueError(
-                "axes attribute must be a tuple or list, not {0}".format(
-                    value.__class__.__name__
-                )
+                "axes attribute must be a tuple or list, not "
+                f"{value.__class__.__name__}"
             )
 
         self.set_axes(tuple(value))
@@ -574,9 +559,8 @@ class CellMethod(cfdm.CellMethod):
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             logger.info(
-                "{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Different types: "
+                f"{self.__class__.__name__} != {other.__class__.__name__}"
             )  # pragma: no cover
             return False
 
@@ -585,9 +569,8 @@ class CellMethod(cfdm.CellMethod):
 
         if len(axes0) != len(axes1) or set(axes0) != set(axes1):
             logger.info(
-                "{}: Non-equivalent axes: {!r}, {!r}".format(
-                    self.__class__.__name__, axes0, axes1
-                )
+                f"{self.__class__.__name__}: Non-equivalent axes: "
+                f"{axes0!r}, {axes1!r}"
             )  # pragma: no cover
             return False
 
@@ -599,9 +582,8 @@ class CellMethod(cfdm.CellMethod):
             other1, rtol=rtol, atol=atol, ignore_qualifiers=("interval",)
         ):
             logger.info(
-                "{0}: Non-equivalent: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self, other
-                )
+                f"{self.__class__.__name__}: Non-equivalent: "
+                f"{self!r}, {other!r}"
             )  # pragma: no cover
             return False
 
@@ -615,12 +597,10 @@ class CellMethod(cfdm.CellMethod):
                 other1.get_qualifier("interval", ())
             ):
                 logger.info(
-                    "{0}: Different numbers of intervals: {1!r} != "
-                    "{2!r}".format(
-                        self.__class__.__name__,
-                        self1.get_qualifier("interval", ()),
-                        other1.get_qualifier("interval", ()),
-                    )
+                    f"{self.__class__.__name__}: Different numbers of "
+                    "intervals: "
+                    f"{self1.get_qualifier('interval', ())!r} != "
+                    f"{other1.get_qualifier('interval', ())!r}"
                 )  # pragma: no cover
                 return False
 
@@ -631,11 +611,8 @@ class CellMethod(cfdm.CellMethod):
             ):
                 if not data0.allclose(data1, rtol=rtol, atol=atol):
                     logger.info(
-                        "{0}: Different interval data: {1!r} != {2!r}".format(
-                            self.__class__.__name__,
-                            self.intervals,
-                            other.intervals,
-                        )
+                        f"{self.__class__.__name__}: Different interval "
+                        f"data: {self.intervals!r} != {other.intervals!r}"
                     )  # pragma: no cover
                     return False
 

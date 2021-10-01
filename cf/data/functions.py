@@ -3,10 +3,8 @@ from os.path import isfile
 from netCDF4 import Dataset as netCDF4_Dataset
 
 from ..constants import _file_to_fh
-from ..functions import open_files_threshold_exceeded, close_one_file
-
+from ..functions import close_one_file, open_files_threshold_exceeded
 from ..umread_lib.umfile import File
-
 
 _file_to_UM = _file_to_fh.setdefault("UM", {})
 _file_to_Dataset = _file_to_fh.setdefault("netCDF", {})

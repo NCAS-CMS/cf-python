@@ -1,5 +1,4 @@
 import logging
-
 from numbers import Integral
 
 import numpy as np
@@ -9,22 +8,20 @@ try:
 except ImportError:
     pass
 
-from ..query import Query
 from ..data import Data
-from ..units import Units
-
-from ..functions import (
-    parse_indices,
-    bounds_combination_mode,
-    _DEPRECATION_ERROR_KWARGS,
-)
-
 from ..decorators import (
+    _deprecated_kwarg_check,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
-    _deprecated_kwarg_check,
 )
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+    parse_indices,
+)
+from ..query import Query
+from ..units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -1210,13 +1207,17 @@ class FieldDomain:
             bounds_units = bounds.Units
 
         period = coord.period()
+
         if period is not None:
             has_period = True
         else:
             period = config.get("period")
-            has_period = False
+            if period is None:
+                has_period = False
+            else:
+                has_period = True
 
-        if period is None:
+        if not has_period:
             if bounds_units.islongitude:
                 period = Data(360.0, units="degrees_east")
             elif bounds_units.equivalent(_units_degrees):
@@ -1234,9 +1235,6 @@ class FieldDomain:
             if not noop:
                 self.cyclic(key, iscyclic=False, config=config)
             return False
-
-        if has_period:
-            period = None
 
         config = config.copy()
         config["axis"] = self.get_data_axes(key, default=(None,))[0]
@@ -1771,14 +1769,15 @@ class FieldDomain:
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_references`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_references`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
         :Parameters:
 
-            identities: optional
+            identity: optional
                 Select coordinate reference constructs that have an
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
@@ -2210,7 +2209,7 @@ class FieldDomain:
         )
 
     def get_coordinate_reference(
-        self, identity=None, key=False, construct=None, default=ValueError()
+        self, *identity, key=False, construct=None, default=ValueError()
     ):
         """TODO.
 
@@ -2281,7 +2280,7 @@ class FieldDomain:
         """
         if construct is None:
             return self.coordinate_reference(
-                identity=identity, key=key, default=default
+                *identity, key=key, default=default
             )
 
         out = []
@@ -2290,7 +2289,6 @@ class FieldDomain:
         if c_key is None:
             if default is None:
                 return
-
             return self._default(
                 default, f"Can't identify construct from {construct!r}"
             )

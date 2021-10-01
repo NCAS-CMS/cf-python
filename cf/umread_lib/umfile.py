@@ -1,5 +1,4 @@
 import os
-
 from functools import cmp_to_key
 
 import numpy
@@ -203,13 +202,15 @@ class Var:
         return self._compare(self.recs.index(a), self.recs.index(b))
 
     def group_records_by_extra_data(self):
-        """Returns a list of (sub)lists of records where each records
-        within each sublist has matching extra data (if any), so if the
-        whole variable has consistent extra data then the return value
-        will be of length 1.
+        """Group records by mathcing extra data.
 
-        Within each group, the ordering of returned records is the same as
-        in the `!recs` attribute.
+        Returns a list of (sub)lists of records where each record
+        within each sublist has matching extra data (if
+        any). Therefore, if the whole variable has consistent extra
+        data then the returned value will be a list of length 1.
+
+        Within each group, the ordering of returned records is the
+        same as in the `!recs` attribute.
 
         :Returns:
 
@@ -349,8 +350,9 @@ class Rec:
         return edu.get_data()
 
     def get_extra_data(self):
-        """Get extra data associated with the record, either by reading
-        or using cached read.
+        """Get extra data associated with the record.
+
+        This is done either by reading or using cached read.
 
         :Returns:
 
@@ -363,7 +365,7 @@ class Rec:
         return self._extra_data
 
     def get_type_and_num_words(self):
-        """Get the data type (as numpy type) and number of words.
+        """Get the data type and number of words.
 
         :Returns:
 

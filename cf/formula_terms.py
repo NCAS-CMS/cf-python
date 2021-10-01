@@ -2,19 +2,16 @@ import logging
 
 import cfdm
 
-from .units import Units
-
-from .functions import bounds_combination_mode
-
 from .constants import (
-    formula_terms_standard_names,
-    formula_terms_max_dimensions,
-    formula_terms_units,
     formula_terms_computed_standard_names,
     formula_terms_D1,
+    formula_terms_max_dimensions,
+    formula_terms_standard_names,
+    formula_terms_units,
 )
-
 from .docstring import _docstring_substitution_definitions
+from .functions import bounds_combination_mode
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +135,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if units is None:
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
-                "{!r} is not a valid term".format(term)
+                f"{term!r} is not a valid term"
             )
 
         units = Units(units)
@@ -151,9 +148,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
         if var is not None:
             logger.detail(
-                "Formula term {!r}:\n{}".format(
-                    term, var.dump(display=False, _level=1)
-                )
+                f"Formula term {term!r}:\n{var.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
             valid_standard_names = formula_terms_standard_names[standard_name][
@@ -168,50 +163,43 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                     and vsn not in valid_standard_names
                     and len(valid_standard_names) > 1
                 ):
+                    expected_names = ", ".join(
+                        repr(x) for x in valid_standard_names
+                    )
                     raise ValueError(
                         "Can't calculate non-parametric vertical coordinates: "
-                        "{!r} term {!r} has no standard name. "
-                        "Expected one of {}".format(
-                            term,
-                            var,
-                            ", ".join(repr(x) for x in valid_standard_names),
-                        )
+                        f"{term!r} term {var!r} has no standard name. "
+                        f"Expected one of {expected_names}"
                     )
             elif vsn not in valid_standard_names:
+                expected_names = ", ".join(
+                    repr(x) for x in valid_standard_names
+                )
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has invalid "
-                    "standard name: {!r}. Expected one of {}".format(
-                        term,
-                        var,
-                        vsn,
-                        ", ".join(repr(x) for x in valid_standard_names),
-                    )
+                    f"{term!r} term {var!r} has invalid standard name: "
+                    f"{vsn!r}. Expected one of {expected_names}"
                 )
 
             if var.ndim > formula_terms_max_dimensions[standard_name][term]:
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has incorrect "
-                    "number of dimensions. Expected at most {}".format(
-                        term, var, var.ndim
-                    )
+                    f"{term!r} term {var!r} has incorrect "
+                    f"number of dimensions. Expected at most {var.ndim}"
                 )
 
             if not var.Units.equivalent(units):
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "{!r} term {!r} has incorrect units: {!r} "
-                    "Expected units equivalent to {!r}".format(
-                        term, var, var.Units, units
-                    )
+                    f"{term!r} term {var!r} has incorrect units: "
+                    f"{var.Units!r}. Expected units equivalent to {units!r}"
                 )
         else:
             if not default_to_zero:
                 raise ValueError(
                     "Can't calculate non-parametric vertical coordinates: "
-                    "No {!r} term domain ancillary construct and "
-                    "default_to_zero=False".format(term)
+                    f"No {term!r} term domain ancillary construct and "
+                    "default_to_zero=False"
                 )
             # ----------------------------------------------------
             # Create a default zero-valued domain ancillary
@@ -226,9 +214,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 var.set_bounds(bounds)
 
             logger.detail(
-                "Formula term {!r} (default):\n{}".format(
-                    term, var.dump(display=False, _level=1)
-                )
+                f"Formula term {term!r} (default):\n"
+                f"{var.dump(display=False, _level=1)}"
             )  # pragma: no cover
 
         return var, key
@@ -270,7 +257,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             # There is a unique computed standard name for this formula
             # ------------------------------------------------------------
             logger.detail(
-                "computed_standard_name: {!r}".format(computed_standard_name)
+                f"computed_standard_name: {computed_standard_name!r}"
             )  # pragma: no cover
 
             return computed_standard_name
@@ -367,7 +354,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             axis = f.get_data_axes(key)
             break
 
-        logger.detail("Vertical axis: {!r}".format(axis))  # pragma: no cover
+        logger.detail(f"Vertical axis: {axis!r}")  # pragma: no cover
 
         return axis
 
@@ -417,8 +404,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             if not set(eta_axes).issuperset(depth_axes):
                 raise ValueError(
                     "Can't calculate non-parametric coordinates: "
-                    "'depth' term {!r} axes must be a subset of "
-                    "'eta' term {!r} axes.".format(depth, eta)
+                    f"'depth' term {depth!r} axes must be a subset of "
+                    f"'eta' term {eta!r} axes."
                 )
 
             eta_axes2 = depth_axes
@@ -432,10 +419,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             eta_axes = eta_axes2
 
         logger.debug(
-            "Transposed domain ancillary 'eta': {!r}\n"
-            "Transposed domain ancillary 'eta' axes: {!r}".format(
-                eta, eta_axes
-            )
+            f"Transposed domain ancillary 'eta': {eta!r}\n"
+            f"Transposed domain ancillary 'eta' axes: {eta_axes!r}"
         )  # pragma: no cover
 
         return eta, eta_axes
@@ -506,7 +491,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
             computed_axes = tuple([computed_axes[i] for i in iaxes])
 
         logger.detail(
-            "Non-parametric coordinate axes: {!r}".format(computed_axes)
+            f"Non-parametric coordinate axes: {computed_axes!r}"
         )  # pragma: no cover
 
         return computed, computed_axes
@@ -554,8 +539,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if units != ref_units:
             if not units.equivalent(ref_units):
                 raise ValueError(
-                    "Terms {!r} and {!r} have incompatible units: "
-                    "{!r}, {!r} ".format(ref_term2, term, ref_units, units)
+                    f"Terms {ref_term2!r} and {term!r} have incompatible "
+                    f"units: {ref_units!r}, {units!r}"
                 )
 
             var = var.copy()
@@ -632,8 +617,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 # been ensured by `_domain_ancillary_term`
                 if strict:
                     raise ValueError(
-                        "{!r} term {!r} has invalid "
-                        "standard name: {!r}".format(term, var, standard_name)
+                        f"{term!r} term {var!r} has invalid "
+                        f"standard name: {standard_name!r}"
                     )
 
         if strict and not indices:
@@ -681,8 +666,8 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         if var.size != 1 or var.dtype.kind != "i":
             raise ValueError(
                 "Can't calculate non-parametric vertical coordinates: "
-                "{!r} term {!r} doen't contain exactly one "
-                "integer value".format(term, var)
+                f"{term!r} term {var!r} doen't contain exactly one "
+                "integer value"
             )
 
     # ----------------------------------------------------------------
@@ -2139,7 +2124,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
 
         if standard_name is not None:
             logger.detail(
-                "standard_name: {!r}".format(standard_name)
+                f"standard_name: {standard_name!r}"
             )  # pragma: no cover
 
             if standard_name in cls.standard_names:

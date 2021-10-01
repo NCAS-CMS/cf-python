@@ -191,7 +191,7 @@ class aggregateTest(unittest.TestCase):
                         log_item.startswith(header)
                         for log_item in catch.output
                     ),
-                    "No log entry begins with '{}'".format(header),
+                    f"No log entry begins with '{header}'",
                 )
 
         # ...but with 'DETAIL' (3), should get only the detail-level one.
@@ -202,16 +202,14 @@ class aggregateTest(unittest.TestCase):
                     log_item.startswith(detail_header)
                     for log_item in catch.output
                 ),
-                "No log entry begins with '{}'".format(detail_header),
+                f"No log entry begins with '{detail_header}'",
             )
             self.assertFalse(
                 any(
                     log_item.startswith(debug_header)
                     for log_item in catch.output
                 ),
-                "A log entry begins with '{}' but should not".format(
-                    debug_header
-                ),
+                f"A log entry begins with '{debug_header}' but should not",
             )
 
         # and neither should emerge at the 'WARNING' (1) level.
@@ -230,10 +228,23 @@ class aggregateTest(unittest.TestCase):
                         log_item.startswith(header)
                         for log_item in catch.output
                     ),
-                    "A log entry begins with '{}' but should not".format(
-                        header
-                    ),
+                    f"A log entry begins with '{header}' but should not",
                 )
+
+    def test_aggregate_bad_units(self):
+        f = cf.read(self.filename, squeeze=True)[0]
+
+        g = cf.FieldList(f[0])
+        g.append(f[1:])
+
+        h = cf.aggregate(g)
+        self.assertEqual(len(h), 1)
+
+        g[0].override_units(cf.Units("apples!"), inplace=True)
+        g[1].override_units(cf.Units("oranges!"), inplace=True)
+
+        h = cf.aggregate(g)
+        self.assertEqual(len(h), 2)
 
 
 if __name__ == "__main__":

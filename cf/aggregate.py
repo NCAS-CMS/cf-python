@@ -1,40 +1,27 @@
 import logging
+from collections import namedtuple
+from operator import itemgetter
 
+from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
 from numpy import argsort as numpy_argsort
 from numpy import dtype as numpy_dtype
 from numpy import sort as numpy_sort
 
-from collections import namedtuple
-from operator import itemgetter
-
-from cfdm import (
-    is_log_level_info,
-    is_log_level_debug,
-    is_log_level_detail,
-)
-
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .domainaxis import DomainAxis
-from .fieldlist import FieldList
-from .query import gt
-from .units import Units
-
+from .data.data import Data
 from .decorators import (
-    _manage_log_level_via_verbosity,
     _manage_log_level_via_verbose_attr,
+    _manage_log_level_via_verbosity,
     _reset_log_emergence_level,
 )
-
-from .functions import (
-    flat,
-    hash_array,
-    _DEPRECATION_ERROR_FUNCTION_KWARGS,
-    _numpy_allclose,
-)
-from .functions import rtol as cf_rtol, atol as cf_atol
-
-from .data.data import Data
-
+from .domainaxis import DomainAxis
+from .fieldlist import FieldList
+from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, _numpy_allclose
+from .functions import atol as cf_atol
+from .functions import flat, hash_array
+from .functions import rtol as cf_rtol
+from .query import gt
+from .units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -424,9 +411,8 @@ class _Meta:
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
                     self.message = (
-                        "axis {0!r} has no netCDF dimension name".format(
-                            f.constructs.domain_axis_identity(axis)
-                        )
+                        f"axis {f.constructs.domain_axis_identity(axis)!r} "
+                        "has no netCDF dimension name"
                     )  # TODO
                     return
                 else:
@@ -1701,9 +1687,7 @@ def aggregate(
                     value[0]
                 except TypeError:
                     raise TypeError(
-                        "Bad type of {!r} parameter: {!r}".format(
-                            key, type(value)
-                        )
+                        f"Bad type of {key!r} parameter: {type(value)!r}"
                     )
 
         equal = properties["equal"]
@@ -1713,9 +1697,7 @@ def aggregate(
         if equal and exist and set(equal).intersection(exist):
             raise AttributeError(
                 "Can't specify the same properties in both the 'equal' "
-                " and 'exist' parameters: {!r}".format(
-                    set(equal).intersection(exist)
-                )
+                f" and 'exist' parameters: {set(equal).intersection(exist)!r}"
             )
 
         if ignore:
@@ -1759,6 +1741,7 @@ def aggregate(
             status = 1
 
             if is_log_level_info(logger):
+                # Note: deliberately no gap between 'has' and '{exclude}'
                 logger.info(
                     f"Unaggregatable {f!r} has{exclude} been output: "
                     f"{meta.message}"
@@ -1840,6 +1823,22 @@ def aggregate(
                 output_fields_append(meta[0].field)
             else:
                 output_fields_append(meta[0].field.copy())
+
+            continue
+
+        if not meta[0].units.isvalid:
+            if is_log_level_info(logger):
+                x = ", ".join(set(repr(m.units) for m in meta))
+                logger.info(
+                    f"Unaggregatable {meta[0].field.identity()!r} fields "
+                    f"have{exclude} been output: Non-valid units {x}"
+                )
+
+            if not exclude:
+                if copy:
+                    output_fields.extend(m.field.copy() for m in meta)
+                else:
+                    output_fields.extend(m.field for m in meta)
 
             continue
 
@@ -1972,10 +1971,8 @@ def aggregate(
                 ):
                     if is_log_level_info(logger):
                         logger.info(
-                            "Unaggregatable {!r} fields have{} been "
-                            "output: {}".format(
-                                m[0].field.identity(), exclude, m[0].message
-                            )
+                            f"Unaggregatable {m[0].field.identity()!r} fields "
+                            f"have{exclude} been output: {m[0].message}"
                         )
 
                     unaggregatable = True
@@ -2821,13 +2818,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # because overlapping has been disallowed and
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
-                        meta[
-                            0
-                        ].message = "overlap={0} and {1!r} dimension coordinate bounds values overlap ({2} < {3})".format(
-                            m.axis[axis]["ids"][dim_coord_index],
-                            overlap,
-                            m1.first_bounds[axis][0],
-                            m0.last_bounds[axis][1],
+                        meta[0].message = (
+                            f"overlap={m.axis[axis]['ids'][dim_coord_index]} "
+                            f"and {overlap!r} dimension coordinate bounds "
+                            f"values overlap ({m1.first_bounds[axis][0]} "
+                            f"< {m0.last_bounds[axis][1]})"
                         )
 
                         return
@@ -2861,14 +2856,11 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # not contiguous with the last cell from
                         # field0.
                         meta[0].message = (
-                            "contiguous={0} and {1!r} dimension "
-                            "coordinate cells are not contiguous "
-                            "({2} < {3})".format(
-                                m.axis[axis]["ids"][dim_coord_index],
-                                contiguous,
-                                m0.last_bounds[axis][1],
-                                m1.first_bounds[axis][0],
-                            )
+                            "contiguous="
+                            f"{m.axis[axis]['ids'][dim_coord_index]} and "
+                            f"{contiguous!r} dimension coordinate cells are "
+                            f"not contiguous ({m0.last_bounds[axis][1]} < "
+                            f"{m1.first_bounds[axis][0]})"
                         )
                         return
 
@@ -2891,9 +2883,9 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     != number_of_1d_aux_coord_values
                 ):
                     meta[0].message = (
-                        "no {0!r} dimension coordinates and {0!r} "
-                        "auxiliary coordinates have duplicate "
-                        "values".format(identity)
+                        f"no {identity!r} dimension coordinates and "
+                        f"{identity!r} auxiliary coordinates have duplicate "
+                        "values"
                     )
 
                     return

@@ -1,18 +1,17 @@
 import logging
 import os
-
+import tempfile
 from glob import glob
 from os.path import isdir
 
 from numpy.ma.core import MaskError
 
-from ..cfimplementation import implementation
-from ..fieldlist import FieldList
 from ..aggregate import aggregate as cf_aggregate
+from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
+from ..fieldlist import FieldList
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from ..query import Query
-from ..functions import flat, _DEPRECATION_ERROR_FUNCTION_KWARGS
-
 from .netcdf import NetCDFRead
 from .um import UMRead
 
@@ -25,6 +24,8 @@ except ImportError:  # pragma: no cover
 else:
     python36 = False
 
+
+_cached_temporary_files = {}
 
 # --------------------------------------------------------------------
 # Create an implementation container and initialize a read object for
@@ -50,6 +51,7 @@ def read(
     squeeze=False,
     unsqueeze=False,
     fmt=None,
+    cdl_string=False,
     select=None,
     extra=None,
     recursive=False,
@@ -207,6 +209,11 @@ def read(
             be raised, unless the *ignore_read_error* parameter is
             True.
 
+            As a special case, if the `cdl_string` parameter is set to
+            True, the interpretation of `files` changes so that each
+            value is assumed to be a string of CDL input rather
+            than the above.
+
         external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
@@ -312,6 +319,22 @@ def read(
             ``'CFA'`` for CFA-netCDF files, ``'UM'`` for PP or UM
             fields files, and ``'CDL'`` for CDL text files. By default
             files of any of these formats are read.
+
+        cdl_string: `bool`, optional
+            If True and the format to read is CDL, read a string
+            input, or sequence of string inputs, each being interpreted
+            as a string of CDL rather than names of locations from
+            which field constructs can be read from, as standard.
+
+            By default, each string input or string element in the input
+            sequence is taken to be a file or directory name or an
+            OPenDAP URL from which to read field constructs, rather
+            than a string of CDL input, including when the `fmt`
+            parameter is set as CDL.
+
+            Note that when `cdl_string` is True, the `fmt` parameter is
+            ignored as the format is assumed to be CDL, so in that case
+            it is not necessary to also specify ``fmt='CDL'``.
 
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
@@ -576,14 +599,24 @@ def read(
         if isinstance(select, (str, Query, Pattern)):
             select = (select,)
 
+    # Manage input parameters where contradictions are possible:
+    if cdl_string and fmt:
+        if fmt == "CDL":
+            logger.info(
+                "It is not necessary to set the cf.read fmt as 'CDL' when "
+                "cdl_string is True, since that implies CDL is the format."
+            )  # pragma: no cover
+        else:
+            raise ValueError(
+                "cdl_string can only be True when the format is CDL, though "
+                "fmt is ignored in that case so there is no need to set it."
+            )
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
-
     if follow_symlinks and not recursive:
         raise ValueError(
-            "Can't set follow_symlinks={0} when recursive={1}".format(
-                follow_symlinks, recursive
-            )
+            f"Can't set follow_symlinks={follow_symlinks} when "
+            f"recursive={recursive}"
         )
 
     # Initialize the output list of fields
@@ -609,6 +642,36 @@ def read(
     # files
     field_counter = -1
     file_counter = 0
+
+    if cdl_string:
+        files2 = []
+
+        # 'files' input may be a single string or a sequence of them and to
+        # handle both cases it is easiest to convert former to a one-item seq.
+        if isinstance(files, str):
+            files = [files]
+
+        for cdl_file in files:
+            c = tempfile.NamedTemporaryFile(
+                mode="w",
+                dir=tempfile.gettempdir(),
+                prefix="cf_",
+                suffix=".cdl",
+            )
+
+            c_name = c.name
+            with open(c_name, "w") as f:
+                f.write(cdl_file)
+
+            # ----------------------------------------------------------------
+            # Need to cache the TemporaryFile object so that it doesn't get
+            # deleted too soon
+            # ----------------------------------------------------------------
+            _cached_temporary_files[c_name] = c
+
+            files2.append(c.name)
+
+        files = files2
 
     for file_glob in flat(files):
         # Expand variables
@@ -640,7 +703,7 @@ def read(
             files2 = files3
 
         for filename in files2:
-            logger.info("File: {0}".format(filename))  # pragma: no cover
+            logger.info(f"File: {filename}")  # pragma: no cover
 
             if um:
                 ftype = "UM"
@@ -666,9 +729,7 @@ def read(
 
                         raise ValueError(message)
 
-                    logger.warning(
-                        "WARNING: {}".format(error)
-                    )  # pragma: no cover
+                    logger.warning(f"WARNING: {error}")  # pragma: no cover
 
                     continue
 
@@ -712,12 +773,8 @@ def read(
             file_counter += 1
 
     logger.info(
-        "Read {0} field{1} from {2} file{3}".format(
-            field_counter,
-            _plural(field_counter),
-            file_counter,
-            _plural(file_counter),
-        )
+        f"Read {field_counter} field{_plural(field_counter)} from "
+        f"{file_counter} file{_plural(file_counter)}"
     )  # pragma: no cover
 
     # ----------------------------------------------------------------
@@ -776,12 +833,8 @@ def read(
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
-            "{} field{} requested but {} fields found in file{}".format(
-                nfields,
-                _plural(nfields),
-                len(field_list),
-                _plural(file_counter),
-            )
+            f"{nfields} field{_plural(nfields)} requested but "
+            f"{len(field_list)} fields found in file{_plural(file_counter)}"
         )
 
     return field_list
@@ -934,18 +987,15 @@ def _read_a_file(
         extra_read_vars["fmt"] = "NETCDF"
 
         if not netcdf.is_netcdf_file(filename):
+            error_msg = (
+                f"Can't determine format of file {filename} generated "
+                f"from CDL file {cdl_filename}"
+            )
             if ignore_read_error:
-                logger.warning(
-                    "WARNING: Can't determine format of file {} generated "
-                    "from CDL file {}".format(filename, cdl_filename)
-                )  # pragma: no cover
-
+                logger.warning(error_msg)  # pragma: no cover
                 return FieldList()
             else:
-                raise IOError(
-                    "Can't determine format of file {} generated from CDL "
-                    "file {}".format(filename, cdl_filename)
-                )
+                raise IOError(error_msg)
 
     if ftype == "netCDF" and extra_read_vars["fmt"] in (None, "NETCDF", "CFA"):
         # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
@@ -1045,4 +1095,4 @@ def file_type(filename):
         return "CDL"
 
     # Still here?
-    raise IOError("Can't determine format of file {}".format(filename))
+    raise IOError(f"Can't determine format of file {filename}")

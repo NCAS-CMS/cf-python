@@ -6,7 +6,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-
 # Note: it is important we test on the cf logging config rather than the
 # generic Python module logging (i.e. 'cf.logging' not just 'logging').
 # Also, mimic the use in the codebase by using a module-specific logger:
@@ -118,10 +117,10 @@ class DecoratorsTest(unittest.TestCase):
         # should be registered within the log message:
         example_class = dummyClass()
         log_message = [
-            "WARNING:{}:{}".format(log_name, example_class.warning_message),
-            "INFO:{}:{}".format(log_name, example_class.info_message),
-            "DETAIL:{}:{}".format(log_name, example_class.detail_message),
-            "DEBUG:{}:{}".format(log_name, example_class.debug_message),
+            f"WARNING:{log_name}:{example_class.warning_message}",
+            f"INFO:{log_name}:{example_class.info_message}",
+            f"DETAIL:{log_name}:{example_class.detail_message}",
+            f"DEBUG:{log_name}:{example_class.debug_message}",
         ]
 
         for level in levels:
