@@ -333,9 +333,7 @@ class TimeDurationTest(unittest.TestCase):
                 if direction is False:
                     y = y[::-1]
 
-                self.assertEqual(
-                    x, y, "{}!={} direction={}".format(x, y, direction)
-                )
+                self.assertEqual(x, y, f"{x}!={y} direction={direction}")
 
             for x, y in zip(
                 [
@@ -388,7 +386,7 @@ class TimeDurationTest(unittest.TestCase):
             ):
                 if direction is False:
                     y = y[::-1]
-                self.assertEqual(x, y, "{}!={}".format(x, y))
+                self.assertEqual(x, y, f"{x}!={y}")
 
             for x, y in zip(
                 [
@@ -437,7 +435,7 @@ class TimeDurationTest(unittest.TestCase):
                 if direction is False:
                     y = y[::-1]
 
-                self.assertEqual(x, y, "{}!={}".format(x, y))
+                self.assertEqual(x, y, f"{x}!={y}")
 
     def test_TimeDuration_arithmetic(self):
         self.assertEqual(cf.M() + cf.dt(2000, 1, 1), cf.dt(2000, 2, 1))

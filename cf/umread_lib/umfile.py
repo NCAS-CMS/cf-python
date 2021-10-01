@@ -126,7 +126,7 @@ class File:
             file_type_obj = c.detect_file_type(self.fd)
         except Exception:
             self.close_fd()
-            raise IOError("File {} has unsupported format".format(self.path))
+            raise IOError(f"File {self.path} has unsupported format")
 
         d = c.file_type_obj_to_dict(file_type_obj)
         self.fmt = d["fmt"]

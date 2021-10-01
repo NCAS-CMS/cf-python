@@ -251,9 +251,7 @@ class CInterface:
             self._int_ptr = CT.POINTER(CT.c_int64)
             self._real_ptr = CT.POINTER(CT.c_double)
         else:
-            raise ValueError(
-                "Word size must be 4 or 8 (not {!r})".format(word_size)
-            )
+            raise ValueError(f"Word size must be 4 or 8 (not {word_size!r})")
 
     def _get_ctypes_int_array(self, size=None):
         """TODO."""
