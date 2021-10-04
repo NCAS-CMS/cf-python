@@ -1246,7 +1246,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(1)
     def __keepdims_indexing__(self):
-        """Flag to indicate whether orthogonal indexing is supported.
+        """Flag to indicate whether dimensions indexed with integers are kept.
 
         If set to True (the default) then providing a single integer
         as a single-axis index does *not* reduce the number of array
