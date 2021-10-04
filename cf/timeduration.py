@@ -949,22 +949,23 @@ class TimeDuration:
         duration = self.duration
         units = duration.Units
 
+        date_prefix = f"P{duration.datum()}"
         if units.equals(_calendar_months):
-            return "P{0}M".format(duration.datum())
+            return f"{date_prefix}M"
         if units.equals(_calendar_years):
-            return "P{0}Y".format(duration.datum())
+            return f"{date_prefix}Y"
         if units.equals(_days):
-            return "P{0}D".format(duration.datum())
-        if units.equals(_hours):
-            return "PT{0}H".format(duration.datum())
-        if units.equals(_minutes):
-            return "PT{0}M".format(duration.datum())
-        if units.equals(_seconds):
-            return "PT{0}S".format(duration.datum())
+            return f"{date_prefix}D"
 
-        raise ValueError(
-            "Bad {0} units: {1!r}".format(self.__class__.__name__, units)
-        )
+        time_prefix = f"PT{duration.datum()}"
+        if units.equals(_hours):
+            return f"{time_prefix}H"
+        if units.equals(_minutes):
+            return f"{time_prefix}M"
+        if units.equals(_seconds):
+            return f"{time_prefix}S"
+
+        raise ValueError(f"Bad {self.__class__.__name__} units: {units!r}")
 
     @property
     def isint(self):
@@ -1452,9 +1453,7 @@ class TimeDuration:
             if not calendar:
                 calendar = None
 
-            units = Units(
-                "{0} since {1}".format(duration.Units.units, dt), calendar
-            )
+            units = Units(f"{duration.Units.units} since {dt}", calendar)
             dt1 = Data(0.0, units)
 
             if not end:
@@ -1484,7 +1483,7 @@ class TimeDuration:
             if int_months != months:
                 raise ValueError(
                     "Can't create a time interval of a non-integer number "
-                    "of calendar months: {0}".format(months)
+                    f"of calendar months: {months}"
                 )
         elif units == _calendar_months:
             months = duration.datum()
@@ -1492,7 +1491,7 @@ class TimeDuration:
             if int_months != months:
                 raise ValueError(
                     "Can't create a time interval of a non-integer number "
-                    "of calendar months: {0}".format(months)
+                    f"of calendar months: {months}"
                 )
         else:
             int_months = None
@@ -1538,11 +1537,11 @@ class TimeDuration:
             return dt0, dt1
 
         if iso == "start and end":
-            return "{0}/{1}".format(dt0, dt1)
+            return f"{dt0}/{dt1}"
         if iso == "start and duration":
-            return "{0}/{1}".format(dt0, self.iso)
+            return f"{dt0}/{self.iso}"
         if iso == "duration and end":
-            return "{0}/{1}".format(self.iso, dt1)
+            return f"{self.iso}/{dt1}"
 
     def bounds(self, dt, direction=True):
         """Return a time interval containing a date-time.
