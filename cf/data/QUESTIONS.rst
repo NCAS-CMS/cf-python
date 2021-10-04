@@ -11,7 +11,7 @@ Q. When we run something that executes all of the lazy operations
    with a "persisted" version of the computed data? If we did this, we
    would want to have the ability to cache persisted chunks to disk,
    as they came into being on each thread (see, for instance,
-   `chest`). Do do this or not this could be controlled by a
+   `chest`). To do this or not do this could be controlled by a
    configuation setting.
 
 A. ?
