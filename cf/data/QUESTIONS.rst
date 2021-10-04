@@ -1,7 +1,7 @@
 Questions and answers
 =====================
 
-A place to record randoms thought about the daskification of
+A place to record random thoughts about the daskification of
 `cf.Data`, possibly prior to starting an issue on GitHub.
 
 ----
