@@ -332,13 +332,11 @@ class TimeDuration:
             self.duration = abs(Data.asdata(duration))
             units = self.duration.Units
             if not units.istime:
-                raise ValueError("Bad units: {!r}".format(units))
+                raise ValueError(f"Bad units: {units!r}")
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
-                "Can't create {0} of {1}".format(
-                    self.__class__.__name__, self.duration
-                )
+                f"Can't create {self.__class__.__name__} of {self.duration}"
             )
 
         duration = self.duration
@@ -417,12 +415,12 @@ class TimeDuration:
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
-        return "<CF {0}: {1}>".format(self.__class__.__name__, str(self))
+        return f"<CF {self.__class__.__name__}: {str(self)}>"
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
         yyy = [
-            x if y is None else "{0:0>2}".format(y)
+            x if y is None else f"{y:0>2}"
             for x, y in zip(("Y", "M", "D", "h", "m", "s"), self.offset)
         ]
 
@@ -777,16 +775,14 @@ class TimeDuration:
 
         if duration.size != 1:
             raise ValueError(
-                "Can't create {} with more than one value: {!r}".format(
-                    self.__class__.__name__, duration
-                )
+                f"Can't create {self.__class__.__name__} with more than one "
+                f"value: {duration!r}"
             )
 
         if duration < 0:
             raise ValueError(
-                "Can't create {} with with negative duration {!r}".format(
-                    self.__class__.__name__, duration
-                )
+                f"Can't create {self.__class__.__name__} with with negative "
+                f"duration {duration!r}"
             )
 
         if (
@@ -795,9 +791,7 @@ class TimeDuration:
         ):
             # Operator is not one of ==, !=, >=, >, <=, <
             raise ValueError(
-                "Can't create {} of {!r}".format(
-                    self.__class__.__name__, duration.Units
-                )
+                f"Can't create {self.__class__.__name__} of {duration.Units!r}"
             )
 
         if method not in _relational_methods:
@@ -833,9 +827,7 @@ class TimeDuration:
         """
 
         def _dHMS(duration, other, calendar, op):
-            units = Units(
-                "{0} since {1}".format(duration.Units.units, other), calendar
-            )
+            units = Units(f"{duration.Units.units} since {other}", calendar)
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
 
@@ -848,7 +840,7 @@ class TimeDuration:
             if months != months0:
                 raise ValueError(
                     "Fractional months are not supported for  "
-                    "date calculations: {}".format(months0)
+                    f"date calculations: {months0}"
                 )
         elif units == _calendar_months:
             months0 = duration.datum()
@@ -856,7 +848,7 @@ class TimeDuration:
             if months != months0:
                 raise ValueError(
                     "Fractional months are not supported for "
-                    "date calculations: {}".format(months0)
+                    f"date calculations: {months0}"
                 )
         else:
             months = None
@@ -929,7 +921,7 @@ class TimeDuration:
                 (i if j is None else j)
                 for i, j in zip(elements(dt), self.offset)
             ],
-            calendar=getattr(dt, "calendar", None)
+            calendar=getattr(dt, "calendar", None),
         )
 
     # ----------------------------------------------------------------
