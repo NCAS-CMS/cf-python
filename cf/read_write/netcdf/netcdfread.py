@@ -16,7 +16,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     """
 
-    def _ncdimensions(self, ncvar):
+    def _ncdimensions(self, ncvar, ncdimensions=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
 
@@ -32,6 +32,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             ncvar: `str`
                 The netCDF variable name.
+
+            ncdimensions: sequence of `str`, optional
+                Use these netCDF dimensions, rather than retrieving them
+                from the netCDF variable itself. This allows the
+                dimensions of a domain variable to be parsed. Note that
+                this only parameter only needs to be used once because the
+                parsed domain dimensions are automatically stored in
+                `self.read_var['domain_ncdimensions'][ncvar]`.
+
+                .. versionadded:: 3.TODO.0
 
         :Returns:
 
@@ -54,9 +64,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
         if not cfa:
-            return super()._ncdimensions(ncvar)
+            return super()._ncdimensions(ncvar, ncdimensions=ncdimensions)
 
-        # Still here?
+        # Still here? Then we have a CFA variable.
         ncdimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )

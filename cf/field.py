@@ -249,7 +249,7 @@ _xxx = namedtuple(
     "data_dimension", ["size", "axis", "key", "coord", "coord_type", "scalar"]
 )
 
-_empty_set = set()
+# _empty_set = set()
 
 
 class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
@@ -592,27 +592,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         data = self.get_data(_fill_value=False)
         data[indices] = value
 
-    @property
-    def _cyclic(self):
-        """Storage for axis cyclicity.
-
-        Do not change the value in-place.
-
-        """
-        return self._custom.get("_cyclic", _empty_set)
-
-    @_cyclic.setter
-    def _cyclic(self, value):
-        """value must be a set.
-
-        Do not change the value in-place.
-
-        """
-        self._custom["_cyclic"] = value
-
-    @_cyclic.deleter
-    def _cyclic(self):
-        self._custom["_cyclic"] = _empty_set
+    #    @property
+    #    def _cyclic(self):
+    #        """Storage for axis cyclicity.
+    #
+    #        Do not change the value in-place.
+    #
+    #        """
+    #        return self._custom.get("_cyclic", _empty_set)
+    #
+    #    @_cyclic.setter
+    #    def _cyclic(self, value):
+    #        """value must be a set.
+    #
+    #        Do not change the value in-place.
+    #
+    #        """
+    #        self._custom["_cyclic"] = value
+    #
+    #    @_cyclic.deleter
+    #    def _cyclic(self):
+    #        self._custom["_cyclic"] = _empty_set
 
     def analyse_items(self, relaxed_identities=None):
         """Analyse a domain.
@@ -4096,41 +4096,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
     @property
-    def rank(self):
-        """The number of axes in the domain.
-
-        Note that this may be greater the number of data array axes.
-
-        .. seealso:: `ndim`, `unsqueeze`
-
-        **Examples:**
-
-        >>> print(f)
-        air_temperature field summary
-        -----------------------------
-        Data           : air_temperature(time(12), latitude(64), longitude(128)) K
-        Cell methods   : time: mean
-        Axes           : time(12) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
-                       : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
-                       : longitude(128) = [0.0, ..., 357.1875] degrees_east
-                       : height(1) = [2.0] m
-        >>> f.rank
-        4
-        >>> f.ndim
-        3
-        >>> f
-        <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
-        >>> f.unsqueeze(inplace=True)
-        <CF Field: air_temperature(height(1), time(12), latitude(64), longitude(128)) K>
-        >>> f.rank
-        4
-        >>> f.ndim
-        4
-
-        """
-        return len(self.domain_axes(todict=True))
-
-    @property
     def varray(self):
         """A numpy array view of the data array.
 
@@ -4946,125 +4911,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
         return out
-
-    def cyclic(
-        self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
-    ):
-        """Set the cyclicity of an axis.
-
-        .. versionadded:: 1.0
-
-        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`,
-                     `period`, `domain_axis`
-
-        :Parameters:
-
-            identity, filter_kwargs: optional
-                Select the unique domain axis construct returned by
-                ``f.domain_axis(*identity, **filter_kwargs)``. See
-                `domain_axis` for details.
-
-            iscyclic: `bool`, optional
-                If False then the axis is set to be non-cyclic. By
-                default the selected axis is set to be cyclic.
-
-            period: optional
-                The period for a dimension coordinate construct which
-                spans the selected axis. May be any numeric scalar
-                object that can be converted to a `Data` object (which
-                includes numpy array and `Data` objects). The absolute
-                value of *period* is used. If *period* has units then
-                they must be compatible with those of the dimension
-                coordinates, otherwise it is assumed to have the same
-                units as the dimension coordinates.
-
-            config: `dict`
-                Additional parameters for optimizing the
-                operation. See the code for details.
-
-                .. versionadded:: 3.9.0
-
-            axes: deprecated at version 3.0.0
-                Use the *identity* and **filter_kwargs* parameters
-                instead.
-
-        :Returns:
-
-            `set`
-                The construct keys of the domain axes which were
-                cyclic prior to the new setting, or the current cyclic
-                domain axes if no axis was specified.
-
-        **Examples:**
-
-        >>> f.cyclic()
-        set()
-        >>> f.cyclic('X', period=360)
-        set()
-        >>> f.cyclic()
-        {'domainaxis2'}
-        >>> f.cyclic('X', iscyclic=False)
-        {'domainaxis2'}
-        >>> f.cyclic()
-        set()
-
-        """
-        if not iscyclic and config.get("no-op"):
-            return self._cyclic.copy()
-
-        old = None
-        cyclic = self._cyclic
-
-        if not identity and not filter_kwargs:
-            return cyclic.copy()
-
-        axis = config.get("axis")
-        if axis is None:
-            axis = self.domain_axis(*identity, key=True, **filter_kwargs)
-
-        data = self.get_data(None, _fill_value=False)
-        if data is not None:
-            try:
-                data_axes = self.get_data_axes()
-                data.cyclic(data_axes.index(axis), iscyclic)
-            except ValueError:
-                pass
-
-        if iscyclic:
-            dim = config.get("coord")
-            if dim is None:
-                dim = self.dimension_coordinate(
-                    filter_by_axis=(axis,), default=None
-                )
-
-            if dim is not None:
-                if config.get("period") is not None:
-                    dim.period(**config)
-                elif period is not None:
-                    dim.period(period, **config)
-                elif dim.period() is None:
-                    raise ValueError(
-                        "A cyclic dimension coordinate must have a period"
-                    )
-
-            if axis not in cyclic:
-                # Never change _cyclic in-place
-                old = cyclic.copy()
-                cyclic = cyclic.copy()
-                cyclic.add(axis)
-                self._cyclic = cyclic
-
-        elif axis in cyclic:
-            # Never change _cyclic in-place
-            old = cyclic.copy()
-            cyclic = cyclic.copy()
-            cyclic.discard(axis)
-            self._cyclic = cyclic
-
-        if old is None:
-            old = cyclic.copy()
-
-        return old
 
     def weights(
         self,
@@ -11683,9 +11529,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         n = 0
 
-        # TODO - replace ().ordered() with (todict=True) when Python
-        #        3.6 is deprecated
-        self_cell_methods = self.cell_methods().ordered()
+        self_cell_methods = self.cell_methods(todict=True)
 
         for identity in identities:
             cms = False

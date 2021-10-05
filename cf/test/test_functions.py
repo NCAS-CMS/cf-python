@@ -15,12 +15,10 @@ class functionTest(unittest.TestCase):
         self.test_only = ()
 
     def test_example_field(self):
-        for n in range(8):
-            f = cf.example_field(n)
-            f.array
+        for f in cf.example_fields():
             f.dump(display=False)
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             cf.example_field(-999)
 
     def test_keyword_deprecation(self):

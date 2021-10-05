@@ -16,6 +16,3 @@ class RaggedIndexedArray(cfdm.RaggedIndexedArray):
     .. versionadded:: 3.0.0
 
     """
-
-
-# --- End: class

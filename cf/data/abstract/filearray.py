@@ -183,8 +183,3 @@ class FileArray(Array):
 
     def open(self):
         pass
-
-
-# --- End: class
-
-# Array.register(FileArray)

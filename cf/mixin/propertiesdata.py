@@ -1663,7 +1663,6 @@ class PropertiesData(Properties):
         [ 0.  1.]
         >>> print(g.array)
         [ 1.  2.]
-
         >>> old = cf.Data.seterr('ignore')
         >>> h = g/f
         >>> print(h.array)

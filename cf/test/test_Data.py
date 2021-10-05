@@ -311,7 +311,6 @@ class DataTest(unittest.TestCase):
                         window=window, axis=-1, mode=mode, cval=0.0
                     )
                     self.assertTrue((e.array == b).all())
-        # --- End: for
 
     def test_Data_diff(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -343,7 +342,6 @@ class DataTest(unittest.TestCase):
                 x = e.diff(n=n, axis=axis, inplace=True)
                 self.assertIsNone(x)
                 self.assertTrue(e.equals(d_diff))
-        # --- End: for
 
         for chunksize in self.chunk_sizes:
             with cf.chunksize(chunksize):
@@ -354,7 +352,6 @@ class DataTest(unittest.TestCase):
                         d_diff = d.diff(n=n, axis=axis)
                         self.assertTrue((a_diff == d_diff).all())
                         self.assertTrue((a_diff.mask == d_diff.mask).all())
-        # --- End: for
 
     def test_Data_compressed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1398,7 +1395,6 @@ class DataTest(unittest.TestCase):
                     d.flip(axes, inplace=True)
 
                 self.assertTrue((d.array == array).all())
-        # --- End: for
 
         array = numpy.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
         d = cf.Data(array.copy(), "metre", chunk=False)
@@ -2197,7 +2193,6 @@ class DataTest(unittest.TestCase):
                             "{}, axis={}, unweighted, unmasked "
                             "\ne={}, \nb={}".format(h, axes, e.array, b),
                         )
-                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -2228,7 +2223,6 @@ class DataTest(unittest.TestCase):
                             "{}, axis={}, unweighted, masked "
                             "\ne={}, \nb={}".format(h, axes, e.array, b),
                         )
-        # --- End: for
 
         cf.chunksize(self.original_chunksize)
 
@@ -2416,7 +2410,6 @@ class DataTest(unittest.TestCase):
                                 "{}, axis={}, unweighted, unmasked "
                                 "\ne={}, \nb={}".format(h, axes, e.array, b),
                             )
-                    # --- End: for
 
                     # unweighted, masked
                     d = cf.Data(self.ma)
@@ -2480,7 +2473,6 @@ class DataTest(unittest.TestCase):
                                 axes, e.array, b
                             ),
                         )
-                    # --- End: for
 
                     # masked
                     d = cf.Data(self.ma)

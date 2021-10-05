@@ -303,6 +303,3 @@ class UMArray(abstract.FileArray):
             word_size=self.word_size,
             byte_ordering=self.byte_ordering,
         )
-
-
-# --- End: class

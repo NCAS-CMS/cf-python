@@ -127,6 +127,3 @@ class CompressedSubarray(abc.ABC):
         # because it includes the (temporary) reference as an argument to
         # getrefcount", hence <= 2 to test for uniqueness rather than <= 1.
         return getrefcount(self.array) <= 2
-
-
-# --- End: class

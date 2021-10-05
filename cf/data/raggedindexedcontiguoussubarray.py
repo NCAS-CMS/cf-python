@@ -54,13 +54,3 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
             )
 
             return get_subspace(uarray, indices)
-
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
-
-
-# --- End: class
