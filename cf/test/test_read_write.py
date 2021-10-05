@@ -420,9 +420,6 @@ class read_writeTest(unittest.TestCase):
             cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             append_ex_fields = cf.example_fields()
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
-            # Note: can remove this del when Issue #140 is closed:
-            if fmt in self.netcdf3_fmts:
-                del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
             if fmt in "NETCDF4_CLASSIC":
                 # Remove n=6 and =7 for reasons as given above (del => minus 1)
                 append_ex_fields = append_ex_fields[:5]
