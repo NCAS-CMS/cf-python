@@ -2,19 +2,16 @@ import logging
 
 import cfdm
 
-from ..mixin_container import Container
-
-from ..functions import (
-    _DEPRECATION_ERROR,
-    _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_DICT,
-)
-
 from ..decorators import (
     _deprecated_kwarg_check,
     _manage_log_level_via_verbosity,
 )
-
+from ..functions import (
+    _DEPRECATION_ERROR,
+    _DEPRECATION_ERROR_DICT,
+    _DEPRECATION_ERROR_KWARGS,
+)
+from ..mixin_container import Container
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +140,6 @@ class ConstructList(list, Container, cfdm.Container):
         for f in self:
             if f.equals(y):
                 return True
-        # --- End: for
 
         return False
 
@@ -252,9 +248,6 @@ class ConstructList(list, Container, cfdm.Container):
     reverse = list.reverse
     sort = list.sort
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def close(self):
         """Close all files referenced by each construct in the list.
 
@@ -317,7 +310,6 @@ class ConstructList(list, Container, cfdm.Container):
         for i, f in enumerate(self[start:stop]):
             if f.equals(value):
                 return i + start
-        # --- End: for
 
         raise ValueError(
             "{0!r} is not in {1}".format(value, self.__class__.__name__)
@@ -335,7 +327,6 @@ class ConstructList(list, Container, cfdm.Container):
             if f.equals(value):
                 del self[i]
                 return
-        # --- End: for
 
         raise ValueError(
             "{0}.remove(x): x not in {0}".format(self.__class__.__name__)
@@ -593,7 +584,6 @@ class ConstructList(list, Container, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-            # --- End: for
 
             # For each identity, check that there are matching pairs
             # of equal constructs.
@@ -617,7 +607,6 @@ class ConstructList(list, Container, cfdm.Container):
                             found_match = True
                             del gl[i]
                             break
-                # --- End: for
 
                 if not found_match:
                     logger.info(
@@ -626,7 +615,6 @@ class ConstructList(list, Container, cfdm.Container):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Still here? Then the lists are equal
@@ -743,9 +731,5 @@ class ConstructList(list, Container, cfdm.Container):
                             i, i.replace(":", "=", 1)
                         )
                     )  # pragma: no cover
-        # --- End: for
 
         return self.select_by_identity(*identities)
-
-
-# --- End: class
