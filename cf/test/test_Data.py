@@ -3112,8 +3112,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == b).all())
 
         d = cf.Data(a, "km")
-        b = np.where(a < 5, a, 10 * a)
-        e = d.where(a < 5, d, cf.Data(10000 * a, "m"))
+        b = np.where(a < 5, 10 * a, a)
+        e = d.where(a < 5, cf.Data(10000 * a, "metre"))
         self.assertTrue(e.shape == b.shape)
         self.assertTrue((e.array == b).all())
 

@@ -11311,10 +11311,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> print(e.array)
         [ 0  1  2  3  4 50 60 70 80 90]
 
-        >>> d = cf.Data(a, 'km')
-        >>> e = d.where(d < 5, d, cf.Data(10000 * d, 'm'))
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'km')
+        >>> e = d.where(d < 5, cf.Data(10000 * d, 'metre'))
         >>> print(e.array)
-        [ 0  1  2  3  4 50 60 70 80 90]
+        [ 0. 10. 20. 30. 40.  5.  6.  7.  8.  9.]
 
         >>> e = d.where(d < 5, cf.masked)
         >>> print(e.array)
@@ -11355,7 +11355,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [2]]
         >>> print(y)
         [[0 1 2 3]]
-        >>> condiction = x < y
+        >>> condition = x < y
         >>> print(condition)
         [[False  True  True  True]
          [False False  True  True]
@@ -11375,6 +11375,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [6.0 7.0 8.0]]
         >>> e.soften_mask()
         >>> f = e.where(d > 5, None, -3.1416)
+        >>> print(f.array)
         [[-3.1416 -3.1416 -3.1416]
          [-3.1416 -3.1416 -3.1416]
          [ 6.      7.      8.    ]]
