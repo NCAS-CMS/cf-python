@@ -5849,7 +5849,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 x=x, from_units=old_units, to_units=value, inplace=False
             )
 
-        self._dask_map_blocks(cf_Units, dtype=dtype)
+        self._map_blocks(cf_Units, dtype=dtype)
 
         self._Units = value
 
