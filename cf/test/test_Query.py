@@ -540,6 +540,32 @@ class QueryTest(unittest.TestCase):
         self.assertNotEqual(x, cf.eq(re.compile(".*RTY$")))
         self.assertNotEqual(x, cf.eq(re.compile("^.*RTY$")))
 
+    def test_Query_set_condition_units(self):
+        q = cf.lt(9)
+        q.set_condition_units("km")
+        self.assertEqual(q.value.Units, cf.Units("km"))
+
+        with self.assertRaises(ValueError):
+            q.set_condition_units("seconds")
+
+        q = cf.lt(9000, units="m")
+        q.set_condition_units("km")
+        self.assertEqual(q.value.Units, cf.Units("km"))
+        self.assertEqual(q.value.array, 9)
+
+        q = cf.lt(9)
+        r = cf.ge(3000, units="m")
+        s = q & r
+        s.set_condition_units("km")
+        self.assertEqual(s._compound[0].value.Units, cf.Units("km"))
+        self.assertEqual(s._compound[1].value.Units, cf.Units("km"))
+        self.assertEqual(s._compound[0].value.array, 9)
+        self.assertEqual(s._compound[1].value.array, 3)
+
+        self.assertEqual(r.value.Units, cf.Units("m"))
+        self.assertEqual(r.value.array, 3000)
+        self.assertEqual(q.value, 9)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
