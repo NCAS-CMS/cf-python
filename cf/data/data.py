@@ -101,6 +101,7 @@ from .creation import (
     generate_axis_identifiers,
     to_dask,
 )
+from .dask_utils import cf_harden_mask, cf_soften_mask
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
@@ -1246,7 +1247,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(1)
     def __keepdims_indexing__(self):
-        """Flag to indicate whether dimensions indexed with integers are kept.
+        """Flag to indicate whether dimensions indexed with integers are
+        kept.
 
         If set to True (the default) then providing a single integer
         as a single-axis index does *not* reduce the number of array
@@ -1452,13 +1454,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             func:
-                The funciton to be applied to the data, via
-                `dask.array.Array.map_blocks`, to each chunk of the
-                dask array.
+                The function to be applied to the data, via
+                `dask.array.map_blocks`, to each chunk of the dask
+                array.
 
             kwargs: optional
                 Keyword arguments passed to the
-                `dask.array.Array.map_blocks` method.
+                `dask.array.map_blocks` method.
 
         :Returns:
 
@@ -9649,7 +9651,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [1 -- 3]
 
         """
-        self._map_blocks(_cf_harden_mask, dtype=self.dtype)
+        self._map_blocks(cf_harden_mask, dtype=self.dtype)
         self._hardmask = True
 
     def soften_mask(self):
@@ -9680,7 +9682,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [  1 999   3]
 
         """
-        self._map_blocks(_cf_soften_mask, dtype=self.dtype)
+        self._map_blocks(cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
 
     @_inplace_enabled(default=False)
@@ -13582,54 +13584,3 @@ def _broadcast(a, shape):
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
     return np.tile(a, tile)
-
-
-"""Dask utilities to be called on chunks"""
-
-
-def _cf_harden_mask(a):
-    """Harden the mask of a masked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a hardened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with hardened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    if np.ma.isMA(a):
-        a.harden_mask()
-
-    return a
-
-
-def _cf_soften_mask(a):
-    """Soften the mask of a maked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a softened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with softened mask.
-
-    """
-    if np.ma.isMA(a):
-        a.soften_mask()
-
-    return a
