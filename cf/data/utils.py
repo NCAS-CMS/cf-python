@@ -1,5 +1,5 @@
 """General functions useful for `Data` functionality."""
-from functools import partial
+from functools import lru_cache, partial
 from itertools import product
 
 import dask.array as da
@@ -91,7 +91,6 @@ def convert_to_reftime(array, units, first_value=None):
                     )
             else:
                 d_calendar = x_calendar
-        # --- End: if
 
         if not units:
             # Set the units to something that is (hopefully)
@@ -208,12 +207,13 @@ def unique_calendars(array):
     return set(cals.tolist())
 
 
+@lru_cache(maxsize=32)
 def new_axis_identifier(existing_axes=(), basename="dim"):
-    """Return a new, unique axis identifiers.
+    """Return a new, unique axis identifier.
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
@@ -415,3 +415,69 @@ def scalar_masked_array(dtype=float):
     a = np.ma.empty((), dtype=dtype)
     a.mask = True
     return a
+ 
+
+def conform_units(value, units):
+    """Conform units.
+
+    If *value* has units defined by its `Units` attribute then
+
+    * if the value units are equal to *units* then *value* is returned
+      unchanged;
+
+    * if the value units are equivalent to *units* then a copy of
+      *value* converted to *units* is returned;
+
+    * if the value units are not equivalent to *units* then an
+      exception is raised.
+
+    In all other cases *value* is returned unchanged.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        value:
+            The value whose units are to be conformed to *units*.
+
+        units: `Units`
+            The units to conform to.
+
+    **Examples:**
+
+    >>> conform_units(1, cf.Units('metres'))
+    1
+    >>> conform_units([1, 2, 3], cf.Units('metres'))
+    [1, 2, 3]
+    >>> import numpy
+    >>> conform_units(numpy.array([1, 2, 3]), cf.Units('metres'))
+    array([1, 2, 3])
+    >>> conform_units('string', cf.Units('metres'))
+    'string'
+    >>> d = cf.Data([1, 2] , 'm')
+    >>> conform_units(d, cf.Units('metres'))
+    <CF Data(2): [1, 2] m>
+    >>> d = cf.Data([1, 2] , 'km')
+    >>> conform_units(d, cf.Units('metres'))
+    <CF Data(2): [1000.0, 2000.0] metres>
+    >>> conform_units(d, cf.Units('s'))
+        ...
+    ValueError: Units <Units: km> are incompatible with units <Units: s>
+
+    """
+    try:
+        value_units = value.Units
+    except AttributeError:
+        pass
+    else:
+        if value_units.equivalent(units):
+            if value_units != units:
+                value = value.copy()
+                value.Units = units
+        elif value_units and units:
+            raise ValueError(
+                f"Units {value_units!r} are incompatible with units {units!r}"
+            )
+
+    return value
+
