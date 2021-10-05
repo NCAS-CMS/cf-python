@@ -28,9 +28,6 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def concatenate(self, axis=0, _preserve=True):
         """Join the sequence of fields together.
 

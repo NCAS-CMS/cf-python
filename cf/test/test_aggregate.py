@@ -246,6 +246,15 @@ class aggregateTest(unittest.TestCase):
         h = cf.aggregate(g)
         self.assertEqual(len(h), 2)
 
+    def test_aggregate_domain(self):
+        f = cf.example_field(0)
+        g = f[0:3].domain
+        h = f[3:].domain
+
+        x = cf.aggregate([g, h])
+
+        self.assertEqual(len(x), 1, x)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

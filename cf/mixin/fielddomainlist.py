@@ -190,6 +190,7 @@ class FieldDomainList:
 
                 A netCDF variable name is specified by a string (e.g.
                 ``'tas'``, etc.); a `Query` object
+
                 (e.g. ``cf.eq('tas')``); or a compiled regular
                 expression (e.g. ``re.compile('^air_')``) that selects
                 the constructs whose netCDF variable names match via

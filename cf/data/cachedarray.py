@@ -119,6 +119,3 @@ class CachedArray(abstract.FileArray):
     def _partition_file(self):
         """The name of the file storing the array on disk."""
         return self._get_component("_partition_file")
-
-
-# --- End: class

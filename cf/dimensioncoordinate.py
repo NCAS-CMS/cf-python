@@ -800,39 +800,35 @@ class DimensionCoordinate(
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
         """Rolls the dimension coordinate along a cyclic axis."""
-        if self.size <= 1:
-            if inplace:
-                return
-            else:
-                return self.copy()
+        c = _inplace_enabled_define_and_cleanup(self)
 
-        shift %= self.size
+        size = c.size
+        if size <= 1:
+            return c
 
-        #        period = self._custom.get('period')
-        period = self.period()
-
+        shift %= size
         if not shift:
             # Null roll
-            if inplace:
-                return
-            else:
-                return self.copy()
-        elif period is None:
+            return c
+
+        #        period = self._custom.get('period')
+        period = c.period()
+
+        if period is None:
             raise ValueError(
                 f"Can't roll {self.__class__.__name__} when no period has "
                 "been set"
             )
 
-        direction = self.direction()
+        direction = c.direction()
 
-        centre = self._centre(period)
+        centre = c._centre(period)
 
         if axis not in [0, -1]:
             raise ValueError(
                 f"Can't roll axis {axis} when there is only one axis"
             )
 
-        c = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, c).roll(axis, shift, inplace=True)
 
         c.dtype = numpy_result_type(c.dtype, period.dtype)

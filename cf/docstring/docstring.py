@@ -25,6 +25,9 @@ _docstring_substitution_definitions = {
     # General susbstitutions (not indent-dependent)
     # ----------------------------------------------------------------
     "{{repr}}": "CF ",
+    # ----------------------------------------------------------------
+    # Class description susbstitutions (1 level of indentation)
+    # ----------------------------------------------------------------
     "{{formula terms links}}": """See the parametric vertical coordinate sections of the CF
     conventions for more details:
 

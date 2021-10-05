@@ -9988,7 +9988,6 @@ class Data(Container, cfdm.Data):
                 collapse, which differs from a weighted sum in that the units
                 of the weights are incorporated into the result.
 
-
                 *Parameter example:*
                   If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
                   1-dimensional weights for axis 1 and ``x`` must contain

@@ -9,7 +9,7 @@ import resource
 import sys
 import urllib.parse
 import warnings
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from collections.abc import Iterable
 from hashlib import md5 as hashlib_md5
 from marshal import dumps as marshal_dumps
 from math import ceil as math_ceil
@@ -3349,6 +3349,19 @@ def default_netCDF_fillvals():
 
     """
     return netCDF4.default_fillvals
+
+
+def unique_constructs(constructs, copy=True):
+    return cfdm.unique_constructs(constructs, copy=copy)
+
+
+unique_constructs.__doc__ = cfdm.unique_constructs.__doc__.replace("cfdm.", "cf.")
+unique_constructs.__doc__ = unique_constructs.__doc__.replace(
+    "<Field:", "<CF Field:"
+)
+unique_constructs.__doc__ = unique_constructs.__doc__.replace(
+    "<Domain:", "<CF Domain:"
+)
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0"):

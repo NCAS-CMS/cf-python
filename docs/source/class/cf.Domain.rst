@@ -77,6 +77,8 @@ Miscellaneous
    ~cf.Domain.fromconstructs
    ~cf.Domain.apply_masking   
    ~cf.Domain.get_filenames
+   ~cf.Domain.has_data
+   ~cf.Domain.get_data
    
 .. rubric:: Attributes
 	    

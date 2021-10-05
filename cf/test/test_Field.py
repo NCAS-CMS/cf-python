@@ -83,8 +83,7 @@ class FieldTest(unittest.TestCase):
     f1 = cf.example_field(1)
 
     def test_Field_creation_commands(self):
-        for i in range(7):
-            f = cf.example_field(i)
+        for f in cf.example_fields():
             f.creation_commands()
 
         f = self.f1
@@ -961,7 +960,10 @@ class FieldTest(unittest.TestCase):
     def test_Field_flip(self):
         f = self.f.copy()
 
-        g = f[(slice(None, None, -1),) * f.ndim]
+        kwargs = {
+            axis: slice(None, None, -1) for axis in f.domain_axes(todict=True)
+        }
+        g = f.subspace(**kwargs)
 
         h = f.flip()
         self.assertTrue(h.equals(g, verbose=1))

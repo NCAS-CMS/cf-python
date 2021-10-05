@@ -24,6 +24,10 @@ class PartitionMatrix:
     rather than a partition matrix is returned if the output array has
     size 1.
 
+    Normal numpy basic and advanced indexing is supported, but size 1
+    dimensions are always removed from the output array, i.e. a partition
+    rather than a partition matrix is returned if the output array has
+    size 1.
 
     **Attributes**
 
