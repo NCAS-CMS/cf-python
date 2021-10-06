@@ -101,7 +101,7 @@ from .creation import (
     generate_axis_identifiers,
     to_dask,
 )
-from .dask_utils import cf_harden_mask, cf_soften_mask
+from .dask_utils import cf_harden_mask, cf_soften_mask, cf_where
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
@@ -1380,9 +1380,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
             # This could occur if any sort of exception is raised by
             # function that is run on chunks (such as
-            # `cf.Data._cf_where`). Such a function could get run at
-            # definition time in order to ascertain suitability (such
-            # as data type casting, braodcasting, etc.). Note that the
+            # `cf_where`). Such a function could get run at definition
+            # time in order to ascertain suitability (such as data
+            # type casting, braodcasting, etc.). Note that the
             # exception may be hard to diagnose, as dask will have
             # silently trapped it and trapped it and returned
             # NotImplemented (for instance, see
@@ -11703,13 +11703,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Apply the where operation
         dx = da.core.elemwise(
-            _cf_where, dx, dask_compatible(condition), x, y, d.hardmask
+            cf_where, dx, dask_compatible(condition), x, y, d.hardmask
         )
         d._set_dask(dx)
 
-        # Note: No need to run _reset_mask_hardness at this point
+        # Note: No need to run `_reset_mask_hardness` at this point
         #       because the mask hardness has already been correctly
-        #       set in _cf_where.
+        #       set in `cf_where`.
 
         return d
 
@@ -13465,95 +13465,3 @@ def _where_broadcastable(data, x, name):
             )
 
     return True
-
-
-def _cf_where(array, condition, x, y, hardmask):
-    """Set elements of *array* from *x* or *y* depending on *condition*.
-
-    The input *array* is not changed in-place.
-
-    See `where` for details on the expected functionality.
-
-    .. versionadded:: TODODASK
-
-    .. seealso:: `cf.Data.where`
-
-    :Parameters:
-
-        array: numpy.ndarray
-            The array to be assigned to.
-
-        condition: numpy.ndarray
-            Where False or masked, assign from *y*, otherwise assign
-            from *x*.
-
-        x: numpy.ndarray or `None`
-            *x* and *y* must not both be `None`.
-
-        y: numpy.ndarray or `None`
-            *x* and *y* must not both be `None`.
-
-        hardmask: `bool`
-           Set the mask hardness for a returned masked array. If True
-           then a returned masked array will have a hardened mask, and
-           the mask of the input *array* (if there is one) will be
-           applied to the returned array, in addition to any masked
-           elements arising from assignments from *x* or *y*.
-
-    :Returns:
-
-        `numpy.ndarray`
-            A copy of the input *array* with elements from *y* where
-            *condition* is False or masked, and elements from *x*
-            elsewhere.
-
-    """
-    mask = None
-
-    if np.ma.isMA(array):
-        # Do a masked where
-        where = np.ma.where
-        if hardmask:
-            mask = array.mask
-    elif np.ma.isMA(x) or np.ma.isMA(y):
-        # Do a masked where
-        where = np.ma.where
-    else:
-        # Do a non-masked where
-        where = np.where
-        hardmask = False
-
-    condition_is_masked = np.ma.isMA(condition)
-    if condition_is_masked:
-        condition = condition.astype(bool)
-
-    if x is not None:
-        # Assign values from x
-        if condition_is_masked:
-            # Replace masked elements of condition with False, so that
-            # masked locations are assigned from array
-            c = condition.filled(False)
-        else:
-            c = condition
-
-        array = where(c, x, array)
-
-    if y is not None:
-        # Assign values from y
-        if condition_is_masked:
-            # Replace masked elements of condition with True, so that
-            # masked locations are assigned from array
-            c = condition.filled(True)
-        else:
-            c = condition
-
-        array = where(c, array, y)
-
-    if hardmask:
-        if mask is not None and mask.any():
-            # Apply the mask from the input array to the result
-            array.mask |= mask
-
-        array.harden_mask()
-
-    return array
