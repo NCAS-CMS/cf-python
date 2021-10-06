@@ -820,11 +820,144 @@ class DataTest(unittest.TestCase):
         a = f.array
         self.assertTrue(np.allclose(a, array))
 
-    def test_Data___getitem__(self):
+    def test_Data__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-    def test_Data___setitem__(self):
+        d = cf.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
+
+        for indices in (
+            Ellipsis,
+            (slice(None), slice(None)),
+            (slice(None), Ellipsis),
+            (Ellipsis, slice(None)),
+            (Ellipsis, slice(None), Ellipsis),
+        ):
+            self.assertEqual(d[indices].shape, d.shape)
+
+        for indices in (
+            ([1, 3, 4], slice(None), [2, -1]),
+            (slice(0, 6, 2), slice(None), [2, -1]),
+            (slice(0, 6, 2), slice(None), slice(2, 5, 2)),
+            (slice(0, 6, 2), list(range(10)), slice(2, 5, 2)),
+        ):
+            self.assertEqual(d[indices].shape, (3, 10, 2))
+
+        for indices in (
+            (slice(0, 6, 2), -2, [2, -1]),
+            (slice(0, 6, 2), -2, slice(2, 5, 2)),
+        ):
+            self.assertEqual(d[indices].shape, (3, 1, 2))
+
+        for indices in (
+            ([1, 3, 4], -2, [2, -1]),
+            ([4, 3, 1], -2, [2, -1]),
+            ([1, 4, 3], -2, [2, -1]),
+            ([4, 1, 4], -2, [2, -1]),
+        ):
+            e = d[indices]
+            self.assertEqual(e.shape, (3, 1, 2))
+            self.assertEqual(e._axes, d._axes)
+
+        d.__keepdims_indexing__ = False
+        self.assertFalse(d.__keepdims_indexing__)
+        for indices in (
+            ([1, 3, 4], -2, [2, -1]),
+            (slice(0, 6, 2), -2, [2, -1]),
+            (slice(0, 6, 2), -2, slice(2, 5, 2)),
+            ([1, 4, 3], -2, [2, -1]),
+            ([4, 3, 4], -2, [2, -1]),
+            ([1, 4, 4], -2, [2, -1]),
+        ):
+            e = d[indices]
+            self.assertFalse(e.__keepdims_indexing__)
+            self.assertEqual(e.shape, (3, 2))
+            self.assertEqual(e._axes, d._axes[0::2])
+
+        self.assertFalse(d.__keepdims_indexing__)
+        d.__keepdims_indexing__ = True
+        self.assertTrue(d.__keepdims_indexing__)
+
+        d = cf.Data(np.ma.arange(24).reshape(3, 8))
+        e = d[0, 2:4]
+
+        # Cyclic slices
+        d = cf.Data(np.ma.arange(24).reshape(3, 8))
+        d.cyclic(1)
+        self.assertTrue((d[0, :6].array == [[0, 1, 2, 3, 4, 5]]).all())
+        e = d[0, -2:4]
+        self.assertEqual(e._axes, d._axes)
+        self.assertEqual(e.shape, (1, 6))
+        self.assertTrue((e[0].array == [[6, 7, 0, 1, 2, 3]]).all())
+        self.assertFalse(e.cyclic())
+
+        d.__keepdims_indexing__ = False
+        e = d[:, 4]
+        self.assertEqual(e.shape, (3,))
+        self.assertFalse(e.cyclic())
+        self.assertEqual(e._axes, d._axes[0:1])
+        d.__keepdims_indexing__ = True
+
+        e = d[0, -2:6]
+        self.assertEqual(e.shape, (1, 8))
+        self.assertTrue((e[0].array == [[6, 7, 0, 1, 2, 3, 4, 5]]).all())
+        self.assertTrue(e.cyclic(), set([1]))
+
+        with self.assertRaises(IndexError):
+            # Cyclic slice of non-cyclic axis
+            e = d[-1:1]
+
+        d.cyclic(0)
+        e = d[-1:1, -2:-4]
+        self.assertEqual(e.shape, (2, 6))
+        self.assertTrue((e[:, 0].array == [[22], [6]]).all())
+        self.assertTrue((e[0].array == [[22, 23, 16, 17, 18, 19]]).all())
+        self.assertFalse(e.cyclic())
+
+        e = d[-1:2, -2:4]
+        self.assertEqual(e.shape, (3, 6))
+        self.assertEqual(e.cyclic(), set([0]))
+        e = d[-1:1, -2:6]
+        self.assertEqual(e.shape, (2, 8))
+        self.assertEqual(e.cyclic(), set([1]))
+        e = d[-1:2, -2:6]
+        self.assertEqual(e.shape, (3, 8))
+        self.assertEqual(e.cyclic(), set([0, 1]))
+
+        d.cyclic(0, False)
+        d.__keepdims_indexing__ = False
+        e = d[0, :6]
+        self.assertFalse(e.__keepdims_indexing__)
+        self.assertEqual(e.shape, (6,))
+        self.assertTrue((e.array == [0, 1, 2, 3, 4, 5]).all())
+        e = d[0, -2:4]
+        self.assertEqual(e.shape, (6,))
+        self.assertTrue((e.array == [6, 7, 0, 1, 2, 3]).all())
+        self.assertFalse(e.cyclic())
+        d.__keepdims_indexing__ = True
+
+        # Keepdims indexing
+        d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        self.assertEqual(d[0].shape, (1, 3))
+        self.assertEqual(d[:, 1].shape, (2, 1))
+        self.assertEqual(d[0, 1].shape, (1, 1))
+        d.__keepdims_indexing__ = False
+        self.assertEqual(d[0].shape, (3,))
+        self.assertEqual(d[:, 1].shape, (2,))
+        self.assertEqual(d[0, 1].shape, ())
+        d.__keepdims_indexing__ = True
+
+        # Orthogonal indexing
+        self.assertEqual(d[[0], [0, 2]].shape, (1, 2))
+        self.assertEqual(d[[0, 1], [0, 2]].shape, (2, 2))
+        self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
+
+        # Ancillary masks
+        #
+        # TODODASK: Test __getitem__ with ancillary masks. Can only do
+        #           this when cf.Data.where has been daskified
+
+    def test_Data__setitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -835,11 +968,10 @@ class DataTest(unittest.TestCase):
             else:
                 a.soften_mask()
 
-            d = cf.Data(a, "m", chunks=(2, 2), hardmask=hardmask)
+            d = cf.Data(a.copy(), "metres", hardmask=hardmask, chunks=(3, 5))
 
-            # Scalar assignment
             a[:, 1] = np.ma.masked
-            d[:, 1] = np.ma.masked
+            d[:, 1] = cf.masked
 
             a[0, 2] = -6
             d[0, 2] = -6
@@ -862,15 +994,37 @@ class DataTest(unittest.TestCase):
             a[8, [8, 6, 5]] = -5
             d[8, [8, 6, 5]] = -5
 
-            self.assertTrue((d.array == a).all())
-            self.assertTrue((d.array.mask == a.mask).all())
+            a[...] = -a
+            d[...] = -d
 
-            # Non-scalar assignment (TODODASK - add more tests)
             a[0] = a[2]
-            d[0] = a[2]
+            d[0] = d[2]
 
             self.assertTrue((d.array == a).all())
             self.assertTrue((d.array.mask == a.mask).all())
+
+        # Units
+        a = np.ma.arange(90).reshape(9, 10)
+        d = cf.Data(a, "metres")
+        d[...] = cf.Data(a * 100, "cm")
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.array.mask == a.mask).all())
+
+        # Cyclic axes
+        d.cyclic(1)
+        self.assertTrue((d[0].array == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).all())
+        d[0, -1:1] = [-99, -1]
+        self.assertTrue(
+            (d[0].array == [-1, 1, 2, 3, 4, 5, 6, 7, 8, -99]).all()
+        )
+        self.assertEqual(d.cyclic(), set([1]))
+
+        # Multiple list/1-d array indices
+        with self.assertRaises(NotImplementedError):
+            d[[1, 2], [0, 4, 1]] = 9
+
+        with self.assertRaises(NotImplementedError):
+            d[[1], [0, 4, 1]] = 9
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_outerproduct(self):
@@ -3102,6 +3256,87 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.has_calendar())
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         self.assertTrue(d.has_calendar())
+
+    def test_Data_where(self):
+        a = np.arange(10)
+        d = cf.Data(a)
+        b = np.where(a < 5, a, 10 * a)
+        e = d.where(a < 5, d, 10 * a)
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        d = cf.Data(a, "km")
+        b = np.where(a < 5, 10 * a, a)
+        e = d.where(a < 5, cf.Data(10000 * a, "metre"))
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        a = np.array(
+            [
+                [
+                    1,
+                    2,
+                ],
+                [3, 4],
+            ]
+        )
+        d = cf.Data(a)
+        b = np.where([[True, False], [True, True]], a, [[9, 8], [7, 6]])
+        e = d.where([[True, False], [True, True]], d, [[9, 8], [7, 6]])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        b = np.where([[True, False], [True, True]], [[9, 8], [7, 6]], a)
+        e = d.where([[True, False], [True, True]], [[9, 8], [7, 6]])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        b = np.where([True, False], [9, 8], a)
+        e = d.where([True, False], [9, 8])
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        a = np.array([[0, 1, 2], [0, 2, 4], [0, 3, 6]])
+        d = cf.Data(a)
+        b = np.where(a < 4, a, -1)
+        e = d.where(a < 4, d, -1)
+        self.assertTrue(e.shape == b.shape)
+        self.assertTrue((e.array == b).all())
+
+        x, y = np.ogrid[:3, :4]
+        d = cf.Data(x)
+        with self.assertRaises(ValueError):
+            # Can't change shape
+            d.where(x < y, d, 10 + y)
+
+        with self.assertRaises(ValueError):
+            # Can't change shape
+            d.where(False, d, 10 + y)
+
+        a = np.ma.arange(9, dtype=int).reshape(3, 3)
+        d = cf.Data(a, mask=[[0, 0, 0], [1, 0, 0], [0, 0, 0]])
+        e = d.where(a > 5, None, -999)
+        self.assertTrue(e.shape == d.shape)
+        self.assertTrue((e.array.mask == d.array.mask).all())
+        self.assertTrue(
+            (e.array == [[-999, -999, -999], [5, -999, -999], [6, 7, 8]]).all()
+        )
+
+        d.soften_mask()
+        e = d.where(a > 5, None, -999)
+        self.assertTrue(e.shape == d.shape)
+        self.assertTrue((e.array.mask == False).all())
+        self.assertTrue(
+            (
+                e.array == [[-999, -999, -999], [-999, -999, -999], [6, 7, 8]]
+            ).all()
+        )
+
+        a = np.arange(10)
+        d = cf.Data(a)
+        e = d.where(a < 5, cf.masked)
+        self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
+        self.assertTrue((e.array == a).all())
 
 
 if __name__ == "__main__":

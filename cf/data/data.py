@@ -1,9 +1,11 @@
 import logging
+import math
 import operator
 from functools import partial, reduce, wraps
 from itertools import product
 from json import dumps as json_dumps
 from json import loads as json_loads
+from numbers import Integral
 from operator import mul
 
 try:
@@ -99,17 +101,25 @@ from .creation import (
     generate_axis_identifiers,
     to_dask,
 )
+from .dask_utils import cf_harden_mask, cf_soften_mask, cf_where
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    conform_units,
     convert_to_datetime,
     convert_to_reftime,
     dask_compatible,
     first_non_missing_value,
     new_axis_identifier,
+    scalar_masked_array,
 )
+
+# from .chunk_utils import (  # is_small,; is_very_small,
+#    harden_mask_chunk,
+#   soften_mask_chunk,
+# )
 
 # from dask.array import Array
 
@@ -298,8 +308,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             array: optional
                 The array of values. May be any scalar or array-like
-                object, including another `Data` instance. Ignored if the
-                *source* parameter is set.
+                object, including another `Data` instance.
 
                 *Parameter example:*
                   ``array=[34.6]``
@@ -312,8 +321,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             units: `str` or `Units`, optional
                 The physical units of the data. if a `Units` object is
-                provided then this an also set the calendar. Ignored if
-                the *source* parameter is set.
+                provided then this an also set the calendar.
 
                 The units (without the calendar) may also be set after
                 initialisation with the `set_units` method.
@@ -325,8 +333,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   ``units='days since 2018-12-01'``
 
             calendar: `str`, optional
-                The calendar for reference time units. Ignored if the
-                *source* parameter is set.
+                The calendar for reference time units.
 
                 The calendar may also be set after initialisation with the
                 `set_calendar` method.
@@ -338,8 +345,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The fill value of the data. By default, or if set to
                 `None`, the `numpy` fill value appropriate to the array's
                 data-type will be used (see
-                `numpy.ma.default_fill_value`). Ignored if the *source*
-                parameter is set.
+                `numpy.ma.default_fill_value`).
 
                 The fill value may also be set after initialisation with
                 the `set_fill_value` method.
@@ -349,7 +355,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             dtype: data-type, optional
                 The desired data-type for the data. By default the
-                data-type will be inferred form the *array* parameter.
+                data-type will be inferred form the *array*
+                parameter.
 
                 The data-type may also be set after initialisation with
                 the `dtype` attribute.
@@ -367,11 +374,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             mask: optional
                 Apply this mask to the data given by the *array*
-                parameter. By default, or if *mask* is `None`, no mask is
-                applied. May be any scalar or array-like object (such as a
-                `list`, `numpy` array or `Data` instance) that is
-                broadcastable to the shape of *array*. Masking will be
-                carried out where the mask elements evaluate to `True`.
+                parameter. By default, or if *mask* is `None`, no mask
+                is applied. May be any scalar or array-like object
+                (such as a `list`, `numpy` array or `Data` instance)
+                that is broadcastable to the shape of *array*. Masking
+                will be carried out where the mask elements evaluate
+                to `True`.
 
                 This mask will applied in addition to any mask already
                 defined by the *array* parameter.
@@ -379,8 +387,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 .. versionadded:: 3.0.5
 
             source: optional
-                Initialize the array, units, calendar and fill value from
-                those of *source*.
+                Initialize the data values and metadata (such as
+                units, mask hardness, etc.) from the data of
+                *source*. All other arguments, with the exception of
+                *copy*, are ignored.
 
             hardmask: `bool`, optional
                 If False then the mask is soft. By default the mask is
@@ -482,6 +492,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 self._del_dask(None)
 
+            # Note the mask hardness. It is safe to assume that if a
+            # dask array has been set, then it's mask hardness will be
+            # already baked into each chunk.
+            self._hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
+
             return
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
@@ -489,7 +504,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Create the _HDF_chunks attribute: defines HDF chunking when
         # writing to disk.
         #
-        # Never change the _HDF_chunks attribute  in-place.
+        # Never change the value of the _HDF_chunks attribute
+        # in-place.
         self._HDF_chunks = None
 
         if loadd is not None:
@@ -504,7 +520,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         units = Units(units, calendar=calendar)
         self._Units = units
 
-        # Set the mask hardness
+        # Note the mask hardness. This only records what we want the
+        # mask hardness to be, and is required in case this
+        # initialization does not set an array (i.e. array is None or
+        # _use_array is False). If a dask array is actually set later
+        # on, then the mask hardness will be set properly, i.e. it
+        # will be baked into each chunk.
         self._hardmask = hardmask
 
         if array is None:
@@ -521,7 +542,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # is removed from _axes then it must also be removed from
         # _cyclic.
         #
-        # Never change the _cyclic attribute in-place.
+        # Never change the value of the _cyclic attribute in-place.
         self._cyclic = _empty_set
 
         # Create the _axes attribute: an ordered sequence of unique
@@ -579,7 +600,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False)
+        self._set_dask(array, delete_source=False, reset_mask_hardness=False)
+
+        # Set the mask hardness on each chunk.
+        self.hardmask = hardmask
 
         # Override the data type
         if dtype is not None:
@@ -588,10 +612,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
-        else:
-            # Set the mask hardness (which is otherwise set by the
-            # 'where' method)
-            self._set_mask_hardness()
 
     @property
     def dask_array(self):
@@ -631,17 +651,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Performance**
 
-        All delayed operations are computed, and the operation does
-        not short-circuit once the first occurrence is found.
+        All delayed operations are exectued, and there is no
+        short-circuit once the first occurrence is found.
 
         **Examples:**
 
-        >>> d = Data([[0.0, 1,  2], [3, 4, 5]], 'm')
+        >>> d = cf.Data([[0.0, 1,  2], [3, 4, 5]], 'm')
         >>> 4 in d
         True
-        >>> Data(3) in d
+        >>> cf.Data(3) in d
         True
-        >>> Data([2.5], units='2 m') in d
+        >>> cf.Data([2.5], units='2 m') in d
         True
         >>> [[2]] in d
         True
@@ -670,7 +690,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self._get_dask()
 
-        out_ind = tuple(dx.ndim)
+        out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
 
         dx = da.blockwise(
@@ -929,7 +949,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
           (similar to the way vector subscripts work in Fortran). This is
           the same behaviour as indexing on a `netCDF4.Variable` object.
 
-        . seealso:: `__setitem__`, `_parse_indices`
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by exectuting all delayed operations.
+
+        . seealso:: `__setitem__`, `__keepdims_indexing__`,
+                    `__orthogonal_indexing__`
 
         :Returns:
 
@@ -957,8 +983,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if indices is Ellipsis:
             return self.copy()
 
-        d = self
-
         auxiliary_mask = ()
         try:
             arg = indices[0]
@@ -969,53 +993,126 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 auxiliary_mask = indices[1]
                 indices = indices[2:]
 
+        shape = self.shape
+        keepdims = self.__keepdims_indexing__
+
         indices, roll = parse_indices(
-            d.shape, indices, cyclic=True, numpy_indexing=False
+            shape,
+            indices,
+            cyclic=True,
+            keepdims=keepdims,
         )
 
-        # TODODASK - sort out the "numpy" environment
+        axes = self._axes
+        cyclic_axes = self._cyclic
 
-        # TODODASK - multiple list indices
-
-        axes = d._axes
-        cyclic_axes = d._cyclic
-
+        # ------------------------------------------------------------
+        # Roll axes with cyclic slices
+        # ------------------------------------------------------------
         if roll:
-            # Roll axes with cyclic slices. For example, if slice(-2,
-            # 3) has been requested on a cyclic axis (and we're not
-            # using numpy indexing), then we roll that axis by two
-            # points and apply the slice(0, 5) instead.
-            if cyclic_axes.intersection([axes[i] for i in roll]):
+            # For example, if slice(-2, 3) has been requested on a
+            # cyclic axis, then we roll that axis by two points and
+            # apply the slice(0, 5) instead.
+            if not cyclic_axes.issuperset([axes[i] for i in roll]):
                 raise IndexError(
                     "Can't take a cyclic slice of a non-cyclic axis"
                 )
 
-            d = d.roll(axis=tuple(roll.keys()), shift=tuple(roll.values()))
-            new = d
+            new = self.roll(
+                axis=tuple(roll.keys()), shift=tuple(roll.values())
+            )
+            dx = new._get_dask()
         else:
-            new = d.copy(array=False)
+            new = self.copy(array=False)
+            dx = self._get_dask()
 
-        # Get the subspaced dask array
-        dx = d._get_dask()
-        dx = dx[tuple(indices)]
-        new._set_dask(dx)
+        # ------------------------------------------------------------
+        # Subspace the dask array
+        # ------------------------------------------------------------
+        if self.__orthogonal_indexing__:
+            # Apply 'orthogonal indexing': indices that are 1-d arrays
+            # or lists subspace along each dimension
+            # independently. This behaviour is similar to Fortran, but
+            # different to dask.
+            axes_with_list_indices = [
+                i
+                for i, x in enumerate(indices)
+                if isinstance(x, list) or getattr(x, "shape", False)
+            ]
+            n_axes_with_list_indices = len(axes_with_list_indices)
 
-        # Apply any auxiliary mask
-        for mask in auxiliary_mask:
-            new.where(mask, cf_masked, inplace=True)
+            if n_axes_with_list_indices < 2:
+                # At most one axis has a list/1-d array index so do a
+                # normal dask subspace
+                dx = dx[tuple(indices)]
+            else:
+                # At least two axes have list/1-d array indices so we
+                # can't do a normal dask subspace
 
-        # Cyclic axes which have been reduced in size are no longer
-        # cyclic
+                # Subspace axes which have list/1-d array indices
+                for axis in axes_with_list_indices:
+                    dx = da.take(dx, indices[axis], axis=axis)
+
+                if n_axes_with_list_indices < len(indices):
+                    # Subspace axes which don't have list/1-d array
+                    # indices. (Do this after subspacing axes which do
+                    # have list/1-d array indices, in case
+                    # __keepdims_indexing__ is False.)
+                    slice_indices = [
+                        slice(None) if i in axes_with_list_indices else x
+                        for i, x in enumerate(indices)
+                    ]
+                    dx = dx[tuple(slice_indices)]
+        else:
+            raise NotImplementedError(
+                "Non-orthogonal indexing has not yet been implemented"
+            )
+
+        # ------------------------------------------------------------
+        # Set the subspaced dask array
+        # ------------------------------------------------------------
+        new._set_dask(dx, reset_mask_hardness=False)
+
+        # ------------------------------------------------------------
+        # Get the axis identifiers for the subspace
+        # ------------------------------------------------------------
+        shape0 = shape
+        if keepdims:
+            new_axes = axes
+        else:
+            new_axes = [
+                axis
+                for axis, x in zip(axes, indices)
+                if not isinstance(x, Integral) and getattr(x, "shape", True)
+            ]
+            if new_axes != axes:
+                new._axes = new_axes
+                cyclic_axes = new._cyclic
+                if cyclic_axes:
+                    shape0 = [
+                        n for n, axis in zip(shape, axes) if axis in new_axes
+                    ]
+
+        # ------------------------------------------------------------
+        # Cyclic axes that have been reduced in size are no longer
+        # considered to be cyclic
+        # ------------------------------------------------------------
         if cyclic_axes:
             x = [
                 axis
-                for axis, n0, n1 in zip(axes, d.shape, new.shape)
-                if n1 != n0 and axis in cyclic_axes
+                for axis, n0, n1 in zip(new_axes, shape0, new.shape)
+                if axis in cyclic_axes and n0 != n1
             ]
             if x:
-                # Never change the _cyclic attribute in-place
+                # Never change the value of the _cyclic attribute
+                # in-place
                 new._cyclic = cyclic_axes.difference(x)
-        # --- End: if
+
+        # ------------------------------------------------------------
+        # Apply auxiliary masks
+        # ------------------------------------------------------------
+        for mask in auxiliary_mask:
+            new.where(mask, cf_masked, None, inplace=True)
 
         return new
 
@@ -1031,6 +1128,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         a subspace. See `__getitem__` for details on how to define
         subspace of the data array.
 
+        .. note:: Currently at most one dimension's assignment index
+                  may be a 1-d array of integers or booleans. This is
+                  is different to `__getitem__`, which applies
+                  'orthogonal indexing' when multiple indices of 1-d
+                  array of integers or booleans are present.
+
         **Missing data**
 
         The treatment of missing data elements during assignment to a
@@ -1045,70 +1148,193 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         the `cf.masked` constant or by assignment to a value which
         contains masked elements.
 
-        .. seealso:: `cf.masked`, `hardmask`, `where`
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        .. seealso:: `__getitem__`, `cf.masked`, `hardmask`, `where`
 
         **Examples:**
 
         """
-        # TODODASK - sort out the "numpy" environment
-
         indices, roll = parse_indices(
-            self.shape, indices, cyclic=True, numpy_indexing=False
+            self.shape, indices, cyclic=True, keepdims=True
         )
         indices = tuple(indices)
 
+        axes_with_list_indices = [
+            i
+            for i, x in enumerate(indices)
+            if isinstance(x, list) or getattr(x, "shape", False)
+        ]
+        if len(axes_with_list_indices) > 1:
+            raise NotImplementedError(
+                "Currently limited to at most one dimension's assignment "
+                "index being a 1-d array of integers or booleans. "
+                f"Got: {indices}"
+            )
+            # TODODASK: The inherited algorithm that does assignment
+            #           for multiple list/1-d array indices
+            #           (cfdm.Data._set_subspace) won't work when the
+            #           1-d array is a dask array because it may need
+            #           to be computed at __setitem__ runtime, which
+            #           is not desirable. Until this can be fixed,
+            #           it's easiest to disallow this case, that was
+            #           allowed pre-dask.
+
+        # Roll axes with cyclic slices
         if roll:
-            # Roll axes with cyclic slices. For example, if assigning
-            # to slice(-2, 3) has been requested on a cyclic axis (and
-            # we're not using numpy indexing), then we roll that axis
-            # by two points and assign to slice(0, 5) instead. The
-            # axis is then unrolled by two points afer the assignment
-            # has been made.
+            # For example, if assigning to slice(-2, 3) has been
+            # requested on a cyclic axis (and we're not using numpy
+            # indexing), then we roll that axis by two points and
+            # assign to slice(0, 5) instead. The axis is then unrolled
+            # by two points afer the assignment has been made.
             axes = self._axes
-            if self._cyclic.intersection([axes[i] for i in roll]):
+            if not self._cyclic.issuperset([axes[i] for i in roll]):
                 raise IndexError(
                     "Can't do a cyclic assignment to a non-cyclic axis"
                 )
 
             roll_axes = tuple(roll.keys())
             shifts = tuple(roll.values())
-            self.roll(axis=roll_axes, shift=shifts, inplace=True)
-
-        # TODODASK: multiple lists
+            self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
         # Make sure that the units of value are the same as self
-        try:
-            value_units = value.Units
-        except AttributeError:
-            pass
-        else:
-            self_units = self.Units
-            if value_units.equivalent(self_units):
-                if value_units != self_units:
-                    value = value.copy()
-                    value.Units = self.Units
-            elif value_units and self_units:
-                raise ValueError(
-                    f"Can't assign values with units {value_units!r} "
-                    f"to data with units {self_units!r}"
-                )
-        # --- End: try
-
-        # Set the mask hardness, in case any previous operations have
-        # inadvertently changed it.
-        self._set_mask_hardness()
+        value = conform_units(value, self.Units)
 
         # Do the assignment
         dx = self._get_dask()
         dx[indices] = dask_compatible(value)
 
+        # Unroll any axes that were rolled to enable a cyclic
+        # assignment
         if roll:
-            # Unroll any axes that were rolled to enable a cyclic
-            # assignment
             shifts = [-shift for shift in shifts]
-            self.roll(axis=roll_axes, shift=shifts, inplace=True)
+            self.roll(shift=shifts, axis=roll_axes, inplace=True)
+
+        # Reset the mask hardness, otherwise it could be incorrect in
+        # the case that a chunk that was not a masked array is
+        # assigned missing values.
+        self._reset_mask_hardness()
 
         return
+
+    # ----------------------------------------------------------------
+    # Indexing behaviour attributes
+    # ----------------------------------------------------------------
+    @property
+    @daskified(1)
+    def __orthogonal_indexing__(self):
+        """Flag to indicate that orthogonal indexing is supported.
+
+        Always True, indicating that 'orthogonal indexing' is
+        applied. This means that when indices are 1-d arrays or lists
+        then they subspace along each dimension independently. This
+        behaviour is similar to Fortran, but different to `numpy`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `__keepdims_indexing__`, `__getitem__`,
+                     `__setitem__`,
+                     `netCDF4.Variable.__orthogonal_indexing__`
+
+        **Examples**
+
+        >>> d = cf.Data([[1, 2, 3],
+        ...              [4, 5, 6]])
+        >>> e = d[[0], [0, 2]]
+        >>> e.shape
+        (1, 2)
+        >>> print(e.array)
+        [[1 3]]
+        >>> e = d[[0, 1], [0, 2]]
+        >>> e.shape
+        (2, 2)
+        >>> print(e.array)
+        [[1 3]
+         [4 6]]
+
+        """
+        return True
+
+    @property
+    @daskified(1)
+    def __keepdims_indexing__(self):
+        """Flag to indicate whether dimensions indexed with integers are
+        kept.
+
+        If set to True (the default) then providing a single integer
+        as a single-axis index does *not* reduce the number of array
+        dimensions by 1. This behaviour is different to `numpy`.
+
+        If set to False then providing a single integer as a
+        single-axis index reduces the number of array dimensions by
+        1. This behaviour is the same as `numpy`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
+                     `__setitem__`
+
+        **Examples**
+
+        >>> d = cf.Data([[1, 2, 3],
+        ...              [4, 5, 6]])
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[0]
+        >>> e.shape
+        (1, 3)
+        >>> print(e.array)
+        [[1 2 3]]
+
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[:, 1]
+        >>> e.shape
+        (2, 1)
+        >>> print(e.array)
+        [[2]
+         [5]]
+
+        >>> d.__keepdims_indexing__
+        True
+        >>> e = d[0, 1]
+        >>> e.shape
+        (1, 1)
+        >>> print(e.array)
+        [[2]]
+
+        >>> d.__keepdims_indexing__ = False
+        >>> e = d[0]
+        >>> e.shape
+        (3,)
+        >>> print(e.array)
+        [1 2 3]
+
+        >>> d.__keepdims_indexing__
+        False
+        >>> e = d[:, 1]
+        >>> e.shape
+        (2,)
+        >>> print(e.array)
+        [2 5]
+
+        >>> d.__keepdims_indexing__
+        False
+        >>> e = d[0, 1]
+        >>> e.shape
+        ()
+        >>> print(e.array)
+        2
+
+        """
+        return self._custom.get("__keepdims_indexing__", True)
+
+    @__keepdims_indexing__.setter
+    def __keepdims_indexing__(self, value):
+        self._custom["__keepdims_indexing__"] = bool(value)
 
     # ----------------------------------------------------------------
     # Private dask methods
@@ -1116,7 +1342,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _get_dask(self):
         """Get the dask array.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASK
+
+        .. seealso:: `_set_dask`, `_del_dask`
 
         :Returns:
 
@@ -1126,10 +1354,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._custom["dask"]
 
-    def _set_dask(self, array, copy=False, delete_source=True):
+    def _set_dask(
+        self, array, copy=False, delete_source=True, reset_mask_hardness=True
+    ):
         """Set the dask array.
 
         .. versionadded:: TODODASK
+
+        .. seealso:: `_get_dask`, `_del_dask`, `_reset_mask_hardness`
 
         :Parameters:
 
@@ -1141,13 +1373,36 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 default the dask array is not copied.
 
             delete_source: `bool`, optional
-                TODODASK
+                If False then do not delete a compressed source array,
+                if one exists, after setting the new dask array. By
+                default a compressed source array is deleted.
+
+            reset_mask_hardness: `bool`, optional
+                If False then do not reset the mask hardness after
+                setting the new dask array. By default the mask
+                hardness is re-applied.
 
         :Returns:
 
             `None`
 
         """
+        if array is NotImplemented:
+            logger.warning(
+                "NotImplemented has been set in the place of a dask array"
+            )
+            # This could occur if any sort of exception is raised by
+            # function that is run on chunks (such as
+            # `cf_where`). Such a function could get run at definition
+            # time in order to ascertain suitability (such as data
+            # type casting, braodcasting, etc.). Note that the
+            # exception may be hard to diagnose, as dask will have
+            # silently trapped it and trapped it and returned
+            # NotImplemented (for instance, see
+            # `dask.array.core.elemwise`). Print statements in a local
+            # copy of dask is prossibly the way to go if the cause of
+            # the error is not obvious by inspection.
+
         if copy:
             array = array.copy()
 
@@ -1158,10 +1413,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # guarantee its consistency with the new dask array.
             self._del_Array(None)
 
+        if reset_mask_hardness:
+            self._reset_mask_hardness()
+
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASK
+
+        .. seealso:: `_set_dask`, `_get_dask`
 
         :Parameters:
 
@@ -1210,21 +1470,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
-    def _dask_map_blocks(self, func, **kwargs):
-        """Apply a function in-place to the dask array using
-        `map_blocks`.
+    def _map_blocks(self, func, **kwargs):
+        """Apply a function to the data in-place.
 
-        .. versionadded:: 4.0.0
+        .. note:: This method does not reset the mask hardness. It may
+                  be necessary for a call to `_map_blocks` to be
+                  followed by a call to `_reset_mask_hardness`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `_reset_mask_hardness`
 
         :Parameters:
 
             func:
-                The funciton to be applied to each chunk of the dask
+                The function to be applied to the data, via
+                `dask.array.map_blocks`, to each chunk of the dask
                 array.
 
             kwargs: optional
-                Keyword arguments passed to the map `map_blocks`
-                method of the dask array.
+                Keyword arguments passed to the
+                `dask.array.map_blocks` method.
 
         :Returns:
 
@@ -1234,16 +1500,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
-        >>> dx = d._dask_map_blocks(lambda x: x / 2, dtype=float)
+        >>> dx = d._map_blocks(lambda x: x / 2)
         >>> print(d.array)
         [0.5 1.  1.5]
 
         """
         dx = self._get_dask()
         dx = dx.map_blocks(func, **kwargs)
-        self._set_dask(dx)
+        self._set_dask(dx, reset_mask_hardness=False)
 
         return dx
+
+    def _reset_mask_hardness(self):
+        """Re-apply the mask hardness to the dask array.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `hardmask`, `harden_mask`, `soften_mask`
+
+        :Returns:
+
+            `None`
+
+        """
+        self.hardmask = self.hardmask
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -2023,7 +2303,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self._get_dask()
         dx = dx.persist()
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -2306,14 +2586,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._size = reduce(mul, shape, 1)
 
         cyclic = d.get("_cyclic", None)
-        # Never change the _cyclic attribute in-place
+        # Never change the value of the _cyclic attribute in-place
         if cyclic:
             self._cyclic = cyclic.copy()
         else:
             self._cyclic = _empty_set
 
         HDF_chunks = d.get("_HDF_chunks", None)
-        # Never change the _HDF_chunks attribute in-place
+        # Never change the value of the _HDF_chunks attribute in-place
         if HDF_chunks:
             self._HDF_chunks = HDF_chunks.copy()
         else:
@@ -2486,6 +2766,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 False.
 
         """
+        # TODODASK: Always return True for now, to aid development.
+        return True
+
         dx = self._get_dask()
 
         # TODODASK fits in memory.
@@ -2962,7 +3245,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
 
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
 
@@ -4228,7 +4511,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         dx = getattr(operator, operation)(dx)
 
-        out._set_dask(dx)
+        out._set_dask(dx, reset_mask_hardness=False)
 
         return out
 
@@ -5425,13 +5708,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _cyclic(self):
         """Storage for axis cyclicity.
 
-        Identifies which axes are cyclic (and therefore allow cyclic
-        slicing).
+        Contains a `set` that identifies which axes are cyclic (and
+        therefore allow cyclic slicing). The set contains a subset of
+        the axis identifiers defined by the `_axes` attribute.
 
-        It must be a subset of the axis identifiers given by the
-        `_axes` attribute.
-
-        .. warning:: Never change the `_cyclic` attribute in-place.
+        .. warning:: Never change the value of the `_cyclic` attribute
+                     in-place.
 
         .. note:: When an axis identifier is removed from the `_axes`
                   attribute then it is automatically also removed from
@@ -5466,55 +5748,46 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         del self._custom["_HDF_chunks"]
 
     @property
+    @daskified(1)
     def _hardmask(self):
-        """TODODASK."""
+        """Storage for the mask hardness.
+
+        Contains a `bool`, where `True` denotes a hard mask and
+        `False` denotes a soft mask.
+
+        See `hardmask` for details.
+
+        """
         return self._custom["_hardmask"]
 
     @_hardmask.setter
     def _hardmask(self, value):
         self._custom["_hardmask"] = value
 
-    @_hardmask.deleter
-    def _hardmask(self):
-        del self._custom["_hardmask"]
-
     @property
     @daskified(1)
     def _axes(self):
         """Storage for the axis identifiers.
 
-        Contains an ordered sequence of unique (within this `Data`
-        instance) identifiers for each array axis.
+        Contains a `tuple` of identifiers, one for each array axis.
 
-        .. note:: When an axis identifier is removed from the `_axes`
-                  attribute then it is automatically also removed from
-                  the `_cyclic` attribute.
+        .. note:: When the axis identifiers are reset, then any axis
+                  identifier named by the `_cyclic` attribute which is
+                  not in the new `_axes` set is automatically removed
+                  from the `_cyclic` attribute.
 
         """
         return self._custom["_axes"]
 
     @_axes.setter
     def _axes(self, value):
-        value = tuple(value)
-        self._custom["_axes"] = value
+        self._custom["_axes"] = tuple(value)
 
-        # Update cyclic: Remove cyclic axes that are not in the new
-        # axes
+        # Remove cyclic axes that are not in the new axes
         cyclic = self._cyclic
         if cyclic:
+            # Never change the value of the _cyclic attribute in-place
             self._cyclic = cyclic.intersection(value)
-
-    @property
-    def numpy_indexing(self):
-        """TODODASK - probably thewrong name - need a gneral numpy
-        compatability flag. See also confg settings
-
-        """
-        return self._custom.get("numpy_indexing", False)
-
-    @numpy_indexing.setter
-    def numpy_indexing(self, value):
-        self._custom["numpy_indexing"] = bool(value)
 
     # ----------------------------------------------------------------
     # Dask attributes
@@ -5583,17 +5856,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dtype = _dtype_float32
             else:
                 dtype = _dtype_float
-        # --- End: if
 
-        self._dask_map_blocks(
-            partial(
-                Units.conform,
-                from_units=old_units,
-                to_units=value,
-                inplace=False,
-            ),
-            dtype=dtype,
-        )
+        def cf_Units(x):
+            return Units.conform(
+                x=x, from_units=old_units, to_units=value, inplace=False
+            )
+
+        self._map_blocks(cf_Units, dtype=dtype)
 
         self._Units = value
 
@@ -5657,10 +5926,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def dtype(self, value):
         dx = self._get_dask()
 
-        # Only change the datatype if it's different
+        # Only change the datatype if it's different to that of the
+        # dask array
         if dx.dtype != value:
             dx = dx.astype(value)
-            self._set_dask(dx)
+            self._set_dask(dx, reset_mask_hardness=False)
 
     @property
     def fill_value(self):
@@ -5698,16 +5968,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Hardness of the mask.
 
         If the `hardmask` attribute is `True`, i.e. there is a hard
-        mask, then unmasking an entry will silently not occur. This
-        feature prevents overwriting the mask. To allow the unmasking
-        of an entries when the data has a hard mask, the mask must
-        first to be softened using the `soften_mask` method, that
-        changes the `hardmask` attribute to `False`. The mask can be
-        re-hardened with `harden_mask` method.
+        mask, then unmasking an entry will silently not occur. This is
+        the default, and prevents overwriting the mask.
 
-        The following operations
+        If the `hardmask` attribute is `False`, i.e. there is a soft
+        mask, then masked entries may be overwritten with non-missing
+        values.
 
-        .. seealso:: `harden_mask`, `soften_mask`, `where`
+        To allow the unmasking of masked values, the mask must be
+        softened by setting the `hardmask` attribute to False, or
+        equivalently with the `soften_mask` method.
+
+        The mask can be hardened by setting the `hardmask` attribute
+        to True, or equivalently with the `harden_mask` method.
+
+        .. seealso:: `harden_mask`, `soften_mask`, `where`,
+                     `__setitem__`
 
         **Examples:**
 
@@ -5717,36 +5993,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[0] = cf.masked
         >>> print(d.array)
         [-- 2 3]
-        >>> d[...]= 9
+        >>> d[...]= 999
         >>> print(d.array)
-        [-- 9 9]
-        >>> d.soften_mask()
+        [-- 999 999]
+        >>> d.hardmask = False
         >>> d.hardmask
         False
         >>> d[...] = -1
-        False
         >>> print(d.array)
         [-1 -1 -1]
-        >>> d.harden_mask()
-        >>> d.hardmask
-        True
-        >>> d[0] = cf.masked
-        >>> d = d.where(True, 9)
-        >>> print(d.array)
-        [-- 9 9]
-        >>> d.soften_mask()
-        >>> d.hardmask
-        False
-        >>> d = d.where(True, 9)
-        >>> print(d.array)
-        [9 9 9]
 
         """
-        return self._custom["_hardmask"]
+        return self._hardmask
 
     @hardmask.setter
     def hardmask(self, value):
-        raise AttributeError("TODODASK - use harden_mask/soften_mask instead")
+        if value:
+            self.harden_mask()
+        else:
+            self.soften_mask()
 
     @property
     @daskified(1)
@@ -5755,7 +6020,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Performance**
 
-        `is_masked` causes all delayed operations to be computed.
+        `is_masked` causes all delayed operations to be executed.
 
         **Examples:**
 
@@ -5774,7 +6039,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self._get_dask()
 
-        out_ind = tuple(dx.ndim)
+        out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
 
         dx = da.blockwise(
@@ -5814,6 +6079,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Does not include bytes consumed by the array mask
 
+        **Performance**
+
+        If the number of bytes is unknown then it is calculated
+        immediately by executing all delayed operations.
+
         **Examples:**
 
         >>> d = cf.Data([[1, 1.5, 2]])
@@ -5831,9 +6101,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         dx = self._get_dask()
-        return dx.nbytes
+        if math.isnan(dx.size):
+            logger.warning(
+                "Computing data nbytes: Performance may be degraded"
+            )
+            dx.compute_chunk_sizes()
 
-    # TODODASK - what about nans (e.g. after da.unique)
+        return dx.nbytes
 
     @property
     @daskified(1)
@@ -5871,6 +6145,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def shape(self):
         """Tuple of the data array's dimension sizes.
 
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
         **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
@@ -5891,15 +6170,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         dx = self._get_dask()
-        #        if nan: do some compute
-        return dx.shape
+        if math.isnan(dx.size):
+            logger.warning("Computing data shape: Performance may be degraded")
+            dx.compute_chunk_sizes()
 
-    # TODODASK - what about nans (e.g. after da.unique  dx.shape -> (nan,))
+        return dx.shape
 
     @property
     @daskified(1)
     def size(self):
         """Number of elements in the data array.
+
+        **Performance**
+
+        If the size of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
 
         **Examples:**
 
@@ -5925,9 +6210,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         dx = self._get_dask()
-        return dx.size
+        size = dx.size
+        if math.isnan(size):
+            logger.warning("Computing data size: Performance may be degraded")
+            dx.compute_chunk_sizes()
+            size = dx.size
 
-    # TODODASK - what about nans (e.g. after da.unique)
+        return size
 
     @property
     @daskified(1)
@@ -5969,7 +6258,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 a.harden_mask()
             else:
                 a.soften_mask()
-        # --- End: if
 
         return a
 
@@ -6042,7 +6330,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 a.harden_mask()
             else:
                 a.soften_mask()
-        # --- End: if
 
         return a
 
@@ -8103,7 +8390,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if dtype is not None and np.dtype(dtype) != data.dtype:
                 data = data.copy()
                 data.dtype = dtype
-        # --- End: if
 
         return data
 
@@ -8393,7 +8679,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         axes = [data_axes[i] for i in self._parse_axes(axes)]
 
-        # Never change the _cyclic attribute in-place
+        # Never change the value of the _cyclic attribute in-place
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
         else:
@@ -8932,7 +9218,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.reshape(shape)
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -9366,15 +9652,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Force the mask to hard.
 
         Whether the mask of a masked array is hard or soft is
-        determined by its the `hardmask` property. `harden_mask` sets
-        `hardmask` to True.
+        determined by its `hardmask` property. `harden_mask` sets
+        `hardmask` to `True`.
 
+        .. versionadded:: TODODASK
+
+        .. seealso:: `hardmask`, `soften_mask`
 
         **Examples:**
-
-        >>> d = cf.Data([1, 2, 3])
-        >>> d.hardmask
-        True
 
         >>> d = cf.Data([1, 2, 3], hardmask=False)
         >>> d.hardmask
@@ -9383,24 +9668,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.hardmask
         True
 
+        >>> d = cf.Data([1, 2, 3], mask=[False, True, False])
+        >>> d.hardmask
+        True
+        >>> d[1] = 999
+        >>> print(d.array)
+        [1 -- 3]
+
         """
-
-        def harden_mask(a):
-            if np.ma.isMA(a):
-                a.harden_mask()
-
-            return a
-
-        if self._hardmask:
-            # Mask is already hard
-            return
-
-        self._dask_map_blocks(harden_mask, dtype=self.dtype)
-
+        self._map_blocks(cf_harden_mask, dtype=self.dtype)
         self._hardmask = True
 
     def soften_mask(self):
-        """TODODASK.
+        """Force the mask to soft.
+
+        Whether the mask of a masked array is hard or soft is
+        determined by its `hardmask` property. `soften_mask` sets
+        `hardmask` to `False`.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `hardmask`, `harden_mask`
 
         **Examples:**
 
@@ -9411,31 +9699,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.hardmask
         False
 
+        >>> d = cf.Data([1, 2, 3], mask=[False, True, False], hardmask=False)
+        >>> d.hardmask
+        False
+        >>> d[1] = 999
+        >>> print(d.array)
+        [  1 999   3]
+
         """
-
-        def soften_mask(a):
-            if np.ma.isMA(a):
-                a.soften_mask()
-
-            return a
-
-        if not self._hardmask:
-            # Mask is already soft
-            return
-
-        self._dask_map_blocks(soften_mask, dtype=self.dtype)
-
+        self._map_blocks(cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
-
-    def _set_mask_hardness(self, hardmask=None):
-        """TODODASK."""
-        if hardmask is None:
-            hardmask = self.hardmask
-
-        if hardmask:
-            self.harden_mask()
-        else:
-            self.soften_mask()
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
@@ -10121,7 +10394,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Return an element of the data array as a standard Python
         scalar.
 
-        TODODASK consider renameing/aliasing to 'item'
+        TODODASK: consider renameing/aliasing to 'item'. Might depend
+                  on whether or not the APIs are the same.
 
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
@@ -10577,7 +10851,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx[tuple(index)]
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -10600,8 +10874,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         chunks = chunks[0]
 
         if chunks is None:
-            # Clear all chunking. Never change the _HDF_chunks
-            # attribute in-place.
+            # Clear all chunking. Never change the value of the
+            # _HDF_chunks attribute in-place.
             self._HDF_chunks = None
             return org_HDF_chunks
 
@@ -10612,7 +10886,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if _HDF_chunks.values() == [None] * self.ndim:
             _HDF_chunks = None
 
-        # Never change the _HDF_chunks attribute in-place
+        # Never change the value of the _HDF_chunks attribute in-place
         self._HDF_chunks = _HDF_chunks
 
         return org_HDF_chunks
@@ -11182,85 +11456,99 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
+    @daskified(1)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
-        """Assign to data elements depending on a condition.
+        """Assign array elements depending on a condition.
 
-        Data can be changed by assigning to elements that are selected by
-        a condition based on the data values.
-
-        Different values can be assigned to where the conditions are, and
-        are not, met.
+        The elements to be changed are identified by a
+        condition. Different values can be assigned according to where
+        the condition is True (assignment from the *x* parameter) or
+        False (assignment from the *y* parameter).
 
         **Missing data**
 
-        Data array elements may be set to missing values by assigning them
-        to the `cf.masked` constant, or by assignment missing data
-        elements of array-valued *x* and *y* parameters.
+        Array elements may be set to missing values if either *x* or
+        *y* are the `cf.masked` constant, or by assignment from any
+        missing data elements in *x* or *y*.
 
-        By default the data mask is "hard", meaning that masked values can
-        not be changed by assigning them to another value. This behaviour
-        may be changed by setting the `hardmask` attribute to `False`,
-        thereby making the data mask "soft" and allowing masked elements
-        to be set to non-masked values.
+        If the data mask is hard (see the `hardmask` attribute) then
+        missing data values in the array will not be overwritten,
+        regardless of the content of *x* and *y*.
+
+        If the *condition* contains missing data then the
+        corresponding elements in the array will not be assigned to,
+        regardless of the contents of *x* and *y*.
+
+        **Broadcasting**
+
+        The array and the *condition*, *x* and *y* parameters must all
+        be broadcastable to each other, such that the shape of the
+        result is identical to the orginal shape of the array.
+
+        If *condition* is a `Query` object then for the purposes of
+        broadcasting, the condition is considered to be that which is
+        produced by applying the query to the array.
+
+        **Performance**
+
+        If any of the shapes of the *condition*, *x*, or *y*
+        parameters, or the array, is unknown, then there is a
+        possibility that an unknown shape will need to be calculated
+        immediately by executing all delayed operations on that
+        object.
 
         .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
 
         :Parameters:
 
-            condition:
-                The condition which determines how to assign values to the
-                data.
+            condition: array-like or `Query`
+                The condition which determines how to assign values to
+                the data.
 
-                In general it may be any scalar or array-like object (such
-                as a numpy array or `Data` instance) that is broadcastable
-                to the shape of the data. Assignment from the *x* and *y*
-                parameters will be done where elements of the condition
-                evaluate to `True` and `False` respectively.
-
-                *Parameter example:*
-                  ``d.where(d.data<0, x=-999)`` will set all data values that
-                  are less than zero to -999.
-
-                *Parameter example:*
-                  ``d.where(True, x=-999)`` will set all data values to
-                  -999. This is equivalent to ``d[...] = -999``.
-
-                *Parameter example:*
-                  ``d.where(False, y=-999)`` will set all data values to
-                  -999. This is equivalent to ``d[...] = -999``.
-
-                *Parameter example:*
-                  If data ``d`` has shape ``(5, 3)`` then ``d.where([True,
-                  False, True], x=-999, y=cf.masked)`` will set data
-                  values in columns 0 and 2 to -999, and data values in
-                  column 1 to missing data. This works because the
-                  condition has shape ``(3,)`` which broadcasts to the
-                  data shape.
+                Assignment from the *x* and *y* parameters will be
+                done where elements of the condition evaluate to
+                `True` and `False` respectively.
 
                 If *condition* is a `Query` object then this implies a
                 condition defined by applying the query to the data.
 
                 *Parameter example:*
-                  ``d.where(cf.lt(0), x=-999)`` will set all data values
-                  that are less than zero to -999. This is equivalent to
-                  ``d.where(d<0, x=-999)``.
+                  ``d.where(d < 0, x=-999)`` will set all data
+                  values that are less than zero to -999.
 
-            x, y: *optional*
-                Specify the assignment values. Where the condition
-                evaluates to `True`, assign to the data from *x*, and
-                where the condition evaluates to `False`, assign to the
-                data from *y*. The *x* and *y* parameters are each one of:
+                *Parameter example:*
+                  ``d.where(True, x=-999)`` will set all data values
+                  to -999. This is equivalent to ``d[...] = -999``.
 
-                * `None`. The appropriate data elements array are
-                  unchanged. This the default.
+                *Parameter example:*
+                  ``d.where(False, y=-999)`` will set all data values
+                  to -999. This is equivalent to ``d[...] = -999``.
 
-                * Any scalar or array-like object (such as a numpy array,
-                  or `Data` instance) that is broadcastable to the shape
-                  of the data.
+                *Parameter example:*
+                  If ``d`` has shape ``(5, 3)`` then ``d.where([True,
+                  False, True], x=-999, y=cf.masked)`` will set data
+                  values in columns 0 and 2 to -999, and data values
+                  in column 1 to missing data. This works because the
+                  condition has shape ``(3,)`` which broadcasts to the
+                  data shape.
 
-            ..
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-999)`` will set all data
+                  values that are less than zero to -999. This is
+                  equivalent to ``d.where(d < 0, x=-999)``.
+
+            x, y: array-like or `None`
+                Specify the assignment values. Where the condition is
+                True assign to the data from *x*, and where the
+                condition is False assign to the data from *y*.
+
+                If *x* is `None` (the default) then no assignment is
+                carried out where the condition is True.
+
+                If *y* is `None` (the default) then no assignment is
+                carried out where the condition is False.
 
                 *Parameter example:*
                   ``d.where(condition)``, for any ``condition``, returns
@@ -11270,6 +11558,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change the
                   sign of all negative data values, and set all other data
                   values to missing data.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d)`` will change the sign of
+                  all negative data values, and leave all other data
+                  values unchanged. This is equivalent to, but faster
+                  than, ``d.where(cf.lt(0), x=-d, y=d)``
 
             {{inplace: `bool`, optional}}
 
@@ -11283,354 +11577,152 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The new data with updated values, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        >>> e = d.where(d < 5, d, 10 * d)
+        >>> print(e.array)
+        [ 0  1  2  3  4 50 60 70 80 90]
+
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'km')
+        >>> e = d.where(d < 5, cf.Data(10000 * d, 'metre'))
+        >>> print(e.array)
+        [ 0. 10. 20. 30. 40.  5.  6.  7.  8.  9.]
+
+        >>> e = d.where(d < 5, cf.masked)
+        >>> print(e.array)
+        [-- -- -- -- -- 5 6 7 8 9]
+
+        >>> d = cf.Data([[1, 2,],
+        ...              [3, 4]])
+        >>> e = d.where([[True, False], [True, True]], d, [[9, 8], [7, 6]])
+        >>> print(e.array)
+        [[1 8]
+         [3 4]]
+        >>> e = d.where([[True, False], [True, True]], [[9, 8], [7, 6]])
+        >>> print(e.array)
+        [[9 2]
+         [7 6]]
+
+        The shape of the result must have the same shape as the
+        original data:
+
+        >>> e = d.where([True, False], [9, 8])
+        >>> print(e.array)
+        [[9 2]
+         [9 4]]
+
+        >>> d = cf.Data(np.array([[0, 1, 2],
+        ...                       [0, 2, 4],
+        ...                       [0, 3, 6]]))
+        >>> d.where(d < 4, None, -1)
+        >>> print(e.array)
+        [[ 0  1  2]
+         [ 0  2 -1]
+         [ 0  3 -1]]
+
+        >>> x, y = np.ogrid[:3, :4]
+        >>> print(x)
+        [[0]
+         [1]
+         [2]]
+        >>> print(y)
+        [[0 1 2 3]]
+        >>> condition = x < y
+        >>> print(condition)
+        [[False  True  True  True]
+         [False False  True  True]
+         [False False False  True]]
+        >>> d = cf.Data(x)
+        >>> e = d.where(condition, d, 10 + y)
+            ...
+        ValueError: where: Broadcasting the 'condition' parameter with shape (3, 4) would change the shape of the data with shape (3, 1)
+
+        >>> d = cf.Data(np.arange(9).reshape(3, 3))
+        >>> e = d.copy()
+        >>> e[1, 0] = cf.masked
+        >>> f = e.where(d > 5, None, -3.1416)
+        >>> print(f.array)
+        [[-3.1416 -3.1416 -3.1416]
+         [-- -3.1416 -3.1416]
+         [6.0 7.0 8.0]]
+        >>> e.soften_mask()
+        >>> f = e.where(d > 5, None, -3.1416)
+        >>> print(f.array)
+        [[-3.1416 -3.1416 -3.1416]
+         [-3.1416 -3.1416 -3.1416]
+         [ 6.      7.      8.    ]]
 
         """
-
-        def _slice_to_partition(data, indices):
-            """Return a numpy array for the part of the input data which
-            spans the given indices.
-
-            :Parameters:
-
-                data: `cf.Data`
-
-                indices: `tuple`
-
-            :Returns:
-
-                `numpy.ndarray`
-
-            """
-            indices2 = [
-                (slice(0, 1) if n == 1 else i)
-                for n, i in zip(data.shape[::-1], indices[::-1])
-            ]
-
-            return data[tuple(indices2)[::-1]].array
-
-        # --- End: def
-
-        def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
-            """Check that the data1 is broadcastable to data0 and return
-            data1, as a python scalar if possible.
-
-            .. note:: The input lists are updated inplace.
-
-            :Parameters:
-
-                data0: `Data`
-
-                data1: `Data`
-
-                do_not_broadcast: `list`
-
-                is_scalar: `list`
-
-            :Returns:
-
-                `Data` or scalar
-                    Return *data1* or, if possible, ``data1.datum(0)``.
-
-            """
-            shape0 = data0._shape
-            shape1 = data1._shape
-            size1 = data1._size
-
-            if shape1 == shape0:
-                do_not_broadcast.append(True)
-                is_scalar.append(False)
-
-            elif size1 == 1:
-                do_not_broadcast.append(False)
-                is_scalar.append(True)
-                # Replace data1 with its scalar value
-                data1 = data1.datum(0)
-
-            elif data1._ndim <= data0._ndim and size1 < data0._size:
-                do_not_broadcast.append(False)
-                is_scalar.append(False)
-                for n, m in zip(shape1[::-1], shape0[::-1]):
-                    if n != m and n != 1:
-                        raise ValueError(
-                            "where: Can't broadcast data with shape {} to "
-                            "shape {}".format(shape1, shape0)
-                        )
-            else:
-                raise ValueError(
-                    "where: Can't broadcast data with shape {} to "
-                    "shape {}".format(shape1, shape0)
-                )
-
-            return data1
-
-        # --- End: def
-
         d = _inplace_enabled_define_and_cleanup(self)
 
-        logger.debug("    data.shape = {}".format(d.shape))  # pragma: no cover
-        logger.debug(
-            "    condition = {!r}".format(condition)
-        )  # pragma: no cover
+        units = d.Units
+        dx = d._get_dask()
+
+        # Parse condition
+        if getattr(condition, "isquery", False):
+            # Condition is a cf.Query object: Make sure that the
+            # condition units are OK, and convert the condition to a
+            # boolean dask array with the same shape as the data.
+            condition = condition.copy()
+            condition = condition.set_condition_units(units)
+            condition = condition.evaluate(d)
+
+        condition = type(self).asdata(condition)
+        _where_broadcastable(d, condition, "condition")
+
+        # If x or y is self then change it to None. This prevents an
+        # unnecessary copy; and, at compute time, an unncessary numpy
+        # where.
+        if x is self:
+            x = None
+
+        if y is self:
+            y = None
 
         if x is None and y is None:
-            # The data is unchanged regardless of condition
-            if inplace:
-                d = None
+            # The data is unchanged regardless of the condition
             return d
 
-        do_not_broadcast = []
-        is_scalar = []
-
-        #        # ------------------------------------------------------------
-        #        # Make sure that the condition is a cf.Data object
-        #        # ------------------------------------------------------------
-        #
-        #        if not isinstance(condition, d.__class__):
-        #            condition = type(d)(condition)
-
-        # ------------------------------------------------------------
-        # Check that the input condition is broadcastable
-        # ------------------------------------------------------------
-        condition = Data.asdata(condition, copy=False)
-        condition = _is_broadcastable(
-            d, condition, do_not_broadcast, is_scalar
-        )
-
-        #        if isinstance(condition, Query):
-        #        condition = condition.evaluate(f).Data
-        # ------------------------------------------------------------
-        # Parse inputs x and y so that each is one of A) None, B) a
-        # scalar or C) a data array with the same shape as the master
-        # array
-        # ------------------------------------------------------------
+        # Parse x and y
         xy = []
-        for value in (x, y):
-            if value is None or value is cf_masked:
-                do_not_broadcast.append(False)
-                is_scalar.append(True)
+        for arg, name in zip((x, y), ("x", "y")):
+            if arg is None:
+                xy.append(arg)
+                continue
 
-            else:
-                # Make sure that the value is a cf.Data object and has
-                # compatible units
-                if not isinstance(value, d.__class__):
-                    value = type(d)(value)
-                else:
-                    if value.Units.equivalent(d.Units):
-                        if not value.Units.equals(d.Units):
-                            value = value.copy()
-                            value.Units = d.Units
-                    elif value.Units:
-                        raise ValueError(
-                            "where: Can't assign values with "
-                            "units {!r} to data with units {!r}".format(
-                                value.Units, d.Units
-                            )
-                        )
-                # --- End: if
+            if arg is cf_masked:
+                # Replace masked constant with array
+                xy.append(scalar_masked_array(self.dtype))
+                continue
 
-                # Check that the value is broadcastable
-                value = _is_broadcastable(
-                    d, value, do_not_broadcast, is_scalar
-                )
-            # --- End: if
+            arg = type(self).asdata(arg)
+            _where_broadcastable(d, arg, name)
 
-            xy.append(value)
-        # --- End: for
+            if arg.Units:
+                # Make sure that units are OK.
+                arg = arg.copy()
+                try:
+                    arg.Units = units
+                except ValueError:
+                    raise ValueError(
+                        f"where: {name!r} parameter units {arg.Units!r} "
+                        f"are not equivalent to data units {units!r}"
+                    )
 
-        (x, y) = xy
-        (condition_is_scalar, x_is_scalar, y_is_scalar) = is_scalar
-        broadcast = not any(do_not_broadcast)
+            xy.append(arg._get_dask())
 
-        logger.debug("    x = {!r}".format(x))  # pragma: no cover
-        logger.debug("    y = {!r}".format(y))  # pragma: no cover
-        logger.debug(
-            "    condition_is_scalar = {!r}".format(condition_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    x_is_scalar         = {!r}".format(x_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    y_is_scalar         = {!r}".format(y_is_scalar)
-        )  # pragma: no cover
-        logger.debug(
-            "    broadcast           = {!r}".format(broadcast)
-        )  # pragma: no cover
+        x, y = xy
 
-        # -------------------------------------------------------------
-        # Try some short cuts if the condition is a scalar
-        # -------------------------------------------------------------
-        if condition_is_scalar and not getattr(condition, "isquery", False):
-            logger.debug(
-                "    Condition is a scalar: {} {}".format(
-                    condition, type(condition)
-                )
-            )
-            if condition:
-                if x is not None:
-                    d[...] = x
+        # Apply the where operation
+        dx = da.core.elemwise(
+            cf_where, dx, dask_compatible(condition), x, y, d.hardmask
+        )
+        d._set_dask(dx)
 
-                if inplace:
-                    d = None
-                return d
-            else:
-                if y is not None:
-                    d[...] = y
-
-                if inplace:
-                    d = None
-                return d
-        # --- End: if
-
-        # Still here?
-        hardmask = d.hardmask
-        config = d.partition_configuration(readonly=False)  # or True?
-
-        for partition in d.partitions.matrix.flat:
-            logger.debug("   Partition:")  # pragma: no cover
-
-            partition.open(config)
-            array = partition.array
-            # --------------------------------------------------------
-            # Find the master array indices for this partition
-            # --------------------------------------------------------
-            shape = array.shape
-            indices = partition.indices
-
-            # --------------------------------------------------------
-            # Find the condition for this partition
-            # --------------------------------------------------------
-            if getattr(condition, "isquery", False):
-                if hasattr(condition._value, "_Units"):
-                    # Ensure query data has equal units before evaluation
-                    orig_condition_units = condition._value._Units
-                    p_units = partition.Units
-                    if orig_condition_units.equivalent(p_units):
-                        if not orig_condition_units.equals(p_units):
-                            # Convert equivalent units to equal units
-                            condition._value._Units = p_units
-                    else:
-                        raise ValueError(
-                            "where: Can't apply a query condition with "
-                            "units '{!s}' on data with non-equivalent "
-                            "units '{!s}'".format(
-                                orig_condition_units, p_units
-                            )
-                        )
-                c = condition.evaluate(array)
-            elif condition_is_scalar:
-                c = condition
-            else:
-                c = _slice_to_partition(condition, indices)
-
-            c_masked = np.ma.isMA(c) and np.ma.is_masked(c)
-
-            # --------------------------------------------------------
-            # Find value to use where condition is True for this
-            # partition
-            # --------------------------------------------------------
-            if x_is_scalar:
-                if x is None:
-                    # Use d
-                    T = array
-                    T_masked = partition.masked
-                else:
-                    T = x
-                    T_masked = x is cf_masked
-            else:
-                T = _slice_to_partition(x, indices)
-                T_masked = np.ma.isMA(T) and np.ma.is_masked(T)
-
-            # --------------------------------------------------------
-            # Find value to use where condition is False for this
-            # partition
-            # --------------------------------------------------------
-            if y_is_scalar:
-                if y is None:
-                    # Use d
-                    F = array
-                    F_masked = partition.masked
-                else:
-                    F = y
-                    F_masked = y is cf_masked
-            else:
-                F = _slice_to_partition(y, indices)
-                F_masked = np.ma.isMA(F) and np.ma.is_masked(F)
-
-            # --------------------------------------------------------
-            # Make sure that at least one of the arrays is the same
-            # shape as the partition
-            # --------------------------------------------------------
-            if broadcast:
-                if x is cf_masked or y is cf_masked:
-                    c = _broadcast(c, shape)
-                else:
-                    max_sizes = max((np.size(c), np.size(T), np.size(F)))
-                    if np.size(c) == max_sizes:
-                        c = _broadcast(c, shape)
-                    elif np.size(T) == max_sizes:
-                        T = _broadcast(T, shape)
-                    else:
-                        F = _broadcast(F, shape)
-            # --- End: if
-
-            logger.debug("  array = {}".format(array))  # pragma: no cover
-            logger.debug("      c = {}".format(c))  # pragma: no cover
-            logger.debug("      T = {}".format(T))  # pragma: no cover
-            logger.debug("      F = {}".format(F))  # pragma: no cover
-
-            # --------------------------------------------------------
-            # Create a numpy array which takes vales from T where c
-            # is True and from F where c is False
-            # --------------------------------------------------------
-            if T_masked or F_masked:
-                # T and/or F have missing data
-                new = np.ma.where(c, T, F)
-                if c_masked:
-                    new = np.ma.where(c.mask, array, new)
-
-                if partition.masked:
-                    if hardmask:
-                        # The original partition has missing data and
-                        # a hardmask, so apply the original
-                        # partition's mask to the new array.
-                        new.mask |= array.mask
-                    elif not np.ma.is_masked(new):
-                        # The original partition has missing data and
-                        # a softmask and the new array doesn't have
-                        # missing data, so turn the new array into an
-                        # unmasked array.
-                        new = new.data[...]
-
-                elif not np.ma.is_masked(new):
-                    # The original partition doesn't have missing data
-                    # and neither does the new array, so turn the new
-                    # array into an unmasked array.
-                    new = new.data[...]
-
-            else:
-                # Neither T nor F have missing data
-                new = np.where(c, T, F)
-                if c_masked:
-                    new = np.ma.where(c.mask, array, new)
-
-                if partition.masked and hardmask:
-                    # The original partition has missing data and a
-                    # hardmask, so apply the original partition's mask
-                    # to the new array.
-                    new = np.ma.masked_where(array.mask, new, copy=False)
-            # --- End: if
-
-            # --------------------------------------------------------
-            # Replace the partition's subarray with the new numpy
-            # array
-            # --------------------------------------------------------
-            logger.debug("      new = {}".format(new))  # pragma: no cover
-
-            partition.subarray = new
-
-            partition.close()
-        # --- End: for
+        # Note: No need to run `_reset_mask_hardness` at this point
+        #       because the mask hardness has already been correctly
+        #       set in `cf_where`.
 
         return d
 
@@ -11989,14 +12081,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # one size 1 axis needs squeezing.
         dx = d._get_dask()
         dx = dx.squeeze(axis=tuple(axes))
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
 
         hdf = self._HDF_chunks
         if hdf:
-            # Never change the _HDF_chunks attribute in-place
+            # Never change the value of the _HDF_chunks attribute in-place
             self._HDF_chunks = {
                 axis: size for axis, size in hdf.items() if axis not in axes
             }
@@ -12518,6 +12610,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 *Parameter example:*
                   Convolve the last axis: ``axis=-1``.
 
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number. If an `int` while *axis* is a
+                tuple of `int`, then the same value is used for all
+                given axes.
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -12527,22 +12627,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
 
         """
+        # TODODASK - consider matching the numpy/dask api: "shift, axis="
+
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if isinstance(shift, int):
-            shift = (shift,)
-
-        axes = self._parse_axes(axis)
-        if len(axes) != len(shift):
-            raise ValueError("TODODASK")
-
-        if not shift:
-            # Null roll
-            return d
-
         dx = d._get_dask()
-        dx = da.roll(dx, axis=axes, shift=shift)
-        d._set_dask(dx)
+        dx = da.roll(dx, shift, axis=axis)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -13336,3 +13427,54 @@ def _broadcast(a, shape):
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
     return np.tile(a, tile)
+
+
+def _where_broadcastable(data, x, name):
+    """Check broadcastability for `where` assignments.
+
+    Raises an exception if the result of broadcasting *data* and *x*
+    together does not have the same shape as *data*.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `where`
+
+    :Parameters:
+
+        data, x: `Data`
+            The arrays to compare.
+
+        name: `str`
+            A name for *x* that is used in any exception error
+            message.
+
+    :Returns:
+
+        `bool`
+             If *x* is acceptably broadcastable to *data* then `True`
+             is returned, otherwise a `ValueError` is raised.
+
+    """
+    ndim_x = x.ndim
+    if not ndim_x:
+        return True
+
+    ndim_data = data.ndim
+    if ndim_x > ndim_data:
+        raise ValueError(
+            f"where: Broadcasting the {name!r} parameter with {ndim_x} "
+            f"dimensions would change the shape of the data with "
+            f"{ndim_data} dimensions"
+        )
+
+    shape_x = x.shape
+    shape_data = data.shape
+    for n, m in zip(shape_x[::-1], shape_data[::-1]):
+        if n != m and n != 1:
+            raise ValueError(
+                f"where: Broadcasting the {name!r} parameter with shape "
+                f"{shape_x} would change the shape of the data with shape "
+                f"{shape_data}"
+            )
+
+    return True

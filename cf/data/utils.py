@@ -1,14 +1,12 @@
 """General functions useful for `Data` functionality."""
-from functools import partial
+from functools import lru_cache, partial
 from itertools import product
 
+import dask.array as da
 import numpy as np
 
-import dask.array as da
-
-from ..cfdatetime import dt2rt, st2rt, rt2dt
 from ..cfdatetime import dt as cf_dt
-
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..units import Units
 
 
@@ -93,7 +91,6 @@ def convert_to_reftime(array, units, first_value=None):
                     )
             else:
                 d_calendar = x_calendar
-        # --- End: if
 
         if not units:
             # Set the units to something that is (hopefully)
@@ -210,12 +207,13 @@ def unique_calendars(array):
     return set(cals.tolist())
 
 
+@lru_cache(maxsize=32)
 def new_axis_identifier(existing_axes=(), basename="dim"):
-    """Return a new, unique axis identifiers.
+    """Return a new, unique axis identifier.
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
@@ -271,15 +269,17 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso:: `chunk_shapes`
 
     :Parameters:
 
         chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
 
-    **Examples:**
+    **Examples**
 
     >>> chunks = ((1, 2), (9,), (44, 55, 66))
     >>> for position in chunk_positions(chunks):
@@ -299,15 +299,17 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso:: `chunk_positions`
 
     :Parameters:
 
         chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
 
-    **Examples:**
+    **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
     >>> for shape in chunk_shapes(chunks):
@@ -365,6 +367,117 @@ def dask_compatible(a):
 
     """
     try:
-        return a.data._get_data()
+        return a.data._get_dask()
     except AttributeError:
         return a
+
+
+def scalar_masked_array(dtype=float):
+    """Return a scalar masked array.
+
+     .. versionadded:: TODODASK
+
+     :Parmaeters:
+
+         dtype: data-type, optional
+             Desired output data-type for the array, e.g,
+             `numpy.int8`. Default is `numpy.float64`.
+
+     :Returns:
+
+         `np.ma.core.MaskedArray`
+             The scalar masked array.
+
+     **Examples**
+
+     >>> scalar_masked_array()
+     masked_array(data=--,
+                  mask=True,
+            fill_value=1e+20,
+                 dtype=float64)
+     >>> scalar_masked_array(dtype('int32'))
+     masked_array(data=--,
+                  mask=True,
+            fill_value=999999,
+                 dtype=int32)
+     >>> scalar_masked_array('U45')
+     masked_array(data=--,
+                  mask=True,
+            fill_value='N/A',
+                dtype='<U45')
+    >>> scalar_masked_array(bool)
+    masked_array(data=--,
+                 mask=True,
+            fill_value=True,
+                dtype=bool)
+
+    """
+    a = np.ma.empty((), dtype=dtype)
+    a.mask = True
+    return a
+ 
+
+def conform_units(value, units):
+    """Conform units.
+
+    If *value* has units defined by its `Units` attribute then
+
+    * if the value units are equal to *units* then *value* is returned
+      unchanged;
+
+    * if the value units are equivalent to *units* then a copy of
+      *value* converted to *units* is returned;
+
+    * if the value units are not equivalent to *units* then an
+      exception is raised.
+
+    In all other cases *value* is returned unchanged.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        value:
+            The value whose units are to be conformed to *units*.
+
+        units: `Units`
+            The units to conform to.
+
+    **Examples:**
+
+    >>> conform_units(1, cf.Units('metres'))
+    1
+    >>> conform_units([1, 2, 3], cf.Units('metres'))
+    [1, 2, 3]
+    >>> import numpy
+    >>> conform_units(numpy.array([1, 2, 3]), cf.Units('metres'))
+    array([1, 2, 3])
+    >>> conform_units('string', cf.Units('metres'))
+    'string'
+    >>> d = cf.Data([1, 2] , 'm')
+    >>> conform_units(d, cf.Units('metres'))
+    <CF Data(2): [1, 2] m>
+    >>> d = cf.Data([1, 2] , 'km')
+    >>> conform_units(d, cf.Units('metres'))
+    <CF Data(2): [1000.0, 2000.0] metres>
+    >>> conform_units(d, cf.Units('s'))
+        ...
+    ValueError: Units <Units: km> are incompatible with units <Units: s>
+
+    """
+    try:
+        value_units = value.Units
+    except AttributeError:
+        pass
+    else:
+        if value_units.equivalent(units):
+            if value_units != units:
+                value = value.copy()
+                value.Units = units
+        elif value_units and units:
+            raise ValueError(
+                f"Units {value_units!r} are incompatible with units {units!r}"
+            )
+
+    return value
+
