@@ -470,7 +470,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 )
 
         if source is not None:
-            super().__init__(source=source, _use_array=_use_array)
+            try:
+                array = source._get_Array(None)
+            except AttributeError:
+                array = None
+
+            super().__init__(
+                source=source, _use_array=_use_array and array is not None
+            )
+
             if _use_array:
                 try:
                     array = source._get_dask()
@@ -478,6 +486,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     pass
                 else:
                     self._set_dask(array, copy=copy, delete_source=False)
+                    # TODODASK: When PR #257 (dask: Data.__getitem__,
+                    #           Data.__setitem__) is merged, add in a
+                    #           "reset_mask_hardness=False".
             else:
                 self._del_dask(None)
 
@@ -488,9 +499,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             return
 
-        super().__init__(
-            array=array, fill_value=fill_value, _use_array=_use_array
-        )
+        super().__init__(array=array, fill_value=fill_value, _use_array=False)
 
         # Create the _HDF_chunks attribute: defines HDF chunking when
         # writing to disk.
@@ -566,6 +575,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "compressed input arrays"
                 )
 
+            # Save the input compressed array, as this will contain
+            # extra information, such as a count or index variable.
+            self._set_Array(array)
+
             array = compressed_to_dask(array)
 
         elif not is_dask_collection(array):
@@ -580,7 +593,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
-        # reference times
+        # reference times, if appropriate.
         if array.dtype.kind in "USO" and (dt or units.isreftime):
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
