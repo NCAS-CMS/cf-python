@@ -12225,27 +12225,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # Parse the axes. By default, reverse the order of the axes.
         ndim = d.ndim
         if axes is None:
             if ndim <= 1:
                 return d
-
             iaxes = tuple(range(ndim - 1, -1, -1))
         else:
-            iaxes = d._parse_axes(axes)  # , 'transpose')
-
-            # Return unchanged if axes are in the same order as the data
-            if iaxes == tuple(range(ndim)):
-                if inplace:
-                    d = None
-                return d
-
-            if len(iaxes) != ndim:
-                raise ValueError(
-                    "Can't tranpose: Axes don't match array: {}".format(iaxes)
-                )
-        # --- End: if
+            iaxes = d._parse_axes(axes)
 
         # Note: _axes attribute is still important/utilised post-Daskification
         # because e.g. axes labelled as cyclic by the _cyclic attribute use it
@@ -12254,7 +12240,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._axes = [data_axes[i] for i in iaxes]
 
         dx = d._get_dask()
-        dx = da.transpose(dx, axes=axes)
+        try:
+            dx = da.transpose(dx, axes=axes)
+        except ValueError:
+            raise ValueError(
+                "Can't tranpose: Axes don't match array: {}".format(iaxes)
+            )
         d._set_dask(dx, reset_mask_hardness=False)
 
         return d
