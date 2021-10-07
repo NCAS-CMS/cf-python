@@ -823,7 +823,6 @@ class DataTest(unittest.TestCase):
     def test_Data__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-        # TODODASK - why is there no testing here?
 
         d = cf.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
 

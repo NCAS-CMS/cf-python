@@ -12247,10 +12247,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 )
         # --- End: if
 
-        # TODODASK Q) is d._axes still relevant? Or can the following go?
-        # Test passes with it commented out, but it could still be important?
-        # data_axes = d._axes
-        # d._axes = [data_axes[i] for i in iaxes]
+        # Note: _axes attribute is still important/utilised post-Daskification
+        # because e.g. axes labelled as cyclic by the _cyclic attribute use it
+        # to determine their position (see #discussion_r694096462 on PR #247).
+        data_axes = d._axes
+        d._axes = [data_axes[i] for i in iaxes]
 
         dx = d._get_dask()
         dx = da.transpose(dx, axes=axes)
