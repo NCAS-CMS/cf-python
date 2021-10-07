@@ -12254,7 +12254,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = da.transpose(dx, axes=axes)
-        d._set_dask(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
