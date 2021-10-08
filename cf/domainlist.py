@@ -1,11 +1,8 @@
-from . import mixin
-from . import ConstructList
+from . import ConstructList, mixin
 
 
 class DomainList(mixin.FieldDomainList, ConstructList):
-    """An ordered sequence of TODO
-
-    Each element of a domain list is a domain construct.
+    """An ordered sequence of domain constructs.
 
     A domain list supports the python list-like operations (such as
     indexing and methods like `!append`). These methods provide

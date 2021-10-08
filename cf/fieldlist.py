@@ -3,9 +3,7 @@ from .functions import _DEPRECATION_ERROR_METHOD
 
 
 class FieldList(mixin.FieldDomainList, ConstructList):
-    """An ordered sequence of fields.
-
-    Each element of a field list is a field construct.
+    """An ordered sequence of field constructs.
 
     A field list supports the python list-like operations (such as
     indexing and methods like `!append`). These methods provide
