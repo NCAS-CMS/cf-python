@@ -3355,7 +3355,9 @@ def unique_constructs(constructs, copy=True):
     return cfdm.unique_constructs(constructs, copy=copy)
 
 
-unique_constructs.__doc__ = cfdm.unique_constructs.__doc__.replace("cfdm.", "cf.")
+unique_constructs.__doc__ = cfdm.unique_constructs.__doc__.replace(
+    "cfdm.", "cf."
+)
 unique_constructs.__doc__ = unique_constructs.__doc__.replace(
     "<Field:", "<CF Field:"
 )
