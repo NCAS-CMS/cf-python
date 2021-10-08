@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.varray
+﻿cf.DimensionCoordinate.varray
 =============================
 
 .. currentmodule:: cf

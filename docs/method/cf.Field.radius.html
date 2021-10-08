@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.radius &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-radius">
+  <section id="cf-field-radius">
 <h1>cf.Field.radius<a class="headerlink" href="#cf-field-radius" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.radius">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">radius</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L4718-L4822"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.radius" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">radius</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L4613-L4717"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the radius used for calculating cell areas in
 spherical polar coordinates.</p>
 <p>The radius is taken from the datums of any coordinate
@@ -146,11 +147,11 @@ then a default value may be used instead.</p>
 reference constructs, but if and only if this is not
 possible then the value set by the <em>default</em> parameter
 is used. May be set to any numeric scalar object,
-including <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the
+including <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the
 radius are assumed to be metres, unless specified by a
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. If the special value <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> is
 given then the default radius taken as 6371229
-metres. If <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> an exception will be
+metres. If <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> an exception will be
 raised if no unique datum can be found in the
 coordinate reference constructs.</p>
 <dl class="simple">
@@ -186,7 +187,7 @@ metres: <code class="docutils literal notranslate"><span class="pre">default=637
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -196,7 +197,7 @@ metres: <code class="docutils literal notranslate"><span class="pre">default=637
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

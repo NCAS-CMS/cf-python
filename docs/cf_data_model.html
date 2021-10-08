@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>CF data model &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
 
 
 
@@ -116,7 +117,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <style> .small {font-size:small} </style><div class="section" id="cf-data-model">
+  <style> .small {font-size:small} </style><section id="cf-data-model">
 <span id="id1"></span><h1><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>The CF (Climate and Forecast) metadata conventions
@@ -125,41 +126,21 @@ meaning of data and of their spatial and temporal properties and are
 designed to promote the creation, processing, and sharing of climate
 and forecasting data using netCDF files and libraries
 (<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>).</p>
-<p>The CF data model <a class="footnote-reference brackets" href="#cfdm" id="id2">1</a> (<a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>)
+<p><a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model">The CF data model</a>
 identifies the fundamental elements (“constructs”) of the CF
 conventions and shows how they relate to each other, independently of
 the netCDF encoding.</p>
-<p>The CF data model defines a <strong>“field construct”</strong> for storing data
-with all of its metadata. It is defined as follows:</p>
+<p>The CF data model defines a <strong>field construct</strong> for storing data with
+all of its metadata. It is defined as follows:</p>
 <dl class="glossary">
 <dt id="term-field-construct">field construct</dt><dd><p>corresponds to a CF-netCDF data variable with all of its
 metadata. It consists of</p>
 <ul>
 <li><p>descriptive properties that apply to field construct as a whole
 (e.g. the standard name),</p></li>
-<li><p>a data array, and</p></li>
-<li><p><strong>“metadata constructs”</strong> that describe the locations of each
-cell of the data array (i.e. the <strong>“domain”</strong>), defined by</p>
-<dl class="glossary simple">
-<dt id="term-domain-axis-constructs">domain axis constructs</dt><dd><p>corresponding to CF-netCDF dimensions or scalar coordinate
-variables</p>
-</dd>
-<dt id="term-dimension-coordinate-constructs">dimension coordinate constructs</dt><dd><p>corresponding to CF-netCDF coordinate variables or numeric scalar
-coordinate variables</p>
-</dd>
-<dt id="term-auxiliary-coordinate-constructs">auxiliary coordinate constructs</dt><dd><p>corresponding to CF-netCDF auxiliary coordinate variables and
-non-numeric scalar coordinate variables</p>
-</dd>
-<dt id="term-coordinate-reference-constructs">coordinate reference constructs</dt><dd><p>corresponding to CF-netCDF grid mapping variables or the
-formula_terms attribute of a coordinate variable</p>
-</dd>
-<dt id="term-domain-ancillary-constructs">domain ancillary constructs</dt><dd><p>corresponding to CF-netCDF variables named by the formula_terms
-attribute of a coordinate variable</p>
-</dd>
-<dt id="term-cell-measure-constructs">cell measure constructs</dt><dd><p>corresponding to CF-netCDF cell measure variables</p>
-</dd>
-</dl>
-</li>
+<li><p>a data array,</p></li>
+<li><p>a <strong>domain construct</strong> that describes the locations of each cell
+of the data array (i.e. the “domain”),</p></li>
 <li><p><strong>metadata constructs</strong> that describe the physical nature of the
 data array, defined by</p>
 <dl class="glossary simple">
@@ -172,27 +153,46 @@ variable</p>
 </li>
 </ul>
 </dd>
+<dt id="term-domain-construct">domain construct</dt><dd><p>that describes the locations of each cell of the domain. It may
+exist independently of a <strong>field construct</strong> and consists of</p>
+<ul class="simple">
+<li><p>descriptive properties that apply to domain construct as a whole,</p></li>
+<li><p><strong>metadata constructs</strong> that describe the locations of each cell
+of the domain, defined by</p></li>
+</ul>
+<dl class="glossary simple">
+<dt id="term-domain-axis-constructs">domain axis constructs</dt><dd><p>corresponding to CF-netCDF dimensions or scalar coordinate
+variables</p>
+</dd>
+<dt id="term-dimension-coordinate-constructs">dimension coordinate constructs</dt><dd><p>corresponding to CF-netCDF coordinate variables or numeric
+scalar coordinate variables</p>
+</dd>
+<dt id="term-auxiliary-coordinate-constructs">auxiliary coordinate constructs</dt><dd><p>corresponding to CF-netCDF auxiliary coordinate variables and
+non-numeric scalar coordinate variables</p>
+</dd>
+<dt id="term-coordinate-reference-constructs">coordinate reference constructs</dt><dd><p>corresponding to CF-netCDF grid mapping variables or the
+formula_terms attribute of a coordinate variable</p>
+</dd>
+<dt id="term-domain-ancillary-constructs">domain ancillary constructs</dt><dd><p>corresponding to CF-netCDF variables named by the
+formula_terms attribute of a coordinate variable</p>
+</dd>
+<dt id="term-cell-measure-constructs">cell measure constructs</dt><dd><p>corresponding to CF-netCDF cell measure variables</p>
+</dd>
+</dl>
+</dd>
 </dl>
 <hr class="docutils" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="figure align-default" id="id3">
-<a class="reference internal image-reference" href="_images/field.png"><img alt="_images/field.png" src="_images/field.png" style="width: 417.2px; height: 555.8px;" /></a>
-<p class="caption"><span class="caption-text"><em>The nine constructs of our CF data model described using UML The field construct corresponds to a CF-netCDF data variable. The domain provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is not a construct of the data model but an abstract concept that is useful for understanding it. Similarly, it is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</div>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/cfdm_field.svg"><img alt="_images/cfdm_field.svg" src="_images/cfdm_field.svg" /></a>
+<figcaption>
+<p><span class="caption-text"><em>The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.</em></span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <hr class="docutils" />
-<dl class="footnote brackets">
-<dt class="label" id="cfdm"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p><span class="small">Hassell, D., Gregory, J., Blower, J.,
-Lawrence, B. N., and Taylor, K. E.: A data model of the
-Climate and Forecast metadata conventions (CF-1.6) with a
-software implementation (cf-python v2.1), Geosci. Model
-Dev., 10, 4619-4646,
-https://doi.org/10.5194/gmd-10-4619-2017, 2017.</span></p>
-</dd>
-</dl>
-</div>
+</section>
 
 
           </div>
@@ -202,7 +202,7 @@ https://doi.org/10.5194/gmd-10-4619-2017, 2017.</span></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

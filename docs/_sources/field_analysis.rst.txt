@@ -1198,7 +1198,7 @@ The field construct has two regridding methods: `~Field.regrids` for
 regridding data between domains with spherical coordinate systems; and
 `~Field.regridc` for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
-`ESMF <https://www.earthsystemcog.org/projects/esmpy>`_ package, a
+`ESMF <https://earthsystemmodeling.org/esmpy/>`_ package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.
 
@@ -2449,8 +2449,8 @@ derivative wraps around by default.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _CF-netCDF cell methods:           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods
-.. _Climatological statistics:        http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#climatological-statistics
-.. _Latitude-longitude:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_latitude_longitude
-.. _Rotated latitude-longitude:       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_rotated_pole
-.. _Plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings
+.. _CF-netCDF cell methods:     http://cfconventions.org/cf-conventions/cf-conventions.html#cell-methods
+.. _Climatological statistics:  http://cfconventions.org/cf-conventions/cf-conventions.html#climatological-statistics
+.. _Latitude-longitude:         http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude
+.. _Rotated latitude-longitude: http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole
+.. _Plane projection:           http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings

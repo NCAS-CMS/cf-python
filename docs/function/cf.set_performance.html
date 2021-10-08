@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.set_performance &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-set-performance">
+  <section id="cf-set-performance">
 <h1>cf.set_performance<a class="headerlink" href="#cf-set-performance" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.set_performance">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">set_performance</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/functions.py#L1290-L1333"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.set_performance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">set_performance</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/functions.py#L1280-L1323"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.set_performance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tune performance of parallelisation by setting chunksize and free
 memory factor. By just providing the chunksize it can be changed to
 a smaller value than an upper limit, which is determined by the
@@ -141,24 +142,24 @@ are returned in a tuple.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The size in bytes of a chunk used by LAMA to partition the
+<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The size in bytes of a chunk used by LAMA to partition the
 data array.</p>
 </dd>
-<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The fraction of memory to keep free as a temporary
+<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The fraction of memory to keep free as a temporary
 workspace.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>A tuple of the previous chunksize and free_memory_factor.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>A tuple of the previous chunksize and free_memory_factor.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -168,7 +169,7 @@ workspace.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

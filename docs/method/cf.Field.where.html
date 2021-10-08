@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.where &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-where">
+  <section id="cf-field-where">
 <h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.where">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">construct=None</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">item=None</em>, <em class="sig-param">**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L14706-L15038"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">construct=None</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">item=None</em>, <em class="sig-param">**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L14410-L14742"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by
 a condition based on the data values of the field construct or on
@@ -140,7 +141,7 @@ elements of array-valued <em>x</em> and <em>y</em> parameters.</p>
 <p>By default the data mask is “hard”, meaning that masked values can
 not be changed by assigning them to another value. This behaviour
 may be changed by setting the <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
-construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
+construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
 allowing masked elements to be set to non-masked values.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -153,10 +154,10 @@ allowing masked elements to be set to non-masked values.</p>
 <dt>condition:</dt><dd><p>The condition which determines how to assign values to the
 data.</p>
 <p>In general it may be any scalar or array-like object (such
-as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
+as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
 broadcastable to the shape of the data. Assignment from
 the <em>x</em> and <em>y</em> parameters will be done where elements of
-the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
+the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(f.data&lt;0,</span> <span class="pre">x=-999)</span></code> will set all data values
 that are less than zero to -999.</p>
@@ -211,14 +212,14 @@ broadcast to the shape of the <code class="docutils literal notranslate"><span c
 </dl>
 </dd>
 <dt>x, y: <em>optional</em></dt><dd><p>Specify the assignment values. Where the condition
-evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the field construct’s data
-from <em>x</em>, and where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
+evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the field construct’s data
+from <em>x</em>, and where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
 assign to the field construct’s data from <em>y</em>. The <em>x</em> and
 <em>y</em> parameters are each one of:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
 unchanged. This the default.</p></li>
-<li><p>Any scalar or array-like object (such as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
+<li><p>Any scalar or array-like object (such as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is broadcastable to the
 shape of the data.</p></li>
 </ul>
@@ -261,7 +262,7 @@ shape of the <code class="docutils literal notranslate"><span class="pre">f</spa
 </dl>
 </div></blockquote>
 <dl class="simple">
-<dt>construct: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Define the condition by applying the <em>construct</em> parameter
+<dt>construct: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Define the condition by applying the <em>construct</em> parameter
 to the given metadata construct’s data, rather then the
 data of the field construct. Must be</p>
 <ul class="simple">
@@ -283,8 +284,8 @@ that is returned by this call of the field construct’s
 </dl>
 </div></blockquote>
 <dl class="simple">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
@@ -295,8 +296,8 @@ that is returned by this call of the field construct’s
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new field construct with an updated data array, or
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new field construct with an updated data array, or
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </dd>
@@ -362,7 +363,7 @@ by indices:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -372,7 +373,7 @@ by indices:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

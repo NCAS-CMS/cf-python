@@ -1,4 +1,4 @@
-cf.FieldAncillary.construct_type
+﻿cf.FieldAncillary.construct_type
 ================================
 
 .. currentmodule:: cf

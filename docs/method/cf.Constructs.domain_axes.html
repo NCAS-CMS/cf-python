@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs.domain_axes &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs-domain-axes">
+  <section id="cf-constructs-domain-axes">
 <h1>cf.Constructs.domain_axes<a class="headerlink" href="#cf-constructs-domain-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.domain_axes">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axes</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L873-L972"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axes</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/constructs.py#L1081-L1180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return domain axis constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -138,7 +139,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>identities: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt><dd><p>Select domain axis constructs that have an identity,
+<dt>identities: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt><dd><p>Select domain axis constructs that have an identity,
 defined by their <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods, that matches
 any of the given values.</p>
 <p>Additionally, the values are matched against construct
@@ -149,7 +150,7 @@ identifiers, with or without the <code class="docutils literal notranslate"><spa
 <span class="pre">filter_by_identity=(value,))</span></code> returns 1-d coordinate
 constructs that all span the same domain axis
 construct then that domain axis construct is
-selected. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for details.</p>
+selected. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for details.</p>
 <p>Additionally, if there is an associated <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> data
 array and a value matches the integer position of an
 array dimension, then the corresponding domain axis
@@ -158,8 +159,8 @@ construct is selected.</p>
 constructs are selected.</p>
 <p>A value may be any object that can match via the
 <code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -180,7 +181,7 @@ unless modified by any <em>filter_kwargs</em> parameters.</p>
 <p><strong>Examples:</strong></p>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -190,7 +191,7 @@ unless modified by any <em>filter_kwargs</em> parameters.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,4 +1,4 @@
-cf.DomainAncillary.dtype
+﻿cf.DomainAncillary.dtype
 ========================
 
 .. currentmodule:: cf

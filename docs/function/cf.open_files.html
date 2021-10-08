@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.open_files &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-open-files">
+  <section id="cf-open-files">
 <h1>cf.open_files<a class="headerlink" href="#cf-open-files" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.open_files">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">open_files</code><span class="sig-paren">(</span><em class="sig-param">file_format=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/functions.py#L1686-L1733"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">open_files</code><span class="sig-paren">(</span><em class="sig-param">file_format=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/functions.py#L1676-L1723"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the open files containing sub-arrays of master data
 arrays.</p>
 <p>By default all such files are returned, but the selection may be
@@ -137,7 +138,7 @@ restricted to files of a particular format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>file_format: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only return files of the given format. Recognised formats
+<dt>file_format: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only return files of the given format. Recognised formats
 are <code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code> and <code class="docutils literal notranslate"><span class="pre">'PP'</span></code>. By default all files are
 returned.</p>
 </dd>
@@ -145,7 +146,7 @@ returned.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>If <em>file_format</em> is set then return a dictionary of file
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>If <em>file_format</em> is set then return a dictionary of file
 names of the specified format and their open file
 objects. If <em>file_format</em> is not set then return a
 dictionary for which each key is a file format whose value
@@ -166,7 +167,7 @@ is the dictionary that would have been returned if the
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -176,7 +177,7 @@ is the dictionary that would have been returned if the
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

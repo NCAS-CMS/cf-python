@@ -1,4 +1,4 @@
-cf.CellMeasure.T
+﻿cf.CellMeasure.T
 ================
 
 .. currentmodule:: cf

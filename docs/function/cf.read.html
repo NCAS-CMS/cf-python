@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.read &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-read">
+  <section id="cf-read">
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/read_write/read.py#L41-L787"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">domain=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/read_write/read.py#L34-L859"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, CDL, PP or UM fields datasets.</p>
 <p>Input datasets are mapped to field constructs in memory which are
 returned as elements of a <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a>.</p>
@@ -189,7 +190,7 @@ possible, into field constructs with 3-d, 4-d or 5-d data. This is
 done prior to the field construct aggregation carried out by the
 <a class="reference internal" href="#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
 <p>When reading PP and UM fields files, the <em>relaxed_units</em> aggregate
-option is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
+option is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
 available to field constructs derived from UM fields files or PP
 files.</p>
 <p><strong>Performance</strong></p>
@@ -201,14 +202,13 @@ constructs that may be read within a session, and makes the read
 operation fast.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, <a class="reference internal" href="cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a>,
-<a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>, <a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convert</span></code></a>,
-<a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dataset_compliance</span></code></a></p>
+<p><a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>,`cf.write`, <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, <a class="reference internal" href="../class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></a>,
+<a class="reference internal" href="cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unique_constructs</span></code></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string or arbitrarily nested sequence of strings giving
+<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string or arbitrarily nested sequence of strings giving
 the file names, directory names, or OPenDAP URLs from
 which to read field constructs. Various type of expansion
 are applied to the names:</p>
@@ -236,7 +236,7 @@ of environment variable <em>name</em>.</p></td>
 <tr class="row-even"><td><p>Pathname</p></td>
 <td><p>A string containing UNIX file name
 metacharacters as understood by the
-Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
+Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
 the list of matching file names. This
 type of expansion is ignored for
 OPenDAP URLs.</p></td>
@@ -259,8 +259,12 @@ are read. Sub-directories are not read unless the
 files that are not valid datasets then an exception will
 be raised, unless the <em>ignore_read_error</em> parameter is
 True.</p>
+<p>As a special case, if the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cdl_string</span></code> parameter is set to
+True, the interpretation of <code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code> changes so that each
+value is assumed to be a string of CDL input rather
+than the above.</p>
 </dd>
-<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
+<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
 attributes, but are not present, in the parent file given
 by the <em>filename</em> parameter) from the given external
 files. Ignored if the parent file does not contain a
@@ -271,7 +275,7 @@ for the required external variables.</p>
 files, or is found in multiple external files, then the
 relevant metadata construct is still created, but without
 any metadata or data. In this case the construct’s
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">external='cell_measure.nc'</span></code></p>
 </dd>
@@ -281,7 +285,7 @@ any metadata or data. In this case the construct’s
 </dd>
 </dl>
 </dd>
-<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create extra, independent field constructs from netCDF
+<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create extra, independent field constructs from netCDF
 variables that correspond to particular types metadata
 constructs. The <em>extra</em> parameter may be one, or a
 sequence, of:</p>
@@ -334,7 +338,7 @@ parent field construct’s domain as possible by using the
 <a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a> method of a returned field construct,
 instead of setting the <em>extra</em> parameter.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -349,7 +353,7 @@ messages, regardless of the globally-configured <a class="reference internal" hr
 Note that increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of
 maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
 be shown according to the value of the <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or equivalent string
 that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
@@ -357,22 +361,35 @@ increasing verbosity, the more description that is printed to
 convey how the contents of the netCDF file were parsed and
 mapped to CF data model constructs.</p>
 </dd>
-<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print warnings when an output field construct
+<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print warnings when an output field construct
 is incomplete due to structural non-compliance of the
 dataset. By default such warnings are not displayed.</p>
 </dd>
-<dt>ignore_read_error: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore any file which raises an IOError
+<dt>ignore_read_error: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore any file which raises an IOError
 whilst being read, as would be the case for an empty file,
 unknown file format, etc. By default the IOError is
 raised.</p>
 </dd>
-<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only read files of the given format, ignoring all other
+<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only read files of the given format, ignoring all other
 files. Valid formats are <code class="docutils literal notranslate"><span class="pre">'NETCDF'</span></code> for CF-netCDF files,
 <code class="docutils literal notranslate"><span class="pre">'CFA'</span></code> for CFA-netCDF files, <code class="docutils literal notranslate"><span class="pre">'UM'</span></code> for PP or UM
 fields files, and <code class="docutils literal notranslate"><span class="pre">'CDL'</span></code> for CDL text files. By default
 files of any of these formats are read.</p>
 </dd>
-<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True (the default) or a dictionary (possibly empty)
+<dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL, read a string
+input, or sequence of string inputs, each being interpreted
+as a string of CDL rather than names of locations from
+which field constructs can be read from, as standard.</p>
+<p>By default, each string input or string element in the input
+sequence is taken to be a file or directory name or an
+OPenDAP URL from which to read field constructs, rather
+than a string of CDL input, including when the <code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code>
+parameter is set as CDL.</p>
+<p>Note that when <code class="xref py py-obj docutils literal notranslate"><span class="pre">cdl_string</span></code> is True, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code> parameter is
+ignored as the format is assumed to be CDL, so in that case
+it is not necessary to also specify <code class="docutils literal notranslate"><span class="pre">fmt='CDL'</span></code>.</p>
+</dd>
+<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True (the default) or a dictionary (possibly empty)
 then aggregate the field constructs read in from all input
 files into as few field constructs as possible by passing
 all of the field constructs found the input files to the
@@ -384,15 +401,15 @@ keyword arguments to the <a class="reference internal" href="cf.aggregate.html#c
 <p>If <em>aggregate</em> is False then the field constructs are not
 aggregated.</p>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then remove size 1 axes from each field construct’s
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then remove size 1 axes from each field construct’s
 data array.</p>
 </dd>
-<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then insert size 1 axes from each field
+<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then insert size 1 axes from each field
 construct’s domain into its data array.</p>
 </dd>
-<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code>, optional</dt><dd><p>Only return field constructs whose identities match the
+<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code>, optional</dt><dd><p>Only return field constructs whose identities match the
 given values(s), i.e. those fields <code class="docutils literal notranslate"><span class="pre">f</span></code> for which
-<code class="docutils literal notranslate"><span class="pre">f.match_by_identity(*select)</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. See
+<code class="docutils literal notranslate"><span class="pre">f.match_by_identity(*select)</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. See
 <a class="reference internal" href="../method/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match_by_identity</span></code></a> for details.</p>
 <p>This is equivalent to, but faster than, not using the
 <em>select</em> parameter but applying its value to the returned
@@ -401,10 +418,10 @@ method. For example, <code class="docutils literal notranslate"><span class="pre
 <span class="pre">select='air_temperature')</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">fl</span> <span class="pre">=</span>
 <span class="pre">cf.read(file).select_by_identity('air_temperature')</span></code>.</p>
 </dd>
-<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
+<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
 directories specified with the <em>files</em> parameter.</p>
 </dd>
-<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
+<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
 files in sub-directories which resolve to symbolic
 links. By default directories which resolve to symbolic
 links are ignored. Ignored of <em>recursive</em> is False. Files
@@ -415,7 +432,7 @@ parent directory of itself.</p>
 <p>This parameter replaces the deprecated <em>follow_symlinks</em>
 parameter.</p>
 </dd>
-<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention when reading the
+<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention when reading the
 data of field or metadata constructs from disk. By default
 data is masked by convention.</p>
 <p>The masking by convention of a netCDF array depends on the
@@ -432,7 +449,7 @@ for details.</p>
 <p><span class="versionmodified added">New in version 3.4.0.</span></p>
 </div>
 </dd>
-<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
 <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties
 on field contructs and metadata constructs that have
 data. By default no such warning is issued.</p>
@@ -447,7 +464,7 @@ for details.</p>
 <p><span class="versionmodified added">New in version 3.4.0.</span></p>
 </div>
 </dd>
-<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
+<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
 files only, provide extra decoding instructions. This
 option is ignored for input files which are notPP or
 fields files. In most cases, how to decode a file is
@@ -534,6 +551,28 @@ little-endian PP files from version 5.1 of the UM:
 <p><span class="versionmodified added">New in version 1.5.</span></p>
 </div>
 </dd>
+<dt>domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return only the domain constructs that are
+explicitly defined by CF-netCDF domain variables, ignoring
+all CF-netCDF data variables. By default only the field
+constructs defined by CF-netCDF data variables are
+returned.</p>
+<p>CF-netCDF domain variables are only defined from CF-1.9,
+so older datasets automatically contain no CF-netCDF
+domain variables.</p>
+<p>The unique domain constructs of the dataset are easily
+found with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unique_constructs</span></code> function. For
+example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ud</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">unique_constructs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ufd</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">unique_constructs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">domain</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Domain constructs can not be read from UM or PP datasets.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.11.0.</span></p>
+</div>
+</dd>
 <dt>umversion: deprecated at version 3.0.0</dt><dd><p>Use the <em>um</em> parameter instead.</p>
 </dd>
 <dt>height_at_top_of_model: deprecated at version 3.0.0</dt><dd><p>Use the <em>um</em> parameter instead.</p>
@@ -548,8 +587,8 @@ little-endian PP files from version 5.1 of the UM:
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt><dd><p>The field constructs found in the input dataset(s). The
-list may be empty.</p>
+<dt><a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainList</span></code></dt><dd><p>The field or domain constructs found in the input
+dataset(s). The list may be empty.</p>
 </dd>
 </dl>
 </dd>
@@ -600,7 +639,7 @@ particular types metadata constructs:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -610,7 +649,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

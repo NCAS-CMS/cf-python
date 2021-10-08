@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.valid_min
+﻿cf.DimensionCoordinate.valid_min
 ================================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.Field.valid_min
+﻿cf.Field.valid_min
 ==================
 
 .. currentmodule:: cf

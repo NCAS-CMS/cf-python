@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.dtype
+﻿cf.AuxiliaryCoordinate.dtype
 ============================
 
 .. currentmodule:: cf

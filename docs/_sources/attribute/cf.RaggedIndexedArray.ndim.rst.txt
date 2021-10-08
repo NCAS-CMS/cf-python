@@ -1,4 +1,4 @@
-cf.RaggedIndexedArray.ndim
+﻿cf.RaggedIndexedArray.ndim
 ==========================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-cf.DomainAncillary.valid_range
+﻿cf.DomainAncillary.valid_range
 ==============================
 
 .. currentmodule:: cf

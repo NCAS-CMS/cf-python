@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.cyclic &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,19 +123,18 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-cyclic">
+  <section id="cf-field-cyclic">
 <h1>cf.Field.cyclic<a class="headerlink" href="#cf-field-cyclic" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cyclic">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cyclic</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">iscyclic=True</em>, <em class="sig-param">period=None</em>, <em class="sig-param">config={}</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L5020-L5137"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cyclic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cyclic</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">iscyclic=True</em>, <em class="sig-param">period=None</em>, <em class="sig-param">config={}</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/mixin/fielddomain.py#L1934-L2050"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cyclic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the cyclicity of an axis.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocyclic</span></code></a>, <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>,
-<a class="reference internal" href="cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a>, <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a></p>
+<p><a class="reference internal" href="cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocyclic</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>, <a class="reference internal" href="cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a>, <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -143,7 +143,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis(*identity,</span> <span class="pre">**filter_kwargs)</span></code>. See
 <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> for details.</p>
 </dd>
-<dt>iscyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the axis is set to be non-cyclic. By
+<dt>iscyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the axis is set to be non-cyclic. By
 default the selected axis is set to be cyclic.</p>
 </dd>
 <dt>period: optional</dt><dd><p>The period for a dimension coordinate construct which
@@ -155,7 +155,7 @@ they must be compatible with those of the dimension
 coordinates, otherwise it is assumed to have the same
 units as the dimension coordinates.</p>
 </dd>
-<dt>config: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Additional parameters for optimizing the
+<dt>config: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Additional parameters for optimizing the
 operation. See the code for details.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.9.0.</span></p>
@@ -190,7 +190,7 @@ domain axes if no axis was specified.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -200,7 +200,7 @@ domain axes if no axis was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.mask
+﻿cf.DimensionCoordinate.mask
 ===========================
 
 .. currentmodule:: cf

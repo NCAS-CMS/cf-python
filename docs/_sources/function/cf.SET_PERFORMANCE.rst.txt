@@ -1,4 +1,4 @@
-cf.SET_PERFORMANCE
+﻿cf.SET_PERFORMANCE
 ==================
 
 .. currentmodule:: cf

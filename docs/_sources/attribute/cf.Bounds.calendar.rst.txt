@@ -1,4 +1,4 @@
-cf.Bounds.calendar
+﻿cf.Bounds.calendar
 ==================
 
 .. currentmodule:: cf

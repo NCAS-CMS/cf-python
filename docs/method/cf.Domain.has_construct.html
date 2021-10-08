@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Domain.has_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,49 +123,34 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-domain-has-construct">
+  <section id="cf-domain-has-construct">
 <h1>cf.Domain.has_construct<a class="headerlink" href="#cf-domain-has-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.has_construct">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">has_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/mixin/fielddomain.py#L1178-L1230"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.has_construct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a unique metadata construct exists.</p>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">has_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/mixin/fielddomain.py#L2463-L2504"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.has_construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a metadata construct exists.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+<p><span class="versionmodified added">New in version 3.4.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Domain.get_construct.html#cf.Domain.get_construct" title="cf.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>, <a class="reference internal" href="../attribute/cf.Domain.constructs.html#cf.Domain.constructs" title="cf.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="#cf.Domain.has_construct" title="cf.Domain.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a>,
+<p><a class="reference internal" href="cf.Domain.construct.html#cf.Domain.construct" title="cf.Domain.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a>, <a class="reference internal" href="cf.Domain.del_construct.html#cf.Domain.del_construct" title="cf.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>, <a class="reference internal" href="cf.Domain.get_construct.html#cf.Domain.get_construct" title="cf.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>,
 <a class="reference internal" href="cf.Domain.set_construct.html#cf.Domain.set_construct" title="cf.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p>
 </div>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt>identity:</dt><dd><p>Select the unique construct that has the identity,
-defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, that matches the
-given values.</p>
-<p>Additionally, the values are matched against construct
-identifiers, with or without the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code> prefix.</p>
-<p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
-call, a construct is always described by an identity
-that will select it.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
-</div>
-</dd>
-<dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code>
-that define additional construct selection
-criteria.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
-</div>
+<dd class="field-odd"><dl class="simple">
+<dt>identity, filter_kwargs: optional</dt><dd><p>Select the unique construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.construct(*identity,</span> <span class="pre">**filter_kwargs)</span></code>. See
+<a class="reference internal" href="cf.Domain.construct.html#cf.Domain.construct" title="cf.Domain.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a> for details.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Whether or not a unique construct can be identified.</p>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the construct exists, otherwise <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -177,15 +163,17 @@ criteria.</p>
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -195,7 +183,7 @@ criteria.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Count.match_by_identity &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-count-match-by-identity">
+  <section id="cf-count-match-by-identity">
 <h1>cf.Count.match_by_identity<a class="headerlink" href="#cf-count-match-by-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Count.match_by_identity">
-<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">match_by_identity</code><span class="sig-paren">(</span><em class="sig-param">*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/mixin/properties.py#L732-L797"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.match_by_identity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">match_by_identity</code><span class="sig-paren">(</span><em class="sig-param">*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/mixin/properties.py#L725-L796"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.match_by_identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not the construct identity satisfies conditions.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.0.</span></p>
@@ -138,36 +139,48 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>identities: optional</dt><dd><p>Define one or more conditions on the identities.</p>
-<p>A construct identity is specified by a string
-(e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'long_name=time',</span>
-<span class="pre">``'ncvar%lat'</span></code>, etc.); a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
-(e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('longitude')</span></code>); or a compiled regular
-expression (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that
-is compared with the construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>A construct has a number of identities, and the
-condition is satisfied if any of the construct’s
-identities, as returned by the <a class="reference internal" href="cf.Count.identities.html#cf.Count.identities" title="cf.Count.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a> method,
-equals the condition value. A construct’s identities
-are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method. In the
-following example, the construct <code class="docutils literal notranslate"><span class="pre">x</span></code> has six
-identities:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
-<span class="go">[&#39;time&#39;,</span>
-<span class="go"> &#39;long_name=Time&#39;,</span>
-<span class="go"> &#39;foo=bar&#39;,</span>
-<span class="go"> &#39;standard_name=time&#39;,</span>
-<span class="go"> &#39;ncvar%t&#39;,</span>
-<span class="go"> &#39;T&#39;]</span>
-</pre></div>
-</div>
+<dt>identities: optional</dt><dd><p>Define conditions on the construct identities by one or
+more of</p>
+<ul>
+<li><p>A construct identity. TODO</p>
+<p>A construct has a number of string-valued identities</p>
+</li>
+</ul>
+<p>defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, and is selected
+if any of them match the <em>identity</em>
+parameter. <em>identity</em> may be a string that equals one
+of a construct’s identities; or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object
+that matches one of a construct’s identities via
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+call, a metadata construct is always described by one
+of its identities, and so this description may always
+be used as an <em>identity</em> value.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'latitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><a href="#id1"><span class="problematic" id="id2">``</span></a>’T’</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'long_name=Cell</span> <span class="pre">Area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'cellmeasure1'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'measure:area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cf.eq('time')'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">re.compile('^lat')</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>To match identities of “T”, or any that start with
+“lat”: <code class="docutils literal notranslate"><span class="pre">'T',</span> <span class="pre">re.compile('^lat')</span></code></p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not at least one of the conditions are met.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not at least one of the conditions are met.</p>
 </dd>
 </dl>
 </dd>
@@ -187,7 +200,7 @@ identities:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -197,7 +210,7 @@ identities:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Performance &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
 
 
 
@@ -116,10 +117,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="performance">
+  <section id="performance">
 <h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.10.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.11.0 for version 1.9 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#lazy-operations" id="id3"><strong>Lazy operations</strong></a></p></li>
@@ -138,7 +139,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <li><p><a class="reference internal" href="#parallelization" id="id13"><strong>Parallelization</strong></a></p></li>
 </ul>
 </div>
-<div class="section" id="lazy-operations">
+<section id="lazy-operations">
 <h2><a class="toc-backref" href="#id3"><strong>Lazy operations</strong></a><a class="headerlink" href="#lazy-operations" title="Permalink to this headline">¶</a></h2>
 <p>Many data operations of field and metadata constructs are lazy
 i.e. the operation is actually performed until the result is needed,
@@ -158,9 +159,9 @@ the units) are not lazy; such arithmetic, trigonometrical, rounding,
 collapse, etc. functions.</p>
 <p>All of these lazy techniques make use of <a class="reference internal" href="#lama"><span class="std std-ref">LAMA (Large Amounts
 of Massive Arrays)</span></a> functionality.</p>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="regridding">
+<section id="regridding">
 <h2><a class="toc-backref" href="#id4"><strong>Regridding</strong></a><a class="headerlink" href="#regridding" title="Permalink to this headline">¶</a></h2>
 <p>When regridding multiple field constructs with their
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> or <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> methods, the regridding
@@ -184,8 +185,8 @@ common destination grid defined by the field construct
 </div>
 </div>
 <hr class="docutils" />
-</div>
-<div class="section" id="large-amounts-of-massive-arrays-lama">
+</section>
+<section id="large-amounts-of-massive-arrays-lama">
 <span id="lama"></span><h2><a class="toc-backref" href="#id5"><strong>Large Amounts of Massive Arrays (LAMA)</strong></a><a class="headerlink" href="#large-amounts-of-massive-arrays-lama" title="Permalink to this headline">¶</a></h2>
 <p>Data are stored and manipulated in a very memory efficient manner such
 that large numbers of constructs may co-exist and be manipulated
@@ -223,23 +224,23 @@ dimensions, etc.) always reflect the data array in its entirety,
 regardless of how the array is partitioned and whether or not its
 partitions are in memory, constructs containing data arrays may be
 used in the API as if they were normal, in-memory objects (like
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
 this may be minimised for particular applications or hardware
 configurations.</p>
 </li>
 </ul>
-<div class="section" id="reading-from-files">
+<section id="reading-from-files">
 <span id="lama-reading"></span><h3><a class="toc-backref" href="#id6">Reading from files</a><a class="headerlink" href="#reading-from-files" title="Permalink to this headline">¶</a></h3>
 <p>When a field construct is read from a file, the data array is not
 realized in memory, however large or small it may be. Instead each
 partition refers to part of the original file on disk. Therefore
 reading even very large field constructs is initially very fast and
 uses up only a very small amount of memory.</p>
-</div>
-<div class="section" id="copying">
+</section>
+<section id="copying">
 <span id="lama-copying"></span><h3><a class="toc-backref" href="#id7">Copying</a><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h3>
 <p>When a field construct is deep copied with its <a class="reference internal" href="method/cf.Field.copy.html#cf.Field.copy" title="cf.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method or
-the Python <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function, the partitions of its data array
+the Python <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function, the partitions of its data array
 are transferred to the new field construct as object identities and
 are <em>not</em> deep copied. Therefore copying even very large field
 constructs is initially very fast and uses up only a very small amount
@@ -249,8 +250,8 @@ since each partition that is stored in memory (as opposed to on disk)
 is deep copied if and when the data in the new field construct is
 actually accessed, and then only if the partition’s data still exists
 in the original (or any other) field construct.</p>
-</div>
-<div class="section" id="aggregation">
+</section>
+<section id="aggregation">
 <h3><a class="toc-backref" href="#id8">Aggregation</a><a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h3>
 <p>When two field constructs are aggregated to form one, larger field
 construct there is no need for either field construct’s data array
@@ -264,10 +265,10 @@ since each partition that is stored in memory (as opposed to on disk)
 is deep copied when the data in the new field construct is actually
 accessed, and then only if the partition’s data still exists in its
 the original (or any other) field construct.</p>
-</div>
-<div class="section" id="subspacing">
+</section>
+<section id="subspacing">
 <span id="lama-subspacing"></span><h3><a class="toc-backref" href="#id9">Subspacing</a><a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h3>
-<p>When a new field construct is created by <a class="reference external" href="https://ncas-cms.github.io/cfdm/tutorial.html#subspacing" title="(in Python cfdm package v1.8)"><span class="xref std std-ref">subspacing</span></a> a field construct, the new field construct is actually a
+<p>When a new field construct is created by <a class="reference external" href="https://ncas-cms.github.io/cfdm/tutorial.html#subspacing" title="(in Python cfdm package v1.9)"><span class="xref std std-ref">subspacing</span></a> a field construct, the new field construct is actually a
 <a class="reference internal" href="#lama-copying"><span class="std std-ref">LAMA deep copy</span></a> of the original but with
 additional instructions on each of its data partitions to only use the
 part specified by the subspace indices.</p>
@@ -293,8 +294,8 @@ example:</p>
 <p>and if all of the partitions of field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> are stored on
 disk then in both cases so are all of the partitions of field
 construct <code class="docutils literal notranslate"><span class="pre">h</span></code> and no data has been read from disk.</p>
-</div>
-<div class="section" id="speed-and-memory-management">
+</section>
+<section id="speed-and-memory-management">
 <h3><a class="toc-backref" href="#id10">Speed and memory management</a><a class="headerlink" href="#speed-and-memory-management" title="Permalink to this headline">¶</a></h3>
 <p>The creation of temporary files for array partitions of large arrays
 and the reading of data from files on disk can create significant
@@ -313,8 +314,8 @@ the amount of available physical memory falls below a specified
 amount. By default this amount is 10% of the total physical memory
 and is found and set with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.MINNCFCM</span></code> function.</p></li>
 </ul>
-</div>
-<div class="section" id="temporary-files">
+</section>
+<section id="temporary-files">
 <span id="lama-temporary-files"></span><h3><a class="toc-backref" href="#id11">Temporary files</a><a class="headerlink" href="#temporary-files" title="Permalink to this headline">¶</a></h3>
 <p>The directory in which temporary files is found and set with the
 <a class="reference internal" href="function/cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.tempdir</span></code></a> function:</p>
@@ -333,8 +334,8 @@ partitions require the file it will be deleted automatically.</p>
 <p>When python exits normally, all temporary files are always deleted.</p>
 <p>Changing the temporary file directory does not prevent temporary files
 in the original directory from being garbage collected.</p>
-</div>
-<div class="section" id="partitioning">
+</section>
+<section id="partitioning">
 <h3><a class="toc-backref" href="#id12">Partitioning</a><a class="headerlink" href="#partitioning" title="Permalink to this headline">¶</a></h3>
 <p>Data partitioning preserves as much as is possible the faster varying
 (inner) dimensions’ sizes in each of the sub-arrays.</p>
@@ -350,9 +351,9 @@ sub-arrays will have shape (1, 2, 3).</p></li>
 eight sub-arrays will have shape (1, 1, 1).</p></li>
 </ul>
 <hr class="docutils" />
-</div>
-</div>
-<div class="section" id="parallelization">
+</section>
+</section>
+<section id="parallelization">
 <span id="id1"></span><h2><a class="toc-backref" href="#id13"><strong>Parallelization</strong></a><a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -362,8 +363,8 @@ be restored soon in a robust fashion when the move to using
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/182">https://github.com/NCAS-CMS/cf-python/issues/182</a>) is
 completed.</p>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -373,7 +374,7 @@ completed.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

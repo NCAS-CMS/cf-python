@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs.unfilter &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs-unfilter">
+  <section id="cf-constructs-unfilter">
 <h1>cf.Constructs.unfilter<a class="headerlink" href="#cf-constructs-unfilter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.unfilter">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">unfilter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L3098-L3199"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">unfilter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/constructs.py#L3301-L3402"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the constructs that existed prior to previous filters.</p>
 <p>By default, the unfiltered constructs are those that existed
 before all previously applied filters.</p>
@@ -134,7 +135,7 @@ before all previously applied filters.</p>
 constructs are those that existed before the <em>N</em>-th most
 recently applied filter.</p>
 <p>A history of the filters that have been applied is returned in
-a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of
+a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of
 the tuple describes the last filter applied. If no filters
 have been applied then the tuple is empty.</p>
 <div class="versionadded">
@@ -142,13 +143,13 @@ have been applied then the tuple is empty.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>,
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>,
 <a class="reference internal" href="cf.Constructs.clear_filters_applied.html#cf.Constructs.clear_filters_applied" title="cf.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by
+<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by
 the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default
 the constructs from before all previously applied
 filters are returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the
@@ -211,7 +212,7 @@ unchanged:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -221,7 +222,7 @@ unchanged:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

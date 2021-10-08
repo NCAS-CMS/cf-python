@@ -1,4 +1,4 @@
-cf.Field.__getitem__
+﻿cf.Field.__getitem__
 ====================
 
 .. currentmodule:: cf

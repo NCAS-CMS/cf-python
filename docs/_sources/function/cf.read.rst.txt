@@ -1,4 +1,4 @@
-cf.read
+﻿cf.read
 =======
 
 .. currentmodule:: cf

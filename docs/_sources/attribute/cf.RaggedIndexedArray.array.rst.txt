@@ -1,4 +1,4 @@
-cf.RaggedIndexedArray.array
+﻿cf.RaggedIndexedArray.array
 ===========================
 
 .. currentmodule:: cf

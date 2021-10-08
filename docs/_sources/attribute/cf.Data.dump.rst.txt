@@ -1,4 +1,4 @@
-cf.Data.dump
+﻿cf.Data.dump
 ============
 
 .. currentmodule:: cf

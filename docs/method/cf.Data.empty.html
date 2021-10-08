@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data.empty &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data-empty">
+  <section id="cf-data-empty">
 <h1>cf.Data.empty<a class="headerlink" href="#cf-data-empty" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.empty">
-<em class="property">classmethod </em><code class="sig-prename descclassname">Data.</code><code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param">shape</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">chunk=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/data/data.py#L14423-L14485"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.empty" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-prename descclassname">Data.</code><code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param">shape</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">chunk=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/data/data.py#L14400-L14462"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new data array without initializing the elements.</p>
 <p>Note that the mask of the returned empty data is hard.</p>
 <div class="admonition seealso">
@@ -136,19 +137,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the new array.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the new array.</p>
 </dd>
-<dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a> or any object convertible to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><p>The data-type of the new array. By default the data-type
+<dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a> or any object convertible to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><p>The data-type of the new array. By default the data-type
 is <code class="docutils literal notranslate"><span class="pre">float</span></code>.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></dt><dd><p>The units for the new data array.</p>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></dt><dd><p>The units for the new data array.</p>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units.</p>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units.</p>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data-type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
 parameter is set.</p>
 <p>The fill value may also be set after initialisation with
 the <a class="reference internal" href="cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
@@ -169,7 +170,7 @@ the <a class="reference internal" href="cf.Data.set_fill_value.html#cf.Data.set_
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -179,7 +180,7 @@ the <a class="reference internal" href="cf.Data.set_fill_value.html#cf.Data.set_
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

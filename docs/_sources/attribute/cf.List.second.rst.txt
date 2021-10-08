@@ -1,4 +1,4 @@
-cf.List.second
+﻿cf.List.second
 ==============
 
 .. currentmodule:: cf

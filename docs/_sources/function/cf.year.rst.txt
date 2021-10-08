@@ -1,4 +1,4 @@
-cf.year
+﻿cf.year
 =======
 
 .. currentmodule:: cf

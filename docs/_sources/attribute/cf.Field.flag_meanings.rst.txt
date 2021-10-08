@@ -1,4 +1,4 @@
-cf.Field.flag_meanings
+﻿cf.Field.flag_meanings
 ======================
 
 .. currentmodule:: cf

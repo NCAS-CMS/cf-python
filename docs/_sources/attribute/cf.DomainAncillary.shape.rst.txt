@@ -1,4 +1,4 @@
-cf.DomainAncillary.shape
+﻿cf.DomainAncillary.shape
 ========================
 
 .. currentmodule:: cf

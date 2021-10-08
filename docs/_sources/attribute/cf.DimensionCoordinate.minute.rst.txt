@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.minute
+﻿cf.DimensionCoordinate.minute
 =============================
 
 .. currentmodule:: cf

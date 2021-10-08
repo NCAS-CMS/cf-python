@@ -1,4 +1,4 @@
-cf.CellMeasure.scale_factor
+﻿cf.CellMeasure.scale_factor
 ===========================
 
 .. currentmodule:: cf

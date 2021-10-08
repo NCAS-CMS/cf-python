@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data.creation_commands &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data-creation-commands">
+  <section id="cf-data-creation-commands">
 <h1>cf.Data.creation_commands<a class="headerlink" href="#cf-data-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.creation_commands">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">name='data'</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/data/data.py#L1174-L1283"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">name='data'</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/data/data.py#L1218-L1318"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the data object.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.7.0</p>
@@ -134,13 +135,13 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Set the variable name of <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object that the commands
+<dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Set the variable name of <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object that the commands
 create.</p>
 </dd>
-<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name space containing classes of the cf
+<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name space containing classes of the cf
 package. This is prefixed to the class name in
 commands that instantiate instances of cf
-objects. By default, or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the name space is
+objects. By default, or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the name space is
 assumed to be consistent with cf being
 imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span></code>.</p>
 <dl class="simple">
@@ -152,12 +153,12 @@ imported as <code class="docutils literal notranslate"><span class="pre">import<
 </dd>
 </dl>
 </dd>
-<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Indent each line by this many spaces. By default no
+<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Indent each line by this many spaces. By default no
 indentation is applied. Ignored if <em>string</em> is
 False.</p>
 </dd>
-<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
+<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
 a string, with a new line inserted between each
 command.</p>
 </dd>
@@ -165,10 +166,10 @@ command.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted
 between each command. If <em>string</em> is False then the
 separate commands are returned as each element of a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -188,7 +189,7 @@ separate commands are returned as each element of a
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -198,7 +199,7 @@ separate commands are returned as each element of a
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

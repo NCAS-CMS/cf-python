@@ -1,4 +1,4 @@
-cf.DomainAncillary.cellsize
+﻿cf.DomainAncillary.cellsize
 ===========================
 
 .. currentmodule:: cf

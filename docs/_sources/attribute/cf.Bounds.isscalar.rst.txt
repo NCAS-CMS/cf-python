@@ -1,4 +1,4 @@
-cf.Bounds.isscalar
+﻿cf.Bounds.isscalar
 ==================
 
 .. currentmodule:: cf

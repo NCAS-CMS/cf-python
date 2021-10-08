@@ -1,4 +1,4 @@
-cf.contains
+﻿cf.contains
 ===========
 
 .. currentmodule:: cf

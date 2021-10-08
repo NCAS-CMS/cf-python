@@ -1,4 +1,4 @@
-cf.Field.coordinate_references
+﻿cf.Field.coordinate_references
 ==============================
 
 .. currentmodule:: cf

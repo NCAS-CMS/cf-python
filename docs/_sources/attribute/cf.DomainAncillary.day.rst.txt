@@ -1,4 +1,4 @@
-cf.DomainAncillary.day
+﻿cf.DomainAncillary.day
 ======================
 
 .. currentmodule:: cf

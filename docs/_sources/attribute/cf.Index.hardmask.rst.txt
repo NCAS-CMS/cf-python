@@ -1,4 +1,4 @@
-cf.Index.hardmask
+﻿cf.Index.hardmask
 =================
 
 .. currentmodule:: cf

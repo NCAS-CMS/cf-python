@@ -1,4 +1,4 @@
-cf.Field.size
+﻿cf.Field.size
 =============
 
 .. currentmodule:: cf

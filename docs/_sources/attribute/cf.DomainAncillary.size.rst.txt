@@ -1,4 +1,4 @@
-cf.DomainAncillary.size
+﻿cf.DomainAncillary.size
 =======================
 
 .. currentmodule:: cf

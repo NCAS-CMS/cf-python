@@ -1,4 +1,4 @@
-cf.FieldAncillary.id
+﻿cf.FieldAncillary.id
 ====================
 
 .. currentmodule:: cf

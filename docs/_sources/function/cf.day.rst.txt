@@ -1,4 +1,4 @@
-cf.day
+﻿cf.day
 ======
 
 .. currentmodule:: cf

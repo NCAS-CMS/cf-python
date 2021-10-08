@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,12 +121,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field">
+  <section id="cf-field">
 <span id="id1"></span><h1>cf.Field<a class="headerlink" href="#cf-field" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L265-L17364"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L255-L17115"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -189,7 +190,7 @@ dataset may be accessed with the <a class="reference internal" href="../method/c
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values. Ignored if the
 <em>source</em> parameter is set.</p>
 <dl class="simple">
@@ -202,7 +203,7 @@ property names, with corresponding values. Ignored if the
 <dt>source: optional</dt><dd><p>Initialize the properties, data and metadata constructs
 from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
@@ -210,7 +211,7 @@ initialization. By default arguments are deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <span id="field-inspection"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -248,8 +249,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="selection">
+</section>
+<section id="selection">
 <h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -281,8 +282,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties">
+</section>
+<section id="properties">
 <span id="field-properties"></span><h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -407,8 +408,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -438,8 +439,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <span id="field-data"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -455,7 +456,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.has_data.html#cf.Field.has_data" title="cf.Field.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
-<td><p>Whether a data has been set.</p></td>
+<td><p>Whether or not the construct has data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
 <td><p>Set the field construct data.</p></td>
@@ -494,7 +495,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.dtype.html#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.ndim.html#cf.Field.ndim" title="cf.Field.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>The number of dimensions in the data array.</p></td>
@@ -626,8 +627,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous-data-operations">
+</section>
+<section id="miscellaneous-data-operations">
 <h2>Miscellaneous data operations<a class="headerlink" href="#miscellaneous-data-operations" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -643,7 +644,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return or set the period of the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.get_filenames.html#cf.Field.get_filenames" title="cf.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
-<td><p>Return the name of the file or files containing the data.</p></td>
+<td><p>Return the names of the files containing the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.close.html#cf.Field.close" title="cf.Field.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
 <td><p>Close all files referenced by the field construct.</p></td>
@@ -653,8 +654,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="metadata-constructs">
+</section>
+<section id="metadata-constructs">
 <h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -797,8 +798,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="domain">
+</section>
+<section id="domain">
 <span id="field-domain"></span><h2>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -824,8 +825,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <span id="field-miscellaneous"></span><h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -889,7 +890,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>The number of axes in the domain.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.T.html#cf.Field.T" title="cf.Field.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.X.html#cf.Field.X" title="cf.Field.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
 <td><p>Always False.</p></td>
@@ -902,8 +903,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <span id="field-netcdf"></span><h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -941,7 +942,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -973,8 +974,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="geometries">
+</section>
+<section id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1006,8 +1007,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="components">
+</section>
+<section id="components">
 <h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1054,9 +1055,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="domain-axes">
+</section>
+</section>
+<section id="domain-axes">
 <span id="field-methods"></span><h2>Domain axes<a class="headerlink" href="#domain-axes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1114,8 +1115,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="subspacing">
+</section>
+<section id="subspacing">
 <h2>Subspacing<a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1134,8 +1135,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-operations">
+</section>
+<section id="mathematical-operations">
 <h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Trigonometrical and hyperbolic functions</p>
 <table class="longtable docutils align-default">
@@ -1344,8 +1345,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-array-operations">
+</section>
+<section id="data-array-operations">
 <h2>Data array operations<a class="headerlink" href="#data-array-operations" title="Permalink to this headline">¶</a></h2>
 <p class="rubric" id="field-data-array-access">Adding and removing elements</p>
 <table class="longtable docutils align-default">
@@ -1377,8 +1378,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="regridding-operations">
+</section>
+<section id="regridding-operations">
 <h2>Regridding operations<a class="headerlink" href="#regridding-operations" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1394,8 +1395,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="date-time-operations">
+</section>
+<section id="date-time-operations">
 <h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1437,8 +1438,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="logic-functions">
+</section>
+<section id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Truth value testing</p>
 <table class="longtable docutils align-default">
@@ -1491,8 +1492,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="aliases">
+</section>
+<section id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1572,8 +1573,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="arithmetic-and-comparison-operations">
+</section>
+<section id="arithmetic-and-comparison-operations">
 <span id="field-arithmetic"></span><h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bitwise and comparison operations are defined on a field
 construct as element-wise operations on its data which yield a new
@@ -1807,7 +1808,7 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="id2">
+<section id="id2">
 <h3>Groups<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1848,9 +1849,9 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <span id="field-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1860,21 +1861,21 @@ construct’s data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.__deepcopy__.html#cf.Field.__deepcopy__" title="cf.Field.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the field construct defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.__repr__.html#cf.Field.__repr__" title="cf.Field.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.__str__.html#cf.Field.__str__" title="cf.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="deprecated">
+</section>
+<section id="deprecated">
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -2037,12 +2038,12 @@ construct’s data in-place.</p>
 <td><p>TODO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.unsafe_array.html#cf.Field.unsafe_array" title="cf.Field.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -2052,7 +2053,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

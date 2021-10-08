@@ -1,4 +1,4 @@
-cf.CellMeasure.history
+﻿cf.CellMeasure.history
 ======================
 
 .. currentmodule:: cf

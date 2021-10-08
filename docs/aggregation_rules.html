@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Aggregation rules &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
 
 
 
@@ -116,17 +117,18 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="aggregation-rules">
+  <section id="aggregation-rules">
 <span id="id1"></span><h1><strong>Aggregation rules</strong><a class="headerlink" href="#aggregation-rules" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<p>Version 3.11.0 for version 1.9 of the CF conventions.</p>
 <p><em>David Hassell and Jonathan Gregory (2012)</em></p>
 <p><a class="reference external" href="https://cf-trac.llnl.gov/trac/ticket/78">https://cf-trac.llnl.gov/trac/ticket/78</a></p>
-<p>Version 3.10.0 for version 1.8 of the CF conventions.</p>
-<p>Aggregation is the combination of two field constructs to create a new
-field construct that occupies a “larger” domain. In practice, this
-means combining the two field constructs so that their data are
-concatenated along one or more domain axis constructs, as are the data
-of their metadata constructs which span those domain axis constructs.</p>
+<p>Aggregation is the combination of two field constructs <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field
+constructs</span></a> to create a new field construct that
+occupies a “larger” domain. In practice, this means combining the two
+field constructs so that their data are concatenated along one or more
+domain axis constructs, as are the data of their metadata constructs
+which span those domain axis constructs.</p>
 <p>These rules are to be used for deciding whether or not two arbitrary
 field constructs may be aggregated into one, larger field construct.
 The rules are based solely on the field constructs’ metadata as
@@ -137,42 +139,43 @@ aggregation of two field constructs.</p>
 <p>More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.</p>
+<p>As of CF-1.9, <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">Domain constructs</span></a> may also be
+aggregated. The rules for <a class="reference internal" href="cf_data_model.html#term-cell-method-constructs"><span class="xref std std-term">cell method constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a> are ignored for domain construct aggregation.</p>
 <p>Aggregation is implemented in the <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function, and is
 applied by default by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
 <hr class="docutils" />
-<p>If all of the following statements are true for two arbitrary field
-constructs then the two field constructs may be aggregated to a new
-field construct.</p>
+<p>If all of the following statements are true for two arbitrary field or
+domain constructs then the two constructs may be aggregated to a new
+field or domain construct.</p>
 <ul class="simple">
-<li><p>Both field constructs have identical standard name properties.</p>
-<ul>
-<li><p>The treatment of other properties, in terms of how they should
-match between the field constructs and whether or not they should be
-included in the aggregated field, is beyond the scope of these
-rules and is at the user’s discretion. This is also the case for
-all other construct properties unnamed by these rules.</p></li>
-</ul>
-</li>
+<li><p>Both field constructs have identical standard name properties. <em>This
+rule is ignored for domain construct aggregation.</em></p></li>
+<li><p>The treatment of other properties, in terms of how they should match
+between the field or domain constructs and whether or not they
+should be included in the aggregated field, is beyond the scope of
+these rules and is at the user’s discretion. This is also the case
+for all other construct properties unnamed by these rules.</p></li>
 </ul>
 <div class="admonition-coordinate-construct admonition">
 <p class="admonition-title">Coordinate construct</p>
-<p>A coordinate construct is either a dimension coordinate construct
-or an auxiliary coordinate construct.</p>
+<p>A coordinate construct is either a <a class="reference internal" href="cf_data_model.html#term-dimension-coordinate-constructs"><span class="xref std std-term">dimension coordinate
+construct</span></a> or an <a class="reference internal" href="cf_data_model.html#term-auxiliary-coordinate-constructs"><span class="xref std std-term">auxiliary
+coordinate construct</span></a>.</p>
 </div>
 <div class="admonition-pair-of-matching-coordinate-constructs admonition">
 <p class="admonition-title">Pair of matching coordinate constructs</p>
 <p>A pair of matching coordinate constructs is a coordinate construct
-from each field construct of the same type (dimension or
+from each field or domain construct of the same type (dimension or
 auxiliary), with equivalent calendar properties (if present) and
 identical standard names.</p>
 </div>
 <ul class="simple">
-<li><p>Both field constructs have the same number of coordinate constructs, all of
-which have a standard name property, and each coordinate construct’s
-standard name is unique within its field construct. Each coordinate construct
-in one field construct forms a pair of matching coordinate
-constructs with a unique coordinate construct in the other field
-construct.</p></li>
+<li><p>Both field or domain constructs have the same number of coordinate
+constructs, all of which have a standard name property, and each
+coordinate construct’s standard name is unique within its field or
+domain construct. Each coordinate construct in one field or domain
+construct forms a pair of matching coordinate constructs with a
+unique coordinate construct in the other field or domain construct.</p></li>
 </ul>
 <div class="admonition-domain-axis-s-associated-coordinate-constructs admonition">
 <p class="admonition-title">Domain axis’s associated coordinate constructs</p>
@@ -180,18 +183,19 @@ construct.</p></li>
 coordinate constructs which span the domain axis.</p>
 </div>
 <ul class="simple">
-<li><p>Each domain axis in both field constructs has at least one associated 1-d
-coordinate construct.</p></li>
+<li><p>Each domain axis in both field or domain constructs has at least one
+associated 1-d coordinate construct.</p></li>
 </ul>
 <div class="admonition-pair-of-matching-axes admonition">
 <p class="admonition-title">Pair of matching axes</p>
-<p>A pair of matching axes is a domain axis from each field construct chosen
-such that the two domain axes have associated coordinate constructs
-that are all matching pairs.</p>
+<p>A pair of matching axes is a domain axis from each field or domain
+construct chosen such that the two domain axes have associated
+coordinate constructs that are all matching pairs.</p>
 </div>
 <ul class="simple">
-<li><p>Each domain axis in one field construct forms a pair of matching axes with a
-unique domain axis in the other field construct.</p>
+<li><p>Each domain axis in one field or domain construct forms a pair of
+matching axes with a unique domain axis in the other field or domain
+construct.</p>
 <ul>
 <li><p>A consequence of this rule is that within each pair of matching
 coordinate constructs, the corresponding domain axes are matching
@@ -214,31 +218,33 @@ arrays.</p>
 <ul>
 <li><p>A pair of matching non-aggregating axes must have identical sizes.</p></li>
 <li><p>The aggregating axis may have either the same size or a different
-size in the two field constructs.</p></li>
+size in the two field or domain constructs.</p></li>
 <li><p>If the domain axes of the arrays of matching associated constructs
 are ordered differently or run in different senses then one of the
 arrays must be rearranged prior to comparison. This is true for
 all array comparisons in these rules.</p></li>
-<li><p>If neither field construct has an aggregating axis then the field constructs are not
-aggregatable because their domains are identical.</p></li>
-<li><p>If either field construct has two or more domain axes which could qualify as
-an aggregating axis then the field constructs are not aggregatable because
-it is not possible to choose the single domain axis for array
-concatenation.</p></li>
+<li><p>If neither field or domain construct has an aggregating axis then
+the field or domain constructs are not aggregatable because their
+domains are identical.</p></li>
+<li><p>If either field or domain construct has two or more domain axes
+which could qualify as an aggregating axis then the field or
+domain constructs are not aggregatable because it is not possible
+to choose the single domain axis for array concatenation.</p></li>
 </ul>
 </li>
 </ul>
-<div class="admonition-pair-of-matching-cell-measure-constructs admonition">
-<p class="admonition-title">Pair of matching cell measure constructs</p>
+<div class="admonition-pair-of-matching-term-cell-measure-constructs-cell-measure-constructs admonition">
+<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-cell-measure-constructs"><span class="xref std std-term">cell measure constructs</span></a></p>
 <p>A pair of matching cell measure constructs is a cell measure
-construct from each field construct with equivalent units and corresponding
-domain axes that are matching pairs.</p>
+construct from each field or domain construct with equivalent units
+and corresponding domain axes that are matching pairs.</p>
 </div>
 <ul class="simple">
-<li><p>Both field constructs have the same number of cell measure constructs, all of
-which have a units property. Each cell measure construct in either
-field construct forms a pair of matching cell measure constructs with a unique
-cell measure construct in the other field construct.</p></li>
+<li><p>Both field or domain constructs have the same number of cell measure
+constructs, all of which have a units property. Each cell measure
+construct in either field or domain construct forms a pair of
+matching cell measure constructs with a unique cell measure
+construct in the other field or domain construct.</p></li>
 </ul>
 <ul class="simple">
 <li><p>Each pair of matching coordinate constructs and matching cell
@@ -265,44 +271,48 @@ aggregation of a monthly mean and a daily mean from a different
 month.</p></li>
 </ul>
 </li>
-<li><p>If one field construct has a cell methods construct then so does the other
-field, with the equivalent methods in the same order. Corresponding
-domain axes in each cell methods are matching pairs.</p></li>
+<li><p>If one field construct has a cell methods construct then so does the
+other field, with the equivalent methods in the same
+order. Corresponding domain axes in each cell methods are matching
+pairs. <em>This rule is ignored for domain construct aggregation.</em></p></li>
 </ul>
-<div class="admonition-pair-of-matching-domain-ancillary-constructs admonition">
-<p class="admonition-title">Pair of matching domain ancillary constructs</p>
+<div class="admonition-pair-of-matching-term-domain-ancillary-constructs-domain-ancillary-constructs admonition">
+<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-domain-ancillary-constructs"><span class="xref std std-term">domain ancillary constructs</span></a></p>
 <p>A pair of matching domain ancillary constructs is a domain
-ancillary construct from each field construct for identical standard
-coordinate conversion terms and corresponding domain axes that are
-matching pairs.</p>
+ancillary construct from each field or domain construct for
+identical standard coordinate conversion terms and corresponding
+domain axes that are matching pairs.</p>
 </div>
 <ul class="simple">
-<li><p>Both field constructs have the same number of domain ancillary
-constructs. Each domain ancillary construct in either field construct forms a
-pair of matching domain ancillary constructs with a unique domain
-ancillary construct in the other field construct.</p></li>
+<li><p>Both field or domain constructs have the same number of domain
+ancillary constructs. Each domain ancillary construct in either
+field or domain construct forms a pair of matching domain ancillary
+constructs with a unique domain ancillary construct in the other
+field or domain construct.</p></li>
 </ul>
-<div class="admonition-pair-of-matching-field-ancillary-constructs admonition">
-<p class="admonition-title">Pair of matching field ancillary constructs</p>
+<div class="admonition-pair-of-matching-term-field-ancillary-constructs-field-ancillary-constructs admonition">
+<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a></p>
 <p>A pair of matching field ancillary constructs is a field ancillary
-construct from each field construct with identical standard names and
-corresponding domain axes that are matching pairs.</p>
+construct from each field construct with identical standard names
+and corresponding domain axes that are matching pairs.</p>
 </div>
 <ul class="simple">
 <li><p>Both field constructs have the same number of field ancillary
 constructs. Each field ancillary construct in either field construct
 forms a pair of matching field ancillary constructs with a unique
-field ancillary construct in the other field construct.</p></li>
+field ancillary construct in the other field construct. <em>This rule
+is ignored for domain construct aggregation.</em></p></li>
 </ul>
 <ul class="simple">
-<li><p>Both field constructs have the same number of coordinate reference
-constructs. For each coordinate reference construct in one field construct
-there is a coordinate reference construct in the other field construct with
-identical name and the same set of terms, taking optional terms into
-account. Corresponding terms which are scalar or vector parameters
-are identical, taking into account equivalent units. Corresponding
-terms which are domain ancillary constructs form a pair of matching
-domain ancillary constructs.</p></li>
+<li><p>Both field or domain constructs have the same number of coordinate
+reference constructs. For each coordinate reference construct in one
+field or domain construct there is a coordinate reference construct
+in the other field or domain construct with identical name and the
+same set of terms, taking optional terms into account. Corresponding
+terms which are scalar or vector parameters are identical, taking
+into account equivalent units. Corresponding terms which are domain
+ancillary constructs form a pair of matching domain ancillary
+constructs.</p></li>
 </ul>
 <hr class="docutils" />
 <dl class="footnote brackets">
@@ -314,7 +324,7 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
 4619-4646, <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>, 2017.</p>
 </dd>
 </dl>
-</div>
+</section>
 
 
           </div>
@@ -324,7 +334,7 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

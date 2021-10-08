@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.scale_factor
+﻿cf.AuxiliaryCoordinate.scale_factor
 ===================================
 
 .. currentmodule:: cf

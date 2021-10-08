@@ -1,4 +1,4 @@
-cf.DomainAncillary.ndim
+﻿cf.DomainAncillary.ndim
 =======================
 
 .. currentmodule:: cf

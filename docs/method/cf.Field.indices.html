@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.indices &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-indices">
+  <section id="cf-field-indices">
 <h1>cf.Field.indices<a class="headerlink" href="#cf-field-indices" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.indices">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">indices</code><span class="sig-paren">(</span><em class="sig-param">*mode</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L10603-L11288"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">indices</code><span class="sig-paren">(</span><em class="sig-param">*mode</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L10332-L10996"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create indices that define a subspace of the field construct.</p>
 <p>The subspace is defined by identifying indices based on the
 metadata constructs.</p>
@@ -144,7 +145,7 @@ doesn’t matter which order they are specified in.</p></li>
 <li><p>Subspace criteria may be provided for size 1 domain axes that
 are not spanned by the field construct’s data.</p></li>
 <li><p>Explicit indices may also be assigned to a domain axis
-identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
 object, or a sequence of integers or booleans.</p></li>
 <li><p>For a dimension that is cyclic, a subspace defined by a slice or
 by a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around the edges of
@@ -169,7 +170,7 @@ creation, in order to set unselected locations to missing data.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em></dt><dd><p>There are three modes of operation, each of which provides
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em></dt><dd><p>There are three modes of operation, each of which provides
 indices for a different type of subspace:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -216,7 +217,7 @@ construct’s data satisfies the condition.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The indices meeting the conditions.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The indices meeting the conditions.</p>
 </dd>
 </dl>
 </dd>
@@ -308,7 +309,7 @@ construct’s data satisfies the condition.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -318,7 +319,7 @@ construct’s data satisfies the condition.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

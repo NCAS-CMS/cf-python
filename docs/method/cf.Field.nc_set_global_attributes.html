@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.nc_set_global_attributes &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-nc-set-global-attributes">
+  <section id="cf-field-nc-set-global-attributes">
 <h1>cf.Field.nc_set_global_attributes<a class="headerlink" href="#cf-field-nc-set-global-attributes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.nc_set_global_attributes">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">properties</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/mixin/netcdf.py#L1467-L1539"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">nc_set_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">properties</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/mixin/netcdf.py#L1467-L1539"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set properties to be written as netCDF global attributes.</p>
 <p>When multiple field constructs are being written to the same
 file, it is only possible to create a netCDF global attribute
@@ -150,11 +151,11 @@ selecting them is optional.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Set the properties be written as a netCDF global
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Set the properties be written as a netCDF global
 attribute from the dictionary supplied. The value of a
 netCDF global attribute, which will be created (if
 possible) in addition to the property as written to a
-netCDF data variable. If a value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is used
+netCDF data variable. If a value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is used
 then this acts as an instruction to write the property
 (if possible) to a netCDF global attribute instead of
 to a netCDF data variable.</p>
@@ -163,14 +164,14 @@ to a netCDF data variable.</p>
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any property values provided by the
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any property values provided by the
 <em>properties</em> parameter are not copied before
 insertion. By default they are deep copied.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -190,7 +191,7 @@ insertion. By default they are deep copied.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -200,7 +201,7 @@ insertion. By default they are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

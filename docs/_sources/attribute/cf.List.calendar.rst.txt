@@ -1,4 +1,4 @@
-cf.List.calendar
+﻿cf.List.calendar
 ================
 
 .. currentmodule:: cf

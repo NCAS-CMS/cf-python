@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Incompatible differences between versions 2.x and 3.x &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
 
 
 
@@ -112,7 +113,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="incompatible-differences-between-versions-2-x-and-3-x">
+  <section id="incompatible-differences-between-versions-2-x-and-3-x">
 <span id="two-to-three-changes"></span><h1>Incompatible differences between versions 2.x and 3.x<a class="headerlink" href="#incompatible-differences-between-versions-2-x-and-3-x" title="Permalink to this headline">¶</a></h1>
 <p>For those familiar with the cf-python API at version 2.x, some
 important, backwards incompatible changes were introduced at version
@@ -124,14 +125,14 @@ scripts are checked when running with Python 3 versions of the cf
 library.</p>
 <p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#releases"><span class="std std-ref">releases</span></a>
 page.</p>
-<div class="section" id="python">
+<section id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x only works for Python 3.5 or later. Version 2.x only works
 for python version 2.7.</p>
-</div>
-<div class="section" id="in-place-operations">
+</section>
+<section id="in-place-operations">
 <h2>In-place operations<a class="headerlink" href="#in-place-operations" title="Permalink to this headline">¶</a></h2>
-<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
+<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
 modified construct. The keyword that defines the operation to be
 in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span>
@@ -142,8 +143,8 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <span class="go">None</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="field-creation">
+</section>
+<section id="field-creation">
 <h2>Field creation<a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
 <p>Field construct creation is has changed in two notable ways:</p>
 <p>Firstly, a single method <a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a> has replaced the
@@ -165,8 +166,8 @@ set on the field construct:</p>
 are able to match up existing domain axis constructs to the new data
 or construct if the mapping can be made unambiguously (as is the case
 in the above example).</p>
-</div>
-<div class="section" id="new-methods-that-replace-deprecated-ones">
+</section>
+<section id="new-methods-that-replace-deprecated-ones">
 <h2>New methods that replace deprecated ones<a class="headerlink" href="#new-methods-that-replace-deprecated-ones" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x methods that replace deprecated version 2.x methods:</p>
 <table class="docutils align-default">
@@ -235,8 +236,8 @@ in the above example).</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="changes-to-the-api-of-existing-methods">
+</section>
+<section id="changes-to-the-api-of-existing-methods">
 <h2>Changes to the  API of existing methods<a class="headerlink" href="#changes-to-the-api-of-existing-methods" title="Permalink to this headline">¶</a></h2>
 <p>Methods that have a different API in version 3.x</p>
 <table class="docutils align-default">
@@ -469,8 +470,8 @@ arguments are no longer assumed to be an abbreviation.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -480,7 +481,7 @@ arguments are no longer assumed to be an abbreviation.</p></td>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data.percentile &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data-percentile">
+  <section id="cf-data-percentile">
 <h1>cf.Data.percentile<a class="headerlink" href="#cf-data-percentile" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.percentile">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">interpolation='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/data/data.py#L2765-L3011"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.percentile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">interpolation='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/data/data.py#L2743-L2989"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.percentile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute percentiles of the data along the specified axes.</p>
 <p>The default is to compute the percentiles along a flattened
 version of the data.</p>
@@ -150,12 +151,12 @@ percentile rank.</p>
 <dt>ranks: (sequence of) number</dt><dd><p>Percentile rank, or sequence of percentile ranks, to
 compute, which must be between 0 and 100 inclusive.</p>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the axes. The <em>axes</em> argument may be one, or a
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the axes. The <em>axes</em> argument may be one, or a
 sequence, of integers that select the axis corresponding to
 the given position in the list of axes of the data array.</p>
-<p>By default, of <em>axes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, all axes are selected.</p>
+<p>By default, of <em>axes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, all axes are selected.</p>
 </dd>
-<dt>interpolation: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the interpolation method to use when the desired
+<dt>interpolation: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the interpolation method to use when the desired
 percentile lies between two data values <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">j</span></code>:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -189,7 +190,7 @@ surrounded by <code class="docutils literal notranslate"><span class="pre">i</sp
 </table>
 <p>By default <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> interpolation is used.</p>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all axes over which percentiles are
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all axes over which percentiles are
 calculated are removed from the returned data. By default
 axes over which percentiles have been calculated are left
 in the result as axes with size 1, meaning that the result
@@ -213,14 +214,14 @@ missing data: <code class="docutils literal notranslate"><span class="pre">mtol=
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The percentiles of the original data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The percentiles of the original data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
 operation was in-place.</p>
 </dd>
 </dl>
@@ -289,7 +290,7 @@ percentiles, and digitize the data based on these bins:</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -299,7 +300,7 @@ percentiles, and digitize the data based on these bins:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

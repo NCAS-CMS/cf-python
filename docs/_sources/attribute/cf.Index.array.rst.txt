@@ -1,4 +1,4 @@
-cf.Index.array
+﻿cf.Index.array
 ==============
 
 .. currentmodule:: cf

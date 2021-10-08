@@ -1,4 +1,4 @@
-cf.implementation
+﻿cf.implementation
 =================
 
 .. currentmodule:: cf

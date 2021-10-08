@@ -1,4 +1,4 @@
-cf.AuxiliaryCoordinate.construct_type
+﻿cf.AuxiliaryCoordinate.construct_type
 =====================================
 
 .. currentmodule:: cf

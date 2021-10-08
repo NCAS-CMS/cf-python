@@ -1,4 +1,4 @@
-cf.FM_THRESHOLD
+﻿cf.FM_THRESHOLD
 ===============
 
 .. currentmodule:: cf

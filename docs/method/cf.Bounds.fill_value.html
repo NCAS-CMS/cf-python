@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Bounds.fill_value &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,16 +123,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-bounds-fill-value">
+  <section id="cf-bounds-fill-value">
 <h1>cf.Bounds.fill_value<a class="headerlink" href="#cf-bounds-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Bounds.fill_value">
-<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/mixin/propertiesdata.py#L3696-L3772"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/mixin/propertiesdata.py#L3686-L3762"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data array missing data value.</p>
 <p>This is the value of the <a class="reference internal" href="../attribute/cf.Bounds.missing_value.html#cf.Bounds.missing_value" title="cf.Bounds.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a> CF property, or if
 that is not set, the value of the <a class="reference internal" href="../attribute/cf.Bounds._FillValue.html#cf.Bounds._FillValue" title="cf.Bounds._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a> CF property,
 else if that is not set, <code class="docutils literal notranslate"><span class="pre">None</span></code>. In the last case the
-default <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> missing data value for the array’s data type
+default <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> missing data value for the array’s data type
 is assumed if a missing data value is required.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -142,7 +143,7 @@ is assumed if a missing data value is required.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>default: optional</dt><dd><p>If the missing value is unset then return this
-value. By default, <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. If <em>default</em>
+value. By default, <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. If <em>default</em>
 is the special value <code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code> then return the
 netCDF default value appropriate to the data array’s
 data type is used. These may be found with the
@@ -194,7 +195,7 @@ value specified by <em>default</em></p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -204,7 +205,7 @@ value specified by <em>default</em></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

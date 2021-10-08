@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.example_fields &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-example-fields">
+  <section id="cf-example-fields">
 <h1>cf.example_fields<a class="headerlink" href="#cf-example-fields" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_fields">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/examplefield.py#L16-L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/examplefield.py#L15-L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return example field constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -136,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>n: zero or more <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the example field constructs to return, any
+<dt>n: zero or more <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the example field constructs to return, any
 combination of:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -197,42 +198,42 @@ be output in the order that they are given.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The example field constructs.</p>
+<dt><a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt><dd><p>The example field constructs.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">()</span>
-<span class="go">[&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
-<span class="go"> &lt;Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K&gt;,</span>
-<span class="go"> &lt;Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K&gt;,</span>
-<span class="go"> &lt;Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K&gt;,</span>
-<span class="go"> &lt;Field: precipitation_amount(cf_role=timeseries_id(2), time(4))&gt;,</span>
-<span class="go"> &lt;Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
+<span class="go"> &lt;CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K&gt;,</span>
+<span class="go"> &lt;CF Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K&gt;,</span>
+<span class="go"> &lt;CF Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K&gt;,</span>
+<span class="go"> &lt;CF Field: precipitation_amount(cf_role=timeseries_id(2), time(4))&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="go">[&lt;Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
+<span class="go">[&lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="go">[&lt;Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;]</span>
+<span class="go">[&lt;CF Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="go">[&lt;Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
-<span class="go"> &lt;Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K&gt;]</span>
+<span class="go">[&lt;CF Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
+<span class="go"> &lt;CF Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K&gt;]</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a> for more details.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -242,7 +243,7 @@ be output in the order that they are given.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

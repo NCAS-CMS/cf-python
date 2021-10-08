@@ -1,4 +1,4 @@
-cf.CellMeasure.binary_mask
+﻿cf.CellMeasure.binary_mask
 ==========================
 
 .. currentmodule:: cf

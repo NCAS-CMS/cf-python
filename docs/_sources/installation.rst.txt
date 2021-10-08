@@ -76,7 +76,7 @@ To install cf without any of its dependencies then run, for example:
    $ pip install cf-python --no-deps
 
 See the `documentation for pip install
-<https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
+<https://pip.pypa.io/en/stable/cli/pip_install/>`_ for further
 options.
 
 Note that :ref:`some environment variables might also need setting
@@ -98,7 +98,7 @@ dependencies, and the `cf-plot visualisation package
 .. code-block:: console
    :caption: *Install with conda.*
 
-   $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
+   $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2
    $ conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
@@ -203,8 +203,8 @@ Required
 .. _UNIDATA-UDUNITS-2-library:
 
 * `UNIDATA UDUNITS-2 library
-  <http://www.unidata.ucar.edu/software/udunits>`_, 2.2.20 <=
-  version. UDUNITS-2 is a C library that provides support for units of
+  <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.25
+  or newer. UDUNITS-2 is a C library that provides support for units of
   physical quantities.
 
   If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
@@ -233,7 +233,7 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
+* `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
   8.0.0 or newer. This is easily installed via conda with
 
   .. code-block:: console

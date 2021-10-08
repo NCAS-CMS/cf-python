@@ -1,4 +1,4 @@
-cf.CellMethod.intervals
+﻿cf.CellMethod.intervals
 =======================
 
 .. currentmodule:: cf

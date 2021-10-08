@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Datum &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,12 +121,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-datum">
+  <section id="cf-datum">
 <h1>cf.Datum<a class="headerlink" href="#cf-datum" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Datum">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Datum</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/datum.py#L4-L32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Datum</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/datum.py#L4-L32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.datum.Datum</span></code></p>
 <p>A datum component of a coordinate reference construct of the CF
 data model.</p>
@@ -147,7 +148,7 @@ the datum.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
 names, with corresponding values. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>Parameters may also be set after initialisation with
@@ -162,7 +163,7 @@ the <a class="reference internal" href="../method/cf.Datum.set_parameters.html#c
 <code class="docutils literal notranslate"><span class="pre">cf.Datum(source=source)</span></code> is equivalent
 to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
 to initialisation. By default arguments are deep
 copied.</p>
 </dd>
@@ -171,7 +172,7 @@ copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="parameters">
+<section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -203,8 +204,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -227,8 +228,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -245,7 +246,7 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -265,9 +266,9 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -277,24 +278,24 @@ copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Datum.__bool__.html#cf.Datum.__bool__" title="cf.Datum.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Datum.__deepcopy__.html#cf.Datum.__deepcopy__" title="cf.Datum.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum.__nonzero__</span></code></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Datum.__repr__.html#cf.Datum.__repr__" title="cf.Datum.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Datum.__str__.html#cf.Datum.__str__" title="cf.Datum.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -304,7 +305,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

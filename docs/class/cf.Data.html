@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,16 +121,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data">
+  <section id="cf-data">
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">loadd=None</em>, <em class="sig-param">loads=None</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/data/data.py#L355-L15431"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">loadd=None</em>, <em class="sig-param">loads=None</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/data/data.py#L333-L15408"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
 <li><p>Contains an N-dimensional, indexable and broadcastable array with
-many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
+many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
 <li><p>Contains the units of the array elements.</p></li>
 <li><p>Supports masked arrays, regardless of whether or not it was
 initialised with a masked array.</p></li>
@@ -204,7 +205,7 @@ object, including another <a class="reference internal" href="#cf.Data" title="c
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
 provided then this an also set the calendar. Ignored if
 the <em>source</em> parameter is set.</p>
 <p>The units (without the calendar) may also be set after
@@ -216,7 +217,7 @@ initialisation with the <a class="reference internal" href="../method/cf.Data.se
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>The calendar may also be set after initialisation with the
 <a class="reference internal" href="../method/cf.Data.set_calendar.html#cf.Data.set_calendar" title="cf.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
@@ -226,9 +227,9 @@ initialisation with the <a class="reference internal" href="../method/cf.Data.se
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data-type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
 parameter is set.</p>
 <p>The fill value may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
@@ -254,11 +255,11 @@ the <a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.
 </div>
 </dd>
 <dt>mask: optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
-parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
+parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
 applied. May be any scalar or array-like object (such as a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
 broadcastable to the shape of <em>array</em>. Masking will be
-carried out where the mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+carried out where the mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <p>This mask will applied in addition to any mask already
 defined by the <em>array</em> parameter.</p>
 <div class="versionadded">
@@ -268,25 +269,25 @@ defined by the <em>array</em> parameter.</p>
 <dt>source: optional</dt><dd><p>Initialize the array, units, calendar and fill value from
 those of <em>source</em>.</p>
 </dd>
-<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the mask is soft. By default the mask is
+<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the mask is soft. By default the mask is
 hard.</p>
 </dd>
-<dt>dt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
+<dt>dt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
 given by the <em>array</em> parameter are re-interpreted as
 date-time objects. By default they are not.</p>
 </dd>
-<dt>loadd: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Initialise the data from a dictionary serialization of a
+<dt>loadd: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Initialise the data from a dictionary serialization of a
 <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object. All other arguments are ignored. See the
 <a class="reference internal" href="../method/cf.Data.dumpd.html#cf.Data.dumpd" title="cf.Data.dumpd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumpd</span></code></a> and <a class="reference internal" href="../method/cf.Data.loadd.html#cf.Data.loadd" title="cf.Data.loadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadd</span></code></a> methods.</p>
 </dd>
-<dt>loads: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Initialise the data array from a string serialization of a
+<dt>loads: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Initialise the data array from a string serialization of a
 <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. All other arguments are ignored. See the
 <a class="reference internal" href="../method/cf.Data.dumps.html#cf.Data.dumps" title="cf.Data.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a> and <a class="reference internal" href="../method/cf.Data.loads.html#cf.Data.loads" title="cf.Data.loads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loads</span></code></a> methods.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
-<dt>chunk: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the data array will be stored in a single
+<dt>chunk: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the data array will be stored in a single
 partition. By default the data array will be partitioned
 if it is larger than the chunk size, as returned by the
 <a class="reference internal" href="../function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function.</p>
@@ -305,7 +306,7 @@ if it is larger than the chunk size, as returned by the
 </div>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -321,7 +322,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>A numpy array view the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>Number of dimensions in the data array.</p></td>
@@ -346,8 +347,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -402,10 +403,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-creation-routines">
+</section>
+<section id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="ones-and-zeros">
+<section id="ones-and-zeros">
 <h3>Ones and zeros<a class="headerlink" href="#ones-and-zeros" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -430,8 +431,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="from-existing-data">
+</section>
+<section id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -453,11 +454,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="data-manipulation-routines">
+</section>
+</section>
+<section id="data-manipulation-routines">
 <h2>Data manipulation routines<a class="headerlink" href="#data-manipulation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="changing-data-shape">
+<section id="changing-data-shape">
 <h3>Changing data shape<a class="headerlink" href="#changing-data-shape" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -470,8 +471,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="transpose-like-operations">
+</section>
+<section id="transpose-like-operations">
 <h3>Transpose-like operations<a class="headerlink" href="#transpose-like-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -487,8 +488,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="changing-number-of-dimensions">
+</section>
+<section id="changing-number-of-dimensions">
 <h3>Changing number of dimensions<a class="headerlink" href="#changing-number-of-dimensions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -504,8 +505,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="joining-data">
+</section>
+<section id="joining-data">
 <h3>Joining data<a class="headerlink" href="#joining-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -521,8 +522,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="adding-and-removing-elements">
+</section>
+<section id="adding-and-removing-elements">
 <h3>Adding and removing elements<a class="headerlink" href="#adding-and-removing-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -535,8 +536,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="rearranging-elements">
+</section>
+<section id="rearranging-elements">
 <h3>Rearranging elements<a class="headerlink" href="#rearranging-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -552,8 +553,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="expanding-the-data">
+</section>
+<section id="expanding-the-data">
 <h3>Expanding the data<a class="headerlink" href="#expanding-the-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -566,8 +567,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="binary-operations">
+</section>
+<section id="binary-operations">
 <h3>Binary operations<a class="headerlink" href="#binary-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -577,9 +578,9 @@ if it is larger than the chunk size, as returned by the
 <tbody>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="date-time-support">
+</section>
+</section>
+<section id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -617,10 +618,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="indexing-routines">
+</section>
+<section id="indexing-routines">
 <h2>Indexing routines<a class="headerlink" href="#indexing-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="single-value-selection">
+<section id="single-value-selection">
 <h3>Single value selection<a class="headerlink" href="#single-value-selection" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -642,8 +643,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="iterating-over-data">
+</section>
+<section id="iterating-over-data">
 <h3>Iterating over data<a class="headerlink" href="#iterating-over-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -659,9 +660,9 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="cyclic-axes">
+</section>
+</section>
+<section id="cyclic-axes">
 <h2>Cyclic axes<a class="headerlink" href="#cyclic-axes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -674,8 +675,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="input-and-output">
+</section>
+<section id="input-and-output">
 <h2>Input and output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -694,8 +695,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="linear-algebra">
+</section>
+<section id="linear-algebra">
 <h2>Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -708,10 +709,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="logic-functions">
+</section>
+<section id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="truth-value-testing">
+<section id="truth-value-testing">
 <h3>Truth value testing<a class="headerlink" href="#truth-value-testing" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -727,8 +728,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="comparison">
+</section>
+<section id="comparison">
 <h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -747,9 +748,9 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="mask-support">
+</section>
+</section>
+<section id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -816,10 +817,10 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-functions">
+</section>
+<section id="mathematical-functions">
 <h2>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="trigonometric-functions">
+<section id="trigonometric-functions">
 <h3>Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -847,8 +848,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="hyperbolic-functions">
+</section>
+<section id="hyperbolic-functions">
 <h3>Hyperbolic functions<a class="headerlink" href="#hyperbolic-functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -876,8 +877,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="rounding">
+</section>
+<section id="rounding">
 <h3>Rounding<a class="headerlink" href="#rounding" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -902,8 +903,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sums-products-differences">
+</section>
+<section id="sums-products-differences">
 <h3>Sums, products, differences<a class="headerlink" href="#sums-products-differences" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -934,8 +935,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="exponents-and-logarithms">
+</section>
+<section id="exponents-and-logarithms">
 <h3>Exponents and logarithms<a class="headerlink" href="#exponents-and-logarithms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -951,8 +952,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h3>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -968,11 +969,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="set-routines">
+</section>
+</section>
+<section id="set-routines">
 <h2>Set routines<a class="headerlink" href="#set-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="making-proper-sets">
+<section id="making-proper-sets">
 <h3>Making proper sets<a class="headerlink" href="#making-proper-sets" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -985,11 +986,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="sorting-searching-and-counting">
+</section>
+</section>
+<section id="sorting-searching-and-counting">
 <h2>Sorting, searching, and counting<a class="headerlink" href="#sorting-searching-and-counting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="searching">
+<section id="searching">
 <h3>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1005,8 +1006,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="counting">
+</section>
+<section id="counting">
 <h3>Counting<a class="headerlink" href="#counting" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1022,11 +1023,11 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="statistics">
+</section>
+</section>
+<section id="statistics">
 <h2>Statistics<a class="headerlink" href="#statistics" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="order-statistics">
+<section id="order-statistics">
 <h3>Order statistics<a class="headerlink" href="#order-statistics" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1057,8 +1058,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="averages-and-variances">
+</section>
+<section id="averages-and-variances">
 <h3>Averages and variances<a class="headerlink" href="#averages-and-variances" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1101,8 +1102,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sums">
+</section>
+<section id="sums">
 <h3>Sums<a class="headerlink" href="#sums" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1121,8 +1122,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="histograms">
+</section>
+<section id="histograms">
 <h3>Histograms<a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1135,8 +1136,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="id1">
+</section>
+<section id="id1">
 <h3>Miscellaneous<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1158,9 +1159,9 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="error-handling">
+</section>
+</section>
+<section id="error-handling">
 <h2>Error handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1173,8 +1174,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="compression-by-convention">
+</section>
+<section id="compression-by-convention">
 <h2>Compression by convention<a class="headerlink" href="#compression-by-convention" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1217,8 +1218,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="id2">
+</section>
+<section id="id2">
 <h2>Miscellaneous<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1252,8 +1253,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="performance">
+</section>
+<section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1317,8 +1318,8 @@ if it is larger than the chunk size, as returned by the
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="element-wise-arithmetic-bit-and-comparison-operations">
+</section>
+<section id="element-wise-arithmetic-bit-and-comparison-operations">
 <h2>Element-wise arithmetic, bit and comparison operations<a class="headerlink" href="#element-wise-arithmetic-bit-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bit and comparison operations are defined as element-wise
 data array operations which yield a new <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object or, for
@@ -1358,7 +1359,7 @@ augmented assignments, modify the data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__bool__.html#cf.Data.__bool__" title="cf.Data.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
-<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
+<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -1563,8 +1564,8 @@ augmented assignments, modify the data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -1582,28 +1583,28 @@ augmented assignments, modify the data in-place.</p>
 <td><p>Returns a new reference to self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__deepcopy__.html#cf.Data.__deepcopy__" title="cf.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__getitem__.html#cf.Data.__getitem__" title="cf.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the data defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__hash__.html#cf.Data.__hash__" title="cf.Data.__hash__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code></a></p></td>
-<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#hash" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash</span></code></a></p></td>
+<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#hash" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__iter__.html#cf.Data.__iter__" title="cf.Data.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></p></td>
 <td><p>Called when an iterator is required.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__len__.html#cf.Data.__len__" title="cf.Data.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a></p></td>
-<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a></p></td>
+<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__repr__.html#cf.Data.__repr__" title="cf.Data.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Implement indexed assignment.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__str__.html#cf.Data.__str__" title="cf.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__query_set__.html#cf.Data.__query_set__" title="cf.Data.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
 <td><p>Implements the “member of set” condition.</p></td>
@@ -1616,8 +1617,8 @@ augmented assignments, modify the data in-place.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="deprecated">
+</section>
+<section id="deprecated">
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -1642,12 +1643,12 @@ augmented assignments, modify the data in-place.</p>
 <td><p>cf.Data.save_to_disk is dead.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.unsafe_array.html#cf.Data.unsafe_array" title="cf.Data.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -1657,7 +1658,7 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

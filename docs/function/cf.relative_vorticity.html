@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.relative_vorticity &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-relative-vorticity">
+  <section id="cf-relative-vorticity">
 <h1>cf.relative_vorticity<a class="headerlink" href="#cf-relative-vorticity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.relative_vorticity">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relative_vorticity</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=6371229.0</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/maths.py#L8-L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relative_vorticity</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=6371229.0</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/maths.py#L7-L203"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the relative vorticity using centred finite
 differences.</p>
 <p>The relative vorticity of wind defined on a Cartesian domain (such
@@ -177,10 +178,10 @@ are assumed.</p>
 </dd>
 </dl>
 </dd>
-<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the longitude is cyclic or not. By default this is
+<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the longitude is cyclic or not. By default this is
 autodetected.</p>
 </dd>
-<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then if the field is not cyclic off-centre finite
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then if the field is not cyclic off-centre finite
 differences are calculated at the boundaries, otherwise
 missing values are used at the boundaries.</p>
 </dd>
@@ -196,7 +197,7 @@ differences.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -206,7 +207,7 @@ differences.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

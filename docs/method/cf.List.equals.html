@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.List.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-list-equals">
+  <section id="cf-list-equals">
 <h1>cf.List.equals<a class="headerlink" href="#cf-list-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.List.equals">
-<code class="sig-prename descclassname">List.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/decorators.py#L122-L200"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">List.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -170,10 +171,10 @@ function.</p>
 numbers. The default value is set by the <a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a>
 function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value”
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value”
 properties are omitted from the comparison.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
 string equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -189,7 +190,7 @@ globally-configured <a class="reference internal" href="../function/cf.log_level
 increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
 case of maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
 messages will be shown according to the value of the
 <a class="reference internal" href="../function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or
@@ -198,21 +199,21 @@ equivalent string that is set (up to a maximum of
 description that is printed to convey information
 about the operation.</p>
 </dd>
-<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties to omit from the comparison.</p>
+<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties to omit from the comparison.</p>
 </dd>
-<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
 comparisons. By default different numerical data types
 imply inequality, regardless of whether the elements are
 within the tolerance for equality.</p>
 </dd>
-<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then any compression applied to the underlying
+<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then any compression applied to the underlying
 arrays is ignored and only the uncompressed arrays are
 tested for equality. By default the compression type and,
 if applicable, the underlying compressed arrays must be
 the same, as well as the arrays in their uncompressed
 forms.</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general, equality
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general, equality
 is only possible with another object of the same type, or
 a subclass of one. If <em>ignore_type</em> is True then equality
 is possible for any object with a compatible API.</p>
@@ -221,7 +222,7 @@ is possible for any object with a compatible API.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two instances are equal.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two instances are equal.</p>
 </dd>
 </dl>
 </dd>
@@ -239,7 +240,7 @@ is possible for any object with a compatible API.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -249,7 +250,7 @@ is possible for any object with a compatible API.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

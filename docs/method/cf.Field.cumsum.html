@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.cumsum &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-cumsum">
+  <section id="cf-field-cumsum">
 <h1>cf.Field.cumsum<a class="headerlink" href="#cf-field-cumsum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cumsum">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cumsum</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">masked_as_zero=False</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L12743-L12895"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cumsum</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">masked_as_zero=False</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L12447-L12599"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field cumulatively summed along the given axis.</p>
 <p>The cell bounds of the axis are updated to describe the range
 over which the sums apply, and a new “sum” cell method
@@ -149,7 +150,7 @@ field construct’s <a class="reference internal" href="cf.Field.domain_axis.htm
 value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
 </dd>
-<dt>masked_as_zero: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set missing data values to zero before
+<dt>masked_as_zero: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set missing data values to zero before
 calculating the cumulative sum. By default the output data
 will be masked at the same locations as the original data.
 .. note:: Sums produced entirely from masked elements will</p>
@@ -159,7 +160,7 @@ data, regardless of the setting of
 <em>masked_as_zero</em>.</p>
 </div></blockquote>
 </dd>
-<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set how the cell coordinate values for the summed axis are
+<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set how the cell coordinate values for the summed axis are
 defined, relative to the new cell bounds. By default they
 are unchanged from the original field construct. The
 <em>coordinate</em> parameter may be one of:</p>
@@ -174,7 +175,7 @@ are unchanged from the original field construct. The
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default.
 Output coordinates are unchanged.</p></td>
 </tr>
@@ -197,15 +198,15 @@ its output coordinate bounds.</p></td>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with the cumulatively summed axis, or
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with the cumulatively summed axis, or
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </dd>
@@ -259,7 +260,7 @@ Dimension coords: time(36) = [1959-12-16 12:00:00, …, 1962-11-16 00:00:00]</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -269,7 +270,7 @@ Dimension coords: time(36) = [1959-12-16 12:00:00, …, 1962-11-16 00:00:00]</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

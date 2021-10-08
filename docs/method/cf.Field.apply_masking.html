@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.apply_masking &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-apply-masking">
+  <section id="cf-field-apply-masking">
 <h1>cf.Field.apply_masking<a class="headerlink" href="#cf-field-apply-masking" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.apply_masking">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/decorators.py#L41-L54"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.apply_masking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.apply_masking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply masking as defined by the CF conventions.</p>
 <p>Masking is applied to the field construct data as well as
 metadata constructs’ data.</p>
@@ -167,21 +168,31 @@ properties have not been updated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new field construct with masked values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new field construct with masked values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if
 the operation was in-place.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[   --    --    --    --    --    --    --    --]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [   --    --    --    --    --    --    --    --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;masked.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">no_mask</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;masked.nc&#39;</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">no_mask</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,</span>
 <span class="go"> 9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
@@ -189,8 +200,8 @@ the operation was in-place.</p>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go">[9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,</span>
 <span class="go"> 9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">masked_f</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">masked_f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">masked</span> <span class="o">=</span> <span class="n">no_mask</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">masked</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[   --    --    --    --    --    --    --    --]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
@@ -200,7 +211,7 @@ the operation was in-place.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -210,7 +221,7 @@ the operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

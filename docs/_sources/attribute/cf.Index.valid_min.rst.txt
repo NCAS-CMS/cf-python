@@ -1,4 +1,4 @@
-cf.Index.valid_min
+﻿cf.Index.valid_min
 ==================
 
 .. currentmodule:: cf

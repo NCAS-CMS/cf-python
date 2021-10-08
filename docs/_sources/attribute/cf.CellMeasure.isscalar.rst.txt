@@ -1,4 +1,4 @@
-cf.CellMeasure.isscalar
+﻿cf.CellMeasure.isscalar
 =======================
 
 .. currentmodule:: cf

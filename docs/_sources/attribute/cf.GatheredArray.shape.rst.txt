@@ -1,4 +1,4 @@
-cf.GatheredArray.shape
+﻿cf.GatheredArray.shape
 ======================
 
 .. currentmodule:: cf

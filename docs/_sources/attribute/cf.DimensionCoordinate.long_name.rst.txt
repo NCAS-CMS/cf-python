@@ -1,4 +1,4 @@
-cf.DimensionCoordinate.long_name
+﻿cf.DimensionCoordinate.long_name
 ================================
 
 .. currentmodule:: cf

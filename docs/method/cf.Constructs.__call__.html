@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Constructs.__call__ &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-constructs-call">
+  <section id="cf-constructs-call">
 <h1>cf.Constructs.__call__<a class="headerlink" href="#cf-constructs-call" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.__call__">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L60-L112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/constructs.py#L48-L100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by identity.</p>
 <p>Calling a <a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance selects metadata constructs by
 identity and is an alias for the <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>
@@ -139,7 +140,7 @@ identity of ‘air_temperature’: <code class="docutils literal notranslate"><s
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a></p>
+<p><a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -149,8 +150,8 @@ their <code class="xref py py-obj docutils literal notranslate"><span class="pre
 given values.</p>
 <p>A value may be any object that can match via the
 <code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -171,10 +172,10 @@ criteria. Also to configure the returned value.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<p>See <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for examples.</p>
+<p>See <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for examples.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -184,7 +185,7 @@ criteria. Also to configure the returned value.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

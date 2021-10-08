@@ -1,4 +1,4 @@
-cf.Index.id
+﻿cf.Index.id
 ===========
 
 .. currentmodule:: cf

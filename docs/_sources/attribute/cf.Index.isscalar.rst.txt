@@ -1,4 +1,4 @@
-cf.Index.isscalar
+﻿cf.Index.isscalar
 =================
 
 .. currentmodule:: cf

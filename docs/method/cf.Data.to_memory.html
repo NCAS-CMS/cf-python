@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Data.to_memory &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,29 +123,29 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-data-to-memory">
+  <section id="cf-data-to-memory">
 <h1>cf.Data.to_memory<a class="headerlink" href="#cf-data-to-memory" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.to_memory">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">to_memory</code><span class="sig-paren">(</span><em class="sig-param">regardless=False</em>, <em class="sig-param">parallelise=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/data/data.py#L12150-L12196"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.to_memory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">to_memory</code><span class="sig-paren">(</span><em class="sig-param">regardless=False</em>, <em class="sig-param">parallelise=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/data/data.py#L12127-L12174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.to_memory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store each partition’s data in memory in place if the master
 array is smaller than the chunk size.</p>
 <p>There is no change to partitions with data that are already in memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>regardless: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then store all partitions’ data in memory
+<dt>regardless: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then store all partitions’ data in memory
 regardless of the size of the master array. By default
 only store all partitions’ data in memory if the master
 array is smaller than the chunk size.</p>
 </dd>
-<dt>parallelise: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True than only move those partitions to memory that are
+<dt>parallelise: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True than only move those partitions to memory that are
 flagged for processing on this rank.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -154,7 +155,7 @@ flagged for processing on this rank.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -164,7 +165,7 @@ flagged for processing on this rank.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

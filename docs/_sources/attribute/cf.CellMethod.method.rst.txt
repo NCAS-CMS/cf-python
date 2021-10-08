@@ -1,4 +1,4 @@
-cf.CellMethod.method
+﻿cf.CellMethod.method
 ====================
 
 .. currentmodule:: cf

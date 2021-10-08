@@ -1,4 +1,4 @@
-cf.List.scale_factor
+﻿cf.List.scale_factor
 ====================
 
 .. currentmodule:: cf

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.field_ancillary &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-field-ancillary">
+  <section id="cf-field-field-ancillary">
 <h1>cf.Field.field_ancillary<a class="headerlink" href="#cf-field-field-ancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.field_ancillary">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">field_ancillary</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em>, <em class="sig-param">item=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L13438-L13502"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.field_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">field_ancillary</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em>, <em class="sig-param">item=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L13142-L13206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.field_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a field ancillary construct.</p>
 <p>If zero or two or more constructs are selected then an
 exception is raised, or the <em>default</em> parameter is returned.</p>
@@ -149,16 +150,16 @@ identifiers, with or without the <code class="docutils literal notranslate"><spa
 constructs are selected.</p>
 <p>A value may be any object that can match via the
 <code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct
 identifier. By default the construct itself is
 returned.</p>
 </dd>
-<dt>item: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct identifier
+<dt>item: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct identifier
 and the construct itself. By default the construct
 itself is returned. If <em>key</em> is True then <em>item</em> is
 ignored.</p>
@@ -168,7 +169,7 @@ ignored.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
 is no unique construct.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code>
@@ -188,7 +189,7 @@ True, or a tuple of both if <em>item</em> is True.</p>
 <p><strong>Examples:</strong></p>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -198,7 +199,7 @@ True, or a tuple of both if <em>item</em> is True.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,4 +1,4 @@
-cf.CellMeasure.Units
+﻿cf.CellMeasure.Units
 ====================
 
 .. currentmodule:: cf

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cf.Field.__getitem__ &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.10.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
 
 
 
@@ -122,11 +123,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
           <div class="body" role="main">
             
-  <div class="section" id="cf-field-getitem">
+  <section id="cf-field-getitem">
 <h1>cf.Field.__getitem__<a class="headerlink" href="#cf-field-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.__getitem__">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.10.0/cf/field.py#L383-L568"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L373-L558"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace of the field construct defined by indices.</p>
 <p>f.__getitem__(indices) &lt;==&gt; f[indices]</p>
 <p>Subspacing by indexing uses rules that are very similar to the
@@ -142,7 +143,7 @@ then these indices work independently along each dimension
 the same indexing behaviour as on a Variable object of the
 netCDF4 package.</p></li>
 <li><p>For a dimension that is cyclic, a range of indices specified by
-a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
+a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
 <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
 a null result.</p></li>
 </ul>
@@ -180,7 +181,7 @@ a null result.</p></li>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -190,7 +191,7 @@ a null result.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-06-10.
+      &copy;2021, NCAS | Page built on 2021-10-08.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,4 +1,4 @@
-cf.DomainAncillary.upper_bounds
+﻿cf.DomainAncillary.upper_bounds
 ===============================
 
 .. currentmodule:: cf

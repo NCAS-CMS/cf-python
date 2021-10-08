@@ -1,4 +1,4 @@
-cf.CellMeasure.dtype
+﻿cf.CellMeasure.dtype
 ====================
 
 .. currentmodule:: cf

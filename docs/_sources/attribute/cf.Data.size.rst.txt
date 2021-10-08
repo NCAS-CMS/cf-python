@@ -1,4 +1,4 @@
-cf.Data.size
+﻿cf.Data.size
 ============
 
 .. currentmodule:: cf
