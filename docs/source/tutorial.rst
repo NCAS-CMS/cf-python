@@ -113,7 +113,7 @@ metadata to describe it:
 A field construct or domain construct is stored in a `cf.Field`
 instance or `cf.Domain` instance respectively. Henceforth the phrase
 "field construct" will be assumed to mean "`cf.Field` instance", and
-"domain construct" will be assumed to mean "`cf.Domain` instance.
+"domain construct" will be assumed to mean "`cf.Domain` instance".
 
 ----
 
@@ -6580,6 +6580,17 @@ The content of the new file is:
    }
 
 ----
+   
+.. _Coordinate-subampling:
+
+Coordinate subsampling
+^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression by coordinate subsampling`_ was introduced into the
+CF conventions at CF-1.9, but is not yet available in cfdm. It will be
+ready in a future 3.x.0 release.
+
+----
 
 .. _PP-and-UM-fields-files:
 
@@ -6920,3 +6931,4 @@ if any, are filtered out.
 .. _indexed contiguous:               http://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/cf-conventions/cf-conventions.html#groups
+.. _Lossy compression by coordinate subsampling: http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
