@@ -840,10 +840,12 @@ class read_writeTest(unittest.TestCase):
         # 1 domain
         cf.write(d, tmpfile)
         e = cf.read(tmpfile)
+        self.assertIsInstance(e, cf.FieldList)
         self.assertTrue(len(e), 10)
 
         e = cf.read(tmpfile, domain=True, verbose=1)
         self.assertEqual(len(e), 1)
+        self.assertIsInstance(e, cf.DomainList)
         e = e[0]
         self.assertIsInstance(e, cf.Domain)
         self.assertTrue(e.equals(e.copy(), verbose=3))
