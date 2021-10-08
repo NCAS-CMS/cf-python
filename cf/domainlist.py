@@ -15,7 +15,7 @@ class DomainList(mixin.FieldDomainList, ConstructList):
     `~cf.Domain.equals` method is used, rather than the ``==``
     operator.
 
-    .. versionadded:: 3.TODO.0
+    .. versionadded:: 3.11.0
 
     """
 

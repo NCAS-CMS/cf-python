@@ -516,7 +516,7 @@ def read(
 
             Domain constructs can not be read from UM or PP datasets.
 
-            .. versionadded:: 3.TODO.0
+            .. versionadded:: 3.11.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.

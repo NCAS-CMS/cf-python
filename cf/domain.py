@@ -122,7 +122,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     #    ):
     #        """Set the cyclicity of an axis.
     #
-    #        .. versionadded:: 3.TODO.0
+    #        .. versionadded:: 3.11.0
     #
     #        .. seealso:: `autocyclic`, `domain_axis`, `iscyclic`
     #
@@ -199,7 +199,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     #                    default=ValueError()):
     #        """Return a domain axis construct, or its key.
     #
-    #        .. versionadded:: 3.TODO.0
+    #        .. versionadded:: 3.11.0
     #
     #        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
     #                     `cell_method`, `coordinate`, `coordinate_reference`,
@@ -356,7 +356,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         cases when it is not known in advance if a `Field` or `Domain`
         instance is in use.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `has_data`
 
@@ -400,7 +400,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """Return the keys of the domain axis constructs spanned by the
         data of a metadata construct.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -497,7 +497,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             * The netCDF variable name, preceded by ``'ncvar%'``.
             * The value of the *default* parameter.
 
-            .. versionadded:: 3.TODO.
+            .. versionadded:: 3.11.0
 
             .. seealso:: `id`, `identities`
 
@@ -681,7 +681,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
 
@@ -786,7 +786,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def match_by_construct(self, *identities, OR=False, **conditions):
         """Whether or not there are particular metadata constructs.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `match`, `match_by_property`, `match_by_rank`,
                      `match_by_identity`, `match_by_ncvar`
@@ -1040,7 +1040,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `indices`
 
@@ -1226,7 +1226,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         construct whose data axis order is ('Y', 'X') will be tranposed to
         have data order ('X', 'Y').
 
-        .. versionadded:: 3.TODO.0
+        .. versionadded:: 3.11.0
 
         .. seealso:: `domain_axis`, `flip`
 

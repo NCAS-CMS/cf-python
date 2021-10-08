@@ -41,7 +41,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 parsed domain dimensions are automatically stored in
                 `self.read_var['domain_ncdimensions'][ncvar]`.
 
-                .. versionadded:: 3.TODO.0
+                .. versionadded:: 3.11.0
 
         :Returns:
 
