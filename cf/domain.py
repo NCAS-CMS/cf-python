@@ -1,5 +1,4 @@
 import logging
-
 from functools import reduce
 from operator import mul as operator_mul
 

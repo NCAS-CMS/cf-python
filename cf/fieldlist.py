@@ -9,8 +9,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     indexing and methods like `!append`). These methods provide
     functionality similar to that of a built-in list. The main
     difference is that when a field construct element needs to be
-    assessed for equality its `~cf.Field.equals` method is used,
-    rather than the ``==`` operator.
+    assessed for equality its `~cf.Field.equals` method is used, rather
+    than the ``==`` operator.
 
     """
 

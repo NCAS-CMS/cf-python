@@ -4,7 +4,6 @@ import cfdm
 
 from .query import Query
 
-
 logger = logging.getLogger(__name__)
 
 
