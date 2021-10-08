@@ -31,10 +31,15 @@ fi
 
 export PYTHONPATH=$PWD:$PYTHONPATH
 
-# Make zip file
+# Make zip of example files
 cd docs/source/sample_files
 zip cf_tutorial_files.zip *.nc *.pp
 cd -
+
+# Regerenate tutorial.py field_analysis.py
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+  ./test_tutorial_code
+fi
 
 # --------------------------------------------------------------------
 # Make the latest docs    
