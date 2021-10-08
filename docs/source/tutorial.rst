@@ -6911,12 +6911,12 @@ if any, are filtered out.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#external-variables
-.. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#discrete-sampling-geometries
-.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#compression-by-gathering
-.. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_contiguous_ragged_array_representation
-.. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
-.. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
-.. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
-.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+.. _External variables:               http://cfconventions.org/cf-conventions/cf-conventions.html#external-variables
+.. _Discrete sampling geometry (DSG): http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form: http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _Compression by gathering:         http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-gathering
+.. _contiguous:                       http://cfconventions.org/cf-conventions/cf-conventions.html#_contiguous_ragged_array_representation
+.. _indexed:                          http://cfconventions.org/cf-conventions/cf-conventions.html#_indexed_ragged_array_representation
+.. _indexed contiguous:               http://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                       http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
+.. _Hierarchical groups:              http://cfconventions.org/cf-conventions/cf-conventions.html#groups

@@ -76,7 +76,7 @@ To install cf without any of its dependencies then run, for example:
    $ pip install cf-python --no-deps
 
 See the `documentation for pip install
-<https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
+<https://pip.pypa.io/en/stable/cli/pip_install/>`_ for further
 options.
 
 Note that :ref:`some environment variables might also need setting
@@ -233,7 +233,7 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
+* `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
   8.0.0 or newer. This is easily installed via conda with
 
   .. code-block:: console
