@@ -761,7 +761,7 @@ class Properties(Container):
                   ``re.compile('^lat')``
 
                 *Parameter example:*
-                  To matche identities of "T", or any that start with
+                  To match identities of "T", or any that start with
                   "lat": ``'T', re.compile('^lat')``
 
         :Returns:

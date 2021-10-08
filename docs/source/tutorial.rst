@@ -2366,7 +2366,7 @@ Constructor  Description
 
 The :ref:`domain of the CF data model <CF-data-model>` is defined
 collectively by various other metadata constructs. It is represented
-by the `Domain` class. A domain construct may exist indpendently, or
+by the `Domain` class. A domain construct may exist independently, or
 is accessed from a field construct with its `~Field.domain` attribute,
 or `~Field.get_domain` method.
 

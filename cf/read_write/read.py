@@ -514,8 +514,7 @@ def read(
                >>> f = cf.read('file.nc')
                >>> ufd = cf.unique_constructs(x.domain for x in f)
 
-            Only field constructs can be read from UM and PP
-            datasests.
+            Domain constructs can not be read from UM or PP datasets.
 
             .. versionadded:: 3.TODO.0
 

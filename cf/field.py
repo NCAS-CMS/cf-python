@@ -15099,8 +15099,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst: `Field` or `dict` or `RegridOperator`
                 The destination grid. Must be one of:
 
-                * `Field`. The grid is defined by the field constuct's
-                  domain.
+                * `Field`. The grid is defined by the field
+                  construct's domain.
 
                 * `dict`. The grid is defined by a dictionary with
                   keys ``'latitude'`` and ``'longitude'`` whose values
@@ -15117,7 +15117,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   to `regrids` with ``return_operator=True``.
 
                   This option can give large performance increases, as
-                  greastest computiotnal expense is often the creation
+                  greatest computational expense is often the creation
                   of the regrid operator, rather than running the
                   regrid operator to regrid the data.
 
@@ -15894,8 +15894,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst: `Field` or `dict` or `RegridOperator`
                 The destination grid. Must be one of:
 
-                * `Field`. The grid is defined by the field constuct's
-                  domain.
+                * `Field`. The grid is defined by the field
+                  construct's domain.
 
                 * `dict`. The grid is defined by a dictionary with
                   keys ``'latitude'`` and ``'longitude'`` whose values
@@ -15912,7 +15912,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   to `regridc` with ``return_operator=True``.
 
                   This option can give large performance increases, as
-                  greastest computiotnal expense is often the creation
+                  greatest computational expense is often the creation
                   of the regrid operator, rather than running the
                   regrid operator to regrid the data.
 
@@ -15943,7 +15943,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 TODO for options for selecting specific axes. However,
                 the number of axes returned by `cf.Field.axes` TODO
                 must be the same as the number of specifiers passed
-                in. TODO Can only be None  if regridoperator
+                in. TODO Can only be None if regridoperator
 
                 .. note:: When *dst* is a regrid operator then *axes*
                           is ignored, and its value is set by the

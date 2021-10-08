@@ -86,8 +86,8 @@ field or domain construct.
  
 .. admonition:: Pair of matching axes
 
-   A pair of matching axes is a domain axis from each field cor domain
-   onstruct chosen such that the two domain axes have associated
+   A pair of matching axes is a domain axis from each field or domain
+   construct chosen such that the two domain axes have associated
    coordinate constructs that are all matching pairs.
 
 * Each domain axis in one field or domain construct forms a pair of

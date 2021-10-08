@@ -43,6 +43,7 @@ booleans
 Booleans
 broadcastable
 categorised
+cdl
 ceil
 cellge
 cellgt
@@ -303,6 +304,7 @@ regridc
 regridded
 regridding
 Regridding
+RegridOperator
 regrids
 relpath
 repr
