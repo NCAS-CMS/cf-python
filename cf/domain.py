@@ -3,7 +3,7 @@ import logging
 from functools import reduce
 from operator import mul as operator_mul
 
-from numpy import size as numpy_size
+import numpy as np
 
 import cfdm
 
@@ -11,16 +11,8 @@ from . import mixin
 
 from .constructs import Constructs
 from .data import Data
-
-from .functions import (
-    parse_indices,
-    _DEPRECATION_ERROR_ARG,
-)
-
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-)
+from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .functions import _DEPRECATION_ERROR_ARG, parse_indices
 
 logger = logging.getLogger(__name__)
 
@@ -1193,7 +1185,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 else:
                     size = int_size
             else:
-                size = numpy_size(index)
+                size = np.size(index)
 
             domain_axes[axis].set_size(size)
 
