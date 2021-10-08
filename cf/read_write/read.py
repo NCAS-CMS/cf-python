@@ -852,7 +852,8 @@ def read(
     if nfields is not None and len(out) != nfields:
         raise ValueError(
             f"{nfields} field{_plural(nfields)} requested but "
-            f"{len(field_list)} fields found in file{_plural(file_counter)}"
+            f"{len(out)} field/domain constucts found in "
+            f"file{_plural(file_counter)}"
         )
 
     return out
