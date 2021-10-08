@@ -1,7 +1,7 @@
 version 3.11.0
 --------------
 
-**2021-10-??**
+**2021-10-08**
 
 * Python 3.6 support removed
   (https://github.com/NCAS-CMS/cf-python/issues/208)
