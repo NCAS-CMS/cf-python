@@ -3,12 +3,10 @@ import logging
 from functools import reduce
 from operator import mul as operator_mul
 
+import cfdm
 import numpy as np
 
-import cfdm
-
 from . import mixin
-
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup

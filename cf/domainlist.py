@@ -6,11 +6,10 @@ class DomainList(mixin.FieldDomainList, ConstructList):
 
     A domain list supports the python list-like operations (such as
     indexing and methods like `!append`). These methods provide
-    functionality similar to that of a :ref:`built-in list
-    <python:tut-morelists>`. The main difference is that when a domain
-    construct element needs to be assesed for equality its
-    `~cf.Domain.equals` method is used, rather than the ``==``
-    operator.
+    functionality similar to that of a built-in list. The main
+    difference is that when a domain construct element needs to be
+    assesed for equality its `~cf.Domain.equals` method is used,
+    rather than the ``==`` operator.
 
     .. versionadded:: 3.11.0
 
