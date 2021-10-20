@@ -8,12 +8,12 @@ import cf
 
 
 class ConstructsTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Constructs class."""
 
     f = cf.example_field(1)
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cf.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -26,13 +26,13 @@ class ConstructsTest(unittest.TestCase):
         # cf.log_level('DISABLE')
 
     def test_Constructs__repr__(self):
-        """TODO DOCS."""
+        """Test all means of Construct inspection."""
         f = self.f
 
         repr(f.constructs)
 
     def test_Constructs_filter_by_naxes(self):
-        """TODO DOCS."""
+        """Test the `filter_by_naxes` Constructs method."""
         c = self.f.constructs
 
         self.assertEqual(len(c.filter_by_naxes()), 12)
