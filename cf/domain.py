@@ -33,7 +33,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     """
 
     def __new__(cls, *args, **kwargs):
-        """"""
+        """Creates a new Domain instance."""
         instance = super().__new__(cls)
         instance._Data = Data
         instance._Constructs = Constructs
