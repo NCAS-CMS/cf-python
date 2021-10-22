@@ -114,7 +114,7 @@ class File:
         self.fd = None
 
     def _detect_file_type(self):
-        """TODO.
+        """Store string values describing the auto-detected file type.
 
         :Returns:
 
@@ -182,7 +182,7 @@ class Var:
             return -1
 
     def _compare_recs_by_extra_data(self, a, b):
-        """TODO.
+        """Compare records with respect to their extra data.
 
         :Returns:
 
@@ -192,7 +192,7 @@ class Var:
         return self._compare(a.get_extra_data(), b.get_extra_data())
 
     def _compare_recs_by_orig_order(self, a, b):
-        """TODO.
+        """Compare records with respect to their original order.
 
         :Returns:
 

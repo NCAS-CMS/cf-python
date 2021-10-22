@@ -136,7 +136,7 @@ class CInterface:
         self.lib = CT.CDLL(lib_path)
 
     def _is_null_pointer(self, ptr):
-        """TODO.
+        """True if the pointer is a null pointer.
 
         :Returns:
 
@@ -194,7 +194,7 @@ class CInterface:
         }
 
     def create_file_type(self, fmt, byte_ordering, word_size):
-        """TODO.
+        """Creates a `File_type` object for passing to `file_parse`.
 
         :Parameters:
 
@@ -254,11 +254,11 @@ class CInterface:
             raise ValueError(f"Word size must be 4 or 8 (not {word_size!r})")
 
     def _get_ctypes_int_array(self, size=None):
-        """TODO."""
+        """Get ctypes corresponding to the `numpy` integer array."""
         return _get_ctypes_array(self.file_data_int_type, size)
 
     def _get_ctypes_real_array(self, size=None):
-        """TODO."""
+        """Get ctypes corresponding to the `numpy` real array."""
         return _get_ctypes_array(self.file_data_real_type, size)
 
     def _get_empty_real_array(self, size):
