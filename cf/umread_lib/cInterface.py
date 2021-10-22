@@ -174,7 +174,7 @@ class CInterface:
 
     def file_type_obj_to_dict(self, file_type):
         """Converts a `File_type` object returned by `detect_file_type` into a
-        dictionary that include meaningful string values in place of the
+        dictionary that includes meaningful string values in place of the
         integers that derive from the C enum statments, specifically:
         'fmt': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
         'big_endian' and also 'word_size': 4 or 8

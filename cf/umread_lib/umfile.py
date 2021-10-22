@@ -18,7 +18,7 @@ class File:
     def __init__(
         self, path, byte_ordering=None, word_size=None, fmt=None, parse=True
     ):
-        """Open andparse a UM file.
+        """Open and parse a UM file.
 
         The optional *byte_ordering*, *word_size* and *fmt* arguments
         specify the file type. If all three are set, then this forces the
@@ -202,7 +202,7 @@ class Var:
         return self._compare(self.recs.index(a), self.recs.index(b))
 
     def group_records_by_extra_data(self):
-        """Group records by mathcing extra data.
+        """Group records by matching extra data.
 
         Returns a list of (sub)lists of records where each record
         within each sublist has matching extra data (if
@@ -285,23 +285,23 @@ class Rec:
         """Instantiate a `Rec` object from the `File` object and the
         header and data offsets.
 
-         The headers are read in, and also the record object is ready for
-         calling `get_data`.
+        The headers are read in, and also the record object is ready for
+        calling `get_data`.
 
-         :Parameters:
+        :Parameters:
 
-             file: `File`
-                 A view of a file including sets of PP records combined
-                 into variables.
+            file: `File`
+                A view of a file including sets of PP records combined
+                into variables.
 
-             hdr_offset: `int`
-                 The start word in the file of the header.
+            hdr_offset: `int`
+                The start word in the file of the header.
 
-             data_offset: `int`
-                 The start word in the file of the data.
+            data_offset: `int`
+                The start word in the file of the data.
 
-             disk_length: `int`
-                 The length in words of the data in the file.
+            disk_length: `int`
+                The length in words of the data in the file.
 
         :Returns:
 
