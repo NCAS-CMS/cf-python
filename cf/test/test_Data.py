@@ -1582,29 +1582,24 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(b.shape, e.shape, message)
                 self.assertTrue((b == e.array).all(), message)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute 'chunk_sizes'")
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
-        for chunksize in self.chunk_sizes:
-            with cf.chunksize(chunksize):
-                d = cf.Data(a.copy())
+        d = cf.Data(a.copy())
 
-                for indices in (range(a.ndim), range(-a.ndim, 0)):
-                    for axes in itertools.permutations(indices):
-                        a = np.transpose(a, axes)
-                        d.transpose(axes, inplace=True)
-                        message = (
-                            "cf.Data.transpose({}) failed: "
-                            "d.shape={}, a.shape={}".format(
-                                axes, d.shape, a.shape
-                            )
-                        )
-                        self.assertEqual(d.shape, a.shape, message)
-                        self.assertTrue((d.array == a).all(), message)
+        for indices in (range(a.ndim), range(-a.ndim, 0)):
+            for axes in itertools.permutations(indices):
+                a = np.transpose(a, axes)
+                d.transpose(axes, inplace=True)
+                message = (
+                    "cf.Data.transpose({}) failed: "
+                    "d.shape={}, a.shape={}".format(axes, d.shape, a.shape)
+                )
+                self.assertEqual(d.shape, a.shape, message)
+                self.assertTrue((d.array == a).all(), message)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
