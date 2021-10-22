@@ -12244,7 +12244,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = da.transpose(dx, axes=axes)
         except ValueError:
             raise ValueError(
-                f"Can't tranpose: Axes don't match array: {axes}"
+                f"Can't transpose: Axes don't match array: {axes}"
             )
         d._set_dask(dx, reset_mask_hardness=False)
 
