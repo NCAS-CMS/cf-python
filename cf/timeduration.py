@@ -380,7 +380,7 @@ class TimeDuration:
         return out
 
     def __array__(self, *dtype):
-        """TODO."""
+        """Returns a `numpy` array representing the time duration."""
         return self.duration.__array__(*dtype)
 
     def __data__(self):
@@ -759,7 +759,7 @@ class TimeDuration:
     # Private methods
     # ----------------------------------------------------------------
     def _binary_operation(self, other, method, inplace=False):
-        """TODO."""
+        """Implement binary operations on the datetime."""
         if inplace:
             new = self
         else:
@@ -803,7 +803,7 @@ class TimeDuration:
         return new
 
     def _data_binary_operation(self, other, method, inplace=False):
-        """TODO."""
+        """Implement binary operations on the datetime data."""
         if inplace:
             new = self
         else:
@@ -812,7 +812,7 @@ class TimeDuration:
         return getattr(new.duration, method)(other)
 
     def _datetime_arithmetic(self, other, op):
-        """TODO.
+        """Apply binary arithmetic operations on the datetime.
 
         .. versionadded:: 1.4
 
@@ -885,7 +885,7 @@ class TimeDuration:
             return _dHMS(duration, other, calendar, op)
 
     def _data_arithmetic(self, other, method, inplace=False):
-        """TODO."""
+        """Apply binary arithmetic operations on the datetime data."""
         try:
             dt = other.datetime_array
         except ValueError:
@@ -903,17 +903,22 @@ class TimeDuration:
             return Data(dt, units=other.Units)
 
     def _offset(self, dt):
-        """TODO.
+        """Calculate the time duration offset.
 
         .. versionadded:: 1.4
 
         :Parameters:
 
-            dt: `cf.Datetime` TODO
+            dt: `cf.Datetime`
+                The date-time from which to calculate the offset.
+                *dt* may be any date-time-like object, such as
+                `cf.Datetime`, `datetime.datetime`,
+                `netCDF4.netcdftime.datetime`, etc.
 
         :Returns:
 
-            `Datetime` TODO
+            `Datetime`
+                The date-time object representing the offset.
 
         """
         return cf_dt(
@@ -1060,10 +1065,12 @@ class TimeDuration:
         :Parameters:
 
             year: `int`
-                TODO
+                The calendar year to query.
 
             month: `int`
-                TODO
+                The one- or two-digit integer representing the calendar
+                month to query (numbered by order in the calendar year,
+                for example 2 for February, 10 for October).
 
             calendar: `str`, optional
                 By default, calendar is the mixed Gregorian/Julian
@@ -1553,7 +1560,7 @@ class TimeDuration:
 
         .. versionadded:: 1.2.3
 
-        .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
+        .. seealso:: `cf.dt`, `cf.Datetime`, `interval`, `offset`
 
         :Parameters:
 
@@ -1581,27 +1588,25 @@ class TimeDuration:
 
         **Examples:**
 
-        TODO
-
         >>> t = cf.M()
         >>> t.bounds(cf.dt(2000, 1, 1))
-        (cftime.DatetimeGregorian(2000-01-01 00:00:00),
-         cftime.DatetimeGregorian(2000-02-01 00:00:00))
+        (cftime.DatetimeGregorian(2000, 1, 1, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 2, 1, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(1)
         >>> t.bounds(cf.dt(2000, 3, 1))
-        (cftime.DatetimeGregorian(2000-03-01 00:00:00),
-         cftime.DatetimeGregorian(2000-04-01 00:00:00))
+        (cftime.DatetimeGregorian(2000, 3, 1, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 4, 1, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(1, day=15)
         >>> t.bounds(cf.dt(2000, 3, 1))
-        (cftime.DatetimeGregorian(2000-02-15 00:00:00),
-         cftime.DatetimeGregorian(2000-03-15 00:00:00))
+        (cftime.DatetimeGregorian(2000, 2, 15, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 3, 15, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(2, day=15)
         >>> t.bounds(cf.dt(2000, 3, 1), direction=False)
-        (cftime.DatetimeGregorian(2000-03-15 00:00:00),
-         cftime.DatetimeGregorian(2000-01-15 00:00:00))
+        (cftime.DatetimeGregorian(2000, 3, 15, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 1, 15, 0, 0, 0, 0, has_year_zero=False))
 
         """
         abs_self = abs(self)
