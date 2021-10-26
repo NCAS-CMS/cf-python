@@ -871,16 +871,7 @@ class TimeDuration:
                 if d > max_days:
                     d = max_days
 
-            # TODO When cftime==1.1.4 is ready use this one line:
-            #            return other.replace(year=y, month=m, day=d)
-            # Instead of these try ... except ... lines:
-            try:
-                return other.replace(year=y, month=m, day=d, calendar=calendar)
-            except (ValueError, TypeError):
-                # If we are here, then 'other' is a datetime.datetime
-                # object, which doesn't have a 'calendar' keyword to
-                # its 'replace' method.
-                return other.replace(year=y, month=m, day=d)
+            return other.replace(year=y, month=m, day=d)
         else:
             return _dHMS(duration, other, calendar, op)
 
