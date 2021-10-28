@@ -470,7 +470,7 @@ _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
 
 
 class UMField:
-    """TODO."""
+    """Represents Fields derived from a UM fields file."""
 
     def __init__(
         self,
@@ -705,7 +705,7 @@ class UMField:
                     break
 
         if not ok:
-            # This PP/UM ield does not match the requested selection
+            # This PP/UM field does not match the requested selection
             self.field = (None,)
             return
 
@@ -1123,7 +1123,7 @@ class UMField:
         return "\n".join(out)
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
-        """TODO.
+        """`atmosphere_hybrid_height_coordinate` when not an array axis.
 
         **From appendix A of UMDP F3**
 
@@ -1266,7 +1266,9 @@ class UMField:
         return dc
 
     def depth_coordinate(self, axiscode):
-        """TODO.
+        """`atmosphere_hybrid_height_coordinate_*k` depth coordinate.
+
+        Only applicable when not an array axis.
 
         :Parameters:
 
@@ -1338,8 +1340,9 @@ class UMField:
         return dc
 
     def atmosphere_hybrid_sigma_pressure_coordinate(self, axiscode):
-        """atmosphere_hybrid_sigma_pressure_coordinate when not an array
-        axis.
+        """`atmosphere_hybrid_sigma_pressure_coordinate`
+
+        Only applicable when not an array axis.
 
         46 BULEV Upper layer boundary or BRSVD(1)
 
@@ -1559,7 +1562,7 @@ class UMField:
         return cell_methods
 
     def coord_axis(self, c, axiscode):
-        """TODO."""
+        """Map axis codes to CF axis attributes for the coordinate."""
         axis = _coord_axis.setdefault(axiscode, None)
         if axis is not None:
             c.axis = axis
@@ -1614,7 +1617,7 @@ class UMField:
         return c
 
     def coord_names(self, coord, axiscode):
-        """TODO.
+        """Map axis codes to CF standard names for the coordinate.
 
         :Parameters:
 
@@ -1640,7 +1643,7 @@ class UMField:
         return coord
 
     def coord_positive(self, c, axiscode, domain_axis_key):
-        """TODO.
+        """Map axis codes to CF positive attributes for the coordinate.
 
         :Parameters:
 
@@ -1664,7 +1667,8 @@ class UMField:
         return c
 
     def ctime(self, rec):
-        """TODO."""
+        """Return elapsed time since the clock time of the given
+        record."""
         reftime = self.refUnits
         LBVTIME = tuple(self.header_vtime(rec))
         LBDTIME = tuple(self.header_dtime(rec))
@@ -3388,7 +3392,7 @@ stash2standard_name = _stash2standard_name
 
 
 class UMRead(cfdm.read_write.IORead):
-    """TODO."""
+    """A container for instantiating Fields from a UM fields file."""
 
     @_manage_log_level_via_verbosity
     def read(
