@@ -2160,7 +2160,7 @@ class UMField:
         return out2
 
     def latitude_longitude_2d_aux_coordinates(self, yc, xc):
-        """TODO.
+        """Set the latitude and longitude auxiliary coordinates.
 
         :Parameters:
 
@@ -2390,7 +2390,7 @@ class UMField:
                 logger.info(header)
 
     def pseudolevel_coordinate(self, LBUSER5):
-        """TODO."""
+        """Create and return the pseudolevel coordinate."""
         if self.nz == 1:
             array = np.array((LBUSER5,), dtype=self.int_hdr_dtype)
         else:
@@ -2432,7 +2432,7 @@ class UMField:
         return dc
 
     def radiation_wavelength_coordinate(self, rwl, rwl_units):
-        """TODO."""
+        """Creata and return the radiation wavelength coordinate."""
         array = np.array((rwl,), dtype=float)
         bounds = np.array(((0.0, rwl)), dtype=float)
 
@@ -2461,7 +2461,7 @@ class UMField:
         return dc
 
     def reference_time_Units(self):
-        """TODO."""
+        """Return the units of the `reference_time`."""
         LBYR = self.int_hdr[lbyr]
         time_units = f"days since {LBYR}-1-1"
         calendar = self.calendar
@@ -2478,7 +2478,7 @@ class UMField:
         return units
 
     def size_1_height_coordinate(self, axiscode, height, units):
-        """TODO."""
+        """Create and return the size-one height coordinate."""
         # Create the height coordinate from the information given in the
         # STASH to standard_name conversion table
 
@@ -2681,7 +2681,7 @@ class UMField:
         return dc
 
     def time_coordinate_from_extra_data(self, axiscode, axis):
-        """TODO.
+        """Create the time coordinate from extra data and return it.
 
         :Returns:
 
@@ -2727,7 +2727,7 @@ class UMField:
         return dc
 
     def time_coordinate_from_um_timeseries(self, axiscode, axis):
-        """TODO."""
+        """Create the time coordinate from a timeseries field."""
         # This PP/FF field is a timeseries. The validity time is
         # taken to be the time for the first sample, the data time
         # for the last sample, with the others evenly between.
@@ -3185,7 +3185,7 @@ class UMField:
 
     @_manage_log_level_via_verbose_attr
     def z_reference_coordinate(self, axiscode):
-        """TODO."""
+        """Create and return the Z reference coordinates."""
         logger.info(
             "Creating Z reference coordinates from BRLEV"
         )  # pragma: no cover
