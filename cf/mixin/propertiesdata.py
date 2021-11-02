@@ -4858,7 +4858,10 @@ class PropertiesData(Properties):
         """
         axis = self._parse_axes(axis)
         if len(axis) != 1:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Only one axis can be checked for cyclicity at once, but "
+                f"multiple were selected: {axis}"
+            )
 
         return axis[0] in self.cyclic()
 
