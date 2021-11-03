@@ -2163,9 +2163,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             refs0 = field0.get_coordinate_reference(construct=a.key, key=True)
 
             n_refs = len(refs1)
+            n0_refs = len(refs0)
 
-            if n_refs != len(refs0):
-                raise ValueError("TODO")
+            if n_refs != n0_refs:
+                raise ValueError(
+                    f"Can't combine {self.__class__.__name__!r} with "
+                    f"{other.__class__.__name__!r} because the coordinate "
+                    f"references have different lengths: {n_refs} and "
+                    f"{n0_refs}."
+                )
 
             n_equivalent_refs = 0
             for ref1 in refs1:
@@ -2178,7 +2184,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         break
 
             if n_equivalent_refs != n_refs:
-                raise ValueError("TODO")
+                raise ValueError(
+                    f"Can't combine {self.__class__.__name__!r} with "
+                    f"{other.__class__.__name__!r} because the fields have "
+                    "incompatible coordinate references."
+                )
 
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
@@ -2603,13 +2613,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ]
 
             nrefs = len(refs0)
+            error_msg = (
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} because the defining "
+                "coordinates are attached to incompatible coordinate "
+                "references."
+            )
             if nrefs > 1 or nrefs != len(refs1):
-                raise ValueError("TODO")
+                raise ValueError(error_msg)
 
             if nrefs and not self._equivalent_coordinate_references(
                 other, key0=refs0[0], key1=refs1[0], s=s, t=v
             ):
-                raise ValueError("TODO")
+                raise ValueError(error_msg)
 
         return other
 
@@ -3372,7 +3388,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 positive = aux_Z.get_property("positive", None)
                 if positive is None:
-                    raise ValueError("TODO")
+                    raise ValueError(
+                        "Value of Z coordinate 'positive' property is not "
+                        "defined"
+                    )
 
                 if positive.lower() == "up":
                     r = radius + z
