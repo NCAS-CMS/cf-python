@@ -3040,7 +3040,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_size=(1,), todict=True
                 )
                 if set(w_domain_axes_1).intersection(t["undefined_axes"]):
-                    raise ValueError("345jn456jn TODO")
+                    raise ValueError(
+                        f"Weights field {w} has at least one undefined "
+                        f"domain axes: {w_domain_axes_1}."
+                    )
 
             w = w.squeeze()
 
@@ -3592,7 +3595,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if auto:
                 return False
 
-            raise ValueError("TODO")
+            raise ValueError(
+                "Z coordinate bounds must have units equivalent to "
+                f"metres for volume calculations. Got {z.Units!r}."
+            )
 
         if not methods:
             # Initialise cell volumes as the cell areas
@@ -3664,7 +3670,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     delta_z ** 3 / (3 * r ** 2) + delta_z ** 2 / r + delta_z
                 )
         else:
-            raise ValueError("TODO")
+            raise ValueError(
+                "X and Y coordinate bounds must both have units "
+                "equivalent to either metres, for plane polygon, or radians, "
+                "for spherical polygon, volume calculations. Got "
+                f"{x.Units!r} and {y.Units!r}."
+            )
 
         comp[(axis,)] = volumes
 
@@ -5368,7 +5379,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 key = [self.domain_axis(i, key=True) for i in key]
                 for k in key:
                     if k not in field_data_axes:
-                        raise ValueError(f"TODO {k!r} domain axis")
+                        raise ValueError(
+                            f"Can't find weights: {k!r} domain axis does "
+                            "not correspond to one of the data axes."
+                        )
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
@@ -8499,7 +8513,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     elif not measure and scale is None:
                         scale = 1.0
                     elif measure and scale is not None:
-                        raise ValueError("TODO")
+                        raise ValueError(
+                            "Can't scale weights which are created as cell "
+                            "measures i.e. can't scale the weights if "
+                            "measure parameter is set to True."
+                        )
 
                     #                    if weights is True:
                     #                        weights = tuple(collapse_axes.keys())
