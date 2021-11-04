@@ -37,7 +37,7 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package is only Python 3.7 or later.
+The cf package is only for Python 3.7 or later.
 
 Versions 2.x of cf work only for Python 2.7.
 
