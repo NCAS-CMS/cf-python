@@ -10,6 +10,38 @@ from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..units import Units
 
 
+def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
+    """An effective dask.array.ma.allclose method.
+
+    True if two dask arrays are element-wise equal within
+    a tolerance.
+
+    Equivalent to allclose except that masked values are treated
+    as equal (default) or unequal, depending on the masked_equal
+    argument.
+
+    Define an effective da.ma.allclose method here because one is
+    currently missing in the Dask codebase.
+
+    Note that all default arguments are the same as those provided to
+    the corresponding NumPy method (see the `numpy.ma.allclose` API
+    reference).
+
+    TODODASK: put in a PR to Dask to request to add as genuine method.
+
+    """
+    x = da.asanyarray(x)
+    y = da.asanyarray(y)
+    return da.map_blocks(
+        np.ma.allclose,
+        x,
+        y,
+        masked_equal=masked_equal,
+        rtol=rtol,
+        atol=atol,
+    )
+
+
 def convert_to_datetime(array, units):
     """Convert a daskarray to.
 
@@ -415,7 +447,7 @@ def scalar_masked_array(dtype=float):
     a = np.ma.empty((), dtype=dtype)
     a.mask = True
     return a
- 
+
 
 def conform_units(value, units):
     """Conform units.
@@ -480,4 +512,3 @@ def conform_units(value, units):
             )
 
     return value
-

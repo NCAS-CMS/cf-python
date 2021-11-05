@@ -107,6 +107,7 @@ from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    _da_ma_allclose,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -9116,26 +9117,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
             return False
 
-        # other.to_memory()  # TODODASK is this still required?
-
         self_dx = self._get_dask()
         other_dx = other._get_dask()
 
-        # Finally check that corresponding elements are equal to a tolerance
-        if not da.allclose(
-            self_dx, other_dx, rtol=float(rtol), atol=float(atol)
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different array values "
-                f"(atol={atol}, rtol={rtol})"
-            )
+        # Now check that corresponding elements are equal within a tolerance.
+        # We assume that all inputs are masked arrays.
+        mask_comparison = da.equal(
+            da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx)
+        )
+        data_comparison = _da_ma_allclose(
+            self_dx,
+            other_dx,
+            masked_equal=False,
+            rtol=float(rtol),
+            atol=float(atol),
+        )
+        # Apply a (dask) logical 'and' to confirm if both the mask and the
+        # data are equal for the pair of masked arrays:
+        result = da.all(da.logical_and(mask_comparison, data_comparison))
 
-            return False
-
-        # ------------------------------------------------------------
-        # Still here? Then the two instances are equal.
-        # ------------------------------------------------------------
-        return True
+        # Return the uncomputed result because there will often be further
+        # steps in the task graph and computing early is inefficient.
+        #
+        # Note that we don't supply an error message (for the False case)
+        # here because we can't specify when to run it without having
+        # evaluated by computing, but that's OK because dask will provide
+        # an appropriate error message to indicate any inequalities.
+        return result
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
