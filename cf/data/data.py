@@ -9142,6 +9142,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # data are equal for the pair of masked arrays:
         result = da.all(da.logical_and(mask_comparison, data_comparison))
 
+        # TODODASK: (how) can we supply a post-compute log message such
+        # as the below, when we return an uncomputed result for the
+        # `equals` method so don't know if it is appropriate or not?
+        # Leave this (pre-Daskification message) commented here for now:
+        #
+        # logger.info(
+        #     "{0}: Different array values (atol={1}, "
+        #     "rtol={2})".format(self.__class__.__name__, atol, rtol)
+        # )
+
         # Return the uncomputed result because there will often be further
         # steps in the task graph and computing early is inefficient.
         #
