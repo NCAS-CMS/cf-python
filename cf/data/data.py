@@ -9059,18 +9059,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             other:
                 The object to compare for equality.
 
-            {{atol: number, optional}}
-
             {{rtol: number, optional}}
+
+            {{atol: number, optional}}
 
             ignore_fill_value: `bool`, optional
                 If True then data arrays with different fill values are
                 considered equal. By default they are considered unequal.
 
+            {{ignore_data_type: `bool`, optional}}
+
+            {{ignore_type: `bool`, optional}}
+
             {{verbose: `int` or `str` or `None`, optional}}
 
             traceback: deprecated at version 3.0.0
                 Use the *verbose* parameter instead.
+
+            {{ignore_compression: `bool`, optional}}
 
         :Returns:
 

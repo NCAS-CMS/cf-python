@@ -279,8 +279,6 @@ class DataTest(unittest.TestCase):
                 # )
 
         # Test ignore_data_type parameter
-        # TODODASK - this one needs documenting in the method docstring.
-        # Question for DH: is ignore_type an alias?
         self.assertTrue(d2.equals(d, ignore_data_type=True))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
