@@ -29,6 +29,32 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
 
     TODODASK: put in a PR to Dask to request to add as genuine method.
 
+    .. versionadded:: 4.0.0
+
+        :Parameters:
+
+            x: a dask array to compare with y
+
+            y: a dask array to compare with x
+
+            masked_equal:
+                Whether masked values in a and b are considered
+                equal (True) or not (False). They are considered equal
+                by default.
+
+            rtol:
+                Relative tolerance. Default is 1e-05.
+
+            atol:
+                Absolute tolerance. Default is 1e-08.
+
+        :Returns:
+
+            Boolean
+                A Boolean value indicating whether or not the
+                two dask arrays are element-wise equal to
+                the given rtol and atol tolerance.
+
     """
     x = da.asanyarray(x)
     y = da.asanyarray(y)
