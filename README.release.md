@@ -146,4 +146,7 @@
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.3.0
   ```
 
+* Update the GitHub releases page for the new version:
+  https://github.com/NCAS-CMS/cf-python/releases
+  
 * Upload the new release to Zenodo: https://zenodo.org/record/3961353

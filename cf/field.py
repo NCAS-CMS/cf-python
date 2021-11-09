@@ -10954,7 +10954,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             "objects"
                         )
 
-                    if 0 < len(bounds) < n_items:
+                    if len(bounds) != 1:
                         raise ValueError(
                             "Can't create indices based on coordinates that "
                             "have bounds that aren't unique."
