@@ -10,7 +10,7 @@ from ...units import Units
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
-    """TODO.
+    """A container for instantiating Fields from a netCDF dataset.
 
     .. versionadded:: 3.0.0
 
@@ -138,7 +138,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
     ):
-        """TODO.
+        """Create data for a netCDF or CFA-netCDF variable.
 
         .. versionadded:: 3.0.0
 
@@ -291,7 +291,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         loadd=None,
         **kwargs,
     ):
-        """TODO.
+        """Create a Data object.
 
         .. versionadded:: 3.0.0
 
@@ -323,7 +323,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
     def _customize_read_vars(self):
-        """TODO.
+        """Customize the read parameters.
 
         .. versionadded:: 3.0.0
 
