@@ -174,15 +174,12 @@ class DataTest(unittest.TestCase):
         g = cf.Data(np.ones(shape, dtype="int64"), "m")  # different values
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(g.equals(d))
-            # TODODASK: (how) can we supply a post-compute log message such
-            # as the below, when we return an uncomputed result for the
-            # `equals` method? Leave these tests in until we know.
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different array values" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         # Test NaN and inf values
         h = cf.Data(np.full(shape, np.nan), "m")
@@ -190,44 +187,40 @@ class DataTest(unittest.TestCase):
         with self.assertLogs(level=cf.log_level().value) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
             self.assertFalse(h.equals(d3))
-            # TODODASK: see TODO in previous block, don't uncomment below
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different array values" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
         i = cf.Data(np.full(shape, np.inf), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(i.equals(d3))  # np.inf is also of dtype float64
-            # TODODASK: see TODO in previous block, don't uncomment below
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different array values" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(h.equals(i))
-            # TODODASK: see TODO in previous block, don't uncomment below
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different array values" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         # Test masked arrays
         j = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j.equals(d))
-            # TODODASK: see TODO in previous block, don't uncomment below
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different array values" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         # Test rtol and atol parameters
         k1 = cf.Data(np.array([10.0, 20.0]))
@@ -237,14 +230,13 @@ class DataTest(unittest.TestCase):
             # Only one log check is sufficient here
             with self.assertLogs(level=cf.log_level().value) as catch:
                 self.assertFalse(k_1.equals(k_2, atol=0.005, rtol=0))
-                # TODODASK: see TODO in previous block, don't uncomment below
-                # self.assertTrue(
-                #     any(
-                #         "Data: Different array values (atol=0.005, rtol=0)"
-                #         in log_msg
-                #         for log_msg in catch.output
-                #     )
-                # )
+                self.assertTrue(
+                    any(
+                        "Data: Different array values (atol=0.005, rtol=0)"
+                        in log_msg
+                        for log_msg in catch.output
+                    )
+                )
             self.assertTrue(k_1.equals(k_2, atol=0.02, rtol=0))
             self.assertFalse(k_1.equals(k_2, atol=0, rtol=0.0005))
             self.assertTrue(k_1.equals(k_2, atol=0, rtol=0.002))
@@ -254,13 +246,12 @@ class DataTest(unittest.TestCase):
         m2 = cf.Data(1, fill_value=2000)
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(m1.equals(m2))
-            # TODODASK: see TODO in previous block, don't uncomment below
-            # self.assertTrue(
-            #     any(
-            #         "Data: Different fill value: 1000 != 2000" in log_msg
-            #         for log_msg in catch.output
-            #     )
-            # )
+            self.assertTrue(
+                any(
+                    "Data: Different fill value: 1000 != 2000" in log_msg
+                    for log_msg in catch.output
+                )
+            )
             self.assertTrue(m1.equals(m2, ignore_fill_value=True))
 
         # Test verbose parameter: 1/'INFO' level is behaviour change boundary
@@ -268,15 +259,14 @@ class DataTest(unittest.TestCase):
             verbosity_level, expect_to_see_msg = checks
             with self.assertLogs(level=cf.log_level().value) as catch:
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
-                # TODODASK: see TODO in previous block, don't uncomment below
-                # self.assertIs(
-                #     any(
-                #         "Data: Different data types: float32 != int64"
-                #         in log_msg
-                #         for log_msg in catch.output
-                #     ),
-                #     expect_to_see_msg,
-                # )
+                self.assertIs(
+                    any(
+                        "Data: Different data types: float32 != int64"
+                        in log_msg
+                        for log_msg in catch.output
+                    ),
+                    expect_to_see_msg,
+                )
 
         # Test ignore_data_type parameter
         self.assertTrue(d2.equals(d, ignore_data_type=True))
