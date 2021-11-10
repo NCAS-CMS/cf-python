@@ -15,7 +15,7 @@ from ...functions import relpath
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
-    """TODO."""
+    """A container for writing Fields to a netCDF dataset."""
 
     def file_close(self, filename):
         """Close the netCDF file that has been written.
@@ -67,7 +67,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return nc
 
     def _write_as_cfa(self, cfvar):
-        """TODO.
+        """True if the variable should be written as a CFA variable.
 
         .. versionadded:: 3.0.0
 
@@ -130,7 +130,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         compressed=False,
         attributes={},
     ):
-        """TODO.
+        """Write a Data object.
 
         .. versionadded:: 3.0.0
 
@@ -327,7 +327,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
 
     def _change_reference_datetime(self, coord):
-        """TODO.
+        """Change the units of a reference date-time value.
 
         .. versionadded:: 3.0.0
 
