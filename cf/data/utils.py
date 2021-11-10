@@ -56,15 +56,33 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
                 the given rtol and atol tolerance.
 
     """
-    x = da.asanyarray(x)
-    y = da.asanyarray(y)
-    return da.map_blocks(
-        np.ma.allclose,
+
+    def allclose(a_blocks, b_blocks):
+        """Run `ma.allclose` across multiple blocks over two arrays."""
+        result = True
+        for a, b in zip(a_blocks, b_blocks):
+            result &= np.ma.allclose(
+                a, b, rtol=rtol, atol=atol, masked_equal=masked_equal
+            )
+
+        return result
+
+    # Handle scalars, which are not valid inputs to da.blockwise, though
+    # test for scalars by checking the shape to avoid computation, etc.
+    if not x.shape and not y.shape:  # i.e. both are scalars
+        return np.ma.allclose(x, y)
+    elif not x.shape or not y.shape:
+        return False  # one is a scalar and the other isn't => not all close
+
+    axes = tuple(range(x.ndim))
+    return da.blockwise(
+        allclose,
+        "",
         x,
+        axes,
         y,
-        masked_equal=masked_equal,
-        rtol=rtol,
-        atol=atol,
+        axes,
+        dtype=bool,
     )
 
 
