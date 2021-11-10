@@ -222,6 +222,37 @@ class DataTest(unittest.TestCase):
                 )
             )
 
+        # Test where inputs are scalars
+        s1 = cf.Data(1)
+        s2 = cf.Data(10)
+        s3 = cf.Data("a_string")
+        # 1. both are scalars
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(s2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(s3))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: int64 != <U8" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. only one is a scalar
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: () != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
         # Test rtol and atol parameters
         k1 = cf.Data(np.array([10.0, 20.0]))
         k2 = cf.Data(np.array([10.01, 20.01]))

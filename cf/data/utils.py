@@ -67,12 +67,11 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
 
         return result
 
-    # Handle scalars, which are not valid inputs to da.blockwise, though
-    # test for scalars by checking the shape to avoid computation, etc.
-    if not x.shape and not y.shape:  # i.e. both are scalars
+    # Handle scalars: da.blockwise will raise a TypeError if both of its array
+    # inputs are scalar, though if only one is scalar it manages. Test for
+    # scalars by checking the shape (scalar has '()') to avoid computation.
+    if not x.shape and not y.shape:
         return np.ma.allclose(x, y)
-    elif not x.shape or not y.shape:
-        return False  # one is a scalar and the other isn't => not all close
 
     axes = tuple(range(x.ndim))
     return da.blockwise(
