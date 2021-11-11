@@ -62,7 +62,11 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
         result = True
         for a, b in zip(a_blocks, b_blocks):
             result &= np.ma.allclose(
-                a, b, rtol=rtol, atol=atol, masked_equal=masked_equal
+                a,
+                b,
+                masked_equal=masked_equal,
+                rtol=rtol,
+                atol=atol,
             )
 
         return result
@@ -71,7 +75,9 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
     # inputs are scalar, though if only one is scalar it manages. Test for
     # scalars by checking the shape (scalar has '()') to avoid computation.
     if not x.shape and not y.shape:
-        return np.ma.allclose(x, y)
+        return np.ma.allclose(
+            x, y, masked_equal=masked_equal, rtol=rtol, atol=atol
+        )
 
     axes = tuple(range(x.ndim))
     return da.blockwise(

@@ -9147,6 +9147,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 f"{self.__class__.__name__}: Different array values ("
                 f"atol={atol}, rtol={rtol})"
             )
+            return False
         else:
             return True
 
