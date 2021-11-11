@@ -310,7 +310,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     """
 
     def __new__(cls, *args, **kwargs):
-        """TODO."""
+        """Store component classes."""
         instance = super().__new__(cls)
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         instance._Bounds = Bounds
@@ -16740,7 +16740,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     # ----------------------------------------------------------------
     @property
     def _Axes(self):
-        """TODO."""
+        """Return domain axis constructs.
+
+        Deprecated at version 3.0.0. Use `domain_axes` method instead.
+
+        """
         raise DeprecationError(
             f"{self.__class__.__name__} attribute '_Axes' has been deprecated "
             "at version 3.0.0 and is no longer available and will be removed"
@@ -16750,7 +16754,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @property
     def CellMethods(self):
-        """TODO."""
+        """Return cell method constructs.
+
+        Deprecated at version 3.0.0. Use `cell_methods` method instead.
+
+        """
         raise DeprecationError(
             f"{self.__class__.__name__} attribute 'CellMethods' has been "
             "deprecated at version 3.0.0 and is no longer available "
@@ -16760,7 +16768,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @property
     def Items(self):
-        """TODO."""
+        """Return domain items as (construct key, construct) pairs.
+
+        Deprecated at version 3.0.0. Use `constructs` method instead.
+
+        """
         raise DeprecationError(
             f"{self.__class__.__name__} attribute 'Items' has been deprecated "
             "at version 3.0.0 and is no longer available "
@@ -16769,7 +16781,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
     def CM(self, xxx):
-        """TODO."""
+        """Return cell method constructs.
+
+        Deprecated at version 3.0.0.
+
+        """
         raise DeprecationError(
             f"{self.__class__.__name__} method 'CM' has been deprecated "
             "at version 3.0.0 and is no longer available "
@@ -16993,13 +17009,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         item=False,
         **filter_kwargs,
     ):
-        """TODO."""
+        """Return a domain item of the field.
+
+        Deprecated. Use `construct` method instead.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self, "item", "Use 'construct' method instead."
         )  # pragma: no cover
 
     def items(self, *identities, **filter_kwargs):
-        """TODO."""
+        """Return domain items as (construct key, construct) pairs.
+
+        Deprecated. Use `constructs` method instead.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self, "items", "Use 'constructs' method instead."
         )  # pragma: no cover
