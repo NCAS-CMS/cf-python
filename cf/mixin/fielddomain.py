@@ -671,7 +671,10 @@ class FieldDomain:
                         )
 
                     if 0 < len(bounds) < n_items:
-                        raise ValueError("bounds alskdaskds TODO")
+                        raise ValueError(
+                            "Cell to derive index from must have unique "
+                            f"bounds, but got {bounds}"
+                        )
 
                     # Remove grid cells if, upon closer inspection,
                     # they do actually contain the point.
@@ -1345,7 +1348,10 @@ class FieldDomain:
         """
         if construct is None:
             if identity is None:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "An identity or construct must be provided in order to "
+                    "determine the coordinate reference to select."
+                )
 
             key = self.coordinate_reference(identity, key=True, default=None)
             if key is None:
@@ -1366,7 +1372,10 @@ class FieldDomain:
 
             return ref
         elif identity is not None:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Provide only one of the identity and construct parameters "
+                "to select a coordinate reference."
+            )
 
         out = []
 
@@ -2694,7 +2703,11 @@ class FieldDomain:
             shape0 = getattr(c, "shape", None)
             shape1 = getattr(new, "shape", None)
             if shape0 != shape1:
-                raise ValueError("TODO bb")
+                raise ValueError(
+                    f"Can't replace {c.__class__.__name__} construct "
+                    f"with a {new.__class__.__name__} object of different "
+                    "shape."
+                )
 
         self.set_construct(new, key=key, axes=axes, copy=copy)
 

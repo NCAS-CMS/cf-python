@@ -2163,9 +2163,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             refs0 = field0.get_coordinate_reference(construct=a.key, key=True)
 
             n_refs = len(refs1)
+            n0_refs = len(refs0)
 
-            if n_refs != len(refs0):
-                raise ValueError("TODO")
+            if n_refs != n0_refs:
+                raise ValueError(
+                    f"Can't combine {self.__class__.__name__!r} with "
+                    f"{other.__class__.__name__!r} because the coordinate "
+                    f"references have different lengths: {n_refs} and "
+                    f"{n0_refs}."
+                )
 
             n_equivalent_refs = 0
             for ref1 in refs1:
@@ -2178,7 +2184,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         break
 
             if n_equivalent_refs != n_refs:
-                raise ValueError("TODO")
+                raise ValueError(
+                    f"Can't combine {self.__class__.__name__!r} with "
+                    f"{other.__class__.__name__!r} because the fields have "
+                    "incompatible coordinate references."
+                )
 
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
@@ -2603,13 +2613,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ]
 
             nrefs = len(refs0)
+            error_msg = (
+                f"Can't combine {self.__class__.__name__!r} with "
+                f"{other.__class__.__name__!r} because the defining "
+                "coordinates are attached to incompatible coordinate "
+                "references."
+            )
             if nrefs > 1 or nrefs != len(refs1):
-                raise ValueError("TODO")
+                raise ValueError(error_msg)
 
             if nrefs and not self._equivalent_coordinate_references(
                 other, key0=refs0[0], key1=refs1[0], s=s, t=v
             ):
-                raise ValueError("TODO")
+                raise ValueError(error_msg)
 
         return other
 
@@ -2953,7 +2969,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if len(axes) != w.ndim:
                 raise ValueError(
                     "'axes' parameter must provide an axis identifier "
-                    "for each weights data dimension. Got {axes!r} for "
+                    f"for each weights data dimension. Got {axes!r} for "
                     f"{w.ndim} dimension(s)."
                 )
 
@@ -3024,7 +3040,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_size=(1,), todict=True
                 )
                 if set(w_domain_axes_1).intersection(t["undefined_axes"]):
-                    raise ValueError("345jn456jn TODO")
+                    raise ValueError(
+                        f"Weights field {w} has at least one undefined "
+                        f"domain axes: {w_domain_axes_1}."
+                    )
 
             w = w.squeeze()
 
@@ -3372,7 +3391,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 positive = aux_Z.get_property("positive", None)
                 if positive is None:
-                    raise ValueError("TODO")
+                    raise ValueError(
+                        "Value of Z coordinate 'positive' property is not "
+                        "defined"
+                    )
 
                 if positive.lower() == "up":
                     r = radius + z
@@ -3573,7 +3595,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if auto:
                 return False
 
-            raise ValueError("TODO")
+            raise ValueError(
+                "Z coordinate bounds must have units equivalent to "
+                f"metres for volume calculations. Got {z.Units!r}."
+            )
 
         if not methods:
             # Initialise cell volumes as the cell areas
@@ -3645,7 +3670,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     delta_z ** 3 / (3 * r ** 2) + delta_z ** 2 / r + delta_z
                 )
         else:
-            raise ValueError("TODO")
+            raise ValueError(
+                "X and Y coordinate bounds must both have units "
+                "equivalent to either metres, for plane polygon, or radians, "
+                "for spherical polygon, volume calculations. Got "
+                f"{x.Units!r} and {y.Units!r}."
+            )
 
         comp[(axis,)] = volumes
 
@@ -5349,7 +5379,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 key = [self.domain_axis(i, key=True) for i in key]
                 for k in key:
                     if k not in field_data_axes:
-                        raise ValueError(f"TODO {k!r} domain axis")
+                        raise ValueError(
+                            f"Can't find weights: {k!r} domain axis does "
+                            "not correspond to one of the data axes."
+                        )
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
@@ -5416,7 +5449,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     if isinstance(w, self.__class__):
                         fields.append(w)
                     elif isinstance(w, Data):
-                        raise ValueError("TODO")
+                        raise ValueError(
+                            f"Invalid weight {w} in sequence of weights."
+                        )
                     elif w in ("area", "volume"):
                         cell_measures.append(w)
                     else:
@@ -8480,7 +8515,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     elif not measure and scale is None:
                         scale = 1.0
                     elif measure and scale is not None:
-                        raise ValueError("TODO")
+                        raise ValueError(
+                            "Can't scale weights which are created as cell "
+                            "measures i.e. can't scale the weights if "
+                            "measure parameter is set to True."
+                        )
 
                     #                    if weights is True:
                     #                        weights = tuple(collapse_axes.keys())
@@ -8587,7 +8626,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 elif not measure and scale is None:
                     scale = 1.0
                 elif measure and scale is not None:
-                    raise ValueError("TODO")
+                    raise ValueError(
+                        "Can't scale weights which are created as cell "
+                        "measures i.e. can't scale the weights if "
+                        "measure parameter is set to True."
+                    )
 
                 d_weights = f.weights(
                     weights,
@@ -9418,7 +9461,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
-                    raise ValueError("dddddd siduhfsuildfhsuil dhfdui TODO")
+                    raise ValueError(
+                        "Dimension coordinates are required for a "
+                        "grouped collapse with TimeDuration groups."
+                    )
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -9451,7 +9497,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
-                    raise ValueError("TODO")
+                    raise ValueError(
+                        "Dimension coordinates are required for a "
+                        "grouped collapse with Data groups."
+                    )
 
                 if coord.Units.isreftime:
                     raise ValueError(
@@ -9507,7 +9556,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         filter_by_axis=(axis,), axis_mode="exact", default=None
                     )
                     if coord is None:
-                        raise ValueError("asdad8777787 TODO")
+                        raise ValueError(
+                            "Dimension and/or auxiliary coordinates are "
+                            "required for a grouped collapse with a "
+                            "sequence of groups."
+                        )
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -10902,7 +10955,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         )
 
                     if len(bounds) != 1:
-                        raise ValueError("bounds alskdaskds TODO")
+                        raise ValueError(
+                            "Can't create indices based on coordinates that "
+                            "have bounds that aren't unique."
+                        )
 
                     # Remove grid cells if, upon closer inspection,
                     # they do actually contain the point.
@@ -13621,7 +13677,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         data_axes = f.get_data_axes(default=())
         if isinstance(size, dict):
             if axes is not None:
-                raise ValueError("can't set axes when size is a dict TODO")
+                raise ValueError(
+                    "Can't set existing axes when size is a dict."
+                )
 
             axis_halo = {
                 self.domain_axis(k, key=True): v for k, v in size.items()
@@ -14705,7 +14763,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             construct_data_axes = g.get_data_axes(key, default=None)
             if construct_data_axes is None:
-                raise ValueError("TODO")
+                raise ValueError(
+                    f"Can't identify construct data axes for {construct!r}."
+                )
 
             data_axes = g.get_data_axes()
 

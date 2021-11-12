@@ -117,7 +117,7 @@ def regrid_get_latlon(f, name, method, axes=None):
 
             * True if 2-d auxiliary coordinates are returned or if 1-d
               X and Y coordinates are returned, which are not
-              long/lat.
+              lon/lat.
 
     """
     data_axes = f.constructs.data_axes()
@@ -164,7 +164,10 @@ def regrid_get_latlon(f, name, method, axes=None):
             # Axes specified by integer position in dimensions of
             # lat and lon 2-d auxiliary coordinates
             if axes["X"] == axes["Y"]:
-                raise ValueError("TODO 0")
+                raise ValueError(
+                    "The X and Y axes must be distinct, but they are the same "
+                    "for {name} field {f!r}."
+                )
 
             lon_key, lon = f.auxiliary_coordinate(
                 "X", item=True, filter_by_naxes=(2,), default=(None, None)
@@ -173,17 +176,30 @@ def regrid_get_latlon(f, name, method, axes=None):
                 "Y", item=True, filter_by_naxes=(2,), default=(None, None)
             )
             if lon is None:
-                raise ValueError("TODO x")
+                raise ValueError(
+                    "The X axis does not correspond to a longitude coordinate "
+                    f"for {name} field {f!r}."
+                )
             if lat is None:
-                raise ValueError("TODO y")
+                raise ValueError(
+                    "The Y axis does not correspond to a latitude coordinate "
+                    f"for {name} field {f!r}."
+                )
 
             if lat.shape != lon.shape:
-                raise ValueError("TODO 222222")
+                raise ValueError(
+                    "The shape of the latitude and longitude coordinates "
+                    "must be equal but they differ for {name} field {f!r}."
+                )
 
             lon_axes = data_axes[lon_key]
             lat_axes = data_axes[lat_key]
             if lat_axes != lon_axes:
-                raise ValueError("TODO 3333333")
+                raise ValueError(
+                    "The domain axis constructs spanned by the latitude and "
+                    "longitude coordinates should be the same, but they "
+                    "differ for {name} field {f!r}."
+                )
 
             x_axis = lon_axes[axes["X"]]
             y_axis = lat_axes[axes["Y"]]
