@@ -101,13 +101,17 @@ from .creation import (
     generate_axis_identifiers,
     to_dask,
 )
-from .dask_utils import cf_harden_mask, cf_soften_mask, cf_where
+from .dask_utils import (
+    _da_ma_allclose,
+    cf_harden_mask,
+    cf_soften_mask,
+    cf_where,
+)
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
-    _da_ma_allclose,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,

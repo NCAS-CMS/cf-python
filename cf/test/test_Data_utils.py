@@ -22,7 +22,7 @@ class DataUtilsTest(unittest.TestCase):
         f = a + 5e-06  # within default tolerances
 
         # Test the function with these inputs as both numpy and dask arrays...
-        allclose = cf.data.utils._da_ma_allclose
+        allclose = cf.data.dask_utils._da_ma_allclose
         da_ = da.from_array(a)
 
         self.assertTrue(allclose(a, a).compute())
