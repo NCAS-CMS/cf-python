@@ -59,6 +59,19 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
     def allclose(a_blocks, b_blocks):
         """Run `ma.allclose` across multiple blocks over two arrays."""
         result = True
+        # Handle scalars, including 0-d arrays, for which a_blocks and
+        # b_blocks will have the corresponding type and hence not be iterable.
+        # With this approach, we avoid inspecting sizes or lengths, and for
+        # the 0-d array blocks the following iteration can be used unchanged
+        # and will only execute once with block sizes as desired of:
+        # (np.array(<int size>),)[0] = array(<int size>). Note
+        # can't check against more general case of collections.abc.Iterable
+        # because a 0-d array is also iterable, but in practice always a list.
+        if not isinstance(a_blocks, list):
+            a_blocks = (a_blocks,)
+        if not isinstance(b_blocks, list):
+            b_blocks = (b_blocks,)
+
         for a, b in zip(a_blocks, b_blocks):
             result &= np.ma.allclose(
                 a,
@@ -69,14 +82,6 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
             )
 
         return result
-
-    # Handle scalars: da.blockwise will raise a TypeError if both of its array
-    # inputs are scalar, though if only one is scalar it manages. Test for
-    # scalars by checking the shape (scalar has '()') to avoid computation.
-    if not x.shape and not y.shape:
-        return np.ma.allclose(
-            x, y, masked_equal=masked_equal, rtol=rtol, atol=atol
-        )
 
     axes = tuple(range(x.ndim))
     return da.blockwise(
