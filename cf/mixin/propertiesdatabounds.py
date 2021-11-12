@@ -579,7 +579,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, rtol=None, atol=None, verbose=None):
-        """TODO.
+        """True if data is equivalent to other data, units considered.
 
         Two real numbers ``x`` and ``y`` are considered equal if
         ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -649,7 +649,7 @@ class PropertiesDataBounds(PropertiesData):
         return True
 
     def _YMDhms(self, attr):
-        """TODO."""
+        """Return some datetime component of the data array elements."""
         out = super()._YMDhms(attr)
         out.del_bounds(None)
         return out
@@ -872,7 +872,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @property
     def isperiodic(self):
-        """TODO.
+        """True if a given axis is periodic.
 
         .. versionadded:: 2.0
 
